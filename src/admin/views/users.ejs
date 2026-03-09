@@ -1,0 +1,41 @@
+<%- include('_header') %>
+<h2 style="margin-bottom: 20px;">Users (<%= total %>)</h2>
+<form class="filters" method="GET" action="/admin/users">
+  <input type="text" name="search" placeholder="Search email/name..." value="<%= search %>">
+  <select name="gender">
+    <option value="all" <%= gender === 'all' ? 'selected' : '' %>>All Genders</option>
+    <option value="MAN" <%= gender === 'MAN' ? 'selected' : '' %>>Man</option>
+    <option value="WOMAN" <%= gender === 'WOMAN' ? 'selected' : '' %>>Woman</option>
+  </select>
+  <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+<div class="card">
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Email</th><th>Age</th><th>Gender</th><th>City</th><th>Diamonds (G/P)</th><th>Status</th><th>Joined</th><th></th></tr>
+    </thead>
+    <tbody>
+      <% users.forEach(function(u) { %>
+      <tr>
+        <td><%= u.name %> <%= u.surname %></td>
+        <td><%= u.email %></td>
+        <td><%= u.age %></td>
+        <td><%= u.gender %></td>
+        <td><%= u.city || '-' %></td>
+        <td><span style="color:#22c55e"><%= u.green_diamonds %></span> / <span style="color:#a855f7"><%= u.purple_diamonds %></span></td>
+        <td><span class="badge <%= u.is_online ? 'badge-online' : 'badge-offline' %>"><%= u.is_online ? 'Online' : 'Offline' %></span></td>
+        <td><%= new Date(u.created_at).toLocaleDateString() %></td>
+        <td><a href="/admin/users/<%= u.id %>" class="btn btn-primary btn-sm">Detail</a></td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+<% if (totalPages > 1) { %>
+<div class="pagination">
+  <% for (var i = 1; i <= totalPages; i++) { %>
+  <a href="/admin/users?page=<%= i %>&search=<%= search %>&gender=<%= gender %>" class="<%= i === page ? 'active' : '' %>"><%= i %></a>
+  <% } %>
+</div>
+<% } %>
+<%- include('_footer') %>

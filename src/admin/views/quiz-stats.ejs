@@ -1,0 +1,38 @@
+<%- include('_header') %>
+<h2 style="margin-bottom: 20px;">Quiz Statistics</h2>
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="value"><%= stats.totalSessions %></div>
+    <div class="label">Total Sessions</div>
+  </div>
+  <div class="stat-card">
+    <div class="value" style="color: #22c55e;"><%= stats.completedSessions %></div>
+    <div class="label">Completed</div>
+  </div>
+  <div class="stat-card">
+    <div class="value" style="color: #ef4444;"><%= stats.failedSessions %></div>
+    <div class="label">Failed</div>
+  </div>
+  <div class="stat-card">
+    <div class="value" style="color: #a855f7;"><%= stats.successRate %>%</div>
+    <div class="label">Success Rate</div>
+  </div>
+</div>
+<div class="card">
+  <h3 style="margin-bottom: 12px;">Power Usage</h3>
+  <table>
+    <thead><tr><th>Power</th><th>Times Used</th></tr></thead>
+    <tbody>
+      <% Object.entries(stats.powerUsage).sort((a, b) => Number(b[1]) - Number(a[1])).forEach(function([power, count]) { %>
+      <tr>
+        <td><%= power %></td>
+        <td><%= count %></td>
+      </tr>
+      <% }); %>
+      <% if (Object.keys(stats.powerUsage).length === 0) { %>
+      <tr><td colspan="2" style="text-align:center; color:#999;">No power usage data yet</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('_footer') %>

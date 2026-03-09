@@ -1,0 +1,159 @@
+<%- include('_header') %>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+  <h2>New Campaign</h2>
+  <a href="/admin/campaigns" class="btn" style="background: #e5e7eb; color: #333;">Back to Campaigns</a>
+</div>
+
+<form method="POST" action="/admin/campaigns" id="campaignForm">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+  <!-- Content Section -->
+  <div class="card">
+    <h3 style="margin-bottom: 16px; font-size: 16px; color: #1a1a2e;">Push Content</h3>
+    <div style="display: grid; gap: 14px;">
+      <div>
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Campaign Title *</label>
+        <input type="text" name="title" required style="width: 100%;" placeholder="Internal name for this campaign" />
+      </div>
+      <div>
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Push Title *</label>
+        <input type="text" name="push_title" required style="width: 100%;" placeholder="Notification title users will see" />
+      </div>
+      <div>
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Push Body *</label>
+        <textarea name="push_body" required rows="3" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-family: inherit; resize: vertical;" placeholder="Notification message body"></textarea>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+        <div>
+          <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Image URL</label>
+          <input type="text" name="image_url" style="width: 100%;" placeholder="https://..." />
+        </div>
+        <div>
+          <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Action URL</label>
+          <input type="text" name="action_url" style="width: 100%;" placeholder="Deep link or URL" />
+        </div>
+        <div>
+          <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Action Label</label>
+          <input type="text" name="action_label" style="width: 100%;" placeholder="Button text" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Segment Section -->
+  <div class="card">
+    <h3 style="margin-bottom: 16px; font-size: 16px; color: #1a1a2e;">Target Segment</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;">
+      <div>
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Gender</label>
+        <select name="segment_gender" style="width: 100%;">
+          <option value="">All</option>
+          <option value="man">Man</option>
+          <option value="woman">Woman</option>
+        </select>
+      </div>
+      <div>
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Age Min</label>
+        <input type="number" name="segment_age_min" style="width: 100%;" placeholder="18" min="18" max="99" />
+      </div>
+      <div>
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Age Max</label>
+        <input type="number" name="segment_age_max" style="width: 100%;" placeholder="65" min="18" max="99" />
+      </div>
+      <div>
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Cities</label>
+        <input type="text" name="segment_cities" style="width: 100%;" placeholder="Istanbul, Ankara, Izmir" />
+      </div>
+      <div>
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Subscription</label>
+        <select name="segment_subscription" style="width: 100%;">
+          <option value="">All</option>
+          <option value="free">Free</option>
+          <option value="premium">Premium</option>
+        </select>
+      </div>
+      <div>
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Last Active (days)</label>
+        <input type="number" name="segment_last_active" style="width: 100%;" placeholder="e.g. 7" min="1" />
+      </div>
+      <div>
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Profile Completion Min %</label>
+        <input type="number" name="segment_completion_min" style="width: 100%;" placeholder="0" min="0" max="100" />
+      </div>
+      <div>
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Profile Completion Max %</label>
+        <input type="number" name="segment_completion_max" style="width: 100%;" placeholder="100" min="0" max="100" />
+      </div>
+      <div>
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Registered After</label>
+        <input type="date" name="segment_registered_after" style="width: 100%;" />
+      </div>
+    </div>
+
+    <div style="margin-top: 16px; display: flex; align-items: center; gap: 12px;">
+      <button type="button" id="previewBtn" class="btn" style="background: #e5e7eb; color: #333;">Preview Count</button>
+      <span id="previewResult" style="font-size: 14px; color: #666;"></span>
+    </div>
+  </div>
+
+  <!-- Schedule Section -->
+  <div class="card">
+    <h3 style="margin-bottom: 16px; font-size: 16px; color: #1a1a2e;">Schedule (optional)</h3>
+    <div>
+      <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Scheduled At</label>
+      <input type="datetime-local" name="scheduled_at" style="width: 300px;" />
+      <p style="font-size: 12px; color: #999; margin-top: 4px;">Leave empty to save as draft</p>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 12px; margin-top: 8px;">
+    <button type="submit" class="btn btn-primary" style="padding: 10px 24px; font-size: 14px;">Create Campaign</button>
+    <a href="/admin/campaigns" class="btn" style="background: #e5e7eb; color: #333; padding: 10px 24px; font-size: 14px;">Cancel</a>
+  </div>
+</form>
+
+<script>
+document.getElementById('previewBtn').addEventListener('click', async function() {
+  const form = document.getElementById('campaignForm');
+  const fd = new FormData(form);
+  const segment = {};
+
+  const gender = fd.get('segment_gender');
+  if (gender) segment.gender = gender;
+  const ageMin = fd.get('segment_age_min');
+  if (ageMin) segment.age_min = parseInt(ageMin);
+  const ageMax = fd.get('segment_age_max');
+  if (ageMax) segment.age_max = parseInt(ageMax);
+  const cities = fd.get('segment_cities');
+  if (cities) segment.cities = cities.split(',').map(c => c.trim()).filter(Boolean);
+  const sub = fd.get('segment_subscription');
+  if (sub) segment.subscription_plan = sub;
+  const lastActive = fd.get('segment_last_active');
+  if (lastActive) segment.last_active_days = parseInt(lastActive);
+  const compMin = fd.get('segment_completion_min');
+  if (compMin) segment.profile_completion_min = parseInt(compMin);
+  const compMax = fd.get('segment_completion_max');
+  if (compMax) segment.profile_completion_max = parseInt(compMax);
+  const regAfter = fd.get('segment_registered_after');
+  if (regAfter) segment.registered_after = regAfter;
+
+  const resultEl = document.getElementById('previewResult');
+  resultEl.textContent = 'Loading...';
+  resultEl.style.color = '#666';
+
+  try {
+    const res = await fetch('/admin/campaigns/preview-count', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...segment, _csrf: fd.get('_csrf') }),
+    });
+    const data = await res.json();
+    resultEl.textContent = data.count + ' users match this segment';
+    resultEl.style.color = '#065f46';
+  } catch (err) {
+    resultEl.textContent = 'Error fetching count';
+    resultEl.style.color = '#991b1b';
+  }
+});
+</script>
+<%- include('_footer') %>

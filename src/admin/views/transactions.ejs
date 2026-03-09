@@ -1,0 +1,36 @@
+<%- include('_header') %>
+<h2 style="margin-bottom: 20px;">Diamond Transactions (<%= total %>)</h2>
+<form class="filters" method="GET" action="/admin/transactions">
+  <select name="type">
+    <option value="all" <%= type === 'all' ? 'selected' : '' %>>All Types</option>
+    <option value="GREEN" <%= type === 'GREEN' ? 'selected' : '' %>>Green</option>
+    <option value="PURPLE" <%= type === 'PURPLE' ? 'selected' : '' %>>Purple</option>
+  </select>
+  <input type="text" name="userId" placeholder="User ID" value="<%= userId %>">
+  <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+<div class="card">
+  <table>
+    <thead><tr><th>User</th><th>Type</th><th>Amount</th><th>Reason</th><th>Reference</th><th>Date</th></tr></thead>
+    <tbody>
+      <% transactions.forEach(function(t) { %>
+      <tr>
+        <td><a href="/admin/users/<%= t.user_id %>" style="color:#a855f7;"><%= t.user_id.substring(0,8) %>...</a></td>
+        <td><span style="color: <%= t.type === 'GREEN' ? '#22c55e' : '#a855f7' %>; font-weight:600;"><%= t.type %></span></td>
+        <td style="color: <%= t.amount > 0 ? '#22c55e' : '#ef4444' %>; font-weight:600;"><%= t.amount > 0 ? '+' : '' %><%= t.amount %></td>
+        <td><%= t.reason %></td>
+        <td><%= t.reference_id || '-' %></td>
+        <td><%= new Date(t.created_at).toLocaleString() %></td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+<% if (totalPages > 1) { %>
+<div class="pagination">
+  <% for (var i = 1; i <= totalPages; i++) { %>
+  <a href="/admin/transactions?page=<%= i %>&type=<%= type %>&userId=<%= userId %>" class="<%= i === page ? 'active' : '' %>"><%= i %></a>
+  <% } %>
+</div>
+<% } %>
+<%- include('_footer') %>

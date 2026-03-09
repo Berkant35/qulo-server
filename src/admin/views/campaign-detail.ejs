@@ -1,0 +1,133 @@
+<%- include('_header') %>
+<% if (typeof error !== 'undefined' && error) { %>
+<div style="background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px;">
+  <strong>Error:</strong> <%= error %>
+</div>
+<% } %>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+  <h2><%= campaign.title %></h2>
+  <a href="/admin/campaigns" class="btn" style="background: #e5e7eb; color: #333;">Back to Campaigns</a>
+</div>
+
+<%
+  const stats = campaign.campaign_stats?.[0] || campaign.campaign_stats || {};
+  const targeted = stats.total_targeted || 0;
+  const sent = stats.total_sent || 0;
+  const opened = stats.total_opened || 0;
+  const clicked = stats.total_clicked || 0;
+  const openRate = sent > 0 ? ((opened / sent) * 100).toFixed(1) : '0.0';
+  const clickRate = sent > 0 ? ((clicked / sent) * 100).toFixed(1) : '0.0';
+%>
+
+<!-- Stats Cards -->
+<div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+  <div class="stat-card">
+    <div class="value"><%= targeted %></div>
+    <div class="label">Targeted</div>
+  </div>
+  <div class="stat-card">
+    <div class="value"><%= sent %></div>
+    <div class="label">Sent</div>
+  </div>
+  <div class="stat-card">
+    <div class="value" style="color: #2563eb;"><%= opened %></div>
+    <div class="label">Opened (<%= openRate %>%)</div>
+  </div>
+  <div class="stat-card">
+    <div class="value" style="color: #a855f7;"><%= clicked %></div>
+    <div class="label">Clicked (<%= clickRate %>%)</div>
+  </div>
+</div>
+
+<!-- Campaign Info -->
+<div class="card">
+  <h3 style="margin-bottom: 16px; font-size: 16px; color: #1a1a2e;">Campaign Details</h3>
+  <div class="detail-grid">
+    <dt>Status</dt>
+    <dd>
+      <% if (campaign.status === 'draft') { %>
+        <span class="badge" style="background: #f3f4f6; color: #6b7280;">Draft</span>
+      <% } else if (campaign.status === 'scheduled') { %>
+        <span class="badge" style="background: #dbeafe; color: #1e40af;">Scheduled</span>
+      <% } else if (campaign.status === 'sending') { %>
+        <span class="badge" style="background: #fef3c7; color: #92400e;">Sending</span>
+      <% } else if (campaign.status === 'sent') { %>
+        <span class="badge" style="background: #d1fae5; color: #065f46;">Sent</span>
+      <% } else if (campaign.status === 'cancelled') { %>
+        <span class="badge" style="background: #fef2f2; color: #991b1b;">Cancelled</span>
+      <% } %>
+    </dd>
+
+    <dt>Push Title</dt>
+    <dd><%= campaign.push_title %></dd>
+
+    <dt>Push Body</dt>
+    <dd><%= campaign.push_body %></dd>
+
+    <% if (campaign.image_url) { %>
+    <dt>Image URL</dt>
+    <dd><a href="<%= campaign.image_url %>" target="_blank" style="color: #a855f7; word-break: break-all;"><%= campaign.image_url %></a></dd>
+    <% } %>
+
+    <% if (campaign.action_url) { %>
+    <dt>Action URL</dt>
+    <dd><%= campaign.action_url %></dd>
+    <% } %>
+
+    <% if (campaign.action_label) { %>
+    <dt>Action Label</dt>
+    <dd><%= campaign.action_label %></dd>
+    <% } %>
+
+    <dt>Segment</dt>
+    <dd style="font-size: 13px;">
+      <%
+        const seg = campaign.segment || {};
+        const parts = [];
+        if (seg.gender) parts.push('Gender: ' + seg.gender);
+        if (seg.age_min || seg.age_max) parts.push('Age: ' + (seg.age_min || '?') + '-' + (seg.age_max || '?'));
+        if (seg.cities?.length) parts.push('Cities: ' + seg.cities.join(', '));
+        if (seg.subscription_plan) parts.push('Plan: ' + seg.subscription_plan);
+        if (seg.last_active_days) parts.push('Active within ' + seg.last_active_days + ' days');
+        if (seg.profile_completion_min !== undefined || seg.profile_completion_max !== undefined) {
+          parts.push('Completion: ' + (seg.profile_completion_min || 0) + '%-' + (seg.profile_completion_max || 100) + '%');
+        }
+        if (seg.registered_after) parts.push('Registered after: ' + seg.registered_after);
+      %>
+      <%= parts.length ? parts.join(' · ') : 'All users' %>
+    </dd>
+
+    <dt>Created</dt>
+    <dd><%= new Date(campaign.created_at).toLocaleString() %></dd>
+
+    <% if (campaign.scheduled_at) { %>
+    <dt>Scheduled At</dt>
+    <dd><%= new Date(campaign.scheduled_at).toLocaleString() %></dd>
+    <% } %>
+
+    <% if (campaign.sent_at) { %>
+    <dt>Sent At</dt>
+    <dd><%= new Date(campaign.sent_at).toLocaleString() %></dd>
+    <% } %>
+  </div>
+</div>
+
+<!-- Action Buttons -->
+<% if (campaign.status === 'draft' || campaign.status === 'scheduled') { %>
+<div class="card" style="display: flex; gap: 12px; align-items: center;">
+  <form method="POST" action="/admin/campaigns/<%= campaign.id %>/send" style="display: inline;">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <button type="submit" class="btn btn-success" onclick="return confirm('Are you sure you want to send this campaign now?');">Send Now</button>
+  </form>
+  <form method="POST" action="/admin/campaigns/<%= campaign.id %>/cancel" style="display: inline;">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <button type="submit" class="btn btn-danger" onclick="return confirm('Cancel this campaign?');">Cancel Campaign</button>
+  </form>
+</div>
+<% } else if (campaign.status === 'sending') { %>
+<div class="card">
+  <button class="btn" style="background: #fef3c7; color: #92400e; cursor: not-allowed;" disabled>Sending...</button>
+</div>
+<% } %>
+
+<%- include('_footer') %>

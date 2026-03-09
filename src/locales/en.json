@@ -1,0 +1,9 @@
+{
+  "push": {
+    "new_message": "{name} sent you a message",
+    "new_message_image": "{name} sent you a photo",
+    "new_match": "New match! {name} solved all your questions",
+    "quiz_started": "{name} started solving your questions",
+    "passport_expired": "Your passport mode has expired"
+  }
+}

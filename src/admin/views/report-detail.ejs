@@ -1,0 +1,64 @@
+<%- include('_header') %>
+<a href="/admin/reports" style="color:#a855f7; text-decoration:none; font-size:14px;">&larr; Back to Reports</a>
+<h2 style="margin: 12px 0 20px;">Report Detail</h2>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+  <div class="card">
+    <h3 style="margin-bottom: 12px;">Reporter</h3>
+    <% if (reporter) { %>
+    <dl class="detail-grid">
+      <dt>Name</dt><dd><%= reporter.name %> <%= reporter.surname %></dd>
+      <dt>Email</dt><dd><%= reporter.email %></dd>
+    </dl>
+    <a href="/admin/users/<%= reporter.id %>" class="btn btn-primary btn-sm" style="margin-top:8px;">View Profile</a>
+    <% } else { %>
+    <p>User not found</p>
+    <% } %>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom: 12px;">Reported</h3>
+    <% if (reported) { %>
+    <dl class="detail-grid">
+      <dt>Name</dt><dd><%= reported.name %> <%= reported.surname %></dd>
+      <dt>Email</dt><dd><%= reported.email %></dd>
+      <dt>Banned</dt><dd><%= reported.is_deleted ? 'Yes' : 'No' %></dd>
+    </dl>
+    <a href="/admin/users/<%= reported.id %>" class="btn btn-primary btn-sm" style="margin-top:8px;">View Profile</a>
+    <% } else { %>
+    <p>User not found</p>
+    <% } %>
+  </div>
+</div>
+
+<div class="card">
+  <h3 style="margin-bottom: 12px;">Report Info</h3>
+  <dl class="detail-grid">
+    <dt>Status</dt><dd><span class="badge badge-<%= report.status.toLowerCase() %>"><%= report.status %></span></dd>
+    <dt>Reason</dt><dd><%= report.reason %></dd>
+    <dt>Date</dt><dd><%= new Date(report.created_at).toLocaleString() %></dd>
+  </dl>
+
+  <% if (report.status !== 'RESOLVED') { %>
+  <h4 style="margin: 16px 0 8px;">Take Action</h4>
+  <div style="display:flex; gap:8px;">
+    <form method="POST" action="/admin/reports/<%= report.id %>/action">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="status" value="REVIEWED">
+      <button type="submit" class="btn btn-primary btn-sm">Mark Reviewed</button>
+    </form>
+    <form method="POST" action="/admin/reports/<%= report.id %>/action">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="status" value="RESOLVED">
+      <button type="submit" class="btn btn-success btn-sm">Resolve</button>
+    </form>
+    <form method="POST" action="/admin/reports/<%= report.id %>/action">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="status" value="RESOLVED">
+      <input type="hidden" name="ban_user" value="1">
+      <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Ban user and resolve report?')">Ban & Resolve</button>
+    </form>
+  </div>
+  <% } %>
+</div>
+<%- include('_footer') %>

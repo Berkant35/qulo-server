@@ -1,0 +1,82 @@
+<%- include('_header') %>
+<h2 style="margin-bottom: 20px;">App Configuration</h2>
+
+<% if (success) { %>
+<div class="alert" style="background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0;">Configuration updated successfully.</div>
+<% } %>
+
+<form method="POST" action="/admin/app-config">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+  <!-- Version Control -->
+  <div class="card">
+    <h3 style="margin-bottom: 16px;">Version Control</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+      <div>
+        <label style="display:block; font-size:13px; font-weight:600; color:#555; margin-bottom:4px;">Min Version iOS</label>
+        <input type="text" name="min_version_ios" value="<%= config?.min_version_ios || '' %>" placeholder="e.g. 1.0.0" style="width:100%;">
+      </div>
+      <div>
+        <label style="display:block; font-size:13px; font-weight:600; color:#555; margin-bottom:4px;">Min Version Android</label>
+        <input type="text" name="min_version_android" value="<%= config?.min_version_android || '' %>" placeholder="e.g. 1.0.0" style="width:100%;">
+      </div>
+      <div>
+        <label style="display:block; font-size:13px; font-weight:600; color:#555; margin-bottom:4px;">Latest Version iOS</label>
+        <input type="text" name="latest_version_ios" value="<%= config?.latest_version_ios || '' %>" placeholder="e.g. 1.2.0" style="width:100%;">
+      </div>
+      <div>
+        <label style="display:block; font-size:13px; font-weight:600; color:#555; margin-bottom:4px;">Latest Version Android</label>
+        <input type="text" name="latest_version_android" value="<%= config?.latest_version_android || '' %>" placeholder="e.g. 1.2.0" style="width:100%;">
+      </div>
+    </div>
+    <div style="margin-top: 16px;">
+      <label style="display:flex; align-items:center; gap:8px; font-size:14px; cursor:pointer;">
+        <input type="checkbox" name="is_force_update_enabled" <%= config?.is_force_update_enabled ? 'checked' : '' %>>
+        <span>Force Update Enabled</span>
+      </label>
+      <p style="font-size:12px; color:#999; margin-top:4px;">When enabled, users below the minimum version will be forced to update.</p>
+    </div>
+  </div>
+
+  <!-- Store URLs -->
+  <div class="card">
+    <h3 style="margin-bottom: 16px;">Store URLs</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+      <div>
+        <label style="display:block; font-size:13px; font-weight:600; color:#555; margin-bottom:4px;">App Store URL (iOS)</label>
+        <input type="text" name="store_url_ios" value="<%= config?.store_url_ios || '' %>" placeholder="https://apps.apple.com/..." style="width:100%;">
+      </div>
+      <div>
+        <label style="display:block; font-size:13px; font-weight:600; color:#555; margin-bottom:4px;">Play Store URL (Android)</label>
+        <input type="text" name="store_url_android" value="<%= config?.store_url_android || '' %>" placeholder="https://play.google.com/..." style="width:100%;">
+      </div>
+    </div>
+  </div>
+
+  <!-- Maintenance -->
+  <div class="card">
+    <h3 style="margin-bottom: 16px;">Maintenance Mode</h3>
+    <div style="margin-bottom: 16px;">
+      <label style="display:flex; align-items:center; gap:8px; font-size:14px; cursor:pointer;">
+        <input type="checkbox" name="is_maintenance" <%= config?.is_maintenance ? 'checked' : '' %>>
+        <span>Maintenance Mode Active</span>
+      </label>
+      <p style="font-size:12px; color:#999; margin-top:4px;">When enabled, users will see a maintenance screen instead of the app.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+      <div>
+        <label style="display:block; font-size:13px; font-weight:600; color:#555; margin-bottom:4px;">Maintenance Message (TR)</label>
+        <textarea name="maintenance_message_tr" rows="3" style="width:100%; padding:8px 12px; border:1px solid #ddd; border-radius:4px; font-size:14px; font-family:inherit; resize:vertical;"><%= config?.maintenance_message_tr || '' %></textarea>
+      </div>
+      <div>
+        <label style="display:block; font-size:13px; font-weight:600; color:#555; margin-bottom:4px;">Maintenance Message (EN)</label>
+        <textarea name="maintenance_message_en" rows="3" style="width:100%; padding:8px 12px; border:1px solid #ddd; border-radius:4px; font-size:14px; font-family:inherit; resize:vertical;"><%= config?.maintenance_message_en || '' %></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align: right;">
+    <button type="submit" class="btn btn-primary" style="padding: 10px 32px; font-size: 15px;">Save Configuration</button>
+  </div>
+</form>
+<%- include('_footer') %>

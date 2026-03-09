@@ -1,0 +1,33 @@
+<%- include('_header') %>
+<h2 style="margin-bottom: 20px;">Matches (<%= total %>)</h2>
+<form class="filters" method="GET" action="/admin/matches">
+  <select name="active">
+    <option value="all" <%= active === 'all' ? 'selected' : '' %>>All</option>
+    <option value="true" <%= active === 'true' ? 'selected' : '' %>>Active</option>
+    <option value="false" <%= active === 'false' ? 'selected' : '' %>>Inactive</option>
+  </select>
+  <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+<div class="card">
+  <table>
+    <thead><tr><th>User 1</th><th>User 2</th><th>Active</th><th>Matched At</th></tr></thead>
+    <tbody>
+      <% matches.forEach(function(m) { %>
+      <tr>
+        <td><% if (m.user1) { %><a href="/admin/users/<%= m.user1_id %>" style="color:#a855f7;"><%= m.user1.name %> <%= m.user1.surname %></a><% } else { %><%= m.user1_id.substring(0,8) %>...<% } %></td>
+        <td><% if (m.user2) { %><a href="/admin/users/<%= m.user2_id %>" style="color:#a855f7;"><%= m.user2.name %> <%= m.user2.surname %></a><% } else { %><%= m.user2_id.substring(0,8) %>...<% } %></td>
+        <td><span class="badge <%= m.is_active ? 'badge-online' : 'badge-offline' %>"><%= m.is_active ? 'Active' : 'Inactive' %></span></td>
+        <td><%= new Date(m.matched_at).toLocaleString() %></td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+<% if (totalPages > 1) { %>
+<div class="pagination">
+  <% for (var i = 1; i <= totalPages; i++) { %>
+  <a href="/admin/matches?page=<%= i %>&active=<%= active %>" class="<%= i === page ? 'active' : '' %>"><%= i %></a>
+  <% } %>
+</div>
+<% } %>
+<%- include('_footer') %>

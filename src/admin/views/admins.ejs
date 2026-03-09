@@ -1,0 +1,46 @@
+<%- include('_header') %>
+<h2 style="margin-bottom: 20px;">Admin Management</h2>
+
+<% if (error) { %>
+<div class="alert alert-error"><%= error %></div>
+<% } %>
+
+<div class="card">
+  <h3 style="margin-bottom: 12px;">Add New Admin</h3>
+  <form method="POST" action="/admin/admins" style="display:flex; gap:8px; flex-wrap:wrap;">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="password" name="password" placeholder="Password (min 8)" required minlength="8">
+    <select name="role">
+      <option value="ADMIN">Admin</option>
+      <option value="SUPER_ADMIN">Super Admin</option>
+    </select>
+    <button type="submit" class="btn btn-primary">Add Admin</button>
+  </form>
+</div>
+
+<div class="card">
+  <h3 style="margin-bottom: 12px;">Current Admins</h3>
+  <table>
+    <thead><tr><th>Email</th><th>Role</th><th>Created</th><th>Last Login</th><th></th></tr></thead>
+    <tbody>
+      <% admins.forEach(function(a) { %>
+      <tr>
+        <td><%= a.email %></td>
+        <td><span class="badge <%= a.role === 'SUPER_ADMIN' ? 'badge-reviewed' : 'badge-resolved' %>"><%= a.role %></span></td>
+        <td><%= new Date(a.created_at).toLocaleDateString() %></td>
+        <td><%= a.last_login_at ? new Date(a.last_login_at).toLocaleString() : 'Never' %></td>
+        <td>
+          <% if (a.id !== session.adminId) { %>
+          <form method="POST" action="/admin/admins/<%= a.id %>/delete" style="display:inline;">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this admin?')">Delete</button>
+          </form>
+          <% } %>
+        </td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+<%- include('_footer') %>

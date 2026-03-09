@@ -1,0 +1,33 @@
+<%- include('_header') %>
+<h2 style="margin-bottom: 20px;">Dashboard</h2>
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="value"><%= stats.totalUsers %></div>
+    <div class="label">Total Users</div>
+  </div>
+  <div class="stat-card">
+    <div class="value"><%= stats.activeUsers %></div>
+    <div class="label">Active (7d)</div>
+  </div>
+  <div class="stat-card">
+    <div class="value"><%= stats.todayRegistrations %></div>
+    <div class="label">Today Registrations</div>
+  </div>
+  <div class="stat-card">
+    <div class="value"><%= stats.totalMatches %></div>
+    <div class="label">Total Matches</div>
+  </div>
+  <div class="stat-card">
+    <div class="value" style="color: #ef4444;"><%= stats.pendingReports %></div>
+    <div class="label">Pending Reports</div>
+  </div>
+  <div class="stat-card">
+    <div class="value" style="color: #22c55e;"><%= stats.greenDiamondCirculation %></div>
+    <div class="label">Green Diamonds Spent</div>
+  </div>
+  <div class="stat-card">
+    <div class="value" style="color: #a855f7;"><%= stats.purpleDiamondCirculation %></div>
+    <div class="label">Purple Diamonds Spent</div>
+  </div>
+</div>
+<%- include('_footer') %>

@@ -1,0 +1,139 @@
+<%- include('_header') %>
+<a href="/admin/users" style="color:#a855f7; text-decoration:none; font-size:14px;">&larr; Back to Users</a>
+<h2 style="margin: 12px 0 20px;"><%= user.name %> <%= user.surname %></h2>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+  <div class="card">
+    <h3 style="margin-bottom: 12px;">Profile</h3>
+    <dl class="detail-grid">
+      <dt>Email</dt><dd><%= user.email %></dd>
+      <dt>Age</dt><dd><%= user.age %></dd>
+      <dt>Gender</dt><dd><%= user.gender %></dd>
+      <dt>City</dt><dd><%= user.city || '-' %></dd>
+      <dt>Bio</dt><dd><%= user.bio || '-' %></dd>
+      <dt>Online</dt><dd><span class="badge <%= user.is_online ? 'badge-online' : 'badge-offline' %>"><%= user.is_online ? 'Yes' : 'No' %></span></dd>
+      <dt>Verified</dt><dd><%= user.email_verified ? 'Yes' : 'No' %></dd>
+      <dt>Banned</dt><dd><%= user.is_deleted ? 'Yes' : 'No' %></dd>
+      <dt>Last Seen</dt><dd><%= user.last_seen_at ? new Date(user.last_seen_at).toLocaleString() : '-' %></dd>
+      <dt>Joined</dt><dd><%= new Date(user.created_at).toLocaleString() %></dd>
+      <dt>Profile %</dt><dd><%= user.profile_completion %>%</dd>
+    </dl>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom: 12px;">Diamonds & Actions</h3>
+    <p style="margin-bottom: 8px;">
+      <span style="color:#22c55e; font-weight:bold; font-size:24px;"><%= user.green_diamonds %></span> Green &nbsp;
+      <span style="color:#a855f7; font-weight:bold; font-size:24px;"><%= user.purple_diamonds %></span> Purple
+    </p>
+    <form method="POST" action="/admin/users/<%= user.id %>/action" style="margin-bottom: 12px;">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="action" value="update_diamonds">
+      <div style="display:flex; gap:8px; margin-bottom:8px;">
+        <input type="text" name="green_diamonds" value="<%= user.green_diamonds %>" style="width:100px" placeholder="Green">
+        <input type="text" name="purple_diamonds" value="<%= user.purple_diamonds %>" style="width:100px" placeholder="Purple">
+        <button type="submit" class="btn btn-primary btn-sm">Update</button>
+      </div>
+    </form>
+    <div style="display:flex; gap:8px;">
+      <% if (user.is_deleted) { %>
+      <form method="POST" action="/admin/users/<%= user.id %>/action">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="action" value="unban">
+        <button type="submit" class="btn btn-success btn-sm">Unban</button>
+      </form>
+      <% } else { %>
+      <form method="POST" action="/admin/users/<%= user.id %>/action">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="action" value="ban">
+        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Ban this user?')">Ban</button>
+      </form>
+      <% } %>
+      <form method="POST" action="/admin/users/<%= user.id %>/action">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="action" value="delete">
+        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('PERMANENTLY delete this user? This cannot be undone.')">Delete</button>
+      </form>
+    </div>
+    <p style="margin-top:12px;"><a href="/admin/transactions?userId=<%= user.id %>" style="color:#a855f7;">View transactions &rarr;</a></p>
+
+    <hr style="border-color:#333; margin:16px 0;">
+    <h4 style="margin-bottom:8px;">Subscription</h4>
+    <p style="margin-bottom:8px;">
+      <% if (user.subscription_plan) { %>
+        <span class="badge badge-online" style="font-size:14px;"><%= user.subscription_plan.toUpperCase() %></span>
+        <span style="color:#888; font-size:12px; margin-left:4px;">expires: <%= user.subscription_expires_at ? new Date(user.subscription_expires_at).toLocaleDateString() : '-' %></span>
+      <% } else { %>
+        <span class="badge badge-offline">Free</span>
+      <% } %>
+    </p>
+    <% if (user.subscription_plan) { %>
+    <form method="POST" action="/admin/users/<%= user.id %>/action" style="margin-bottom:8px;">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="action" value="cancel_subscription">
+      <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Cancel subscription for this user?')">Cancel Subscription</button>
+    </form>
+    <% } %>
+    <form method="POST" action="/admin/users/<%= user.id %>/action">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="action" value="set_subscription">
+      <div style="display:flex; gap:8px; align-items:center;">
+        <select name="sub_plan" style="padding:4px 8px;">
+          <option value="plus">Plus</option>
+          <option value="premium">Premium</option>
+        </select>
+        <input type="number" name="sub_days" value="30" min="1" max="365" style="width:70px;" placeholder="Days">
+        <button type="submit" class="btn btn-primary btn-sm">Grant</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<% if (user.photos && user.photos.length > 0) { %>
+<div class="card">
+  <h3 style="margin-bottom: 12px;">Photos (<%= user.photos.length %>)</h3>
+  <div class="photos-grid">
+    <% user.photos.forEach(function(photo) { %>
+    <img src="<%= photo %>" alt="photo">
+    <% }); %>
+  </div>
+</div>
+<% } %>
+
+<% if (questions.length > 0) { %>
+<div class="card">
+  <h3 style="margin-bottom: 12px;">Questions (<%= questions.length %>)</h3>
+  <table>
+    <thead><tr><th>#</th><th>Question</th><th>Correct</th><th>Stats (C/W)</th></tr></thead>
+    <tbody>
+      <% questions.forEach(function(q) { %>
+      <tr>
+        <td><%= q.order_num %></td>
+        <td><%= q.question_text %></td>
+        <td>Answer <%= q.correct_answer %></td>
+        <td><span style="color:#22c55e"><%= q.stats_correct %></span> / <span style="color:#ef4444"><%= q.stats_wrong %></span></td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+<% } %>
+
+<% if (details) { %>
+<div class="card">
+  <h3 style="margin-bottom: 12px;">Details</h3>
+  <dl class="detail-grid">
+    <dt>Height</dt><dd><%= details.height || '-' %></dd>
+    <dt>Weight</dt><dd><%= details.weight || '-' %></dd>
+    <dt>Zodiac</dt><dd><%= details.zodiac || '-' %></dd>
+    <dt>Job</dt><dd><%= details.job || '-' %></dd>
+    <dt>School</dt><dd><%= details.school || '-' %></dd>
+    <dt>Smoking</dt><dd><%= details.smoking || '-' %></dd>
+    <dt>Alcohol</dt><dd><%= details.alcohol || '-' %></dd>
+    <dt>Pets</dt><dd><%= details.pets || '-' %></dd>
+    <dt>Music</dt><dd><%= details.music_type || '-' %></dd>
+    <dt>Personality</dt><dd><%= details.personality || '-' %></dd>
+  </dl>
+</div>
+<% } %>
+<%- include('_footer') %>

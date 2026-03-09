@@ -1,0 +1,36 @@
+<%- include('_header') %>
+<h2 style="margin-bottom: 20px;">Reports (<%= total %>)</h2>
+<form class="filters" method="GET" action="/admin/reports">
+  <select name="status">
+    <option value="all" <%= status === 'all' ? 'selected' : '' %>>All Status</option>
+    <option value="PENDING" <%= status === 'PENDING' ? 'selected' : '' %>>Pending</option>
+    <option value="REVIEWED" <%= status === 'REVIEWED' ? 'selected' : '' %>>Reviewed</option>
+    <option value="RESOLVED" <%= status === 'RESOLVED' ? 'selected' : '' %>>Resolved</option>
+  </select>
+  <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+<div class="card">
+  <table>
+    <thead><tr><th>Reporter</th><th>Reported</th><th>Reason</th><th>Status</th><th>Date</th><th></th></tr></thead>
+    <tbody>
+      <% reports.forEach(function(r) { %>
+      <tr>
+        <td><a href="/admin/users/<%= r.reporter_id %>" style="color:#a855f7;"><%= r.reporter_id.substring(0,8) %>...</a></td>
+        <td><a href="/admin/users/<%= r.reported_id %>" style="color:#a855f7;"><%= r.reported_id.substring(0,8) %>...</a></td>
+        <td><%= r.reason.substring(0, 50) %></td>
+        <td><span class="badge badge-<%= r.status.toLowerCase() %>"><%= r.status %></span></td>
+        <td><%= new Date(r.created_at).toLocaleDateString() %></td>
+        <td><a href="/admin/reports/<%= r.id %>" class="btn btn-primary btn-sm">Detail</a></td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+<% if (totalPages > 1) { %>
+<div class="pagination">
+  <% for (var i = 1; i <= totalPages; i++) { %>
+  <a href="/admin/reports?page=<%= i %>&status=<%= status %>" class="<%= i === page ? 'active' : '' %>"><%= i %></a>
+  <% } %>
+</div>
+<% } %>
+<%- include('_footer') %>

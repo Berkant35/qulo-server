@@ -1,0 +1,72 @@
+<%- include('_header') %>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+  <h2>Campaigns <span style="font-size: 14px; color: #666;">(<%= total %> total)</span></h2>
+  <a href="/admin/campaigns/new" class="btn btn-primary">+ New Campaign</a>
+</div>
+
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Status</th>
+        <th>Segment</th>
+        <th>Targeted</th>
+        <th>Sent</th>
+        <th>Opened</th>
+        <th>Clicked</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (campaigns.length === 0) { %>
+      <tr><td colspan="8" style="text-align: center; color: #999; padding: 24px;">No campaigns yet</td></tr>
+      <% } %>
+      <% campaigns.forEach(c => { %>
+      <% const stats = c.campaign_stats?.[0] || c.campaign_stats || {}; %>
+      <tr>
+        <td><a href="/admin/campaigns/<%= c.id %>" style="color: #a855f7; text-decoration: none; font-weight: 500;"><%= c.title %></a></td>
+        <td>
+          <% if (c.status === 'draft') { %>
+            <span class="badge" style="background: #f3f4f6; color: #6b7280;">Draft</span>
+          <% } else if (c.status === 'scheduled') { %>
+            <span class="badge" style="background: #dbeafe; color: #1e40af;">Scheduled</span>
+          <% } else if (c.status === 'sending') { %>
+            <span class="badge" style="background: #fef3c7; color: #92400e;">Sending</span>
+          <% } else if (c.status === 'sent') { %>
+            <span class="badge" style="background: #d1fae5; color: #065f46;">Sent</span>
+          <% } else if (c.status === 'cancelled') { %>
+            <span class="badge" style="background: #fef2f2; color: #991b1b;">Cancelled</span>
+          <% } %>
+        </td>
+        <td style="font-size: 12px; color: #666; max-width: 200px;">
+          <%
+            const seg = c.segment || {};
+            const parts = [];
+            if (seg.gender) parts.push(seg.gender);
+            if (seg.age_min || seg.age_max) parts.push((seg.age_min || '?') + '-' + (seg.age_max || '?'));
+            if (seg.cities?.length) parts.push(seg.cities.join(', '));
+            if (seg.subscription_plan) parts.push(seg.subscription_plan);
+            if (seg.last_active_days) parts.push('Active ' + seg.last_active_days + 'd');
+          %>
+          <%= parts.length ? parts.join(' · ') : 'All users' %>
+        </td>
+        <td><%= stats.total_targeted || 0 %></td>
+        <td><%= stats.total_sent || 0 %></td>
+        <td><%= stats.total_opened || 0 %></td>
+        <td><%= stats.total_clicked || 0 %></td>
+        <td style="font-size: 12px; color: #666;"><%= c.sent_at ? new Date(c.sent_at).toLocaleDateString() : new Date(c.created_at).toLocaleDateString() %></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<% if (totalPages > 1) { %>
+<div class="pagination">
+  <% for (let i = 1; i <= totalPages; i++) { %>
+    <a href="/admin/campaigns?page=<%= i %>" class="<%= i === page ? 'active' : '' %>"><%= i %></a>
+  <% } %>
+</div>
+<% } %>
+<%- include('_footer') %>

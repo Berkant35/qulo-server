@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Qulo Admin - Login</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .login-card { background: #fff; border-radius: 12px; padding: 40px; width: 380px; box-shadow: 0 4px 24px rgba(0,0,0,0.2); }
+    .login-card h1 { text-align: center; color: #a855f7; margin-bottom: 8px; }
+    .login-card p { text-align: center; color: #999; font-size: 14px; margin-bottom: 24px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px; }
+    .form-group input { width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+    .form-group input:focus { outline: none; border-color: #a855f7; }
+    .btn-login { width: 100%; padding: 12px; background: #a855f7; color: #fff; border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; }
+    .btn-login:hover { background: #9333ea; }
+    .error { background: #fef2f2; color: #991b1b; padding: 10px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 16px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <h1>Qulo Admin</h1>
+    <p>Backoffice Panel</p>
+    <% if (error) { %>
+    <div class="error"><%= error %></div>
+    <% } %>
+    <form method="POST" action="/admin/login">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" name="email" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn-login">Login</button>
+    </form>
+  </div>
+</body>
+</html>
