@@ -9,11 +9,10 @@ const locales: Record<string, Record<string, Record<string, string>>> = {
   tr: require('../locales/tr.json'),
 };
 
-type PushType = 'new_message' | 'new_message_image' | 'new_match' | 'quiz_started' | 'passport_expired' | 'campaign';
+type PushType = 'new_message' | 'new_message_image' | 'new_match' | 'passport_expired' | 'campaign';
 
 const ACTION_URL_MAP: Partial<Record<PushType, string>> = {
   new_match: '/matches',
-  quiz_started: '/discover',
   passport_expired: '/profile/passport',
 };
 
@@ -62,9 +61,11 @@ export class NotificationService {
         body = params.body ?? options.title;
       } else {
         const locale = user.locale && locales[user.locale] ? user.locale : 'en';
-        const template = locales[locale]?.push?.[type];
+        // Use badge-specific template if badge param is present
+        const templateKey = (type === 'new_match' && params.badge) ? 'new_match_badge' : type;
+        const template = locales[locale]?.push?.[templateKey];
         if (!template) {
-          console.warn(`[NotificationService] No push template for type=${type}, locale=${locale}`);
+          console.warn(`[NotificationService] No push template for type=${templateKey}, locale=${locale}`);
           return false;
         }
         body = interpolate(template, params);

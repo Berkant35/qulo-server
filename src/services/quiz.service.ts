@@ -103,9 +103,6 @@ export class QuizService {
 
     if (createErr || !session) throw Errors.SERVER_ERROR();
 
-    // 4. Notify target
-    await NotificationService.sendPush(targetId, "quiz_started");
-
     return { session_id: session.id as string, total_questions: totalQuestions };
   }
 
@@ -436,11 +433,51 @@ export class QuizService {
       .update({ status: "COMPLETED", completed_at: new Date().toISOString() })
       .eq("id", sessionId);
 
-    // Send push to both users
+    // Calculate badge for the solver's performance
+    const badge = await this.calculateBadge(sessionId);
+
+    // Send push to both users (target gets badge info)
+    const badgeParams: Record<string, string> = badge !== "none" ? { badge } : {};
     await Promise.all([
       NotificationService.sendPush(solverId, "new_match"),
-      NotificationService.sendPush(targetId, "new_match"),
+      NotificationService.sendPush(targetId, "new_match", badgeParams),
     ]);
+  }
+
+  private async calculateBadge(sessionId: string): Promise<string> {
+    // Get session info
+    const { data: session } = await supabase
+      .from("quiz_sessions")
+      .select("total_time_spent, total_questions")
+      .eq("id", sessionId)
+      .single();
+
+    if (!session) return "none";
+
+    // Get answers for this session
+    const { data: answers } = await supabase
+      .from("quiz_answers")
+      .select("is_correct, power_used, time_spent")
+      .eq("session_id", sessionId);
+
+    if (!answers || answers.length === 0) return "none";
+
+    const totalCorrect = answers.filter((a: any) => a.is_correct).length;
+    const totalQuestions = answers.length;
+    const totalPowers = answers.filter((a: any) => a.power_used).length;
+    const totalTimeSpent = session.total_time_spent ?? answers.reduce((s: number, a: any) => s + (a.time_spent ?? 0), 0);
+
+    if (totalCorrect === totalQuestions && totalPowers === 0) {
+      return "flawless";
+    } else if (totalTimeSpent < totalQuestions * 15) {
+      return "speed_solver";
+    } else if (totalPowers >= 3) {
+      return "power_master";
+    } else if (totalCorrect === totalQuestions) {
+      return "determined";
+    }
+
+    return "none";
   }
 
   private async completeSession(session: SessionRow) {

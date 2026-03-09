@@ -2,7 +2,8 @@
   "push": {
     "new_message": "{name} sent you a message",
     "new_message_image": "{name} sent you a photo",
-    "new_match": "New match! {name} solved all your questions",
+    "new_match": "New match! Someone solved all your questions",
+    "new_match_badge": "Someone solved your quiz with {badge} badge! You have a new match!",
     "quiz_started": "{name} started solving your questions",
     "passport_expired": "Your passport mode has expired"
   }
