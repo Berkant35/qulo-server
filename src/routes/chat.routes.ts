@@ -15,6 +15,13 @@ import {
   createChatQuestionHandler,
   answerChatQuestionHandler,
 } from "../controllers/chat-question.controller.js";
+import {
+  requestMediaHandler,
+  respondToMediaRequestHandler,
+  disableMediaHandler,
+  getMediaStatusHandler,
+} from "../controllers/media.controller.js";
+import { respondMediaRequestSchema } from "../validators/media.validator.js";
 
 const router = Router();
 
@@ -29,5 +36,11 @@ router.delete("/:match_id/messages/:message_id", deleteMessageHandler);
 router.post("/:match_id/messages/:message_id/reactions", validate(reactionSchema), addReactionHandler);
 router.post("/:match_id/questions", validate(createChatQuestionSchema), createChatQuestionHandler);
 router.post("/questions/:id/answer", validate(answerChatQuestionSchema), answerChatQuestionHandler);
+
+// Media sharing routes
+router.post("/:match_id/media-request", requestMediaHandler);
+router.post("/:match_id/media-request/:id/respond", validate(respondMediaRequestSchema), respondToMediaRequestHandler);
+router.post("/:match_id/media-disable", disableMediaHandler);
+router.get("/:match_id/media-status", getMediaStatusHandler);
 
 export default router;

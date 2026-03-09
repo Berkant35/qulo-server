@@ -8,6 +8,8 @@ interface Match {
   user1_id: string;
   user2_id: string;
   is_active: boolean;
+  media_enabled_by_user1: boolean;
+  media_enabled_by_user2: boolean;
 }
 
 export class ChatService {
@@ -17,7 +19,7 @@ export class ChatService {
 
     const { data: match, error } = await supabase
       .from("matches")
-      .select("id, user1_id, user2_id, is_active")
+      .select("id, user1_id, user2_id, is_active, media_enabled_by_user1, media_enabled_by_user2")
       .eq("id", matchId)
       .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)
       .single();
@@ -59,17 +61,38 @@ export class ChatService {
     };
   }
 
-  async sendMessage(userId: string, matchId: string, content: string, isImage = false) {
+  async sendMessage(
+    userId: string,
+    matchId: string,
+    content: string,
+    isImage = false,
+    audioUrl?: string,
+    audioDuration?: number,
+  ) {
     const match = await this.verifyMatchAccess(userId, matchId);
+
+    // Media permission check — both users must have enabled media sharing
+    if (isImage || audioUrl) {
+      if (!match.media_enabled_by_user1 || !match.media_enabled_by_user2) {
+        throw Errors.MEDIA_NOT_ENABLED();
+      }
+    }
+
+    const insertData: Record<string, unknown> = {
+      match_id: match.id,
+      sender_id: userId,
+      content,
+      is_image: isImage,
+    };
+
+    if (audioUrl) {
+      insertData.audio_url = audioUrl;
+      insertData.audio_duration_seconds = audioDuration;
+    }
 
     const { data: message, error } = await supabase
       .from("messages")
-      .insert({
-        match_id: match.id,
-        sender_id: userId,
-        content,
-        is_image: isImage,
-      })
+      .insert(insertData)
       .select("*")
       .single();
 

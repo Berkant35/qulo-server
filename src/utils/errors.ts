@@ -128,4 +128,19 @@ export const Errors = {
 
   MESSAGE_NOT_OWNER: () =>
     new AppError("MESSAGE_NOT_OWNER", 403, "Cannot delete another user's message"),
+
+  MEDIA_ALREADY_ENABLED: () =>
+    new AppError("MEDIA_ALREADY_ENABLED", 400, "Media already enabled"),
+
+  MEDIA_REQUEST_PENDING: () =>
+    new AppError("MEDIA_REQUEST_PENDING", 400, "Pending media request exists"),
+
+  MEDIA_REQUEST_NOT_FOUND: () =>
+    new AppError("MEDIA_REQUEST_NOT_FOUND", 404, "Media request not found"),
+
+  MEDIA_REQUEST_NOT_RECIPIENT: () =>
+    new AppError("MEDIA_REQUEST_NOT_RECIPIENT", 403, "Only the recipient can respond"),
+
+  MEDIA_NOT_ENABLED: () =>
+    new AppError("MEDIA_NOT_ENABLED", 403, "Both users must enable media sharing"),
 } as const;

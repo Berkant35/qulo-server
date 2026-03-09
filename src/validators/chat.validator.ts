@@ -3,6 +3,8 @@ import { z } from "zod";
 export const sendMessageSchema = z.object({
   content: z.string().min(1).max(2000),
   is_image: z.boolean().default(false),
+  audio_url: z.string().url().optional(),
+  audio_duration_seconds: z.number().int().min(1).max(60).optional(),
 });
 
 export const chatQuerySchema = z.object({
