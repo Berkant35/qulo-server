@@ -62,7 +62,11 @@ export class UserService {
       throw Errors.USER_NOT_FOUND();
     }
 
-    await this.recalculateProfileCompletion(userId);
+    try {
+      await this.recalculateProfileCompletion(userId);
+    } catch (err) {
+      console.error("[updateProfile] recalculateProfileCompletion error:", err);
+    }
 
     // Re-fetch to get updated completion
     const { data: updated } = await supabase
@@ -109,7 +113,11 @@ export class UserService {
       if (error) throw Errors.SERVER_ERROR();
     }
 
-    await this.recalculateProfileCompletion(userId);
+    try {
+      await this.recalculateProfileCompletion(userId);
+    } catch (err) {
+      console.error("[updateDetails] recalculateProfileCompletion error:", err);
+    }
 
     const { data: details } = await supabase
       .from("user_details")
@@ -135,7 +143,11 @@ export class UserService {
       throw Errors.SERVER_ERROR();
     }
 
-    await this.recalculateProfileCompletion(userId);
+    try {
+      await this.recalculateProfileCompletion(userId);
+    } catch (err) {
+      console.error("[updateLocation] recalculateProfileCompletion error:", err);
+    }
   }
 
   async updatePushToken(userId: string, pushToken: string) {
@@ -348,7 +360,11 @@ export class UserService {
       .eq("id", userId);
 
     // Check and reward referral if profile completion >= 60%
-    await referralService.checkAndReward(userId, newCompletion);
+    try {
+      await referralService.checkAndReward(userId, newCompletion);
+    } catch {
+      // Best effort — referrals table may not exist yet
+    }
   }
 }
 
