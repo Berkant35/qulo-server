@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
+    "build": "tsc && cp -r src/locales dist/locales && cp -r src/admin/views dist/admin/views",
     "start": "node dist/index.js",
     "test": "vitest"
   },
@@ -25,6 +25,9 @@
     "multer": "^2.1.1",
     "nodemailer": "^8.0.1",
     "zod": "^3.24.2"
+  },
+  "engines": {
+    "node": ">=20"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
