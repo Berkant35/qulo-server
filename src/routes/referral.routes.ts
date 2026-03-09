@@ -28,7 +28,7 @@ router.get("/my-code", async (req: Request, res: Response, next: NextFunction) =
       throw Errors.USER_NOT_FOUND();
     }
 
-    res.json({ referral_code: data.referral_code });
+    res.json({ code: data.referral_code });
   } catch (err) {
     next(err);
   }
@@ -48,7 +48,7 @@ router.get("/stats", async (req: Request, res: Response, next: NextFunction) => 
 router.get("/history", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const history = await referralService.getHistory(req.user!.userId);
-    res.json({ items: history });
+    res.json(history);
   } catch (err) {
     next(err);
   }

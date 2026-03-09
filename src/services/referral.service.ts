@@ -107,6 +107,10 @@ export class ReferralService {
         "REFERRAL_REWARD_REFEREE",
         referral.id,
       );
+      await supabase
+        .from("referrals")
+        .update({ referee_rewarded: true })
+        .eq("id", referral.id);
     } catch {
       // Best effort
     }
@@ -126,6 +130,10 @@ export class ReferralService {
           "REFERRAL_REWARD_REFERRER",
           referral.id,
         );
+        await supabase
+          .from("referrals")
+          .update({ referrer_rewarded: true })
+          .eq("id", referral.id);
       } catch {
         // Best effort
       }
