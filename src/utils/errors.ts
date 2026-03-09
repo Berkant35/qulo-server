@@ -122,4 +122,10 @@ export const Errors = {
 
   ALREADY_REFERRED: () =>
     new AppError("ALREADY_REFERRED", 409, "User already has a referrer"),
+
+  MESSAGE_NOT_FOUND: () =>
+    new AppError("MESSAGE_NOT_FOUND", 404, "Message not found"),
+
+  MESSAGE_NOT_OWNER: () =>
+    new AppError("MESSAGE_NOT_OWNER", 403, "Cannot delete another user's message"),
 } as const;

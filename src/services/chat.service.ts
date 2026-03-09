@@ -40,8 +40,9 @@ export class ChatService {
 
     const { data: messages, error, count } = await supabase
       .from("messages")
-      .select("*", { count: "exact" })
+      .select("*, reactions:message_reactions(emoji, user_id)", { count: "exact" })
       .eq("match_id", match.id)
+      .is("deleted_at", null)
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
@@ -87,6 +88,73 @@ export class ChatService {
     }).catch(() => {});
 
     return message;
+  }
+
+  async deleteMessage(userId: string, matchId: string, messageId: string) {
+    const match = await this.verifyMatchAccess(userId, matchId);
+    assertUuid(messageId, "messageId");
+
+    // Fetch the message to verify ownership
+    const { data: message, error: fetchError } = await supabase
+      .from("messages")
+      .select("id, sender_id")
+      .eq("id", messageId)
+      .eq("match_id", match.id)
+      .is("deleted_at", null)
+      .single();
+
+    if (fetchError || !message) {
+      throw Errors.MESSAGE_NOT_FOUND();
+    }
+
+    if (message.sender_id !== userId) {
+      throw Errors.MESSAGE_NOT_OWNER();
+    }
+
+    const { error } = await supabase
+      .from("messages")
+      .update({ deleted_at: new Date().toISOString() })
+      .eq("id", messageId);
+
+    if (error) {
+      console.error("[chat] deleteMessage error:", error);
+      throw Errors.SERVER_ERROR();
+    }
+
+    return { success: true };
+  }
+
+  async addReaction(userId: string, matchId: string, messageId: string, emoji: string) {
+    await this.verifyMatchAccess(userId, matchId);
+    assertUuid(messageId, "messageId");
+
+    const { error: insertError } = await supabase
+      .from("message_reactions")
+      .insert({ message_id: messageId, user_id: userId, emoji });
+
+    if (insertError) {
+      // Unique constraint violation → toggle off (remove reaction)
+      if (insertError.code === "23505") {
+        const { error: deleteError } = await supabase
+          .from("message_reactions")
+          .delete()
+          .eq("message_id", messageId)
+          .eq("user_id", userId)
+          .eq("emoji", emoji);
+
+        if (deleteError) {
+          console.error("[chat] removeReaction error:", deleteError);
+          throw Errors.SERVER_ERROR();
+        }
+
+        return { toggled: "removed" as const };
+      }
+
+      console.error("[chat] addReaction error:", insertError);
+      throw Errors.SERVER_ERROR();
+    }
+
+    return { toggled: "added" as const };
   }
 
   async markAsRead(userId: string, matchId: string) {

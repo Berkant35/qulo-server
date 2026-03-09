@@ -10,5 +10,10 @@ export const chatQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(50).default(30),
 });
 
+export const reactionSchema = z.object({
+  emoji: z.string().min(1).max(10),
+});
+
 export type SendMessageInput = z.infer<typeof sendMessageSchema>;
 export type ChatQuery = z.infer<typeof chatQuerySchema>;
+export type ReactionInput = z.infer<typeof reactionSchema>;
