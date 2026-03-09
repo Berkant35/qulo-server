@@ -34,6 +34,9 @@ const envSchema = z.object({
   // Gemini AI
   GEMINI_API_KEY: z.string().default(''),
 
+  // Deep Links
+  ANDROID_SHA256_FINGERPRINT: z.string().default(''),
+
   // Admin
   ADMIN_SESSION_SECRET: z.string().min(1),
   ADMIN_SEED_EMAIL: z.string().email().optional(),

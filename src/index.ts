@@ -72,6 +72,36 @@ app.get("/ping", (_req, res) => {
   });
 });
 
+// Apple Universal Links
+app.get("/.well-known/apple-app-site-association", (_req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.json({
+    applinks: {
+      apps: [],
+      details: [
+        {
+          appID: "5W2U3NK284.com.wordpress.calikusuberkant.qulorelease",
+          paths: ["/invite/*"],
+        },
+      ],
+    },
+  });
+});
+
+// Android App Links
+app.get("/.well-known/assetlinks.json", (_req, res) => {
+  res.json([
+    {
+      relation: ["delegate_permission/common.handle_all_urls"],
+      target: {
+        namespace: "android_app",
+        package_name: "com.wordpress.calikusuberkant.qulo",
+        sha256_cert_fingerprints: [env.ANDROID_SHA256_FINGERPRINT || "TODO:ADD_YOUR_SHA256_FINGERPRINT"],
+      },
+    },
+  ]);
+});
+
 // Email verification callback (Supabase Auth redirects here)
 app.get("/", (_req, res) => {
   res.render("email-verified");
