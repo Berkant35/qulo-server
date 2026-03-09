@@ -7,6 +7,8 @@ import {
   startQuizHandler,
   getCurrentQuestionHandler,
   answerQuestionHandler,
+  rescueQuizHandler,
+  failQuizHandler,
   getSessionResultHandler,
   getMatchQuizSummaryHandler,
 } from "../controllers/quiz.controller.js";
@@ -20,6 +22,8 @@ router.post("/start", validate(startQuizSchema), startQuizHandler);
 router.get("/match/:match_id/summary", getMatchQuizSummaryHandler);
 router.get("/:session_id", getCurrentQuestionHandler);
 router.post("/:session_id/answer", validate(answerQuizSchema), answerQuestionHandler);
+router.post("/:session_id/rescue", rescueQuizHandler);
+router.post("/:session_id/fail", failQuizHandler);
 router.get("/:session_id/result", getSessionResultHandler);
 
 export default router;

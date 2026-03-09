@@ -47,6 +47,28 @@ export async function getSessionResultHandler(req: Request, res: Response, next:
   }
 }
 
+export async function rescueQuizHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const userId = req.user!.userId;
+    const sessionId = req.params.session_id as string;
+    const data = await quizService.rescueWithSkip(sessionId, userId);
+    res.json(data);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function failQuizHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const userId = req.user!.userId;
+    const sessionId = req.params.session_id as string;
+    const data = await quizService.failSession(sessionId, userId);
+    res.json(data);
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function getMatchQuizSummaryHandler(req: Request, res: Response, next: NextFunction) {
   try {
     const userId = req.user!.userId;
