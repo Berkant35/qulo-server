@@ -7,7 +7,7 @@ export const startQuizSchema = z.object({
 export const answerQuizSchema = z.object({
   selected_answer: z.number().int().min(1).max(4),
   power_used: z
-    .enum(["COPY", "HALF", "SKIP", "SKIP_ALL", "TIME_EXTEND", "HINT"])
+    .enum(["ORACLE", "HALF", "SKIP", "SKIP_ALL", "TIME_EXTEND", "HINT"])
     .optional(),
   time_spent: z.number().int().min(0).max(120).optional(),
 });

@@ -110,4 +110,16 @@ export const Errors = {
 
   PASSPORT_ALREADY_ACTIVE: () =>
     new AppError("PASSPORT_ALREADY_ACTIVE", 409, "Passport is already active"),
+
+  INVALID_REFERRAL_CODE: () =>
+    new AppError("INVALID_REFERRAL_CODE", 404, "Referral code not found"),
+
+  REFERRAL_LIMIT_REACHED: () =>
+    new AppError("REFERRAL_LIMIT_REACHED", 409, "Referral limit reached (max 10)"),
+
+  SELF_REFERRAL: () =>
+    new AppError("SELF_REFERRAL", 400, "Cannot refer yourself"),
+
+  ALREADY_REFERRED: () =>
+    new AppError("ALREADY_REFERRED", 409, "User already has a referrer"),
 } as const;

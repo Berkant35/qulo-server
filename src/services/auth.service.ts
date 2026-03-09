@@ -5,6 +5,7 @@ import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../utils/
 import { sendVerificationEmail, sendPasswordResetEmail } from "../utils/email.js";
 import type { RegisterInput, LoginInput } from "../validators/auth.validator.js";
 import { userLanguageService } from "./user-language.service.js";
+import { referralService } from "./referral.service.js";
 
 export class AuthService {
   async register(data: RegisterInput) {
@@ -44,6 +45,26 @@ export class AuthService {
 
     if (error || !user) {
       throw Errors.SERVER_ERROR();
+    }
+
+    // Generate unique referral code for the new user
+    try {
+      const referralCode = await referralService.generateUniqueCode();
+      await supabase
+        .from("users")
+        .update({ referral_code: referralCode })
+        .eq("id", user.id);
+    } catch (err) {
+      console.error("[auth] Failed to generate referral code:", err);
+    }
+
+    // Apply referral code if provided (don't block registration on failure)
+    if (data.referral_code) {
+      try {
+        await referralService.applyReferralCode(user.id, data.referral_code);
+      } catch (err) {
+        console.error("[auth] Failed to apply referral code:", err);
+      }
     }
 
     // Auto-add user's locale to user_languages

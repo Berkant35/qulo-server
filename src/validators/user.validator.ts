@@ -14,6 +14,8 @@ export const updateProfileSchema = z.object({
   country: z.string().max(100).optional(),
   locale: z.enum(SUPPORTED_LOCALES as unknown as [string, ...string[]]).optional(),
   photos: z.array(z.string().url()).max(6).optional(),
+  relationship_goal: z.enum(["SERIOUS", "FRIENDSHIP", "NOT_SURE"]).optional(),
+  preferred_languages: z.array(z.enum(["tr", "en", "de", "fr", "ar", "ru", "es"])).min(1).max(7).optional(),
 });
 
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;

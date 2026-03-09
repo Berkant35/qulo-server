@@ -18,6 +18,8 @@ import reportRoutes from "./routes/report.routes.js";
 import webhookRoutes from "./routes/webhook.routes.js";
 import subscriptionRoutes from "./routes/subscription.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
+import exchangeRoutes from "./routes/exchange.routes.js";
+import referralRoutes from "./routes/referral.routes.js";
 import appRoutes from "./routes/app.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import adminRoutes from "./admin/admin.routes.js";
@@ -93,6 +95,8 @@ app.use("/api/v1/reports", reportRoutes);
 app.use("/api/v1/webhooks", webhookRoutes);
 app.use("/api/v1/subscriptions", subscriptionRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
+app.use("/api/v1/exchange", exchangeRoutes);
+app.use("/api/v1/referrals", referralRoutes);
 
 // Error handler (must be last)
 app.use(errorHandler);

@@ -24,6 +24,7 @@ interface CandidateRow {
   times_shown_count: number;
   last_seen_at: string;
   boost_until: string | null;
+  relationship_goal: string | null;
 }
 
 interface QuestionInfo {
@@ -45,6 +46,7 @@ interface ProfileCard {
   profile_completion: number;
   is_boosted: boolean;
   question_info: QuestionInfo;
+  relationship_goal: string | null;
 }
 
 export class MatchingService {
@@ -57,7 +59,7 @@ export class MatchingService {
       supabase
         .from("users")
         .select(
-          "id, gender_pref, age_pref_min, age_pref_max, match_radius_km, lat, lng, passport_lat, passport_lng",
+          "id, gender_pref, age_pref_min, age_pref_max, match_radius_km, lat, lng, passport_lat, passport_lng, preferred_languages",
         )
         .eq("id", userId)
         .eq("is_deleted", false)
@@ -99,7 +101,7 @@ export class MatchingService {
     let query = supabase
       .from("users")
       .select(
-        "id, name, bio, age, gender, city, lat, lng, photos, profile_completion, green_diamonds, like_received_count, times_shown_count, last_seen_at, boost_until",
+        "id, name, bio, age, gender, city, lat, lng, photos, profile_completion, green_diamonds, like_received_count, times_shown_count, last_seen_at, boost_until, relationship_goal",
       )
       .eq("is_deleted", false)
       .eq("email_verified", true)
@@ -203,7 +205,12 @@ export class MatchingService {
     });
 
     // 5.6 — Language filter: candidate must have 2+ questions in user's languages
-    if (userLanguages.length > 0) {
+    // Use preferred_languages if set, otherwise fall back to userLanguages
+    const langPrefs = user.preferred_languages && (user.preferred_languages as string[]).length > 0
+      ? (user.preferred_languages as string[])
+      : userLanguages;
+
+    if (langPrefs.length > 0) {
       const langCandidateIds = discoverableFiltered.map((c) => c.id);
       if (langCandidateIds.length > 0) {
         const { data: candidateQuestionData } = await supabase
@@ -220,7 +227,7 @@ export class MatchingService {
 
         discoverableFiltered = discoverableFiltered.filter((c) => {
           const qLocales = questionLocalesByUser.get(c.id) || [];
-          const matchingCount = qLocales.filter((l: string) => userLanguages.includes(l)).length;
+          const matchingCount = qLocales.filter((l: string) => langPrefs.includes(l)).length;
           return matchingCount >= 2;
         });
       }
@@ -280,6 +287,7 @@ export class MatchingService {
       profile_completion: s.candidate.profile_completion,
       is_boosted: isBoostActive(s.candidate.boost_until),
       question_info: questionInfoMap.get(s.candidate.id) ?? { count: 0, categories: [], avg_difficulty: 'unranked', languages: [] },
+      relationship_goal: s.candidate.relationship_goal,
     }));
 
     return { cards, page, has_more: hasMore };

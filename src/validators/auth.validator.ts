@@ -10,6 +10,7 @@ export const registerSchema = z.object({
   locale: z.enum(["tr", "en"]).default("tr"),
   lat: z.number().min(-90).max(90).optional(),
   lng: z.number().min(-180).max(180).optional(),
+  referral_code: z.string().min(1).max(10).optional(),
 });
 
 export const loginSchema = z.object({

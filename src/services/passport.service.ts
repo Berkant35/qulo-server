@@ -1,5 +1,4 @@
 import { supabase } from "../config/supabase.js";
-import { diamondService } from "./diamond.service.js";
 import { subscriptionService } from "./subscription.service.js";
 import { Errors } from "../utils/errors.js";
 
@@ -22,10 +21,7 @@ export class PassportService {
       throw Errors.PASSPORT_ALREADY_ACTIVE();
     }
 
-    // 3. 50 mor elmas harca
-    await diamondService.spendPurple(userId, 50, "PASSPORT");
-
-    // 4. Passport alanlarını güncelle
+    // 3. Passport alanlarını güncelle
     const { error } = await supabase
       .from("users")
       .update({

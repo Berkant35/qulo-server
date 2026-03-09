@@ -4,7 +4,7 @@ export interface JwtPayload {
 }
 
 export type PowerName =
-  | "COPY"
+  | "ORACLE"
   | "HALF"
   | "SKIP"
   | "SKIP_ALL"
@@ -20,6 +20,8 @@ export const QUESTION_COUNT_MULTIPLIERS: Record<number, number> = {
 };
 
 export const GREEN_DIAMOND_REWARD_RATIO = 0.3;
+
+export const GREEN_TO_PURPLE_RATIO = 3;
 
 // Subscription Plans
 export type SubscriptionPlan = 'plus' | 'premium';

@@ -2,6 +2,7 @@ import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
 import { calculatePowerCost, calculateGreenReward, shuffleArray } from "../utils/math.js";
 import { diamondService } from "./diamond.service.js";
+import { exchangeService } from "./exchange.service.js";
 import { NotificationService } from "./notification.service.js";
 import { pendingChangeService } from "./pending-change.service.js";
 import { userLanguageService } from "./user-language.service.js";
@@ -204,7 +205,7 @@ export class QuizService {
       // Get power from powers table
       const { data: power, error: powerErr } = await supabase
         .from("powers")
-        .select("id, name, base_cost, is_active")
+        .select("id, name, base_cost, is_active, accuracy_rate")
         .eq("name", powerUsed)
         .eq("is_active", true)
         .maybeSingle();
@@ -212,26 +213,32 @@ export class QuizService {
       if (powerErr || !power) throw Errors.SERVER_ERROR();
 
       const powerData = power as unknown as PowerRow;
-      const cost = calculatePowerCost(powerData.base_cost, session.total_questions);
-      const greenReward = calculateGreenReward(cost);
 
-      // Spend purple diamonds from solver
-      await diamondService.spendPurple(solverId, cost, "POWER_USED", `${powerUsed}:${sessionId}`);
-      // Earn green diamonds for target
-      await diamondService.earnGreen(session.target_id, greenReward, "POWER_REWARD", `${powerUsed}:${sessionId}`);
+      // Envanter kontrolü — hak varsa envanterden düş, yoksa anlık ödeme
+      const usedFromInventory = await exchangeService.tryUseInventory(solverId, powerUsed);
 
-      // Track green earned on the question
-      const { data: currentQData } = await supabase
-        .from('questions')
-        .select('stats_green_earned')
-        .eq('id', currentQuestion.id)
-        .single();
+      if (!usedFromInventory) {
+        const cost = calculatePowerCost(powerData.base_cost, session.total_questions);
+        const greenReward = calculateGreenReward(cost);
 
-      if (currentQData) {
-        await supabase
+        // Spend purple diamonds from solver
+        await diamondService.spendPurple(solverId, cost, "POWER_USED", `${powerUsed}:${sessionId}`);
+        // Earn green diamonds for target
+        await diamondService.earnGreen(session.target_id, greenReward, "POWER_REWARD", `${powerUsed}:${sessionId}`);
+
+        // Track green earned on the question
+        const { data: currentQData } = await supabase
           .from('questions')
-          .update({ stats_green_earned: currentQData.stats_green_earned + greenReward })
-          .eq('id', currentQuestion.id);
+          .select('stats_green_earned')
+          .eq('id', currentQuestion.id)
+          .single();
+
+        if (currentQData) {
+          await supabase
+            .from('questions')
+            .update({ stats_green_earned: currentQData.stats_green_earned + greenReward })
+            .eq('id', currentQuestion.id);
+        }
       }
 
       // ─── Power effects ───
@@ -271,9 +278,20 @@ export class QuizService {
           return await this.completeSession(session);
         }
 
-        case "COPY": {
+        case "ORACLE": {
+          const accuracyRate = (powerData as unknown as { accuracy_rate?: number }).accuracy_rate ?? 0.7;
+          const isAccurate = Math.random() < accuracyRate;
+
+          let suggestedIndex: number;
+          if (isAccurate) {
+            suggestedIndex = currentQuestion.correct_answer;
+          } else {
+            const wrongIndices = [1, 2, 3, 4].filter((i) => i !== currentQuestion.correct_answer);
+            suggestedIndex = wrongIndices[Math.floor(Math.random() * wrongIndices.length)];
+          }
+
           return {
-            power_result: { correct_answer_index: currentQuestion.correct_answer },
+            power_result: { suggested_answer_index: suggestedIndex, is_guaranteed: false },
             awaiting_answer: true,
           };
         }

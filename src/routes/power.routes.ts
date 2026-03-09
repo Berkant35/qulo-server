@@ -13,7 +13,7 @@ router.get("/", async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const { data, error } = await supabase
       .from("powers")
-      .select("*")
+      .select("id, name, base_cost, green_cost, purple_cost, accuracy_rate, is_active, description")
       .eq("is_active", true);
 
     if (error) throw Errors.SERVER_ERROR();
