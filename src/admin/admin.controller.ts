@@ -45,7 +45,8 @@ class AdminController {
   async userDetail(req: Request, res: Response) {
     const { user, details, questions } = await adminService.getUserDetail(req.params.id as string);
     if (!user) return res.status(404).render("error", { message: "User not found", session: req.session });
-    res.render("user-detail", { user, details, questions, session: req.session, csrfToken: req.session.csrfToken });
+    const swipeCount = await adminService.getSwipeCount(req.params.id as string);
+    res.render("user-detail", { user, details, questions, swipeCount, session: req.session, csrfToken: req.session.csrfToken });
   }
 
   async userAction(req: Request, res: Response) {
@@ -62,6 +63,8 @@ class AdminController {
       await adminService.setSubscription(id, sub_plan, parseInt(sub_days) || 30);
     } else if (action === "cancel_subscription") {
       await adminService.cancelSubscription(id);
+    } else if (action === "reset_swipes") {
+      await adminService.resetSwipes(id);
     }
 
     res.redirect(`/admin/users/${id}`);

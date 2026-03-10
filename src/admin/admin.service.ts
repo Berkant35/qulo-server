@@ -178,6 +178,39 @@ class AdminService {
       .eq("status", "active");
   }
 
+  async resetSwipes(userId: string) {
+    const { count } = await supabase
+      .from("swipes")
+      .select("*", { count: "exact", head: true })
+      .eq("swiper_id", userId);
+
+    const { error } = await supabase
+      .from("swipes")
+      .delete()
+      .eq("swiper_id", userId);
+
+    if (error) {
+      console.error("[admin] Reset swipes error:", error.message);
+      throw new Error("Failed to reset swipes");
+    }
+
+    // Reset daily swipe counter as well
+    await supabase
+      .from("users")
+      .update({ daily_swipes_used: 0 })
+      .eq("id", userId);
+
+    return count ?? 0;
+  }
+
+  async getSwipeCount(userId: string) {
+    const { count } = await supabase
+      .from("swipes")
+      .select("*", { count: "exact", head: true })
+      .eq("swiper_id", userId);
+    return count ?? 0;
+  }
+
   async getReports(page: number, limit: number, status?: string) {
     let query = supabase
       .from("reports")

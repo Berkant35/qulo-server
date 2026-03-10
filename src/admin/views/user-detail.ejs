@@ -58,6 +58,17 @@
     <p style="margin-top:12px;"><a href="/admin/transactions?userId=<%= user.id %>" style="color:#a855f7;">View transactions &rarr;</a></p>
 
     <hr style="border-color:#333; margin:16px 0;">
+    <h4 style="margin-bottom:8px;">Swipes</h4>
+    <p style="margin-bottom:8px;">
+      Total swipes: <span style="font-weight:bold; color:#60a5fa;"><%= swipeCount %></span>
+    </p>
+    <form method="POST" action="/admin/users/<%= user.id %>/action" style="margin-bottom:8px;">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="action" value="reset_swipes">
+      <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Reset all swipes for this user? They will see all profiles again in discover.')">Reset Swipes</button>
+    </form>
+
+    <hr style="border-color:#333; margin:16px 0;">
     <h4 style="margin-bottom:8px;">Subscription</h4>
     <p style="margin-bottom:8px;">
       <% if (user.subscription_plan) { %>
