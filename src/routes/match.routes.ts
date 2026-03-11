@@ -6,6 +6,7 @@ import { swipeSchema, discoverQuerySchema } from "../validators/match.validator.
 import {
   discoverHandler,
   swipeHandler,
+  undoSwipeHandler,
   getMatchesHandler,
   unmatchHandler,
 } from "../controllers/match.controller.js";
@@ -17,6 +18,7 @@ router.use(authMiddleware);
 
 router.get("/discover", discoverLimiter, validate(discoverQuerySchema, "query"), discoverHandler);
 router.post("/swipe", generalLimiter, validate(swipeSchema), swipeHandler);
+router.delete("/swipe/:target_id", generalLimiter, undoSwipeHandler);
 router.get("/list", generalLimiter, getMatchesHandler);
 router.delete("/:match_id", generalLimiter, unmatchHandler);
 

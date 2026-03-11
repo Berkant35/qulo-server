@@ -4,7 +4,6 @@ import { calculatePowerCost, calculateGreenReward, shuffleArray } from "../utils
 import { diamondService } from "./diamond.service.js";
 import { exchangeService } from "./exchange.service.js";
 import { NotificationService } from "./notification.service.js";
-import { pendingChangeService } from "./pending-change.service.js";
 import { userLanguageService } from "./user-language.service.js";
 import type { PowerName } from "../types/index.js";
 
@@ -481,8 +480,7 @@ export class QuizService {
     await this.createMatch(session.id, session.solver_id, session.target_id);
     await this.saveSessionSummary(session.id);
 
-    // Apply any pending question changes for the target user
-    await pendingChangeService.applyPendingChanges(session.target_id);
+
 
     const badge = await this.calculateBadge(session.id);
     return { is_correct: true, matched: true, session_status: "COMPLETED", badge };
@@ -665,7 +663,6 @@ export class QuizService {
       .eq("id", sessionId);
 
     await this.saveSessionSummary(sessionId);
-    await pendingChangeService.applyPendingChanges(session.target_id);
 
     return { session_status: "FAILED" };
   }

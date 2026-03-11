@@ -34,6 +34,17 @@ export async function getMatchesHandler(req: Request, res: Response, next: NextF
   }
 }
 
+export async function undoSwipeHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const userId = req.user!.userId;
+    const targetId = req.params.target_id as string;
+    const data = await matchingService.undoSwipe(userId, targetId);
+    res.json(data);
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function unmatchHandler(req: Request, res: Response, next: NextFunction) {
   try {
     const userId = req.user!.userId;

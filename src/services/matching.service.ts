@@ -362,6 +362,89 @@ export class MatchingService {
   }
 
   /**
+   * Undo the last swipe (delete the swipe record and return the card).
+   */
+  async undoSwipe(userId: string, targetId: string): Promise<ProfileCard> {
+    assertUuid(targetId, "targetId");
+
+    // Check daily undo limit
+    await subscriptionService.incrementDailyUndos(userId);
+
+    // Delete the swipe record
+    const { error, count } = await supabase
+      .from("swipes")
+      .delete({ count: "exact" })
+      .eq("swiper_id", userId)
+      .eq("target_id", targetId);
+
+    if (error) {
+      console.error("[matching] Undo swipe error:", error);
+      throw Errors.SERVER_ERROR();
+    }
+    if (count === 0) throw Errors.SESSION_NOT_FOUND();
+
+    // Fetch the target user's card data to return
+    const { data: user, error: userError } = await supabase
+      .from("users")
+      .select("id, name, age, city, bio, photos, lat, lng, profile_completion, boost_until, relationship_goal")
+      .eq("id", targetId)
+      .single();
+
+    if (userError || !user) throw Errors.USER_NOT_FOUND();
+
+    // Get question info
+    const { data: questions } = await supabase
+      .from("questions")
+      .select("user_id, category, stats_correct, stats_wrong, locale")
+      .eq("user_id", targetId);
+
+    const userQuestions = questions ?? [];
+    const totalAttempts = userQuestions.reduce((s, q: any) => s + q.stats_correct + q.stats_wrong, 0);
+    const totalCorrect = userQuestions.reduce((s, q: any) => s + q.stats_correct, 0);
+    const successRate = totalAttempts > 0 ? (totalCorrect / totalAttempts) * 100 : 50;
+
+    let difficulty = "unranked";
+    if (totalAttempts >= 10) {
+      if (successRate > 70) difficulty = "easy";
+      else if (successRate > 40) difficulty = "medium";
+      else if (successRate > 20) difficulty = "hard";
+      else difficulty = "legendary";
+    }
+
+    const categories = [...new Set(userQuestions.map((q: any) => q.category).filter(Boolean))] as string[];
+    const languages = [...new Set(userQuestions.map((q: any) => q.locale || "tr"))] as string[];
+
+    // Calculate distance
+    const { data: me } = await supabase
+      .from("users")
+      .select("lat, lng, passport_lat, passport_lng")
+      .eq("id", userId)
+      .single();
+
+    const myLat = (me?.passport_lat as number | null) ?? me?.lat;
+    const myLng = (me?.passport_lng as number | null) ?? me?.lng;
+    const dist = myLat && myLng ? haversineDistance(myLat, myLng, user.lat, user.lng) : 0;
+
+    const now = new Date();
+    const isBoostActive = user.boost_until != null && new Date(user.boost_until) > now;
+
+    return {
+      user_id: user.id,
+      name: user.name,
+      age: user.age,
+      city: user.city,
+      bio: user.bio,
+      photos: user.photos,
+      distance_km: Math.round(dist * 10) / 10,
+      question_count: userQuestions.length,
+      profile_completion: user.profile_completion,
+      is_boosted: isBoostActive,
+      question_info: { count: userQuestions.length, categories, avg_difficulty: difficulty, languages },
+      relationship_goal: user.relationship_goal,
+    };
+  }
+
+  /**
    * Get all active matches for a user.
    */
   async getMatches(userId: string) {

@@ -28,12 +28,8 @@ export async function updateQuestionHandler(req: Request, res: Response, next: N
     const userId = req.user!.userId;
     const orderNum = parseInt(req.params.order as string, 10);
     const input = req.body as UpdateQuestionInput;
-    const result = await questionService.updateQuestion(userId, orderNum, input);
-    if (result.queued) {
-      res.status(202).json({ queued: true, change: result.change });
-    } else {
-      res.json(result.question);
-    }
+    const data = await questionService.updateQuestion(userId, orderNum, input);
+    res.json(data);
   } catch (err) {
     next(err);
   }
@@ -43,12 +39,8 @@ export async function deleteQuestionHandler(req: Request, res: Response, next: N
   try {
     const userId = req.user!.userId;
     const orderNum = parseInt(req.params.order as string, 10);
-    const result = await questionService.deleteQuestion(userId, orderNum);
-    if (result.queued) {
-      res.status(202).json({ queued: true, change: result.change });
-    } else {
-      res.json({ message: "Question deleted" });
-    }
+    await questionService.deleteQuestion(userId, orderNum);
+    res.json({ message: "Question deleted" });
   } catch (err) {
     next(err);
   }

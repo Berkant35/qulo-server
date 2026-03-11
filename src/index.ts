@@ -35,7 +35,17 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "admin", "views"));
 
 // Middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+      "form-action": null,
+      "img-src": ["'self'", "data:", "https:"],
+      "upgrade-insecure-requests": env.NODE_ENV === "production" ? [] : null,
+    },
+  },
+  hsts: env.NODE_ENV === "production",
+}));
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 
@@ -48,7 +58,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: env.NODE_ENV === "production" ? "strict" : "lax",
       maxAge: 2 * 60 * 60 * 1000, // 2 hours
     },
   }),
