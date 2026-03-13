@@ -9,10 +9,11 @@ const locales: Record<string, Record<string, Record<string, string>>> = {
   tr: require('../locales/tr.json'),
 };
 
-type PushType = 'new_message' | 'new_message_image' | 'new_match' | 'passport_expired' | 'campaign';
+type PushType = 'new_message' | 'new_message_image' | 'new_match' | 'new_match_solver' | 'passport_expired' | 'campaign' | 'chat_question_answered';
 
 const ACTION_URL_MAP: Partial<Record<PushType, string>> = {
   new_match: '/matches',
+  new_match_solver: '/matches',
   passport_expired: '/profile/passport',
 };
 

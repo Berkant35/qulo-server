@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { discoverLimiter, generalLimiter } from "../middleware/rateLimit.js";
+import { discoverLimiter, generalLimiter, swipeLimiter } from "../middleware/rateLimit.js";
 import { validate } from "../middleware/validate.js";
 import { authMiddleware } from "../middleware/auth.js";
 import { swipeSchema, discoverQuerySchema } from "../validators/match.validator.js";
@@ -17,7 +17,7 @@ const router = Router();
 router.use(authMiddleware);
 
 router.get("/discover", discoverLimiter, validate(discoverQuerySchema, "query"), discoverHandler);
-router.post("/swipe", generalLimiter, validate(swipeSchema), swipeHandler);
+router.post("/swipe", swipeLimiter, validate(swipeSchema), swipeHandler);
 router.delete("/swipe/:target_id", generalLimiter, undoSwipeHandler);
 router.get("/list", generalLimiter, getMatchesHandler);
 router.delete("/:match_id", generalLimiter, unmatchHandler);

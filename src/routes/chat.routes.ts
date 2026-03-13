@@ -13,6 +13,7 @@ import {
 } from "../controllers/chat.controller.js";
 import {
   createChatQuestionHandler,
+  getChatQuestionHandler,
   answerChatQuestionHandler,
 } from "../controllers/chat-question.controller.js";
 import {
@@ -35,6 +36,7 @@ router.post("/:match_id/read", markAsReadHandler);
 router.delete("/:match_id/messages/:message_id", deleteMessageHandler);
 router.post("/:match_id/messages/:message_id/reactions", validate(reactionSchema), addReactionHandler);
 router.post("/:match_id/questions", validate(createChatQuestionSchema), createChatQuestionHandler);
+router.get("/questions/:id", getChatQuestionHandler);
 router.post("/questions/:id/answer", validate(answerChatQuestionSchema), answerChatQuestionHandler);
 
 // Media sharing routes

@@ -22,6 +22,7 @@ import exchangeRoutes from "./routes/exchange.routes.js";
 import referralRoutes from "./routes/referral.routes.js";
 import appRoutes from "./routes/app.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
+import { idempotencyMiddleware } from "./middleware/idempotency.js";
 import adminRoutes from "./admin/admin.routes.js";
 import { adminService } from "./admin/admin.service.js";
 import { ensureStorageBuckets } from "./config/supabase.js";
@@ -48,6 +49,7 @@ app.use(helmet({
 }));
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
+app.use(idempotencyMiddleware);
 
 // Admin session middleware
 app.use(

@@ -134,7 +134,6 @@ class ExchangeService {
         power_name: powerName,
         diamond_type: diamondType,
         quantity,
-        unit_cost: unitCost,
         total_cost: totalCost,
       });
 

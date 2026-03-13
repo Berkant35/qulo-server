@@ -55,7 +55,7 @@ export class MatchingService {
    */
   async discover(userId: string, page = 1): Promise<{ cards: ProfileCard[]; page: number; has_more: boolean }> {
     // 1. Get current user + already-swiped IDs in parallel
-    const [userResult, swipedResult] = await Promise.all([
+    const [userResult, swipedResult, matchResult] = await Promise.all([
       supabase
         .from("users")
         .select(
@@ -68,6 +68,11 @@ export class MatchingService {
         .from("swipes")
         .select("target_id")
         .eq("swiper_id", userId),
+      supabase
+        .from("matches")
+        .select("user1_id, user2_id")
+        .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)
+        .eq("is_active", true),
     ]);
 
     const { data: user, error: userError } = userResult;
@@ -87,11 +92,19 @@ export class MatchingService {
     const maxRadius: number = user.match_radius_km ?? 100;
 
     const { data: swipedRows } = swipedResult;
+    const { data: matchRows } = matchResult;
 
     const excludedIds = new Set<string>([userId]);
     if (swipedRows) {
       for (const row of swipedRows) {
         excludedIds.add(row.target_id as string);
+      }
+    }
+    // Exclude already-matched users
+    if (matchRows) {
+      for (const m of matchRows) {
+        const otherId = m.user1_id === userId ? (m.user2_id as string) : (m.user1_id as string);
+        excludedIds.add(otherId);
       }
     }
 
@@ -302,6 +315,18 @@ export class MatchingService {
       throw Errors.SELF_SWIPE();
     }
 
+    // Check for existing swipe (idempotent — fire-and-forget safe)
+    const { data: existing } = await supabase
+      .from("swipes")
+      .select("id")
+      .eq("swiper_id", swiperId)
+      .eq("target_id", targetId)
+      .maybeSingle();
+
+    if (existing) {
+      return { matched: false };
+    }
+
     // Daily swipe limit check + increment
     await subscriptionService.incrementDailySwipes(swiperId);
 
@@ -322,40 +347,18 @@ export class MatchingService {
       .insert({ swiper_id: swiperId, target_id: targetId, action });
 
     if (swipeError) {
-      // Unique constraint violation
+      // Race condition: another request inserted between our check and insert
       if (swipeError.code === "23505") {
-        throw Errors.ALREADY_SWIPED();
+        return { matched: false };
       }
       console.error("[matching] Swipe insert error:", swipeError);
       throw Errors.SERVER_ERROR();
     }
 
     // If LIKE, increment like_received_count
+    // Match is only created via quiz completion (quiz.service.ts → completeSession)
     if (action === "LIKE") {
       await supabase.rpc("increment_like_received", { target_user_id: targetId });
-
-      // Check for mutual like (match)
-      const { data: mutual } = await supabase
-        .from("swipes")
-        .select("id")
-        .eq("swiper_id", targetId)
-        .eq("target_id", swiperId)
-        .eq("action", "LIKE")
-        .maybeSingle();
-
-      if (mutual) {
-        // Create match — order user IDs consistently
-        const [user1, user2] = [swiperId, targetId].sort();
-        const { error: matchError } = await supabase
-          .from("matches")
-          .insert({ user1_id: user1, user2_id: user2 });
-
-        if (matchError && matchError.code !== "23505") {
-          console.error("[matching] Match insert error:", matchError);
-        }
-
-        return { matched: true };
-      }
     }
 
     return { matched: false };
@@ -450,12 +453,16 @@ export class MatchingService {
   async getMatches(userId: string) {
     assertUuid(userId, "userId");
 
+    console.log("[matching] getMatches called for userId:", userId);
+
     const { data: matches, error } = await supabase
       .from("matches")
-      .select("id, user1_id, user2_id, matched_at")
+      .select("id, user1_id, user2_id, matched_at, is_active")
       .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)
       .eq("is_active", true)
       .order("matched_at", { ascending: false });
+
+    console.log("[matching] getMatches result:", { matchCount: matches?.length ?? 0, error, matches });
 
     if (error) {
       console.error("[matching] Get matches error:", error);
@@ -464,30 +471,81 @@ export class MatchingService {
 
     if (!matches || matches.length === 0) return [];
 
+    const matchIds = matches.map((m) => m.id as string);
+
     // Gather other user IDs
     const otherIds = matches.map((m) =>
       m.user1_id === userId ? (m.user2_id as string) : (m.user1_id as string),
     );
 
-    // Fetch basic info for other users
-    const { data: others } = await supabase
-      .from("users")
-      .select("id, name, age, city, photos, bio, is_online, last_seen_at")
-      .in("id", otherIds);
+    // Fetch users, last messages, and unread counts in parallel
+    const [usersResult, lastMessagesResult, unreadResult] = await Promise.all([
+      supabase
+        .from("users")
+        .select("id, name, age, city, photos, bio, is_online, last_seen_at")
+        .in("id", otherIds),
+      supabase
+        .from("messages")
+        .select("match_id, content, sender_id, is_image, audio_url, created_at, deleted_at")
+        .in("match_id", matchIds)
+        .is("deleted_at", null)
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("messages")
+        .select("match_id")
+        .in("match_id", matchIds)
+        .neq("sender_id", userId)
+        .is("read_at", null)
+        .is("deleted_at", null),
+    ]);
 
-    const otherMap = new Map<string, (typeof others extends (infer U)[] | null ? U : never)>();
-    if (others) {
-      for (const o of others) {
+    const otherMap = new Map<string, (typeof usersResult.data extends (infer U)[] | null ? U : never)>();
+    if (usersResult.data) {
+      for (const o of usersResult.data) {
         otherMap.set(o.id as string, o);
+      }
+    }
+
+    // Build last message map (first occurrence per match_id = most recent)
+    const lastMsgMap = new Map<string, { content: string; sender_id: string; is_image: boolean; audio_url: string | null; created_at: string }>();
+    if (lastMessagesResult.data) {
+      for (const msg of lastMessagesResult.data) {
+        const mid = msg.match_id as string;
+        if (!lastMsgMap.has(mid)) {
+          lastMsgMap.set(mid, msg as any);
+        }
+      }
+    }
+
+    // Build unread count map
+    const unreadMap = new Map<string, number>();
+    if (unreadResult.data) {
+      for (const msg of unreadResult.data) {
+        const mid = msg.match_id as string;
+        unreadMap.set(mid, (unreadMap.get(mid) ?? 0) + 1);
       }
     }
 
     return matches.map((m) => {
       const otherId = m.user1_id === userId ? (m.user2_id as string) : (m.user1_id as string);
       const other = otherMap.get(otherId);
+      const lastMsg = lastMsgMap.get(m.id as string);
+      const unread = unreadMap.get(m.id as string) ?? 0;
+
+      let lastMessagePreview: string | null = null;
+      if (lastMsg) {
+        if (lastMsg.audio_url) lastMessagePreview = "🎤 Sesli mesaj";
+        else if (lastMsg.is_image) lastMessagePreview = "📷 Fotoğraf";
+        else lastMessagePreview = lastMsg.content;
+      }
+
       return {
         match_id: m.id,
         matched_at: m.matched_at,
+        last_message: lastMessagePreview,
+        last_message_sent_at: lastMsg?.created_at ?? null,
+        last_message_sender_id: lastMsg?.sender_id ?? null,
+        unread_count: unread,
         user: other
           ? {
               user_id: other.id,

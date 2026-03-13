@@ -105,6 +105,19 @@ export class ChatQuestionService {
       throw Errors.SERVER_ERROR();
     }
 
+    // Insert a message into the chat timeline so the question appears in the conversation
+    const { error: msgErr } = await supabase.from("messages").insert({
+      match_id: matchId,
+      sender_id: senderId,
+      content: `__QUESTION__:${question.id}`,
+      is_image: false,
+    });
+
+    if (msgErr) {
+      console.error("[chat-question] Message insert error:", msgErr);
+      // Non-fatal: question was created, but message insert failed
+    }
+
     // Send push to other user (fire-and-forget)
     const otherUserId = match.user1_id === senderId ? match.user2_id : match.user1_id;
     NotificationService.sendPush(otherUserId, "new_message", {}, undefined, {
@@ -162,6 +175,24 @@ export class ChatQuestionService {
       throw Errors.SERVER_ERROR();
     }
 
+    // Reward sender with green diamonds if answer is correct (50% of cost)
+    if (isCorrect) {
+      const cost = question.has_unmatch_risk ? UNMATCH_RISK_COST : NORMAL_QUESTION_COST;
+      const rewardAmount = Math.floor(cost * 0.5);
+      if (rewardAmount > 0) {
+        try {
+          await diamondService.earnGreen(
+            question.sender_id as string,
+            rewardAmount,
+            "CHAT_QUESTION_REWARD",
+            questionId,
+          );
+        } catch (err) {
+          console.error("[chat-question] Diamond reward failed:", err);
+        }
+      }
+    }
+
     let unmatched = false;
 
     // If wrong + unmatch risk → unmatch
@@ -175,11 +206,45 @@ export class ChatQuestionService {
       }
     }
 
+    // Send push notification to question sender about the answer (fire-and-forget)
+    NotificationService.sendPush(
+      question.sender_id as string,
+      "chat_question_answered",
+      { result: isCorrect ? "correct" : "wrong" },
+      undefined,
+      { actionUrl: `/matches/chat/${question.match_id}` },
+    ).catch(() => {});
+
     return {
       question: updated,
       is_correct: isCorrect,
       unmatched,
     };
+  }
+  async getQuestion(questionId: string, userId: string) {
+    assertUuid(questionId, "questionId");
+    assertUuid(userId, "userId");
+
+    const { data: question, error } = await supabase
+      .from("chat_questions")
+      .select("*")
+      .eq("id", questionId)
+      .single();
+
+    if (error || !question) {
+      throw Errors.SESSION_NOT_FOUND();
+    }
+
+    // Verify user is part of this match
+    await this.verifyMatchAccess(userId, question.match_id as string);
+
+    // If the user is the answerer (not sender) and hasn't answered yet, hide the correct option
+    if (question.sender_id !== userId && question.answered_option == null) {
+      const { correct_option, ...safeQuestion } = question;
+      return safeQuestion;
+    }
+
+    return question;
   }
 }
 

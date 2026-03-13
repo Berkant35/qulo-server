@@ -28,6 +28,22 @@ export const chatLimiter = rateLimit({
   message: rateLimitResponse,
 });
 
+export const swipeLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 40,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitResponse,
+});
+
+export const quizLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitResponse,
+});
+
 export const generalLimiter = rateLimit({
   windowMs: 60 * 1000,
   limit: 100,

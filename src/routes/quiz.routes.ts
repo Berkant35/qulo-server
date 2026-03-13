@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { generalLimiter } from "../middleware/rateLimit.js";
+import { quizLimiter } from "../middleware/rateLimit.js";
 import { validate } from "../middleware/validate.js";
 import { authMiddleware } from "../middleware/auth.js";
 import { startQuizSchema, answerQuizSchema } from "../validators/quiz.validator.js";
@@ -16,7 +16,7 @@ import {
 const router = Router();
 
 // All routes require authentication + general rate limit
-router.use(authMiddleware, generalLimiter);
+router.use(authMiddleware, quizLimiter);
 
 router.post("/start", validate(startQuizSchema), startQuizHandler);
 router.get("/match/:match_id/summary", getMatchQuizSummaryHandler);

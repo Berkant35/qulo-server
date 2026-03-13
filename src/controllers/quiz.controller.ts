@@ -51,7 +51,8 @@ export async function rescueQuizHandler(req: Request, res: Response, next: NextF
   try {
     const userId = req.user!.userId;
     const sessionId = req.params.session_id as string;
-    const data = await quizService.rescueWithSkip(sessionId, userId);
+    const powerType = (req.body?.power_type === "SKIP_ALL") ? "SKIP_ALL" : "SKIP";
+    const data = await quizService.rescueWithSkip(sessionId, userId, powerType as "SKIP" | "SKIP_ALL");
     res.json(data);
   } catch (err) {
     next(err);

@@ -14,6 +14,17 @@ export async function createChatQuestionHandler(req: Request, res: Response, nex
   }
 }
 
+export async function getChatQuestionHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const userId = req.user!.userId;
+    const questionId = req.params.id as string;
+    const data = await chatQuestionService.getQuestion(questionId, userId);
+    res.json(data);
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function answerChatQuestionHandler(req: Request, res: Response, next: NextFunction) {
   try {
     const userId = req.user!.userId;
