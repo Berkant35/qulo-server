@@ -91,13 +91,17 @@ export class ReferralService {
 
     if (!referral) return;
 
-    // Complete the referral
-    const { error: updateErr } = await supabase
+    // Atomically complete the referral — only updates if still pending
+    // This prevents double-reward from concurrent calls
+    const { data: updated, error: updateErr } = await supabase
       .from("referrals")
       .update({ status: "completed", completed_at: new Date().toISOString() })
-      .eq("id", referral.id);
+      .eq("id", referral.id)
+      .eq("status", "pending")
+      .select("id")
+      .maybeSingle();
 
-    if (updateErr) return;
+    if (updateErr || !updated) return;
 
     // Reward referee (always)
     try {
