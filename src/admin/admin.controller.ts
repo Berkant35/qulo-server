@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { adminService } from "./admin.service.js";
 import { campaignService } from "../services/campaign.service.js";
 import { appConfigService } from "../services/app-config.service.js";
+import { NotificationService } from "../services/notification.service.js";
 import { supabase } from "../config/supabase.js";
 
 class AdminController {
@@ -34,7 +35,7 @@ class AdminController {
   }
 
   async users(req: Request, res: Response) {
-    const page = parseInt(req.query.page as string) || 1;
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
     const search = req.query.search as string;
     const gender = req.query.gender as string;
     const { users, total } = await adminService.getUsers(page, 20, search, gender);
@@ -71,7 +72,7 @@ class AdminController {
   }
 
   async reports(req: Request, res: Response) {
-    const page = parseInt(req.query.page as string) || 1;
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
     const status = req.query.status as string;
     const { reports, total } = await adminService.getReports(page, 20, status);
     const totalPages = Math.ceil(total / 20);
@@ -96,7 +97,7 @@ class AdminController {
   }
 
   async matches(req: Request, res: Response) {
-    const page = parseInt(req.query.page as string) || 1;
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
     const active = req.query.active as string;
     const { matches, total } = await adminService.getMatches(page, 20, active);
     const totalPages = Math.ceil(total / 20);
@@ -104,7 +105,7 @@ class AdminController {
   }
 
   async transactions(req: Request, res: Response) {
-    const page = parseInt(req.query.page as string) || 1;
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
     const type = req.query.type as string;
     const userId = req.query.userId as string;
     const { transactions, total } = await adminService.getTransactions(page, 30, type, userId);
@@ -135,7 +136,7 @@ class AdminController {
 
   // ── Campaign management ───────────────────────────────────────────
   async campaigns(req: Request, res: Response) {
-    const page = parseInt(req.query.page as string) || 1;
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
     const { campaigns, total } = await campaignService.getCampaigns(page, 20);
     const totalPages = Math.ceil(total / 20);
     res.render("campaigns", { campaigns, page, totalPages, total, session: req.session });
@@ -204,6 +205,37 @@ class AdminController {
   async campaignPreviewCount(req: Request, res: Response) {
     const count = await campaignService.previewSegmentCount(req.body);
     res.json({ count });
+  }
+
+  // ── Send notification to specific user ──────────────────────────
+  async sendNotification(req: Request, res: Response) {
+    const userId = req.params.id as string;
+    const { push_title, push_body, image_url, action_url, action_label } = req.body;
+
+    if (!push_title || !push_body) {
+      return res.redirect(`/admin/users/${userId}?notif_error=Title and body are required`);
+    }
+
+    try {
+      const sent = await NotificationService.sendPush(
+        userId,
+        'campaign',
+        { body: push_body },
+        undefined,
+        {
+          title: push_title,
+          imageUrl: image_url || undefined,
+          actionUrl: action_url || undefined,
+          actionLabel: action_label || undefined,
+        },
+      );
+
+      const status = sent ? 'sent' : 'saved_no_push';
+      res.redirect(`/admin/users/${userId}?notif_success=${status}`);
+    } catch (err: any) {
+      console.error(`[Admin] Send notification to ${userId} failed:`, err.message);
+      res.redirect(`/admin/users/${userId}?notif_error=${encodeURIComponent(err.message)}`);
+    }
   }
 
   // ── App Config management ───────────────────────────────────────
