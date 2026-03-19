@@ -15,6 +15,7 @@ import {
 import type {
   CreateChatQuestionInput,
   AnswerChatQuestionInput,
+  SaveDraftInput,
 } from "../validators/chat-question.validator.js";
 
 /* ------------------------------------------------------------------ */
@@ -580,6 +581,55 @@ export class ChatQuestionService {
     await this.verifyMatchAccess(userId, question.match_id as string);
 
     return this.sanitizeQuestion(question, userId);
+  }
+
+  // ── Drafts ──
+  async saveDraft(userId: string, data: SaveDraftInput) {
+    const { data: draft, error } = await supabase
+      .from("chat_question_drafts")
+      .insert({ user_id: userId, ...data })
+      .select("*")
+      .single();
+    if (error) {
+      console.error("[chat-question] saveDraft error:", error);
+      throw Errors.SERVER_ERROR();
+    }
+    return draft;
+  }
+
+  async getDrafts(userId: string) {
+    const { data, error } = await supabase
+      .from("chat_question_drafts")
+      .select("*")
+      .eq("user_id", userId)
+      .order("updated_at", { ascending: false })
+      .limit(50);
+    if (error) throw Errors.SERVER_ERROR();
+    return data ?? [];
+  }
+
+  async deleteDraft(userId: string, draftId: string) {
+    assertUuid(draftId, "draftId");
+    const { error } = await supabase
+      .from("chat_question_drafts")
+      .delete()
+      .eq("id", draftId)
+      .eq("user_id", userId);
+    if (error) throw Errors.SERVER_ERROR();
+    return { success: true };
+  }
+
+  // ── History ──
+  async getHistory(userId: string, page = 1, limit = 20) {
+    const offset = (page - 1) * limit;
+    const { data, error, count } = await supabase
+      .from("chat_questions")
+      .select("id, question_text, option_count, option_a, option_b, option_c, option_d, correct_option, time_limit_seconds, hint_text, has_unmatch_risk, has_chat_lock, created_at", { count: "exact" })
+      .eq("sender_id", userId)
+      .order("created_at", { ascending: false })
+      .range(offset, offset + limit - 1);
+    if (error) throw Errors.SERVER_ERROR();
+    return { items: data ?? [], total: count ?? 0, page, limit };
   }
 }
 

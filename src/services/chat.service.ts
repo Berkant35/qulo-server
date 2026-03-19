@@ -61,6 +61,32 @@ export class ChatService {
     };
   }
 
+  async uploadMedia(userId: string, matchId: string, fileBuffer: Buffer, mimeType: string) {
+    const match = await this.verifyMatchAccess(userId, matchId);
+
+    if (!match.media_enabled_by_user1 || !match.media_enabled_by_user2) {
+      throw Errors.MEDIA_NOT_ENABLED();
+    }
+
+    const ext = mimeType.startsWith("audio/") ? "m4a" : mimeType === "image/png" ? "png" : "jpg";
+    const fileName = `${matchId}/${Date.now()}.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("chat-media")
+      .upload(fileName, fileBuffer, { contentType: mimeType, upsert: false });
+
+    if (uploadError) {
+      console.error("[chat] media upload failed:", uploadError);
+      throw Errors.SERVER_ERROR();
+    }
+
+    const { data: urlData } = supabase.storage
+      .from("chat-media")
+      .getPublicUrl(fileName);
+
+    return { url: urlData.publicUrl };
+  }
+
   async sendMessage(
     userId: string,
     matchId: string,
@@ -75,6 +101,23 @@ export class ChatService {
     if (isImage || audioUrl) {
       if (!match.media_enabled_by_user1 || !match.media_enabled_by_user2) {
         throw Errors.MEDIA_NOT_ENABLED();
+      }
+    }
+
+    // Chat lock check — if there's an unanswered question with chat lock, block messages
+    const { data: lockedQuestion } = await supabase
+      .from("chat_questions")
+      .select("id")
+      .eq("match_id", matchId)
+      .eq("has_chat_lock", true)
+      .is("answered_option", null)
+      .limit(1)
+      .maybeSingle();
+
+    if (lockedQuestion) {
+      // Allow the question message marker itself (starts with __QUESTION__)
+      if (!content.startsWith("__QUESTION__")) {
+        throw Errors.CHAT_LOCKED();
       }
     }
 

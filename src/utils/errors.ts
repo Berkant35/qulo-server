@@ -143,4 +143,16 @@ export const Errors = {
 
   MEDIA_NOT_ENABLED: () =>
     new AppError("MEDIA_NOT_ENABLED", 403, "Both users must enable media sharing"),
+
+  ALREADY_BLOCKED: () =>
+    new AppError("ALREADY_BLOCKED", 409, "User already blocked"),
+
+  CANNOT_BLOCK_SELF: () =>
+    new AppError("CANNOT_BLOCK_SELF", 400, "Cannot block yourself"),
+
+  BLOCK_NOT_FOUND: () =>
+    new AppError("BLOCK_NOT_FOUND", 404, "Block not found"),
+
+  CHAT_LOCKED: () =>
+    new AppError("CHAT_LOCKED", 403, "Chat is locked until the question is answered"),
 } as const;
