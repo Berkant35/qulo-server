@@ -2,6 +2,7 @@ import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
 import { haversineDistance } from "../utils/math.js";
 import { assertUuid } from "../utils/validation.js";
+import { blockService } from "./block.service.js";
 import { scoringService } from "./scoring.service.js";
 import { subscriptionService } from "./subscription.service.js";
 import { userLanguageService } from "./user-language.service.js";
@@ -94,7 +95,13 @@ export class MatchingService {
     const { data: swipedRows } = swipedResult;
     const { data: matchRows } = matchResult;
 
-    const excludedIds = new Set<string>([userId]);
+    // Get blocked user IDs (both directions)
+    const [blockedIds, blockerIds] = await Promise.all([
+      blockService.getBlockedIds(userId),
+      blockService.getBlockerIds(userId),
+    ]);
+
+    const excludedIds = new Set<string>([userId, ...blockedIds, ...blockerIds]);
     if (swipedRows) {
       for (const row of swipedRows) {
         excludedIds.add(row.target_id as string);

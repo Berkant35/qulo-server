@@ -13,7 +13,8 @@ ALTER TABLE chat_questions
   ADD COLUMN IF NOT EXISTS has_chat_lock BOOLEAN DEFAULT false,
   ADD COLUMN IF NOT EXISTS has_power_block BOOLEAN DEFAULT false,
   ADD COLUMN IF NOT EXISTS power_block_removed BOOLEAN DEFAULT false,
-  ADD COLUMN IF NOT EXISTS powers_used JSONB DEFAULT '[]'::jsonb;
+  ADD COLUMN IF NOT EXISTS powers_used JSONB DEFAULT '[]'::jsonb,
+  ADD COLUMN IF NOT EXISTS time_spent INTEGER;
 
 -- Remove diamond_cost column default (questions are now free to create)
 ALTER TABLE chat_questions ALTER COLUMN diamond_cost SET DEFAULT 0;

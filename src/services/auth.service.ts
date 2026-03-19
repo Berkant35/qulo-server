@@ -14,17 +14,23 @@ export class AuthService {
     // Check if email already exists
     const { data: existing } = await supabase
       .from("users")
-      .select("id")
+      .select("id, is_deleted")
       .eq("email", email)
       .maybeSingle();
 
-    if (existing) {
+    if (existing && !existing.is_deleted) {
       throw Errors.EMAIL_ALREADY_EXISTS();
+    }
+
+    // If a soft-deleted account exists with this email, hard-delete it so the user can re-register
+    if (existing?.is_deleted) {
+      await this.hardDeleteUser(existing.id);
     }
 
     const passwordHash = await hashPassword(data.password);
     const verifyToken = generateToken();
     const verifyTokenHash = hashToken(verifyToken);
+    const referralCode = await referralService.generateUniqueCode();
 
     const { data: user, error } = await supabase
       .from("users")
@@ -38,24 +44,15 @@ export class AuthService {
         locale: data.locale,
         verify_token: verifyTokenHash,
         email_verified: false,
+        referral_code: referralCode,
         ...(data.lat != null && data.lng != null ? { lat: data.lat, lng: data.lng } : {}),
       })
       .select("id, email")
       .single();
 
     if (error || !user) {
+      console.error("[register] Insert user failed:", error?.message, error?.code);
       throw Errors.SERVER_ERROR();
-    }
-
-    // Generate unique referral code for the new user
-    try {
-      const referralCode = await referralService.generateUniqueCode();
-      await supabase
-        .from("users")
-        .update({ referral_code: referralCode })
-        .eq("id", user.id);
-    } catch (err) {
-      console.error("[auth] Failed to generate referral code:", err);
     }
 
     // Apply referral code if provided (don't block registration on failure)
@@ -260,6 +257,81 @@ export class AuthService {
     sendPasswordResetEmail(email, token, user.locale).catch((err) => {
       console.error("[auth] Failed to send password reset email:", err);
     });
+  }
+
+  /**
+   * Hard-delete a soft-deleted user and all related data so the email can be re-registered.
+   */
+  private async hardDeleteUser(userId: string) {
+    // Delete from child tables first (order matters for FK constraints)
+    // Delete user's quiz sessions first, then answers cascade via FK
+    // Delete deepest children first to avoid FK violations
+    const { data: sessions } = await supabase
+      .from("quiz_sessions")
+      .select("id")
+      .or(`solver_id.eq.${userId},target_id.eq.${userId}`);
+
+    if (sessions && sessions.length > 0) {
+      const sessionIds = sessions.map((s: { id: string }) => s.id);
+      // Delete quiz_answers that belong to these sessions
+      for (const sid of sessionIds) {
+        await supabase.from("quiz_answers").delete().eq("session_id", sid);
+      }
+      // Now delete the sessions themselves
+      for (const sid of sessionIds) {
+        await supabase.from("quiz_sessions").delete().eq("id", sid);
+      }
+    }
+
+    const childTables: { table: string; column: string }[] = [
+      { table: "campaign_events", column: "user_id" },
+      { table: "notifications", column: "user_id" },
+      { table: "message_reactions", column: "user_id" },
+      { table: "messages", column: "sender_id" },
+      { table: "chat_questions", column: "sender_id" },
+      { table: "media_requests", column: "requester_id" },
+      { table: "matches", column: "user1_id" },
+      { table: "matches", column: "user2_id" },
+      { table: "swipes", column: "swiper_id" },
+      { table: "swipes", column: "target_id" },
+      { table: "diamond_transactions", column: "user_id" },
+      { table: "power_purchase_transactions", column: "user_id" },
+      { table: "user_power_inventory", column: "user_id" },
+      { table: "iap_transactions", column: "user_id" },
+      { table: "user_subscriptions", column: "user_id" },
+      { table: "questions", column: "user_id" },
+      { table: "reports", column: "reporter_id" },
+      { table: "reports", column: "reported_id" },
+      { table: "referrals", column: "referrer_id" },
+      { table: "referrals", column: "referee_id" },
+      { table: "user_languages", column: "user_id" },
+      { table: "user_details", column: "user_id" },
+      { table: "refresh_tokens", column: "user_id" },
+    ];
+
+    for (const { table, column } of childTables) {
+      const { error } = await supabase.from(table).delete().eq(column, userId);
+      if (error) {
+        // Table may not exist yet — log and continue
+        console.warn(`[hardDelete] Failed to clean ${table}.${column}:`, error.message);
+      }
+    }
+
+    // Delete photos from storage
+    const { data: files } = await supabase.storage.from("photos").list(userId);
+    if (files && files.length > 0) {
+      const paths = files.map((f) => `${userId}/${f.name}`);
+      await supabase.storage.from("photos").remove(paths);
+    }
+
+    // Finally delete the user row
+    const { error } = await supabase.from("users").delete().eq("id", userId);
+    if (error) {
+      console.error("[hardDelete] Failed to delete user row:", error.message);
+      throw Errors.SERVER_ERROR();
+    }
+
+    console.log(`[hardDelete] User ${userId} fully purged`);
   }
 
   async resetPassword(token: string, password: string) {

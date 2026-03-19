@@ -2,6 +2,7 @@ import { supabase } from "../config/supabase.js";
 import { diamondService } from "./diamond.service.js";
 import { referralService } from "./referral.service.js";
 import { Errors } from "../utils/errors.js";
+import { haversineDistance } from "../utils/math.js";
 import type { UpdateProfileInput, UpdateDetailsInput } from "../validators/user.validator.js";
 
 export class UserService {
@@ -283,6 +284,104 @@ export class UserService {
     }
 
     return { boost_until: boostUntil };
+  }
+
+  async getPublicProfile(requesterId: string, targetId: string) {
+    // Block check
+    const { blockService } = await import("./block.service.js");
+    const blocked = await blockService.isBlocked(requesterId, targetId);
+    if (blocked) throw Errors.USER_NOT_FOUND();
+
+    // Get target user
+    const { data: user, error } = await supabase
+      .from("users")
+      .select(
+        "id, name, age, bio, city, country, photos, relationship_goal, is_online, last_seen_at, profile_completion, boost_until, lat, lng"
+      )
+      .eq("id", targetId)
+      .eq("is_deleted", false)
+      .maybeSingle();
+
+    if (error || !user) throw Errors.USER_NOT_FOUND();
+
+    // Get details (excluding weight for privacy)
+    const { data: details } = await supabase
+      .from("user_details")
+      .select("height, zodiac, job, school, smoking, alcohol, pets, music_type, personality")
+      .eq("user_id", targetId)
+      .maybeSingle();
+
+    // Check if matched (for online/last_seen visibility)
+    const { data: matchData } = await supabase
+      .from("matches")
+      .select("id")
+      .eq("is_active", true)
+      .or(
+        `and(user1_id.eq.${requesterId},user2_id.eq.${targetId}),and(user1_id.eq.${targetId},user2_id.eq.${requesterId})`
+      )
+      .limit(1);
+
+    const isMatched = (matchData?.length ?? 0) > 0;
+
+    // Calculate distance
+    const { data: requester } = await supabase
+      .from("users")
+      .select("lat, lng, passport_lat, passport_lng")
+      .eq("id", requesterId)
+      .single();
+
+    let distanceKm = 0;
+    if (requester && user.lat && user.lng) {
+      const reqLat = requester.passport_lat ?? requester.lat;
+      const reqLng = requester.passport_lng ?? requester.lng;
+      distanceKm = haversineDistance(reqLat, reqLng, user.lat, user.lng);
+    }
+
+    // Question info
+    const { data: questions } = await supabase
+      .from("questions")
+      .select("category, stats_correct, stats_wrong, locale")
+      .eq("user_id", targetId);
+
+    let questionInfo = null;
+    if (questions && questions.length > 0) {
+      const totalAttempts = questions.reduce((s: number, q: any) => s + q.stats_correct + q.stats_wrong, 0);
+      const totalCorrect = questions.reduce((s: number, q: any) => s + q.stats_correct, 0);
+      const successRate = totalAttempts > 0 ? (totalCorrect / totalAttempts) * 100 : 50;
+
+      let difficulty = "unranked";
+      if (totalAttempts >= 10) {
+        if (successRate > 70) difficulty = "easy";
+        else if (successRate > 40) difficulty = "medium";
+        else if (successRate > 20) difficulty = "hard";
+        else difficulty = "legendary";
+      }
+
+      questionInfo = {
+        count: questions.length,
+        categories: [...new Set(questions.map((q: any) => q.category).filter(Boolean))],
+        avg_difficulty: difficulty,
+        languages: [...new Set(questions.map((q: any) => q.locale || "tr"))],
+      };
+    }
+
+    return {
+      user_id: user.id,
+      name: user.name,
+      age: user.age,
+      bio: user.bio,
+      city: user.city,
+      country: user.country,
+      photos: user.photos ?? [],
+      distance_km: Math.round(distanceKm * 10) / 10,
+      relationship_goal: user.relationship_goal,
+      is_online: isMatched ? user.is_online : null,
+      last_seen: isMatched ? user.last_seen_at : null,
+      profile_completion: user.profile_completion,
+      is_boosted: user.boost_until ? new Date(user.boost_until) > new Date() : false,
+      details: details ?? null,
+      question_info: questionInfo,
+    };
   }
 
   private async recalculateProfileCompletion(userId: string) {

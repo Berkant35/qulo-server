@@ -21,6 +21,7 @@ import {
   deletePhotoHandler,
   boostHandler,
   claimBadgeRewardHandler,
+  getPublicProfileHandler,
   deleteAccountHandler,
 } from "../controllers/user.controller.js";
 import { AppError } from "../utils/errors.js";
@@ -72,6 +73,8 @@ router.put("/me/languages", validate(setUserLanguagesSchema), async (req, res, n
     next(err);
   }
 });
+
+router.get("/:id/profile", getPublicProfileHandler);
 
 router.delete("/me", deleteAccountHandler);
 

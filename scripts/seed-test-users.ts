@@ -417,10 +417,18 @@ async function addPhotos() {
   for (const user of testUsers) {
     const isMale = user.gender === "MAN";
     const gender = isMale ? "men" : "women";
-    const photoIndex = randomInt(1, 99);
-    const photos = [
-      `https://randomuser.me/api/portraits/${gender}/${photoIndex}.jpg`,
-    ];
+    const photoCount = randomInt(2, 5);
+    const usedIndices = new Set<number>();
+    const photos: string[] = [];
+
+    while (photos.length < photoCount) {
+      const idx = randomInt(1, 99);
+      if (usedIndices.has(idx)) continue;
+      usedIndices.add(idx);
+      photos.push(
+        `https://randomuser.me/api/portraits/${gender}/${idx}.jpg`
+      );
+    }
 
     const { error: updateError } = await supabase
       .from("users")

@@ -111,11 +111,8 @@ export class ChatQuestionService {
       delete result.correct_option;
     }
 
-    // Hide reward_media_url if not answered correctly
-    if (!isCorrect) {
-      delete result.reward_media_url;
-      delete result.reward_media_type;
-    }
+    // Mark reward as locked (client shows blurred preview)
+    result.reward_locked = !isCorrect;
 
     return result;
   }
@@ -159,6 +156,20 @@ export class ChatQuestionService {
     data: CreateChatQuestionInput,
   ) {
     const match = await this.verifyMatchAccess(senderId, matchId);
+
+    // ── Chat lock check — cannot create question while another is locked ──
+    const { data: lockedQ } = await supabase
+      .from("chat_questions")
+      .select("id")
+      .eq("match_id", matchId)
+      .eq("has_chat_lock", true)
+      .is("answered_option", null)
+      .limit(1)
+      .maybeSingle();
+
+    if (lockedQ) {
+      throw Errors.CHAT_LOCKED();
+    }
 
     // ── Subscription-aware daily limits ──
     const tier = await this.getUserTier(senderId);
@@ -398,6 +409,72 @@ export class ChatQuestionService {
   }
 
   /* ================================================================ */
+  /*  rescueQuestion — SKIP after wrong answer                         */
+  /* ================================================================ */
+  async rescueQuestion(questionId: string, userId: string) {
+    const question = await this.fetchQuestion(questionId);
+
+    if (question.sender_id === userId) {
+      throw Errors.VALIDATION_ERROR({ sender: "Only the answerer can rescue" });
+    }
+
+    // Must be answered AND wrong
+    if (question.answered_option == null || question.is_correct) {
+      throw Errors.VALIDATION_ERROR({ state: "Can only rescue a wrong answer" });
+    }
+
+    const match = await this.verifyMatchAccess(userId, question.match_id as string);
+
+    // Power block check
+    if (question.has_power_block && !question.power_block_removed) {
+      throw Errors.VALIDATION_ERROR({ power: "Power block is active. Use POWER_UNBLOCK first." });
+    }
+
+    // Pay for SKIP
+    const power = await this.fetchPower("SKIP");
+    const cost = calculatePowerCost(power.purple_cost ?? power.base_cost ?? 0, 1);
+    await this.tryUseOrSpend(userId, "SKIP", cost, "chat_question_rescue", questionId);
+
+    const greenReward = calculateGreenReward(cost);
+    if (greenReward > 0) {
+      try {
+        await diamondService.earnGreen(
+          question.sender_id as string,
+          greenReward,
+          "CHAT_QUESTION_RESCUE_REWARD",
+          questionId,
+        );
+      } catch (err) {
+        console.error("[chat-question] Rescue green reward failed:", err);
+      }
+    }
+
+    // Override answer to correct
+    const { data: updated, error: updateErr } = await supabase
+      .from("chat_questions")
+      .update({
+        answered_option: question.correct_option,
+        is_correct: true,
+        powers_used: [...(question.powers_used ?? []), "SKIP_RESCUE"],
+      })
+      .eq("id", questionId)
+      .select("*")
+      .single();
+
+    if (updateErr) {
+      console.error("[chat-question] Rescue update error:", updateErr);
+      throw Errors.SERVER_ERROR();
+    }
+
+    return {
+      question: this.sanitizeQuestion(updated, userId),
+      is_correct: true,
+      unmatched: false,
+      rescued: true,
+    };
+  }
+
+  /* ================================================================ */
   /*  usePower                                                         */
   /* ================================================================ */
   async usePower(questionId: string, userId: string, powerName: PowerName) {
@@ -537,6 +614,28 @@ export class ChatQuestionService {
       case "TIME_EXTEND": {
         powerResult = { extra_seconds: 15 };
         break;
+      }
+      case "SKIP": {
+        // SKIP via usePower — auto-correct the question
+        const { data: updated } = await supabase
+          .from("chat_questions")
+          .update({
+            answered_option: question.correct_option,
+            is_correct: true,
+            answered_at: new Date().toISOString(),
+            powers_used: [...(question.powers_used ?? []), "SKIP"],
+          })
+          .eq("id", questionId)
+          .select("*")
+          .single();
+
+        return {
+          power_result: { skipped: true },
+          cost,
+          green_reward: greenReward,
+          is_correct: true,
+          question: this.sanitizeQuestion(updated, userId),
+        };
       }
     }
 

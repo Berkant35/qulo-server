@@ -38,6 +38,17 @@ export async function answerChatQuestionHandler(req: Request, res: Response, nex
   }
 }
 
+export async function rescueHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const userId = req.user!.userId;
+    const questionId = req.params.id as string;
+    const data = await chatQuestionService.rescueQuestion(questionId, userId);
+    res.json(data);
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function usePowerHandler(req: Request, res: Response, next: NextFunction) {
   try {
     const userId = req.user!.userId;

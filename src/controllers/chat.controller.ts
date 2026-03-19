@@ -51,6 +51,21 @@ export async function addReactionHandler(req: Request, res: Response, next: Next
   }
 }
 
+export async function uploadMediaHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    if (!req.file) {
+      res.status(400).json({ code: "NO_FILE", message: "No file provided" });
+      return;
+    }
+    const userId = req.user!.userId;
+    const matchId = req.params.match_id as string;
+    const data = await chatService.uploadMedia(userId, matchId, req.file.buffer, req.file.mimetype);
+    res.status(201).json(data);
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function markAsReadHandler(req: Request, res: Response, next: NextFunction) {
   try {
     const userId = req.user!.userId;

@@ -17,6 +17,16 @@
       <dt>Last Seen</dt><dd><%= user.last_seen_at ? new Date(user.last_seen_at).toLocaleString() : '-' %></dd>
       <dt>Joined</dt><dd><%= new Date(user.created_at).toLocaleString() %></dd>
       <dt>Profile %</dt><dd><%= user.profile_completion %>%</dd>
+      <dt>Locale</dt><dd><%= user.locale || '-' %></dd>
+      <dt>Push Token</dt>
+      <dd>
+        <% if (user.push_token) { %>
+          <span style="color:#22c55e; font-size:12px; word-break:break-all;" title="<%= user.push_token %>"><%= user.push_token.substring(0, 40) %>...</span>
+          <button onclick="navigator.clipboard.writeText('<%= user.push_token %>')" style="background:none; border:1px solid #555; color:#a855f7; padding:2px 6px; border-radius:4px; cursor:pointer; font-size:11px; margin-left:4px;">Copy</button>
+        <% } else { %>
+          <span style="color:#ef4444;">No token</span>
+        <% } %>
+      </dd>
     </dl>
   </div>
 
@@ -55,7 +65,48 @@
         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('PERMANENTLY delete this user? This cannot be undone.')">Delete</button>
       </form>
     </div>
-    <p style="margin-top:12px;"><a href="/admin/transactions?userId=<%= user.id %>" style="color:#a855f7;">View transactions &rarr;</a></p>
+    <p style="margin-top:12px;">
+      <a href="/admin/transactions?userId=<%= user.id %>" style="color:#a855f7;">View transactions &rarr;</a>
+    </p>
+
+    <hr style="border-color:#333; margin:16px 0;">
+    <h4 style="margin-bottom:8px;">Send Notification</h4>
+    <% const notifError = (typeof locals !== 'undefined' && typeof locals.notif_error !== 'undefined') ? locals.notif_error : null; %>
+    <% const notifSuccess = (typeof locals !== 'undefined' && typeof locals.notif_success !== 'undefined') ? locals.notif_success : null; %>
+    <script>
+      (function() {
+        const params = new URLSearchParams(window.location.search);
+        const err = params.get('notif_error');
+        const suc = params.get('notif_success');
+        if (err) {
+          document.addEventListener('DOMContentLoaded', function() {
+            const el = document.getElementById('notif-feedback');
+            if (el) { el.textContent = 'Error: ' + err; el.style.color = '#ef4444'; el.style.display = 'block'; }
+          });
+        }
+        if (suc) {
+          document.addEventListener('DOMContentLoaded', function() {
+            const el = document.getElementById('notif-feedback');
+            const msg = suc === 'sent' ? 'Notification sent via FCM + saved to DB' : 'Saved to DB (no push token or FCM unavailable)';
+            if (el) { el.textContent = msg; el.style.color = '#22c55e'; el.style.display = 'block'; }
+          });
+        }
+      })();
+    </script>
+    <p id="notif-feedback" style="display:none; font-size:12px; margin-bottom:8px;"></p>
+    <form method="POST" action="/admin/users/<%= user.id %>/send-notification">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <input type="text" name="push_title" placeholder="Notification Title" required style="padding:6px 8px;">
+        <textarea name="push_body" placeholder="Notification Body" required rows="2" style="padding:6px 8px; resize:vertical;"></textarea>
+        <input type="text" name="action_url" placeholder="Action URL (optional, e.g. /matches)" style="padding:6px 8px;">
+        <input type="text" name="action_label" placeholder="Action Label (optional)" style="padding:6px 8px;">
+        <input type="text" name="image_url" placeholder="Image URL (optional)" style="padding:6px 8px;">
+        <button type="submit" class="btn btn-primary btn-sm" style="align-self:flex-start; margin-top:4px;" <% if (!user.push_token) { %>title="No push token — will save to DB only"<% } %>>
+          Send Notification
+        </button>
+      </div>
+    </form>
 
     <hr style="border-color:#333; margin:16px 0;">
     <h4 style="margin-bottom:8px;">Swipes</h4>

@@ -18,6 +18,7 @@ import {
   getChatQuestionHandler,
   answerChatQuestionHandler,
   usePowerHandler,
+  rescueHandler,
   timeoutHandler,
   saveDraftHandler,
   getDraftsHandler,
@@ -59,6 +60,7 @@ router.post("/:match_id/questions", validate(createChatQuestionSchema), createCh
 router.get("/questions/:id", getChatQuestionHandler);
 router.post("/questions/:id/answer", validate(answerChatQuestionSchema), answerChatQuestionHandler);
 router.post("/questions/:id/use-power", validate(usePowerSchema), usePowerHandler);
+router.post("/questions/:id/rescue", rescueHandler);
 router.post("/questions/:id/timeout", timeoutHandler);
 
 // Media sharing routes

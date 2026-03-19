@@ -36,7 +36,7 @@ export const answerChatQuestionSchema = z.object({
 });
 
 export const usePowerSchema = z.object({
-  power_name: z.enum(["ORACLE", "HALF", "HINT", "TIME_EXTEND", "POWER_UNBLOCK"]),
+  power_name: z.enum(["ORACLE", "HALF", "HINT", "TIME_EXTEND", "SKIP", "POWER_UNBLOCK"]),
 });
 
 export const saveDraftSchema = z.object({

@@ -108,6 +108,16 @@ export async function claimBadgeRewardHandler(req: Request, res: Response, next:
   }
 }
 
+export async function getPublicProfileHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const targetId = req.params.id as string;
+    const result = await userService.getPublicProfile(req.user!.userId, targetId);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function deleteAccountHandler(req: Request, res: Response, next: NextFunction) {
   try {
     await userService.deleteAccount(req.user!.userId);

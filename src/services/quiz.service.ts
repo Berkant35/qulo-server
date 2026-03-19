@@ -77,7 +77,22 @@ export class QuizService {
     if (existErr) throw Errors.SERVER_ERROR();
 
     if (existing) {
-      return { session_id: existing.id as string, total_questions: totalQuestions };
+      // Check if existing session is expired — if so, mark as failed and create new one
+      const { data: existSession } = await supabase
+        .from("quiz_sessions")
+        .select("expires_at")
+        .eq("id", existing.id)
+        .single();
+
+      if (existSession && new Date(existSession.expires_at) < new Date()) {
+        await supabase
+          .from("quiz_sessions")
+          .update({ status: "FAILED", completed_at: new Date().toISOString() })
+          .eq("id", existing.id);
+        // Fall through to create new session
+      } else {
+        return { session_id: existing.id as string, total_questions: totalQuestions };
+      }
     }
 
     // 3. Create session — dynamic expires_at based on per-question time_limits
@@ -433,11 +448,23 @@ export class QuizService {
       .select("id")
       .single();
 
-    if (matchErr && matchErr.code !== "23505") {
-      console.error("[quiz] Match insert error:", matchErr);
+    if (matchErr) {
+      if (matchErr.code === "23505") {
+        // Duplicate — reactivate existing match
+        const { data: reactivated } = await supabase
+          .from("matches")
+          .update({ is_active: true, matched_at: new Date().toISOString() })
+          .eq("user1_id", user1)
+          .eq("user2_id", user2)
+          .select("id")
+          .single();
+        console.log("[quiz] Match reactivated:", { matchId: reactivated?.id, user1, user2, sessionId });
+      } else {
+        console.error("[quiz] Match insert error:", matchErr);
+      }
+    } else {
+      console.log("[quiz] Match created:", { matchId: matchData?.id, user1, user2, sessionId });
     }
-
-    console.log("[quiz] Match created:", { matchId: matchData?.id, user1, user2, sessionId });
 
     // Update session
     await supabase
