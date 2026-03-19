@@ -489,6 +489,58 @@ class AdminService {
       topSpenders: topSpenderList,
     };
   }
+  async getQuestions(page: number, limit: number, search?: string, category?: string, userId?: string) {
+    let query = supabase
+      .from("questions")
+      .select("*", { count: "exact" })
+      .order("created_at", { ascending: false })
+      .range((page - 1) * limit, page * limit - 1);
+
+    if (search) {
+      const s = sanitizeIlike(search);
+      query = query.ilike("question_text", `%${s}%`);
+    }
+    if (category && category !== "all") query = query.eq("category", category);
+    if (userId) query = query.eq("user_id", userId);
+
+    const { data, count } = await query;
+    const questions = data ?? [];
+
+    // Enrich with user info
+    if (questions.length > 0) {
+      const userIds = [...new Set(questions.map((q: any) => q.user_id))];
+      const { data: users } = await supabase
+        .from("users")
+        .select("id, name, surname, email")
+        .in("id", userIds);
+      const userMap = new Map((users ?? []).map((u: any) => [u.id, u]));
+      questions.forEach((q: any) => { q.users = userMap.get(q.user_id) || null; });
+    }
+
+    return { questions, total: count ?? 0 };
+  }
+
+  async getQuestionDetail(questionId: string) {
+    const { data: question } = await supabase
+      .from("questions")
+      .select("*")
+      .eq("id", questionId)
+      .single();
+
+    if (!question) return null;
+
+    const { data: user } = await supabase
+      .from("users")
+      .select("id, name, surname, email, photos")
+      .eq("id", question.user_id)
+      .single();
+
+    return { question, user };
+  }
+
+  async deleteQuestion(questionId: string) {
+    await supabase.from("questions").delete().eq("id", questionId);
+  }
 }
 
 export const adminService = new AdminService();

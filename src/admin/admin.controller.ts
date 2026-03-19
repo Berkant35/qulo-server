@@ -281,6 +281,38 @@ class AdminController {
     await adminService.deleteAdmin(req.params.id as string);
     res.redirect("/admin/admins");
   }
+  async questions(req: Request, res: Response) {
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
+    const search = req.query.search as string;
+    const category = req.query.category as string;
+    const userId = req.query.userId as string;
+    const { questions, total } = await adminService.getQuestions(page, 30, search, category, userId);
+    const totalPages = Math.ceil(total / 30);
+    res.render("questions", {
+      questions, page, totalPages, total,
+      search: search || "",
+      category: category || "all",
+      userId: userId || "",
+      session: req.session,
+      csrfToken: req.session.csrfToken,
+    });
+  }
+
+  async questionDetail(req: Request, res: Response) {
+    const result = await adminService.getQuestionDetail(req.params.id as string);
+    if (!result) return res.status(404).render("error", { message: "Question not found", session: req.session });
+    res.render("question-detail", { ...result, session: req.session, csrfToken: req.session.csrfToken });
+  }
+
+  async questionAction(req: Request, res: Response) {
+    const id = req.params.id as string;
+    const { action } = req.body;
+    if (action === "delete") {
+      await adminService.deleteQuestion(id);
+      return res.redirect("/admin/questions?deleted=1");
+    }
+    res.redirect(`/admin/questions/${id}`);
+  }
 }
 
 export const adminController = new AdminController();

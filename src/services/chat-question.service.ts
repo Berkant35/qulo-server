@@ -17,6 +17,14 @@ import type {
   AnswerChatQuestionInput,
   SaveDraftInput,
 } from "../validators/chat-question.validator.js";
+import type {
+  ChatQuestionBase,
+  AnswerQuestionResult,
+  UsePowerResult,
+  HandleTimeoutResult,
+  HistoryResponse,
+  ChatQuestionHistory,
+} from "../types/index.js";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -81,7 +89,7 @@ export class ChatQuestionService {
   }
 
   /* ── Helper: fetchQuestion ─────────────────────────────────────── */
-  private async fetchQuestion(questionId: string) {
+  private async fetchQuestion(questionId: string): Promise<ChatQuestionBase & { sender_id: string; match_id: string }> {
     assertUuid(questionId, "questionId");
 
     const { data: question, error } = await supabase
@@ -94,21 +102,21 @@ export class ChatQuestionService {
       throw Errors.SESSION_NOT_FOUND();
     }
 
-    return question;
+    return question as ChatQuestionBase & { sender_id: string; match_id: string };
   }
 
   /* ── Helper: sanitizeQuestion ──────────────────────────────────── */
-  private sanitizeQuestion(question: Record<string, any>, userId: string) {
+  private sanitizeQuestion(question: ChatQuestionBase & { sender_id: string }, userId: string): ChatQuestionBase {
     const isAnswerer = question.sender_id !== userId;
     const isNotAnswered = question.answered_option == null;
     const isCorrect = question.is_correct === true;
 
     // Clone to avoid mutating the original
-    const result = { ...question };
+    const result: ChatQuestionBase = { ...question };
 
     // Hide correct_option from answerer if not yet answered
     if (isAnswerer && isNotAnswered) {
-      delete result.correct_option;
+      result.correct_option = "";
     }
 
     // Mark reward as locked (client shows blurred preview)
@@ -273,7 +281,7 @@ export class ChatQuestionService {
     selectedOption: "A" | "B" | "C" | "D",
     powerUsed?: string,
     timeSpent?: number,
-  ) {
+  ): Promise<AnswerQuestionResult> {
     const question = await this.fetchQuestion(questionId);
 
     // Cannot answer own question
@@ -287,7 +295,7 @@ export class ChatQuestionService {
     }
 
     // Verify match access
-    const match = await this.verifyMatchAccess(userId, question.match_id as string);
+    const match = await this.verifyMatchAccess(userId, question.match_id);
 
     // ── SKIP power: auto-correct, reward sender, reveal media ──
     if (powerUsed === "SKIP") {
@@ -305,7 +313,7 @@ export class ChatQuestionService {
       if (greenReward > 0) {
         try {
           await diamondService.earnGreen(
-            question.sender_id as string,
+            question.sender_id,
             greenReward,
             "CHAT_QUESTION_SKIP_REWARD",
             questionId,
@@ -369,7 +377,7 @@ export class ChatQuestionService {
       if (greenReward > 0) {
         try {
           await diamondService.earnGreen(
-            question.sender_id as string,
+            question.sender_id,
             greenReward,
             "CHAT_QUESTION_REWARD",
             questionId,
@@ -385,7 +393,7 @@ export class ChatQuestionService {
     // If wrong + unmatch risk → unmatch
     if (!isCorrect && question.has_unmatch_risk) {
       try {
-        await matchingService.unmatch(question.sender_id as string, match.id);
+        await matchingService.unmatch(question.sender_id, match.id);
         unmatched = true;
       } catch (err) {
         console.error("[chat-question] Unmatch after wrong answer failed:", err);
@@ -394,7 +402,7 @@ export class ChatQuestionService {
 
     // Push notification (fire-and-forget)
     NotificationService.sendPush(
-      question.sender_id as string,
+      question.sender_id,
       "chat_question_answered",
       { result: isCorrect ? "correct" : "wrong" },
       undefined,
@@ -411,7 +419,7 @@ export class ChatQuestionService {
   /* ================================================================ */
   /*  rescueQuestion — SKIP after wrong answer                         */
   /* ================================================================ */
-  async rescueQuestion(questionId: string, userId: string) {
+  async rescueQuestion(questionId: string, userId: string): Promise<AnswerQuestionResult> {
     const question = await this.fetchQuestion(questionId);
 
     if (question.sender_id === userId) {
@@ -477,7 +485,7 @@ export class ChatQuestionService {
   /* ================================================================ */
   /*  usePower                                                         */
   /* ================================================================ */
-  async usePower(questionId: string, userId: string, powerName: PowerName) {
+  async usePower(questionId: string, userId: string, powerName: PowerName): Promise<UsePowerResult> {
     const question = await this.fetchQuestion(questionId);
 
     // Must be the answerer (not sender)
@@ -521,7 +529,7 @@ export class ChatQuestionService {
       if (specialReward > 0) {
         try {
           await diamondService.earnGreen(
-            question.sender_id as string,
+            question.sender_id,
             specialReward,
             "CHAT_QUESTION_UNBLOCK_REWARD",
             questionId,
@@ -576,14 +584,14 @@ export class ChatQuestionService {
     }
 
     // ── Apply power effect ──
-    let powerResult: Record<string, any> = {};
+    let powerResult: Omit<UsePowerResult, 'power_name' | 'power_result'> = {};
 
     switch (powerName) {
       case "ORACLE": {
         // 70% chance to suggest the correct option
         const accuracyRate = power.accuracy_rate ?? 0.7;
         const isAccurate = Math.random() < accuracyRate;
-        const correctOption = question.correct_option as string;
+        const correctOption = question.correct_option;
         const allOptions = optionCount === 4 ? ["A", "B", "C", "D"] : ["A", "B"];
         const wrongOptions = allOptions.filter((o) => o !== correctOption);
 
@@ -597,7 +605,7 @@ export class ChatQuestionService {
 
       case "HALF": {
         // Remove 2 wrong options (only for 4-option questions)
-        const correct = question.correct_option as string;
+        const correct = question.correct_option;
         const wrong = ["A", "B", "C", "D"].filter((o) => o !== correct);
         // Shuffle wrong options and pick 2 to eliminate
         const shuffled = wrong.sort(() => Math.random() - 0.5);
@@ -658,7 +666,7 @@ export class ChatQuestionService {
   /* ================================================================ */
   /*  handleTimeout                                                    */
   /* ================================================================ */
-  async handleTimeout(questionId: string, userId: string) {
+  async handleTimeout(questionId: string, userId: string): Promise<HandleTimeoutResult> {
     const question = await this.fetchQuestion(questionId);
 
     return {
@@ -719,7 +727,7 @@ export class ChatQuestionService {
   }
 
   // ── History ──
-  async getHistory(userId: string, page = 1, limit = 20) {
+  async getHistory(userId: string, page = 1, limit = 20): Promise<HistoryResponse> {
     const offset = (page - 1) * limit;
     const { data, error, count } = await supabase
       .from("chat_questions")
@@ -728,7 +736,7 @@ export class ChatQuestionService {
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
     if (error) throw Errors.SERVER_ERROR();
-    return { items: data ?? [], total: count ?? 0, page, limit };
+    return { items: (data as ChatQuestionHistory[]) ?? [], total: count ?? 0, page, limit };
   }
 }
 

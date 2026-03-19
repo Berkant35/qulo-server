@@ -41,6 +41,10 @@ router.get("/diamond-economy", (req, res) => adminController.diamondEconomy(req,
 
 router.get("/quiz-stats", (req, res) => adminController.quizStats(req, res));
 
+router.get("/questions", (req, res) => adminController.questions(req, res));
+router.get("/questions/:id", (req, res) => adminController.questionDetail(req, res));
+router.post("/questions/:id/action", csrfValidate, (req, res) => adminController.questionAction(req, res));
+
 router.get("/app-config", (req, res) => adminController.appConfig(req, res));
 router.post("/app-config", csrfValidate, (req, res) => adminController.updateAppConfig(req, res));
 

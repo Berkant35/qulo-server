@@ -1,0 +1,89 @@
+<%- include('_header') %>
+<h2 style="margin-bottom: 20px;">Question Detail</h2>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 24px;">
+  <div class="card">
+    <h3 style="margin-bottom: 16px;">Question</h3>
+    <p style="font-size: 18px; font-weight: 600; margin-bottom: 16px;"><%= question.question_text %></p>
+
+    <div style="display: grid; gap: 8px; margin-bottom: 16px;">
+      <% [1,2,3,4].forEach(function(i) { %>
+      <div style="padding: 10px 14px; border-radius: 6px; border: 1px solid <%= question.correct_answer === i ? '#22c55e' : '#e5e7eb' %>; background: <%= question.correct_answer === i ? '#f0fdf4' : '#fff' %>;">
+        <strong style="color: <%= question.correct_answer === i ? '#22c55e' : '#666' %>;"><%= i %>.</strong>
+        <%= question['answer_' + i] || '-' %>
+        <% if (question.correct_answer === i) { %> (correct)<% } %>
+      </div>
+      <% }); %>
+    </div>
+
+    <% if (question.hint_text) { %>
+    <p style="color: #f59e0b; font-size: 14px;">Hint: <%= question.hint_text %></p>
+    <% } %>
+
+    <div class="detail-grid" style="margin-top: 16px;">
+      <dt>Category</dt><dd><span class="badge" style="background:#eef2ff; color:#4338ca;"><%= question.category || '-' %></span></dd>
+      <dt>Time Limit</dt><dd><%= question.time_limit %>s</dd>
+      <dt>Order #</dt><dd><%= question.order_num %></dd>
+      <dt>Locale</dt><dd><%= question.locale || '-' %></dd>
+      <dt>Created</dt><dd><%= new Date(question.created_at).toLocaleString() %></dd>
+    </div>
+  </div>
+
+  <div>
+    <!-- User Info -->
+    <div class="card" style="margin-bottom: 16px;">
+      <h3 style="margin-bottom: 12px;">Creator</h3>
+      <% if (user) { %>
+      <p><strong><%= user.name || '' %> <%= user.surname || '' %></strong></p>
+      <p style="font-size: 13px; color: #666;"><%= user.email %></p>
+      <a href="/admin/users/<%= user.id %>" class="btn btn-sm btn-primary" style="margin-top: 8px;">View Profile</a>
+      <% } else { %>
+      <p style="color: #999;">User not found</p>
+      <% } %>
+    </div>
+
+    <!-- Stats -->
+    <div class="card" style="margin-bottom: 16px;">
+      <h3 style="margin-bottom: 12px;">Stats</h3>
+      <div class="detail-grid">
+        <dt>Solve Count</dt><dd><%= question.stats_solve_count || 0 %></dd>
+        <dt>Correct</dt><dd style="color: #22c55e;"><%= question.stats_correct || 0 %></dd>
+        <dt>Wrong</dt><dd style="color: #ef4444;"><%= question.stats_wrong || 0 %></dd>
+        <dt>Success Rate</dt><dd><%= question.stats_solve_count ? Math.round((question.stats_correct || 0) / question.stats_solve_count * 100) : 0 %>%</dd>
+        <dt>Green Earned</dt><dd style="color: #22c55e;"><%= question.stats_green_earned || 0 %></dd>
+        <dt>Avg Time</dt><dd><%= question.stats_solve_count ? Math.round((question.stats_total_time_spent || 0) / question.stats_solve_count) : 0 %>s</dd>
+      </div>
+    </div>
+
+    <!-- Answer Distribution -->
+    <div class="card" style="margin-bottom: 16px;">
+      <h3 style="margin-bottom: 12px;">Answer Distribution</h3>
+      <% var totalAnswers = (question.stats_answer_1_count || 0) + (question.stats_answer_2_count || 0) + (question.stats_answer_3_count || 0) + (question.stats_answer_4_count || 0); %>
+      <% [1,2,3,4].forEach(function(i) { %>
+      <% var count = question['stats_answer_' + i + '_count'] || 0; var pct = totalAnswers ? Math.round(count / totalAnswers * 100) : 0; %>
+      <div style="margin-bottom: 8px;">
+        <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 2px;">
+          <span><%= i %>. <%= (question['answer_' + i] || '-').substring(0, 30) %></span>
+          <span><%= count %> (<%= pct %>%)</span>
+        </div>
+        <div style="background: #f3f4f6; border-radius: 4px; height: 8px; overflow: hidden;">
+          <div style="background: <%= question.correct_answer === i ? '#22c55e' : '#a855f7' %>; height: 100%; width: <%= pct %>%; border-radius: 4px;"></div>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+
+    <!-- Actions -->
+    <div class="card">
+      <h3 style="margin-bottom: 12px;">Actions</h3>
+      <form method="POST" action="/admin/questions/<%= question.id %>/action" onsubmit="return confirm('Are you sure you want to delete this question?');">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="action" value="delete">
+        <button type="submit" class="btn btn-danger">Delete Question</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<a href="/admin/questions" class="btn btn-primary">Back to Questions</a>
+<%- include('_footer') %>

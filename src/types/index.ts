@@ -101,3 +101,81 @@ export const SUBSCRIPTION_PRODUCT_MAP: Record<string, SubscriptionPlan> = {
   quloplusmonthly2: 'plus',
   qulopremiummonthly: 'premium',
 };
+
+/* ── Chat Question Response Types ─────────────────────────────────────── */
+export interface ChatQuestionBase {
+  id: string;
+  match_id: string;
+  sender_id: string;
+  question_text: string;
+  option_count: number;
+  option_a: string;
+  option_b: string;
+  option_c: string | null;
+  option_d: string | null;
+  correct_option: string;
+  hint_text: string | null;
+  has_unmatch_risk: boolean;
+  has_chat_lock: boolean;
+  has_power_block: boolean;
+  power_block_removed: boolean;
+  time_limit_seconds: number;
+  answered_option: string | null;
+  is_correct: boolean | null;
+  answered_at: string | null;
+  time_spent: number | null;
+  powers_used: string[];
+  created_at: string;
+  reward_locked: boolean;
+}
+
+export interface AnswerQuestionResult {
+  question: ChatQuestionBase;
+  is_correct: boolean;
+  unmatched: boolean;
+  skipped?: boolean;
+  rescued?: boolean;
+}
+
+export interface UsePowerResult {
+  power_name?: string;
+  power_result?: Record<string, any>;
+  suggested_option?: string;
+  eliminated_options?: string[];
+  hint_text?: string | null;
+  extra_seconds?: number;
+  cost?: number;
+  green_reward?: number;
+  is_correct?: boolean;
+  question?: ChatQuestionBase;
+  skipped?: boolean;
+  unblocked?: boolean;
+}
+
+export interface HandleTimeoutResult {
+  can_rescue: boolean;
+  has_power_block: boolean;
+}
+
+export interface ChatQuestionHistory {
+  id: string;
+  question_text: string;
+  option_count: number;
+  option_a: string;
+  option_b: string;
+  option_c: string | null;
+  option_d: string | null;
+  correct_option: string;
+  time_limit_seconds: number;
+  hint_text: string | null;
+  has_unmatch_risk: boolean;
+  has_chat_lock: boolean;
+  created_at: string;
+}
+
+export interface HistoryResponse {
+  items: ChatQuestionHistory[];
+  total: number;
+  page: number;
+  limit: number;
+}

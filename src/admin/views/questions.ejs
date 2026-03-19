@@ -1,0 +1,80 @@
+<%- include('_header') %>
+<h2 style="margin-bottom: 20px;">Questions Review (<%= total %>)</h2>
+
+<form class="filters" method="GET" action="/admin/questions">
+  <input type="text" name="search" placeholder="Search question text..." value="<%= search %>" style="min-width: 200px;">
+  <select name="category">
+    <option value="all" <%= category === 'all' ? 'selected' : '' %>>All Categories</option>
+    <option value="personality" <%= category === 'personality' ? 'selected' : '' %>>Personality</option>
+    <option value="music" <%= category === 'music' ? 'selected' : '' %>>Music</option>
+    <option value="film" <%= category === 'film' ? 'selected' : '' %>>Film</option>
+    <option value="sports" <%= category === 'sports' ? 'selected' : '' %>>Sports</option>
+    <option value="travel" <%= category === 'travel' ? 'selected' : '' %>>Travel</option>
+    <option value="food" <%= category === 'food' ? 'selected' : '' %>>Food</option>
+    <option value="technology" <%= category === 'technology' ? 'selected' : '' %>>Technology</option>
+    <option value="general" <%= category === 'general' ? 'selected' : '' %>>General</option>
+    <option value="other" <%= category === 'other' ? 'selected' : '' %>>Other</option>
+  </select>
+  <input type="text" name="userId" placeholder="User ID" value="<%= userId %>">
+  <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>Question</th>
+        <th>Category</th>
+        <th>User</th>
+        <th>Answers</th>
+        <th style="text-align:center;">Stats</th>
+        <th>Date</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% questions.forEach(function(q) { %>
+      <tr>
+        <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+          <a href="/admin/questions/<%= q.id %>" style="color:#a855f7;"><%= q.question_text %></a>
+        </td>
+        <td><span class="badge" style="background:#eef2ff; color:#4338ca;"><%= q.category || '-' %></span></td>
+        <td>
+          <% if (q.users) { %>
+            <a href="/admin/users/<%= q.user_id %>" style="color:#a855f7;"><%= q.users.name || q.users.email || q.user_id.substring(0,8) %></a>
+          <% } else { %>
+            <a href="/admin/users/<%= q.user_id %>" style="color:#a855f7;"><%= q.user_id.substring(0,8) %>...</a>
+          <% } %>
+        </td>
+        <td style="font-size:12px;">
+          1. <%= q.answer_1 ? q.answer_1.substring(0,20) : '-' %><br>
+          2. <%= q.answer_2 ? q.answer_2.substring(0,20) : '-' %><br>
+          3. <%= q.answer_3 ? q.answer_3.substring(0,20) : '-' %><br>
+          4. <%= q.answer_4 ? q.answer_4.substring(0,20) : '-' %>
+        </td>
+        <td style="text-align:center; font-size:12px;">
+          <%= q.stats_correct || 0 %> / <%= q.stats_wrong || 0 %><br>
+          <span style="color:#22c55e;"><%= q.stats_green_earned || 0 %> green</span>
+        </td>
+        <td style="font-size:12px;"><%= new Date(q.created_at).toLocaleDateString() %></td>
+        <td><a href="/admin/questions/<%= q.id %>" class="btn btn-sm btn-primary">View</a></td>
+      </tr>
+      <% }); %>
+      <% if (questions.length === 0) { %>
+      <tr><td colspan="7" style="text-align:center; color:#999; padding:20px;">No questions found</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<% if (totalPages > 1) { %>
+<div class="pagination">
+  <% for (var i = 1; i <= Math.min(totalPages, 20); i++) { %>
+  <a href="/admin/questions?page=<%= i %>&search=<%= search %>&category=<%= category %>&userId=<%= userId %>" class="<%= i === page ? 'active' : '' %>"><%= i %></a>
+  <% } %>
+  <% if (totalPages > 20) { %>
+  <span>... (<%= totalPages %> pages)</span>
+  <% } %>
+</div>
+<% } %>
+<%- include('_footer') %>
