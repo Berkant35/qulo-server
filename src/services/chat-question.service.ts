@@ -2,8 +2,24 @@ import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
 import { assertUuid } from "../utils/validation.js";
 import { diamondService } from "./diamond.service.js";
+import { exchangeService } from "./exchange.service.js";
 import { matchingService } from "./matching.service.js";
 import { NotificationService } from "./notification.service.js";
+import { calculatePowerCost, calculateGreenReward } from "../utils/math.js";
+import {
+  CHAT_QUESTION_LIMITS,
+  CHAT_QUESTION_POWERS_2,
+  CHAT_QUESTION_POWERS_4,
+  type PowerName,
+} from "../types/index.js";
+import type {
+  CreateChatQuestionInput,
+  AnswerChatQuestionInput,
+} from "../validators/chat-question.validator.js";
+
+/* ------------------------------------------------------------------ */
+/*  Types                                                              */
+/* ------------------------------------------------------------------ */
 
 interface Match {
   id: string;
@@ -12,12 +28,14 @@ interface Match {
   is_active: boolean;
 }
 
-const DAILY_QUESTION_LIMIT = 2;
-const DAILY_UNMATCH_RISK_LIMIT = 1;
-const NORMAL_QUESTION_COST = 5;
-const UNMATCH_RISK_COST = 15;
+type UserTier = "free" | "plus" | "premium";
+
+/* ------------------------------------------------------------------ */
+/*  Service                                                            */
+/* ------------------------------------------------------------------ */
 
 export class ChatQuestionService {
+  /* ── Helper: verifyMatchAccess ─────────────────────────────────── */
   private async verifyMatchAccess(userId: string, matchId: string): Promise<Match> {
     assertUuid(userId, "userId");
     assertUuid(matchId, "matchId");
@@ -40,20 +58,111 @@ export class ChatQuestionService {
     return match as Match;
   }
 
+  /* ── Helper: getUserTier ───────────────────────────────────────── */
+  private async getUserTier(userId: string): Promise<UserTier> {
+    const { data: sub } = await supabase
+      .from("user_subscriptions")
+      .select("plan, status, expires_at")
+      .eq("user_id", userId)
+      .eq("status", "active")
+      .maybeSingle();
+
+    if (!sub) return "free";
+
+    // Check if subscription is still valid
+    if (sub.expires_at && new Date(sub.expires_at) < new Date()) {
+      return "free";
+    }
+
+    if (sub.plan === "premium") return "premium";
+    if (sub.plan === "plus") return "plus";
+    return "free";
+  }
+
+  /* ── Helper: fetchQuestion ─────────────────────────────────────── */
+  private async fetchQuestion(questionId: string) {
+    assertUuid(questionId, "questionId");
+
+    const { data: question, error } = await supabase
+      .from("chat_questions")
+      .select("*")
+      .eq("id", questionId)
+      .single();
+
+    if (error || !question) {
+      throw Errors.SESSION_NOT_FOUND();
+    }
+
+    return question;
+  }
+
+  /* ── Helper: sanitizeQuestion ──────────────────────────────────── */
+  private sanitizeQuestion(question: Record<string, any>, userId: string) {
+    const isAnswerer = question.sender_id !== userId;
+    const isNotAnswered = question.answered_option == null;
+    const isCorrect = question.is_correct === true;
+
+    // Clone to avoid mutating the original
+    const result = { ...question };
+
+    // Hide correct_option from answerer if not yet answered
+    if (isAnswerer && isNotAnswered) {
+      delete result.correct_option;
+    }
+
+    // Hide reward_media_url if not answered correctly
+    if (!isCorrect) {
+      delete result.reward_media_url;
+      delete result.reward_media_type;
+    }
+
+    return result;
+  }
+
+  /* ── Helper: fetchPowerFromDB ──────────────────────────────────── */
+  private async fetchPower(powerName: string) {
+    const { data: power, error } = await supabase
+      .from("powers")
+      .select("*")
+      .eq("name", powerName)
+      .eq("is_active", true)
+      .single();
+
+    if (error || !power) {
+      throw Errors.VALIDATION_ERROR({ powerName: "Power not found or inactive" });
+    }
+
+    return power;
+  }
+
+  /* ── Helper: tryUseOrSpend ─────────────────────────────────────── */
+  private async tryUseOrSpend(
+    userId: string,
+    powerName: string,
+    purpleCost: number,
+    reason: string,
+    referenceId?: string,
+  ): Promise<void> {
+    const used = await exchangeService.tryUseInventory(userId, powerName);
+    if (!used) {
+      await diamondService.spendPurple(userId, purpleCost, reason, referenceId);
+    }
+  }
+
+  /* ================================================================ */
+  /*  createQuestion                                                   */
+  /* ================================================================ */
   async createQuestion(
     matchId: string,
     senderId: string,
-    data: {
-      question_text: string;
-      option_a: string;
-      option_b: string;
-      correct_option: "A" | "B";
-      has_unmatch_risk: boolean;
-    },
+    data: CreateChatQuestionInput,
   ) {
     const match = await this.verifyMatchAccess(senderId, matchId);
 
-    // Check daily limits — questions sent today in this match
+    // ── Subscription-aware daily limits ──
+    const tier = await this.getUserTier(senderId);
+    const limits = CHAT_QUESTION_LIMITS[tier];
+
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
 
@@ -70,32 +179,48 @@ export class ChatQuestionService {
     }
 
     const questionsToday = todayQuestions?.length ?? 0;
-    if (questionsToday >= DAILY_QUESTION_LIMIT) {
+    if (questionsToday >= limits.daily) {
       throw Errors.DAILY_LIMIT_EXCEEDED("chat_questions");
     }
 
     if (data.has_unmatch_risk) {
-      const unmatchRiskToday = (todayQuestions ?? []).filter((q) => q.has_unmatch_risk).length;
-      if (unmatchRiskToday >= DAILY_UNMATCH_RISK_LIMIT) {
+      const unmatchRiskToday = (todayQuestions ?? []).filter(
+        (q: any) => q.has_unmatch_risk,
+      ).length;
+      if (unmatchRiskToday >= limits.unmatchRisk) {
         throw Errors.DAILY_LIMIT_EXCEEDED("unmatch_risk_questions");
       }
     }
 
-    // Deduct diamonds
-    const cost = data.has_unmatch_risk ? UNMATCH_RISK_COST : NORMAL_QUESTION_COST;
-    await diamondService.spendPurple(senderId, cost, "chat_question", matchId);
+    // ── Power Block handling ──
+    if (data.use_power_block) {
+      const power = await this.fetchPower("POWER_BLOCK");
+      const cost = power.purple_cost ?? power.base_cost ?? 0;
+      await this.tryUseOrSpend(senderId, "POWER_BLOCK", cost, "chat_question_power_block", matchId);
+    }
 
-    // Insert question
+    // ── NO diamond cost for question creation (FREE) ──
+
+    // ── Insert question ──
     const { data: question, error: insertErr } = await supabase
       .from("chat_questions")
       .insert({
         match_id: matchId,
         sender_id: senderId,
         question_text: data.question_text,
+        option_count: data.option_count,
         option_a: data.option_a,
         option_b: data.option_b,
+        option_c: data.option_c ?? null,
+        option_d: data.option_d ?? null,
         correct_option: data.correct_option,
+        time_limit_seconds: data.time_limit_seconds,
+        hint_text: data.hint_text ?? null,
+        reward_media_url: data.reward_media_url ?? null,
+        reward_media_type: data.reward_media_type ?? null,
         has_unmatch_risk: data.has_unmatch_risk,
+        has_chat_lock: data.has_chat_lock ?? false,
+        has_power_block: data.use_power_block ?? false,
       })
       .select("*")
       .single();
@@ -105,7 +230,7 @@ export class ChatQuestionService {
       throw Errors.SERVER_ERROR();
     }
 
-    // Insert a message into the chat timeline so the question appears in the conversation
+    // ── Insert message marker ──
     const { error: msgErr } = await supabase.from("messages").insert({
       match_id: matchId,
       sender_id: senderId,
@@ -115,10 +240,10 @@ export class ChatQuestionService {
 
     if (msgErr) {
       console.error("[chat-question] Message insert error:", msgErr);
-      // Non-fatal: question was created, but message insert failed
+      // Non-fatal
     }
 
-    // Send push to other user (fire-and-forget)
+    // ── Push notification (fire-and-forget) ──
     const otherUserId = match.user1_id === senderId ? match.user2_id : match.user1_id;
     NotificationService.sendPush(otherUserId, "new_message", {}, undefined, {
       actionUrl: `/matches/chat/${matchId}`,
@@ -127,20 +252,17 @@ export class ChatQuestionService {
     return question;
   }
 
-  async answerQuestion(questionId: string, userId: string, selectedOption: "A" | "B") {
-    assertUuid(questionId, "questionId");
-    assertUuid(userId, "userId");
-
-    // Fetch question
-    const { data: question, error: fetchErr } = await supabase
-      .from("chat_questions")
-      .select("*")
-      .eq("id", questionId)
-      .single();
-
-    if (fetchErr || !question) {
-      throw Errors.SESSION_NOT_FOUND();
-    }
+  /* ================================================================ */
+  /*  answerQuestion                                                   */
+  /* ================================================================ */
+  async answerQuestion(
+    questionId: string,
+    userId: string,
+    selectedOption: "A" | "B" | "C" | "D",
+    powerUsed?: string,
+    timeSpent?: number,
+  ) {
+    const question = await this.fetchQuestion(questionId);
 
     // Cannot answer own question
     if (question.sender_id === userId) {
@@ -155,16 +277,69 @@ export class ChatQuestionService {
     // Verify match access
     const match = await this.verifyMatchAccess(userId, question.match_id as string);
 
-    // Determine correctness
+    // ── SKIP power: auto-correct, reward sender, reveal media ──
+    if (powerUsed === "SKIP") {
+      // Check power block
+      if (question.has_power_block && !question.power_block_removed) {
+        throw Errors.VALIDATION_ERROR({ power: "Power block is active. Use POWER_UNBLOCK first." });
+      }
+
+      const power = await this.fetchPower("SKIP");
+      const cost = calculatePowerCost(power.purple_cost ?? power.base_cost ?? 0, 1);
+      await this.tryUseOrSpend(userId, "SKIP", cost, "chat_question_skip", questionId);
+
+      // Calculate green reward for sender (30%)
+      const greenReward = calculateGreenReward(cost);
+      if (greenReward > 0) {
+        try {
+          await diamondService.earnGreen(
+            question.sender_id as string,
+            greenReward,
+            "CHAT_QUESTION_SKIP_REWARD",
+            questionId,
+          );
+        } catch (err) {
+          console.error("[chat-question] Skip green reward failed:", err);
+        }
+      }
+
+      // Mark as correct (auto-fill correct answer)
+      const { data: updated, error: updateErr } = await supabase
+        .from("chat_questions")
+        .update({
+          answered_option: question.correct_option,
+          is_correct: true,
+          answered_at: new Date().toISOString(),
+          time_spent: timeSpent ?? null,
+          powers_used: [...(question.powers_used ?? []), "SKIP"],
+        })
+        .eq("id", questionId)
+        .select("*")
+        .single();
+
+      if (updateErr) {
+        console.error("[chat-question] Skip update error:", updateErr);
+        throw Errors.SERVER_ERROR();
+      }
+
+      return {
+        question: this.sanitizeQuestion(updated, userId),
+        is_correct: true,
+        unmatched: false,
+        skipped: true,
+      };
+    }
+
+    // ── Normal answer flow ──
     const isCorrect = selectedOption === question.correct_option;
 
-    // Update question
     const { data: updated, error: updateErr } = await supabase
       .from("chat_questions")
       .update({
         answered_option: selectedOption,
         is_correct: isCorrect,
         answered_at: new Date().toISOString(),
+        time_spent: timeSpent ?? null,
       })
       .eq("id", questionId)
       .select("*")
@@ -175,15 +350,15 @@ export class ChatQuestionService {
       throw Errors.SERVER_ERROR();
     }
 
-    // Reward sender with green diamonds if answer is correct (50% of cost)
+    // Reward sender with green diamonds if correct (30%)
     if (isCorrect) {
-      const cost = question.has_unmatch_risk ? UNMATCH_RISK_COST : NORMAL_QUESTION_COST;
-      const rewardAmount = Math.floor(cost * 0.5);
-      if (rewardAmount > 0) {
+      // Use a base reward of 10 for free questions
+      const greenReward = calculateGreenReward(10);
+      if (greenReward > 0) {
         try {
           await diamondService.earnGreen(
             question.sender_id as string,
-            rewardAmount,
+            greenReward,
             "CHAT_QUESTION_REWARD",
             questionId,
           );
@@ -198,7 +373,6 @@ export class ChatQuestionService {
     // If wrong + unmatch risk → unmatch
     if (!isCorrect && question.has_unmatch_risk) {
       try {
-        // Use sender to unmatch (the one who created the risky question)
         await matchingService.unmatch(question.sender_id as string, match.id);
         unmatched = true;
       } catch (err) {
@@ -206,7 +380,7 @@ export class ChatQuestionService {
       }
     }
 
-    // Send push notification to question sender about the answer (fire-and-forget)
+    // Push notification (fire-and-forget)
     NotificationService.sendPush(
       question.sender_id as string,
       "chat_question_answered",
@@ -216,35 +390,196 @@ export class ChatQuestionService {
     ).catch(() => {});
 
     return {
-      question: updated,
+      question: this.sanitizeQuestion(updated, userId),
       is_correct: isCorrect,
       unmatched,
     };
   }
+
+  /* ================================================================ */
+  /*  usePower                                                         */
+  /* ================================================================ */
+  async usePower(questionId: string, userId: string, powerName: PowerName) {
+    const question = await this.fetchQuestion(questionId);
+
+    // Must be the answerer (not sender)
+    if (question.sender_id === userId) {
+      throw Errors.VALIDATION_ERROR({ sender: "Only the answerer can use powers" });
+    }
+
+    // Already answered
+    if (question.answered_option != null) {
+      throw Errors.ALREADY_ANSWERED();
+    }
+
+    // Verify match access
+    await this.verifyMatchAccess(userId, question.match_id as string);
+
+    // Validate power is allowed for this option_count
+    const optionCount = question.option_count ?? 2;
+    const allowedPowers = optionCount === 4 ? CHAT_QUESTION_POWERS_4 : CHAT_QUESTION_POWERS_2;
+
+    // POWER_UNBLOCK is always allowed if block is active
+    if (powerName !== "POWER_UNBLOCK" && !allowedPowers.includes(powerName)) {
+      throw Errors.VALIDATION_ERROR({
+        power: `${powerName} is not available for ${optionCount}-option questions`,
+      });
+    }
+
+    const hasPowerBlock = question.has_power_block && !question.power_block_removed;
+
+    // ── POWER_UNBLOCK handling ──
+    if (powerName === "POWER_UNBLOCK") {
+      if (!hasPowerBlock) {
+        throw Errors.VALIDATION_ERROR({ power: "No power block to remove" });
+      }
+
+      const power = await this.fetchPower("POWER_UNBLOCK");
+      const cost = power.purple_cost ?? power.base_cost ?? 0;
+      await this.tryUseOrSpend(userId, "POWER_UNBLOCK", cost, "chat_question_power_unblock", questionId);
+
+      // Green reward for question sender (from special_green_reward)
+      const specialReward = power.special_green_reward ?? 0;
+      if (specialReward > 0) {
+        try {
+          await diamondService.earnGreen(
+            question.sender_id as string,
+            specialReward,
+            "CHAT_QUESTION_UNBLOCK_REWARD",
+            questionId,
+          );
+        } catch (err) {
+          console.error("[chat-question] Unblock green reward failed:", err);
+        }
+      }
+
+      // Update power_block_removed
+      const { error: updateErr } = await supabase
+        .from("chat_questions")
+        .update({
+          power_block_removed: true,
+          powers_used: [...(question.powers_used ?? []), "POWER_UNBLOCK"],
+        })
+        .eq("id", questionId);
+
+      if (updateErr) {
+        console.error("[chat-question] Power unblock update error:", updateErr);
+        throw Errors.SERVER_ERROR();
+      }
+
+      return { unblocked: true };
+    }
+
+    // ── Block check for normal powers ──
+    if (hasPowerBlock) {
+      throw Errors.VALIDATION_ERROR({
+        power: "Power block is active. Use POWER_UNBLOCK first.",
+      });
+    }
+
+    // ── Normal power handling (ORACLE, HALF, HINT, TIME_EXTEND) ──
+    const power = await this.fetchPower(powerName);
+    const cost = calculatePowerCost(power.purple_cost ?? power.base_cost ?? 0, 1);
+    await this.tryUseOrSpend(userId, powerName, cost, `chat_question_power_${powerName.toLowerCase()}`, questionId);
+
+    // Calculate green reward for sender
+    const greenReward = calculateGreenReward(cost);
+    if (greenReward > 0) {
+      try {
+        await diamondService.earnGreen(
+          question.sender_id as string,
+          greenReward,
+          "CHAT_QUESTION_POWER_REWARD",
+          questionId,
+        );
+      } catch (err) {
+        console.error("[chat-question] Power green reward failed:", err);
+      }
+    }
+
+    // ── Apply power effect ──
+    let powerResult: Record<string, any> = {};
+
+    switch (powerName) {
+      case "ORACLE": {
+        // 70% chance to suggest the correct option
+        const accuracyRate = power.accuracy_rate ?? 0.7;
+        const isAccurate = Math.random() < accuracyRate;
+        const correctOption = question.correct_option as string;
+        const allOptions = optionCount === 4 ? ["A", "B", "C", "D"] : ["A", "B"];
+        const wrongOptions = allOptions.filter((o) => o !== correctOption);
+
+        const suggestedOption = isAccurate
+          ? correctOption
+          : wrongOptions[Math.floor(Math.random() * wrongOptions.length)];
+
+        powerResult = { suggested_option: suggestedOption };
+        break;
+      }
+
+      case "HALF": {
+        // Remove 2 wrong options (only for 4-option questions)
+        const correct = question.correct_option as string;
+        const wrong = ["A", "B", "C", "D"].filter((o) => o !== correct);
+        // Shuffle wrong options and pick 2 to eliminate
+        const shuffled = wrong.sort(() => Math.random() - 0.5);
+        const eliminated = shuffled.slice(0, 2);
+        powerResult = { eliminated_options: eliminated };
+        break;
+      }
+
+      case "HINT": {
+        powerResult = { hint_text: question.hint_text ?? null };
+        break;
+      }
+
+      case "TIME_EXTEND": {
+        powerResult = { extra_seconds: 15 };
+        break;
+      }
+    }
+
+    // Update powers_used array
+    const { error: updateErr } = await supabase
+      .from("chat_questions")
+      .update({
+        powers_used: [...(question.powers_used ?? []), powerName],
+      })
+      .eq("id", questionId);
+
+    if (updateErr) {
+      console.error("[chat-question] Power used update error:", updateErr);
+      throw Errors.SERVER_ERROR();
+    }
+
+    return { power_name: powerName, ...powerResult };
+  }
+
+  /* ================================================================ */
+  /*  handleTimeout                                                    */
+  /* ================================================================ */
+  async handleTimeout(questionId: string, userId: string) {
+    const question = await this.fetchQuestion(questionId);
+
+    return {
+      can_rescue: true,
+      has_power_block: question.has_power_block && !question.power_block_removed,
+    };
+  }
+
+  /* ================================================================ */
+  /*  getQuestion                                                      */
+  /* ================================================================ */
   async getQuestion(questionId: string, userId: string) {
     assertUuid(questionId, "questionId");
     assertUuid(userId, "userId");
 
-    const { data: question, error } = await supabase
-      .from("chat_questions")
-      .select("*")
-      .eq("id", questionId)
-      .single();
-
-    if (error || !question) {
-      throw Errors.SESSION_NOT_FOUND();
-    }
+    const question = await this.fetchQuestion(questionId);
 
     // Verify user is part of this match
     await this.verifyMatchAccess(userId, question.match_id as string);
 
-    // If the user is the answerer (not sender) and hasn't answered yet, hide the correct option
-    if (question.sender_id !== userId && question.answered_option == null) {
-      const { correct_option, ...safeQuestion } = question;
-      return safeQuestion;
-    }
-
-    return question;
+    return this.sanitizeQuestion(question, userId);
   }
 }
 
