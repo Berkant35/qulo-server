@@ -9,7 +9,9 @@ export type PowerName =
   | "SKIP"
   | "SKIP_ALL"
   | "TIME_EXTEND"
-  | "HINT";
+  | "HINT"
+  | "POWER_BLOCK"
+  | "POWER_UNBLOCK";
 
 export const QUESTION_COUNT_MULTIPLIERS: Record<number, number> = {
   2: 0.5,
@@ -22,6 +24,17 @@ export const QUESTION_COUNT_MULTIPLIERS: Record<number, number> = {
 export const GREEN_DIAMOND_REWARD_RATIO = 0.3;
 
 export const GREEN_TO_PURPLE_RATIO = 3;
+
+// Chat question power sets (which powers are available per option count)
+export const CHAT_QUESTION_POWERS_2: PowerName[] = ["ORACLE", "SKIP"];
+export const CHAT_QUESTION_POWERS_4: PowerName[] = ["ORACLE", "SKIP", "HALF", "HINT", "TIME_EXTEND"];
+
+// Chat question daily limits per subscription tier
+export const CHAT_QUESTION_LIMITS = {
+  free: { daily: 2, unmatchRisk: 1 },
+  plus: { daily: 5, unmatchRisk: 2 },
+  premium: { daily: Infinity, unmatchRisk: Infinity },
+} as const;
 
 // Subscription Plans
 export type SubscriptionPlan = 'plus' | 'premium';

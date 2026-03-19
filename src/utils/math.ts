@@ -12,7 +12,7 @@ export function calculatePowerCost(baseCost: number, questionCount: number): num
  * Calculate green diamond reward from purple diamonds spent.
  */
 export function calculateGreenReward(purpleSpent: number): number {
-  return Math.ceil(purpleSpent * GREEN_DIAMOND_REWARD_RATIO);
+  return Math.floor(purpleSpent * GREEN_DIAMOND_REWARD_RATIO);
 }
 
 /**
