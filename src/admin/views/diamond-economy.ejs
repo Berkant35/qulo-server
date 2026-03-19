@@ -1,0 +1,158 @@
+<%- include('_header') %>
+<h2 style="margin-bottom: 20px;">💎 Diamond Economy</h2>
+
+<!-- Supply Overview -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="value" style="color: #22c55e;"><%= stats.totalGreenSupply.toLocaleString() %></div>
+    <div class="label">Total Green Supply</div>
+  </div>
+  <div class="stat-card">
+    <div class="value" style="color: #a855f7;"><%= stats.totalPurpleSupply.toLocaleString() %></div>
+    <div class="label">Total Purple Supply</div>
+  </div>
+  <div class="stat-card">
+    <div class="value"><%= stats.txToday.toLocaleString() %></div>
+    <div class="label">Transactions Today</div>
+  </div>
+  <div class="stat-card">
+    <div class="value"><%= stats.tx7d.toLocaleString() %></div>
+    <div class="label">Transactions (7d)</div>
+  </div>
+  <div class="stat-card">
+    <div class="value"><%= stats.tx30d.toLocaleString() %></div>
+    <div class="label">Transactions (30d)</div>
+  </div>
+  <div class="stat-card">
+    <div class="value"><%= stats.txTotal.toLocaleString() %></div>
+    <div class="label">Total Transactions</div>
+  </div>
+</div>
+
+<!-- Green Diamond Flows -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+  <div class="card">
+    <h3 style="margin-bottom: 12px; color: #22c55e;">🟢 Green Diamond Earnings (Sources)</h3>
+    <table>
+      <thead><tr><th>Reason</th><th style="text-align:right;">Amount</th></tr></thead>
+      <tbody>
+        <% Object.entries(stats.greenEarnByReason).sort((a,b) => b[1] - a[1]).forEach(function([reason, amount]) { %>
+        <tr><td><%= reason %></td><td style="text-align:right; color:#22c55e; font-weight:600;"><%= Number(amount).toLocaleString() %></td></tr>
+        <% }); %>
+        <% if (Object.keys(stats.greenEarnByReason).length === 0) { %>
+        <tr><td colspan="2" style="color:#999; text-align:center;">No data</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h3 style="margin-bottom: 12px; color: #22c55e;">🟢 Green Diamond Spending (Sinks)</h3>
+    <table>
+      <thead><tr><th>Reason</th><th style="text-align:right;">Amount</th></tr></thead>
+      <tbody>
+        <% Object.entries(stats.greenByReason).sort((a,b) => b[1] - a[1]).forEach(function([reason, amount]) { %>
+        <tr><td><%= reason %></td><td style="text-align:right; color:#ef4444; font-weight:600;"><%= Number(amount).toLocaleString() %></td></tr>
+        <% }); %>
+        <% if (Object.keys(stats.greenByReason).length === 0) { %>
+        <tr><td colspan="2" style="color:#999; text-align:center;">No data</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Purple Diamond Flows -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+  <div class="card">
+    <h3 style="margin-bottom: 12px; color: #a855f7;">🟣 Purple Diamond Earnings (Sources)</h3>
+    <table>
+      <thead><tr><th>Reason</th><th style="text-align:right;">Amount</th></tr></thead>
+      <tbody>
+        <% Object.entries(stats.purpleEarnByReason).sort((a,b) => b[1] - a[1]).forEach(function([reason, amount]) { %>
+        <tr><td><%= reason %></td><td style="text-align:right; color:#a855f7; font-weight:600;"><%= Number(amount).toLocaleString() %></td></tr>
+        <% }); %>
+        <% if (Object.keys(stats.purpleEarnByReason).length === 0) { %>
+        <tr><td colspan="2" style="color:#999; text-align:center;">No data</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h3 style="margin-bottom: 12px; color: #a855f7;">🟣 Purple Diamond Spending (Sinks)</h3>
+    <table>
+      <thead><tr><th>Reason</th><th style="text-align:right;">Amount</th></tr></thead>
+      <tbody>
+        <% Object.entries(stats.purpleByReason).sort((a,b) => b[1] - a[1]).forEach(function([reason, amount]) { %>
+        <tr><td><%= reason %></td><td style="text-align:right; color:#ef4444; font-weight:600;"><%= Number(amount).toLocaleString() %></td></tr>
+        <% }); %>
+        <% if (Object.keys(stats.purpleByReason).length === 0) { %>
+        <tr><td colspan="2" style="color:#999; text-align:center;">No data</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Power Purchase Stats -->
+<div class="card" style="margin-bottom: 24px;">
+  <h3 style="margin-bottom: 12px;">⚡ Power Purchase Stats</h3>
+  <table>
+    <thead><tr><th>Power</th><th style="text-align:right;">Total Bought</th><th style="text-align:right;">Green Spent</th><th style="text-align:right;">Purple Spent</th></tr></thead>
+    <tbody>
+      <% Object.entries(stats.powerStats).sort((a,b) => b[1].totalBought - a[1].totalBought).forEach(function([name, data]) { %>
+      <tr>
+        <td><strong><%= name %></strong></td>
+        <td style="text-align:right;"><%= data.totalBought.toLocaleString() %></td>
+        <td style="text-align:right; color:#22c55e;"><%= data.greenSpent.toLocaleString() %></td>
+        <td style="text-align:right; color:#a855f7;"><%= data.purpleSpent.toLocaleString() %></td>
+      </tr>
+      <% }); %>
+      <% if (Object.keys(stats.powerStats).length === 0) { %>
+      <tr><td colspan="4" style="color:#999; text-align:center;">No purchases yet</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<!-- Top Spenders -->
+<div class="card" style="margin-bottom: 24px;">
+  <h3 style="margin-bottom: 12px;">🏆 Top 10 Spenders</h3>
+  <table>
+    <thead><tr><th>#</th><th>User</th><th style="text-align:right;">Total Spent</th></tr></thead>
+    <tbody>
+      <% stats.topSpenders.forEach(function(s, i) { %>
+      <tr>
+        <td><%= i + 1 %></td>
+        <td><a href="/admin/users/<%= s.userId %>" style="color:#a855f7;"><%= s.name || s.userId.substring(0,8) %></a></td>
+        <td style="text-align:right; font-weight:600;"><%= s.totalSpent.toLocaleString() %></td>
+      </tr>
+      <% }); %>
+      <% if (stats.topSpenders.length === 0) { %>
+      <tr><td colspan="3" style="color:#999; text-align:center;">No data</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<!-- Recent IAP Transactions -->
+<div class="card">
+  <h3 style="margin-bottom: 12px;">💰 Recent IAP Transactions (Last 50)</h3>
+  <table>
+    <thead><tr><th>Product</th><th>Amount</th><th>Currency</th><th>Date</th></tr></thead>
+    <tbody>
+      <% stats.iapTransactions.forEach(function(t) { %>
+      <tr>
+        <td><%= t.product_id %></td>
+        <td style="font-weight:600;"><%= t.amount %></td>
+        <td><%= t.currency %></td>
+        <td><%= new Date(t.created_at).toLocaleString() %></td>
+      </tr>
+      <% }); %>
+      <% if (stats.iapTransactions.length === 0) { %>
+      <tr><td colspan="4" style="color:#999; text-align:center;">No IAP transactions</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('_footer') %>

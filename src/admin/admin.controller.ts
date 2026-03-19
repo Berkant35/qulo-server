@@ -269,6 +269,11 @@ class AdminController {
     res.redirect("/admin/app-config?success=1");
   }
 
+  async diamondEconomy(req: Request, res: Response) {
+    const stats = await adminService.getDiamondEconomyStats();
+    res.render("diamond-economy", { stats, session: req.session });
+  }
+
   async deleteAdminAction(req: Request, res: Response) {
     if ((req.params.id as string) === req.session.adminId) {
       return res.redirect("/admin/admins");

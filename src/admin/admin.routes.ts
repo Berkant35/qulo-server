@@ -37,6 +37,8 @@ router.get("/matches", (req, res) => adminController.matches(req, res));
 
 router.get("/transactions", (req, res) => adminController.transactions(req, res));
 
+router.get("/diamond-economy", (req, res) => adminController.diamondEconomy(req, res));
+
 router.get("/quiz-stats", (req, res) => adminController.quizStats(req, res));
 
 router.get("/app-config", (req, res) => adminController.appConfig(req, res));

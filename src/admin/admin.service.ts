@@ -340,6 +340,155 @@ class AdminService {
   async deleteAdmin(adminId: string) {
     await supabase.from("admin_users").delete().eq("id", adminId);
   }
+
+  async getDiamondEconomyStats() {
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+    // Total supply (sum of all users' diamonds)
+    const { data: supplyData } = await supabase
+      .from("users")
+      .select("green_diamonds, purple_diamonds")
+      .eq("is_deleted", false);
+
+    const totalGreenSupply = (supplyData ?? []).reduce((s: number, u: any) => s + (u.green_diamonds || 0), 0);
+    const totalPurpleSupply = (supplyData ?? []).reduce((s: number, u: any) => s + (u.purple_diamonds || 0), 0);
+
+    // Spending by reason (all time)
+    const { data: greenSpending } = await supabase
+      .from("diamond_transactions")
+      .select("reason, amount")
+      .eq("type", "GREEN")
+      .lt("amount", 0);
+
+    const { data: purpleSpending } = await supabase
+      .from("diamond_transactions")
+      .select("reason, amount")
+      .eq("type", "PURPLE")
+      .lt("amount", 0);
+
+    const greenByReason: Record<string, number> = {};
+    (greenSpending ?? []).forEach((t: any) => {
+      const r = t.reason || 'unknown';
+      greenByReason[r] = (greenByReason[r] || 0) + Math.abs(t.amount);
+    });
+
+    const purpleByReason: Record<string, number> = {};
+    (purpleSpending ?? []).forEach((t: any) => {
+      const r = t.reason || 'unknown';
+      purpleByReason[r] = (purpleByReason[r] || 0) + Math.abs(t.amount);
+    });
+
+    // Earnings by reason (all time)
+    const { data: greenEarnings } = await supabase
+      .from("diamond_transactions")
+      .select("reason, amount")
+      .eq("type", "GREEN")
+      .gt("amount", 0);
+
+    const { data: purpleEarnings } = await supabase
+      .from("diamond_transactions")
+      .select("reason, amount")
+      .eq("type", "PURPLE")
+      .gt("amount", 0);
+
+    const greenEarnByReason: Record<string, number> = {};
+    (greenEarnings ?? []).forEach((t: any) => {
+      const r = t.reason || 'unknown';
+      greenEarnByReason[r] = (greenEarnByReason[r] || 0) + t.amount;
+    });
+
+    const purpleEarnByReason: Record<string, number> = {};
+    (purpleEarnings ?? []).forEach((t: any) => {
+      const r = t.reason || 'unknown';
+      purpleEarnByReason[r] = (purpleEarnByReason[r] || 0) + t.amount;
+    });
+
+    // Transaction volumes (today, 7d, 30d)
+    const [
+      { count: txToday },
+      { count: tx7d },
+      { count: tx30d },
+      { count: txTotal },
+    ] = await Promise.all([
+      supabase.from("diamond_transactions").select("*", { count: "exact", head: true }).gte("created_at", todayStart),
+      supabase.from("diamond_transactions").select("*", { count: "exact", head: true }).gte("created_at", sevenDaysAgo),
+      supabase.from("diamond_transactions").select("*", { count: "exact", head: true }).gte("created_at", thirtyDaysAgo),
+      supabase.from("diamond_transactions").select("*", { count: "exact", head: true }),
+    ]);
+
+    // Power purchase stats
+    const { data: powerPurchases } = await supabase
+      .from("power_purchase_transactions")
+      .select("power_name, quantity, diamond_type, total_cost");
+
+    const powerStats: Record<string, { totalBought: number, greenSpent: number, purpleSpent: number }> = {};
+    (powerPurchases ?? []).forEach((p: any) => {
+      if (!powerStats[p.power_name]) {
+        powerStats[p.power_name] = { totalBought: 0, greenSpent: 0, purpleSpent: 0 };
+      }
+      powerStats[p.power_name].totalBought += p.quantity;
+      if (p.diamond_type === 'GREEN') {
+        powerStats[p.power_name].greenSpent += p.total_cost;
+      } else {
+        powerStats[p.power_name].purpleSpent += p.total_cost;
+      }
+    });
+
+    // IAP revenue (purple diamond purchases via RevenueCat)
+    const { data: iapData } = await supabase
+      .from("iap_transactions")
+      .select("product_id, amount, currency, created_at")
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    // Top spenders
+    const { data: topSpenders } = await supabase
+      .from("diamond_transactions")
+      .select("user_id, amount")
+      .lt("amount", 0);
+
+    const spenderMap: Record<string, number> = {};
+    (topSpenders ?? []).forEach((t: any) => {
+      spenderMap[t.user_id] = (spenderMap[t.user_id] || 0) + Math.abs(t.amount);
+    });
+    const topSpenderList: any[] = Object.entries(spenderMap)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([userId, totalSpent]) => ({ userId, totalSpent }));
+
+    // Get names for top spenders
+    if (topSpenderList.length > 0) {
+      const ids = topSpenderList.map(s => s.userId);
+      const { data: users } = await supabase
+        .from("users")
+        .select("id, name, surname, email")
+        .in("id", ids);
+      const userMap = new Map((users ?? []).map((u: any) => [u.id, u]));
+      topSpenderList.forEach((s: any) => {
+        const u = userMap.get(s.userId);
+        s.name = u ? `${u.name || ''} ${u.surname || ''}`.trim() || u.email : s.userId.substring(0, 8);
+      });
+    }
+
+    return {
+      totalGreenSupply,
+      totalPurpleSupply,
+      greenByReason,
+      purpleByReason,
+      greenEarnByReason,
+      purpleEarnByReason,
+      txToday: txToday ?? 0,
+      tx7d: tx7d ?? 0,
+      tx30d: tx30d ?? 0,
+      txTotal: txTotal ?? 0,
+      powerStats,
+      iapTransactions: iapData ?? [],
+      topSpenders: topSpenderList,
+    };
+  }
 }
 
 export const adminService = new AdminService();
