@@ -6,6 +6,7 @@ import { sendVerificationEmail, sendPasswordResetEmail } from "../utils/email.js
 import type { RegisterInput, LoginInput } from "../validators/auth.validator.js";
 import { userLanguageService } from "./user-language.service.js";
 import { referralService } from "./referral.service.js";
+import { assertUuid } from "../utils/validation.js";
 
 export class AuthService {
   async register(data: RegisterInput) {
@@ -263,6 +264,7 @@ export class AuthService {
    * Hard-delete a soft-deleted user and all related data so the email can be re-registered.
    */
   private async hardDeleteUser(userId: string) {
+    assertUuid(userId, 'userId');
     // Delete from child tables first (order matters for FK constraints)
     // Delete user's quiz sessions first, then answers cascade via FK
     // Delete deepest children first to avoid FK violations

@@ -10,10 +10,11 @@ export const revenueCatWebhookHandler = async (
 ) => {
   try {
     const authHeader = req.headers.authorization;
-    if (
-      env.REVENUECAT_WEBHOOK_SECRET &&
-      authHeader !== `Bearer ${env.REVENUECAT_WEBHOOK_SECRET}`
-    ) {
+    if (!env.REVENUECAT_WEBHOOK_SECRET) {
+      console.error('[webhook] REVENUECAT_WEBHOOK_SECRET is not set — rejecting request');
+      throw Errors.INVALID_WEBHOOK_AUTH();
+    }
+    if (authHeader !== `Bearer ${env.REVENUECAT_WEBHOOK_SECRET}`) {
       throw Errors.INVALID_WEBHOOK_AUTH();
     }
 
