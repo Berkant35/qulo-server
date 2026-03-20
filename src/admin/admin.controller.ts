@@ -350,7 +350,7 @@ class AdminController {
         return res.redirect("/admin/economy-config?error=" + encodeURIComponent("Change reason is required"));
       }
       const parsed = economyConfigSchema.parse(configJson);
-      await economyConfigService.createVersion(parsed, req.session.adminEmail || "admin", reason);
+      await economyConfigService.createVersion(parsed, req.session.adminId!, reason);
       res.redirect("/admin/economy-config?success=1");
     } catch (err: any) {
       const message = err instanceof SyntaxError ? "Invalid JSON format" : err.message;
