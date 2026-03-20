@@ -224,7 +224,11 @@ export class UserService {
 
     if (updateError) throw Errors.SERVER_ERROR();
 
-    await this.recalculateProfileCompletion(userId);
+    try {
+      await this.recalculateProfileCompletion(userId);
+    } catch (err) {
+      console.error("[uploadPhoto] recalculateProfileCompletion error:", err);
+    }
 
     return { photos, url: photoUrl };
   }
@@ -264,7 +268,11 @@ export class UserService {
 
     if (updateError) throw Errors.SERVER_ERROR();
 
-    await this.recalculateProfileCompletion(userId);
+    try {
+      await this.recalculateProfileCompletion(userId);
+    } catch (err) {
+      console.error("[deletePhoto] recalculateProfileCompletion error:", err);
+    }
 
     return { photos };
   }

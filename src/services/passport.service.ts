@@ -10,25 +10,13 @@ export class PassportService {
       throw Errors.PASSPORT_REQUIRES_PREMIUM();
     }
 
-    // 2. Zaten aktif mi kontrol
-    const { data: user } = await supabase
-      .from("users")
-      .select("passport_city")
-      .eq("id", userId)
-      .single();
-
-    if (user?.passport_city) {
-      throw Errors.PASSPORT_ALREADY_ACTIVE();
-    }
-
-    // 3. Passport alanlarını güncelle
+    // 2. Passport alanlarını güncelle (upsert — zaten aktifse yeni şehre güncelle)
     const { error } = await supabase
       .from("users")
       .update({
         passport_city: city,
         passport_lat: lat,
         passport_lng: lng,
-        updated_at: new Date().toISOString(),
       })
       .eq("id", userId);
 
@@ -44,7 +32,6 @@ export class PassportService {
         passport_city: null,
         passport_lat: null,
         passport_lng: null,
-        updated_at: new Date().toISOString(),
       })
       .eq("id", userId);
 

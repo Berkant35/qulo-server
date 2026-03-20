@@ -38,7 +38,7 @@ export const swipeLimiter = rateLimit({
 
 export const quizLimiter = rateLimit({
   windowMs: 60 * 1000,
-  limit: 20,
+  limit: 60,
   standardHeaders: true,
   legacyHeaders: false,
   message: rateLimitResponse,
