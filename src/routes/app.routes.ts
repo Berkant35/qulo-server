@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { generalLimiter } from "../middleware/rateLimit.js";
-import { getAppConfigHandler } from "../controllers/app.controller.js";
+import { getAppConfigHandler, getEconomyConfigHandler } from "../controllers/app.controller.js";
 
 const router = Router();
 
@@ -8,5 +8,6 @@ const router = Router();
 router.use(generalLimiter);
 
 router.get("/config", getAppConfigHandler);
+router.get("/economy", getEconomyConfigHandler);
 
 export default router;
