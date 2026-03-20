@@ -3,7 +3,9 @@ import { SUPPORTED_LOCALES } from '../constants/locales.js';
 
 export const QUESTION_CATEGORIES = [
   'personality', 'music', 'film', 'sports', 'travel',
-  'food', 'technology', 'general', 'other'
+  'food', 'technology', 'general', 'other',
+  'fun', 'entertainment', 'lifestyle', 'humor',
+  'hobby', 'science', 'history', 'art', 'nature',
 ] as const;
 
 export const TIME_PRESETS = [15, 30, 60, 90] as const;
