@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { adminController } from "./admin.controller.js";
+import { questionBankController } from "./question-bank.controller.js";
 import { adminAuth, superAdminOnly, ipWhitelist, csrfGenerate, csrfValidate } from "./admin.middleware.js";
 import rateLimit from "express-rate-limit";
 
@@ -44,6 +45,14 @@ router.get("/quiz-stats", (req, res) => adminController.quizStats(req, res));
 router.get("/questions", (req, res) => adminController.questions(req, res));
 router.get("/questions/:id", (req, res) => adminController.questionDetail(req, res));
 router.post("/questions/:id/action", csrfValidate, (req, res) => adminController.questionAction(req, res));
+
+// Question Bank (AI suggestions)
+router.get("/question-bank", (req, res) => questionBankController.page(req, res));
+router.get("/question-bank/api", (req, res) => questionBankController.list(req, res));
+router.post("/question-bank/api", csrfValidate, (req, res) => questionBankController.create(req, res));
+router.post("/question-bank/api/bulk", csrfValidate, (req, res) => questionBankController.bulkCreate(req, res));
+router.put("/question-bank/api/:id", csrfValidate, (req, res) => questionBankController.update(req, res));
+router.delete("/question-bank/api/:id", csrfValidate, (req, res) => questionBankController.remove(req, res));
 
 router.get("/app-config", (req, res) => adminController.appConfig(req, res));
 router.post("/app-config", csrfValidate, (req, res) => adminController.updateAppConfig(req, res));

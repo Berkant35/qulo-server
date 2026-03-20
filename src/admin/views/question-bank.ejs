@@ -1,0 +1,420 @@
+<%- include('_header') %>
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+  <h2>Question Bank (AI Suggestions)</h2>
+  <button class="btn btn-primary" onclick="openAddModal()">+ Add Question</button>
+</div>
+
+<!-- Filters -->
+<div class="filters">
+  <select id="filterLocale">
+    <option value="">All Locales</option>
+    <option value="tr">TR</option>
+    <option value="en">EN</option>
+    <option value="de">DE</option>
+    <option value="fr">FR</option>
+    <option value="es">ES</option>
+    <option value="ar">AR</option>
+    <option value="ru">RU</option>
+    <option value="pt">PT</option>
+    <option value="it">IT</option>
+    <option value="ja">JA</option>
+    <option value="ko">KO</option>
+    <option value="zh">ZH</option>
+    <option value="nl">NL</option>
+    <option value="pl">PL</option>
+    <option value="sv">SV</option>
+    <option value="hi">HI</option>
+  </select>
+  <select id="filterCategory">
+    <option value="">All Categories</option>
+    <option value="personality">Personality</option>
+    <option value="music">Music</option>
+    <option value="film">Film</option>
+    <option value="sports">Sports</option>
+    <option value="travel">Travel</option>
+    <option value="food">Food</option>
+    <option value="technology">Technology</option>
+    <option value="general">General</option>
+    <option value="other">Other</option>
+    <option value="fun">Fun</option>
+    <option value="entertainment">Entertainment</option>
+    <option value="lifestyle">Lifestyle</option>
+    <option value="humor">Humor</option>
+    <option value="hobby">Hobby</option>
+    <option value="science">Science</option>
+    <option value="history">History</option>
+    <option value="art">Art</option>
+    <option value="nature">Nature</option>
+  </select>
+  <select id="filterTone">
+    <option value="">All Tones</option>
+    <option value="flirty">Flirty</option>
+    <option value="fun">Fun</option>
+    <option value="deep">Deep</option>
+  </select>
+  <select id="filterActive">
+    <option value="">All Status</option>
+    <option value="true">Active</option>
+    <option value="false">Inactive</option>
+  </select>
+  <select id="sortField">
+    <option value="created_at">Created</option>
+    <option value="shown_count">Shown</option>
+    <option value="selected_count">Selected</option>
+    <option value="acceptance_rate">Rate%</option>
+  </select>
+  <select id="sortOrder">
+    <option value="desc">DESC</option>
+    <option value="asc">ASC</option>
+  </select>
+  <button class="btn btn-primary" onclick="loadData(1)">Filter</button>
+</div>
+
+<!-- Stats -->
+<div id="statsBar" style="margin-bottom:12px; font-size:13px; color:#666;"></div>
+
+<!-- Table -->
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>Question</th>
+        <th>Locale</th>
+        <th>Category</th>
+        <th>Tone</th>
+        <th>Target</th>
+        <th style="text-align:center;">Shown</th>
+        <th style="text-align:center;">Selected</th>
+        <th style="text-align:center;">Rate%</th>
+        <th style="text-align:center;">Active</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+      <tr><td colspan="10" style="text-align:center; color:#999; padding:20px;">Loading...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Pagination -->
+<div class="pagination" id="pagination"></div>
+
+<!-- Add/Edit Modal -->
+<div id="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; justify-content:center; align-items:center;">
+  <div style="background:#fff; border-radius:8px; padding:24px; width:560px; max-width:95vw; max-height:90vh; overflow-y:auto;">
+    <h3 id="modalTitle" style="margin-bottom:16px;">Add Question</h3>
+    <input type="hidden" id="editId">
+    <div style="display:grid; gap:12px;">
+      <div>
+        <label style="font-size:13px; font-weight:600;">Question Text *</label>
+        <textarea id="fQuestionText" rows="3" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; font-size:14px; resize:vertical;"></textarea>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+        <div>
+          <label style="font-size:13px; font-weight:600;">Locale *</label>
+          <select id="fLocale" style="width:100%;">
+            <option value="tr">TR</option>
+            <option value="en">EN</option>
+            <option value="de">DE</option>
+            <option value="fr">FR</option>
+            <option value="es">ES</option>
+            <option value="ar">AR</option>
+            <option value="ru">RU</option>
+            <option value="pt">PT</option>
+            <option value="it">IT</option>
+            <option value="ja">JA</option>
+            <option value="ko">KO</option>
+            <option value="zh">ZH</option>
+            <option value="nl">NL</option>
+            <option value="pl">PL</option>
+            <option value="sv">SV</option>
+            <option value="hi">HI</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:13px; font-weight:600;">Category *</label>
+          <select id="fCategory" style="width:100%;">
+            <option value="personality">Personality</option>
+            <option value="music">Music</option>
+            <option value="film">Film</option>
+            <option value="sports">Sports</option>
+            <option value="travel">Travel</option>
+            <option value="food">Food</option>
+            <option value="technology">Technology</option>
+            <option value="general">General</option>
+            <option value="other">Other</option>
+            <option value="fun">Fun</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="lifestyle">Lifestyle</option>
+            <option value="humor">Humor</option>
+            <option value="hobby">Hobby</option>
+            <option value="science">Science</option>
+            <option value="history">History</option>
+            <option value="art">Art</option>
+            <option value="nature">Nature</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:13px; font-weight:600;">Tone</label>
+          <select id="fTone" style="width:100%;">
+            <option value="fun">Fun</option>
+            <option value="flirty">Flirty</option>
+            <option value="deep">Deep</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label style="font-size:13px; font-weight:600;">Answers (4 required) *</label>
+        <input type="text" id="fAnswer1" placeholder="Answer 1" style="width:100%; margin-bottom:6px;">
+        <input type="text" id="fAnswer2" placeholder="Answer 2" style="width:100%; margin-bottom:6px;">
+        <input type="text" id="fAnswer3" placeholder="Answer 3" style="width:100%; margin-bottom:6px;">
+        <input type="text" id="fAnswer4" placeholder="Answer 4" style="width:100%;">
+      </div>
+      <div>
+        <label style="font-size:13px; font-weight:600;">Hint (optional)</label>
+        <input type="text" id="fHint" placeholder="Hint text" style="width:100%;">
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+        <div>
+          <label style="font-size:13px; font-weight:600;">Target Gender</label>
+          <select id="fTargetGender" style="width:100%;">
+            <option value="">Any</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:13px; font-weight:600;">Min Age</label>
+          <input type="number" id="fAgeMin" placeholder="13" min="13" max="100" style="width:100%;">
+        </div>
+        <div>
+          <label style="font-size:13px; font-weight:600;">Max Age</label>
+          <input type="number" id="fAgeMax" placeholder="100" min="13" max="100" style="width:100%;">
+        </div>
+      </div>
+    </div>
+    <div id="modalError" style="color:#ef4444; font-size:13px; margin-top:8px; display:none;"></div>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn" style="background:#eee; color:#333;" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="modalSubmit" onclick="submitForm()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var csrfToken = '<%= typeof csrfToken !== "undefined" ? csrfToken : "" %>';
+var currentPage = 1;
+
+function loadData(page) {
+  currentPage = page || 1;
+  var params = new URLSearchParams();
+  params.set('page', currentPage);
+  params.set('limit', '50');
+
+  var locale = document.getElementById('filterLocale').value;
+  var category = document.getElementById('filterCategory').value;
+  var tone = document.getElementById('filterTone').value;
+  var active = document.getElementById('filterActive').value;
+  var sort = document.getElementById('sortField').value;
+  var order = document.getElementById('sortOrder').value;
+
+  if (locale) params.set('locale', locale);
+  if (category) params.set('category', category);
+  if (tone) params.set('tone', tone);
+  if (active) params.set('is_active', active);
+  params.set('sort', sort);
+  params.set('order', order);
+
+  fetch('/admin/question-bank/api?' + params.toString())
+    .then(function(r) { return r.json(); })
+    .then(function(res) {
+      renderTable(res.data || []);
+      renderPagination(res.pagination || {});
+      renderStats(res.pagination || {});
+    })
+    .catch(function(err) {
+      document.getElementById('tableBody').innerHTML =
+        '<tr><td colspan="10" style="text-align:center; color:#ef4444; padding:20px;">Error loading data</td></tr>';
+    });
+}
+
+function renderTable(data) {
+  var tbody = document.getElementById('tableBody');
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:#999; padding:20px;">No questions found</td></tr>';
+    return;
+  }
+  var html = '';
+  data.forEach(function(q) {
+    var text = q.question_text.length > 50 ? q.question_text.substring(0, 50) + '...' : q.question_text;
+    var rate = q.acceptance_rate !== null ? (q.acceptance_rate * 100).toFixed(0) + '%' : '-';
+    var target = '';
+    if (q.target_gender) target += q.target_gender;
+    if (q.target_age_min || q.target_age_max) target += (target ? ' ' : '') + (q.target_age_min || '?') + '-' + (q.target_age_max || '?');
+    if (!target) target = 'All';
+
+    html += '<tr>' +
+      '<td style="max-width:250px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="' + escHtml(q.question_text) + '">' + escHtml(text) + '</td>' +
+      '<td><span class="badge" style="background:#eef2ff; color:#4338ca;">' + (q.locale || '-').toUpperCase() + '</span></td>' +
+      '<td><span class="badge" style="background:#f0fdf4; color:#166534;">' + escHtml(q.category || '-') + '</span></td>' +
+      '<td><span class="badge" style="background:#fef3c7; color:#92400e;">' + escHtml(q.tone || '-') + '</span></td>' +
+      '<td style="font-size:12px;">' + escHtml(target) + '</td>' +
+      '<td style="text-align:center;">' + (q.shown_count || 0) + '</td>' +
+      '<td style="text-align:center;">' + (q.selected_count || 0) + '</td>' +
+      '<td style="text-align:center;">' + rate + '</td>' +
+      '<td style="text-align:center;">' +
+        (q.is_active
+          ? '<span class="badge badge-online">Active</span>'
+          : '<span class="badge badge-offline">Inactive</span>') +
+      '</td>' +
+      '<td style="white-space:nowrap;">' +
+        '<button class="btn btn-sm btn-primary" onclick="openEditModal(\'' + q.id + '\')">Edit</button> ' +
+        (q.is_active
+          ? '<button class="btn btn-sm btn-danger" onclick="deactivate(\'' + q.id + '\')">Deact.</button>'
+          : '') +
+      '</td>' +
+      '</tr>';
+  });
+  tbody.innerHTML = html;
+  // store data for edit
+  window._qbData = data;
+}
+
+function renderPagination(p) {
+  var el = document.getElementById('pagination');
+  if (!p.total || p.total <= p.limit) { el.innerHTML = ''; return; }
+  var totalPages = Math.ceil(p.total / p.limit);
+  var html = '';
+  for (var i = 1; i <= Math.min(totalPages, 20); i++) {
+    html += '<a href="#" onclick="loadData(' + i + '); return false;" class="' + (i === p.page ? 'active' : '') + '">' + i + '</a>';
+  }
+  if (totalPages > 20) html += '<span style="padding:6px;">... (' + totalPages + ' pages)</span>';
+  el.innerHTML = html;
+}
+
+function renderStats(p) {
+  document.getElementById('statsBar').textContent = 'Total: ' + (p.total || 0) + ' questions | Page ' + (p.page || 1);
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function openAddModal() {
+  document.getElementById('modalTitle').textContent = 'Add Question';
+  document.getElementById('editId').value = '';
+  document.getElementById('fQuestionText').value = '';
+  document.getElementById('fLocale').value = 'en';
+  document.getElementById('fCategory').value = 'general';
+  document.getElementById('fTone').value = 'fun';
+  document.getElementById('fAnswer1').value = '';
+  document.getElementById('fAnswer2').value = '';
+  document.getElementById('fAnswer3').value = '';
+  document.getElementById('fAnswer4').value = '';
+  document.getElementById('fHint').value = '';
+  document.getElementById('fTargetGender').value = '';
+  document.getElementById('fAgeMin').value = '';
+  document.getElementById('fAgeMax').value = '';
+  document.getElementById('modalError').style.display = 'none';
+  document.getElementById('modal').style.display = 'flex';
+}
+
+function openEditModal(id) {
+  var q = (window._qbData || []).find(function(x) { return x.id === id; });
+  if (!q) return;
+  document.getElementById('modalTitle').textContent = 'Edit Question';
+  document.getElementById('editId').value = id;
+  document.getElementById('fQuestionText').value = q.question_text || '';
+  document.getElementById('fLocale').value = q.locale || 'en';
+  document.getElementById('fCategory').value = q.category || 'general';
+  document.getElementById('fTone').value = q.tone || 'fun';
+  var answers = q.answers || [];
+  document.getElementById('fAnswer1').value = answers[0] || '';
+  document.getElementById('fAnswer2').value = answers[1] || '';
+  document.getElementById('fAnswer3').value = answers[2] || '';
+  document.getElementById('fAnswer4').value = answers[3] || '';
+  document.getElementById('fHint').value = q.hint || '';
+  document.getElementById('fTargetGender').value = q.target_gender || '';
+  document.getElementById('fAgeMin').value = q.target_age_min || '';
+  document.getElementById('fAgeMax').value = q.target_age_max || '';
+  document.getElementById('modalError').style.display = 'none';
+  document.getElementById('modal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('modal').style.display = 'none';
+}
+
+function submitForm() {
+  var id = document.getElementById('editId').value;
+  var body = {
+    question_text: document.getElementById('fQuestionText').value.trim(),
+    locale: document.getElementById('fLocale').value,
+    category: document.getElementById('fCategory').value,
+    tone: document.getElementById('fTone').value,
+    answers: [
+      document.getElementById('fAnswer1').value.trim(),
+      document.getElementById('fAnswer2').value.trim(),
+      document.getElementById('fAnswer3').value.trim(),
+      document.getElementById('fAnswer4').value.trim(),
+    ],
+  };
+
+  var hint = document.getElementById('fHint').value.trim();
+  if (hint) body.hint = hint;
+
+  var gender = document.getElementById('fTargetGender').value;
+  if (gender) body.target_gender = gender;
+
+  var ageMin = document.getElementById('fAgeMin').value;
+  if (ageMin) body.target_age_min = parseInt(ageMin, 10);
+
+  var ageMax = document.getElementById('fAgeMax').value;
+  if (ageMax) body.target_age_max = parseInt(ageMax, 10);
+
+  var url = id ? '/admin/question-bank/api/' + id : '/admin/question-bank/api';
+  var method = id ? 'PUT' : 'POST';
+
+  document.getElementById('modalSubmit').disabled = true;
+
+  fetch(url, {
+    method: method,
+    headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken },
+    body: JSON.stringify(body),
+  })
+    .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+    .then(function(res) {
+      document.getElementById('modalSubmit').disabled = false;
+      if (!res.ok) {
+        var errEl = document.getElementById('modalError');
+        errEl.textContent = res.data.error || 'Error saving';
+        errEl.style.display = 'block';
+        return;
+      }
+      closeModal();
+      loadData(currentPage);
+    })
+    .catch(function() {
+      document.getElementById('modalSubmit').disabled = false;
+      var errEl = document.getElementById('modalError');
+      errEl.textContent = 'Network error';
+      errEl.style.display = 'block';
+    });
+}
+
+function deactivate(id) {
+  if (!confirm('Deactivate this question?')) return;
+  fetch('/admin/question-bank/api/' + id, {
+    method: 'DELETE',
+    headers: { 'x-csrf-token': csrfToken },
+  })
+    .then(function(r) { return r.json(); })
+    .then(function() { loadData(currentPage); })
+    .catch(function() { alert('Error deactivating'); });
+}
+
+// Initial load
+loadData(1);
+</script>
+<%- include('_footer') %>
