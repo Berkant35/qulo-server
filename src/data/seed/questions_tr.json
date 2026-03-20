@@ -1,0 +1,7002 @@
+[
+  {
+    "category": "personality",
+    "question_text": "İlk buluşmada karşındaki kişi seni nereye götürse en çok etkilenirsin?",
+    "answers": [
+      "Gizli bir kafeye",
+      "Kitapçıya",
+      "Çatıda film izlemeye",
+      "Gece müzesine"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Seninle bir gün geçirecek olsam, planı kim yapsın?",
+    "answers": [
+      "Ben sürpriz yaparım",
+      "Sen karar ver",
+      "Birlikte planlayalım",
+      "Akışına bırakalım"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Bir ilişkide seni en çok ne mutlu eder?",
+    "answers": [
+      "Küçük sürprizler",
+      "Derin sohbetler",
+      "Birlikte sessizlik",
+      "Macera paylaşmak"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Tartışmada nasıl bir tavır sergilersin?",
+    "answers": [
+      "Hemen konuşurum",
+      "Biraz soğuyup dönerim",
+      "Yazarak anlatırım",
+      "Sarılıp barışırım"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Sabah uyandığında ilk ne yaparsın?",
+    "answers": [
+      "Telefona bakarım",
+      "Kahve yaparım",
+      "Duşa girerim",
+      "5 dakika daha uyurum"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Seni en iyi tanımlayan kelime hangisi?",
+    "answers": [
+      "Maceracı",
+      "Düşünceli",
+      "Enerjik",
+      "Gizemli"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Aşık olduğunu nasıl anlarsın?",
+    "answers": [
+      "Sürekli düşünürüm",
+      "Gülümsemem artar",
+      "Paylaşma isteğim artar",
+      "Korkuyla karışık heyecan"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Partide seni nerede buluruz?",
+    "answers": [
+      "Dans pistinde",
+      "Mutfakta sohbette",
+      "Balkonda hava alırken",
+      "DJ'e şarkı ısmarlarken"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Sevdiğin insana sevgini nasıl gösterirsin?",
+    "answers": [
+      "Hediye alırım",
+      "Vakit ayırırım",
+      "Dokunarak",
+      "Sözlerle ifade ederim"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Hayatında en çok neyi değiştirmek isterdin?",
+    "answers": [
+      "Daha cesur olmak",
+      "Daha sabırlı olmak",
+      "Daha az düşünmek",
+      "Daha çok risk almak"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Stresli bir günde seni ne rahatlatır?",
+    "answers": [
+      "Müzik dinlemek",
+      "Yürüyüş yapmak",
+      "Biriyle konuşmak",
+      "Yalnız kalmak"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Birini tanırken ilk neye dikkat edersin?",
+    "answers": [
+      "Gülüşüne",
+      "Konuşma tarzına",
+      "Gözlerine",
+      "Enerjisine"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Kendini bir mevsimle tanımlasan hangisi olurdun?",
+    "answers": [
+      "İlkbahar — yenilenme",
+      "Yaz — enerji",
+      "Sonbahar — huzur",
+      "Kış — derinlik"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Bir ilişkide en çok neyden korkarsın?",
+    "answers": [
+      "Monotonluktan",
+      "Güvensizlikten",
+      "Bağımsızlığımı kaybetmekten",
+      "Yanlış anlaşılmaktan"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Flört ederken nasıl birisin?",
+    "answers": [
+      "Utangaç ama meraklı",
+      "Direkt ve net",
+      "Espriyle yaklaşırım",
+      "Göz temasıyla başlarım"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "En yakın arkadaşın seni nasıl tanımlar?",
+    "answers": [
+      "Deli ama sadık",
+      "Sakin ama derin",
+      "Eğlenceli ama ciddi",
+      "Romantik ama gerçekçi"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Yeni biriyle tanışırken ilk izlenim mi yoksa zaman mı önemli?",
+    "answers": [
+      "İlk izlenim her şey",
+      "Zaman gösterir",
+      "İkisi de önemli",
+      "Sezgilerime güvenirim"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Duygularını ifade etmekte nasılsın?",
+    "answers": [
+      "Çok açığım",
+      "Zor ifade ederim",
+      "Yazarak daha iyi",
+      "Davranışlarımla gösteririm"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Spontane bir plan mı yoksa her şeyi önceden ayarlamak mı?",
+    "answers": [
+      "Tamamen spontane",
+      "Hafif plan yeter",
+      "Her detay planlanmalı",
+      "Duruma göre değişir"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Sana bir sürpriz yapılsa tepkin ne olur?",
+    "answers": [
+      "Çığlık atarım",
+      "Ağlarım mutluluktan",
+      "Şok olurum ama sevinirim",
+      "Sürpriz sevmem aslında"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "İlişkide en önemli şey sence ne?",
+    "answers": [
+      "Güven",
+      "İletişim",
+      "Tutku",
+      "Saygı"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoşlandığın kişiye ilk adımı atar mısın?",
+    "answers": [
+      "Kesinlikle atarım",
+      "İpuçları veririm",
+      "Beklerim atsın",
+      "Duruma bağlı"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Seni en çok ne kızdırır?",
+    "answers": [
+      "Yalan",
+      "İlgisizlik",
+      "Saygısızlık",
+      "Bencillik"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Karar verirken neye güvenirsin?",
+    "answers": [
+      "Mantığıma",
+      "Kalbime",
+      "Sezgilerime",
+      "Tecrübelerime"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Uzun mesafeli ilişki hakkında ne düşünürsün?",
+    "answers": [
+      "Denemeye değer",
+      "Çok zor ama mümkün",
+      "Hiç denemem",
+      "Doğru kişi için her şey olur"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Sevgilinle aynı hobiye sahip olmak önemli mi?",
+    "answers": [
+      "Çok önemli",
+      "Birkaç ortak yeter",
+      "Hiç önemli değil",
+      "Farklılık güzel"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Yalnız kalmaktan mı yoksa yanlış kişiyle olmaktan mı daha çok korkarsın?",
+    "answers": [
+      "Yalnız kalmaktan",
+      "Yanlış kişiyle olmaktan",
+      "İkisinden de korkmam",
+      "İkisinden de korkarım"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Kıskançlık hakkında ne düşünürsün?",
+    "answers": [
+      "Biraz kıskançlık güzel",
+      "Hiç olmamalı",
+      "Güvenle aşılır",
+      "İlgi göstergesi"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Birlikte yaşamaya ne zaman hazır olursun?",
+    "answers": [
+      "Hemen olabilir",
+      "En az 1 yıl sonra",
+      "Evlilikten sonra",
+      "Deneme süreci şart"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Mesaj atma sıklığın nasıldır?",
+    "answers": [
+      "Sürekli yazarım",
+      "Günde birkaç kez",
+      "Sadece önemli şeyleri",
+      "Aramayı tercih ederim"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Birine güvenmek senin için kolay mı?",
+    "answers": [
+      "Evet, herkese güvenirim",
+      "Zaman ister",
+      "Zor ama çalışırım",
+      "Kanıtlanması lazım"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Geçmişte yaşadığın en büyük ders ne oldu?",
+    "answers": [
+      "Kendime öncelik vermek",
+      "Herkese güvenmemek",
+      "An'ı yaşamak",
+      "Sınırlarımı bilmek"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Bir gün boyunca sadece 3 kelime kullanabilsen hangileri olurdu?",
+    "answers": [
+      "Evet, hayır, belki",
+      "Seviyorum, acıktım, uyuyacağım",
+      "Tamam, olur, gel",
+      "Neden, nasıl, nereye"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ruh eşine inanır mısın?",
+    "answers": [
+      "Kesinlikle inanırım",
+      "Güzel bir hayal",
+      "Uyum önemli, ruh eşi değil",
+      "Hiç inanmam"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Birine ilk mesajı nasıl atarsın?",
+    "answers": [
+      "Espriyle girerim",
+      "Profilinden bir detayla",
+      "Klasik merhaba",
+      "Cesur bir iltifatla"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Sevgilinle kavga ettikten sonra barışma şeklin nedir?",
+    "answers": [
+      "Sarılırım",
+      "Komik bir şey yaparım",
+      "Konuşarak çözerim",
+      "Biraz zaman isterim"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hayatının filmi çekilse türü ne olurdu?",
+    "answers": [
+      "Romantik komedi",
+      "Dram",
+      "Macera",
+      "Bilim kurgu"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "İdeal Pazar günün nasıl geçer?",
+    "answers": [
+      "Geç kalkıp kahvaltı",
+      "Doğada yürüyüş",
+      "Evde film maratonu",
+      "Arkadaşlarla brunch"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Sosyal medyada ne kadar aktifsin?",
+    "answers": [
+      "Her gün paylaşırım",
+      "Takip ederim ama paylaşmam",
+      "Nadiren bakarım",
+      "Hesabım bile yok"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Seni tanımak isteyen birine ilk ne söylersin?",
+    "answers": [
+      "Sabırlı ol, katman katman açılırım",
+      "Aç kitabım, sor öğren",
+      "Benimle vakit geçir anlarsın",
+      "Kendimi anlatmayı sevmem"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hayattan en büyük beklentin ne?",
+    "answers": [
+      "Anlamlı ilişkiler",
+      "Özgürce yaşamak",
+      "Başarılı bir kariyer",
+      "İç huzur"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Seni mutlu etmek zor mu kolay mı?",
+    "answers": [
+      "Çok kolay, küçük şeyler yeter",
+      "Biraz çaba ister",
+      "Zor ama değer",
+      "Kendim bile bilmiyorum"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "10 yıl sonra kendini nerede görüyorsun?",
+    "answers": [
+      "Dünyayı geziyorum",
+      "Ailemi kurmuşum",
+      "Kendi işimin başındayım",
+      "Hiç bilmiyorum, sürpriz olsun"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Karşındaki insanda en çok neye bakarsın?",
+    "answers": [
+      "Zekasına",
+      "Mizah anlayışına",
+      "Duygusal zekasına",
+      "Enerjisine"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Sıkıldığında ne yaparsın?",
+    "answers": [
+      "İnternette dolaşırım",
+      "Birini ararım",
+      "Yeni bir şey denerim",
+      "Uyurum"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "En sevdiğin iletişim şekli hangisi?",
+    "answers": [
+      "Yüz yüze",
+      "Sesli arama",
+      "Mesajlaşma",
+      "Video arama"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Bir günlüğüne karşı cins olsan ilk ne yapardın?",
+    "answers": [
+      "Aynaya bakardım",
+      "Flört ederdim",
+      "Hayatın ne kadar farklı olduğunu görürdüm",
+      "Alışveriş yapardım"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "İlişkide bağımsızlık mı yoksa birliktelik mi daha önemli?",
+    "answers": [
+      "Bağımsızlık her şeyden önce",
+      "Birliktelik güzel",
+      "Dengesi önemli",
+      "Birlikte ama özgür"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Hayalindeki ev nasıl bir yer?",
+    "answers": [
+      "Deniz kenarında küçük bir ev",
+      "Şehir merkezinde modern daire",
+      "Dağ başında ahşap ev",
+      "Geniş bahçeli müstakil"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Arkadaşlarınla mı yoksa sevgilinle mi daha çok vakit geçirirsin?",
+    "answers": [
+      "Arkadaşlarımla",
+      "Sevgilimle",
+      "Eşit dağıtırım",
+      "Dönemine göre değişir"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Kendini introvert mi extrovert mi hissediyorsun?",
+    "answers": [
+      "Tam introvert",
+      "Introvert ama sosyal",
+      "Extrovert ama dinlenmeye ihtiyaç duyarım",
+      "Tam extrovert"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "En son ne zaman ağladın?",
+    "answers": [
+      "Dün",
+      "Geçen hafta",
+      "Hatırlamıyorum",
+      "Şu an ağlıyorum"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Dürüstlük bazen acıtır, yine de her zaman dürüst mü olmalı?",
+    "answers": [
+      "Evet, her zaman",
+      "Bazen beyaz yalan gerekir",
+      "Zamanlaması önemli",
+      "Nazikçe dürüst olunabilir"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Bir emoji seçmen gerekse kendini hangisiyle anlatırdın?",
+    "answers": [
+      "Gülen yüz",
+      "Ateş",
+      "Düşünen yüz",
+      "Kalp gözlü"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Affetmek senin için kolay mı?",
+    "answers": [
+      "Evet, herkesi affederim",
+      "Zor ama zamanla",
+      "Bazı şeyler affedilmez",
+      "Affederim ama unutmam"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hayatta en çok pişman olduğun şey genelde ne olur?",
+    "answers": [
+      "Yapmadığım şeyler",
+      "Söylemediğim sözler",
+      "Güvendiğim yanlış insanlar",
+      "Pişmanlık duymam"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoşlandığın kişi geç cevap yazarsa ne düşünürsün?",
+    "answers": [
+      "Meşguldür, sorun yok",
+      "Biraz tedirgin olurum",
+      "Ben de geç yazarım",
+      "İlgisiz diye düşünürüm"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Seni en iyi anlatan renk hangisi?",
+    "answers": [
+      "Kırmızı — tutkulu",
+      "Mavi — sakin",
+      "Sarı — neşeli",
+      "Siyah — gizemli"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Romantik mektubu mu yoksa anlık mesajı mı tercih edersin?",
+    "answers": [
+      "Mektup, çok romantik",
+      "Anlık mesaj, doğal olan",
+      "İkisi de güzel",
+      "Yüz yüze söylesin"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hayatta risk almayı sever misin?",
+    "answers": [
+      "Evet, adrenalini severim",
+      "Hesaplı risk alırım",
+      "Güvenli olanı tercih ederim",
+      "Duruma göre değişir"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Evcil hayvan mı yoksa çocuk mu önce?",
+    "answers": [
+      "Evcil hayvan tabii ki",
+      "Çocuk önce gelir",
+      "İkisi birden",
+      "İkisi de şimdilik yok"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Senden hoşlanan ama senin hoşlanmadığın birine ne yaparsın?",
+    "answers": [
+      "Açıkça söylerim",
+      "Yavaşça uzaklaşırım",
+      "Arkadaş kalalım derim",
+      "Bir şans veririm"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Birini ilk gördüğünde çekicilik mi yoksa karakter mi önemli?",
+    "answers": [
+      "İlk çekicilik sonra karakter",
+      "Karakter her zaman önce",
+      "İkisi eşit",
+      "Enerji önemli, ikisinden de çok"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Bir gün herkes senin hakkında bir şey öğrense, bu ne olsun isterdin?",
+    "answers": [
+      "Ne kadar sadık olduğumu",
+      "Hayallerimi",
+      "Gerçek hislerimi",
+      "Başardıklarımı"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hayatında en çok kimi etkiledin?",
+    "answers": [
+      "Ailemi",
+      "Arkadaşlarımı",
+      "Kendimi",
+      "Henüz bilmiyorum"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Bir flört uygulamasında seni ne çeker?",
+    "answers": [
+      "Fotoğraflar",
+      "Bio yazısı",
+      "Ortak ilgi alanları",
+      "Sorulara verdiği cevaplar"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Evlilik hakkında ne düşünüyorsun?",
+    "answers": [
+      "Hayalim",
+      "Doğru kişiyle olabilir",
+      "Şart değil",
+      "Hiç düşünmedim"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Karanlıkta mı yoksa aydınlıkta mı daha rahat hissedersin?",
+    "answers": [
+      "Loş ışık ideal",
+      "Karanlıkta huzurlu",
+      "Aydınlık severim",
+      "Mum ışığı en iyisi"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Sır tutabilir misin?",
+    "answers": [
+      "Mezara kadar",
+      "Çoğunu tutarım",
+      "En yakınıma söylerim",
+      "Sır tutmak çok zor"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Birinin sana en güzel söyleyebileceği söz ne olurdu?",
+    "answers": [
+      "Seninle huzur buluyorum",
+      "Seni çok seviyorum",
+      "Hayatıma anlam katıyorsun",
+      "Seninle her şey eğlenceli"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Sabahçı mısın gececi mi?",
+    "answers": [
+      "Kesinlikle sabahçı",
+      "Gece kuşuyum",
+      "İkisi arası",
+      "Uyku düzenim yok"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Para mı mutluluk mu?",
+    "answers": [
+      "Para mutluluk getirir",
+      "Mutluluk parayla olmaz",
+      "İkisi dengede olmalı",
+      "Temel ihtiyaçlar karşılanınca mutluluk"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Seni çıldırtan küçük detay ne olabilir?",
+    "answers": [
+      "Geç kalan insanlar",
+      "Çiğneyerek yemek yiyenler",
+      "Telefona bakarak konuşanlar",
+      "Plan iptal edenler"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Bir yıl boyunca sadece bir şehirde yaşamak zorunda olsan?",
+    "answers": [
+      "İstanbul",
+      "Barselona",
+      "Tokyo",
+      "Bali"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Tatilde kumsal mı, dağ mı?",
+    "answers": [
+      "Kumsal kesinlikle",
+      "Dağ ve doğa",
+      "İkisini de isterim",
+      "Şehir turu tercihim"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Seyahatte en önemli olan şey ne?",
+    "answers": [
+      "Yeni yemekler denemek",
+      "Kültürel yerler gezmek",
+      "Doğayla baş başa kalmak",
+      "Parti ve gece hayatı"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Sevgilinle seyahat etsen nereye gitmek isterdin?",
+    "answers": [
+      "Paris",
+      "Santorini",
+      "Kapadokya",
+      "Maldivler"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Tek başına seyahat eder misin?",
+    "answers": [
+      "Bayılırım",
+      "Biraz çekinirdim",
+      "Asla, yanımda biri olmalı",
+      "Denedim ama sevmedim"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Uçak mı tren mi?",
+    "answers": [
+      "Uçak, hızlı olsun",
+      "Tren, manzara güzel",
+      "Araba, özgürlük",
+      "Gemi, lüks olsun"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "İstanbul'un en güzel semti sence hangisi?",
+    "answers": [
+      "Beşiktaş",
+      "Kadıköy",
+      "Bebek",
+      "Karaköy"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Bir adada mahsur kalsan yanına ne alırdın?",
+    "answers": [
+      "Kitap",
+      "Müzik çalar",
+      "Bıçak",
+      "Sevdiğim kişiyi"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Kamp yapmayı sever misin?",
+    "answers": [
+      "Bayılırım, doğa harika",
+      "Glamping olsun",
+      "Otel varken neden kamp",
+      "Hiç denemedim"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Hayalindeki tatil ne kadar sürer?",
+    "answers": [
+      "Bir hafta yeter",
+      "En az iki hafta",
+      "Bir ay olsun",
+      "Süresiz seyahat"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Türkiye'de en çok nereyi seviyorsun?",
+    "answers": [
+      "Ege kıyıları",
+      "Karadeniz yaylaları",
+      "Kapadokya",
+      "Antalya"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Seyahatte planlı mı yoksa spontan mı olursun?",
+    "answers": [
+      "Her şey planlanmalı",
+      "Genel plan yeter",
+      "Tamamen spontan",
+      "Yarı yarıya"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Hangi ülkenin mutfağını keşfetmek için seyahat edersin?",
+    "answers": [
+      "İtalya",
+      "Japonya",
+      "Meksika",
+      "Tayland"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Seyahatte konaklama tercihin ne?",
+    "answers": [
+      "Butik otel",
+      "Airbnb",
+      "Hostel",
+      "5 yıldızlı otel"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Seyahat arkadaşında en önemli özellik ne?",
+    "answers": [
+      "Esnek olması",
+      "Eğlenceli olması",
+      "Organize olması",
+      "Maceraperest olması"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Bir Interrail turu yapsan ilk nereye gidersin?",
+    "answers": [
+      "Amsterdam",
+      "Prag",
+      "Viyana",
+      "Roma"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "Kapadokya'da balon turu mu yoksa Fethiye'de yamaç paraşütü mü?",
+    "answers": [
+      "Balon turu, romantik",
+      "Yamaç paraşütü, adrenalin",
+      "İkisi de olsun",
+      "İkisi de çok korkutucu"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Seyahatte en çok ne fotoğraflarsın?",
+    "answers": [
+      "Yemekleri",
+      "Manzarayı",
+      "Kendimi",
+      "Sokak detaylarını"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Gece yarısı uçak bileti buldun, gider misin?",
+    "answers": [
+      "Hemen bavulumu toplarım",
+      "Düşünürdüm biraz",
+      "Nereye olduğuna bağlı",
+      "Asla, plan lazım"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Yurt dışında yaşamak ister misin?",
+    "answers": [
+      "Kesinlikle, hemen giderim",
+      "Birkaç yıl güzel olur",
+      "Türkiye'yi tercih ederim",
+      "Gidip gelme mantıklı"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Kuzey ışıklarını görmek mi yoksa safari yapmak mı?",
+    "answers": [
+      "Kuzey ışıkları",
+      "Safari",
+      "İkisi de listemde",
+      "Deniz altı dalışı tercihim"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Seyahatte internet olmasa dayanabilir misin?",
+    "answers": [
+      "Evet, dijital detoks güzel",
+      "Birkaç gün dayanırım",
+      "Harita için lazım",
+      "Asla, sürekli paylaşırım"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Hangi dönemde yaşamak için zamanda yolculuk yapardın?",
+    "answers": [
+      "Osmanlı İstanbul'u",
+      "1960'lar Paris",
+      "Antik Roma",
+      "2100'ler gelecek"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "İstanbul'da en çok nereye gitmekten keyif alırsın?",
+    "answers": [
+      "Boğaz kenarı",
+      "Adalar",
+      "Balat sokakları",
+      "Beyoğlu barları"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Tatilde erken kalkıp gezi mi yoksa geç kalkıp dinlenme mi?",
+    "answers": [
+      "Erken kalkıp her yeri gezerim",
+      "Geç kalkıp dinlenirim",
+      "Gün aşırı değişir",
+      "Öğlen kalkıp gece gezerim"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Bir karavan turuna çıkar mısın?",
+    "answers": [
+      "Hayalim bu!",
+      "Birkaç gün olabilir",
+      "Konforsuz buluyorum",
+      "Sevdiğim kişiyle her yere"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Seyahat ederken en çok neyi özlersin?",
+    "answers": [
+      "Yatağımı",
+      "Yemeklerimi",
+      "Arkadaşlarımı",
+      "Hiçbir şeyi"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "En sevdiğin tatil aktivitesi ne?",
+    "answers": [
+      "Dalış ve su sporları",
+      "Tarih ve müze turu",
+      "Alışveriş",
+      "Yerel halkla tanışmak"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Bir dünya turu yapsan kaç ülke gezersin?",
+    "answers": [
+      "5-10, ama detaylı",
+      "20+, her yeri görmek isterim",
+      "3-4 favorim yeter",
+      "Tek bir kıtayı detaylı gezerim"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Uçak korkun var mı?",
+    "answers": [
+      "Yok, uçmayı severim",
+      "Biraz var ama binerim",
+      "Çok korkuyorum",
+      "Pencere kenarında huzur bulurum"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Sevgilinle balayına nereye gitmek isterdin?",
+    "answers": [
+      "Maldivler",
+      "İtalya turu",
+      "Bora Bora",
+      "Japonya"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Sırt çantalı gezgin mi lüks otelci mi?",
+    "answers": [
+      "Sırt çantam her zaman hazır",
+      "Lüks otel olmazsa olmaz",
+      "İkisini de yaparım",
+      "Orta yol en iyisi"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Ege mi Akdeniz mi?",
+    "answers": [
+      "Ege, daha sakin",
+      "Akdeniz, daha eğlenceli",
+      "İkisi de harika",
+      "Karadeniz daha iyi"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Seyahatte en büyük lüksün ne olur?",
+    "answers": [
+      "Güzel bir kahvaltı",
+      "Spa ve masaj",
+      "Deniz manzaralı oda",
+      "Hiçbir alarm kurmamak"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "İlk defa gittiğin bir şehirde ne yaparsın?",
+    "answers": [
+      "Sokak sokak gezerim",
+      "En ünlü restorana giderim",
+      "Yerel birine sorarım",
+      "Google Maps açar giderim"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Hangi mevsimde seyahat etmeyi en çok seversin?",
+    "answers": [
+      "Yaz — güneş ve deniz",
+      "Sonbahar — rengarenk",
+      "İlkbahar — ılık havalar",
+      "Kış — kar ve sıcak çikolata"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Uzay turizmi mümkün olsa gider misin?",
+    "answers": [
+      "İlk bilet bende",
+      "Çok korkardım",
+      "Fiyatına bağlı",
+      "Dünya'da keşfedecek çok yer var"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "Yolculukta müzik mi podcast mi?",
+    "answers": [
+      "Müzik kesinlikle",
+      "Podcast öğretici olsun",
+      "İkisi de",
+      "Sessizlik en iyisi"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Seyahatte en çok hangi anı yaşamak istersin?",
+    "answers": [
+      "Gün batımında sahil",
+      "Karlı bir dağda sıcak çay",
+      "Sokak müziği eşliğinde yürüyüş",
+      "Yerel bir festivalde dans"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Kapıda pasaportun hazır, nereye?",
+    "answers": [
+      "Yunan adalarına",
+      "New York'a",
+      "Bali'ye",
+      "Dubai'ye"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hayatta en çok neye değer verirsin?",
+    "answers": [
+      "Özgürlük",
+      "Güvenlik",
+      "Tutku",
+      "Huzur"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "İdeal hafta sonun nasıl geçer?",
+    "answers": [
+      "Evde Netflix ve pijama",
+      "Dışarıda aktif bir gün",
+      "Arkadaşlarla buluşma",
+      "Doğada vakit geçirme"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Spor yapmayı sever misin?",
+    "answers": [
+      "Her gün spor yapmalıyım",
+      "Haftada birkaç kez",
+      "Ara sıra",
+      "Televizyondan izlerim"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Sabah rutinin nasıl?",
+    "answers": [
+      "Erken kalkıp spor",
+      "Yavaş yavaş kahveyle",
+      "Son dakika koşturması",
+      "Rutinim yok, her gün farklı"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Kariyer mi aşk mı?",
+    "answers": [
+      "Kariyer önce gelir",
+      "Aşk her şeyden önemli",
+      "İkisi dengede olmalı",
+      "Dönemine göre değişir"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Şehir hayatı mı köy hayatı mı?",
+    "answers": [
+      "Şehir, hareketli olsun",
+      "Köy, huzurlu olsun",
+      "Şehirde çalışıp köyde dinlenirim",
+      "Kasaba ideali"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Alışveriş yapmayı sever misin?",
+    "answers": [
+      "Bayılırım, terapi gibi",
+      "Sadece ihtiyaç olunca",
+      "Online tercih ederim",
+      "Hiç sevmem"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Senin için lüks ne demek?",
+    "answers": [
+      "Zaman",
+      "Para",
+      "Sağlık",
+      "Sevdiklerimle olmak"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Kahve mi çay mı?",
+    "answers": [
+      "Kahve olmazsa olmaz",
+      "Çay ama Türk çayı",
+      "İkisi de güzel",
+      "Su içerim ben"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Arabayla mı toplu taşımayla mı?",
+    "answers": [
+      "Arabam olmazsa olmaz",
+      "Toplu taşıma pratik",
+      "Bisiklet veya scooter",
+      "Yürümeyi tercih ederim"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Evcil hayvan besler misin?",
+    "answers": [
+      "Kedi insanıyım",
+      "Köpek insanıyım",
+      "İkisini de isterim",
+      "Evcil hayvan bana göre değil"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Para biriktirmekte nasılsın?",
+    "answers": [
+      "Çok iyiyim, hesaplıyım",
+      "Bazen biriktiririm",
+      "Paramı yaşamak için harcarım",
+      "Ne para biriktirmek?"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "İdeal yaşam tarzın hangisi?",
+    "answers": [
+      "Minimalist",
+      "Konforlu ve gösterişli",
+      "Doğayla iç içe",
+      "Şehirde aktif ve sosyal"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Sigara içer misin?",
+    "answers": [
+      "Asla",
+      "Sosyal olarak bazen",
+      "Bırakmaya çalışıyorum",
+      "Evet içiyorum"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Alkol hakkında ne düşünürsün?",
+    "answers": [
+      "Sosyal içici",
+      "Hiç içmem",
+      "Sadece özel günlerde",
+      "Akşam bir kadeh güzel"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gece dışarı çıkmayı sever misin?",
+    "answers": [
+      "Haftada birkaç kez",
+      "Ayda bir-iki kez",
+      "Çok nadir",
+      "Her hafta sonu dışarıdayım"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Ev işlerini nasıl yaparsın?",
+    "answers": [
+      "Düzenli ve planlı",
+      "Son dakikaya bırakırım",
+      "Müzikle eğlenceli hale getiririm",
+      "Temizlikçi tutarım"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Yemek yapmayı sever misin?",
+    "answers": [
+      "Bayılırım, hobi gibi",
+      "Basit şeyler yaparım",
+      "Yemek yemeyi severim yapmayı değil",
+      "Sipariş hayat kurtarır"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Kitap okur musun?",
+    "answers": [
+      "Çok okurum",
+      "Ara sıra",
+      "Podcast dinlemeyi tercih ederim",
+      "Ekranda okurum"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Meditasyon veya yoga yapar mısın?",
+    "answers": [
+      "Düzenli yaparım",
+      "Denedim ama sürdüremedim",
+      "İlgimi çekiyor",
+      "Hiç denemem"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gelecekte çocuk ister misin?",
+    "answers": [
+      "Kesinlikle evet",
+      "Belki, zamanı gelince",
+      "Hayır istemiyorum",
+      "Henüz karar vermedim"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Düzenli misin dağınık mı?",
+    "answers": [
+      "Her şey yerli yerinde",
+      "Kontrollü kaos",
+      "Dağınığım ama bulurum",
+      "Düzensizliğe tahammülüm yok"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Sağlıklı beslenmeye dikkat eder misin?",
+    "answers": [
+      "Çok dikkat ederim",
+      "Genel olarak ederim",
+      "Canım ne isterse",
+      "Dengelemeye çalışırım"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Kendi işini mi kurmak istersin yoksa kurumsal mı çalışmak?",
+    "answers": [
+      "Kendi işim, özgürlük önemli",
+      "Kurumsal, güvenlik önemli",
+      "Freelance çalışmak",
+      "Denedikten sonra karar veririm"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gece geç yatıp sabah zor kalkmak mı yoksa erken yatıp erken kalkmak mı?",
+    "answers": [
+      "Gece kuşuyum",
+      "Erken kalkan yol alır",
+      "Duruma göre değişir",
+      "Uyku düzenim yok ki"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hayatında en çok ne seni motive eder?",
+    "answers": [
+      "Başarı hissi",
+      "Sevdiklerim",
+      "Yeni deneyimler",
+      "Kendimi geliştirmek"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Tatil planı yaparken bütçe mi deneyim mi önce gelir?",
+    "answers": [
+      "Bütçe tabii ki",
+      "Deneyim, para bulunur",
+      "Dengesi önemli",
+      "Kredi kartı halleder"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gönüllü çalışma yapar mısın?",
+    "answers": [
+      "Düzenli yaparım",
+      "Fırsat buldukça",
+      "Yapmak isterdim",
+      "Pek ilgimi çekmiyor"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Sabah kahvaltı yapar mısın?",
+    "answers": [
+      "Serpme kahvaltı şart",
+      "Hızlı bir şeyler atıştırırım",
+      "Sadece kahve",
+      "Öğlene kadar bir şey yemem"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Sosyal çevren geniş mi dar mı?",
+    "answers": [
+      "Çok genişim, herkesi tanırım",
+      "Küçük ama kaliteli",
+      "Orta, seçiciyim",
+      "Birkaç yakın arkadaş yeter"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Moda seni ilgilendirir mi?",
+    "answers": [
+      "Trendleri takip ederim",
+      "Kendi tarzım var",
+      "Rahat olan ne varsa",
+      "Hiç ilgilenmem"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Bir gün boş zamanın olsa ne yaparsın?",
+    "answers": [
+      "Uyurum",
+      "Bir şeyler keşfederim",
+      "Arkadaşlarımla buluşurum",
+      "Kendi projelerimle ilgilenirim"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Aile ile ne sıklıkta görüşürsün?",
+    "answers": [
+      "Her gün",
+      "Haftada birkaç kez",
+      "Ayda bir-iki kez",
+      "Bayramdan bayrama"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Bir abonelik seçmen gerekse?",
+    "answers": [
+      "Netflix/Disney+",
+      "Spotify",
+      "Spor salonu",
+      "Dergi/kitap kutusu"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "İş hayatında en çok neye önem verirsin?",
+    "answers": [
+      "Maaş",
+      "İş-yaşam dengesi",
+      "Gelişim fırsatları",
+      "Çalışma arkadaşları"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Günde kaç saat telefon kullanırsın?",
+    "answers": [
+      "1-2 saat",
+      "3-5 saat",
+      "5+ saat",
+      "Saymak istemiyorum"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Yeni yıl kararları alır mısın?",
+    "answers": [
+      "Alırım ve uygularım",
+      "Alırım ama tutmam",
+      "Kararları beklemeden yaparım",
+      "Hiç almam"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir süper gücün olsa hangisini seçerdin?",
+    "answers": [
+      "Zihin okuma",
+      "Zamanda yolculuk",
+      "Görünmezlik",
+      "Uçabilmek"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir hayvan olsan ne olurdun?",
+    "answers": [
+      "Kedi — bağımsız",
+      "Köpek — sadık",
+      "Kartal — özgür",
+      "Yunus — eğlenceli"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Zombi kıyameti olsa ilk ne yaparsın?",
+    "answers": [
+      "Markete koşarım",
+      "Silah bulurum",
+      "Saklanırım",
+      "Parti yaparım, son gün"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir çizgi film karakteri olsan kim olurdun?",
+    "answers": [
+      "SpongeBob — neşeli",
+      "Batman — gizemli",
+      "Rapunzel — hayalperest",
+      "Shrek — kendine özgü"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Ünlü biriyle akşam yemeği yiyebilsen kim olurdu?",
+    "answers": [
+      "Elon Musk",
+      "Barış Manço",
+      "Rihanna",
+      "Einstein"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir renk olsan ne renk olurdun?",
+    "answers": [
+      "Kırmızı — ateşli",
+      "Mavi — derin",
+      "Yeşil — doğal",
+      "Turuncu — enerjik"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Lotoya çıksan ilk ne alırsın?",
+    "answers": [
+      "Ev",
+      "Dünya turu",
+      "Araba",
+      "Yatırım yaparım"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir gün boyunca ünlü olsan ne yapardın?",
+    "answers": [
+      "Konser verirdim",
+      "Kırmızı halıda yürürdüm",
+      "Sosyal medyada efsane olurdum",
+      "Bir hayır kurumu için çalışırdım"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Hangi elemansın?",
+    "answers": [
+      "Ateş — tutkulu",
+      "Su — uyumlu",
+      "Toprak — sağlam",
+      "Hava — özgür"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Karaoke'de hangi şarkıyı söylersin?",
+    "answers": [
+      "Tarkan — Şımarık",
+      "Sezen Aksu — Geri Dön",
+      "Kenan Doğulu — Shake It",
+      "Edis — Dudak"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Dondurma mı waffle mı?",
+    "answers": [
+      "Dondurma her zaman",
+      "Waffle tabii ki",
+      "İkisi birden",
+      "Künefe daha iyi"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir dizi karakteriyle arkadaş olsan kim olurdu?",
+    "answers": [
+      "Chandler — espri ustası",
+      "Barney Stinson — efsane",
+      "Lorelai Gilmore — konuşkan",
+      "Michael Scott — kaotik"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Hangisi daha kötü: alarm çalmadan uyanmak mı yoksa alarmı kapatıp uyumak mı?",
+    "answers": [
+      "Alarm çalmadan uyanmak",
+      "Alarmı kapatıp uyumak",
+      "İkisi de lanet",
+      "Ben alarmsız yaşıyorum"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir video oyun dünyasında yaşasan hangisi olurdu?",
+    "answers": [
+      "Minecraft",
+      "GTA",
+      "The Sims",
+      "Zelda"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir günlüğüne görünmez olsan ne yapardın?",
+    "answers": [
+      "İnsanları gözlemlerdim",
+      "Korkutma şakaları",
+      "Gizli bilgilere ulaşırdım",
+      "Bedava seyahat ederdim"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Sabah okula/işe giderken en çok ne sinir eder?",
+    "answers": [
+      "Trafik",
+      "Kalabalık toplu taşıma",
+      "Geç kalmak",
+      "Erken kalkmak"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir ülke kursan adı ne olurdu?",
+    "answers": [
+      "Rahatistan",
+      "Eğlenceland",
+      "Uykuland",
+      "Yemekistan"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir gün boyunca bir hayvan gibi yaşasan?",
+    "answers": [
+      "Kedi — uyku ve yemek",
+      "Kuş — uçmak",
+      "Balık — okyanusta yüzmek",
+      "Koala — ağaçta takılmak"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir tane yiyecek ömür boyu yemek zorunda olsan?",
+    "answers": [
+      "Pizza",
+      "Lahmacun",
+      "Sushi",
+      "Makarna"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Karşındakine verdiğin en iyi iltifat ne olurdu?",
+    "answers": [
+      "Gülüşün çok güzel",
+      "Seninle konuşmak çok keyifli",
+      "Enerjin bulaşıcı",
+      "Gözlerin her şeyi anlatıyor"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir telefon uygulaması yapsan ne olurdu?",
+    "answers": [
+      "İnsanları eşleştiren bir oyun",
+      "Yemek tarifi öneren AI",
+      "Ruh hali playlist'i yapan",
+      "Yakındaki etkinlikleri bulan"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "En garip korkun ne?",
+    "answers": [
+      "Palyaçolar",
+      "Derin su",
+      "Böcekler",
+      "Küçük delikler (tripofobi)"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir dans türü öğrenecek olsan?",
+    "answers": [
+      "Salsa",
+      "Hip-hop",
+      "Vals",
+      "Tango"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Hangi Türk dizisi karakterisin?",
+    "answers": [
+      "Ezel — kararlı",
+      "Çukur — sadık",
+      "Leyla ile Mecnun — çılgın",
+      "Muhteşem Yüzyıl — stratejist"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir cümleyle hayatını özetle?",
+    "answers": [
+      "Kaotik ama eğlenceli",
+      "Sakin ama derin",
+      "Hep yolda, hep meraklı",
+      "Planlamayı seviyorum ama olmuyorr"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir müzik aletiyle doğsaydın hangisi olurdun?",
+    "answers": [
+      "Gitar — cool",
+      "Piyano — zarif",
+      "Davul — enerjik",
+      "Keman — duygusal"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Dünyanın en büyük sırrını öğrensen ne yapardın?",
+    "answers": [
+      "Herkese söylerdim",
+      "Kendime saklardım",
+      "Kitap yazardım",
+      "Bir podcast başlatırdım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir gün boyunca başka bir ülkede uyansan nerede olmak isterdin?",
+    "answers": [
+      "Japonya'da",
+      "İtalya'da",
+      "Brezilya'da",
+      "İzlanda'da"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir robota ne yaptırırdın?",
+    "answers": [
+      "Ev işleri",
+      "Benim yerime işe gitmesi",
+      "Yemek yapması",
+      "Benimle sohbet etmesi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir Türk atasözüyle yaşasan hangisi olurdu?",
+    "answers": [
+      "Damlaya damlaya göl olur",
+      "Gülme komşuna, gelir başına",
+      "Nerede hareket orada bereket",
+      "Sabır acıdır, meyvesi tatlı"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Seni en çok ne güldürür?",
+    "answers": [
+      "Kara mizah",
+      "Absürt şeyler",
+      "İnsanların halleri",
+      "Kendi saçmalıklarım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir sorunun olsa kime danışırsın?",
+    "answers": [
+      "Anneme",
+      "En yakın arkadaşıma",
+      "Kendime",
+      "Google'a"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir gezegende yaşasan hangisinde?",
+    "answers": [
+      "Mars — kırmızı ve gizemli",
+      "Satürn — halkalı ve şık",
+      "Jüpiter — büyük düşün",
+      "Dünya'da kalırım bence"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir buluş yapsan ne icat ederdin?",
+    "answers": [
+      "Teleportasyon cihazı",
+      "Kalori yakmayan yemek",
+      "Uyku makinesı — 2 saat yeter",
+      "Düşünce okuyucu"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bi tane yasaklanacak şey seçebilsen?",
+    "answers": [
+      "Pazartesiler",
+      "Trafikte kornaya basmak",
+      "Asansörde konuşmak",
+      "Yemek fotoğrafı paylaşmak"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir yarışma programına katılsan hangisi?",
+    "answers": [
+      "Survivor",
+      "MasterChef",
+      "Kim Milyoner Olmak İster",
+      "O Ses Türkiye"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Hayat bir oyun olsa şu an hangi levelde olurdun?",
+    "answers": [
+      "Tutorial bitmedi",
+      "Orta seviye, boss fight yakın",
+      "Son level, final boss",
+      "Yan görevlerde kayboldum"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir ayakkabı olsan ne olurdun?",
+    "answers": [
+      "Spor ayakkabı — rahat",
+      "Topuklu — şık",
+      "Sandalet — rahat ve özgür",
+      "Bot — sağlam ve güvenilir"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir tatil köyünde olsan tüm gün ne yaparsın?",
+    "answers": [
+      "Havuzda yüzerim",
+      "Animasyona katılırım",
+      "Şezlongda kitap okurum",
+      "Denize girerim çıkarım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Seninle yemek yapacak olsam hangi mutfağı deneyelim?",
+    "answers": [
+      "İtalyan",
+      "Japon",
+      "Meksika",
+      "Türk kahvaltısı"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Acılı sever misin?",
+    "answers": [
+      "Ne kadar acı o kadar iyi",
+      "Biraz olsun",
+      "Hiç sevmem",
+      "Isırgan acısı tamam, biber acısı hayır"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Kahveni nasıl içersin?",
+    "answers": [
+      "Sade, sert",
+      "Sütlü ve şekerli",
+      "Türk kahvesi",
+      "Filtre kahve"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "İstanbul'da en sevdiğin sokak yemeği?",
+    "answers": [
+      "Balık ekmek",
+      "Islak hamburger",
+      "Midye dolma",
+      "Kokoreç"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Bir tatlı seçmen gerekse?",
+    "answers": [
+      "Künefe",
+      "Baklava",
+      "Cheesecake",
+      "Tiramisu"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Bir buluşmada hangi restoran türünü tercih edersin?",
+    "answers": [
+      "Şık bir İtalyan",
+      "Samimi bir meyhane",
+      "Egzotik bir Asya restoranı",
+      "Kahvaltıcı"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Et mi sebze mi?",
+    "answers": [
+      "Et olmazsa olmaz",
+      "Sebze ağırlıklı",
+      "Vegan/vejetaryen",
+      "İkisi dengede"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Pizza'da ananas olur mu?",
+    "answers": [
+      "Asla, bu suç!",
+      "Neden olmasın",
+      "Denedim, fena değil",
+      "Pizza'yı seçtirmem, her şey olur"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Evde yemek mi dışarıda yemek mi?",
+    "answers": [
+      "Evde, sevgiyle yapılan",
+      "Dışarıda, keşfetmek güzel",
+      "Sipariş, rahatına bak",
+      "Hepsini severim"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "En sevdiğin Türk yemeği?",
+    "answers": [
+      "Mantı",
+      "İskender",
+      "Karnıyarık",
+      "Pide"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Yemek yerken konuşmayı sever misin?",
+    "answers": [
+      "Yemek sohbetle güzel",
+      "Önce yemek sonra sohbet",
+      "Sessizce yemek severim",
+      "Yemeğe bağlı"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Bir içecek olsan ne olurdun?",
+    "answers": [
+      "Türk kahvesi — yoğun",
+      "Limonata — ferahlatıcı",
+      "Şarap — sofistike",
+      "Mojito — eğlenceli"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Gece geç saatte acıktın, ne yiyorsun?",
+    "answers": [
+      "Tost",
+      "Çikolata",
+      "Cips",
+      "Kalan yemekleri ısıtırım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Bir ülkenin mutfağını ömür boyu yemek zorunda olsan?",
+    "answers": [
+      "Türk mutfağı",
+      "İtalyan mutfağı",
+      "Japon mutfağı",
+      "Meksika mutfağı"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Sevgilinle birlikte pişireceğin yemek ne olurdu?",
+    "answers": [
+      "Pizza hamurdan",
+      "Sushi",
+      "Türk kahvaltısı",
+      "Makarna"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Çay bardağı mı kupa mı?",
+    "answers": [
+      "İnce belli bardak tabii ki",
+      "Kupa pratik",
+      "Bardağa göre değil çaya göre",
+      "Termosla her yere taşırım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Yeni yemek denemeye açık mısın?",
+    "answers": [
+      "Her şeyi denerim",
+      "Biraz çekinirim ama denerim",
+      "Bildiğimi yerim",
+      "Böcek bile yerim"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Brunch mı akşam yemeği mi?",
+    "answers": [
+      "Brunch, huzurlu ve uzun",
+      "Akşam yemeği, mum ışığında",
+      "İkisi de güzel",
+      "Kahvaltı en önemli öğün"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Fast food mu sağlıklı yemek mi?",
+    "answers": [
+      "Fast food suçlu zevkim",
+      "Sağlıklı tercih ederim",
+      "Dengeli olsun",
+      "Cheat day haftada bir"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "En sevdiğin kahvaltılık?",
+    "answers": [
+      "Peynir-zeytin",
+      "Menemen",
+      "Pankek",
+      "Granola ve meyve"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Bir yemek programı sunsan adı ne olurdu?",
+    "answers": [
+      "Acele Mutfak",
+      "Gurme Günleri",
+      "Annemin Tarifleri",
+      "Sokak Lezzetleri"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Şarap mı bira mı?",
+    "answers": [
+      "Kırmızı şarap",
+      "Bira, soğuk olsun",
+      "Kokteyl tercihim",
+      "İkisini de sevmem"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Yemekte en önemli olan ne?",
+    "answers": [
+      "Lezzet",
+      "Sunum",
+      "Porsiyon",
+      "Kimle yediğin"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Bir sokak yemeği festivali olsa ilk ne denersin?",
+    "answers": [
+      "Taco",
+      "Waffle",
+      "Döner",
+      "Ramen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ramazan'da en çok neyi beklersin?",
+    "answers": [
+      "İftar sofrası",
+      "Pide",
+      "Ramazan pidesi",
+      "Aile buluşmaları"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Yemek fotoğrafı çeker misin?",
+    "answers": [
+      "Her yemeğin fotoğrafı şart",
+      "Sadece özel olanların",
+      "Asla, soğuyana kadar beklemem",
+      "Bazen, güzel görünüyorsa"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "Bir meyhane masasında olmazsa olmazın ne?",
+    "answers": [
+      "Rakı",
+      "Deniz mahsülleri",
+      "Acılı ezme",
+      "İyi sohbet"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Çikolata mı meyve mi?",
+    "answers": [
+      "Çikolata, karanlık taraf",
+      "Meyve, sağlıklı taraf",
+      "Çikolatalı meyve — ikisi birden",
+      "Baklava ikisini de döver"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Yemek yaparken tarif mi takip edersin yoksa doğaçlama mı?",
+    "answers": [
+      "Tarif şart, gram gram",
+      "Doğaçlama, sezgilerimle",
+      "Tarife bakıp kendimce yaparım",
+      "Yemek yapmak mı?"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Türk kahvesi falına bakar mısın?",
+    "answers": [
+      "Hep bakılır, gelenek",
+      "İnanmam ama bakarım",
+      "Hiç bakmam",
+      "Ben bakarım başkalarına"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Bir buluşmada yemek ısmarlama konusu nasıl olmalı?",
+    "answers": [
+      "Kim davet ettiyse o ısmarlar",
+      "Hesap ortadan bölünür",
+      "Sırayla ısmarlanır",
+      "Hiç önemli değil, akışına bırakırım"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Simit mi poğaça mı?",
+    "answers": [
+      "Simit, çayla efsane",
+      "Poğaça, peynirli olsun",
+      "Açma tercihim",
+      "Hepsi olsun"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Bir bölgenin mutfağını keşfetsen hangisi?",
+    "answers": [
+      "Güneydoğu — kebap cenneti",
+      "Ege — zeytinyağlılar",
+      "Karadeniz — kuymak ve muhlama",
+      "Antep — baklava başkenti"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Kahve içerken yanında ne olsun?",
+    "answers": [
+      "Çikolata",
+      "Kurabiye",
+      "Hiçbir şey, sade içerim",
+      "Sigara (eski alışkanlık)"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ev yemeği mi anne yemeği mi?",
+    "answers": [
+      "Anne yemeği efsane",
+      "Kendi yaptığım daha iyi",
+      "İkisi de güzel",
+      "Restoran yemeği tercihim"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Bir şarkıyla ruh halini anlatsan?",
+    "answers": [
+      "Hızlı ve enerjik bir şarkı",
+      "Yavaş ve duygusal bir ballad",
+      "Alternatif ve farklı",
+      "Pop hit — dans ederim"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Arabayla giderken hangi müzik çalar?",
+    "answers": [
+      "Türkçe pop",
+      "Yabancı rock",
+      "Rap/hip-hop",
+      "Her türden karışık"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Konser mi festival mi?",
+    "answers": [
+      "Konser, tek sanatçıya odaklan",
+      "Festival, atmosfer başka",
+      "Akustik sahne",
+      "Evde canlı yayın izlerim"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Sevgilinle dans edecek olsan hangi tarz?",
+    "answers": [
+      "Slow dans",
+      "Latin dansları",
+      "Serbest dans",
+      "Dans etmeyi bilmem ama denerim"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Hangi Türk sanatçıyı canlı görmek isterdin?",
+    "answers": [
+      "Tarkan",
+      "Sezen Aksu",
+      "Mor ve Ötesi",
+      "Ceza"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Müzik dinlerken ne yaparsın?",
+    "answers": [
+      "Dans ederim",
+      "Sözlerini ezbere söylerim",
+      "Gözlerimi kapatıp dinlerim",
+      "Bir yandan başka iş yaparım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Bir müzik aleti çalabilsen hangisi?",
+    "answers": [
+      "Gitar",
+      "Piyano",
+      "Bateri",
+      "Keman"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Şarkı sözleri mi melodi mi daha önemli?",
+    "answers": [
+      "Sözler her şey",
+      "Melodi önce gelir",
+      "İkisi birbirini tamamlamalı",
+      "Ritim en önemlisi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Hangi müzik tarzı seni en iyi anlatır?",
+    "answers": [
+      "Pop — enerjik ve eğlenceli",
+      "Rock — asi ve özgür",
+      "Jazz — sofistike ve derin",
+      "Elektronik — modern ve hareketli"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Yağmurlu bir günde hangi müzik dinlersin?",
+    "answers": [
+      "Jazz",
+      "Türk sanat müziği",
+      "Lo-fi",
+      "Akustik şarkılar"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Bir şarkıyı sana adayan biri hakkında ne düşünürsün?",
+    "answers": [
+      "Çok romantik, erirdim",
+      "Şarkıya bağlı",
+      "Biraz utanırdım",
+      "En sevdiğim jest"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Spotify mı YouTube Music mi?",
+    "answers": [
+      "Spotify kesinlikle",
+      "YouTube Music",
+      "Apple Music",
+      "Hangisi varsa"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "Bir karaoke gecesine gidecek olsan?",
+    "answers": [
+      "İlk sahneye çıkarım",
+      "Biraz içtikten sonra çıkarım",
+      "İzlemeyi tercih ederim",
+      "Düet yaparım"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Alarm sesi olarak hangi şarkıyı koyardın?",
+    "answers": [
+      "Enerjik bir pop şarkısı",
+      "Sakin bir melodi",
+      "Klasik alarm sesi yeter",
+      "Her sabah farklı şarkı"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Türk müziğinde hangi dönem en iyi?",
+    "answers": [
+      "90'lar Türk pop",
+      "Arabesk klasikleri",
+      "2000'ler pop-rock",
+      "Günümüz indie"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Bir playlist yaparken nasıl bir mantık izlersin?",
+    "answers": [
+      "Ruh haline göre",
+      "Türe göre",
+      "Keşfet karışık",
+      "Tek şarkıyı tekrarda bırakırım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "En çok hangi dilde şarkı dinlersin?",
+    "answers": [
+      "Türkçe",
+      "İngilizce",
+      "İkisi eşit",
+      "Dil fark etmez, melodi önemli"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Bir müzik festivali organize etsen tema ne olurdu?",
+    "answers": [
+      "Gün batımı sahil partisi",
+      "Orman akustik gecesi",
+      "Retro 90'lar",
+      "Elektronik müzik maratonu"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Birlikte müzik dinlemek mi birlikte dans etmek mi?",
+    "answers": [
+      "Müzik dinlemek, huzurlu",
+      "Dans etmek, enerjik",
+      "İkisi de olsun",
+      "Birlikte şarkı söylemek"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Kulaklıkla mı hoparlörle mi dinlersin?",
+    "answers": [
+      "Kulaklık, kendi dünyamda",
+      "Hoparlör, herkes duysun",
+      "Duruma göre değişir",
+      "Araba hoparlörü en iyisi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Bir sahne performansı izlesen hangi sanatçı?",
+    "answers": [
+      "Beyoncé",
+      "Coldplay",
+      "Tarkan",
+      "Ed Sheeran"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Nostalji şarkıları mı yeni çıkan şarkılar mı?",
+    "answers": [
+      "Nostalji, eski güzel günler",
+      "Yeni şarkılar, güncel kalayım",
+      "İkisini karıştırırım",
+      "Klasikler asla eskimez"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Bir şarkıyı tekrar tekrar dinleyebilir misin?",
+    "answers": [
+      "Evet, günlerce aynı şarkı",
+      "Birkaç kez sonra değiştiririm",
+      "Asla, çeşitlilik şart",
+      "Sadece çok sevdiğim şarkıları"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "İlk buluşmada arka planda ne çalsın?",
+    "answers": [
+      "Hafif caz",
+      "Akustik pop",
+      "Sessizlik olsun, birbirimizi duyalım",
+      "Canlı müzik olan bir mekân"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Seni en çok etkileyen müzik türü hangisi?",
+    "answers": [
+      "Arabesk — duygusal derinlik",
+      "İndie — özgünlük",
+      "R&B — his",
+      "Klasik müzik — zamansız"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Bir DJ olsan ilk ne çalarsın?",
+    "answers": [
+      "Daft Punk — One More Time",
+      "Tarkan — Dudu",
+      "Calvin Harris hit'i",
+      "Türkçe pop remix"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "Müzik olmasa hayat nasıl olurdu?",
+    "answers": [
+      "Anlamsız",
+      "Sessiz ama güzel",
+      "Başka sanatlarla dolar",
+      "Düşünemiyorum bile"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Sabah enerjini toplamak için ne dinlersin?",
+    "answers": [
+      "Hareketli pop",
+      "Motivasyon podcast'i",
+      "Rap/hip-hop",
+      "Doğa sesleri"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Romantik bir anı hangi şarkıyla yaşamak istersin?",
+    "answers": [
+      "Sezen Aksu — Firuze",
+      "Adele — Make You Feel My Love",
+      "Müslüm Gürses — Nilüfer",
+      "Ed Sheeran — Perfect"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Film türü olarak neyi tercih edersin?",
+    "answers": [
+      "Romantik komedi",
+      "Aksiyon/Macera",
+      "Gerilim/Korku",
+      "Dram"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Sinemada mı evde mi film izlersin?",
+    "answers": [
+      "Sinema deneyimi başka",
+      "Evde, kendi rahatlığımda",
+      "İkisi de güzel",
+      "Projeksiyonla evde sinema"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Bir filmde hangisi daha önemli?",
+    "answers": [
+      "Senaryo",
+      "Oyunculuk",
+      "Görsellik",
+      "Müzik"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Sevgilinle film izlesen hangi tür?",
+    "answers": [
+      "Romantik komedi",
+      "Korku — sarılma bahane",
+      "Aksiyon — heyecan",
+      "Belgesel — ilham verici"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Marvel mı DC mi?",
+    "answers": [
+      "Marvel tabii ki",
+      "DC, daha karanlık",
+      "İkisi de güzel",
+      "Süper kahraman filmi izlemem"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Film izlerken atıştırmalık?",
+    "answers": [
+      "Patlamış mısır şart",
+      "Çikolata",
+      "Cips",
+      "Hiçbir şey, filme odaklanırım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "En çok hangi film seni etkiledi?",
+    "answers": [
+      "Inception — zihin açıcı",
+      "The Notebook — romantik",
+      "Interstellar — kozmik",
+      "Fight Club — sorgulattı"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Türk filmi mi yabancı film mi?",
+    "answers": [
+      "Türk filmi, kendi hikayelerimiz",
+      "Yabancı film, daha kaliteli",
+      "İkisi de izlerim",
+      "Kaliteli olan nereden olursa"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Netflix mi Disney+ mı?",
+    "answers": [
+      "Netflix, daha çok içerik",
+      "Disney+, nostalji",
+      "İkisine de aboneyim",
+      "YouTube yeter"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "film",
+    "question_text": "Dizi mi film mi?",
+    "answers": [
+      "Dizi, uzun soluklu hikaye",
+      "Film, tek seferde biter",
+      "İkisi de",
+      "Dizi başlatıp bırakırım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Bir filmin içinde yaşayabilsen hangisi?",
+    "answers": [
+      "Harry Potter dünyası",
+      "Star Wars evreni",
+      "La La Land",
+      "Lord of the Rings"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Hangi Türk dizisini tavsiye edersin?",
+    "answers": [
+      "Leyla ile Mecnun",
+      "Ezel",
+      "Çukur",
+      "Behzat Ç."
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Film izlerken spoiler verilse tepkin ne olur?",
+    "answers": [
+      "Çıldırırım",
+      "Biraz üzülürüm",
+      "Sorun değil, nasıl anlatıldığı önemli",
+      "Ben zaten spoiler okurum"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Bir korku filmi izlesen yanında kim olsun?",
+    "answers": [
+      "Sevgilim — korkunca sarılırım",
+      "Arkadaşlarım — birlikte çığlık atarız",
+      "Yalnız — daha korkunç",
+      "Korku filmi izlemem"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Bir film yönetmeni olsan hangi tür çekerdin?",
+    "answers": [
+      "Romantik dram",
+      "Psikolojik gerilim",
+      "Komedi",
+      "Belgesel"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Film seçerken ne yaparsın?",
+    "answers": [
+      "IMDB puanına bakarım",
+      "Fragmanı izlerim",
+      "Öneriye güvenirim",
+      "Rastgele seçerim"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Animasyon film izler misin?",
+    "answers": [
+      "Bayılırım, Pixar fan'ıyım",
+      "Bazen izlerim",
+      "Çocuklar için değil mi?",
+      "Studio Ghibli efsane"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Bir dizi maratonu yapacak olsan kaç bölüm izlersin?",
+    "answers": [
+      "1-2 bölüm yeter",
+      "5-6 bölüm normal",
+      "Bitene kadar devam",
+      "Uyuyakalana kadar"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "En sevdiğin film repliği ne tarz olurdu?",
+    "answers": [
+      "Motivasyonel",
+      "Romantik",
+      "Komik",
+      "Felsefik"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Sinema bileti mi yoksa evde dizi gecesi mi?",
+    "answers": [
+      "Sinema, büyük ekran büyüsü",
+      "Evde dizi gecesi, rahat",
+      "İkisi farklı zevkler",
+      "Açık hava sineması en iyisi"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Ağlatan film mi güldüren film mi?",
+    "answers": [
+      "Ağlatan, duygusal boşalma",
+      "Güldüren, hayat zaten ağlatıyor",
+      "İkisi bir arada en iyi",
+      "Düşündüren filmler"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Yıldız Savaşları mı Yüzüklerin Efendisi mi?",
+    "answers": [
+      "Star Wars efsane",
+      "LOTR tartışılmaz",
+      "İkisi de başyapıt",
+      "İkisi de bana göre değil"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Bir film karakterinin hayatını yaşasan kim olurdun?",
+    "answers": [
+      "James Bond — macera dolu",
+      "Amelie — renkli ve hayalperest",
+      "Tony Stark — zeki ve zengin",
+      "Forest Gump — saf ve şanslı"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Belgesel izlemeyi sever misin?",
+    "answers": [
+      "Çok severim, öğretici",
+      "Doğa belgeseli izlerim",
+      "True crime belgeseli",
+      "Pek izlemem"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Bir Yeşilçam filmi seçsen?",
+    "answers": [
+      "Hababam Sınıfı",
+      "Tosun Paşa",
+      "Vizontele",
+      "Eşkıya"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Filmin sonunda beklenmedik bir twist mi yoksa mutlu son mu?",
+    "answers": [
+      "Twist, beyin yansın",
+      "Mutlu son, rahat edeyim",
+      "Açık uçlu olsun",
+      "Gerçekçi son, ne olursa"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Bir film için en uzak sinemaya gider misin?",
+    "answers": [
+      "Evet, deneyim önemli",
+      "Yakın sinema yeter",
+      "Online izlerim",
+      "IMAX için giderim"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "K-drama izler misin?",
+    "answers": [
+      "Bayılırım",
+      "Bir-iki denedim",
+      "Hiç izlemedim",
+      "Türk dizisi varken neden?"
+    ],
+    "tone": "fun",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "film",
+    "question_text": "Film izlerken telefona bakar mısın?",
+    "answers": [
+      "Asla, saygısızlık",
+      "Bazen mesaj kontrolü",
+      "Sıkılınca bakarım",
+      "Film izlerken dünya durur"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Altyazılı mı dublajlı mı?",
+    "answers": [
+      "Altyazılı, orijinal ses şart",
+      "Dublajlı, rahat izlerim",
+      "Duruma göre",
+      "İngilizce anlıyorum, altyazısız"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Bir film seti ziyaret edeceksin, hangisi?",
+    "answers": [
+      "Harry Potter stüdyoları",
+      "Hollywood",
+      "Bollywood",
+      "Yeşilçam sokağı"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Hangi sporu yapmayı seversin?",
+    "answers": [
+      "Koşu/yürüyüş",
+      "Fitness",
+      "Yüzme",
+      "Takım sporları"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Futbol mu basketbol mu?",
+    "answers": [
+      "Futbol tabii ki",
+      "Basketbol",
+      "İkisi de güzel",
+      "İkisi de ilgimi çekmez"
+    ],
+    "tone": "fun",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Sevgilinle birlikte hangi sporu yapardın?",
+    "answers": [
+      "Tenis",
+      "Bisiklet",
+      "Yoga",
+      "Dans"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Adrenalin sporları dener misin?",
+    "answers": [
+      "Bungee jumping yaparım",
+      "Rafting denerim",
+      "Dalış yaparım",
+      "Hiçbiri, ayaklarım yerde kalsın"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Spor salonuna gider misin?",
+    "answers": [
+      "Düzenli giderim",
+      "Bazen",
+      "Evde yaparım",
+      "Spor salonunun yolunu bilmem"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Favori takımın var mı?",
+    "answers": [
+      "Evet, fanatik seviyede",
+      "Var ama takıntılı değilim",
+      "Milli takımı desteklerim",
+      "Takım tutmam"
+    ],
+    "tone": "fun",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Bir olimpiyat sporuna katılabilsen hangisi?",
+    "answers": [
+      "Yüzme",
+      "Atletizm",
+      "Jimnastik",
+      "Okçuluk"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Maç izlerken nasıl birisin?",
+    "answers": [
+      "Çığlık atan fanatik",
+      "Sessiz izleyici",
+      "Sosyal medyada yorum yapan",
+      "Maç izlemem"
+    ],
+    "tone": "fun",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Sabah koşusu mu akşam sporu mu?",
+    "answers": [
+      "Sabah koşusu, gün güzel başlar",
+      "Akşam sporu, stresi atarım",
+      "Öğlen molasında",
+      "Koşmak mı? Asla"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "E-spor hakkında ne düşünürsün?",
+    "answers": [
+      "Gerçek spor sayılır",
+      "Eğlenceli ama spor değil",
+      "Oynarım da izlemem",
+      "Hiç ilgilenmem"
+    ],
+    "tone": "fun",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "sports",
+    "question_text": "Bir dövüş sanatı öğrenecek olsan?",
+    "answers": [
+      "Boks",
+      "Muay Thai",
+      "Jiu-Jitsu",
+      "Karate"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Kayak mı sörf mü?",
+    "answers": [
+      "Kayak, kar keyifli",
+      "Sörf, deniz tutkusu",
+      "İkisi de",
+      "İkisi de zor, izlerim"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Bir maratona katılır mısın?",
+    "answers": [
+      "5K bile zor",
+      "10K yapabilirim",
+      "Yarı maraton koşarım",
+      "Tam maraton hedefim"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Spor yaparken müzik dinler misin?",
+    "answers": [
+      "Müziksiz spor olmaz",
+      "Podcast dinlerim",
+      "Sessizlikte odaklanırım",
+      "Duruma göre"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Masa tenisi mi bilardo mu?",
+    "answers": [
+      "Masa tenisi, hızlı ve eğlenceli",
+      "Bilardo, strateji",
+      "Dart atarım",
+      "Langırt en iyisi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Bir spor idolün var mı?",
+    "answers": [
+      "Ronaldo",
+      "Serena Williams",
+      "Michael Jordan",
+      "Spor idolüm yok"
+    ],
+    "tone": "fun",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Pilates mi crossfit mi?",
+    "answers": [
+      "Pilates, zarif ve kontrollü",
+      "CrossFit, ağır ve yoğun",
+      "İkisi de farklı güzel",
+      "Yürüyüş yeter bana"
+    ],
+    "tone": "fun",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Bisiklet mi scooter mı?",
+    "answers": [
+      "Bisiklet, pedal çevirmek güzel",
+      "Scooter, pratik",
+      "Yürümeyi tercih ederim",
+      "Araba varken neden?"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Bir spor etkinliği organize etsen ne olurdu?",
+    "answers": [
+      "Plaj voleybolu turnuvası",
+      "Halı saha maçı",
+      "Doğa yürüyüşü",
+      "Yoga buluşması"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Buz pateni yapmaya gider misin?",
+    "answers": [
+      "Bayılırım, romantik",
+      "Düşerim ama eğlenirim",
+      "Hiç denemedim",
+      "Kış sporları bana göre değil"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Galatasaray, Fenerbahçe, Beşiktaş yoksa başka?",
+    "answers": [
+      "Galatasaray",
+      "Fenerbahçe",
+      "Beşiktaş",
+      "Tarafsızım"
+    ],
+    "tone": "fun",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Bir su sporunu denemek istesen?",
+    "answers": [
+      "Dalış",
+      "Sörf",
+      "Kano/kayak",
+      "Su topu"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Spor yapmak için en iyi motivasyon ne?",
+    "answers": [
+      "Sağlık",
+      "Görünüm",
+      "Stres atmak",
+      "Sosyalleşmek"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Bir tırmanış duvarına çıkar mısın?",
+    "answers": [
+      "Hemen çıkarım",
+      "Biraz korkardım ama denerim",
+      "Yükseklik korkum var",
+      "Yer çekimiyle barışığım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Futbol maçı stadyumda mı evde mi?",
+    "answers": [
+      "Stadyumda, atmosfer başka",
+      "Evde, rahat",
+      "Pub'da arkadaşlarla",
+      "Futbolla ilgilenmiyorum"
+    ],
+    "tone": "fun",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Golf oynamak ister misin?",
+    "answers": [
+      "Evet, zarif bir spor",
+      "Çok yavaş gelir",
+      "Merak ediyorum",
+      "Benim sporumun temposu farklı"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Fitness challenge'ları yapar mısın?",
+    "answers": [
+      "Evet, motivasyon olur",
+      "Bazen denerim",
+      "Kendi programım var",
+      "Challenge benim için değil"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "Bir stand-up gösterisi yapacak olsan konun ne olurdu?",
+    "answers": [
+      "Türk aile yapısı",
+      "İlişki problemleri",
+      "İş hayatının absürtlüğü",
+      "Sosyal medya çılgınlığı"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Hangi espri tarzını seversin?",
+    "answers": [
+      "Kara mizah",
+      "Absürt mizah",
+      "Durumsal komedi",
+      "Kelime oyunları"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Biri sana kötü bir espri yapsa ne yaparsın?",
+    "answers": [
+      "Yine de gülerim",
+      "Yüzüne bakarım",
+      "Daha kötü bir espriyle karşılık veririm",
+      "Nazikçe gülümserim"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "En çok ne zaman gülersin?",
+    "answers": [
+      "Arkadaşlarımla saçmalarken",
+      "Komik videolar izlerken",
+      "Uygunsuz anlarda",
+      "Her zaman gülerim"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Bir komedyen olsan sahne adın ne olurdu?",
+    "answers": [
+      "Şaka Şef",
+      "Gül Baba",
+      "Komik Kaçık",
+      "İsim koymam, doğaçlama yaparım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Yanlışlıkla utanç verici bir şey yapsan tepkin ne olur?",
+    "answers": [
+      "Kendim gülerim",
+      "Olmamış gibi yaparım",
+      "Kaçarım",
+      "Herkese anlatırım sonra"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Hangi Türk komedyeni seversin?",
+    "answers": [
+      "Cem Yılmaz",
+      "Ata Demirer",
+      "Şahan Gökbakar",
+      "Yılmaz Erdoğan"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "İlişkide espri ne kadar önemli?",
+    "answers": [
+      "Olmazsa olmaz",
+      "Önemli ama tek kriter değil",
+      "Az ve öz olsun",
+      "Ciddi olmayı tercih ederim"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Bir meme (caps) olsan hangisi olurdun?",
+    "answers": [
+      "Distracted Boyfriend",
+      "This is Fine köpeği",
+      "Success Kid",
+      "Woman Yelling at Cat"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "Gülme krizine giren birini gördüğünde?",
+    "answers": [
+      "Ben de katılırım",
+      "Merak ederim neden güldüğünü",
+      "Garip garip bakarım",
+      "Video çekerim"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Birini güldürmek mi yoksa birine gülmek mi daha keyifli?",
+    "answers": [
+      "Güldürmek, en büyük başarı",
+      "Gülmek, rahatlatıcı",
+      "İkisi birden",
+      "Birlikte gülmek en iyisi"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Bir WhatsApp grubunun adı ne olmalı?",
+    "answers": [
+      "Aile Terapisi",
+      "Müdahale Ekibi",
+      "Gizli Operasyon",
+      "Dedikodu Merkezi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Yanlışlıkla yanlış kişiye mesaj atsan ne yaparsın?",
+    "answers": [
+      "Hızlıca 'yanlış kişi' derim",
+      "Silmeye çalışırım",
+      "Devam ederim sanki doğru kişiye",
+      "Telefonumu fırlatırım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Bir gün boyunca sadece şarkı sözleriyle konuşsan?",
+    "answers": [
+      "Tarkan şarkılarıyla idare ederim",
+      "İngilizce şarkılarla geçiştiririm",
+      "Çok eğlenceli olurdu",
+      "Herkes deli sanardı"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Topluluk önünde en utanç verici anın ne tür olur genelde?",
+    "answers": [
+      "Yanlış bir şey söylerim",
+      "Bir yere takılıp düşerim",
+      "İsim unuturum",
+      "Garip sesler çıkarırım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Bir TikTok trendi yapsan ne tarz olur?",
+    "answers": [
+      "Komik skeç",
+      "Dans challenge",
+      "Yemek videosu",
+      "TikTok kullanmam"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "Espri yaparken timing mi içerik mi daha önemli?",
+    "answers": [
+      "Timing her şey",
+      "İçerik önemli",
+      "İkisi birlikte mükemmel",
+      "Yüz ifadesi en önemli"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "En komik bulduğun film türü?",
+    "answers": [
+      "Türk komedisi",
+      "Amerikan komedisi",
+      "İngiliz mizahı",
+      "Parodi filmleri"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Birine takılmayı sever misin?",
+    "answers": [
+      "Bayılırım, şaka dolu biri",
+      "Yakın arkadaşlarıma yaparım",
+      "Pek yapmam, kırılabilirler",
+      "Bana yapılınca gülerim ama yapmam"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Bir buluşmada karşındaki kişi espri yapamazsa?",
+    "answers": [
+      "Sorun değil, başka özellikleri vardır",
+      "Biraz sıkılırım",
+      "Ben yapıyorsam yeter",
+      "İkinci buluşma zor"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Hayatında en çok güldüğün an ne tarz bir andı?",
+    "answers": [
+      "Beklenmedik bir kaza",
+      "Arkadaşla saçma bir muhabet",
+      "Bir filmdeki sahne",
+      "Kendi kendime yaptığım saçmalık"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Bir gün boyunca her söylediğin şeye herkes gülse ne yaparsın?",
+    "answers": [
+      "Stand-up yaparım",
+      "Dünya barışı isterim gülerek kabul etsinler",
+      "Sessiz kalırım, çok garip",
+      "Keyfini çıkarırım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Seni en çok ne tür şeyler güldürür?",
+    "answers": [
+      "İnsanların düştüğü videolar",
+      "Zeki kelime oyunları",
+      "Absürt durumlar",
+      "Bebek ve hayvan videoları"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Bir 1 Nisan şakası yapsan ne yapardın?",
+    "answers": [
+      "Evleniyorum derdim",
+      "İşten ayrıldım derdim",
+      "Ülkeden gidiyorum derdim",
+      "Şaka yapmam, inandırıcı olmazdım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Komik mi yoksa tatlı mı olmak daha çekici?",
+    "answers": [
+      "Komik kesinlikle",
+      "Tatlı daha çekici",
+      "İkisi birden ideal",
+      "Zeki olsun, gerisi gelir"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Sesli güler misin sessiz mi?",
+    "answers": [
+      "Kahkahamla bina sallanır",
+      "Sessiz gülerim ama yoğun",
+      "Duruma göre değişir",
+      "Gözlerimle gülerim"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "En iyi arkadaşınla bir YouTube kanalı açsanız ne yapardınız?",
+    "answers": [
+      "Challenge videoları",
+      "Sokak röportajı",
+      "Yemek denemeleri",
+      "Skeç ve komedi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "hobby",
+    "question_text": "Bir hobi edinecek olsan ne olurdu?",
+    "answers": [
+      "Fotoğrafçılık",
+      "Resim yapma",
+      "Bir müzik aleti",
+      "Yazarlık"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Haftasonları en çok ne yaparsın?",
+    "answers": [
+      "Spor",
+      "Sanat",
+      "Sosyalleşme",
+      "Dinlenme"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Bir kursa yazılacak olsan?",
+    "answers": [
+      "Dil kursu",
+      "Yemek kursu",
+      "Dans kursu",
+      "Fotoğrafçılık kursu"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Doğada ne yapmayı seversin?",
+    "answers": [
+      "Kamp yapmak",
+      "Trekking",
+      "Kuş gözlemciliği",
+      "Fotoğraf çekmek"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Koleksiyon yapar mısın?",
+    "answers": [
+      "Kitap koleksiyonum var",
+      "Plak/vinyl biriktiririm",
+      "Magnet/hatıra eşyası",
+      "Koleksiyon yapmam"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Bir el sanatı yapsan?",
+    "answers": [
+      "Seramik",
+      "Örgü/makrame",
+      "Ahşap işçiliği",
+      "Takı tasarımı"
+    ],
+    "tone": "fun",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Oyun oynamayı sever misin?",
+    "answers": [
+      "Video oyunları bağımlısıyım",
+      "Masa oyunları severim",
+      "Kart oyunları güzel",
+      "Oyun oynamam"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Bahçe işleriyle ilgilenir misin?",
+    "answers": [
+      "Çiçek yetiştirmeyi severim",
+      "Sebze-meyve bahçesi isterdim",
+      "Kaktüsü bile kuruturum",
+      "Hayalim ama dairede yaşıyorum"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Yeni bir dil öğrenecek olsan hangisi?",
+    "answers": [
+      "İspanyolca",
+      "Japonca",
+      "Fransızca",
+      "Korece"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Bir sanat dalında ustalaşsan hangisi?",
+    "answers": [
+      "Resim",
+      "Müzik",
+      "Fotoğrafçılık",
+      "Yazarlık"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Puzzle yapmayı sever misin?",
+    "answers": [
+      "Bayılırım, saatlerce yaparım",
+      "Küçük olanları",
+      "Dijital puzzle tercih ederim",
+      "Hiç sevmem, sabırsızım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Bir blog veya vlog açsan konu ne olurdu?",
+    "answers": [
+      "Seyahat",
+      "Yemek",
+      "Teknoloji",
+      "Günlük hayat"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Bulmaca ve zeka oyunları sever misin?",
+    "answers": [
+      "Sudoku bağımlısıyım",
+      "Kelime oyunları güzel",
+      "Satranç oynarım",
+      "Beyin yorulmasın"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Sevgilinle birlikte yapabileceğin en güzel hobi ne?",
+    "answers": [
+      "Birlikte yemek yapma",
+      "Resim kursu",
+      "Doğa yürüyüşleri",
+      "Birlikte dizi izleme"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Bir enstrüman çalmayı bilsen ne çalardın?",
+    "answers": [
+      "Gitar — her yerde çalarım",
+      "Piyano — klasik ve zarif",
+      "Ukulele — neşeli",
+      "Saz — kültürel"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "DIY (kendin yap) projeleri yapar mısın?",
+    "answers": [
+      "Bayılırım, her şeyi yaparım",
+      "Pinterest'ten ilham alırım",
+      "Denedim ama beceremem",
+      "Profesyonele bırakırım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Bir workshop'a katılsan hangisi?",
+    "answers": [
+      "Çikolata yapımı",
+      "Seramik atölyesi",
+      "Fotoğrafçılık workshop'u",
+      "Kokteyl yapımı"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Boş zamanlarında en çok ne izlersin?",
+    "answers": [
+      "YouTube",
+      "Netflix dizileri",
+      "Podcast dinlerim",
+      "Twitch yayınları"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "hobby",
+    "question_text": "Bir gönüllü projede yer alsan hangisi?",
+    "answers": [
+      "Hayvan barınağı",
+      "Çevre temizliği",
+      "Çocuklara eğitim",
+      "Yaşlı ziyareti"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Bir sergi gezmek istesen hangi tür?",
+    "answers": [
+      "Modern sanat",
+      "Fotoğraf sergisi",
+      "Tarih sergisi",
+      "İnteraktif deneyim sergisi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Astrolojiye ilgi duyar mısın?",
+    "answers": [
+      "Burçları takip ederim",
+      "Eğlenceli ama inanmam",
+      "Hiç ilgimi çekmez",
+      "Doğum haritama baktırdım"
+    ],
+    "tone": "fun",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Günlük veya jurnal tutar mısın?",
+    "answers": [
+      "Evet, düzenli yazarım",
+      "Ara sıra",
+      "Dijital not tutarım",
+      "Hiç tutmam"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Bir podcast başlatsan konusu ne olurdu?",
+    "answers": [
+      "İlişkiler ve flört",
+      "Kişisel gelişim",
+      "Popüler kültür",
+      "Gerçek suç hikayeleri"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Bir konsept kafe açsan teması ne olurdu?",
+    "answers": [
+      "Kitap kafesi",
+      "Kedi kafesi",
+      "Board game cafe",
+      "Retro/vintage"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Tatilde kitap okur musun?",
+    "answers": [
+      "Tatilde en çok kitap okurum",
+      "Hafif bir roman alırım",
+      "Tatilde kitap mı olur",
+      "E-kitap yeter"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Bir binicilik deneyimi ister misin?",
+    "answers": [
+      "Evet, at binmeyi seviyorum",
+      "Denemek isterdim",
+      "Korkardım ama denerim",
+      "Benim hobim değil"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Eskiden yapıp da bıraktığın bir hobi var mı?",
+    "answers": [
+      "Müzik aleti çalma",
+      "Resim/çizim",
+      "Bir spor dalı",
+      "Her şeyi yapıyorum hâlâ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Bir antika pazarı mı modern tasarım mağazası mı?",
+    "answers": [
+      "Antika pazar, tarih kokuyor",
+      "Modern tasarım, çağdaş çizgiler",
+      "İkisi de keyifli",
+      "Alışveriş ilgimi çekmez"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Bir hayvan çiftliği ziyaret etmek ister misin?",
+    "answers": [
+      "Bayılırım, hayvanları severim",
+      "Çocukken severdim",
+      "Uzaktan izlemek güzel",
+      "Tercih etmem"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Bir sürpriz hediye olarak kurs hediye edilse?",
+    "answers": [
+      "Çok mutlu olurum",
+      "Kursa göre değişir",
+      "Kendi seçmek isterdim",
+      "Kurs yerine tatil olsun"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Bir müze turu mu sanat galerisi mi?",
+    "answers": [
+      "Müze, tarih meraklısıyım",
+      "Galeri, sanat ilham veriyor",
+      "İkisi de güzel",
+      "Açık hava daha iyi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Kaçış odası (escape room) denedin mi?",
+    "answers": [
+      "Bayılırım, heyecanlı",
+      "Denedim, güzeldi",
+      "Denemek isterim",
+      "Kapalı alan, hayır teşekkürler"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Yoga mu meditasyon mu?",
+    "answers": [
+      "Yoga, bedeni de çalıştırır",
+      "Meditasyon, zihin için",
+      "İkisi birlikte",
+      "İkisi de bana göre değil"
+    ],
+    "tone": "fun",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "iPhone mu Android mi?",
+    "answers": [
+      "iPhone kesinlikle",
+      "Android, özgürlük",
+      "Hangisi elime geçerse",
+      "Telefonla ilgilenmem o kadar"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Yapay zeka hakkında ne düşünürsün?",
+    "answers": [
+      "Gelecek AI'da",
+      "Biraz korkutucu",
+      "Faydalı ama kontrol şart",
+      "Çok ilgilenmiyorum"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Sosyal medyada en çok hangisini kullanırsın?",
+    "answers": [
+      "Instagram",
+      "Twitter/X",
+      "TikTok",
+      "LinkedIn"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "Akıllı ev teknolojileri kullanır mısın?",
+    "answers": [
+      "Alexa/Google Home var",
+      "Akıllı ışıklar var",
+      "İlgimi çekiyor ama almadım",
+      "Klasik ev yeter"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Kripto para yatırımı yapar mısın?",
+    "answers": [
+      "Aktif yatırımcıyım",
+      "Biraz denedim",
+      "Riskli buluyorum",
+      "Hiç ilgilenmedim"
+    ],
+    "tone": "fun",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Bir uygulama geliştirsen ne yapardı?",
+    "answers": [
+      "Sağlık takip",
+      "Sosyal bağlantı",
+      "Finansal planlama",
+      "Eğlence/oyun"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Teknoloji bağımlısı mısın?",
+    "answers": [
+      "Evet, dijital detoks lazım",
+      "Biraz, kontrol edebiliyorum",
+      "Hayır, dengeli kullanırım",
+      "Teknolojiyle aram iyi değil"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "VR (sanal gerçeklik) denedin mi?",
+    "answers": [
+      "Evet, harika deneyim",
+      "Denedim, fena değil",
+      "Denemek istiyorum",
+      "İlgimi çekmiyor"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "Çevrimiçi alışveriş mi mağaza mı?",
+    "answers": [
+      "Online, pratik",
+      "Mağaza, dokunmam lazım",
+      "İkisini de kullanırım",
+      "Online araştır, mağazadan al"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Bir gün telefonsuz kalabilir misin?",
+    "answers": [
+      "Asla, panik atak gelir",
+      "Zor ama denerim",
+      "Evet, rahatlarım",
+      "Denedim, güzeldi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Podcast dinler misin?",
+    "answers": [
+      "Her gün dinlerim",
+      "Bazen ilgimi çekenleri",
+      "Denedim ama alışamadım",
+      "Müzik tercih ederim"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Elektrikli araba mı benzinli araba mı?",
+    "answers": [
+      "Elektrikli, gelecek orada",
+      "Benzinli, motor sesi güzel",
+      "Hibrit en iyisi",
+      "Araba kullanmıyorum"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Bir robot arkadaşın olsa ne yapardınız?",
+    "answers": [
+      "Sohbet ederdik",
+      "Birlikte oyun oynardık",
+      "İşlerimi yaptırırdım",
+      "Robot arkadaş istemem"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Akıllı saat kullanır mısın?",
+    "answers": [
+      "Apple Watch vazgeçilmezim",
+      "Spor için kullanırım",
+      "Normal saat daha şık",
+      "Saat takmam"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Yazılım öğrenmek ister misin?",
+    "answers": [
+      "Zaten biliyorum",
+      "Öğrenmek istiyorum",
+      "Merak ediyorum ama zor görünüyor",
+      "İlgimi çekmiyor"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "Fotoğraflarını nasıl düzenlersin?",
+    "answers": [
+      "Filtre atarım hemen",
+      "Profesyonel uygulama kullanırım",
+      "Olduğu gibi paylaşırım",
+      "Fotoğraf çekmeyi sevmem"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Metaverse hakkında ne düşünüyorsun?",
+    "answers": [
+      "Gelecek orada",
+      "Abartılıyor",
+      "Merak ediyorum",
+      "Ne olduğunu bilmiyorum"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "E-kitap mı basılı kitap mı?",
+    "answers": [
+      "Basılı, kokusu bile güzel",
+      "E-kitap, pratik",
+      "İkisini de kullanırım",
+      "Sesli kitap dinlerim"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Oyun konsolu mu PC mi?",
+    "answers": [
+      "PlayStation",
+      "PC master race",
+      "Xbox",
+      "Mobil oyunlar yeter"
+    ],
+    "tone": "fun",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "Bir teknoloji ürünü tasarlasan ne olurdu?",
+    "answers": [
+      "Uçan araba",
+      "Hologram telefon",
+      "Teleportasyon cihazı",
+      "Uyku optimize eden cihaz"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Sosyal medyada paylaşırken neye dikkat edersin?",
+    "answers": [
+      "Estetik görünüm",
+      "İçerik kalitesi",
+      "Gizlilik",
+      "Pek paylaşmam"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Bir streaming servisi seçmen gerekse?",
+    "answers": [
+      "Netflix",
+      "Spotify",
+      "YouTube Premium",
+      "Hepsine abone olmalıyım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Drone ile ne yapardın?",
+    "answers": [
+      "Manzara çekimi",
+      "Yarış yapardım",
+      "Teslimat servisi",
+      "Drone kullanmayı bilmem"
+    ],
+    "tone": "fun",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Gelecekte teknoloji hayatımızı nasıl değiştirir?",
+    "answers": [
+      "Her şey kolaylaşır",
+      "İnsan ilişkileri zayıflar",
+      "Dengeli kullanırsak güzel",
+      "Tahmin bile edemeyiz"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Bir bilgisayar oyunu dünyasında yaşasan?",
+    "answers": [
+      "Açık dünya RPG",
+      "Simülasyon oyunu",
+      "Strateji oyunu",
+      "Yarış oyunu"
+    ],
+    "tone": "fun",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "Teknoloji sayesinde en çok neyi seviyorsun?",
+    "answers": [
+      "Uzaktaki insanlarla bağlantı",
+      "Bilgiye kolay erişim",
+      "Eğlence seçenekleri",
+      "İşleri kolaylaştırması"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "ChatGPT veya AI asistanı kullanır mısın?",
+    "answers": [
+      "Her gün kullanırım",
+      "Bazen danışırım",
+      "Denedim, ilginç",
+      "İnsan zekası yeter"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Tabletini ne için kullanırsın?",
+    "answers": [
+      "Film/dizi izlemek",
+      "Çizim/not almak",
+      "İş/okul için",
+      "Tabletim yok"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Bir erkekte en çekici özellik ne?",
+    "answers": [
+      "Mizah anlayışı",
+      "Özgüveni",
+      "Zekası",
+      "Duyarlılığı"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Bir kadında en çekici özellik ne?",
+    "answers": [
+      "Gülüşü",
+      "Zekası",
+      "Enerjisi",
+      "Gizemli oluşu"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Erkekler duygularını göstermeli mi?",
+    "answers": [
+      "Kesinlikle, çok çekici",
+      "Bazen göstermeli",
+      "Kendi bilir",
+      "Göstermese de hissetmeli"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Makyaj yapmayı sever misin?",
+    "answers": [
+      "Her gün yaparım",
+      "Özel günlerde",
+      "Minimal tercih ederim",
+      "Hiç yapmam"
+    ],
+    "tone": "fun",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Bakımlı bir erkek mi doğal bir erkek mi?",
+    "answers": [
+      "Bakımlı, kendine özen gösteren",
+      "Doğal, olduğu gibi",
+      "Dengeli olsun",
+      "Önemli olan iç güzellik"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Bir kadının en güzel hali ne zaman?",
+    "answers": [
+      "Gülerken",
+      "Makyajsızken",
+      "Kendinden emin olduğunda",
+      "Tutkuyla bir şey yaparken"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Sakal mı temiz tıraş mı?",
+    "answers": [
+      "Hafif sakal çok çekici",
+      "Temiz tıraş tercihim",
+      "Farketmez",
+      "Bakımlı olsun yeter"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Parfüm mü doğal koku mu?",
+    "answers": [
+      "Güzel bir parfüm şart",
+      "Doğal koku daha çekici",
+      "Hafif bir koku yeter",
+      "Koku çok önemli değil"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Bir erkeğin yemek yapması çekici mi?",
+    "answers": [
+      "Çok çekici",
+      "Güzel ama şart değil",
+      "Birlikte yapalım",
+      "Önemli olan niyet"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Yoga yapan bir erkek hakkında ne düşünürsün?",
+    "answers": [
+      "Çok cool",
+      "Fark etmez",
+      "Biraz garip",
+      "Kendiyle barışık demek"
+    ],
+    "tone": "fun",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Bir kadının bağımsız olması seni çeker mi?",
+    "answers": [
+      "Çok çeker, güçlü kadın güzeldir",
+      "Biraz bağımsız olsun",
+      "Aşırısı sorun",
+      "Birlikte güçlü olalım"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Karşı cinsten en çok hangi jesti beklersin?",
+    "answers": [
+      "Sürpriz mesajlar",
+      "Küçük hediyeler",
+      "Kaliteli zaman",
+      "Fiziksel yakınlık"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "İlk buluşmada kim ödemeyi yapmalı?",
+    "answers": [
+      "Davet eden öder",
+      "Ortadan böleriz",
+      "Erkek öder",
+      "Kim isterse"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Romantik bir kaçamak için nereye gidersin?",
+    "answers": [
+      "Bozcaada",
+      "Sapanca",
+      "Alaçatı",
+      "Kapadokya"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "İlk buluşmada ne giyersin?",
+    "answers": [
+      "Şık ama rahat",
+      "En iyi kıyafetlerimi",
+      "Her zamanki tarzımda",
+      "Mekâna göre değişir"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Mesajda emoji kullanır mısın?",
+    "answers": [
+      "Bol bol kullanırım",
+      "Bazen koyarım",
+      "Çok nadir",
+      "Emoji yerine GIF atarım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir günlüğüne zengin olsan ilk ne yaparsın?",
+    "answers": [
+      "Özel jet kiralardım",
+      "Alışveriş çılgınlığı",
+      "Bağış yapardım",
+      "Yatırım yapardım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir yemek yarışmasına katılsan ne pişirirsin?",
+    "answers": [
+      "Makarna",
+      "Steak",
+      "Tatlı",
+      "Anne yemeği"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Sabah mı akşam mı daha çok yersin?",
+    "answers": [
+      "Sabah, güne doyarak başlarım",
+      "Akşam, gün boyu biriktiririm",
+      "Gün boyu atıştırırım",
+      "Düzenli 3 öğün"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Deniz ürünleri sever misin?",
+    "answers": [
+      "Bayılırım, balık olmazsa olmaz",
+      "Sadece karides",
+      "Pek sevmem",
+      "Alerjim var"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Bir tatil yapacak olsan lüks mü ekonomik mi?",
+    "answers": [
+      "Lüks, kendime ödül",
+      "Ekonomik, daha çok yer gezerim",
+      "Orta yol",
+      "Deneyim önemli, bütçe değil"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "İlk buluşmada sessizlik olsa ne yaparsın?",
+    "answers": [
+      "Espri yaparım",
+      "Doğal karşılarım",
+      "Soru sorarım",
+      "Gergin olurum"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Hayalindeki ilişki nasıl bir şey?",
+    "answers": [
+      "En iyi arkadaşımla sevgili olmak",
+      "Tutkulu ve heyecanlı",
+      "Sakin ve güvenli",
+      "Her gün yeni bir macera"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Bir ada tatili mi yoksa şehir turu mu?",
+    "answers": [
+      "Ada, huzur ve deniz",
+      "Şehir, keşif ve kültür",
+      "Önce şehir sonra ada",
+      "İkisi birden olan bir yer"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Yağmurlu bir günde evde ne yaparsın?",
+    "answers": [
+      "Film maratonu",
+      "Kitap okuma",
+      "Yemek yapma",
+      "Uyuma"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "En saçma bahaneniz ne olmuştur?",
+    "answers": [
+      "Kedim telefonumu yedi",
+      "Alarm çalmadı (3 tane var)",
+      "Kayboldum (GPS çağında)",
+      "Trafik (evden çalışıyorum)"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Arabesk mi pop mu?",
+    "answers": [
+      "Arabesk, duygu seli",
+      "Pop, dans edeyim",
+      "İkisi de güzel",
+      "Rock daha iyi ikisinden de"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Bir sır söylense sana, ne yaparsın?",
+    "answers": [
+      "Mezara kadar saklarım",
+      "Sadece en yakınıma söylerim",
+      "Sırrın büyüklüğüne bağlı",
+      "Sır tutmak benim özelliğim"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Bir motivasyon kaynağı seçmen gerekse?",
+    "answers": [
+      "Kitaplar",
+      "Başarı hikayeleri",
+      "Müzik",
+      "Kendi hedeflerim"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Bir ilişkiyi bitiren en büyük sebep sence ne?",
+    "answers": [
+      "İletişimsizlik",
+      "Aldatma",
+      "Monotonluk",
+      "Farklı hayat hedefleri"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir günlüğüne başka biri olabilsen kim olurdun?",
+    "answers": [
+      "Bir rockstar",
+      "Bir astronot",
+      "Bir şef",
+      "Bir milyarder"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Yolculukta yanına bir şey alabilsen?",
+    "answers": [
+      "Kulaklık",
+      "Kitap",
+      "Yastık",
+      "Atıştırmalık"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Bir market alışverişinde sepetine ilk ne koyarsın?",
+    "answers": [
+      "Çikolata",
+      "Meyve",
+      "Atıştırmalık",
+      "İhtiyaç listeme bakarım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Plaj voleybolu mu frisbee mi?",
+    "answers": [
+      "Plaj voleybolu, takım ruhu",
+      "Frisbee, rahat",
+      "İkisi de eğlenceli",
+      "Şezlongda izlerim"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Bir konser biletini kime alırsın?",
+    "answers": [
+      "Sevgilime",
+      "En yakın arkadaşıma",
+      "Kendime, tek giderim",
+      "Anneme"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Bir romantik film sahnesi yaşasan hangisi olsun?",
+    "answers": [
+      "Yağmurda öpüşme",
+      "Havaalanında koşma",
+      "Sürpriz evlenme teklifi",
+      "Gün batımında itiraf"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Bir hediye alırken en çok neye dikkat edersin?",
+    "answers": [
+      "Kişiye özel olmasına",
+      "Şık ve pahalı olmasına",
+      "İşe yarar olmasına",
+      "Sürpriz etkisine"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Evde bitki bakar mısın?",
+    "answers": [
+      "Evim botanik bahçesi",
+      "Birkaç tane var",
+      "Hepsini kurutuyorum",
+      "Yapay çiçek tercihim"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Geç mi kalırsın erken mi gelirsin?",
+    "answers": [
+      "Her zaman erken",
+      "Tam zamanında",
+      "5-10 dakika gecikirirm",
+      "Geç kalmak adetimdir"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Emekli olunca ne yaparsın?",
+    "answers": [
+      "Dünyayı gezerim",
+      "Bahçeyle ilgilenirim",
+      "Torunlarımla vakit geçiririm",
+      "Bir hobi dükkanı açarım"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Zaman makinenle geçmişe mi gidersin geleceğe mi?",
+    "answers": [
+      "Geçmişe, hatalarımı düzeltirim",
+      "Geleceğe, merak ediyorum",
+      "Geçmişe, nostaljik anları yaşarım",
+      "Şu anda kalırım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Çiftler birbirinin şifresini bilmeli mi?",
+    "answers": [
+      "Evet, gizli bir şey olmamalı",
+      "Hayır, özel alan lazım",
+      "Güven varsa gerek yok",
+      "Duruma bağlı"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Bir hayır kurumu destekleyecek olsan hangisi?",
+    "answers": [
+      "Eğitim",
+      "Sağlık",
+      "Çevre",
+      "Hayvan hakları"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Bir yere taşınacak olsan İstanbul'un hangi yakası?",
+    "answers": [
+      "Avrupa yakası",
+      "Anadolu yakası",
+      "İstanbul dışına",
+      "Yurt dışına"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Kendine yatırım yapmak denince aklına ne gelir?",
+    "answers": [
+      "Eğitim ve kurslar",
+      "Spor ve sağlık",
+      "Terapi ve kişisel gelişim",
+      "Seyahat ve deneyim"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Eski sevgilinle arkadaş kalır mısın?",
+    "answers": [
+      "Evet, olgunca olur",
+      "Asla, sayfa kapanır",
+      "Duruma bağlı",
+      "Zaman geçince belki"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir işaret dili öğrensen ilk ne söylersin?",
+    "answers": [
+      "Merhaba",
+      "Seni seviyorum",
+      "Acıktım",
+      "Teşekkürler"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Bir motivasyon konuşması yapsan başlığı ne olurdu?",
+    "answers": [
+      "Korkularını yen",
+      "Hayallerine koş",
+      "Başarısızlık dersi verir",
+      "Kendin ol, yeter"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Birinin seni dinlediğini nasıl anlarsın?",
+    "answers": [
+      "Göz temasından",
+      "Sorular sormasından",
+      "Anlattıklarımı hatırlamasından",
+      "Telefonuna bakmamasından"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir süpermarket yarışmasına katılsan stratejin ne olur?",
+    "answers": [
+      "En pahalı şeyleri alırım",
+      "Planlı hareket ederim",
+      "Rastgele koşarım",
+      "Sadece atıştırmalık alırım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Bir arkadaş grubuyla hangi spor aktivitesini yaparsın?",
+    "answers": [
+      "Halı saha maçı",
+      "Bowling",
+      "Paintball",
+      "Doğa yürüyüşü"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Dijital wellness (dijital sağlık) için ne yaparsın?",
+    "answers": [
+      "Ekran süresini sınırlarım",
+      "Bildirim kapatırım",
+      "Telefonsuz saatler oluştururum",
+      "Hiçbir şey yapmam"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Seni en çok şaşırtan iltifat ne olur?",
+    "answers": [
+      "Gözlerin çok güzel",
+      "Sesinle büyülüyorsun",
+      "Enerjin inanılmaz",
+      "Çok farklısın"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Pazar sabahı kaçta uyanırsın?",
+    "answers": [
+      "8'den önce",
+      "10 civarı",
+      "Öğlene doğru",
+      "Alarm ne demek?"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Sevgilinin sana sürpriz akşam yemeği hazırlasa tepkin ne olur?",
+    "answers": [
+      "En güzel hediye bu",
+      "Yardım etmek isterdim",
+      "Lezzetten çok niyet önemli",
+      "Sipariş versek daha iyi"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Özür dilemekte nasılsın?",
+    "answers": [
+      "Hemen özür dilerim",
+      "Haklıysam dilerim",
+      "Zor ama yaparım",
+      "Davranışlarımla gösteririm"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "En çok hangi günü seversin?",
+    "answers": [
+      "Cuma — hafta sonu heyecanı",
+      "Cumartesi — tam gün özgürlük",
+      "Pazar — dinlenme",
+      "Pazartesi — yeni başlangıç"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Bir canlı yayın yapsan ne anlatırsın?",
+    "answers": [
+      "Yemek yapımı",
+      "Oyun oynardım",
+      "Soru-cevap",
+      "Günlük hayatımı paylaşırdım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir tane kurala herkesin uymasını sağlayabilsen?",
+    "answers": [
+      "Herkes nazik olsun",
+      "Çöp atmasın",
+      "Trafikte sakin olsun",
+      "Yalan söylemesin"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Sevgiline lakap takar mısın?",
+    "answers": [
+      "Tatlı lakaplar takarım",
+      "İsmiyle hitap ederim",
+      "Komik lakaplar",
+      "O bana taksın"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Birlikte koşu yapmak romantik mi?",
+    "answers": [
+      "Çok romantik",
+      "Spor birlikte yapılmaz",
+      "Tempoma uyarsa evet",
+      "Koşu yerine yürüyüş"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Bir Türk filminde oynasan hangi rol olurdu?",
+    "answers": [
+      "Karizmatik kahraman",
+      "Komik yan karakter",
+      "Gizemli kötü adam",
+      "Romantik aşık"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Fotoğraf çekmeyi sever misin?",
+    "answers": [
+      "Evet, her anı ölümsüzleştiririm",
+      "Sadece güzel manzaraları",
+      "Selfie çekerim",
+      "Fotoğraf çekmem, anı yaşarım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Kış tatili mi yaz tatili mi?",
+    "answers": [
+      "Kış, kar ve sıcak şömine",
+      "Yaz, güneş ve deniz",
+      "İkisini de isterim",
+      "Sonbahar en güzeli"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Bir lezzet daha önce hiç denemediğin ama merak ettiğin?",
+    "answers": [
+      "Japon ramen",
+      "Meksika taco",
+      "Kore BBQ",
+      "Hint curry"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Yolda yürürken kulaklıktan ne çalar?",
+    "answers": [
+      "Günün hit şarkısı",
+      "Ruh halime göre playlist",
+      "Podcast",
+      "Sessizlik, düşüncelerimle yürürüm"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Bir sosyal medya hesabı açsan ne paylaşırsın?",
+    "answers": [
+      "Seyahat fotoğrafları",
+      "Yemek içerikleri",
+      "Günlük hayat",
+      "Meme ve komik içerikler"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "Bir buluşmada en çok ne konuşmak istersin?",
+    "answers": [
+      "Hayaller ve hedefler",
+      "Komik anılar",
+      "Ortak ilgi alanları",
+      "Derin konular"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Bir gemi turu yapsan hangi rota?",
+    "answers": [
+      "Akdeniz turu",
+      "Karayipler",
+      "Norveç fiyortları",
+      "Güneydoğu Asya"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Seyahatte en çok hangi anı biriktirmek istersin?",
+    "answers": [
+      "Gün doğumu izlemek",
+      "Yerel bir festivale katılmak",
+      "Yeni bir arkadaş edinmek",
+      "Spontane bir macera yaşamak"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Pasaportunda kaç ülke damgası var?",
+    "answers": [
+      "Henüz yok ama olacak",
+      "1-5 arası",
+      "5-10 arası",
+      "10'dan fazla"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Bir köy evinde hafta sonu geçirmek ister misin?",
+    "answers": [
+      "Harika olur, doğa beni çağırıyor",
+      "Bir gece yeter",
+      "WiFi varsa evet",
+      "Şehirden çıkmak istemem"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Sırt çantanla dünyayı dolaşır mısın?",
+    "answers": [
+      "Hayalim bu",
+      "Birkaç ay yapardım",
+      "Valizle daha rahat",
+      "Konfor şart benim için"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir süperkahraman takımı kursan takım adı ne olurdu?",
+    "answers": [
+      "İstanbul Koruyucuları",
+      "Boğaz Savaşçıları",
+      "Çay Kahramanları",
+      "Simit Gücü"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir hayvanat bahçesi kursan maskot hayvan ne olurdu?",
+    "answers": [
+      "Panda — tatlı ve tembel",
+      "Aslan — güçlü ve karizmatik",
+      "Penguen — komik ve sadık",
+      "Flamingo — farklı ve gösterişli"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bir gün boyunca sadece bir kelimeyle iletişim kursan?",
+    "answers": [
+      "Tamam",
+      "Evet",
+      "Yok",
+      "Hmm"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Dünyada bir şeyi değiştirebilsen ne olurdu?",
+    "answers": [
+      "Açlık problemi",
+      "Çevre kirliliği",
+      "Eşitsizlik",
+      "İnternetin hızı"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Bir yemek düellosu yapsan hangi yemekle yarışırsın?",
+    "answers": [
+      "Makarna",
+      "Omlet",
+      "Salata",
+      "Tost"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Bir restoran açsan konsepti ne olurdu?",
+    "answers": [
+      "Brunch mekanı",
+      "Street food",
+      "Fine dining",
+      "Ev yemekleri"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "En sevdiğin atıştırmalık?",
+    "answers": [
+      "Çikolata",
+      "Cips",
+      "Meyve",
+      "Kuruyemiş"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Bir müzik grubunun üyesi olsan hangi pozisyon?",
+    "answers": [
+      "Vokal",
+      "Gitarist",
+      "Baterist",
+      "Basçı"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Yılbaşı gecesi hangi şarkıyla karşılarsın yeni yılı?",
+    "answers": [
+      "Sezen Aksu klasiği",
+      "Tarkan hiti",
+      "Yabancı pop",
+      "DJ seti"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Uyumadan önce müzik dinler misin?",
+    "answers": [
+      "Evet, sakin melodiler",
+      "Podcast dinlerim",
+      "Sessizlikte uyurum",
+      "ASMR dinlerim"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Bir şarkıcının biyografisini okuyacak olsan?",
+    "answers": [
+      "Freddie Mercury",
+      "Sezen Aksu",
+      "Amy Winehouse",
+      "Zeki Müren"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Bir film müziği soundtrack'i seçsen hayatına?",
+    "answers": [
+      "Hans Zimmer — epik",
+      "Yann Tiersen (Amelie) — tatlı",
+      "Ennio Morricone — dramatik",
+      "Lo-fi playlist — sakin"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Bir dizi finale hazırlanırken ne yaparsın?",
+    "answers": [
+      "Atıştırmalık hazırlarım",
+      "Telefonu kapatırım",
+      "Arkadaşlarla izlerim",
+      "Spoiler'dan kaçınırım günlerce"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Bir reality show'a katılsan hangisi?",
+    "answers": [
+      "The Bachelor/Bachelorette",
+      "Survivor",
+      "Amazing Race",
+      "MasterChef"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Bir film çekilse ve sen başrolde olsan karşı rol kim olsun?",
+    "answers": [
+      "En yakın arkadaşım",
+      "Çok tanınmış bir oyuncu",
+      "Sürpriz olsun",
+      "Sevgilim"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Bir parkur (parkour) denemesi yapar mısın?",
+    "answers": [
+      "Kesinlikle, adrenalin seviyorum",
+      "Basit olanları denerim",
+      "İzlemesi bile yeter",
+      "Kırılacak kemiklerim var"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "sports",
+    "question_text": "Bir dans stili öğrenmen gerekse?",
+    "answers": [
+      "Salsa — tutkulu",
+      "Hip-hop — enerjik",
+      "Bachata — romantik",
+      "Zeybek — geleneksel"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Bir pranks (şaka) kanalı açsan ilk video ne olurdu?",
+    "answers": [
+      "Arkadaşına korku şakası",
+      "Yanlış sipariş verme",
+      "Tanımadığın birine sarılma",
+      "Görünmez sandalye"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "Bir kelime oyunu yapsan: 'aşk' kelimesiyle cümle kur?",
+    "answers": [
+      "Aşk acı çektirmez, beklenti çektirir",
+      "Aşk bulunmaz, yaşanır",
+      "Aşk mı? O da ne?",
+      "Aşk her yerde, gözünü aç"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "En son ne zaman karnından güldün?",
+    "answers": [
+      "Bugün",
+      "Bu hafta",
+      "Hatırlamıyorum bile",
+      "Şu an gülüyorum"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Bir şehirde kaybolmak mı yoksa GPS ile gitmek mi?",
+    "answers": [
+      "Kaybolmak, macera bu",
+      "GPS şart, zaman kaybetmem",
+      "Önce GPS, sonra kaybolma",
+      "Birine sorarım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Bir gurme deneyimi yaşasan hangisi?",
+    "answers": [
+      "Şef'in masası deneyimi",
+      "Sokak yemekleri turu",
+      "Şarap tadımı",
+      "Çikolata atölyesi"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Bir düğünde hangi şarkıyla dans edersin?",
+    "answers": [
+      "Slow bir klasik",
+      "Hareketli Türkçe pop",
+      "Erik Dalı",
+      "Romantik bir İngilizce şarkı"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Bir kitaptan uyarlama izlemeyi sever misin?",
+    "answers": [
+      "Kitap her zaman daha iyi",
+      "Film de güzel olabiliyor",
+      "Önce filmi sonra kitabı",
+      "Kitap okumadan izlerim"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Bir günlük rutin oluşturma konusunda nasılsın?",
+    "answers": [
+      "Çok disiplinliyim",
+      "Genel çerçeve yeter",
+      "Rutin beni boğar",
+      "Her gün farklı yaşarım"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Bir mini dizi önerisi yapsan?",
+    "answers": [
+      "Chernobyl",
+      "Queen's Gambit",
+      "Band of Brothers",
+      "Midnight Mass"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Bir canlı performans izlesen açık havada mı kapalı mekanda mı?",
+    "answers": [
+      "Açık hava, yıldızlar altında",
+      "Kapalı mekan, akustik daha iyi",
+      "Festival alanı, kalabalık",
+      "Küçük bar, samimi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Tatlı mı tuzlu mu tercih edersin?",
+    "answers": [
+      "Tatlı, hayat zaten acı",
+      "Tuzlu, ana yemek benim işim",
+      "İkisi birden",
+      "Ekşi daha iyi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  }
+]
