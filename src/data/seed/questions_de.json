@@ -1,0 +1,6890 @@
+[
+  {
+    "category": "personality",
+    "question_text": "Was beeindruckt dich am meisten beim ersten Date?",
+    "answers": [
+      "Ein verstecktes Speakeasy",
+      "Ein Spaziergang am Rhein",
+      "Eine Rooftop-Bar bei Nacht",
+      "Ein Besuch im Antiquariat"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie lädst du nach einer anstrengenden Woche deine Batterien auf?",
+    "answers": [
+      "Netflix-Marathon alleine",
+      "Ausgehen mit Freunden",
+      "Eine lange Wanderung",
+      "Etwas Schönes kochen"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie ist dein Schreibstil in einer Beziehung?",
+    "answers": [
+      "Memes den ganzen Tag",
+      "Guten-Morgen-Nachrichten",
+      "Sprachnachrichten statt Tippen",
+      "Kurz und knackig"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Wenn wir einen Tag zusammen verbringen – wer plant?",
+    "answers": [
+      "Ich überrasche dich",
+      "Du entscheidest",
+      "Wir planen zusammen",
+      "Einfach laufen lassen"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Was ist dir bei einem Partner am wichtigsten?",
+    "answers": [
+      "Humor",
+      "Ehrgeiz",
+      "Herzlichkeit",
+      "Intelligenz"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie gehst du mit Konflikten in einer Beziehung um?",
+    "answers": [
+      "Sofort aussprechen",
+      "Erstmal Abstand nehmen",
+      "Meine Gefühle aufschreiben",
+      "Humor löst alles"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Morgenmensch oder Nachteule?",
+    "answers": [
+      "Frühaufsteher, immer",
+      "Nachteule durch und durch",
+      "Kommt auf den Tag an",
+      "Beides – ich schlafe einfach wenig"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Welche Love Language passt am besten zu dir?",
+    "answers": [
+      "Worte der Zuneigung",
+      "Quality Time",
+      "Geschenke machen",
+      "Körperliche Nähe"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "Welche deutsche Stadt würdest du für ein Wochenend-Date wählen?",
+    "answers": [
+      "Berlin – Party und Kultur",
+      "München – Biergarten und Gemütlichkeit",
+      "Hamburg – Hafen und Flair",
+      "Köln – Dom und Karneval"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "Dein Traumurlaub mit jemandem Besonderen?",
+    "answers": [
+      "Roadtrip durch die Alpen",
+      "Strandurlaub auf Mallorca",
+      "Kulturtrip in Wien",
+      "Abenteuer in Südostasien"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Perfekter Sonntagmorgen?",
+    "answers": [
+      "Brötchen vom Bäcker holen",
+      "Ausschlafen bis Mittag",
+      "Joggen im Park",
+      "Frühstück im Café"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "Welches Street Food liebst du am meisten?",
+    "answers": [
+      "Currywurst vom Imbiss",
+      "Döner Kebab",
+      "Flammkuchen",
+      "Brezel mit Obatzda"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "Welches Festival würdest du sofort besuchen?",
+    "answers": [
+      "Rock am Ring",
+      "Tomorrowland",
+      "Wacken Open Air",
+      "Splash! Festival"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "film",
+    "question_text": "Welcher deutsche Film ist dein Guilty Pleasure?",
+    "answers": [
+      "Fack ju Göhte",
+      "Good Bye, Lenin!",
+      "Der Schuh des Manitu",
+      "Das Leben der Anderen"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "sports",
+    "question_text": "Welche Sportart findest du beim Date am coolsten?",
+    "answers": [
+      "Bouldern zusammen",
+      "Kajak auf der Spree",
+      "Eislaufen",
+      "Beachvolleyball"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "Welcher Humor-Typ bist du?",
+    "answers": [
+      "Trockener Sarkasmus",
+      "Slapstick und Albernheit",
+      "Wortspiele und Kalauer",
+      "Schwarzer Humor"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "hobby",
+    "question_text": "Welches Hobby würdest du mit deinem Date teilen?",
+    "answers": [
+      "Gemeinsam kochen",
+      "Brettspielabend",
+      "Zusammen wandern",
+      "Konzerte besuchen"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "Wie wichtig ist dir Technik im Alltag?",
+    "answers": [
+      "Ohne Smartphone bin ich verloren",
+      "Ich nutze es, aber nicht exzessiv",
+      "Am liebsten Digital Detox",
+      "Ich liebe Gadgets und Neues"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "Welche Superkraft hättest du gern für einen Tag?",
+    "answers": [
+      "Gedanken lesen",
+      "Fliegen können",
+      "Zeitreisen",
+      "Unsichtbar werden"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Was fällt dir zuerst an einem Menschen auf?",
+    "answers": [
+      "Das Lächeln",
+      "Die Augen",
+      "Die Stimme",
+      "Die Ausstrahlung"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Bist du eher spontan oder planst du alles durch?",
+    "answers": [
+      "Total spontan",
+      "Ich plane alles",
+      "Mix aus beidem",
+      "Kommt auf die Situation an"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "Campingurlaub oder Luxushotel?",
+    "answers": [
+      "Zelt im Schwarzwald",
+      "5-Sterne am Bodensee",
+      "Gemütliche Pension",
+      "Wohnmobil-Roadtrip"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wie sieht dein idealer Feierabend aus?",
+    "answers": [
+      "Sport treiben",
+      "Auf der Couch chillen",
+      "Freunde treffen",
+      "Ein neues Rezept ausprobieren"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "Wenn du ein Tier wärst, welches?",
+    "answers": [
+      "Ein Adler – frei und stark",
+      "Eine Katze – unabhängig",
+      "Ein Delfin – verspielt",
+      "Ein Wolf – loyal im Rudel"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "Dein Go-to-Comfort-Food?",
+    "answers": [
+      "Schnitzel mit Pommes",
+      "Käsespätzle",
+      "Pizza vom Lieblingsitaliener",
+      "Omas Eintopf"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Was macht dich in einer Beziehung glücklich?",
+    "answers": [
+      "Gemeinsame Abenteuer",
+      "Tiefe Gespräche",
+      "Kleine Aufmerksamkeiten",
+      "Zusammen schweigen können"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie zeigst du jemandem, dass du ihn magst?",
+    "answers": [
+      "Ich koche für die Person",
+      "Ich schreibe süße Nachrichten",
+      "Ich plane Überraschungen",
+      "Ich bin einfach immer da"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Was ist ein absolutes No-Go bei einem Date?",
+    "answers": [
+      "Ständig aufs Handy schauen",
+      "Unhöflich zum Personal sein",
+      "Nur über sich selbst reden",
+      "Zu spät kommen ohne Bescheid"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Welcher Beziehungstyp bist du?",
+    "answers": [
+      "Der Beschützer",
+      "Der Abenteurer",
+      "Der Romantiker",
+      "Der beste Freund"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "Wohin würdest du mit deiner Traumfrau reisen?",
+    "answers": [
+      "Paris – Stadt der Liebe",
+      "Santorini – Sonnenuntergang",
+      "New York – Großstadtfeeling",
+      "Bali – tropisches Paradies"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "Wie planst du eine Reise?",
+    "answers": [
+      "Alles durchgeplant",
+      "Last-Minute-Abenteuer",
+      "Grobe Route, Rest spontan",
+      "Ich lasse mich überraschen"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Was darf in deiner Wohnung nicht fehlen?",
+    "answers": [
+      "Schallplatten und Boxen",
+      "Bücherregal bis zur Decke",
+      "Gaming-Setup",
+      "Pflanzen überall"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Dein perfektes Date-Outfit?",
+    "answers": [
+      "Lässig elegant",
+      "Sportlich cool",
+      "Komplett overdressed",
+      "Hauptsache bequem"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "Was kochst du, wenn du beeindrucken willst?",
+    "answers": [
+      "Selbstgemachte Pasta",
+      "Ein Steak perfekt gebraten",
+      "Sushi selber rollen",
+      "Ich bestelle lieber was"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "Bier oder Wein beim Abendessen?",
+    "answers": [
+      "Craft Beer immer",
+      "Ein guter Rotwein",
+      "Cocktails stattdessen",
+      "Ich trinke keinen Alkohol"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "Welches Lied bringt dich sofort zum Tanzen?",
+    "answers": [
+      "99 Luftballons",
+      "Ein guter Techno-Beat",
+      "80er Disco-Klassiker",
+      "Aktueller Chart-Hit"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "Wie wichtig ist Musikgeschmack bei einem Partner?",
+    "answers": [
+      "Absolut entscheidend",
+      "Schön, aber kein Muss",
+      "Gegensätze ziehen sich an",
+      "Musik ist mir nicht so wichtig"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "film",
+    "question_text": "Welches Film-Genre für einen Kuschelabend?",
+    "answers": [
+      "Romantische Komödie",
+      "Thriller mit Spannung",
+      "Sci-Fi-Abenteuer",
+      "Dokumentation über die Welt"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "film",
+    "question_text": "Kino oder Heimkino?",
+    "answers": [
+      "Großes Kino mit Popcorn",
+      "Heimkino mit Decke",
+      "Open-Air-Kino im Sommer",
+      "Beides gleich gern"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "sports",
+    "question_text": "Welche Sportart treibst du am liebsten?",
+    "answers": [
+      "Fußball – Klassiker",
+      "Laufen und Fitness",
+      "Klettern und Bouldern",
+      "Ski oder Snowboard"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "Was bringt dich garantiert zum Lachen?",
+    "answers": [
+      "Spontane Wortwitze",
+      "Sarkastische Kommentare",
+      "Alberne Grimassen",
+      "Selbstironie"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "Lachst du über Loriot-Sketche?",
+    "answers": [
+      "Jedes Mal aufs Neue",
+      "Eher nicht mein Humor",
+      "Kenne ich nicht",
+      "Nur die Badewannen-Szene"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "hobby",
+    "question_text": "Welches Hobby hättest du gern, traust dich aber nicht?",
+    "answers": [
+      "Fallschirmspringen",
+      "Stand-up-Comedy",
+      "Ein Instrument lernen",
+      "Malen oder Zeichnen"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "hobby",
+    "question_text": "Brettspiel oder Videospiel?",
+    "answers": [
+      "Brettspiel – Siedler von Catan!",
+      "Videospiel – immer",
+      "Kartenspiele wie Doppelkopf",
+      "Lieber draußen aktiv sein"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "Apple oder Android?",
+    "answers": [
+      "Apple – natürlich",
+      "Android – mehr Freiheit",
+      "Ist mir egal",
+      "Ich wechsle ständig"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "Wie stehst du zu Smart-Home-Technik?",
+    "answers": [
+      "Alles vernetzt",
+      "Nur Basics wie Licht",
+      "Finde ich gruselig",
+      "Will ich noch ausprobieren"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "Zombie-Apokalypse: Was ist deine Strategie?",
+    "answers": [
+      "Ab in den Schwarzwald verstecken",
+      "Ein Team zusammenstellen",
+      "Im Supermarkt verschanzen",
+      "Ich werde eh zuerst gebissen"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "Welches Haustier passt zu dir?",
+    "answers": [
+      "Hund – treuer Begleiter",
+      "Katze – eigenständig wie ich",
+      "Hamster – klein und süß",
+      "Kein Haustier – zu viel Verantwortung"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Introvertiert oder extrovertiert – was überwiegt?",
+    "answers": [
+      "Introvertiert und stolz",
+      "Extrovertiert und laut",
+      "Ambivertiert – je nach Laune",
+      "Ich weiß es selbst nicht"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Was bedeutet Treue für dich?",
+    "answers": [
+      "Emotionale Exklusivität",
+      "Körperliche Treue",
+      "Vollkommenes Vertrauen",
+      "Offene Kommunikation"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Was inspiriert dich im Leben am meisten?",
+    "answers": [
+      "Die Natur",
+      "Kreative Menschen",
+      "Reisen und Kulturen",
+      "Wissenschaft und Fortschritt"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie definierst du Erfolg?",
+    "answers": [
+      "Innerer Frieden",
+      "Finanzielle Freiheit",
+      "Liebevolle Beziehungen",
+      "Berufliche Anerkennung"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Glaubst du an Liebe auf den ersten Blick?",
+    "answers": [
+      "Absolut!",
+      "Eher Anziehung auf den ersten Blick",
+      "Liebe braucht Zeit",
+      "Kommt auf die Situation an"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was würdest du an deinem Leben sofort ändern?",
+    "answers": [
+      "Mehr Reisen",
+      "Weniger Arbeit",
+      "Mehr Zeit für Hobbys",
+      "Nichts – ich bin zufrieden"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Welche Eigenschaft bewunderst du bei anderen?",
+    "answers": [
+      "Mut",
+      "Empathie",
+      "Disziplin",
+      "Kreativität"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie wichtig ist dir Unabhängigkeit in einer Beziehung?",
+    "answers": [
+      "Sehr – eigene Räume sind wichtig",
+      "Balance zwischen Nähe und Freiraum",
+      "Ich bin gern ständig zusammen",
+      "Freiheit in Vertrauen"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was ist dein größter Traum?",
+    "answers": [
+      "Eine Familie gründen",
+      "Die Welt bereisen",
+      "Mein eigenes Business",
+      "Etwas Bleibendes schaffen"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie gehst du mit Veränderungen um?",
+    "answers": [
+      "Ich liebe Veränderung",
+      "Ich brauche Zeit",
+      "Kommt drauf an",
+      "Veränderung macht mir Angst"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was bedeutet Heimat für dich?",
+    "answers": [
+      "Wo meine Familie ist",
+      "Wo ich mich wohlfühle",
+      "Meine Geburtsstadt",
+      "Heimat trage ich in mir"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Fernreise oder europäischer Kurztrip?",
+    "answers": [
+      "Fernreise – je weiter, desto besser",
+      "Europa hat genug zu bieten",
+      "Abwechselnd beides",
+      "Hauptsache weg von zuhause"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Dein Lieblingsreiseland in Europa?",
+    "answers": [
+      "Italien – Essen und Kultur",
+      "Spanien – Sonne und Fiesta",
+      "Skandinavien – Natur pur",
+      "Griechenland – Inseln und Meer"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Wie lange dauert dein idealer Urlaub?",
+    "answers": [
+      "Ein langes Wochenende reicht",
+      "Mindestens zwei Wochen",
+      "Ein Monat Auszeit",
+      "So lange wie möglich"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Alleinreisen oder zu zweit?",
+    "answers": [
+      "Allein – volle Freiheit",
+      "Zu zweit ist romantischer",
+      "In einer kleinen Gruppe",
+      "Kommt aufs Ziel an"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Stadt oder Land – wo willst du leben?",
+    "answers": [
+      "Großstadt – Berlin oder München",
+      "Kleinstadt mit Charme",
+      "Auf dem Land mit Garten",
+      "Am liebsten am Meer"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wie wichtig ist dir Nachhaltigkeit?",
+    "answers": [
+      "Sehr – ich lebe bewusst",
+      "Ich versuche mein Bestes",
+      "Nicht mein Hauptthema",
+      "Nachhaltigkeit ist überbewertet"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wann bist du am produktivsten?",
+    "answers": [
+      "Früh am Morgen",
+      "Spät in der Nacht",
+      "Nachmittags nach dem Kaffee",
+      "Unter Zeitdruck"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Fleischliebhaber oder vegetarisch?",
+    "answers": [
+      "Fleisch gehört dazu",
+      "Vegetarisch meistens",
+      "Vegan und stolz",
+      "Flexitarier – von allem etwas"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welche Küche der Welt liebst du?",
+    "answers": [
+      "Italienisch",
+      "Japanisch",
+      "Mexikanisch",
+      "Indisch"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vinyl oder Spotify?",
+    "answers": [
+      "Vinyl – der Sound ist unschlagbar",
+      "Spotify – praktisch und überall",
+      "Beides je nach Stimmung",
+      "YouTube reicht mir"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Konzert oder DJ-Set?",
+    "answers": [
+      "Live-Konzert – die Energie",
+      "DJ-Set im Club",
+      "Klassisches Konzert",
+      "Lieber kleine Livemusik-Bar"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Serien-Binge oder ein Film pro Abend?",
+    "answers": [
+      "Serien-Binge bis 3 Uhr",
+      "Ein guter Film reicht",
+      "Beides abwechselnd",
+      "Lieber ein Buch"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Welche Bundesliga-Mannschaft?",
+    "answers": [
+      "Bayern München natürlich",
+      "Borussia Dortmund",
+      "Ein Underdog-Team",
+      "Fußball interessiert mich nicht"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Peinliche Situationen – wie reagierst du?",
+    "answers": [
+      "Lache über mich selbst",
+      "Will im Boden versinken",
+      "Mache einen Witz draus",
+      "Ignoriere es einfach"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Hast du ein kreatives Hobby?",
+    "answers": [
+      "Fotografie",
+      "Musik machen",
+      "Schreiben",
+      "Malen oder Zeichnen"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Social Media – Segen oder Fluch?",
+    "answers": [
+      "Segen – verbindet Menschen",
+      "Fluch – macht süchtig",
+      "Beides gleichermaßen",
+      "Ich nutze kaum Social Media"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welches Jahrzehnt hättest du gern erlebt?",
+    "answers": [
+      "Die wilden 20er",
+      "Die 60er – Flower Power",
+      "Die 80er – Neon und New Wave",
+      "Die 90er – Grunge und Techno"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welcher Wochentag beschreibt deine Persönlichkeit?",
+    "answers": [
+      "Montag – motiviert und fokussiert",
+      "Mittwoch – Mitte und Balance",
+      "Freitag – Partystimmung",
+      "Sonntag – entspannt und gemütlich"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Kopf oder Bauch – wie triffst du Entscheidungen?",
+    "answers": [
+      "Immer mit dem Kopf",
+      "Immer aus dem Bauch",
+      "Beides zusammen",
+      "Ich frage andere um Rat"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was ist dir wichtiger: Ehrlichkeit oder Diplomatie?",
+    "answers": [
+      "Ehrlichkeit, immer",
+      "Diplomatie hält den Frieden",
+      "Kommt auf die Situation an",
+      "Ehrlichkeit mit Feingefühl"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was machst du, wenn du nervös bist?",
+    "answers": [
+      "Ich rede viel",
+      "Ich werde ganz still",
+      "Ich lache nervös",
+      "Ich mache Witze"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Bist du jemand, der schnell vertraut?",
+    "answers": [
+      "Ja, sehr schnell",
+      "Ich brauche Zeit",
+      "Nur bei starker Verbindung",
+      "Vertrauen muss verdient werden"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was beschreibt dich am besten?",
+    "answers": [
+      "Optimist durch und durch",
+      "Realist mit Hoffnung",
+      "Verträumter Idealist",
+      "Pragmatischer Macher"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie wichtig sind dir gemeinsame Werte?",
+    "answers": [
+      "Unverzichtbar",
+      "Wichtig aber nicht alles",
+      "Gegensätze bereichern",
+      "Kommt auf die Werte an"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was ist dein Guilty Pleasure?",
+    "answers": [
+      "Reality-TV schauen",
+      "Süßigkeiten um Mitternacht",
+      "Cheesy Pop-Musik",
+      "Den ganzen Tag im Bett bleiben"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Planst du die Zukunft oder lebst du im Moment?",
+    "answers": [
+      "5-Jahres-Plan steht",
+      "Ich lebe im Hier und Jetzt",
+      "Grobe Richtung reicht",
+      "Ich plane und ändere ständig"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was ist dein Umgang mit Stress?",
+    "answers": [
+      "Sport als Ventil",
+      "Meditation und Ruhe",
+      "Reden mit Freunden",
+      "Musik hören und abschalten"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Kannst du gut Komplimente annehmen?",
+    "answers": [
+      "Klar, danke!",
+      "Ich werde rot",
+      "Ich wehre sie ab",
+      "Kommt drauf an, von wem"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was würdest du deinem jüngeren Ich raten?",
+    "answers": [
+      "Mach dir weniger Sorgen",
+      "Sei mutiger",
+      "Genieße den Moment",
+      "Höre auf dein Herz"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie stehst du zu Überraschungen?",
+    "answers": [
+      "Liebe sie!",
+      "Kommt drauf an",
+      "Eher nicht mein Ding",
+      "Nur positive natürlich"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Bist du eher der Gesprächsführer oder Zuhörer?",
+    "answers": [
+      "Ich rede gerne",
+      "Ich höre lieber zu",
+      "Beides abwechselnd",
+      "Kommt auf das Thema an"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was bringt dich auf die Palme?",
+    "answers": [
+      "Unehrlichkeit",
+      "Unpünktlichkeit",
+      "Arroganz",
+      "Ignoranz"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie feierst du deinen Geburtstag am liebsten?",
+    "answers": [
+      "Große Party mit allen",
+      "Essen gehen mit wenigen",
+      "Allein etwas Besonderes",
+      "Verreisen über das Wochenende"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie schnell bist du bereit, dich zu verlieben?",
+    "answers": [
+      "Ziemlich schnell",
+      "Ich lasse mir Zeit",
+      "Nur wenn es sich richtig anfühlt",
+      "Ich verliebe mich selten"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie wichtig ist dir persönliches Wachstum?",
+    "answers": [
+      "Meine oberste Priorität",
+      "Wichtig, aber nicht alles",
+      "Es passiert von allein",
+      "Ich bin gut so wie ich bin"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Bist du ein guter Verlierer?",
+    "answers": [
+      "Absolut sportlich",
+      "Ich bin sehr kompetitiv",
+      "Kommt auf das Spiel an",
+      "Verlieren? Kenne ich nicht"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was ist romantischer: Sonnenaufgang oder Sonnenuntergang?",
+    "answers": [
+      "Sonnenaufgang – frischer Start",
+      "Sonnenuntergang – magisch",
+      "Sternenhimmel bei Nacht",
+      "Beides gleich schön"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie wichtig ist dir die Meinung anderer?",
+    "answers": [
+      "Gar nicht – ich mache mein Ding",
+      "Etwas, bei engen Freunden",
+      "Ziemlich wichtig",
+      "Nur bei Respektpersonen"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie gehst du mit Langeweile um?",
+    "answers": [
+      "Ich finde immer was zu tun",
+      "Netflix bis der Arzt kommt",
+      "Rausgehen und Leute treffen",
+      "Kreativ werden"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was schätzt du an Freundschaften am meisten?",
+    "answers": [
+      "Ehrlichkeit und Loyalität",
+      "Gemeinsame Erlebnisse",
+      "Tiefe Gespräche",
+      "Zusammen lachen können"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Glaubst du an Schicksal?",
+    "answers": [
+      "Ja, alles hat einen Grund",
+      "Nein, wir gestalten unser Leben",
+      "Ein bisschen von beidem",
+      "Ich bin unsicher"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie reagierst du auf Kritik?",
+    "answers": [
+      "Ich nehme sie konstruktiv",
+      "Erstmal beleidigt, dann nachdenken",
+      "Kommt drauf an, von wem",
+      "Ich hinterfrage alles"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was wäre dein Traumjob, wenn Geld keine Rolle spielte?",
+    "answers": [
+      "Reiseblogger",
+      "Tierschützer",
+      "Künstler oder Musiker",
+      "Café-Besitzer"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie viele enge Freunde hast du?",
+    "answers": [
+      "Einen oder zwei reichen",
+      "Eine Handvoll",
+      "Viele gute Freunde",
+      "Ich bin eher ein Einzelgänger"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was ist dir wichtiger: Freiheit oder Sicherheit?",
+    "answers": [
+      "Freiheit über alles",
+      "Sicherheit gibt mir Ruhe",
+      "Eine gesunde Balance",
+      "Freiheit innerhalb von Sicherheit"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Strand oder Berge?",
+    "answers": [
+      "Strand – Sonne und Meer",
+      "Berge – frische Luft und Aussicht",
+      "Beides abwechselnd",
+      "Stadttrip stattdessen"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Was ist dir im Urlaub am wichtigsten?",
+    "answers": [
+      "Gutes Essen",
+      "Kultur und Geschichte",
+      "Entspannung",
+      "Abenteuer und Action"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Flugzeug, Zug oder Auto?",
+    "answers": [
+      "Fliegen – schnell und effizient",
+      "Zug – entspannt und umweltfreundlich",
+      "Auto – Freiheit und Flexibilität",
+      "Interrail – das Abenteuer"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Dein Traumziel außerhalb Europas?",
+    "answers": [
+      "Japan – Kultur und Essen",
+      "Neuseeland – Natur pur",
+      "Kanada – Weite und Wildnis",
+      "Kolumbien – Lebensfreude"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Wie packst du deinen Koffer?",
+    "answers": [
+      "Alles durchgeplant mit Liste",
+      "Last Minute reinwerfen",
+      "Minimalistisch – weniger ist mehr",
+      "Ich packe zu viel ein"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Hostel oder Airbnb?",
+    "answers": [
+      "Hostel – neue Leute kennenlernen",
+      "Airbnb – wie ein Local leben",
+      "Hotel – ich will verwöhnt werden",
+      "Couchsurfing – Abenteuer pur"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Welche europäische Hauptstadt fasziniert dich?",
+    "answers": [
+      "Lissabon – Charme und Saudade",
+      "Budapest – Thermalquellen und Nachtleben",
+      "Prag – Architektur und Bier",
+      "Stockholm – Design und Natur"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Wellness-Urlaub in den Alpen oder Abenteuer in Island?",
+    "answers": [
+      "Wellness – ich brauche Erholung",
+      "Island – Nordlichter und Vulkane",
+      "Abwechselnd beides",
+      "Lieber Strandurlaub"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Sprichst du gerne die Landessprache im Urlaub?",
+    "answers": [
+      "Ja, ich versuche es immer",
+      "Englisch reicht überall",
+      "Ich lerne ein paar Wörter",
+      "Hände und Füße reichen"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Lieber ein langer Urlaub oder viele kurze?",
+    "answers": [
+      "Ein langer Urlaub im Jahr",
+      "Viele Wochenendtrips",
+      "Beides wenn möglich",
+      "Ich reise selten"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Was nimmst du immer mit auf Reisen?",
+    "answers": [
+      "Meine Kamera",
+      "Ein gutes Buch",
+      "Kopfhörer und Playlist",
+      "Nur das Nötigste"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Würdest du für die Liebe in eine andere Stadt ziehen?",
+    "answers": [
+      "Sofort, ohne zu zögern",
+      "Nur innerhalb Deutschlands",
+      "Nur wenn alles stimmt",
+      "Nein, mein Zuhause ist wichtig"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Roadtrip-Snack – was muss mit?",
+    "answers": [
+      "Haribo Goldbären",
+      "Belegte Brötchen",
+      "Obst und Nüsse",
+      "Alles von der Tankstelle"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Wo in Deutschland warst du noch nie, willst aber hin?",
+    "answers": [
+      "Sylt – Nordsee-Feeling",
+      "Sächsische Schweiz – Kletterparadies",
+      "Schwarzwald – Natur und Wandern",
+      "Rügen – weiße Kreidefelsen"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Kreuzfahrt oder Segeltrip?",
+    "answers": [
+      "Kreuzfahrt – Luxus auf See",
+      "Segeln – Abenteuer pur",
+      "Lieber festen Boden",
+      "Kanu auf dem Bodensee"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Weihnachtsmarkt in welcher Stadt?",
+    "answers": [
+      "Nürnberg – der Klassiker",
+      "Dresdner Striezelmarkt",
+      "Kölner Dom-Kulisse",
+      "Wiener Christkindlmarkt"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wie startest du in den Tag?",
+    "answers": [
+      "Kaffee ist Pflicht",
+      "Sport am Morgen",
+      "Erstmal Social Media checken",
+      "Gemütlich frühstücken"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Ordnungsfanatiker oder kreatives Chaos?",
+    "answers": [
+      "Alles hat seinen Platz",
+      "Kreatives Chaos inspiriert mich",
+      "Ordentlich mit Ausnahmen",
+      "Chaos, aber ich finde alles"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Was liest du am liebsten?",
+    "answers": [
+      "Romane und Belletristik",
+      "Sachbücher und Biografien",
+      "News und Artikel online",
+      "Ich lese eher wenig"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Fitnessstudio oder Outdoor-Sport?",
+    "answers": [
+      "Gym – Gewichte stemmen",
+      "Draußen laufen und radfahren",
+      "Yoga und Pilates",
+      "Sport? Nein danke"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wie sieht dein Freitagabend aus?",
+    "answers": [
+      "Ausgehen mit Freunden",
+      "Gemütlich auf der Couch",
+      "Date Night",
+      "Kreativ sein – Musik, Kunst"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hund oder Katze?",
+    "answers": [
+      "Hund – bester Freund",
+      "Katze – unabhängiger Geist",
+      "Beide!",
+      "Weder noch"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Kaffee oder Tee?",
+    "answers": [
+      "Kaffee – schwarz und stark",
+      "Tee – in allen Varianten",
+      "Beides je nach Stimmung",
+      "Weder noch – Wasser reicht"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wie viel Zeit verbringst du am Handy?",
+    "answers": [
+      "Zu viel, leider",
+      "Nur wenn nötig",
+      "Ich versuche es zu reduzieren",
+      "Ich bin immer online"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Sparst du oder gibst du gern aus?",
+    "answers": [
+      "Ich spare diszipliniert",
+      "Ich gönne mir gerne was",
+      "Balance – sparen und genießen",
+      "Geld ist zum Ausgeben da"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Dein Lieblingsgetränk beim Ausgehen?",
+    "answers": [
+      "Bier vom Fass",
+      "Gin Tonic",
+      "Aperol Spritz",
+      "Softdrink oder Wasser"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wie hältst du dich fit?",
+    "answers": [
+      "Regelmäßig im Gym",
+      "Spazierengehen reicht",
+      "Tanzen und Bewegung im Alltag",
+      "Fitness-Apps und Home Workout"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wie wichtig ist dir gesunde Ernährung?",
+    "answers": [
+      "Sehr – ich achte genau darauf",
+      "Unter der Woche gesund, Wochenende Cheat",
+      "Ich esse was mir schmeckt",
+      "Gesund kochen ist mein Hobby"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Selbstständig oder Angestellter?",
+    "answers": [
+      "Selbstständig – mein eigener Boss",
+      "Angestellt – Sicherheit zählt",
+      "Ich träume von der Selbstständigkeit",
+      "Egal, Hauptsache es macht Spaß"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wann gehst du normalerweise ins Bett?",
+    "answers": [
+      "Vor 22 Uhr",
+      "Gegen Mitternacht",
+      "Nach 1 Uhr",
+      "Keine feste Zeit"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wie stehst du zu Tattoos?",
+    "answers": [
+      "Ich liebe sie und habe welche",
+      "Finde sie cool an anderen",
+      "Nicht mein Geschmack",
+      "Ich will eins, traue mich aber nicht"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Dein Traumhaus?",
+    "answers": [
+      "Loft in der Großstadt",
+      "Häuschen mit Garten",
+      "Bauernhof auf dem Land",
+      "Tiny House und Minimalismus"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Podcast oder Musik beim Pendeln?",
+    "answers": [
+      "Podcast – ich lerne gerne",
+      "Musik – immer",
+      "Hörbücher",
+      "Stille genießen"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wie oft kochst du selbst?",
+    "answers": [
+      "Fast jeden Tag",
+      "Ein paar Mal die Woche",
+      "Selten – lieber bestellen",
+      "Nur am Wochenende aufwändig"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Flohmarkt oder Online-Shopping?",
+    "answers": [
+      "Flohmarkt – Schätze finden",
+      "Online – bequem und schnell",
+      "Geschäfte in der Innenstadt",
+      "Ich kaufe selten ein"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "WG oder alleine wohnen?",
+    "answers": [
+      "WG – Gesellschaft ist wichtig",
+      "Alleine – meine Ruhe",
+      "Mit Partner zusammen",
+      "WG nur mit Freunden"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Wenn du eine Zeitmaschine hättest – Vergangenheit oder Zukunft?",
+    "answers": [
+      "Vergangenheit – Geschichte erleben",
+      "Zukunft – was kommt noch?",
+      "Immer wieder denselben perfekten Tag",
+      "Lieber im Jetzt bleiben"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welche Farbe beschreibt deine Persönlichkeit?",
+    "answers": [
+      "Rot – leidenschaftlich",
+      "Blau – ruhig und besonnen",
+      "Gelb – fröhlich und offen",
+      "Grün – naturverbunden und ausgeglichen"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Du bist auf einer einsamen Insel – was nimmst du mit?",
+    "answers": [
+      "Ein Buch das nie endet",
+      "Ein Musikinstrument",
+      "Angelrute und Messer",
+      "Mein Handy (mit Empfang natürlich)"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Dein Motto im Leben?",
+    "answers": [
+      "YOLO – man lebt nur einmal",
+      "Alles hat seinen Sinn",
+      "Was mich nicht umbringt, macht mich stärker",
+      "Lach mal wieder"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welches Emoji benutzt du am häufigsten?",
+    "answers": [
+      "😂 – Tränen lachen",
+      "❤️ – Herz",
+      "🔥 – Feuer",
+      "😎 – Cool"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Wenn du berühmt wärst, wofür?",
+    "answers": [
+      "Musik oder Kunst",
+      "Wissenschaftliche Entdeckung",
+      "Sport-Champion",
+      "Social Media Star"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Glaubst du an Aliens?",
+    "answers": [
+      "Ja, definitiv",
+      "Möglich, wer weiß",
+      "Eher nicht",
+      "Wir sind die Aliens"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Was wärst du in einer Fantasy-Welt?",
+    "answers": [
+      "Ein Zauberer",
+      "Ein Ritter",
+      "Ein Waldelf",
+      "Ein Drache"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Dein Karaoke-Song?",
+    "answers": [
+      "Bohemian Rhapsody",
+      "Ein Schlager-Klassiker",
+      "Ein aktueller Pop-Hit",
+      "Ich singe nie – niemals"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Lottogewinn – was machst du zuerst?",
+    "answers": [
+      "Weltreise buchen",
+      "Haus kaufen",
+      "Familie und Freunde beschenken",
+      "In Startups investieren"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welches Märchen beschreibt dein Liebesleben?",
+    "answers": [
+      "Dornröschen – warte auf den Kuss",
+      "Aschenputtel – auf den richtigen Moment",
+      "Froschkönig – erst Kuss, dann Wunder",
+      "Hans im Glück – genieße was kommt"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Du hast einen freien Tag ohne Pläne – was machst du?",
+    "answers": [
+      "Ausschlafen und faulenzen",
+      "Spontan etwas unternehmen",
+      "Endlich To-Do-Liste abarbeiten",
+      "Natur genießen"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welches deutsche Klischee trifft auf dich zu?",
+    "answers": [
+      "Pünktlichkeit ist mir heilig",
+      "Ich liebe Brot und Brötchen",
+      "Ich recycle wie ein Profi",
+      "Ich bin effizient organisiert"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welche Jahreszeit bist du?",
+    "answers": [
+      "Frühling – voller Energie",
+      "Sommer – warm und einladend",
+      "Herbst – gemütlich und nachdenklich",
+      "Winter – cool und geheimnisvoll"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welches Gericht beschreibt dein Dating-Stil?",
+    "answers": [
+      "Pizza – einfach und beliebt",
+      "Sushi – raffiniert und besonders",
+      "Currywurst – ehrlich und direkt",
+      "Fondue – gemeinsam genießen"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welcher Weihnachtstyp bist du?",
+    "answers": [
+      "Geschenke-König",
+      "Gemütlichkeit am Kamin",
+      "Weihnachtsmarkt-Fan",
+      "Eher Silvester-Typ"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Du darfst eine Sache für immer essen – welche?",
+    "answers": [
+      "Pizza in allen Varianten",
+      "Sushi und japanisch",
+      "Pasta – nie langweilig",
+      "Burger – Comfort Food"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Dein Geist-Tier?",
+    "answers": [
+      "Faultier – chill und relaxt",
+      "Fuchs – schlau und clever",
+      "Bär – stark und beschützend",
+      "Schmetterling – frei und bunt"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welches Transportmittel wärst du?",
+    "answers": [
+      "Sportwagen – schnell und aufregend",
+      "Fahrrad – entspannt und nachhaltig",
+      "Zug – zuverlässig und komfortabel",
+      "Heißluftballon – frei und abenteuerlich"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Dein Lieblings-Brettspiel für einen Spieleabend?",
+    "answers": [
+      "Siedler von Catan",
+      "Monopoly – auch wenn es Freundschaften zerstört",
+      "Codenames",
+      "Jenga – Nervenkitzel pur"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Wenn du ein Getränk wärst, welches?",
+    "answers": [
+      "Espresso – intensiv und wach",
+      "Smoothie – gesund und frisch",
+      "Bier – gesellig und entspannt",
+      "Champagner – prickelnd und besonders"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Dein perfekter Sonntag in Berlin?",
+    "answers": [
+      "Brunch in Kreuzberg",
+      "Flohmarkt am Mauerpark",
+      "Techno-Nachmittag im Berghain",
+      "Spaziergang durch den Tiergarten"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Dein Lieblings-Frühstück?",
+    "answers": [
+      "Müsli mit frischem Obst",
+      "Brötchen mit Marmelade und Käse",
+      "Rührei und Speck",
+      "Nur Kaffee – reicht mir"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Scharfes Essen – ja oder nein?",
+    "answers": [
+      "Je schärfer, desto besser",
+      "Mild bis mittel",
+      "Gar nicht scharf bitte",
+      "Kommt auf das Gericht an"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welcher Kuchen zum Kaffee?",
+    "answers": [
+      "Schwarzwälder Kirschtorte",
+      "Apfelstrudel mit Sahne",
+      "Käsekuchen – der Klassiker",
+      "Croissant statt Kuchen"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Lieber selber kochen oder Essen bestellen?",
+    "answers": [
+      "Selber kochen macht Spaß",
+      "Bestellen – bequem und lecker",
+      "Abwechselnd",
+      "Zusammen kochen – romantisch!"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Dein Lieblings-Snack beim Filmabend?",
+    "answers": [
+      "Popcorn – salzig",
+      "Chips und Dips",
+      "Schokolade",
+      "Nachos mit Käse"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welches Essen verbindest du mit Kindheitserinnerungen?",
+    "answers": [
+      "Omas Sonntagsbraten",
+      "Milchreis mit Zimt und Zucker",
+      "Fischstäbchen mit Kartoffelpüree",
+      "Pfannkuchen mit Nutella"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Dein perfektes Restaurant für ein Date?",
+    "answers": [
+      "Italienisches Ristorante",
+      "Schickes Sushi-Restaurant",
+      "Gemütliches Brauhaus",
+      "Street Food Markt"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Frühstücks-Typ: süß oder herzhaft?",
+    "answers": [
+      "Süß – Marmelade und Honig",
+      "Herzhaft – Wurst und Käse",
+      "Beides auf dem Teller",
+      "Kein Frühstück – erst Mittag"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welcher Kaffee-Typ bist du?",
+    "answers": [
+      "Espresso – pur und stark",
+      "Cappuccino – cremig und mild",
+      "Latte Macchiato – süß und groß",
+      "Filterkaffee – Oma-Style"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Grillparty – was liegt auf deinem Rost?",
+    "answers": [
+      "Bratwurst und Steak",
+      "Gemüse und Halloumi",
+      "Lachs und Garnelen",
+      "Alles durcheinander"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welche Schokolade?",
+    "answers": [
+      "Vollmilch – cremig",
+      "Zartbitter – herb",
+      "Weiße Schokolade",
+      "Schokolade mit Nüssen"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Dein liebstes Weihnachtsessen?",
+    "answers": [
+      "Gans mit Rotkohl",
+      "Raclette – gesellig",
+      "Fondue – gemütlich",
+      "Kartoffelsalat mit Würstchen"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Wie stehst du zu exotischem Essen?",
+    "answers": [
+      "Ich probiere alles",
+      "Eher zurückhaltend",
+      "Nur in Restaurants",
+      "Lieber bei Bekanntem bleiben"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Deine Lieblings-Pizza?",
+    "answers": [
+      "Margherita – Klassiker",
+      "Salami und Pilze",
+      "Quattro Formaggi",
+      "Hawaii – ja, mit Ananas!"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Was trinkst du zum Essen?",
+    "answers": [
+      "Wasser – immer",
+      "Passender Wein",
+      "Bier zum Essen",
+      "Limo oder Saft"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Dein Lieblings-Musikgenre?",
+    "answers": [
+      "Pop und Charts",
+      "Rock und Alternative",
+      "Hip-Hop und Rap",
+      "Techno und Elektro"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Spielst du ein Instrument?",
+    "answers": [
+      "Ja, Gitarre",
+      "Klavier oder Keyboard",
+      "Nein, aber ich würde gern",
+      "Nein, ich höre lieber zu"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welcher deutsche Musiker gefällt dir?",
+    "answers": [
+      "AnnenMayKantereit",
+      "Rammstein",
+      "Cro",
+      "Kraftwerk"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welche Stimmung hat deine Playlist?",
+    "answers": [
+      "Feel-good und Sommer-Vibes",
+      "Melancholisch und nachdenklich",
+      "Energiegeladen und laut",
+      "Chill und Lo-Fi"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Letztes Konzert, das du besucht hast?",
+    "answers": [
+      "Rock oder Indie",
+      "Rapper live",
+      "DJ-Set oder Festival",
+      "Klassik oder Jazz"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Musik beim Kochen – ja oder nein?",
+    "answers": [
+      "Immer – Küche ohne Musik geht nicht",
+      "Manchmal, wenn die Stimmung passt",
+      "Nein, ich brauche Ruhe",
+      "Podcast statt Musik"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Unter der Dusche singen?",
+    "answers": [
+      "Jeden Morgen ein kleines Konzert",
+      "Nur wenn niemand zuhört",
+      "Niemals!",
+      "Ich summe lieber"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Schlager – Liebe oder Hass?",
+    "answers": [
+      "Heimlich liebe ich Schlager",
+      "Nur auf der Après-Ski-Party",
+      "Absolut nicht mein Ding",
+      "Helene Fischer ist Kult"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welche Musik läuft bei deinem Roadtrip?",
+    "answers": [
+      "Classic Rock Hits",
+      "Aktuelle Charts",
+      "Ein wilder Mix aus allem",
+      "Ich lasse den Beifahrer wählen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Open-Air-Festival oder intimer Club?",
+    "answers": [
+      "Open Air – tausende Leute",
+      "Kleiner Club – Nähe zur Band",
+      "Beides hat seinen Reiz",
+      "Lieber Konzerthalle"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welches Lied weckt dich am besten?",
+    "answers": [
+      "Ein sanfter Song",
+      "Etwas Lautes und Energisches",
+      "Vogelgezwitscher reicht",
+      "Jeder Wecker ist der Feind"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Dein Lieblings-Filmgenre?",
+    "answers": [
+      "Action und Thriller",
+      "Komödie",
+      "Drama und Indie",
+      "Sci-Fi und Fantasy"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welche Serie fesselt dich gerade?",
+    "answers": [
+      "Krimi und Thriller",
+      "Sci-Fi und Fantasy",
+      "Comedy und Sitcom",
+      "Doku-Serien"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Tatort-Sonntag – ja oder nein?",
+    "answers": [
+      "Jeden Sonntag Pflicht",
+      "Ab und zu",
+      "Tatort ist mir zu langsam",
+      "Nur der Münster-Tatort"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Netflix, Amazon Prime oder Disney+?",
+    "answers": [
+      "Netflix – die meiste Auswahl",
+      "Amazon Prime – auch zum Shoppen",
+      "Disney+ – für das innere Kind",
+      "Alle drei natürlich"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Synchronisiert oder Original mit Untertiteln?",
+    "answers": [
+      "Original – immer",
+      "Synchronisiert ist bequemer",
+      "Kommt auf die Sprache an",
+      "Original mit deutschen Untertiteln"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welcher Film hat dich am meisten berührt?",
+    "answers": [
+      "Ein romantischer Film",
+      "Ein Kriegsdrama",
+      "Eine Biografie",
+      "Ein Animationsfilm"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Horrorfilm – mutig oder Angsthase?",
+    "answers": [
+      "Ich liebe Horror!",
+      "Nur mit jemandem an meiner Seite",
+      "Nein danke, ich schlafe sonst nicht",
+      "Psychothriller ja, Splatter nein"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Filmklassiker oder Neuheiten?",
+    "answers": [
+      "Klassiker haben mehr Seele",
+      "Neuheiten sind aufregender",
+      "Beides gemischt",
+      "Hauptsache gut erzählt"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Anime – ja oder nein?",
+    "answers": [
+      "Ja, ich bin Fan",
+      "Manchmal",
+      "Nicht mein Ding",
+      "Was ist Anime?"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Dein idealer Film-Snack?",
+    "answers": [
+      "Popcorn süß",
+      "Popcorn salzig",
+      "Nachos mit Käsesauce",
+      "Gar nichts – fokussiert schauen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Welche Wintersportart liebst du?",
+    "answers": [
+      "Skifahren in den Alpen",
+      "Snowboarden",
+      "Eislaufen",
+      "Winterwandern mit Glühwein"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Sport selber machen oder zuschauen?",
+    "answers": [
+      "Selber machen – immer",
+      "Zuschauen im Stadion",
+      "Beides gleich gern",
+      "Weder noch"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Yoga – hast du es probiert?",
+    "answers": [
+      "Ja, mache ich regelmäßig",
+      "Ein paarmal probiert",
+      "Ist nichts für mich",
+      "Wollte ich immer mal"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Dein liebster Outdoor-Sport?",
+    "answers": [
+      "Wandern in den Bergen",
+      "Fahrrad fahren",
+      "Schwimmen im See",
+      "Laufen durch den Wald"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Olympische Spiele – verfolgst du sie?",
+    "answers": [
+      "Ja, jede Sportart",
+      "Nur bestimmte Disziplinen",
+      "Nur die Eröffnungsfeier",
+      "Olympia interessiert mich nicht"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Extremsport – reizt dich das?",
+    "answers": [
+      "Ja – Bungee, Fallschirm, alles!",
+      "Vielleicht mit Überwindung",
+      "Nein, zu gefährlich",
+      "Ich schaue lieber zu"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Welches Sport-Date klingt gut?",
+    "answers": [
+      "Bowling gehen",
+      "Tanzkurs zusammen",
+      "Minigolf",
+      "Laufrunde im Park"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Wie kompetitiv bist du?",
+    "answers": [
+      "Sehr – ich will immer gewinnen",
+      "Ein bisschen Wettbewerb macht Spaß",
+      "Mir geht es ums Mitmachen",
+      "Gar nicht – Spaß zählt"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Wassersport oder Bergsport?",
+    "answers": [
+      "Surfen und Segeln",
+      "Klettern und Bergsteigen",
+      "Beides je nach Saison",
+      "Keins davon"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Welche WM verfolgst du am liebsten?",
+    "answers": [
+      "Fußball-WM natürlich",
+      "Formel 1",
+      "Handball-WM",
+      "Keine Sportevents"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Welcher Comedy-Typ bist du?",
+    "answers": [
+      "Stand-up – Bühne frei",
+      "Sketch-Comedy wie SNL",
+      "Impro-Theater",
+      "Satirische Late-Night-Shows"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Dein liebster deutscher Comedian?",
+    "answers": [
+      "Carolin Kebekus",
+      "Felix Lobrecht",
+      "Bülent Ceylan",
+      "Hazel Brugger"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Wie reagierst du auf schlechte Witze?",
+    "answers": [
+      "Trotzdem lachen aus Höflichkeit",
+      "Augenrollen",
+      "Einen noch schlechteren Witz erzählen",
+      "Todernst bleiben"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Bist du ein guter Witzeerzähler?",
+    "answers": [
+      "Ja, ich bringe alle zum Lachen",
+      "Ich vergesse die Pointe",
+      "Mein Humor ist eher situativ",
+      "Ich lache lieber über andere"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Lachst du über Memes?",
+    "answers": [
+      "Ständig – mein halbes Handy ist Memes",
+      "Manchmal, wenn sie gut sind",
+      "Ich verstehe die meisten nicht",
+      "Ich erstelle selbst welche"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Karneval in Köln oder Oktoberfest in München?",
+    "answers": [
+      "Karneval – Alaaf!",
+      "Oktoberfest – O'zapft is!",
+      "Beide Feste sind super",
+      "Keins davon – nicht mein Ding"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Sendung mit der Maus oder Löwenzahn – Kindheitsfavorit?",
+    "answers": [
+      "Sendung mit der Maus",
+      "Löwenzahn mit Peter Lustig",
+      "Biene Maja",
+      "Pumuckl natürlich"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Ironie oder Slapstick?",
+    "answers": [
+      "Ironie – subtil und clever",
+      "Slapstick – laut und albern",
+      "Beides hat seinen Platz",
+      "Absurder Humor ist am besten"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Welcher Witz-Typ passt zu dir?",
+    "answers": [
+      "Trockene One-Liner",
+      "Lange Geschichten mit Pointe",
+      "Spontane Situationskomik",
+      "Übertriebenes Schauspiel"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Was ist lustiger: Fail-Videos oder Tiervideos?",
+    "answers": [
+      "Fail-Videos – Schadenfreude",
+      "Tiervideos – immer süß",
+      "Beides zusammen – Tier-Fails",
+      "Keins – echtes Leben ist lustiger"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Dein liebstes Hobby am Wochenende?",
+    "answers": [
+      "Wandern in der Natur",
+      "Kochen und Backen",
+      "Gaming",
+      "Fotografie"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Liest du Bücher oder hörst du Hörbücher?",
+    "answers": [
+      "Gedruckte Bücher sind das Beste",
+      "Hörbücher beim Pendeln",
+      "E-Reader für unterwegs",
+      "Ich lese eher wenig"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Gärtnerst du gern?",
+    "answers": [
+      "Ja, ich habe einen grünen Daumen",
+      "Balkonpflanzen reichen",
+      "Meine Pflanzen sterben leider",
+      "Gar nicht mein Ding"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Sammlung von irgendwas?",
+    "answers": [
+      "Schallplatten oder CDs",
+      "Briefmarken oder Münzen",
+      "Erlebnisse statt Dinge",
+      "Ja, aber ich verrate nicht was"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "DIY-Projekte – machst du das?",
+    "answers": [
+      "Ja, ich baue gerne selbst",
+      "Pinterest ist meine Inspiration",
+      "Ich habe zwei linke Hände",
+      "Nur wenn es sein muss"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Museum oder Galerie?",
+    "answers": [
+      "Naturkundemuseum",
+      "Moderne Kunstgalerie",
+      "Geschichtsmuseum",
+      "Interaktives Science Center"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Strickst oder häkelst du?",
+    "answers": [
+      "Ja, es entspannt mich",
+      "Nein, aber ich finde es cool",
+      "Das ist nichts für mich",
+      "Ich würde es gern lernen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Escape Room – wie gut wärst du?",
+    "answers": [
+      "Ich knacke jeden Code",
+      "Team-Player mit guten Ideen",
+      "Ich gerate in Panik",
+      "Noch nie probiert"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Welches Instrument würdest du gern spielen?",
+    "answers": [
+      "Klavier – elegant",
+      "Gitarre – vielseitig",
+      "Schlagzeug – kraftvoll",
+      "Saxophon – smooth"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Podcasts hören – welches Thema?",
+    "answers": [
+      "True Crime",
+      "Wissenschaft und Bildung",
+      "Comedy und Unterhaltung",
+      "Interview-Podcasts"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ehrenamt – engagierst du dich?",
+    "answers": [
+      "Ja, regelmäßig",
+      "Gelegentlich",
+      "Nein, aber ich sollte",
+      "Ich spende lieber Geld"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Tanzen gehen – ja oder nein?",
+    "answers": [
+      "Ja, ich liebe es!",
+      "Nur mit genug Mut",
+      "Zwei linke Füße",
+      "Nur zu Hause allein"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Dein Traum-Kreativprojekt?",
+    "answers": [
+      "Einen Roman schreiben",
+      "Einen Song komponieren",
+      "Einen Kurzfilm drehen",
+      "Eine App entwickeln"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "KI – begeistert oder besorgt?",
+    "answers": [
+      "Begeistert – Zukunft ist jetzt",
+      "Besorgt – wo führt das hin?",
+      "Neugierig aber vorsichtig",
+      "Ist mir egal"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Wie viele Tabs hast du gerade offen?",
+    "answers": [
+      "Weniger als 5 – Ordnung muss sein",
+      "10-20 – ganz normal",
+      "50+ – ich habe ein Problem",
+      "Ich benutze Lesezeichen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Dein Verhältnis zu Videospielen?",
+    "answers": [
+      "Gamer durch und durch",
+      "Gelegentlich zum Entspannen",
+      "Nur Mobile Games",
+      "Ich spiele gar nicht"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Elektroauto oder Verbrenner?",
+    "answers": [
+      "Elektro – die Zukunft",
+      "Verbrenner – zuverlässig",
+      "Fahrrad und ÖPNV reichen",
+      "Hauptsache es fährt"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Wie schnell adoptierst du neue Technologie?",
+    "answers": [
+      "Day-One-Käufer",
+      "Ich warte auf Bewertungen",
+      "Erst wenn alle es haben",
+      "Ich hänge gern hinterher"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Passwort – wie merkst du dir das?",
+    "answers": [
+      "Passwort-Manager natürlich",
+      "Überall das gleiche (oops)",
+      "Auf einem Zettel",
+      "Fingerabdruck und Face ID"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Virtual Reality – hast du es probiert?",
+    "answers": [
+      "Ja, es ist unglaublich",
+      "Einmal und war beeindruckt",
+      "Nein, aber will ich",
+      "Interessiert mich nicht"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Wie viele Streaming-Abos hast du?",
+    "answers": [
+      "1-2 reichen",
+      "3-4 verschiedene",
+      "5+ – ich brauche alles",
+      "Keins – ich teile mit Freunden"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Smart Watch oder klassische Uhr?",
+    "answers": [
+      "Smart Watch – Daten sind wichtig",
+      "Klassische Uhr – zeitlos",
+      "Gar keine Uhr",
+      "Beides je nach Anlass"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Online-Dating – wie stehst du dazu?",
+    "answers": [
+      "Beste Erfindung überhaupt",
+      "Okay, aber lieber offline kennenlernen",
+      "Es hat Vor- und Nachteile",
+      "Du bist doch hier, oder?"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie gehst du mit Heimweh um?",
+    "answers": [
+      "Ich rufe meine Familie an",
+      "Ich koche ein Gericht von zuhause",
+      "Ich höre vertraute Musik",
+      "Ich habe selten Heimweh"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was bedeutet Luxus für dich?",
+    "answers": [
+      "Zeit für mich",
+      "Reisen und Erlebnisse",
+      "Gutes Essen und Trinken",
+      "Materielle Dinge"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Bist du eher Geber oder Nehmer?",
+    "answers": [
+      "Geber – ich teile gern",
+      "Balance ist wichtig",
+      "Kommt auf die Situation an",
+      "Ich gebe zu viel, ehrlich gesagt"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was war der mutigste Moment in deinem Leben?",
+    "answers": [
+      "Eine große Veränderung gewagt",
+      "Jemandem meine Gefühle gestanden",
+      "Allein in ein fremdes Land gereist",
+      "Ich warte noch auf meinen Moment"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie stehst du zu Traditionen?",
+    "answers": [
+      "Ich liebe Traditionen",
+      "Manche ja, manche nein",
+      "Ich schaffe lieber neue",
+      "Traditionen sind überholt"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was macht einen perfekten Abend aus?",
+    "answers": [
+      "Gutes Gespräch bei Kerzenlicht",
+      "Lachen bis der Bauch weh tut",
+      "Gemeinsam etwas Neues erleben",
+      "Stille Zweisamkeit"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Bist du spontan oder braucht alles einen Plan?",
+    "answers": [
+      "Spontaneität ist das Salz im Leben",
+      "Ich brauche einen groben Plan",
+      "Alles muss durchgeplant sein",
+      "Ich plane und ändere spontan"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was war das Beste, das dir ein Fremder je gesagt hat?",
+    "answers": [
+      "Du hast ein tolles Lächeln",
+      "Deine Energie ist ansteckend",
+      "Du bist mutig",
+      "Ich erinnere mich nicht"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Welcher Sinn ist dir am wichtigsten?",
+    "answers": [
+      "Sehen – die Welt bewundern",
+      "Hören – Musik und Stimmen",
+      "Schmecken – gutes Essen",
+      "Fühlen – Berührung und Nähe"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie drückst du Zuneigung aus?",
+    "answers": [
+      "Durch kleine Gesten",
+      "Durch Worte",
+      "Durch Taten",
+      "Durch Umarmungen"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie wichtig ist dir Pünktlichkeit?",
+    "answers": [
+      "Heilig – ich bin immer pünktlich",
+      "Meistens pünktlich",
+      "Akademische Viertelstunde ist okay",
+      "Zeit ist relativ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was ist deine geheime Stärke?",
+    "answers": [
+      "Empathie – ich fühle mit",
+      "Geduld – ich bleibe ruhig",
+      "Kreativität – ich denke anders",
+      "Anpassungsfähigkeit – ich meistere alles"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Telefonieren oder Texten?",
+    "answers": [
+      "Telefonieren – persönlicher",
+      "Texten – mehr Zeit zum Nachdenken",
+      "Sprachnachrichten",
+      "Kommt auf die Person an"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Wie viele Länder hast du bereist?",
+    "answers": [
+      "Weniger als 5",
+      "5-15 Länder",
+      "15-30 Länder",
+      "Über 30 – Reise ist mein Leben"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Reist du lieber in der Gruppe oder individuell?",
+    "answers": [
+      "Individuell – mein eigenes Tempo",
+      "Kleine Gruppe – mehr Spaß",
+      "Organisierte Tour – stressfrei",
+      "Zu zweit ist am besten"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vanlife – würdest du das ausprobieren?",
+    "answers": [
+      "Sofort – Freiheit auf Rädern",
+      "Für ein paar Wochen ja",
+      "Nein, ich brauche Komfort",
+      "Ich träume davon"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Meditation – machst du das?",
+    "answers": [
+      "Täglich",
+      "Gelegentlich",
+      "Habe es versucht, kann nicht stillsitzen",
+      "Noch nie probiert"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wie wichtig ist dir Mode?",
+    "answers": [
+      "Sehr – ich achte auf Trends",
+      "Eigener Stil ist wichtiger",
+      "Hauptsache bequem",
+      "Mode interessiert mich nicht"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Sauna – finnisch oder Bio?",
+    "answers": [
+      "Finnisch – richtig heiß",
+      "Bio-Sauna – milder",
+      "Aufguss ist das Highlight",
+      "Sauna ist nichts für mich"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wie organisierst du deinen Alltag?",
+    "answers": [
+      "Kalender-App für alles",
+      "To-Do-Listen auf Papier",
+      "Im Kopf – funktioniert meistens",
+      "Organisieren? Spontan leben!"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Dein Lieblings-Eis?",
+    "answers": [
+      "Schokolade – der Klassiker",
+      "Stracciatella",
+      "Fruchtsorbet",
+      "Vanille – unterschätzt"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Koch-Show im TV – schaust du die?",
+    "answers": [
+      "The Taste ist super",
+      "Kitchen Impossible!",
+      "Ich koche lieber selbst",
+      "Kochen im TV langweilt mich"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Bäcker oder selber backen?",
+    "answers": [
+      "Beim Bäcker – frisch und gut",
+      "Selber backen am Wochenende",
+      "Aufbackbrötchen reichen",
+      "Ich esse kaum Brot"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Kannst du singen?",
+    "answers": [
+      "Ja, ziemlich gut sogar",
+      "Unter der Dusche bin ich Star",
+      "Eher nicht, aber laut",
+      "Ich singe nie"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Wie entdeckst du neue Musik?",
+    "answers": [
+      "Spotify Discover Weekly",
+      "Freunde empfehlen mir was",
+      "Social Media und TikTok",
+      "Radio – ja, wirklich"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welchen Film kannst du immer wieder schauen?",
+    "answers": [
+      "Eine Komödie die mich aufheitert",
+      "Ein episches Abenteuer",
+      "Einen Film der mich nachdenken lässt",
+      "Meinen Kindheitsfilm"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Dokumentation – welches Thema?",
+    "answers": [
+      "Natur und Tiere",
+      "True Crime",
+      "Geschichte",
+      "Technologie und Zukunft"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Marathon laufen – wäre das was für dich?",
+    "answers": [
+      "Ja, das ist mein Ziel",
+      "Halbmarathon vielleicht",
+      "Nein, 5 km reichen",
+      "Laufen? Ich nehme das Fahrrad"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Tanz als Sport – ja oder nein?",
+    "answers": [
+      "Ja, Tanzen ist großartig",
+      "Salsa oder Bachata wäre cool",
+      "Eher nicht mein Ding",
+      "Ich bin rhythmisch unbegabt"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Kannst du über dich selbst lachen?",
+    "answers": [
+      "Immer – Selbstironie ist meine Stärke",
+      "Meistens ja",
+      "Nur bei kleinen Sachen",
+      "Ich nehme mich zu ernst"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Wortspiele – genial oder nervig?",
+    "answers": [
+      "Genial – je schlechter, desto besser",
+      "Manchmal lustig",
+      "Meistens nervig",
+      "Ich mache selbst die besten"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Hast du ein ungewöhnliches Hobby?",
+    "answers": [
+      "Ja, und ich bin stolz drauf",
+      "Ich sammle etwas Seltsames",
+      "Eher normale Hobbys",
+      "Mein Leben ist mein Hobby"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Puzzle – entspannend oder frustrierend?",
+    "answers": [
+      "Entspannend – ich liebe 1000-Teile",
+      "Frustrierend nach 20 Minuten",
+      "Nur mit guter Gesellschaft",
+      "Kreuzworträtsel sind besser"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Wie gehst du mit Software-Updates um?",
+    "answers": [
+      "Sofort installieren",
+      "Wochenlang ignorieren",
+      "Nur bei Sicherheitsupdates",
+      "Automatisch einstellen und vergessen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Könntest du eine Woche ohne Internet leben?",
+    "answers": [
+      "Ja, sogar gern",
+      "Schwierig, aber möglich",
+      "Nein, unmöglich",
+      "Nur im Urlaub"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was ist dein Morgenritual?",
+    "answers": [
+      "Kaffee und Zeitung",
+      "Sport und Dusche",
+      "Snooze drücken, fünfmal",
+      "Meditation und Dankbarkeit"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Welches Element bist du?",
+    "answers": [
+      "Feuer – leidenschaftlich",
+      "Wasser – anpassungsfähig",
+      "Erde – bodenständig",
+      "Luft – frei und leicht"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie wichtig ist dir dein Beruf?",
+    "answers": [
+      "Mein Beruf definiert mich",
+      "Wichtig, aber nicht alles",
+      "Mittel zum Zweck",
+      "Work-Life-Balance ist wichtiger"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie reagierst du, wenn jemand weint?",
+    "answers": [
+      "Ich umarme die Person",
+      "Ich höre zu",
+      "Ich versuche aufzuheitern",
+      "Ich bin etwas hilflos"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was gibt dir Energie?",
+    "answers": [
+      "Zeit mit Menschen",
+      "Zeit allein",
+      "Neue Erfahrungen",
+      "Kreative Arbeit"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Lieber zu viel fühlen oder zu wenig?",
+    "answers": [
+      "Zu viel – ich bin emotional",
+      "Zu wenig – Schutzschild",
+      "Die goldene Mitte",
+      "Gefühle sind Stärke"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Abenteuerurlaub oder All-Inclusive?",
+    "answers": [
+      "Abenteuer – jeden Tag was Neues",
+      "All-Inclusive – Pool und Buffet",
+      "Mischung aus beidem",
+      "Kulturreise mit Führung"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Hast du schon mal Work and Travel gemacht?",
+    "answers": [
+      "Ja, beste Erfahrung",
+      "Nein, aber ich wollte immer",
+      "Das Zeitfenster ist vorbei",
+      "Digitaler Nomade stattdessen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Wanderst du gern in den deutschen Mittelgebirgen?",
+    "answers": [
+      "Ja, Harz und Eifel sind super",
+      "Nur im Schwarzwald",
+      "Berge müssen alpin sein",
+      "Wandern ist nicht mein Ding"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wie stehst du zu Silvester?",
+    "answers": [
+      "Große Party mit Feuerwerk",
+      "Gemütlich mit engen Freunden",
+      "Verreisen über den Jahreswechsel",
+      "Ist mir nicht so wichtig"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wie viel Schlaf brauchst du?",
+    "answers": [
+      "6 Stunden reichen",
+      "Mindestens 8 Stunden",
+      "Je mehr desto besser",
+      "Ich schlafe unregelmäßig"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Balkon, Garten oder Dachterrasse?",
+    "answers": [
+      "Garten zum Grillen",
+      "Balkon in der Stadt",
+      "Dachterrasse mit Aussicht",
+      "Mir reicht ein Fenster"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "ÖPNV oder eigenes Auto?",
+    "answers": [
+      "ÖPNV und Fahrrad",
+      "Eigenes Auto – Freiheit",
+      "Carsharing reicht",
+      "Ich gehe lieber zu Fuß"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wie verbringst du einen Regentag?",
+    "answers": [
+      "Zuhause eingemummelt",
+      "Museum oder Kino",
+      "Indoor-Sport",
+      "Trotzdem rausgehen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Bist du ein Sammler oder Minimalist?",
+    "answers": [
+      "Sammler – alles hat Erinnerungswert",
+      "Minimalist – weniger ist mehr",
+      "Irgendwo dazwischen",
+      "Ich versuche auszumisten"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Sonntagsbrunch – was darf nicht fehlen?",
+    "answers": [
+      "Rührei mit Lachs",
+      "Avocado-Toast",
+      "Croissants und Marmelade",
+      "Frisch gepresster Orangensaft"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welche Suppe wärmt dich im Winter?",
+    "answers": [
+      "Kürbissuppe",
+      "Gulaschsuppe",
+      "Hühnerbrühe wie von Oma",
+      "Tom Kha Gai – Thai-Kokos"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welches Lied beschreibt dein Liebesleben?",
+    "answers": [
+      "Ein fröhlicher Popsong",
+      "Eine melancholische Ballade",
+      "Ein wilder Rock-Song",
+      "Die Suche läuft noch"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welcher Filmcharakter bist du?",
+    "answers": [
+      "Der witzige Sidekick",
+      "Der geheimnisvolle Held",
+      "Die romantische Hauptrolle",
+      "Der kluge Stratege"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Fahrradtour – wie weit?",
+    "answers": [
+      "Um den Block reicht",
+      "20-50 km Tagestour",
+      "100+ km Langstrecke",
+      "Ich fahre kein Fahrrad"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Was ist das Witzigste, das dir je passiert ist?",
+    "answers": [
+      "Eine peinliche Verwechslung",
+      "Ein Missgeschick in der Öffentlichkeit",
+      "Ein Insider-Witz mit Freunden",
+      "Ich bin selbst der Witz"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Geocaching – hast du das schon gemacht?",
+    "answers": [
+      "Ja, regelmäßig",
+      "Einmal probiert",
+      "Klingt spannend",
+      "Was ist das?"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Drohne oder Actioncam?",
+    "answers": [
+      "Drohne – Perspektive von oben",
+      "Actioncam – mitten im Geschehen",
+      "Beides für den perfekten Clip",
+      "Smartphone reicht mir"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Dein perfekter Karneval-Kostüm?",
+    "answers": [
+      "Superheld",
+      "Etwas Witziges und Kreatives",
+      "Gruppen-Kostüm mit Freunden",
+      "Ich verkleide mich nicht"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welches Buch würdest du jedem empfehlen?",
+    "answers": [
+      "Einen Roman der mich bewegt hat",
+      "Ein Sachbuch das die Welt erklärt",
+      "Einen lustigen Comic",
+      "Ich empfehle lieber Filme"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie stehst du zu Fernbeziehungen?",
+    "answers": [
+      "Könnte ich schaffen",
+      "Lieber nicht",
+      "Nur für eine begrenzte Zeit",
+      "Kommt auf die Person an"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was tust du wenn du nicht schlafen kannst?",
+    "answers": [
+      "Lesen bis die Augen zufallen",
+      "Podcast hören",
+      "Gedanken aufschreiben",
+      "Schäfchen zählen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Bist du ein guter Zuhörer?",
+    "answers": [
+      "Ja, das sagen alle",
+      "Ich gebe mir Mühe",
+      "Manchmal schweife ich ab",
+      "Ich rede lieber selbst"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie feierst du kleine Erfolge?",
+    "answers": [
+      "Essen gehen",
+      "Mit Freunden teilen",
+      "Stille Zufriedenheit",
+      "Neues Ziel setzen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Flugangst – hast du die?",
+    "answers": [
+      "Null – ich liebe Fliegen",
+      "Ein bisschen beim Start",
+      "Ja, aber ich fliege trotzdem",
+      "Ja, deshalb reise ich anders"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Dein Lieblings-Souvenir von Reisen?",
+    "answers": [
+      "Kühlschrankmagnete",
+      "Lokale Spezialitäten",
+      "Fotos und Erinnerungen",
+      "Ich kaufe keine Souvenirs"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Weihnachten: echter Baum oder künstlich?",
+    "answers": [
+      "Echt – der Duft!",
+      "Künstlich – nachhaltig",
+      "Gar kein Baum",
+      "Ein kleiner auf dem Tisch"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wie viele Pflanzen hast du zuhause?",
+    "answers": [
+      "Einen ganzen Dschungel",
+      "Ein paar Ausgewählte",
+      "Eine tapfere Überlebende",
+      "Keine – Kaktus zählt nicht"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Mitternachtssnack – was greifst du dir?",
+    "answers": [
+      "Käsebrot",
+      "Restliche Pizza vom Vortag",
+      "Müsli mit Milch",
+      "Nichts – ich bin diszipliniert"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welches Gewürz darf nie fehlen?",
+    "answers": [
+      "Salz und Pfeffer reichen",
+      "Knoblauch – in allem",
+      "Paprika – für die Farbe",
+      "Chili – es muss brennen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Hast du ein Lied, das dich an jemanden erinnert?",
+    "answers": [
+      "Ja, und es macht mich glücklich",
+      "Ja, aber es ist bittersüß",
+      "Mehrere sogar",
+      "Nein, Musik verbinde ich nicht so"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welcher Regisseur beeindruckt dich?",
+    "answers": [
+      "Christopher Nolan",
+      "Quentin Tarantino",
+      "Wes Anderson",
+      "Ich achte nicht auf Regisseure"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Hast du schon mal einen Halbmarathon gelaufen?",
+    "answers": [
+      "Ja, mehrfach",
+      "Einmal geschafft",
+      "Steht auf meiner Bucket List",
+      "Niemals"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Dein Humor in drei Worten?",
+    "answers": [
+      "Trocken, dunkel, clever",
+      "Laut, albern, spontan",
+      "Subtil, absurd, überraschend",
+      "Warm, freundlich, harmlos"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Würdest du gern ein Buch schreiben?",
+    "answers": [
+      "Ja, einen Roman",
+      "Ein Sachbuch über mein Fachgebiet",
+      "Einen Reiseblog reicht mir",
+      "Nein, Schreiben ist nicht meins"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Wie viele Apps hast du auf deinem Handy?",
+    "answers": [
+      "Wenige – nur das Nötigste",
+      "Normale Menge",
+      "Zu viele – ich räume nie auf",
+      "Ich probiere ständig neue aus"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Wenn du ein Tag lang unsichtbar wärst?",
+    "answers": [
+      "Durch gesperrte Bereiche schleichen",
+      "Meinen Freunden Streiche spielen",
+      "Einfach beobachten",
+      "Nichts Besonderes – ich bleibe brav"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie stehst du zu Kompromissen?",
+    "answers": [
+      "Bin sehr kompromissbereit",
+      "Bei wichtigen Dingen nicht",
+      "Kompromisse sind der Schlüssel",
+      "Lieber kreative Lösungen finden"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was hast du zuletzt zum ersten Mal gemacht?",
+    "answers": [
+      "Ein neues Gericht probiert",
+      "Einen neuen Ort besucht",
+      "Etwas Sportliches gewagt",
+      "Mich für etwas entschuldigt"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Hast du einen Lieblingsflughafen?",
+    "answers": [
+      "Frankfurt – das Tor zur Welt",
+      "München – effizient und sauber",
+      "Amsterdam Schiphol",
+      "Flughäfen sind alle gleich"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Trinkst du Smoothies?",
+    "answers": [
+      "Jeden Morgen",
+      "Ab und zu",
+      "Nein, zu aufwendig",
+      "Lieber ganzes Obst essen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welche Nudeln sind die besten?",
+    "answers": [
+      "Spaghetti – der Klassiker",
+      "Penne – perfekt für Sauce",
+      "Tortellini – gefüllt und gut",
+      "Ramen – japanisch und heiß"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Klassische Musik – langweilig oder faszinierend?",
+    "answers": [
+      "Faszinierend – Gänsehaut",
+      "Manchmal zum Entspannen",
+      "Eher langweilig",
+      "Nur Filmmusik-Klassik"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Wie lange schaust du TV am Tag?",
+    "answers": [
+      "Weniger als eine Stunde",
+      "1-2 Stunden",
+      "3+ Stunden",
+      "Ich schaue kein lineares TV"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Tennis oder Badminton?",
+    "answers": [
+      "Tennis – Federer-Fan",
+      "Badminton – schnell und spaßig",
+      "Tischtennis!",
+      "Keins davon"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Welches Meme beschreibt dein Leben?",
+    "answers": [
+      "Alles brennt, aber ich lächle",
+      "Erwartung vs. Realität",
+      "Das ist fine-Hund",
+      "Ich bin der Meme-König"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Kochen als Hobby – was ist dein Level?",
+    "answers": [
+      "Profi – mehrgängige Menüs",
+      "Fortgeschritten – ich experimentiere",
+      "Anfänger – Grundrezepte",
+      "Mikrowellen-Champion"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Roboter im Haushalt – willst du das?",
+    "answers": [
+      "Ja, Saugroboter habe ich schon",
+      "Für alles einen Roboter bitte",
+      "Nein, ich mache selbst",
+      "Klingt nach Science-Fiction"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welche Sprache würdest du gern fließend sprechen?",
+    "answers": [
+      "Spanisch – weltweit nützlich",
+      "Japanisch – faszinierende Kultur",
+      "Französisch – die Sprache der Liebe",
+      "Italienisch – klingt so schön"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was wäre auf deiner Bucket List ganz oben?",
+    "answers": [
+      "Nordlichter sehen",
+      "Fallschirmspringen",
+      "Ein Buch veröffentlichen",
+      "Auf jedem Kontinent gewesen sein"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie gehst du mit Einsamkeit um?",
+    "answers": [
+      "Ich genieße Alleinsein",
+      "Ich rufe jemanden an",
+      "Ich gehe unter Leute",
+      "Es fällt mir schwer"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vergangenheit loslassen – fällt dir das leicht?",
+    "answers": [
+      "Ja, ich blicke nach vorn",
+      "Ich brauche etwas Zeit",
+      "Manche Dinge bleiben",
+      "Ich arbeite daran"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Welche Rolle spielst du in deiner Freundesgruppe?",
+    "answers": [
+      "Der Planer",
+      "Der Entertainer",
+      "Der Ruhige",
+      "Der Vermittler"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Reisefotografie – wie machst du das?",
+    "answers": [
+      "Kamera immer dabei",
+      "Smartphone reicht",
+      "Ich genieße lieber den Moment",
+      "Selfies vor Sehenswürdigkeiten"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wie gehst du mit Montagen um?",
+    "answers": [
+      "Positiv – neue Woche, neue Chancen",
+      "Montags bin ich müde",
+      "Motivation erst ab Dienstag",
+      "Montage sind wie jeder andere Tag"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Spätzle oder Knödel?",
+    "answers": [
+      "Spätzle – schwäbisch gut",
+      "Knödel – bayerisch lecker",
+      "Beides mit viel Sauce",
+      "Kartoffeln sind besser"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welches Jahrzehnt hat die beste Musik?",
+    "answers": [
+      "Die 70er – Rock und Disco",
+      "Die 80er – Synthie-Pop",
+      "Die 90er – Grunge und Eurodance",
+      "2000er – R&B und Hip-Hop"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Filmmarathon – welche Reihe?",
+    "answers": [
+      "Harry Potter",
+      "Herr der Ringe",
+      "Star Wars",
+      "Marvel"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Frühsport oder Abendsport?",
+    "answers": [
+      "Morgens – Energie für den Tag",
+      "Abends – Stress abbauen",
+      "Mittags in der Pause",
+      "Sport hat keine Uhrzeit"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Welches deutsche Wort findest du am lustigsten?",
+    "answers": [
+      "Backpfeifengesicht",
+      "Handschuhschneeballwerfer",
+      "Kummerspeck",
+      "Verschlimmbessern"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Fotografie – Handy oder Kamera?",
+    "answers": [
+      "Kamera – Qualität zählt",
+      "Handy – immer dabei",
+      "Drohne für besondere Shots",
+      "Ich fotografiere selten"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Wie viel gibst du für Technik aus?",
+    "answers": [
+      "Viel – neueste Gadgets",
+      "Nur was ich brauche",
+      "Gebraucht und günstig",
+      "So wenig wie möglich"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welches Sprichwort lebst du?",
+    "answers": [
+      "Wer wagt, gewinnt",
+      "Stille Wasser sind tief",
+      "Lachen ist die beste Medizin",
+      "Lieber den Spatz in der Hand"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was ist dein Love Language im Alltag?",
+    "answers": [
+      "Kaffee ans Bett bringen",
+      "Hand halten beim Spazieren",
+      "Aufmerksam zuhören",
+      "Kleine Überraschungen vorbereiten"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie sehr beeinflusst dich das Wetter?",
+    "answers": [
+      "Sehr – Sonne macht mich happy",
+      "Kaum – ich mache das Beste draus",
+      "Regen macht mich melancholisch",
+      "Ich liebe jedes Wetter"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Welcher Bahnhof hat deinen Lieblings-Bäcker?",
+    "answers": [
+      "Hauptbahnhof meiner Stadt",
+      "Ich esse nicht am Bahnhof",
+      "Brezel vom Brezelstand",
+      "Bahnhofsbäckereien sind überbewertet"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Jogginghose in der Öffentlichkeit – ja oder nein?",
+    "answers": [
+      "Absolut – Komfort geht vor",
+      "Nur zum Sport",
+      "Niemals – Karl Lagerfeld hatte Recht",
+      "Athleisure ist der Kompromiss"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Maultaschen oder Pierogi?",
+    "answers": [
+      "Maultaschen – schwäbisch",
+      "Pierogi – polnisch",
+      "Beide lecker",
+      "Kenne nur eins davon"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was bringt dich zum Strahlen?",
+    "answers": [
+      "Ein ehrliches Kompliment",
+      "Eine Umarmung",
+      "Ein gutes Gespräch",
+      "Ein Sonnenuntergang"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Barfuß oder Socken zuhause?",
+    "answers": [
+      "Barfuß immer",
+      "Kuschelsocken",
+      "Hausschuhe natürlich",
+      "Schuhe an bis zum Bett"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Dein verrücktester Traum für die Zukunft?",
+    "answers": [
+      "Auswandern auf eine Insel",
+      "Ein eigenes Restaurant eröffnen",
+      "Einmal um die Welt segeln",
+      "Einen Weltrekord aufstellen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Ostsee oder Nordsee?",
+    "answers": [
+      "Ostsee – ruhiger und wärmer",
+      "Nordsee – Wellen und Wind",
+      "Mittelmeer stattdessen",
+      "Meer ist Meer"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Dein Lieblingsort in deiner Stadt?",
+    "answers": [
+      "Mein Lieblingscafé",
+      "Ein Park oder Grünfläche",
+      "Am Fluss oder See",
+      "Zuhause auf meiner Couch"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was wünschst du dir von einer Beziehung?",
+    "answers": [
+      "Tiefe Verbindung",
+      "Gemeinsames Wachstum",
+      "Spaß und Leichtigkeit",
+      "Sicherheit und Geborgenheit"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie schnell antwortest du auf Nachrichten?",
+    "answers": [
+      "Sofort – immer erreichbar",
+      "Innerhalb einer Stunde",
+      "Wenn ich daran denke",
+      "Ich bin ein schlechter Texter"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Kantine, Bringdienst oder Meal Prep?",
+    "answers": [
+      "Kantine – schnell und einfach",
+      "Bringdienst – Lieferando-Profi",
+      "Meal Prep am Sonntag",
+      "Ich esse was sich findet"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Bist du kreativ oder analytisch?",
+    "answers": [
+      "Kreativ – Kunst und Ideen",
+      "Analytisch – Zahlen und Logik",
+      "Beides je nach Aufgabe",
+      "Weder noch – ich bin praktisch"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Navi oder Intuition beim Fahren?",
+    "answers": [
+      "Navi – immer",
+      "Ich kenne meine Stadt auswendig",
+      "Google Maps auf dem Handy",
+      "Ich frage lieber nach dem Weg"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Risikobereit oder sicherheitsorientiert?",
+    "answers": [
+      "Risikobereit – No Risk No Fun",
+      "Kalkuliertes Risiko",
+      "Sicherheit geht vor",
+      "Kommt auf den Bereich an"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welcher Disney-Charakter bist du?",
+    "answers": [
+      "Simba – mutig wachsen",
+      "Rapunzel – neugierig und frei",
+      "Woody – loyal und treu",
+      "Elsa – lass los und sei du selbst"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Sonnencreme – Pflicht oder vergisst du es?",
+    "answers": [
+      "Immer LSF 50",
+      "Meistens dabei",
+      "Vergesse ich regelmäßig",
+      "Ich bräune ohne Schutz"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Dein Lieblings-Markt?",
+    "answers": [
+      "Wochenmarkt für frisches Gemüse",
+      "Flohmarkt für Vintage-Schätze",
+      "Street Food Festival",
+      "Online bestellen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Welches Land steht als nächstes auf deiner Liste?",
+    "answers": [
+      "Portugal – Surfen und Pastéis",
+      "Japan – Kultur und Essen",
+      "Island – Natur pur",
+      "Thailand – Sonne und Strände"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Dein Morgen-Soundtrack?",
+    "answers": [
+      "Upbeat Pop zum Wachwerden",
+      "Chill Lo-Fi zum Aufwachen",
+      "Nachrichten-Podcast",
+      "Stille – bitte kein Lärm"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Wenn du einen Tag als jemand anderes leben könntest?",
+    "answers": [
+      "Ein berühmter Musiker",
+      "Ein Astronaut im All",
+      "Ein Tierpfleger im Zoo",
+      "Der Bundeskanzler"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was machst du als erstes nach dem Aufwachen?",
+    "answers": [
+      "Handy checken",
+      "Wasser trinken",
+      "Strecken und Gähnen",
+      "Weiterschlafen wollen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Dein Umgang mit Enttäuschungen?",
+    "answers": [
+      "Daraus lernen und weitermachen",
+      "Erstmal traurig sein ist okay",
+      "Mit Freunden darüber reden",
+      "Mich in Arbeit stürzen"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welches Klischee über Dating-Apps stimmt?",
+    "answers": [
+      "Alle suchen nur was Schnelles",
+      "Es gibt wirklich tolle Menschen",
+      "Die Auswahl überfordert",
+      "Man lernt sich selbst besser kennen"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wie gehst du mit Alltagsstress um?",
+    "answers": [
+      "Sport und Bewegung",
+      "Baden und Entspannen",
+      "Freunde treffen",
+      "Spaziergang in der Natur"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wofür bist du dankbar?",
+    "answers": [
+      "Meine Familie und Freunde",
+      "Meine Gesundheit",
+      "Meine Freiheit",
+      "Jeden neuen Tag"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie wichtig ist dir emotionale Intelligenz?",
+    "answers": [
+      "Sehr – die wichtigste Eigenschaft",
+      "Wichtig, aber nicht alles",
+      "Kommt drauf an",
+      "Darüber denke ich selten nach"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was motiviert dich am Morgen aufzustehen?",
+    "answers": [
+      "Neue Möglichkeiten",
+      "Kaffee und Frühstück",
+      "Meine Ziele",
+      "Die Angst zu spät zu kommen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie drückst du Dankbarkeit aus?",
+    "answers": [
+      "Ich sage es direkt",
+      "Durch Taten",
+      "Durch Geschenke",
+      "Innerlich – still und leise"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was wäre dein perfektes zweites Date?",
+    "answers": [
+      "Zusammen kochen",
+      "Ein Konzert besuchen",
+      "Eine Fahrradtour",
+      "Escape Room zu zweit"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie gehst du mit Verantwortung um?",
+    "answers": [
+      "Ich übernehme sie gern",
+      "Nur wenn es sein muss",
+      "Teilen ist besser",
+      "Manchmal überfordert es mich"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was bedeutet Respekt für dich?",
+    "answers": [
+      "Grenzen akzeptieren",
+      "Zuhören können",
+      "Ehrlich sein",
+      "Alles zusammen"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie gehst du mit Eifersucht um?",
+    "answers": [
+      "Offen darüber reden",
+      "Vertrauen ist die Basis",
+      "Kommt selten vor bei mir",
+      "Ich arbeite daran"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was hast du von deinen Eltern gelernt?",
+    "answers": [
+      "Durchhaltevermögen",
+      "Liebe und Fürsorge",
+      "Unabhängigkeit",
+      "Gute Werte"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Liebstes Verkehrsmittel im Urlaub?",
+    "answers": [
+      "Mietwagen",
+      "Roller oder Fahrrad",
+      "Öffentliche Verkehrsmittel",
+      "Zu Fuß – am besten"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Was ist dein Urlaubsrituale?",
+    "answers": [
+      "Am ersten Tag erkunden",
+      "Direkt an den Strand",
+      "Local Food probieren",
+      "Erstmal ankommen und ausruhen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Reisetagebuch oder Fotos?",
+    "answers": [
+      "Reisetagebuch – Gedanken festhalten",
+      "Fotos – Erinnerungen in Bildern",
+      "Beides natürlich",
+      "Nichts – ich lebe den Moment"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Welcher Flughafen nervt dich am meisten?",
+    "answers": [
+      "Jeder ohne WLAN",
+      "Große mit langen Wegen",
+      "Kleine ohne Shopping",
+      "Mir ist jeder Flughafen egal"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Sprichst du eine Fremdsprache fließend?",
+    "answers": [
+      "Ja, mehrere",
+      "Englisch und ein bisschen was",
+      "Schulenglisch reicht",
+      "Sprachen sind nicht mein Ding"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wie wichtig ist dir Work-Life-Balance?",
+    "answers": [
+      "Das Wichtigste überhaupt",
+      "Versuche es zu balancieren",
+      "Arbeit geht oft vor",
+      "Arbeit und Leben verschmelzen"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Dein Verhältnis zu Alkohol?",
+    "answers": [
+      "Genuss in Maßen",
+      "Selten bis nie",
+      "Sozial trinker",
+      "Nur zu besonderen Anlässen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hast du ein Morgenritual das du nie auslässt?",
+    "answers": [
+      "Kaffee – heilig",
+      "Kalt duschen",
+      "Zeitung oder Nachrichten",
+      "Nein, jeder Morgen ist anders"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Dein liebster Ort zum Nachdenken?",
+    "answers": [
+      "Beim Spaziergang",
+      "Unter der Dusche",
+      "Im Bett vor dem Einschlafen",
+      "Am Wasser"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Feierst du gerne Feste?",
+    "answers": [
+      "Jedes Fest wird gefeiert!",
+      "Nur die wichtigen",
+      "Eher nicht mein Ding",
+      "Am liebsten kleine Feiern"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wie stehst du zu Routinen?",
+    "answers": [
+      "Liebe sie – Struktur hilft",
+      "Ein paar sind gut",
+      "Zu viel Routine langweilt",
+      "Jeder Tag sollte anders sein"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welche Fähigkeit hättest du gern?",
+    "answers": [
+      "Jede Sprache sprechen",
+      "Kochen wie ein Profi",
+      "Ein Instrument perfekt spielen",
+      "Tanzen wie ein Profi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welche TV-Serie beschreibt dein Leben?",
+    "answers": [
+      "How I Met Your Mother",
+      "Friends",
+      "The Office",
+      "Breaking Bad (hoffentlich nicht)"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Dein Traumauto?",
+    "answers": [
+      "Oldtimer VW Bulli",
+      "Tesla",
+      "Sportwagen",
+      "Fahrrad reicht mir"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welches Essen könntest du nie aufgeben?",
+    "answers": [
+      "Brot – ich bin Deutscher",
+      "Schokolade",
+      "Käse",
+      "Kaffee zählt auch"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Glaubst du an Horoskope?",
+    "answers": [
+      "Ja, irgendwie schon",
+      "Nein, Quatsch",
+      "Zum Spaß lesen",
+      "Nur wenn es passt"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Was steht auf deiner Bucket-List ganz unten?",
+    "answers": [
+      "Bungee-Jumping",
+      "Einen Marathon laufen",
+      "Auf einem Kamel reiten",
+      "Nichts – alles will ich machen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welche App benutzt du am meisten?",
+    "answers": [
+      "Instagram",
+      "WhatsApp",
+      "Spotify",
+      "TikTok"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Dein verstecktes Talent?",
+    "answers": [
+      "Ich kann gut kochen",
+      "Ich bin lustig",
+      "Ich kann Akzente nachmachen",
+      "Ich habe keins – oder doch?"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Dein liebstes Getränk im Sommer?",
+    "answers": [
+      "Aperol Spritz",
+      "Eiskalte Limo",
+      "Radler",
+      "Eiskaffee"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welche Brotsorte ist die beste?",
+    "answers": [
+      "Vollkornbrot",
+      "Sauerteigbrot",
+      "Ciabatta",
+      "Brezel zählt auch"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Kochst du nach Rezept oder frei Schnauze?",
+    "answers": [
+      "Immer nach Rezept",
+      "Frei Schnauze – Gefühl zählt",
+      "Rezept als Inspiration",
+      "Ich kann beides"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Wie trinkst du deinen Kaffee am liebsten?",
+    "answers": [
+      "Schwarz – ohne alles",
+      "Mit Milch und Zucker",
+      "Cappuccino mit Hafermilch",
+      "Ich trinke keinen Kaffee"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Dein liebstes Dessert?",
+    "answers": [
+      "Tiramisu",
+      "Apfelstrudel",
+      "Crème Brûlée",
+      "Eis geht immer"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welches Lied hörst du beim Aufräumen?",
+    "answers": [
+      "Energiegeladener Pop",
+      "Klassik – wird produktiv",
+      "Podcast nebenbei",
+      "Stille – Fokus pur"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welchen Song würdest du auf einer Hochzeit spielen?",
+    "answers": [
+      "Einen Klassiker zum Tanzen",
+      "Etwas Romantisches",
+      "Partyhit zum Abfeiern",
+      "Ich überlasse das dem DJ"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Könntest du eine Woche ohne Musik leben?",
+    "answers": [
+      "Unmöglich!",
+      "Schwierig aber machbar",
+      "Kein Problem",
+      "Musik ist mein Lebensinhalt"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welcher Filmvillain hat dich beeindruckt?",
+    "answers": [
+      "Joker – chaotisch genial",
+      "Thanos – überzeugend",
+      "Hans Landa – intelligent böse",
+      "Darth Vader – ikonisch"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welcher Streaming-Trend nervt dich?",
+    "answers": [
+      "Zu viele Abos",
+      "Serien werden einfach gecancelt",
+      "Spoiler überall",
+      "Mich nervt nichts"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Dein liebster deutscher Schauspieler?",
+    "answers": [
+      "Daniel Brühl",
+      "Til Schweiger",
+      "Sandra Hüller",
+      "Elyas M'Barek"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Wie oft treibst du Sport pro Woche?",
+    "answers": [
+      "Fast jeden Tag",
+      "3-4 mal",
+      "1-2 mal",
+      "Eher selten"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Welche Sportart möchtest du noch lernen?",
+    "answers": [
+      "Surfen",
+      "Klettern",
+      "Tanzen",
+      "Kampfsport"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Dein sportliches Vorbild?",
+    "answers": [
+      "Ein Fußballstar",
+      "Ein Olympionike",
+      "Mein eigener Fortschritt",
+      "Ich habe keins"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Schwimmen im See oder im Pool?",
+    "answers": [
+      "See – Natur pur",
+      "Pool – sauber und warm",
+      "Meer ist am besten",
+      "Ich schwimme nicht gern"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Welche Comedyserie liebst du?",
+    "answers": [
+      "The Office",
+      "Brooklyn Nine-Nine",
+      "Stromberg",
+      "How I Met Your Mother"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Wie bringst du jemanden zum Lachen?",
+    "answers": [
+      "Mit Witz und Charme",
+      "Situationskomik",
+      "Memes schicken",
+      "Einfach ich selbst sein"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Dein Go-to Gesprächsöffner?",
+    "answers": [
+      "Ein lustiger Fakt",
+      "Ehrliche Frage",
+      "Kompliment",
+      "Situationsbezogener Witz"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Was machst du an einem Regentag?",
+    "answers": [
+      "Kochen und Backen",
+      "Lesen mit Tee",
+      "Filme schauen",
+      "Kreativ werden"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Hast du ein Notizbuch dabei?",
+    "answers": [
+      "Immer – für Ideen",
+      "Digital auf dem Handy",
+      "Nein, ich merke mir alles",
+      "Nur für To-Do-Listen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Welches Brettspiel dominierst du?",
+    "answers": [
+      "Siedler von Catan",
+      "Risiko",
+      "Scrabble",
+      "Ich verliere immer"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Warst du schon mal auf einer Weinprobe?",
+    "answers": [
+      "Ja, regelmäßig",
+      "Einmal – war toll",
+      "Nein, aber will ich",
+      "Wein ist nicht mein Ding"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Welche Sprache lernst du gerade?",
+    "answers": [
+      "Spanisch",
+      "Japanisch",
+      "Keine gerade",
+      "Ich möchte anfangen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Welche App hat dein Leben verändert?",
+    "answers": [
+      "Meditations-App",
+      "Fitness-Tracker",
+      "Sprach-Lern-App",
+      "Keine – ich bin analog"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Wie oft wechselst du dein Handy?",
+    "answers": [
+      "Jedes Jahr",
+      "Alle 2-3 Jahre",
+      "Wenn es kaputt geht",
+      "So selten wie möglich"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Datenschutz – wie ernst nimmst du ihn?",
+    "answers": [
+      "Sehr ernst – VPN und alles",
+      "Achte drauf",
+      "Nicht so wichtig",
+      "Was ist Datenschutz?"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Welche Social-Media-Plattform benutzt du am meisten?",
+    "answers": [
+      "Instagram",
+      "TikTok",
+      "LinkedIn",
+      "Keine aktiv"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie gehst du mit Absagen um?",
+    "answers": [
+      "Kein Problem – gibt Schlimmeres",
+      "Ein bisschen enttäuscht",
+      "Kommt auf die Absage an",
+      "Ich hake es sofort ab"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Dein Lieblingsessen unterwegs?",
+    "answers": [
+      "Lokale Spezialität",
+      "Street Food",
+      "Ein gutes Restaurant finden",
+      "Supermarkt-Picknick"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Was machst du vor dem Einschlafen?",
+    "answers": [
+      "Handy checken",
+      "Lesen",
+      "Podcast hören",
+      "Sofort einschlafen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welches Gemüse magst du gar nicht?",
+    "answers": [
+      "Rosenkohl",
+      "Blumenkohl",
+      "Ich mag alles",
+      "Gemüse? Nein danke"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Gibt es einen Song den du hasst?",
+    "answers": [
+      "Last Christmas im November",
+      "Baby Shark",
+      "Einen der zu oft im Radio lief",
+      "Ich hasse keine Songs"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Was war der letzte Film der dich zum Weinen brachte?",
+    "answers": [
+      "Ein Drama",
+      "Ein Animationsfilm",
+      "Ich weine nicht bei Filmen",
+      "Zu viele um einen zu nennen"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Stretching nach dem Sport – machst du das?",
+    "answers": [
+      "Immer – ist wichtig",
+      "Manchmal",
+      "Nie – keine Zeit",
+      "Was ist Stretching?"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Welches Meme würdest du als Profilbild nehmen?",
+    "answers": [
+      "Distracted Boyfriend",
+      "Surprised Pikachu",
+      "Doge",
+      "Kein Meme – ich bin seriös"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Welches Gesellschaftsspiel nervt dich?",
+    "answers": [
+      "Monopoly – es zerstört Freundschaften",
+      "Mensch ärgere dich nicht",
+      "Keins – ich liebe alle",
+      "Alle mit zu vielen Regeln"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Hast du schon mal digital detox gemacht?",
+    "answers": [
+      "Ja, war befreiend",
+      "Versucht aber gescheitert",
+      "Nein, aber will ich",
+      "Wozu?"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Was war dein peinlichstes Date?",
+    "answers": [
+      "Essen im Gesicht",
+      "Den Namen vergessen",
+      "Am falschen Ort gewartet",
+      "Noch keins – Glück gehabt"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welchen Promi würdest du gern treffen?",
+    "answers": [
+      "Einen Schauspieler",
+      "Einen Musiker",
+      "Einen Wissenschaftler",
+      "Niemanden – Promis sind auch nur Menschen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Hast du ein Lebensmotto?",
+    "answers": [
+      "Carpe Diem",
+      "Alles wird gut",
+      "Mach das Beste draus",
+      "Ich lebe ohne Motto"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie wichtig ist dir Humor bei einem Partner?",
+    "answers": [
+      "Das Wichtigste überhaupt",
+      "Sehr wichtig",
+      "Nett aber nicht notwendig",
+      "Andere Dinge sind wichtiger"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie zeigst du dass du jemanden vermisst?",
+    "answers": [
+      "Ich sage es direkt",
+      "Ich schicke eine Nachricht",
+      "Ich plane ein Treffen",
+      "Ich zeige es nicht offen"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was ist dir in einer Beziehung wichtiger: Leidenschaft oder Stabilität?",
+    "answers": [
+      "Leidenschaft",
+      "Stabilität",
+      "Beides ist möglich",
+      "Stabilität mit Funken"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Was ist dein Geheimtipp in Deutschland?",
+    "answers": [
+      "Ein Dorf das niemand kennt",
+      "Ein Wanderweg",
+      "Ein Restaurant",
+      "Verrate ich nicht"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wie gehst du mit Geld um?",
+    "answers": [
+      "Budget und Tabellen",
+      "Grob im Blick",
+      "Spontan entscheiden",
+      "Geld kommt und geht"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Was ist dein Lieblings-Wochentag?",
+    "answers": [
+      "Freitag – Wochenende naht",
+      "Samstag – voller Tag",
+      "Sonntag – Ruhe",
+      "Mittwoch – Halbzeit"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Imbiss um Mitternacht – wohin?",
+    "answers": [
+      "Döner",
+      "Currywurst",
+      "Pizza",
+      "Ich esse nachts nicht"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welche Band sollte sich wiedervereinigen?",
+    "answers": [
+      "Keine bestimmte",
+      "Eine aus meiner Jugend",
+      "Die Beatles natürlich",
+      "Bands sollten aufhören wenn es gut ist"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Sequel oder Original – was ist besser?",
+    "answers": [
+      "Original immer",
+      "Manche Sequels sind besser",
+      "Kommt auf den Film an",
+      "Reboots sind das Schlimmste"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Sportkleidung im Alltag – ja oder nein?",
+    "answers": [
+      "Athleisure ist lifestyle",
+      "Nur zum Sport",
+      "Bequemlichkeit über alles",
+      "Sportkleidung gehört ins Gym"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Welcher Running Gag nervt nie?",
+    "answers": [
+      "Ein Insider mit Freunden",
+      "Ein Filmzitat",
+      "Ein Sound-Effekt",
+      "Running Gags nerven immer irgendwann"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Welches Museum hat dich am meisten beeindruckt?",
+    "answers": [
+      "Ein Kunstmuseum",
+      "Ein Naturkundemuseum",
+      "Ein interaktives Museum",
+      "Ich gehe selten ins Museum"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Bargeld oder Kartenzahlung?",
+    "answers": [
+      "Nur noch Karte",
+      "Bargeld für kleine Beträge",
+      "Nur Bargeld",
+      "Handy-Zahlung"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Wenn du einen Podcast starten würdest, worüber?",
+    "answers": [
+      "Reisen und Abenteuer",
+      "Dating und Beziehungen",
+      "True Crime",
+      "Comedy und Unterhaltung"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was ist der schönste Zufall der dir passiert ist?",
+    "answers": [
+      "Eine zufällige Begegnung",
+      "Am richtigen Ort zur richtigen Zeit",
+      "Ein unerwartetes Geschenk",
+      "Mein ganzes Leben ist ein glücklicher Zufall"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Nachtflug oder Tagflug?",
+    "answers": [
+      "Nachtflug – schlafen und ankommen",
+      "Tagflug – Aussicht genießen",
+      "Egal – Hauptsache ankommen",
+      "Ich fliege ungern"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Welches Zimmer in deiner Wohnung magst du am meisten?",
+    "answers": [
+      "Küche – Herz des Hauses",
+      "Schlafzimmer – mein Rückzugsort",
+      "Wohnzimmer – gemütlich",
+      "Balkon zählt auch"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Was kochst du wenn du traurig bist?",
+    "answers": [
+      "Pasta – immer tröstlich",
+      "Suppe – wärmend",
+      "Schokolade schmelzen",
+      "Ich bestelle mein Lieblingsessen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welches Genre überrascht dich selbst dass du es magst?",
+    "answers": [
+      "Country",
+      "K-Pop",
+      "Klassik",
+      "Schlager"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Hast du schon mal bei einem Film eingeschlafen?",
+    "answers": [
+      "Nie – ich bin aufmerksam",
+      "Öfter als ich zugeben will",
+      "Nur bei langweiligen",
+      "Im Kino nie, zuhause oft"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Trainierst du lieber allein oder mit jemandem?",
+    "answers": [
+      "Allein – mein Tempo",
+      "Mit Trainingspartner – Motivation",
+      "Gruppenkurse",
+      "Kommt auf die Sportart an"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Was ist dein liebster Eisbrecher?",
+    "answers": [
+      "Ein Witz",
+      "Eine interessante Frage",
+      "Ein Kompliment",
+      "Einfach Hallo sagen"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Hast du schon mal etwas Verrücktes gemacht?",
+    "answers": [
+      "Ja, und ich bereue nichts",
+      "Ein paar Sachen",
+      "Nein, aber ich sollte",
+      "Ich lebe vorsichtig"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Welches Gerät würdest du nie abgeben?",
+    "answers": [
+      "Mein Smartphone",
+      "Meine Kopfhörer",
+      "Meinen Laptop",
+      "Keins – ich bin nicht abhängig"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Wenn du eine Regel für alle aufstellen könntest?",
+    "answers": [
+      "Jeden Tag jemanden anlächeln",
+      "Kein Handy beim Essen",
+      "Einmal im Jahr reisen",
+      "Mehr Feiertage!"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wie reagierst du auf unerwartete Komplimente?",
+    "answers": [
+      "Freue mich sehr",
+      "Werde verlegen",
+      "Mache einen Witz",
+      "Gebe eins zurück"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Kannst du gut Geheimnisse bewahren?",
+    "answers": [
+      "Absolut – Tresor",
+      "Meistens ja",
+      "Kommt auf das Geheimnis an",
+      "Ich versuche es"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Hast du schon mal einen Roadtrip gemacht?",
+    "answers": [
+      "Ja, das Beste!",
+      "Einmal und es war toll",
+      "Nein, aber es steht an",
+      "Roadtrips sind nichts für mich"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Dusche am Morgen oder Abend?",
+    "answers": [
+      "Morgens – wach werden",
+      "Abends – sauber ins Bett",
+      "Beides",
+      "Wann immer nötig"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ananas auf der Pizza – ja oder nein?",
+    "answers": [
+      "Ja, fight me!",
+      "Niemals – Verbrechen",
+      "Mir egal",
+      "Ich habe noch nie probiert"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was hast du in letzter Zeit über dich gelernt?",
+    "answers": [
+      "Ich bin stärker als gedacht",
+      "Ich brauche mehr Ruhe",
+      "Ich sollte mehr genießen",
+      "Dass ich mich weiterentwickle"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Wenn du eine Nachricht an die Welt schicken könntest?",
+    "answers": [
+      "Seid netter zueinander",
+      "Genießt den Moment",
+      "Folgt euren Träumen",
+      "Tanzt mehr"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Was ist dein Sonntagabendritual?",
+    "answers": [
+      "Tatort gucken",
+      "Für die Woche vorbereiten",
+      "Mit Freunden essen",
+      "Einfach entspannen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Dein Go-to Rezept wenn Gäste kommen?",
+    "answers": [
+      "Pasta – immer gut",
+      "Flammkuchen",
+      "Etwas auf dem Grill",
+      "Ich bestelle Pizza"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Hast du ein Lied das dich immer aufheitert?",
+    "answers": [
+      "Ja, einen echten Gute-Laune-Song",
+      "Mehrere in einer Playlist",
+      "Musik allgemein hilft",
+      "Ich brauche keine Musik dafür"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was würdest du nie in einer Beziehung tolerieren?",
+    "answers": [
+      "Betrug",
+      "Respektlosigkeit",
+      "Ständiges Lügen",
+      "Mangelnde Kommunikation"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Warst du schon mal in Österreich oder der Schweiz?",
+    "answers": [
+      "Ja, liebe ich",
+      "Oft – Skifahren!",
+      "Noch nicht",
+      "Ist auf meiner Liste"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Lernst du gern neue Dinge?",
+    "answers": [
+      "Ständig – Wissen ist Macht",
+      "Ja, wenn es mich interessiert",
+      "Manchmal",
+      "Ich bin zufrieden mit dem was ich kann"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Podcast-App oder YouTube für Podcasts?",
+    "answers": [
+      "Podcast-App – Spotify oder Apple",
+      "YouTube",
+      "Beides",
+      "Ich höre keine Podcasts"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welches Fest in Deutschland ist das beste?",
+    "answers": [
+      "Oktoberfest",
+      "Karneval in Köln",
+      "Weihnachtsmärkte",
+      "Silvester am Brandenburger Tor"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Hast du schon mal Kickboxen probiert?",
+    "answers": [
+      "Ja, macht mega Spaß",
+      "Nein, aber klingt cool",
+      "Zu aggressiv für mich",
+      "Ich bevorzuge sanftere Sportarten"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Lachst du über deine eigenen Witze?",
+    "answers": [
+      "Immer – ich bin mein bestes Publikum",
+      "Manchmal",
+      "Nein, ich bleibe cool",
+      "Nur wenn sie wirklich gut sind"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was wünscht du dir für die nächsten 5 Jahre?",
+    "answers": [
+      "Gesundheit und Glück",
+      "Beruflichen Erfolg",
+      "Die große Liebe",
+      "Mehr Abenteuer"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Dein liebster Social-Media-Trend?",
+    "answers": [
+      "Rezept-Videos",
+      "Reise-Content",
+      "Comedy-Clips",
+      "Ich ignoriere Trends"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Was ist der beste Rat den du je bekommen hast?",
+    "answers": [
+      "Sei du selbst",
+      "Mach was dich glücklich macht",
+      "Hab keine Angst vor Fehlern",
+      "Hör auf dein Herz"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wie feierst du Erfolge?",
+    "answers": [
+      "Essen gehen",
+      "Mir etwas gönnen",
+      "Mit Freunden feiern",
+      "Still und zufrieden"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Zugfahren in Deutschland – Liebe oder Frust?",
+    "answers": [
+      "Liebe – trotz Verspätung",
+      "Frust – DB halt",
+      "Beides je nach Tag",
+      "Ich fahre lieber Auto"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welcher Döner ist der beste?",
+    "answers": [
+      "Klassisch mit allem",
+      "Dürum statt Brot",
+      "Vegetarischer Falafel",
+      "Döner ist überbewertet"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Wie reagierst du wenn dein Lieblingslied läuft?",
+    "answers": [
+      "Sofort mitsingen",
+      "Lauter drehen",
+      "Tanzen egal wo",
+      "Innerlich mitfühlen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Bevorzugst du Filme allein oder in Gesellschaft?",
+    "answers": [
+      "Allein – volle Konzentration",
+      "Mit Freunden – mehr Spaß",
+      "Mit Partner – kuscheliger",
+      "Kommt auf den Film an"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Kochst du gerne für andere?",
+    "answers": [
+      "Ja, es ist meine Liebeserklärung",
+      "Manchmal, wenn die Stimmung passt",
+      "Lieber für mich allein",
+      "Ich lade lieber ins Restaurant ein"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Wie stehst du zu E-Scootern?",
+    "answers": [
+      "Praktisch in der Stadt",
+      "Gefährlich und nervig",
+      "Spaßig für kurze Strecken",
+      "Fahrrad ist besser"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Bist du stolz auf etwas Bestimmtes?",
+    "answers": [
+      "Meinen Werdegang",
+      "Meine Beziehungen",
+      "Dass ich ich selbst bin",
+      "Einen bestimmten Erfolg"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welche drei Dinge nimmst du auf eine einsame Insel mit?",
+    "answers": [
+      "Feuerzeug, Messer, Buch",
+      "Musik, Essen, Sonnencreme",
+      "Freund, Zelt, Kocher",
+      "Wifi-Router!"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  }
+]

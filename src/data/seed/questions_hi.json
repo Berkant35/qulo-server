@@ -1,0 +1,5182 @@
+[
+  {
+    "category": "personality",
+    "question_text": "पहली डेट पर सबसे ज़्यादा क्या इम्प्रेस करेगा?",
+    "answers": [
+      "एक छुपी हुई रूफटॉप कैफे",
+      "किताबों की दुकान में घूमना",
+      "मरीन ड्राइव पर सैर",
+      "म्यूज़ियम की रात की सैर"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "थकान भरे हफ्ते के बाद कैसे रिचार्ज करते हो?",
+    "answers": [
+      "Netflix मैराथन",
+      "दोस्तों के साथ बाहर",
+      "लंबी सैर या हाइकिंग",
+      "कुछ स्पेशल बनाना"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "रिलेशनशिप में तुम्हारा चैटिंग स्टाइल क्या है?",
+    "answers": [
+      "पूरा दिन मीम्स",
+      "गुड मॉर्निंग मैसेज रोज़",
+      "वॉइस नोट्स भेजना",
+      "छोटे और प्यारे मैसेज"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "अगर हम एक दिन साथ बिताएं तो प्लान कौन बनाएगा?",
+    "answers": [
+      "मैं सरप्राइज़ करूंगा",
+      "तुम चुनो",
+      "साथ मिलकर प्लान करें",
+      "बस चलते रहें"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "पार्टनर में सबसे ज़रूरी क्या है?",
+    "answers": [
+      "सेंस ऑफ ह्यूमर",
+      "एम्बिशन",
+      "दयालुता",
+      "बुद्धिमत्ता"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "रिलेशनशिप में लड़ाई कैसे हैंडल करते हो?",
+    "answers": [
+      "तुरंत बात करते हैं",
+      "पहले थोड़ा स्पेस लेते हैं",
+      "लिखकर बताते हैं",
+      "हंसी से माहौल बदलते हैं"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "सुबह का इंसान हो या रात का उल्लू?",
+    "answers": [
+      "सुबह का पक्का",
+      "रात का उल्लू",
+      "दिन पर निर्भर करता है",
+      "दोनों – कम सोता हूं"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "तुम्हारी लव लैंग्वेज क्या है?",
+    "answers": [
+      "प्यारी बातें",
+      "क्वालिटी टाइम",
+      "गिफ्ट्स देना",
+      "टच और गले लगना"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "डेट के लिए भारत में कहां जाओगे?",
+    "answers": [
+      "गोवा – बीच और सनसेट",
+      "जयपुर – महलों का शहर",
+      "मनाली – पहाड़ों में रोमांस",
+      "पॉन्डिचेरी – फ्रेंच विब"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "किसी खास के साथ ड्रीम वेकेशन?",
+    "answers": [
+      "पेरिस – प्यार का शहर",
+      "मालदीव – ओवरवॉटर विला",
+      "स्विट्ज़रलैंड – बर्फीले पहाड़",
+      "बाली – ट्रॉपिकल पैराडाइज़"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "परफेक्ट संडे मॉर्निंग?",
+    "answers": [
+      "गरमा गरम पराठे और चाय",
+      "दोपहर तक सोना",
+      "सुबह की दौड़",
+      "कैफे में ब्रेकफास्ट"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "सबसे पसंदीदा स्ट्रीट फूड?",
+    "answers": [
+      "पानी पूरी/गोलगप्पे",
+      "वड़ा पाव",
+      "चाट",
+      "मोमोज़"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "कौन सा म्यूज़िक फेस्टिवल जाना चाहोगे?",
+    "answers": [
+      "NH7 Weekender",
+      "Sunburn",
+      "Magnetic Fields",
+      "Ziro Festival"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "film",
+    "question_text": "गिल्टी प्लेज़र बॉलीवुड फिल्म?",
+    "answers": [
+      "DDLJ – हर बार",
+      "3 Idiots",
+      "Hera Pheri",
+      "Dil Chahta Hai"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "sports",
+    "question_text": "डेट पर कौन सा स्पोर्ट करोगे?",
+    "answers": [
+      "बोलिंग",
+      "बैडमिंटन",
+      "साइकलिंग",
+      "ट्रेकिंग"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "तुम्हारा ह्यूमर टाइप क्या है?",
+    "answers": [
+      "ड्राई सरकैज़म",
+      "स्लैपस्टिक और मस्ती",
+      "पन और वर्डप्ले",
+      "डार्क ह्यूमर"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "hobby",
+    "question_text": "डेट पर कौन सी हॉबी शेयर करोगे?",
+    "answers": [
+      "साथ में कुकिंग",
+      "बोर्ड गेम नाइट",
+      "हाइकिंग",
+      "कॉन्सर्ट जाना"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "टेक्नोलॉजी तुम्हारी ज़िंदगी में कितनी ज़रूरी है?",
+    "answers": [
+      "फोन के बिना नहीं जी सकता",
+      "यूज़ करता हूं पर ज़्यादा नहीं",
+      "डिजिटल डीटॉक्स चाहिए",
+      "गैजेट्स का दीवाना"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "एक दिन के लिए कौन सी सुपरपावर चाहिए?",
+    "answers": [
+      "दिमाग पढ़ना",
+      "उड़ना",
+      "टाइम ट्रैवल",
+      "इनविजिबल होना"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "किसी इंसान में सबसे पहले क्या नोटिस करते हो?",
+    "answers": [
+      "मुस्कान",
+      "आंखें",
+      "आवाज़",
+      "ऑरा"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "स्पॉन्टेनियस हो या प्लानर?",
+    "answers": [
+      "पूरी तरह स्पॉन्टेनियस",
+      "सब प्लान करता हूं",
+      "दोनों का मिक्स",
+      "सिचुएशन पर डिपेंड"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "कैंपिंग या लक्ज़री होटल?",
+    "answers": [
+      "हिमालय में कैंपिंग",
+      "5-स्टार रिज़ॉर्ट",
+      "होमस्टे",
+      "रोडट्रिप"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "ऑफिस के बाद क्या करते हो?",
+    "answers": [
+      "जिम जाता हूं",
+      "सोफे पर आराम",
+      "दोस्तों से मिलना",
+      "कुछ नया ट्राई करना"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "अगर जानवर होते तो क्या?",
+    "answers": [
+      "बाज – आज़ाद और ताकतवर",
+      "बिल्ली – आज़ाद",
+      "डॉल्फिन – खिलाड़ी",
+      "शेर – राजा"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "कम्फर्ट फूड क्या है?",
+    "answers": [
+      "दाल चावल",
+      "मां के हाथ का खाना",
+      "बिरयानी",
+      "मैगी"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "रिलेशनशिप में सबसे ज़्यादा खुशी कब मिलती है?",
+    "answers": [
+      "साथ में एडवेंचर",
+      "गहरी बातें",
+      "छोटे सरप्राइज़",
+      "चुपचाप साथ बैठना"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "पसंद का इज़हार कैसे करते हो?",
+    "answers": [
+      "खाना बनाकर",
+      "प्यारे मैसेज भेजकर",
+      "सरप्राइज़ प्लान करके",
+      "हमेशा साथ रहकर"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "डेट पर सबसे बड़ा टर्नऑफ?",
+    "answers": [
+      "बार-बार फोन देखना",
+      "वेटर से बदतमीज़ी",
+      "सिर्फ अपनी बातें करना",
+      "बिना बताए लेट आना"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "तुम कैसे पार्टनर हो?",
+    "answers": [
+      "प्रोटेक्टर",
+      "एडवेंचरर",
+      "रोमांटिक",
+      "बेस्ट फ्रेंड वाला"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "ड्रीम गर्ल के साथ कहां जाओगे?",
+    "answers": [
+      "पेरिस – एफिल टॉवर",
+      "संतोरिनी – सनसेट",
+      "न्यूयॉर्क – सिटी लाइट्स",
+      "केरल – बैकवॉटर्स"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "ट्रिप कैसे प्लान करते हो?",
+    "answers": [
+      "पूरा प्लान तैयार",
+      "लास्ट मिनट एडवेंचर",
+      "बस दिशा तय करो",
+      "दूसरों पर छोड़ दो"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "घर में क्या ज़रूर होना चाहिए?",
+    "answers": [
+      "अच्छा स्पीकर सिस्टम",
+      "किताबों से भरी अलमारी",
+      "गेमिंग सेटअप",
+      "हर जगह पौधे"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "डेट पर क्या पहनोगे?",
+    "answers": [
+      "कैज़ुअल एलिगेंट",
+      "स्पोर्टी कूल",
+      "ओवरड्रेस्ड",
+      "बस कम्फर्टेबल"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "इम्प्रेस करने के लिए क्या बनाओगे?",
+    "answers": [
+      "बटर चिकन",
+      "बिरयानी",
+      "पास्ता",
+      "ऑर्डर कर लेता हूं"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "डिनर में बीयर या वाइन?",
+    "answers": [
+      "बीयर हमेशा",
+      "अच्छी रेड वाइन",
+      "कॉकटेल",
+      "मैं शराब नहीं पीता"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "कौन सा गाना सुनकर तुरंत नाचने लगते हो?",
+    "answers": [
+      "कोई बॉलीवुड हिट",
+      "पंजाबी बीट",
+      "EDM ड्रॉप",
+      "रीट्रो क्लासिक"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "पार्टनर का म्यूज़िक टेस्ट कितना ज़रूरी है?",
+    "answers": [
+      "बहुत ज़रूरी",
+      "अच्छा है पर ज़रूरी नहीं",
+      "अलग टेस्ट भी ठीक",
+      "म्यूज़िक इतना मायने नहीं रखता"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "film",
+    "question_text": "कडल नाइट के लिए कौन सा जॉनर?",
+    "answers": [
+      "रोमांटिक कॉमेडी",
+      "थ्रिलर",
+      "साइ-फाई",
+      "डॉक्यूमेंट्री"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "film",
+    "question_text": "सिनेमा या होम थिएटर?",
+    "answers": [
+      "सिनेमा – बड़ी स्क्रीन",
+      "घर पर – कंबल में",
+      "ड्राइव-इन सिनेमा",
+      "दोनों अच्छे"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "sports",
+    "question_text": "सबसे ज़्यादा कौन सा स्पोर्ट खेलते हो?",
+    "answers": [
+      "क्रिकेट – क्लासिक",
+      "फुटबॉल",
+      "बैडमिंटन",
+      "रनिंग और जिम"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "तुम्हें हंसाने का गारंटीड तरीका?",
+    "answers": [
+      "अचानक का जोक",
+      "सटीक टिप्पणी",
+      "फनी फेस",
+      "सेल्फ-डेप्रिकेटिंग ह्यूमर"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "तुम्हें कौन सा कॉमेडी शो पसंद है?",
+    "answers": [
+      "स्टैंड-अप कॉमेडी",
+      "इम्प्रोव",
+      "सिटकॉम",
+      "मीम पेजेस"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "hobby",
+    "question_text": "करना चाहते हो पर हिम्मत नहीं?",
+    "answers": [
+      "स्काईडाइविंग",
+      "स्टैंड-अप कॉमेडी ट्राई करना",
+      "कोई इंस्ट्रूमेंट सीखना",
+      "पेंटिंग"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "hobby",
+    "question_text": "बोर्ड गेम या वीडियो गेम?",
+    "answers": [
+      "लूडो किंग!",
+      "PS5 या Switch",
+      "ताश – तीन पत्ती",
+      "बाहर खेलना पसंद"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "iPhone या Android?",
+    "answers": [
+      "iPhone – बिल्कुल",
+      "Android – ज़्यादा फ्रीडम",
+      "कोई फर्क नहीं",
+      "बदलता रहता हूं"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "स्मार्ट होम में इंटरेस्ट?",
+    "answers": [
+      "सब कुछ स्मार्ट चाहिए",
+      "बस लाइट्स",
+      "थोड़ा डरावना लगता है",
+      "ट्राई करना चाहूंगा"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "ज़ॉम्बी अपोकैलिप्स – तुम्हारी स्ट्रैटेजी?",
+    "answers": [
+      "पहाड़ों में छुप जाना",
+      "टीम बनाना",
+      "मॉल में छुपना",
+      "मुझे सबसे पहले काटेंगे"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "कौन सा पेट सूट करता है?",
+    "answers": [
+      "कुत्ता – वफादार साथी",
+      "बिल्ली – आज़ाद जैसे मैं",
+      "तोता – बातूनी",
+      "कोई पेट नहीं"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "इंट्रोवर्ट हो या एक्सट्रोवर्ट?",
+    "answers": [
+      "इंट्रोवर्ट और प्राउड",
+      "एक्सट्रोवर्ट और लाउड",
+      "एम्बिवर्ट – मूड पर निर्भर",
+      "खुद नहीं पता"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "वफादारी का मतलब क्या है तुम्हारे लिए?",
+    "answers": [
+      "इमोशनल एक्सक्लूसिविटी",
+      "फिज़िकल फिडेलिटी",
+      "पूरा भरोसा",
+      "खुली बातचीत"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "ज़िंदगी में सबसे ज़्यादा इंस्पायर क्या करता है?",
+    "answers": [
+      "प्रकृति",
+      "क्रिएटिव लोग",
+      "यात्रा और संस्कृतियां",
+      "विज्ञान और प्रगति"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "सफलता की तुम्हारी परिभाषा?",
+    "answers": [
+      "मन की शांति",
+      "फाइनेंशियल फ्रीडम",
+      "प्यार भरे रिश्ते",
+      "प्रोफेशनल पहचान"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "पहली नज़र के प्यार में विश्वास?",
+    "answers": [
+      "बिल्कुल!",
+      "अट्रैक्शन होता है, प्यार नहीं",
+      "प्यार में समय लगता है",
+      "सिचुएशन पर डिपेंड"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ज़िंदगी में अभी क्या बदलना चाहोगे?",
+    "answers": [
+      "ज़्यादा ट्रैवल",
+      "कम काम",
+      "हॉबीज़ के लिए समय",
+      "कुछ नहीं – खुश हूं"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "दूसरों में कौन सी क्वालिटी की तारीफ करते हो?",
+    "answers": [
+      "हिम्मत",
+      "एम्पैथी",
+      "डिसिप्लिन",
+      "क्रिएटिविटी"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "रिलेशनशिप में इंडिपेंडेंस कितनी ज़रूरी?",
+    "answers": [
+      "बहुत – अपनी स्पेस ज़रूरी",
+      "नज़दीकी और स्पेस का बैलेंस",
+      "हमेशा साथ रहना पसंद",
+      "भरोसे में आज़ादी"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "सबसे बड़ा सपना क्या है?",
+    "answers": [
+      "फैमिली बनाना",
+      "दुनिया घूमना",
+      "अपना बिज़नेस",
+      "कुछ ऐसा बनाना जो रहे"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "बदलाव से कैसे डील करते हो?",
+    "answers": [
+      "बदलाव पसंद है",
+      "थोड़ा टाइम चाहिए",
+      "डिपेंड करता है",
+      "बदलाव से डर लगता है"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "घर का मतलब तुम्हारे लिए?",
+    "answers": [
+      "जहां फैमिली है",
+      "जहां सुकून हो",
+      "जहां पैदा हुआ",
+      "दिल में है घर"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "विदेश यात्रा या देश में?",
+    "answers": [
+      "विदेश – जितनी दूर उतना अच्छा",
+      "भारत में काफी कुछ है",
+      "बारी-बारी दोनों",
+      "बस कहीं भी चलो"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "यूरोप में कहां जाना है?",
+    "answers": [
+      "इटली – खाना और कला",
+      "स्पेन – धूप और फिएस्टा",
+      "नॉर्डिक देश – प्रकृति",
+      "ग्रीस – द्वीप और समुद्र"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "आइडियल वेकेशन कितने दिन?",
+    "answers": [
+      "लॉन्ग वीकेंड काफी",
+      "कम से कम दो हफ्ते",
+      "एक महीने की छुट्टी",
+      "जितना ज़्यादा उतना अच्छा"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "अकेले ट्रैवल या साथ में?",
+    "answers": [
+      "अकेले – पूरी आज़ादी",
+      "साथ में – रोमांटिक",
+      "छोटे ग्रुप में",
+      "जगह पर डिपेंड"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "शहर या गांव – कहां रहना है?",
+    "answers": [
+      "मुंबई या दिल्ली जैसे शहर",
+      "छोटा शहर",
+      "गांव में ज़मीन पर",
+      "समुद्र किनारे"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "सस्टेनेबिलिटी कितनी ज़रूरी?",
+    "answers": [
+      "बहुत – जागरूक जीवन",
+      "जितना हो सके कोशिश",
+      "ज़्यादा सोचता नहीं",
+      "ओवररेटेड है"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "सबसे प्रोडक्टिव कब होते हो?",
+    "answers": [
+      "सुबह जल्दी",
+      "रात को देर से",
+      "दोपहर कॉफी के बाद",
+      "डेडलाइन के दबाव में"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "नॉनवेज या वेज?",
+    "answers": [
+      "नॉनवेज – ज़रूरी है",
+      "ज़्यादातर वेज",
+      "प्योर वेज",
+      "दोनों – फ्लेक्सिबल"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "दुनिया का सबसे अच्छा खाना?",
+    "answers": [
+      "इटैलियन",
+      "इंडियन",
+      "मैक्सिकन",
+      "थाई"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "विनाइल या स्पॉटिफाई?",
+    "answers": [
+      "विनाइल – साउंड अलग है",
+      "स्पॉटिफाई – प्रैक्टिकल",
+      "मूड के हिसाब से",
+      "YouTube काफी है"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "लाइव कॉन्सर्ट या DJ सेट?",
+    "answers": [
+      "लाइव – एनर्जी अलग है",
+      "DJ सेट",
+      "क्लासिकल कॉन्सर्ट",
+      "छोटा लाइव म्यूज़िक बार"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "बिंज वॉच या एक एपिसोड रोज़?",
+    "answers": [
+      "बिंज – रात 3 बजे तक",
+      "एक एपिसोड काफी है",
+      "दोनों बारी-बारी",
+      "किताब पढ़ना बेहतर"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "किस टीम को सपोर्ट करते हो?",
+    "answers": [
+      "IPL टीम",
+      "फुटबॉल क्लब",
+      "कोई खास टीम नहीं",
+      "इंटरनेशनल टीम"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "शर्मिंदा होने पर क्या करते हो?",
+    "answers": [
+      "खुद पर हंसता हूं",
+      "ज़मीन में गड़ जाना चाहता हूं",
+      "जोक बना देता हूं",
+      "इग्नोर कर देता हूं"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "कोई क्रिएटिव हॉबी?",
+    "answers": [
+      "फोटोग्राफी",
+      "म्यूज़िक बनाना",
+      "लिखना",
+      "पेंटिंग या ड्राइंग"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "सोशल मीडिया – अच्छा या बुरा?",
+    "answers": [
+      "अच्छा – लोगों से जुड़ता है",
+      "बुरा – एडिक्टिव",
+      "दोनों बराबर",
+      "मैं कम यूज़ करता हूं"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "किस ज़माने में पैदा होना चाहते?",
+    "answers": [
+      "मुगल काल – शान-ओ-शौकत",
+      "70s – बॉलीवुड का गोल्डन एरा",
+      "90s – दूरदर्शन और गली क्रिकेट",
+      "अभी का ज़माना बेस्ट है"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "कौन सा दिन तुम्हारी पर्सनालिटी है?",
+    "answers": [
+      "सोमवार – मोटिवेटेड",
+      "बुधवार – बैलेंस्ड",
+      "शुक्रवार – पार्टी मूड",
+      "रविवार – रिलैक्स्ड"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "दिमाग से चलते हो या दिल से?",
+    "answers": [
+      "हमेशा दिमाग से",
+      "हमेशा दिल से",
+      "दोनों मिलाकर",
+      "दूसरों से सलाह लेता हूं"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ईमानदारी ज़्यादा ज़रूरी या डिप्लोमेसी?",
+    "answers": [
+      "ईमानदारी, हमेशा",
+      "डिप्लोमेसी शांति रखती है",
+      "सिचुएशन पर डिपेंड",
+      "प्यार से कही गई सच्चाई"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "नर्वस होने पर क्या करते हो?",
+    "answers": [
+      "बहुत बोलता हूं",
+      "चुप हो जाता हूं",
+      "नर्वस हंसी आती है",
+      "जोक मारता हूं"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "जल्दी भरोसा करते हो?",
+    "answers": [
+      "हां, बहुत जल्दी",
+      "समय लगता है",
+      "स्ट्रॉन्ग कनेक्शन में ही",
+      "भरोसा कमाना पड़ता है"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "खुद को एक शब्द में बताओ?",
+    "answers": [
+      "ऑप्टिमिस्ट",
+      "रियलिस्ट",
+      "ड्रीमर",
+      "डूअर"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "कॉमन वैल्यूज़ कितनी ज़रूरी?",
+    "answers": [
+      "बहुत ज़रूरी",
+      "इम्पोर्टेंट पर सब कुछ नहीं",
+      "अलग सोच भी अच्छी",
+      "वैल्यूज़ पर डिपेंड"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "गिल्टी प्लेज़र क्या है?",
+    "answers": [
+      "रियलिटी TV देखना",
+      "आधी रात को मिठाई",
+      "चीज़ी बॉलीवुड गाने",
+      "पूरा दिन बिस्तर में"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "फ्यूचर प्लानर हो या मोमेंट में जीते हो?",
+    "answers": [
+      "5 साल का प्लान है",
+      "अभी में जीता हूं",
+      "बस दिशा पता हो",
+      "प्लान बनाता हूं फिर बदलता हूं"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "स्ट्रेस कैसे मैनेज करते हो?",
+    "answers": [
+      "एक्सरसाइज़",
+      "मेडिटेशन और शांति",
+      "दोस्तों से बात",
+      "म्यूज़िक सुनकर"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "तारीफ सुनकर कैसा लगता है?",
+    "answers": [
+      "अच्छा, थैंक्स!",
+      "शर्मा जाता हूं",
+      "मना कर देता हूं",
+      "डिपेंड करता है किसने कही"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "छोटे खुद को क्या सलाह देते?",
+    "answers": [
+      "इतनी चिंता मत करो",
+      "ज़्यादा हिम्मत रखो",
+      "पल का मज़ा लो",
+      "दिल की सुनो"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "सरप्राइज़ पसंद हैं?",
+    "answers": [
+      "बहुत पसंद!",
+      "डिपेंड करता है",
+      "ज़्यादा नहीं",
+      "बस अच्छे सरप्राइज़"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "बातचीत में सुनने वाले हो या बोलने वाले?",
+    "answers": [
+      "बोलना पसंद है",
+      "सुनना ज़्यादा पसंद",
+      "बारी-बारी",
+      "टॉपिक पर डिपेंड"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "सबसे ज़्यादा गुस्सा किस बात पर आता है?",
+    "answers": [
+      "झूठ बोलना",
+      "टाइम वेस्ट करना",
+      "घमंड",
+      "अनदेखा करना"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "बर्थडे कैसे सेलिब्रेट करते हो?",
+    "answers": [
+      "बड़ी पार्टी",
+      "क्लोज़ फ्रेंड्स के साथ डिनर",
+      "अकेले कुछ स्पेशल",
+      "ट्रैवल पर निकल जाना"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "कितनी जल्दी प्यार हो जाता है?",
+    "answers": [
+      "काफी जल्दी",
+      "टाइम लेता हूं",
+      "जब सही लगे तभी",
+      "बहुत कम होता है"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "पर्सनल ग्रोथ कितनी ज़रूरी?",
+    "answers": [
+      "टॉप प्रायोरिटी",
+      "ज़रूरी पर सब नहीं",
+      "अपने आप होती है",
+      "जैसा हूं अच्छा हूं"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "अच्छे लूज़र हो?",
+    "answers": [
+      "बिल्कुल स्पोर्ट्समैन",
+      "कॉम्पिटिटिव हूं",
+      "गेम पर डिपेंड",
+      "हारना? मुझे नहीं पता"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ज़्यादा रोमांटिक – सूर्योदय या सूर्यास्त?",
+    "answers": [
+      "सूर्योदय – नई शुरुआत",
+      "सूर्यास्त – जादुई",
+      "तारों भरी रात",
+      "दोनों बराबर"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "दूसरों की राय कितनी मायने रखती है?",
+    "answers": [
+      "बिल्कुल नहीं",
+      "करीबी लोगों की थोड़ी",
+      "काफी ज़्यादा",
+      "सिर्फ रिस्पेक्टेड लोगों की"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "बोरियत में क्या करते हो?",
+    "answers": [
+      "कुछ न कुछ ढूंढ लेता हूं",
+      "YouTube/Netflix",
+      "बाहर जाकर लोगों से मिलता हूं",
+      "क्रिएटिव हो जाता हूं"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "दोस्ती में सबसे ज़रूरी?",
+    "answers": [
+      "ईमानदारी और वफादारी",
+      "साथ के अनुभव",
+      "गहरी बातें",
+      "साथ में हंसना"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "किस्मत में यकीन?",
+    "answers": [
+      "हां, सब कुछ लिखा है",
+      "नहीं, हम खुद बनाते हैं",
+      "थोड़ा दोनों",
+      "पक्का नहीं पता"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "आलोचना पर कैसे रिएक्ट करते हो?",
+    "answers": [
+      "कंस्ट्रक्टिवली लेता हूं",
+      "पहले बुरा लगता है, फिर सोचता हूं",
+      "किसने कही उस पर डिपेंड",
+      "सब कुछ क्वेश्चन करता हूं"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "पैसे की चिंता न हो तो क्या काम करोगे?",
+    "answers": [
+      "ट्रैवल ब्लॉगर",
+      "एनिमल शेल्टर चलाना",
+      "आर्टिस्ट या म्यूज़िशियन",
+      "कैफे का मालिक"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "कितने करीबी दोस्त हैं?",
+    "answers": [
+      "एक या दो काफी",
+      "मुट्ठी भर",
+      "बहुत सारे",
+      "अकेला भेड़िया हूं"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "आज़ादी ज़्यादा ज़रूरी या सुरक्षा?",
+    "answers": [
+      "आज़ादी सब से ऊपर",
+      "सुरक्षा सुकून देती है",
+      "दोनों का बैलेंस",
+      "सुरक्षा में आज़ादी"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "बीच या पहाड़?",
+    "answers": [
+      "बीच – धूप और समुद्र",
+      "पहाड़ – ताज़ी हवा",
+      "बारी-बारी दोनों",
+      "शहर ही बेस्ट"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "ट्रैवल में सबसे ज़रूरी क्या?",
+    "answers": [
+      "अच्छा खाना",
+      "कल्चर और हिस्ट्री",
+      "आराम",
+      "एडवेंचर और एक्शन"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "फ्लाइट, ट्रेन या कार?",
+    "answers": [
+      "फ्लाइट – तेज़",
+      "ट्रेन – आरामदायक",
+      "कार – फ्रीडम",
+      "बस – बजट ट्रैवलर"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "एशिया के बाहर ड्रीम डेस्टिनेशन?",
+    "answers": [
+      "इटली – खाना और कला",
+      "न्यूज़ीलैंड – प्रकृति",
+      "कनाडा – जंगल और बर्फ",
+      "ब्राज़ील – जोश और कार्निवल"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "पैकिंग कैसे करते हो?",
+    "answers": [
+      "लिस्ट बनाकर परफेक्ट",
+      "आखिरी मिनट में",
+      "मिनिमलिस्ट",
+      "हमेशा ज़्यादा पैक करता हूं"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "हॉस्टल या Airbnb?",
+    "answers": [
+      "हॉस्टल – नए लोगों से मिलना",
+      "Airbnb – लोकल की तरह",
+      "होटल – आराम चाहिए",
+      "कॉचसर्फिंग – एडवेंचर"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "भारत में कहां नहीं गए अभी तक?",
+    "answers": [
+      "लद्दाख – बाइक ट्रिप",
+      "अंडमान – बीच पैराडाइज़",
+      "मेघालय – लिविंग रूट ब्रिज",
+      "वाराणसी – आध्यात्मिक अनुभव"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "ट्रैवल में लोकल भाषा बोलने की कोशिश?",
+    "answers": [
+      "हां, हमेशा ट्राई करता हूं",
+      "अंग्रेज़ी से काम चलाता हूं",
+      "कुछ शब्द सीख लेता हूं",
+      "Google Translate ज़िंदाबाद"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "एक लंबी ट्रिप या कई छोटी?",
+    "answers": [
+      "साल में एक लंबी",
+      "कई वीकेंड ट्रिप्स",
+      "दोनों हो सकें तो बेस्ट",
+      "मैं कम ट्रैवल करता हूं"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "ट्रैवल में हमेशा साथ क्या रखते हो?",
+    "answers": [
+      "कैमरा",
+      "अच्छी किताब",
+      "हेडफोन्स और प्लेलिस्ट",
+      "बस ज़रूरी सामान"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "प्यार के लिए शहर बदल सकते हो?",
+    "answers": [
+      "तुरंत, बिना सोचे",
+      "भारत में कहीं भी",
+      "सब कुछ सही हो तो",
+      "नहीं, अपनी जगह ज़रूरी है"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "रोडट्रिप स्नैक क्या?",
+    "answers": [
+      "समोसे",
+      "चिप्स और नमकीन",
+      "फल और मेवे",
+      "ढाबे से पराठे"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "क्रूज़ या बोट ट्रिप?",
+    "answers": [
+      "क्रूज़ – लक्ज़री",
+      "हाउसबोट – केरल स्टाइल",
+      "ज़मीन पर ही अच्छा",
+      "राफ्टिंग – एडवेंचर"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "मॉनसून में कहां जाओगे?",
+    "answers": [
+      "कूर्ग – हरियाली",
+      "लोनावाला – वॉटरफॉल",
+      "शिलॉन्ग – बारिश का मज़ा",
+      "घर पर चाय पीना"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "दिवाली कहां मनाना चाहोगे?",
+    "answers": [
+      "जयपुर – रोशनी का शहर",
+      "वाराणसी – गंगा आरती",
+      "अपने घर – फैमिली के साथ",
+      "गोवा – बीच पर"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "सुबह की शुरुआत कैसे?",
+    "answers": [
+      "चाय ज़रूरी है",
+      "सुबह की एक्सरसाइज़",
+      "पहले सोशल मीडिया",
+      "आराम से नाश्ता"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "सफाई पसंद या क्रिएटिव अव्यवस्था?",
+    "answers": [
+      "सब चीज़ अपनी जगह",
+      "क्रिएटिव अव्यवस्था इंस्पायर करती है",
+      "ज़्यादातर साफ",
+      "बेतरतीब पर सब मिल जाता है"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "क्या पढ़ना पसंद है?",
+    "answers": [
+      "नॉवेल और कहानियां",
+      "सेल्फ-हेल्प और बायोग्राफी",
+      "ऑनलाइन आर्टिकल्स",
+      "ज़्यादा पढ़ता नहीं"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "जिम या आउटडोर एक्सरसाइज़?",
+    "answers": [
+      "जिम – वेट्स उठाना",
+      "बाहर दौड़ना-साइकिल चलाना",
+      "योगा और पिलाटीज़",
+      "एक्सरसाइज़? नहीं यार"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "फ्राइडे नाइट कैसी होती है?",
+    "answers": [
+      "दोस्तों के साथ बाहर",
+      "घर पर आराम",
+      "डेट नाइट",
+      "क्रिएटिव काम – म्यूज़िक, आर्ट"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "कुत्ता या बिल्ली?",
+    "answers": [
+      "कुत्ता – बेस्ट फ्रेंड",
+      "बिल्ली – आज़ाद रूह",
+      "दोनों!",
+      "कोई नहीं"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "चाय या कॉफी?",
+    "answers": [
+      "चाय – अदरक वाली",
+      "कॉफी – स्ट्रॉन्ग ब्लैक",
+      "मूड पर डिपेंड",
+      "दोनों नहीं – पानी"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "फोन पर कितना टाइम?",
+    "answers": [
+      "बहुत ज़्यादा, माफ़ करो",
+      "ज़रूरत पर ही",
+      "कम करने की कोशिश",
+      "हमेशा ऑनलाइन"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "बचत करते हो या खर्च?",
+    "answers": [
+      "बचत ज़रूरी",
+      "खुद पर खर्च करना पसंद",
+      "बैलेंस – बचत भी खर्च भी",
+      "पैसा खर्च करने के लिए है"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "बाहर जाकर क्या पीते हो?",
+    "answers": [
+      "बीयर",
+      "विस्की",
+      "मोजीटो",
+      "सॉफ्ट ड्रिंक या नींबू पानी"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "फिट कैसे रहते हो?",
+    "answers": [
+      "रेगुलर जिम",
+      "वॉक करके",
+      "डांस और मूवमेंट",
+      "फिटनेस ऐप"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "हेल्दी खाना कितना ज़रूरी?",
+    "answers": [
+      "बहुत – ध्यान रखता हूं",
+      "वीकडे हेल्दी, वीकेंड फ्री",
+      "जो मन करे वो खाता हूं",
+      "हेल्दी कुकिंग हॉबी है"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "नौकरी या बिज़नेस?",
+    "answers": [
+      "बिज़नेस – अपना बॉस",
+      "नौकरी – स्टेबिलिटी",
+      "बिज़नेस का सपना है",
+      "कुछ भी – बस मज़ा आए"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "सोने का टाइम?",
+    "answers": [
+      "रात 10 बजे से पहले",
+      "12 बजे के आसपास",
+      "1 बजे के बाद",
+      "कोई फिक्स टाइम नहीं"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "टैटू के बारे में क्या सोचते हो?",
+    "answers": [
+      "पसंद है – मेरे भी हैं",
+      "दूसरों पर अच्छे लगते हैं",
+      "मुझे पसंद नहीं",
+      "करवाना चाहता हूं पर डर लगता है"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "ड्रीम घर?",
+    "answers": [
+      "शहर में फ्लैट",
+      "बगीचे वाला मकान",
+      "फार्महाउस",
+      "मिनिमलिस्ट स्टूडियो"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "कम्यूट में क्या करते हो?",
+    "answers": [
+      "पॉडकास्ट सुनना",
+      "म्यूज़िक – हमेशा",
+      "ऑडियोबुक",
+      "शांति से बैठना"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "कितनी बार खुद खाना बनाते हो?",
+    "answers": [
+      "लगभग रोज़",
+      "हफ्ते में कुछ बार",
+      "कम – ज़्यादातर ऑर्डर",
+      "वीकेंड पर ही"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "लोकल मार्केट या ऑनलाइन शॉपिंग?",
+    "answers": [
+      "लोकल मार्केट – बार्गेन का मज़ा",
+      "ऑनलाइन – आसान",
+      "मॉल में घूमना",
+      "शॉपिंग कम ही करता हूं"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "फ्लैटमेट या अकेले रहना?",
+    "answers": [
+      "फ्लैटमेट – कंपनी अच्छी",
+      "अकेले – अपनी शांति",
+      "पार्टनर के साथ",
+      "दोस्तों के साथ ही"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "टाइम मशीन मिले तो – पास्ट या फ्यूचर?",
+    "answers": [
+      "पास्ट – इतिहास देखना",
+      "फ्यूचर – क्या आने वाला है",
+      "एक परफेक्ट दिन फिर से",
+      "अभी में ही रहना बेहतर"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "कौन सा रंग तुम्हारी पर्सनालिटी है?",
+    "answers": [
+      "लाल – जोशीला",
+      "नीला – शांत",
+      "पीला – खुशमिज़ाज",
+      "हरा – प्रकृति प्रेमी"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "सुनसान द्वीप पर एक चीज़ ले जाओगे?",
+    "answers": [
+      "कभी ख़त्म न होने वाली किताब",
+      "गिटार",
+      "फिशिंग गियर और चाकू",
+      "फोन (नेटवर्क के साथ)"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "ज़िंदगी का मोटो?",
+    "answers": [
+      "जियो और जीने दो",
+      "सब कुछ होता है एक वजह से",
+      "जो नहीं मारता वो मज़बूत बनाता है",
+      "हंसते रहो"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "सबसे ज़्यादा कौन सा इमोजी यूज़ करते हो?",
+    "answers": [
+      "😂 – हंसी",
+      "❤️ – दिल",
+      "🔥 – आग",
+      "🙏 – नमस्ते"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "फेमस होते तो किसलिए?",
+    "answers": [
+      "म्यूज़िक या आर्ट",
+      "कोई खोज",
+      "स्पोर्ट्स चैंपियन",
+      "सोशल मीडिया स्टार"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "एलियन्स में यकीन?",
+    "answers": [
+      "बिल्कुल",
+      "हो सकते हैं",
+      "शायद नहीं",
+      "हम ही एलियन हैं"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "फैंटेसी दुनिया में क्या होते?",
+    "answers": [
+      "जादूगर",
+      "योद्धा",
+      "एल्फ",
+      "ड्रैगन"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "कराओके का गाना?",
+    "answers": [
+      "बॉलीवुड क्लासिक",
+      "पंजाबी हिट",
+      "अरिजित सिंह का कोई गाना",
+      "मैं गाता नहीं – कभी नहीं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "लॉटरी जीत गए – पहले क्या?",
+    "answers": [
+      "वर्ल्ड टूर",
+      "घर खरीदना",
+      "फैमिली और दोस्तों को देना",
+      "बिज़नेस में इन्वेस्ट"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "तुम्हारे प्यार को बॉलीवुड फिल्म बताओ?",
+    "answers": [
+      "DDLJ – क्लासिक रोमांस",
+      "Jab We Met – मस्ती भरा",
+      "Tamasha – गहरा और अलग",
+      "Ae Dil Hai Mushkil – कॉम्प्लिकेटेड"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "बिना प्लान का दिन – क्या करोगे?",
+    "answers": [
+      "पूरा दिन सोना",
+      "कुछ स्पॉन्टेनियस",
+      "टू-डू लिस्ट क्लियर करना",
+      "प्रकृति में रिफ्रेश"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "कौन सा इंडियन स्टीरियोटाइप तुम पर फिट?",
+    "answers": [
+      "मेहमान नवाज़ी",
+      "चाय के बिना दिन शुरू नहीं",
+      "जुगाड़ एक्सपर्ट",
+      "खाने का शौकीन"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "कौन सा मौसम हो?",
+    "answers": [
+      "बसंत – ताज़ा एनर्जी",
+      "गर्मी – गरम और जोशीला",
+      "बरसात – रोमांटिक",
+      "सर्दी – कूल और गहरा"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "तुम्हारा डेटिंग स्टाइल खाने में?",
+    "answers": [
+      "दाल चावल – सिंपल और प्यारा",
+      "बिरयानी – लेयर्ड और स्पेशल",
+      "गोलगप्पे – मज़ेदार और तीखा",
+      "थाली – सबकुछ एक साथ"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "होली कैसे खेलते हो?",
+    "answers": [
+      "रंगों से सराबोर",
+      "सिर्फ गुलाल",
+      "घर पर ठंडाई पीकर",
+      "भाग के छुप जाता हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "एक ही चीज़ हमेशा खाना हो तो?",
+    "answers": [
+      "बिरयानी",
+      "पिज़्ज़ा",
+      "दाल चावल",
+      "मोमोज़"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "तुम्हारा स्पिरिट एनिमल?",
+    "answers": [
+      "मोर – शानदार",
+      "बंदर – शरारती",
+      "हाथी – बुद्धिमान और शांत",
+      "तोता – बातूनी"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "कौन सी गाड़ी होते?",
+    "answers": [
+      "स्पोर्ट्स कार – तेज़ और रोमांचक",
+      "बुलेट – क्लासिक और रॉयल",
+      "ट्रेन – विश्वसनीय",
+      "ऑटो – जुगाड़ू"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "दोस्तों के साथ क्या करना पसंद?",
+    "answers": [
+      "क्रिकेट खेलना",
+      "चाय पर गपशप",
+      "रोडट्रिप",
+      "पार्टी करना"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "अगर ड्रिंक होते तो कौन सी?",
+    "answers": [
+      "एस्प्रेसो – तेज़ और पावरफुल",
+      "मसाला चाय – देसी और गरम",
+      "बीयर – रिलैक्स्ड",
+      "शैम्पेन – स्पेशल"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "मुंबई में परफेक्ट संडे?",
+    "answers": [
+      "मरीन ड्राइव पर वॉक",
+      "बांद्रा में कैफे हॉपिंग",
+      "जुहू बीच पर पाव भाजी",
+      "गेटवे ऑफ इंडिया"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "पसंदीदा ब्रेकफास्ट?",
+    "answers": [
+      "पराठा और अचार",
+      "इडली सांभर",
+      "पोहा",
+      "बस चाय – काफी है"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "तीखा खाना – हां या ना?",
+    "answers": [
+      "जितना तीखा उतना अच्छा",
+      "मीडियम",
+      "बिल्कुल नहीं",
+      "डिश पर डिपेंड"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "चाय के साथ क्या?",
+    "answers": [
+      "समोसा",
+      "बिस्कुट – पारले-G",
+      "पकोड़े",
+      "केक या पेस्ट्री"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "खुद बनाना या ऑर्डर करना?",
+    "answers": [
+      "बनाना मज़ेदार है",
+      "ऑर्डर – आसान और टेस्टी",
+      "बारी-बारी",
+      "साथ बनाएं – रोमांटिक!"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "मूवी नाइट स्नैक?",
+    "answers": [
+      "पॉपकॉर्न – नमकीन",
+      "चिप्स",
+      "चॉकलेट",
+      "नमकीन मिक्सचर"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "बचपन की याद दिलाने वाला खाना?",
+    "answers": [
+      "मां की राजमा चावल",
+      "दादी की खीर",
+      "स्कूल कैंटीन की मैगी",
+      "छुट्टियों में नानी का खाना"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "डेट के लिए परफेक्ट रेस्टोरेंट?",
+    "answers": [
+      "इटैलियन रेस्टोरेंट",
+      "रूफटॉप बार",
+      "लोकल ढाबा",
+      "स्ट्रीट फूड टूर"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "मीठा या नमकीन?",
+    "answers": [
+      "मीठा – गुलाब जामुन!",
+      "नमकीन – चटपटा",
+      "दोनों",
+      "ब्रेकफास्ट स्किप"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "कौन सी कॉफी?",
+    "answers": [
+      "एस्प्रेसो – स्ट्रॉन्ग",
+      "कैपुचीनो – क्रीमी",
+      "कोल्ड कॉफी",
+      "फिल्टर कॉफी – साउथ इंडियन"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "BBQ में क्या?",
+    "answers": [
+      "चिकन टिक्का",
+      "पनीर टिक्का",
+      "सीफूड",
+      "सब कुछ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "पसंदीदा आइसक्रीम?",
+    "answers": [
+      "चॉकलेट",
+      "मैंगो",
+      "कुल्फी",
+      "वनीला"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "त्योहारों का खास खाना?",
+    "answers": [
+      "दिवाली की मिठाइयां",
+      "ईद की बिरयानी",
+      "क्रिसमस केक",
+      "होली की गुजिया"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "नए खाने ट्राई करते हो?",
+    "answers": [
+      "सब कुछ ट्राई करता हूं",
+      "थोड़ा सोचता हूं",
+      "रेस्टोरेंट में ही",
+      "जाना-पहचाना बेहतर"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "पसंदीदा बिरयानी?",
+    "answers": [
+      "हैदराबादी",
+      "लखनवी",
+      "कोलकाता",
+      "वेज बिरयानी"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "खाने के साथ क्या पीते हो?",
+    "answers": [
+      "पानी – हमेशा",
+      "लस्सी या छाछ",
+      "कोल्ड ड्रिंक",
+      "जूस"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "पसंदीदा म्यूज़िक जॉनर?",
+    "answers": [
+      "बॉलीवुड",
+      "इंडी और ऑल्टरनेटिव",
+      "हिप-हॉप और रैप",
+      "पंजाबी बीट्स"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "कोई इंस्ट्रूमेंट बजाते हो?",
+    "answers": [
+      "गिटार",
+      "तबला या ढोल",
+      "नहीं पर सीखना चाहूंगा",
+      "सुनना पसंद है"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "पसंदीदा इंडियन आर्टिस्ट?",
+    "answers": [
+      "अरिजित सिंह",
+      "प्रतीक कुहाड़",
+      "दिल्जीत दोसांझ",
+      "A.R. रहमान"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "प्लेलिस्ट का मूड?",
+    "answers": [
+      "फील-गुड समर वाइब्स",
+      "इमोशनल और सोचने वाले",
+      "एनर्जेटिक और लाउड",
+      "चिल और Lo-Fi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "आखिरी कॉन्सर्ट कौन सा था?",
+    "answers": [
+      "रॉक या इंडी",
+      "रैपर लाइव",
+      "DJ या फेस्टिवल",
+      "क्लासिकल या ग़ज़ल"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "कुकिंग करते वक्त म्यूज़िक?",
+    "answers": [
+      "ज़रूरी – बिना म्यूज़िक कुकिंग नहीं",
+      "कभी-कभी",
+      "शांति चाहिए",
+      "पॉडकास्ट सुनता हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "नहाते वक्त गाते हो?",
+    "answers": [
+      "रोज़ कॉन्सर्ट होता है",
+      "जब कोई सुन न रहा हो",
+      "कभी नहीं!",
+      "गुनगुनाता हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "रीमिक्स – पसंद या नापसंद?",
+    "answers": [
+      "कुछ रीमिक्स अच्छे हैं",
+      "ओरिजिनल हमेशा बेस्ट",
+      "DJ रीमिक्स मज़ेदार हैं",
+      "90s के गानों को छोड़ो"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "रोडट्रिप पर कौन सा म्यूज़िक?",
+    "answers": [
+      "90s-2000s बॉलीवुड",
+      "लेटेस्ट चार्ट्स",
+      "सबका मिक्स",
+      "जो भी बैठा हो वो चुने"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "बड़ा फेस्टिवल या छोटा वेन्यू?",
+    "answers": [
+      "बड़ा फेस्टिवल – हज़ारों लोग",
+      "छोटा – आर्टिस्ट के करीब",
+      "दोनों का अपना मज़ा",
+      "कॉन्सर्ट हॉल पसंद"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "अलार्म के लिए कौन सा गाना?",
+    "answers": [
+      "सॉफ्ट गाना",
+      "एनर्जेटिक गाना",
+      "चिड़ियों की आवाज़",
+      "हर अलार्म दुश्मन है"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "पसंदीदा फिल्म जॉनर?",
+    "answers": [
+      "एक्शन और थ्रिलर",
+      "कॉमेडी",
+      "ड्रामा और इंडी",
+      "साइ-फाई और फैंटेसी"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "अभी कौन सी सीरीज़ देख रहे हो?",
+    "answers": [
+      "क्राइम और थ्रिलर",
+      "साइ-फाई",
+      "कॉमेडी और सिटकॉम",
+      "डॉक्यूमेंट्री"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "बॉलीवुड क्लासिक – DDLJ या शोले?",
+    "answers": [
+      "DDLJ – रोमांस फॉरेवर",
+      "शोले – कभी पुराना नहीं होता",
+      "दोनों लेजेंड हैं",
+      "कोई नहीं – न्यू एज पसंद"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Netflix, Amazon Prime, या Hotstar?",
+    "answers": [
+      "Netflix – सबसे ज़्यादा ऑप्शन",
+      "Amazon Prime – शॉपिंग भी",
+      "Hotstar – क्रिकेट भी",
+      "सब हैं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "सबटाइटल या डब?",
+    "answers": [
+      "ओरिजिनल – हमेशा",
+      "डब – आसान",
+      "भाषा पर डिपेंड",
+      "हिंदी सबटाइटल्स"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "सबसे इमोशनल फिल्म?",
+    "answers": [
+      "रोमांटिक फिल्म",
+      "वॉर ड्रामा",
+      "बायोपिक",
+      "एनिमेटेड फिल्म"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "हॉरर फिल्म – बहादुर या डरपोक?",
+    "answers": [
+      "मुझे हॉरर पसंद!",
+      "किसी के साथ ही",
+      "नहीं – नींद नहीं आएगी",
+      "साइकोलॉजिकल थ्रिलर ठीक"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "क्लासिक या नई फिल्में?",
+    "answers": [
+      "क्लासिक में जान है",
+      "नई ज़्यादा एक्साइटिंग",
+      "दोनों मिक्स",
+      "बस अच्छी हो"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "साउथ इंडियन फिल्में देखते हो?",
+    "answers": [
+      "हां – बहुत शानदार",
+      "कभी-कभी",
+      "ज़्यादा नहीं",
+      "KGF और बाहुबली तो देखी"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "सिनेमा में क्या खाते हो?",
+    "answers": [
+      "पॉपकॉर्न – कैरेमल",
+      "पॉपकॉर्न – नमकीन",
+      "नाचोज़",
+      "कुछ नहीं – फोकस से देखता हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "विंटर स्पोर्ट पसंद?",
+    "answers": [
+      "स्कीइंग",
+      "स्नोबोर्डिंग",
+      "आइस स्केटिंग",
+      "सर्दियों में कंबल और चाय"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "स्पोर्ट खेलना या देखना?",
+    "answers": [
+      "खेलना – हमेशा",
+      "स्टेडियम में देखना",
+      "दोनों बराबर",
+      "दोनों नहीं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "योगा किया है?",
+    "answers": [
+      "रेगुलर करता हूं",
+      "कुछ बार ट्राई किया",
+      "मेरे लिए नहीं",
+      "करना चाहता हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "पसंदीदा आउटडोर स्पोर्ट?",
+    "answers": [
+      "ट्रेकिंग – हिमालय",
+      "साइकलिंग",
+      "स्विमिंग",
+      "रनिंग"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "ओलंपिक देखते हो?",
+    "answers": [
+      "हर इवेंट",
+      "बस कुछ स्पोर्ट्स",
+      "सिर्फ ओपनिंग सेरेमनी",
+      "इंटरेस्ट नहीं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "एक्सट्रीम स्पोर्ट – करोगे?",
+    "answers": [
+      "बंजी, स्काईडाइविंग – सब!",
+      "हिम्मत जुटाकर शायद",
+      "बहुत खतरनाक",
+      "देखना ही काफी"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "स्पोर्ट्स डेट कौन सा?",
+    "answers": [
+      "बोलिंग",
+      "डांस क्लास",
+      "गो-कार्टिंग",
+      "पार्क में जॉगिंग"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "कितने कॉम्पिटिटिव हो?",
+    "answers": [
+      "बहुत – जीतना ज़रूरी",
+      "थोड़ा कॉम्पिटीशन मज़ेदार",
+      "खेलना ज़्यादा ज़रूरी",
+      "बिल्कुल नहीं – मज़ा ज़रूरी"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "समुद्री स्पोर्ट या पहाड़ी?",
+    "answers": [
+      "सर्फिंग और स्नोर्कलिंग",
+      "ट्रेकिंग और क्लाइंबिंग",
+      "सीज़न के हिसाब से",
+      "कोई नहीं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "IPL टीम कौन सी?",
+    "answers": [
+      "MI – मुंबई इंडियंस",
+      "CSK – चेन्नई",
+      "RCB – बैंगलोर",
+      "IPL नहीं देखता"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "कॉमेडी का कौन सा स्टाइल?",
+    "answers": [
+      "स्टैंड-अप",
+      "स्केच कॉमेडी",
+      "इम्प्रोव",
+      "सैटायर"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "पसंदीदा इंडियन कॉमेडियन?",
+    "answers": [
+      "ज़ाकिर खान",
+      "बिसवा कल्याण रथ",
+      "कनीज़ सुरका",
+      "अभिषेक उपमन्यु"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "बुरे जोक पर क्या करते हो?",
+    "answers": [
+      "तहज़ीब से हंसता हूं",
+      "आई रोल",
+      "और बुरा जोक सुनाता हूं",
+      "सीरियस रहता हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "अच्छे जोक सुनाते हो?",
+    "answers": [
+      "सबको हंसा सकता हूं",
+      "पंचलाइन भूल जाता हूं",
+      "सिचुएशनल ह्यूमर मेरा है",
+      "दूसरों पर हंसना पसंद"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "मीम्स पर हंसते हो?",
+    "answers": [
+      "हर टाइम – फोन का आधा मीम्स",
+      "अच्छे हों तो",
+      "ज़्यादातर समझ नहीं आते",
+      "खुद बनाता हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "फैमिली WhatsApp ग्रुप – कैसा लगता है?",
+    "answers": [
+      "गुड मॉर्निंग मैसेज से भरा",
+      "कभी-कभी फनी कंटेंट",
+      "म्यूट कर रखा है",
+      "मैं ही फनी मीम्स भेजता हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "बचपन का पसंदीदा TV शो?",
+    "answers": [
+      "शक्तिमान",
+      "छोटा भीम",
+      "तारक मेहता",
+      "डोरेमोन"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "सबटल ह्यूमर या स्लैपस्टिक?",
+    "answers": [
+      "सबटल – स्मार्ट और क्लेवर",
+      "स्लैपस्टिक – लाउड और फनी",
+      "दोनों का अपना मज़ा",
+      "एब्सर्ड ह्यूमर बेस्ट"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "तुम्हारा जोक स्टाइल?",
+    "answers": [
+      "ड्राई वन-लाइनर्स",
+      "लंबी कहानी पंचलाइन के साथ",
+      "सिचुएशनल कॉमेडी",
+      "ओवर-एक्टिंग"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "फेल वीडियोज़ या एनिमल वीडियोज़?",
+    "answers": [
+      "फेल वीडियोज़ – शादेनफ्रॉयड",
+      "एनिमल – हमेशा क्यूट",
+      "दोनों – एनिमल फेल्स",
+      "असली ज़िंदगी ज़्यादा फनी"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "वीकेंड की पसंदीदा हॉबी?",
+    "answers": [
+      "हाइकिंग",
+      "कुकिंग और बेकिंग",
+      "गेमिंग",
+      "फोटोग्राफी"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "किताबें पढ़ते हो या ऑडियोबुक?",
+    "answers": [
+      "प्रिंटेड किताब बेस्ट",
+      "कम्यूट में ऑडियोबुक",
+      "ई-रीडर",
+      "ज़्यादा नहीं पढ़ता"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "पौधे लगाना पसंद?",
+    "answers": [
+      "ग्रीन थंब हूं",
+      "बालकनी में कुछ गमले",
+      "मेरे पौधे मर जाते हैं",
+      "इंटरेस्ट नहीं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "कुछ कलेक्ट करते हो?",
+    "answers": [
+      "किताबें या कॉमिक्स",
+      "रेकॉर्ड्स",
+      "एक्सपीरियंसेज़ – चीज़ें नहीं",
+      "कुछ है पर बताऊंगा नहीं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "DIY प्रोजेक्ट्स?",
+    "answers": [
+      "पसंद है – खुद बनाता हूं",
+      "YouTube से सीखता हूं",
+      "दो बाएं हाथ हैं",
+      "ज़रूरत पड़े तभी"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "म्यूज़ियम या गैलरी?",
+    "answers": [
+      "नेशनल म्यूज़ियम",
+      "मॉडर्न आर्ट गैलरी",
+      "साइंस सेंटर",
+      "इंटरैक्टिव एग्ज़िबिशन"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "क्राफ्ट या आर्ट करते हो?",
+    "answers": [
+      "हां – रिलैक्सिंग है",
+      "इंटरेस्ट है पर करता नहीं",
+      "मेरे बस का नहीं",
+      "सीखना चाहूंगा"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "एस्केप रूम – कैसा परफॉर्म करोगे?",
+    "answers": [
+      "हर कोड तोड़ूंगा",
+      "टीम में आइडियाज़ दूंगा",
+      "पैनिक हो जाऊंगा",
+      "अभी तक ट्राई नहीं किया"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "कौन सा इंस्ट्रूमेंट सीखना है?",
+    "answers": [
+      "पियानो – एलिगेंट",
+      "गिटार – वर्सटाइल",
+      "ड्रम्स – पावरफुल",
+      "सितार – इंडियन क्लासिकल"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "पॉडकास्ट – कौन सा टॉपिक?",
+    "answers": [
+      "ट्रू क्राइम",
+      "बिज़नेस और मोटिवेशन",
+      "कॉमेडी",
+      "इंटरव्यू पॉडकास्ट"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "वॉलंटियर काम करते हो?",
+    "answers": [
+      "रेगुलर करता हूं",
+      "कभी-कभी",
+      "नहीं, पर करना चाहिए",
+      "डोनेट करता हूं"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "डांस करना पसंद?",
+    "answers": [
+      "बहुत!",
+      "ड्रिंक के बाद ही",
+      "दो बाएं पैर",
+      "अकेले में डांस करता हूं"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "ड्रीम क्रिएटिव प्रोजेक्ट?",
+    "answers": [
+      "नॉवेल लिखना",
+      "गाना कंपोज़ करना",
+      "शॉर्ट फिल्म बनाना",
+      "ऐप बनाना"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "AI – एक्साइटेड या चिंतित?",
+    "answers": [
+      "एक्साइटेड – फ्यूचर यही है",
+      "चिंतित – कहां जा रहा है",
+      "उत्सुक पर सतर्क",
+      "कोई फर्क नहीं"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "अभी कितने ब्राउज़र टैब खुले हैं?",
+    "answers": [
+      "5 से कम – ऑर्गनाइज़्ड",
+      "10-20 – नॉर्मल",
+      "50+ – प्रॉब्लम है",
+      "बुकमार्क्स यूज़ करता हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "वीडियो गेम्स खेलते हो?",
+    "answers": [
+      "पक्का गेमर",
+      "कभी-कभी रिलैक्स के लिए",
+      "सिर्फ मोबाइल गेम्स",
+      "बिल्कुल नहीं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "इलेक्ट्रिक कार या पेट्रोल?",
+    "answers": [
+      "इलेक्ट्रिक – फ्यूचर",
+      "पेट्रोल – भरोसेमंद",
+      "मेट्रो और ऑटो काफी",
+      "बस चलती रहे"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "नई टेक्नोलॉजी कितनी जल्दी अपनाते हो?",
+    "answers": [
+      "पहले दिन खरीदता हूं",
+      "रिव्यूज़ का इंतज़ार",
+      "जब सब लोग ले लें",
+      "देर से अपनाता हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "पासवर्ड कैसे याद रखते हो?",
+    "answers": [
+      "पासवर्ड मैनेजर",
+      "सब जगह एक ही (उफ्फ)",
+      "कागज़ पर लिखा है",
+      "फिंगरप्रिंट और फेस ID"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "VR ट्राई किया?",
+    "answers": [
+      "हां, अमेज़िंग!",
+      "एक बार – इम्प्रेस्ड",
+      "नहीं पर करना है",
+      "इंटरेस्ट नहीं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "कितने स्ट्रीमिंग सब्सक्रिप्शन?",
+    "answers": [
+      "1-2 काफी",
+      "3-4",
+      "5+ – सब चाहिए",
+      "कोई नहीं – दोस्तों से शेयर"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "स्मार्ट वॉच या ट्रेडिशनल?",
+    "answers": [
+      "स्मार्ट वॉच – डेटा ज़रूरी",
+      "ट्रेडिशनल – टाइमलेस",
+      "कोई भी नहीं",
+      "दोनों – मौके पर"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "डेटिंग ऐप्स के बारे में क्या सोचते हो?",
+    "answers": [
+      "बेस्ट इन्वेंशन",
+      "ठीक है, पर ऑफलाइन बेहतर",
+      "फायदे और नुकसान दोनों",
+      "इसीलिए तो तुम यहां हो!"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "होमसिकनेस कैसे हैंडल करते हो?",
+    "answers": [
+      "फैमिली को कॉल करता हूं",
+      "घर का खाना बनाता हूं",
+      "पुराने गाने सुनता हूं",
+      "मुझे कम ही होता है"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "लक्ज़री का मतलब क्या?",
+    "answers": [
+      "अपने लिए समय",
+      "ट्रैवल और एक्सपीरियंस",
+      "अच्छा खाना",
+      "मटेरियल चीज़ें"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "देने वाले हो या लेने वाले?",
+    "answers": [
+      "देने वाला – शेयर करना पसंद",
+      "बैलेंस ज़रूरी",
+      "सिचुएशन पर डिपेंड",
+      "शायद ज़्यादा देता हूं"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ज़िंदगी का सबसे बहादुर पल?",
+    "answers": [
+      "बड़ा बदलाव किया",
+      "किसी को फीलिंग्स बताई",
+      "अकेले अनजान जगह गया",
+      "अभी उस पल का इंतज़ार"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "परंपराओं के बारे में क्या सोचते हो?",
+    "answers": [
+      "बहुत पसंद हैं",
+      "कुछ हां कुछ नहीं",
+      "नई बनाना पसंद",
+      "पुरानी हो गईं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "परफेक्ट शाम क्या है?",
+    "answers": [
+      "कैंडललाइट में गहरी बातें",
+      "पेट दर्द होने तक हंसना",
+      "साथ में कुछ नया एक्सपीरियंस",
+      "शांत टोगेदरनेस"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "प्लान बनाते हो या चलते रहते हो?",
+    "answers": [
+      "चलते रहना ज़िंदगी का नमक",
+      "एक रफ प्लान ज़रूरी",
+      "सब कुछ प्लान्ड",
+      "प्लान बनाता हूं फिर बदलता हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "किसी अजनबी ने सबसे अच्छी बात क्या कही?",
+    "answers": [
+      "मुस्कान अच्छी है",
+      "एनर्जी संक्रामक है",
+      "बहादुर हो",
+      "याद नहीं"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "पांच इंद्रियों में सबसे ज़रूरी?",
+    "answers": [
+      "देखना – दुनिया देखना",
+      "सुनना – म्यूज़िक और आवाज़ें",
+      "स्वाद – अच्छा खाना",
+      "छूना – गर्माहट और जुड़ाव"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "प्यार कैसे दिखाते हो?",
+    "answers": [
+      "छोटे-छोटे काम से",
+      "शब्दों से",
+      "कामों से",
+      "गले लगाकर"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "टाइम पर आना कितना ज़रूरी?",
+    "answers": [
+      "बहुत – हमेशा टाइम पर",
+      "ज़्यादातर पंक्चुअल",
+      "IST – इंडियन स्ट्रेचेबल टाइम",
+      "टाइम रिलेटिव है"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "छुपी हुई ताकत?",
+    "answers": [
+      "एम्पैथी – दूसरों को समझना",
+      "पेशेंस – शांत रहना",
+      "क्रिएटिविटी – अलग सोच",
+      "एडाप्टेबिलिटी – कहीं भी ढल जाना"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "फोन या टेक्स्ट?",
+    "answers": [
+      "फोन – ज़्यादा पर्सनल",
+      "टेक्स्ट – सोचने का टाइम",
+      "वॉइस नोट्स",
+      "इंसान पर डिपेंड"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "कितने देश घूमे हो?",
+    "answers": [
+      "5 से कम",
+      "5-15",
+      "15-30",
+      "30+ – ट्रैवल ही लाइफ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "ग्रुप ट्रैवल या सोलो?",
+    "answers": [
+      "सोलो – अपनी पेस",
+      "छोटा ग्रुप – ज़्यादा मज़ा",
+      "ऑर्गनाइज़्ड टूर – आसान",
+      "दो लोग बेस्ट"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "वर्क फ्रॉम एनीवेयर – करोगे?",
+    "answers": [
+      "अभी चलो!",
+      "कुछ हफ्तों के लिए ठीक",
+      "कम्फर्ट ज़रूरी",
+      "डिजिटल नोमैड बनना है"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "मेडिटेशन करते हो?",
+    "answers": [
+      "रोज़",
+      "कभी-कभी",
+      "बैठ नहीं पाता शांत से",
+      "कभी नहीं किया"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "फैशन कितना ज़रूरी?",
+    "answers": [
+      "ट्रेंड्स फॉलो करता हूं",
+      "अपना स्टाइल ज़्यादा ज़रूरी",
+      "कम्फर्ट पहले",
+      "फैशन में इंटरेस्ट नहीं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "स्पा डे पसंद?",
+    "answers": [
+      "बहुत – रिलैक्सिंग",
+      "कभी-कभी",
+      "मुझे अजीब लगता है",
+      "आयुर्वेदिक मसाज बेस्ट"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "दिन कैसे ऑर्गनाइज़ करते हो?",
+    "answers": [
+      "कैलेंडर ऐप",
+      "डायरी में लिखता हूं",
+      "दिमाग में – ज़्यादातर काम करता है",
+      "ऑर्गनाइज़? स्पॉन्टेनियस!"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "पसंदीदा आइसक्रीम?",
+    "answers": [
+      "चॉकलेट",
+      "मैंगो",
+      "कुल्फी – देसी स्टाइल",
+      "बटरस्कॉच"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "कुकिंग शो देखते हो?",
+    "answers": [
+      "MasterChef देखता हूं",
+      "YouTube रेसिपीज़",
+      "खुद बनाना बेहतर",
+      "खाने में इंटरेस्ट, बनाने में नहीं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "बेकरी या घर का?",
+    "answers": [
+      "लोकल बेकरी – फ्रेश",
+      "घर पर वीकेंड बेकिंग",
+      "पैकेट वाला चलता है",
+      "ब्रेड ज़्यादा नहीं खाता"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "गाना अच्छा गाते हो?",
+    "answers": [
+      "हां, काफी अच्छा",
+      "बाथरूम में स्टार हूं",
+      "बुरा पर ज़ोर से",
+      "कभी नहीं गाता"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "नया म्यूज़िक कैसे खोजते हो?",
+    "answers": [
+      "Spotify Discover",
+      "दोस्तों की सलाह",
+      "Instagram और Reels",
+      "रेडियो – हां, सच में"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "बार-बार देखने वाली फिल्म?",
+    "answers": [
+      "हंसाने वाली कॉमेडी",
+      "एपिक एडवेंचर",
+      "सोचने पर मजबूर करने वाली",
+      "बचपन की फिल्म"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "डॉक्यूमेंट्री – कौन सा टॉपिक?",
+    "answers": [
+      "नेचर और वाइल्डलाइफ",
+      "ट्रू क्राइम",
+      "हिस्ट्री",
+      "टेक्नोलॉजी और फ्यूचर"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "मैराथन दौड़ सकते हो?",
+    "answers": [
+      "गोल है मेरा",
+      "हाफ मैराथन शायद",
+      "5 km काफी",
+      "दौड़ना? साइकिल चलाता हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "डांस – स्पोर्ट है?",
+    "answers": [
+      "बिल्कुल!",
+      "सालसा सीखना चाहूंगा",
+      "मेरे बस का नहीं",
+      "रिदम ज़ीरो"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "खुद पर हंस सकते हो?",
+    "answers": [
+      "हमेशा – सेल्फ-ह्यूमर मेरी ताकत",
+      "ज़्यादातर",
+      "छोटी बातों पर ही",
+      "बहुत सीरियस हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "PJ (पुअर जोक्स) – पसंद या नापसंद?",
+    "answers": [
+      "पसंद – जितने बुरे उतने अच्छे",
+      "कभी-कभी फनी",
+      "ज़्यादातर बोरिंग",
+      "मैं ही सबसे अच्छे PJ मारता हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "कोई अनोखी हॉबी?",
+    "answers": [
+      "हां, प्राउड हूं",
+      "कुछ अजीब कलेक्ट करता हूं",
+      "नॉर्मल हॉबीज़ हैं",
+      "ज़िंदगी मेरी हॉबी है"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "पज़ल – रिलैक्सिंग या फ्रस्ट्रेटिंग?",
+    "answers": [
+      "रिलैक्सिंग",
+      "20 मिनट में बोर",
+      "किसी के साथ ठीक",
+      "सुडोकू बेहतर"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "सॉफ्टवेयर अपडेट्स तुरंत करते हो?",
+    "answers": [
+      "तुरंत इंस्टॉल",
+      "हफ्तों इग्नोर",
+      "सिक्योरिटी वाले ही",
+      "ऑटो अपडेट"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "एक हफ्ता बिना इंटरनेट रह सकते हो?",
+    "answers": [
+      "मज़े से",
+      "मुश्किल पर हो जाएगा",
+      "नामुमकिन",
+      "छुट्टी पर ही"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "सुबह का रूटीन?",
+    "answers": [
+      "चाय और अखबार",
+      "एक्सरसाइज़ और शॉवर",
+      "स्नूज़ 5 बार",
+      "ध्यान और शुक्रिया"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "कौन सा तत्व हो?",
+    "answers": [
+      "अग्नि – जोशीला",
+      "जल – अनुकूलनशील",
+      "पृथ्वी – ठोस",
+      "वायु – आज़ाद"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "करियर कितना ज़रूरी?",
+    "answers": [
+      "करियर मुझे डिफाइन करता है",
+      "ज़रूरी पर सब नहीं",
+      "ज़िंदगी जीने का ज़रिया",
+      "वर्क-लाइफ बैलेंस ज़्यादा ज़रूरी"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "कोई रो रहा हो तो क्या करोगे?",
+    "answers": [
+      "गले लगाऊंगा",
+      "सुनूंगा",
+      "खुश करने की कोशिश",
+      "थोड़ा हेल्पलेस हूं"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "एनर्जी कहां से आती है?",
+    "answers": [
+      "लोगों से मिलकर",
+      "अकेले वक्त में",
+      "नए अनुभवों से",
+      "क्रिएटिव काम से"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ज़्यादा फील करना या कम?",
+    "answers": [
+      "ज़्यादा – इमोशनल हूं",
+      "कम – शील्ड लगाकर",
+      "बीच का रास्ता",
+      "इमोशंस ताकत हैं"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "एडवेंचर ट्रिप या ऑल इनक्लूसिव?",
+    "answers": [
+      "एडवेंचर – हर दिन कुछ नया",
+      "ऑल इनक्लूसिव – पूल और बुफे",
+      "दोनों का मिक्स",
+      "कल्चरल टूर"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "बैकपैकिंग किया है?",
+    "answers": [
+      "बेस्ट एक्सपीरियंस था",
+      "करना चाहता था पर नहीं हुआ",
+      "अब मौका बीत गया",
+      "डिजिटल नोमैड बेहतर"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "हिमालय में ट्रेक करोगे?",
+    "answers": [
+      "बिल्कुल – केदारनाथ ट्रेक!",
+      "वैली ऑफ फ्लावर्स",
+      "ऊंचाई से डर लगता है",
+      "ट्रेकिंग मेरे बस की नहीं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "न्यू ईयर कैसे मनाते हो?",
+    "answers": [
+      "पार्टी और काउंटडाउन",
+      "क्लोज़ फ्रेंड्स के साथ",
+      "ट्रैवल पर",
+      "खास कुछ नहीं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "कितनी नींद चाहिए?",
+    "answers": [
+      "6 घंटे काफी",
+      "8 घंटे ज़रूरी",
+      "जितनी ज़्यादा उतनी अच्छी",
+      "अनियमित"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "बालकनी, गार्डन, या छत?",
+    "answers": [
+      "गार्डन में BBQ",
+      "शहर में बालकनी",
+      "छत पर तारे देखना",
+      "खिड़की काफी है"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "पब्लिक ट्रांसपोर्ट या गाड़ी?",
+    "answers": [
+      "मेट्रो और बस",
+      "अपनी गाड़ी – फ्रीडम",
+      "ओला/उबर",
+      "पैदल चलना पसंद"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "बारिश के दिन कैसे बिताते हो?",
+    "answers": [
+      "घर में कंबल में",
+      "म्यूज़ियम या सिनेमा",
+      "इनडोर एक्टिविटी",
+      "बारिश में भीगना"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "कलेक्टर या मिनिमलिस्ट?",
+    "answers": [
+      "कलेक्टर – हर चीज़ में यादें",
+      "मिनिमलिस्ट – कम ज़्यादा है",
+      "बीच में कहीं",
+      "सफाई करने की कोशिश"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "ब्रंच में क्या ज़रूरी?",
+    "answers": [
+      "छोले भटूरे",
+      "एवोकाडो टोस्ट",
+      "पैनकेक्स",
+      "फ्रेश जूस"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "सर्दियों में कौन सा सूप?",
+    "answers": [
+      "टमाटर सूप",
+      "चिकन शोरबा",
+      "मटर का सूप",
+      "हॉट चॉकलेट ही पी लो"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "कौन सा गाना प्यार का?",
+    "answers": [
+      "मीठा बॉलीवुड रोमांटिक",
+      "दिल तोड़ने वाला गाना",
+      "एनर्जेटिक डांस नंबर",
+      "अभी ढूंढ रहा हूं"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "फिल्म में कौन सा कैरेक्टर हो?",
+    "answers": [
+      "फनी साइडकिक",
+      "मिस्टीरियस हीरो",
+      "रोमांटिक लीड",
+      "स्मार्ट प्लानर"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "साइकलिंग – कितनी दूर?",
+    "answers": [
+      "पड़ोस में ही",
+      "20-50 km",
+      "100+ km",
+      "साइकिल नहीं चलाता"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "सबसे फनी किस्सा?",
+    "answers": [
+      "शर्मनाक कन्फ्यूज़न",
+      "पब्लिक में गड़बड़",
+      "दोस्तों के साथ इनसाइड जोक",
+      "मैं खुद जोक हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "कभी ट्रेकिंग ग्रुप जॉइन किया?",
+    "answers": [
+      "रेगुलर जाता हूं",
+      "एक बार ट्राई किया",
+      "करना है",
+      "ट्रेकिंग मुश्किल लगती है"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "ड्रोन या एक्शन कैमरा?",
+    "answers": [
+      "ड्रोन – ऊपर से नज़ारा",
+      "एक्शन कैमरा – एक्शन में",
+      "दोनों – परफेक्ट कॉम्बो",
+      "फोन काफी है"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "कॉस्ट्यूम पार्टी में क्या पहनोगे?",
+    "answers": [
+      "सुपरहीरो",
+      "कुछ फनी और क्रिएटिव",
+      "ग्रुप कॉस्ट्यूम",
+      "कॉस्ट्यूम नहीं पहनता"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "सबको कौन सी किताब रिकमेंड करोगे?",
+    "answers": [
+      "दिल को छू लेने वाली नॉवेल",
+      "दुनिया समझने वाली नॉन-फिक्शन",
+      "फनी कॉमिक",
+      "किताब नहीं, फिल्म रिकमेंड करूंगा"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "लॉन्ग डिस्टेंस रिलेशनशिप कर सकते हो?",
+    "answers": [
+      "कर सकता हूं",
+      "मुश्किल है",
+      "लिमिटेड टाइम के लिए",
+      "इंसान पर डिपेंड"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "नींद न आए तो क्या करते हो?",
+    "answers": [
+      "किताब पढ़ता हूं",
+      "पॉडकास्ट सुनता हूं",
+      "सोच लिख लेता हूं",
+      "भेड़ गिनता हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "अच्छे लिसनर हो?",
+    "answers": [
+      "सब कहते हैं हां",
+      "कोशिश करता हूं",
+      "कभी-कभी ध्यान भटकता है",
+      "बोलना ज़्यादा पसंद"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "छोटी जीत कैसे सेलिब्रेट करते हो?",
+    "answers": [
+      "अच्छा खाना खाकर",
+      "दोस्तों को बताकर",
+      "चुपचाप खुशी",
+      "अगला गोल सेट करके"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "फ्लाइट से डर?",
+    "answers": [
+      "ज़ीरो – उड़ना पसंद",
+      "टेकऑफ पर थोड़ा",
+      "हां, पर फिर भी उड़ता हूं",
+      "इसीलिए ट्रेन से जाता हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "ट्रैवल से पसंदीदा सूवनिर?",
+    "answers": [
+      "फ्रिज मैगनेट",
+      "लोकल खाना-पीना",
+      "फोटोज़ और यादें",
+      "सूवनिर नहीं खरीदता"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "दिवाली कैसे मनाते हो?",
+    "answers": [
+      "पटाखे और लाइट्स",
+      "पूजा और मिठाई",
+      "दोस्तों के साथ पार्टी",
+      "शांत – दीये जलाकर"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "घर में कितने पौधे?",
+    "answers": [
+      "जंगल जैसा",
+      "कुछ चुने हुए",
+      "एक बहादुर बचा है",
+      "कोई नहीं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "आधी रात का स्नैक?",
+    "answers": [
+      "मैगी",
+      "बिस्किट्स",
+      "फ्रूट",
+      "कुछ नहीं – डिसिप्लिन्ड हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "कौन सा मसाला सबसे ज़रूरी?",
+    "answers": [
+      "नमक और काली मिर्च",
+      "लहसुन – हर चीज़ में",
+      "हल्दी – सेहत और स्वाद",
+      "लाल मिर्च – तीखा लगना चाहिए"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "किसी की याद दिलाने वाला गाना?",
+    "answers": [
+      "हां – खुशी देता है",
+      "हां – थोड़ा बिटरस्वीट",
+      "कई गाने हैं",
+      "म्यूज़िक को लोगों से नहीं जोड़ता"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "पसंदीदा डायरेक्टर?",
+    "answers": [
+      "आमिर खान (एक्टर-डायरेक्टर)",
+      "इम्तियाज़ अली",
+      "क्रिस्टोफर नोलन",
+      "डायरेक्टर नोटिस नहीं करता"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "हाफ मैराथन दौड़े हो?",
+    "answers": [
+      "कई बार",
+      "एक बार",
+      "बकेट लिस्ट में है",
+      "कभी नहीं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "अपना ह्यूमर 3 शब्दों में?",
+    "answers": [
+      "ड्राई, डार्क, क्लेवर",
+      "लाउड, सिली, नेचुरल",
+      "सबटल, एब्सर्ड, सरप्राइज़िंग",
+      "वार्म, जेंटल, सॉफ्ट"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "किताब लिखना चाहोगे?",
+    "answers": [
+      "नॉवेल लिखूंगा",
+      "अपने फील्ड की बुक",
+      "ट्रैवल ब्लॉग काफी",
+      "लिखना मेरा नहीं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "फोन में कितने ऐप्स?",
+    "answers": [
+      "कम – बस ज़रूरी",
+      "नॉर्मल",
+      "बहुत ज़्यादा – सफाई नहीं करता",
+      "नए ट्राई करता रहता हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "एक दिन इनविजिबल हो गए तो?",
+    "answers": [
+      "बैन जगहों में घुसना",
+      "दोस्तों को प्रैंक करना",
+      "बस ऑब्ज़र्व करना",
+      "कुछ खास नहीं – अच्छा रहूंगा"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "कॉम्प्रोमाइज़ कैसे करते हो?",
+    "answers": [
+      "बहुत फ्लेक्सिबल",
+      "ज़रूरी चीज़ों पर नहीं",
+      "कॉम्प्रोमाइज़ ज़रूरी है",
+      "क्रिएटिव सॉल्यूशन ढूंढना पसंद"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "हाल ही में पहली बार क्या किया?",
+    "answers": [
+      "नई डिश ट्राई की",
+      "नई जगह गया",
+      "कोई स्पोर्ट ट्राई किया",
+      "किसी से माफी मांगी"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "पसंदीदा एयरपोर्ट?",
+    "answers": [
+      "दिल्ली T3",
+      "मुंबई T2",
+      "सिंगापुर चांगी",
+      "एयरपोर्ट सब एक जैसे"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "स्मूदी पीते हो?",
+    "answers": [
+      "रोज़ सुबह",
+      "कभी-कभी",
+      "बनाना मुश्किल",
+      "फल वैसे ही खाता हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "पसंदीदा रोटी?",
+    "answers": [
+      "तंदूरी नान",
+      "रुमाली रोटी",
+      "पराठा – आलू वाला",
+      "चपाती – क्लासिक"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "क्लासिकल म्यूज़िक – बोरिंग या अमेज़िंग?",
+    "answers": [
+      "अमेज़िंग – रूह को छूता है",
+      "कभी-कभी रिलैक्स के लिए",
+      "बोरिंग",
+      "फिल्मी म्यूज़िक ही सही"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "दिन में कितना TV देखते हो?",
+    "answers": [
+      "एक घंटे से कम",
+      "1-2 घंटे",
+      "3+ घंटे",
+      "TV नहीं – सिर्फ स्ट्रीमिंग"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "क्रिकेट या फुटबॉल?",
+    "answers": [
+      "क्रिकेट – जान है",
+      "फुटबॉल – ग्लोबल गेम",
+      "कबड्डी!",
+      "दोनों नहीं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "कौन सा मीम तुम्हारी ज़िंदगी है?",
+    "answers": [
+      "सब जल रहा है पर मैं मुस्कुरा रहा हूं",
+      "उम्मीद vs हकीकत",
+      "This is fine कुत्ता",
+      "मीम किंग हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "कुकिंग स्किल लेवल?",
+    "answers": [
+      "प्रो – फुल कोर्स",
+      "एडवांस्ड – एक्सपेरिमेंट करता हूं",
+      "बिगिनर – बेसिक रेसिपीज़",
+      "मैगी चैंपियन"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "घर में रोबोट चाहिए?",
+    "answers": [
+      "रोबोट वैक्यूम है",
+      "सबके लिए रोबोट चाहिए",
+      "खुद करता हूं",
+      "साइंस फिक्शन लगता है"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "कौन सी भाषा फ्लुएंट बोलना चाहोगे?",
+    "answers": [
+      "स्पैनिश – दुनिया भर में काम",
+      "फ्रेंच – प्यार की भाषा",
+      "जापानी – अमेज़िंग कल्चर",
+      "कोरियन – K-drama के लिए"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "बकेट लिस्ट में सबसे ऊपर?",
+    "answers": [
+      "नॉर्दर्न लाइट्स देखना",
+      "स्काईडाइविंग",
+      "किताब पब्लिश करना",
+      "हर कॉन्टिनेंट जाना"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "अकेलापन कैसे हैंडल करते हो?",
+    "answers": [
+      "अकेले रहना एन्जॉय करता हूं",
+      "किसी को कॉल करता हूं",
+      "लोगों के बीच जाता हूं",
+      "थोड़ा मुश्किल लगता है"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "बीता हुआ भूलना आसान है?",
+    "answers": [
+      "हां – आगे देखता हूं",
+      "थोड़ा समय लगता है",
+      "कुछ चीज़ें रहती हैं",
+      "कोशिश कर रहा हूं"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "दोस्तों के ग्रुप में तुम्हारा रोल?",
+    "answers": [
+      "प्लानर",
+      "एंटरटेनर",
+      "शांत वाला",
+      "बीच का मध्यस्थ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "ट्रैवल फोटोग्राफी कैसे?",
+    "answers": [
+      "कैमरा हमेशा साथ",
+      "स्मार्टफोन काफी",
+      "पल का मज़ा लेना ज़्यादा",
+      "सेल्फी लवर"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "मंडे को कैसे हैंडल करते हो?",
+    "answers": [
+      "पॉज़िटिव – नया हफ्ता",
+      "मंडे में नींद आती है",
+      "मंगलवार से मोटिवेशन",
+      "मंडे भी बाकी दिनों जैसा"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "दोसा या इडली?",
+    "answers": [
+      "मसाला दोसा – क्रिस्पी",
+      "इडली सांभर",
+      "दोनों!",
+      "उत्तप्पम"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "सबसे अच्छा म्यूज़िक दशक?",
+    "answers": [
+      "90s – गोल्डन एरा",
+      "2000s – रीमिक्स टाइम",
+      "70s-80s – किशोर-रफी",
+      "आज का म्यूज़िक बेस्ट"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "फिल्म मैराथन – कौन सी सीरीज़?",
+    "answers": [
+      "हैरी पॉटर",
+      "लॉर्ड ऑफ द रिंग्स",
+      "मार्वल",
+      "बाहुबली 1 और 2"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "सुबह एक्सरसाइज़ या शाम को?",
+    "answers": [
+      "सुबह – दिन की एनर्जी",
+      "शाम – स्ट्रेस बस्टर",
+      "लंच ब्रेक में",
+      "एक्सरसाइज़ का कोई टाइम नहीं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "कौन सा हिंदी शब्द सबसे फनी?",
+    "answers": [
+      "जुगाड़",
+      "चमचा",
+      "टशन",
+      "धींगामस्ती"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "फोटोग्राफी – फोन या कैमरा?",
+    "answers": [
+      "कैमरा – क्वालिटी",
+      "फोन – हमेशा साथ",
+      "ड्रोन",
+      "ज़्यादा फोटो नहीं खींचता"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "टेक पर कितना खर्च?",
+    "answers": [
+      "बहुत – लेटेस्ट गैजेट्स",
+      "ज़रूरत का ही",
+      "सेकंड हैंड और सेल",
+      "कम से कम"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "कौन सी कहावत जीते हो?",
+    "answers": [
+      "जो होगा देखा जाएगा",
+      "मेहनत का फल मीठा होता है",
+      "हंसी सबसे अच्छी दवा",
+      "अकेला चना भाड़ नहीं फोड़ता"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "रोज़ाना का प्यार कैसे दिखाते हो?",
+    "answers": [
+      "बेड पर चाय लाकर",
+      "हाथ पकड़कर चलना",
+      "ध्यान से सुनना",
+      "छोटे सरप्राइज़"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "मौसम से मूड बदलता है?",
+    "answers": [
+      "बहुत – धूप पसंद",
+      "नहीं – बेस्ट बनाता हूं",
+      "बारिश में उदास",
+      "हर मौसम पसंद"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "ट्रेन में पसंदीदा खाना?",
+    "answers": [
+      "कटलेट और चाय",
+      "घर से लाया पराठा",
+      "पैंट्री कार का खाना",
+      "ट्रेन में नहीं खाता"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "घर पर क्या पहनते हो?",
+    "answers": [
+      "ट्रैक पैंट और टी-शर्ट",
+      "लुंगी",
+      "वही कपड़े जो बाहर",
+      "शॉर्ट्स"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "पसंदीदा चाय?",
+    "answers": [
+      "अदरक वाली",
+      "मसाला चाय",
+      "ग्रीन टी",
+      "कटिंग चाय"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "क्या चीज़ चेहरे पर मुस्कान लाती है?",
+    "answers": [
+      "सच्ची तारीफ",
+      "गर्मजोशी से गले लगना",
+      "अच्छी बातचीत",
+      "खूबसूरत नज़ारा"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "नंगे पैर या मोज़े?",
+    "answers": [
+      "नंगे पैर हमेशा",
+      "मोज़े – गर्म रहो",
+      "चप्पल",
+      "जूते पहनकर ही रहता हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "सबसे पागल सपना?",
+    "answers": [
+      "किसी द्वीप पर शिफ्ट होना",
+      "अपना रेस्टोरेंट खोलना",
+      "दुनिया भर में सेलिंग",
+      "वर्ल्ड रिकॉर्ड तोड़ना"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "गोवा या कश्मीर?",
+    "answers": [
+      "गोवा – बीच और पार्टी",
+      "कश्मीर – जन्नत",
+      "मौसम पर डिपेंड",
+      "दोनों बेस्ट"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "अपनी फेवरेट जगह शहर में?",
+    "answers": [
+      "पसंदीदा कैफे",
+      "पार्क या गार्डन",
+      "नदी या झील किनारे",
+      "घर का सोफा"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "रिलेशनशिप से क्या चाहते हो?",
+    "answers": [
+      "गहरा कनेक्शन",
+      "साथ बढ़ना",
+      "मस्ती और हल्कापन",
+      "सुरक्षा और अपनापन"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "मैसेज का रिप्लाई कितनी जल्दी?",
+    "answers": [
+      "तुरंत – हमेशा ऑनलाइन",
+      "एक घंटे में",
+      "याद आने पर",
+      "मैं लेट रिप्लायर हूं"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "लंच में क्या – टिफिन, कैंटीन, या बाहर?",
+    "answers": [
+      "घर का टिफिन",
+      "ऑफिस कैंटीन",
+      "बाहर का खाना",
+      "कभी-कभी स्किप"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "क्रिएटिव हो या एनालिटिकल?",
+    "answers": [
+      "क्रिएटिव – आर्ट और आइडियाज़",
+      "एनालिटिकल – नंबर्स और लॉजिक",
+      "दोनों",
+      "कोई नहीं – प्रैक्टिकल"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "नेविगेशन – मैप या इंट्यूशन?",
+    "answers": [
+      "Google Maps हमेशा",
+      "अपना शहर याद है",
+      "Maps ऐप",
+      "रास्ता पूछ लेता हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "रिस्क लेने वाले हो या सेफ?",
+    "answers": [
+      "रिस्क – नो रिस्क नो गेन",
+      "कैलकुलेटेड रिस्क",
+      "सेफ्टी फर्स्ट",
+      "एरिया पर डिपेंड"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "कौन सा बॉलीवुड कैरेक्टर हो?",
+    "answers": [
+      "रणचोड़दास – 3 Idiots",
+      "बन्नी – Yeh Jawaani Hai Deewani",
+      "गीत – Jab We Met",
+      "मुन्ना भाई"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "सनस्क्रीन लगाते हो?",
+    "answers": [
+      "SPF 50 – ज़रूरी",
+      "ज़्यादातर",
+      "भूल जाता हूं",
+      "टैन चाहिए"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "पसंदीदा बाज़ार?",
+    "answers": [
+      "सब्ज़ी मंडी – ताज़ा",
+      "फ्ली मार्केट",
+      "फूड फेस्टिवल",
+      "ऑनलाइन ऑर्डर"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "अगला डेस्टिनेशन?",
+    "answers": [
+      "वियतनाम – स्ट्रीट फूड",
+      "तुर्की – इस्तांबुल",
+      "श्रीलंका – बीच और चाय",
+      "भूटान – शांति"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "सुबह का BGM?",
+    "answers": [
+      "एनर्जेटिक पॉप",
+      "चिल Lo-Fi",
+      "न्यूज़ पॉडकास्ट",
+      "शांति – कोई आवाज़ नहीं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "एक दिन कोई और बन सकते तो?",
+    "answers": [
+      "फेमस म्यूज़िशियन",
+      "अंतरिक्ष यात्री",
+      "वाइल्डलाइफ फोटोग्राफर",
+      "प्राइम मिनिस्टर"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "उठकर सबसे पहले क्या करते हो?",
+    "answers": [
+      "फोन चेक",
+      "पानी पीना",
+      "स्ट्रेच और जम्हाई",
+      "और सोना चाहता हूं"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "निराशा से कैसे निपटते हो?",
+    "answers": [
+      "सीखकर आगे बढ़ता हूं",
+      "दुखी होना ठीक है",
+      "दोस्तों से बात करता हूं",
+      "काम में डूब जाता हूं"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "डेटिंग ऐप का सबसे सही स्टीरियोटाइप?",
+    "answers": [
+      "सब बस टाइमपास करते हैं",
+      "सच में अच्छे लोग मिलते हैं",
+      "बहुत ज़्यादा ऑप्शन",
+      "खुद को बेहतर समझ पाते हो"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "रोज़ाना स्ट्रेस कैसे दूर?",
+    "answers": [
+      "एक्सरसाइज़",
+      "गर्म पानी से नहाना",
+      "दोस्तों से मिलना",
+      "प्रकृति में टहलना"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "किस बात के लिए शुक्रगुज़ार हो?",
+    "answers": [
+      "परिवार और दोस्त",
+      "सेहत",
+      "आज़ादी",
+      "हर नया दिन"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  }
+]

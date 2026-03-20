@@ -98,7 +98,7 @@
     "target_age_max": 25
   },
   {
-    "category": "personality",
+    "category": "music",
     "question_text": "Partide seni nerede buluruz?",
     "answers": [
       "Dans pistinde",
@@ -168,7 +168,7 @@
     "target_age_max": 25
   },
   {
-    "category": "personality",
+    "category": "travel",
     "question_text": "Kendini bir mevsimle tanımlasan hangisi olurdun?",
     "answers": [
       "İlkbahar — yenilenme",
@@ -448,7 +448,7 @@
     "target_age_max": null
   },
   {
-    "category": "personality",
+    "category": "humor",
     "question_text": "Bir gün boyunca sadece 3 kelime kullanabilsen hangileri olurdu?",
     "answers": [
       "Evet, hayır, belki",
@@ -504,7 +504,7 @@
     "target_age_max": null
   },
   {
-    "category": "personality",
+    "category": "film",
     "question_text": "Hayatının filmi çekilse türü ne olurdu?",
     "answers": [
       "Romantik komedi",
@@ -588,7 +588,7 @@
     "target_age_max": null
   },
   {
-    "category": "personality",
+    "category": "travel",
     "question_text": "10 yıl sonra kendini nerede görüyorsun?",
     "answers": [
       "Dünyayı geziyorum",
@@ -616,7 +616,7 @@
     "target_age_max": null
   },
   {
-    "category": "personality",
+    "category": "sports",
     "question_text": "Sıkıldığında ne yaparsın?",
     "answers": [
       "İnternette dolaşırım",
@@ -644,7 +644,7 @@
     "target_age_max": null
   },
   {
-    "category": "personality",
+    "category": "humor",
     "question_text": "Bir günlüğüne karşı cins olsan ilk ne yapardın?",
     "answers": [
       "Aynaya bakardım",
@@ -742,7 +742,7 @@
     "target_age_max": null
   },
   {
-    "category": "personality",
+    "category": "humor",
     "question_text": "Bir emoji seçmen gerekse kendini hangisiyle anlatırdın?",
     "answers": [
       "Gülen yüz",
@@ -826,7 +826,7 @@
     "target_age_max": null
   },
   {
-    "category": "personality",
+    "category": "sports",
     "question_text": "Hayatta risk almayı sever misin?",
     "answers": [
       "Evet, adrenalini severim",
@@ -938,7 +938,7 @@
     "target_age_max": null
   },
   {
-    "category": "personality",
+    "category": "travel",
     "question_text": "Karanlıkta mı yoksa aydınlıkta mı daha rahat hissedersin?",
     "answers": [
       "Loş ışık ideal",
@@ -980,7 +980,7 @@
     "target_age_max": null
   },
   {
-    "category": "personality",
+    "category": "music",
     "question_text": "Sabahçı mısın gececi mi?",
     "answers": [
       "Kesinlikle sabahçı",
@@ -1008,7 +1008,7 @@
     "target_age_max": null
   },
   {
-    "category": "personality",
+    "category": "humor",
     "question_text": "Seni çıldırtan küçük detay ne olabilir?",
     "answers": [
       "Geç kalan insanlar",
@@ -5894,7 +5894,7 @@
     "target_age_max": null
   },
   {
-    "category": "humor",
+    "category": "personality",
     "question_text": "Hayalindeki ilişki nasıl bir şey?",
     "answers": [
       "En iyi arkadaşımla sevgili olmak",
@@ -5964,7 +5964,7 @@
     "target_age_max": null
   },
   {
-    "category": "humor",
+    "category": "personality",
     "question_text": "Bir sır söylense sana, ne yaparsın?",
     "answers": [
       "Mezara kadar saklarım",
@@ -5992,7 +5992,7 @@
     "target_age_max": null
   },
   {
-    "category": "humor",
+    "category": "personality",
     "question_text": "Bir ilişkiyi bitiren en büyük sebep sence ne?",
     "answers": [
       "İletişimsizlik",
@@ -6090,7 +6090,7 @@
     "target_age_max": null
   },
   {
-    "category": "humor",
+    "category": "personality",
     "question_text": "Bir hediye alırken en çok neye dikkat edersin?",
     "answers": [
       "Kişiye özel olmasına",
@@ -6118,7 +6118,7 @@
     "target_age_max": null
   },
   {
-    "category": "sports",
+    "category": "personality",
     "question_text": "Geç mi kalırsın erken mi gelirsin?",
     "answers": [
       "Her zaman erken",
@@ -6160,7 +6160,7 @@
     "target_age_max": null
   },
   {
-    "category": "sports",
+    "category": "personality",
     "question_text": "Çiftler birbirinin şifresini bilmeli mi?",
     "answers": [
       "Evet, gizli bir şey olmamalı",
@@ -6216,7 +6216,7 @@
     "target_age_max": null
   },
   {
-    "category": "film",
+    "category": "personality",
     "question_text": "Eski sevgilinle arkadaş kalır mısın?",
     "answers": [
       "Evet, olgunca olur",
@@ -6258,7 +6258,7 @@
     "target_age_max": null
   },
   {
-    "category": "music",
+    "category": "personality",
     "question_text": "Birinin seni dinlediğini nasıl anlarsın?",
     "answers": [
       "Göz temasından",
@@ -6314,7 +6314,7 @@
     "target_age_max": null
   },
   {
-    "category": "music",
+    "category": "personality",
     "question_text": "Seni en çok şaşırtan iltifat ne olur?",
     "answers": [
       "Gözlerin çok güzel",
@@ -6356,7 +6356,7 @@
     "target_age_max": null
   },
   {
-    "category": "travel",
+    "category": "personality",
     "question_text": "Özür dilemekte nasılsın?",
     "answers": [
       "Hemen özür dilerim",
@@ -6412,7 +6412,7 @@
     "target_age_max": null
   },
   {
-    "category": "travel",
+    "category": "personality",
     "question_text": "Sevgiline lakap takar mısın?",
     "answers": [
       "Tatlı lakaplar takarım",
@@ -6524,7 +6524,7 @@
     "target_age_max": 25
   },
   {
-    "category": "travel",
+    "category": "personality",
     "question_text": "Bir buluşmada en çok ne konuşmak istersin?",
     "answers": [
       "Hayaller ve hedefler",

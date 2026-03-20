@@ -1,0 +1,5602 @@
+[
+  {
+    "category": "personality",
+    "question_text": "Qu'est-ce qui t'impressionnerait le plus lors d'un premier rendez-vous ?",
+    "answers": [
+      "Un bar caché dans Paris",
+      "Une visite dans une librairie",
+      "Un pique-nique au bord de la Seine",
+      "Une balade dans le Marais"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Comment tu recharges tes batteries après une longue semaine ?",
+    "answers": [
+      "Marathon de séries",
+      "Sortie avec les potes",
+      "Randonnée en forêt",
+      "Cuisiner un bon plat"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Quel est ton style de textos en couple ?",
+    "answers": [
+      "Des memes toute la journée",
+      "Bonjour avec un petit coeur",
+      "Notes vocales longues",
+      "Court et efficace"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Si on passait une journée ensemble, qui devrait planifier ?",
+    "answers": [
+      "Je te fais la surprise",
+      "Tu choisis",
+      "On planifie ensemble",
+      "On improvise au feeling"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Quel trait tu values le plus chez un·e partenaire ?",
+    "answers": [
+      "Le sens de l'humour",
+      "L'ambition",
+      "La tendresse",
+      "L'esprit aventurier"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Comment tu montres ton affection ?",
+    "answers": [
+      "Avec des mots doux",
+      "En cuisinant pour l'autre",
+      "Des cadeaux inattendus",
+      "Du temps de qualité"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Quel type d'humour t'attire le plus ?",
+    "answers": [
+      "Sarcasme intelligent",
+      "Humour absurde",
+      "Humour noir",
+      "Blagues de papa"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu es plutôt lève-tôt ou couche-tard ?",
+    "answers": [
+      "Lève-tôt productif",
+      "Couche-tard créatif",
+      "Ça dépend du programme",
+      "Je m'adapte à l'autre"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Comment tu te définis en soirée ?",
+    "answers": [
+      "L'âme de la fête",
+      "En conversation profonde avec quelques personnes",
+      "Sur la piste de danse",
+      "Près du buffet"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Qu'est-ce qui te fait tomber amoureux ?",
+    "answers": [
+      "Son rire",
+      "Son intelligence",
+      "Sa passion pour quelque chose",
+      "Sa façon de traiter les autres"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "Quel type de voyage tu préfères ?",
+    "answers": [
+      "Sac à dos en Asie",
+      "Resort tout inclus",
+      "Road trip en Provence",
+      "Tour culturel en Europe"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "Mer ou montagne pour les vacances ?",
+    "answers": [
+      "Côte d'Azur",
+      "Les Alpes",
+      "Un lac tranquille",
+      "Ville côtière bretonne"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "C'est quoi ton dimanche idéal ?",
+    "answers": [
+      "Brunch et marché aux puces",
+      "Canapé et série",
+      "Sport en plein air",
+      "Cuisiner toute la journée"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Quelle priorité a ta carrière dans ta vie ?",
+    "answers": [
+      "C'est ma priorité numéro un",
+      "Important mais pas tout",
+      "Je préfère l'équilibre",
+      "Je vis pour profiter"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "Quel superpouvoir tu choisirais ?",
+    "answers": [
+      "Téléportation",
+      "Lire dans les pensées",
+      "Voler",
+      "Voyager dans le temps"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "Quel est ton plat réconfortant ?",
+    "answers": [
+      "Croque-monsieur",
+      "Raclette",
+      "Gratin dauphinois",
+      "Crêpes au Nutella"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "Quel genre musical te définit ?",
+    "answers": [
+      "Rap français",
+      "Chanson française",
+      "Électro",
+      "Variété française"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "film",
+    "question_text": "Quel type de film tu préfères pour une soirée ciné ?",
+    "answers": [
+      "Comédie romantique",
+      "Thriller",
+      "Film d'auteur français",
+      "Animation Pixar"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "sports",
+    "question_text": "Quel sport te passionne ?",
+    "answers": [
+      "Football",
+      "Tennis",
+      "Escalade",
+      "Running"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "Quelle serait ton excuse la plus créative pour arriver en retard à un date ?",
+    "answers": [
+      "Je me suis perdu en regardant des memes",
+      "Mon chat a caché mes clés",
+      "Le GPS m'a emmené dans une autre ville",
+      "Je choisissais la playlist parfaite"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "hobby",
+    "question_text": "Quel hobby tu aimerais apprendre en couple ?",
+    "answers": [
+      "Danse salsa",
+      "Cuisine du monde",
+      "Escalade",
+      "Photographie"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "Comment tu utilises ton téléphone en couple ?",
+    "answers": [
+      "Messages constants",
+      "Appels importants uniquement",
+      "Partage de memes et reels",
+      "Le minimum possible"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Qu'est-ce que tu remarques en premier chez quelqu'un ?",
+    "answers": [
+      "Son sourire",
+      "Sa façon de parler",
+      "Son style",
+      "Son énergie"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu es plutôt jalouse en couple ?",
+    "answers": [
+      "Zéro jalousie",
+      "Juste un peu",
+      "Ça dépend de la situation",
+      "Assez, je suis intense"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu préfères être conquise avec de l'humour ou du romantisme ?",
+    "answers": [
+      "Humour toujours",
+      "Romantisme classique",
+      "Un mélange parfait",
+      "Par les actions, pas les mots"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Comment tu gères les conflits en couple ?",
+    "answers": [
+      "J'en parle tout de suite",
+      "J'ai besoin d'espace d'abord",
+      "J'écris un long message",
+      "Avec humour pour détendre"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "Ta destination de rêve pour une lune de miel ?",
+    "answers": [
+      "Les Maldives",
+      "L'Italie",
+      "Le Japon",
+      "La Grèce"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Quelle routine de self-care tu ne peux pas lâcher ?",
+    "answers": [
+      "Skincare complet",
+      "Yoga ou méditation",
+      "Journaling",
+      "Sport sans excuses"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "Si tu étais un personnage de série française, lequel serais-tu ?",
+    "answers": [
+      "La protagoniste dramatique",
+      "La méchante avec du style",
+      "La meilleure amie drôle",
+      "La mystérieuse qui arrive à la fin"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "Quel dessert te rend le plus heureuse ?",
+    "answers": [
+      "Crème brûlée",
+      "Tarte Tatin",
+      "Macaron Ladurée",
+      "Fondant au chocolat"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "Quelle chanson tu mettrais pour danser en couple ?",
+    "answers": [
+      "Une chanson d'Edith Piaf",
+      "Un slow de Francis Cabrel",
+      "Quelque chose de Stromae",
+      "Du zouk"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "film",
+    "question_text": "Quelle série te tient accrochée en ce moment ?",
+    "answers": [
+      "Un drame coréen",
+      "Thriller Netflix",
+      "Comédie légère",
+      "Docu intéressant"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "sports",
+    "question_text": "Quelle activité physique te motive le plus ?",
+    "answers": [
+      "Pilates",
+      "Danse",
+      "Natation",
+      "Randonnée"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "Que ferais-tu si ton date se pointe avec des fleurs fanées ?",
+    "answers": [
+      "Je rigole et trouve ça adorable",
+      "Je fais semblant de pas voir",
+      "Je lui apprends à choisir des fleurs",
+      "Je les mets dans l'eau en espérant"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "hobby",
+    "question_text": "Quel hobby secret tu as ?",
+    "answers": [
+      "Écrire de la poésie",
+      "Peindre ou dessiner",
+      "Faire du DIY",
+      "Chanter quand personne n'écoute"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "Tu mets combien de temps pour répondre à un message de quelqu'un qui te plaît ?",
+    "answers": [
+      "Instantanément",
+      "J'attends pour pas paraître trop intense",
+      "Quand j'y pense",
+      "Ça dépend de mon humeur"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu crois au coup de foudre ?",
+    "answers": [
+      "Totalement",
+      "Je crois à l'attirance immédiate",
+      "Non, l'amour se construit",
+      "Seulement dans les films"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Quel réseau social tu utilises le plus pour draguer ?",
+    "answers": [
+      "Instagram stories",
+      "TikTok",
+      "WhatsApp direct",
+      "En personne, pas de réseaux"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "Tu préfères un voyage sac à dos ou tout organisé ?",
+    "answers": [
+      "Sac à dos total",
+      "Tout planifié",
+      "Moitié-moitié",
+      "Que mon partenaire décide"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Qu'est-ce que tu values le plus au quotidien ?",
+    "answers": [
+      "Du temps avec mes amies",
+      "Mon indépendance",
+      "Des moments de paix",
+      "De nouvelles expériences"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "Quel emoji te représente le mieux ?",
+    "answers": [
+      "La rieuse",
+      "L'intense",
+      "La rêveuse",
+      "La coquine"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "Ta boisson préférée pour une soirée entre copines ?",
+    "answers": [
+      "Cocktail au champagne",
+      "Vin rouge",
+      "Mojito",
+      "Bière artisanale"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "Quel artiste tu mettrais à ton mariage ?",
+    "answers": [
+      "Aya Nakamura",
+      "Céline Dion",
+      "Stromae",
+      "Angèle"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu te considères plutôt rationnelle ou émotionnelle ?",
+    "answers": [
+      "Très rationnelle",
+      "Assez émotionnelle",
+      "Ça dépend du contexte",
+      "Un mélange équilibré"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "hobby",
+    "question_text": "Quel plan de week-end te fait le plus plaisir ?",
+    "answers": [
+      "Aller au spa",
+      "Visiter un marché vintage",
+      "Cours de poterie",
+      "Brunch avec les copines"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "Tu penses quoi du fait de matcher sur les apps ?",
+    "answers": [
+      "J'adore, c'est fun",
+      "Je préfère rencontrer en vrai",
+      "C'est un complément",
+      "C'est l'avenir de l'amour"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu préfères qu'on te dise les choses directement ou avec tact ?",
+    "answers": [
+      "Direct sans détour",
+      "Avec tact et douceur",
+      "Ça dépend du sujet",
+      "Par écrit pour que je digère"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "film",
+    "question_text": "Ton film romantique préféré ?",
+    "answers": [
+      "Amélie Poulain",
+      "Titanic",
+      "Les Intouchables",
+      "La La Land"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "sports",
+    "question_text": "Tu irais à un match de foot avec ton copain ?",
+    "answers": [
+      "Oui, j'adore le foot",
+      "Seulement pour l'ambiance",
+      "Je préfère d'autres plans",
+      "Uniquement pour les snacks"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "Que ferais-tu si ton copain cuisine très mal mais avec beaucoup d'amour ?",
+    "answers": [
+      "Je mange tout avec le sourire",
+      "Je lui propose des cours de cuisine ensemble",
+      "Je commande en douce",
+      "Je cuisine la prochaine fois"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Qu'est-ce qui te motive le plus dans la vie ?",
+    "answers": [
+      "Évoluer professionnellement",
+      "Les connexions profondes",
+      "Vivre des expériences uniques",
+      "Construire un foyer heureux"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Comment tu vois ta vie dans 5 ans ?",
+    "answers": [
+      "En voyage autour du monde",
+      "Stable avec une famille",
+      "À lancer mon propre projet",
+      "À profiter de chaque jour"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Quel rôle joue la famille dans ta vie ?",
+    "answers": [
+      "C'est le plus important",
+      "Important mais avec des limites",
+      "Ma famille ce sont mes amis",
+      "Je suis en train de construire la mienne"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Qu'est-ce que tu as appris de tes relations passées ?",
+    "answers": [
+      "À mieux communiquer",
+      "À ne pas me perdre moi-même",
+      "Que le respect est la base",
+      "Qu'il ne faut rien forcer"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Que cherches-tu dans une relation sérieuse ?",
+    "answers": [
+      "Du partenariat et de l'équipe",
+      "De la passion constante",
+      "De la stabilité et de la paix",
+      "Une croissance mutuelle"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Ton prochain voyage idéal ?",
+    "answers": [
+      "Safari en Afrique",
+      "Route des vins en Bourgogne",
+      "Temples du Japon",
+      "Côte amalfitaine"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Tu vivrais dans un autre pays ?",
+    "answers": [
+      "Oui, j'y pense déjà",
+      "Seulement temporairement",
+      "Je préfère mon pays",
+      "Avec la bonne personne, n'importe où"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "C'est quoi ta routine matinale ?",
+    "answers": [
+      "Café et journaux",
+      "Sport tôt le matin",
+      "Méditation et journaling",
+      "Snooze jusqu'à la dernière seconde"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "L'argent est important pour toi à quel point ?",
+    "answers": [
+      "Un outil pour bien vivre",
+      "La sécurité avant tout",
+      "Pas le plus important",
+      "La liberté de choisir"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Que ferais-tu si tu gagnais au loto ?",
+    "answers": [
+      "Investir et entreprendre",
+      "Voyager un an entier",
+      "Acheter une maison à mes parents",
+      "Ouvrir un bistrot en Provence"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Que cuisines-tu quand tu veux impressionner ?",
+    "answers": [
+      "Boeuf bourguignon",
+      "Risotto aux truffes",
+      "Fruits de mer",
+      "Ratatouille maison"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Quelle musique tu écoutes en voiture ?",
+    "answers": [
+      "Rock classique",
+      "Rap français",
+      "Des podcasts en fait",
+      "Ce qui passe à la radio"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Ton réalisateur préféré ?",
+    "answers": [
+      "Jean-Luc Godard",
+      "Luc Besson",
+      "Christopher Nolan",
+      "Jacques Audiard"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "PSG ou OM ?",
+    "answers": [
+      "PSG évidemment",
+      "OM de coeur",
+      "Un autre club",
+      "Le foot m'intéresse pas"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Quelle est ta pire compétence domestique ?",
+    "answers": [
+      "Repasser le linge",
+      "Cuisiner du riz sans le brûler",
+      "Monter des meubles IKEA",
+      "Penser à sortir les poubelles"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ton hobby de week-end idéal ?",
+    "answers": [
+      "Bricolage à la maison",
+      "Balade à vélo",
+      "Lire un bon bouquin",
+      "Aller au marché et cuisiner"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Quelle app tu ne peux pas vivre sans ?",
+    "answers": [
+      "Spotify",
+      "Maps",
+      "WhatsApp",
+      "Mon app bancaire"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Qu'est-ce qui est plus important : la liberté ou la sécurité ?",
+    "answers": [
+      "Liberté absolue",
+      "Sécurité avant tout",
+      "Un équilibre des deux",
+      "Ça dépend du moment de la vie"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Qu'attends-tu d'un partenaire à long terme ?",
+    "answers": [
+      "Qu'il soit mon meilleur ami",
+      "Qu'il me fasse rire toujours",
+      "Qu'on ait des objectifs communs",
+      "Qu'il me laisse de l'espace pour grandir"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Comment tu te sens à propos d'avoir des enfants ?",
+    "answers": [
+      "J'en veux absolument",
+      "Peut-être plus tard",
+      "Je préfère ne pas en avoir",
+      "Ouverte à ce qui vient"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Qu'est-ce que tu values le plus dans une amitié ?",
+    "answers": [
+      "La loyauté inconditionnelle",
+      "L'honnêteté brutale",
+      "Être là dans les bons et mauvais moments",
+      "Qu'on me fasse rire"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Où tu irais vivre un an ?",
+    "answers": [
+      "Italie",
+      "Canada",
+      "Bali",
+      "New York"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Qu'est-ce qui est indispensable dans ta valise ?",
+    "answers": [
+      "Un bon livre",
+      "Skincare complet",
+      "Des snacks de la maison",
+      "Mon appareil photo"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Comment tu équilibres travail et vie perso ?",
+    "answers": [
+      "Horaires stricts",
+      "Flow naturel",
+      "J'apprends encore",
+      "Le travail est ma passion"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Ton rituel bien-être préféré ?",
+    "answers": [
+      "Yoga au lever du soleil",
+      "Soirée skincare",
+      "Thérapie régulière",
+      "Temps seule dans la nature"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Qu'est-ce qui te décrit le mieux un lundi ?",
+    "answers": [
+      "Motivation totale",
+      "Café et survie",
+      "Mini crise existentielle",
+      "Playlist de motivation"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ton restaurant idéal pour un rendez-vous spécial ?",
+    "answers": [
+      "Bistrot parisien",
+      "Japonais omakase",
+      "Terrasse avec vue",
+      "Cuisine fusion créative"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Quelle chanson tu dédierais à quelqu'un de spécial ?",
+    "answers": [
+      "Je t'aime de Lara Fabian",
+      "Quelque chose de Gainsbourg",
+      "Perfect d'Ed Sheeran",
+      "Une chanson d'Angèle"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Ton guilty pleasure en séries ?",
+    "answers": [
+      "Téléréalité",
+      "Séries turques",
+      "True crime",
+      "Dramas pour ados"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Quel sport tu ferais avec ton copain ?",
+    "answers": [
+      "Tennis ou paddle",
+      "Running ensemble",
+      "Escalade",
+      "Surf"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Ton plus gros red flag en date ?",
+    "answers": [
+      "Qu'il regarde son téléphone tout le temps",
+      "Qu'il soit malpoli avec le serveur",
+      "Qu'il ne parle que de lui",
+      "Qu'il n'ait pas d'humour"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ton activité préférée pour déconnecter ?",
+    "answers": [
+      "Lire de la fiction",
+      "Peindre ou créer",
+      "Jardinage",
+      "Cuisiner de nouvelles recettes"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Réseaux sociaux : présence active ou profil fantôme ?",
+    "answers": [
+      "Je publie beaucoup",
+      "Juste des stories de temps en temps",
+      "Je consomme mais ne publie pas",
+      "J'utilise presque pas les réseaux"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu es plutôt leader ou suiveur ?",
+    "answers": [
+      "Leader naturel",
+      "Je préfère suivre",
+      "Ça dépend du groupe",
+      "Leader quand il le faut"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Comment tu réagis aux changements inattendus ?",
+    "answers": [
+      "Je m'adapte vite",
+      "Je stresse un peu",
+      "C'est une aventure",
+      "J'ai besoin de temps pour digérer"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Quel est ton langage de l'amour ?",
+    "answers": [
+      "Mots d'affirmation",
+      "Actes de service",
+      "Contact physique",
+      "Temps de qualité"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu préfères la stabilité ou l'excitation constante ?",
+    "answers": [
+      "Stabilité tranquille",
+      "Excitation et adrénaline",
+      "Stabilité avec des surprises",
+      "Excitation sur une base solide"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu es spontané·e à quel point ?",
+    "answers": [
+      "Très spontané·e",
+      "Je planifie tout",
+      "Spontané·e avec des limites",
+      "Ça dépend du jour"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Qu'est-ce qui te fait perdre la notion du temps ?",
+    "answers": [
+      "Une bonne conversation",
+      "Un hobby créatif",
+      "Explorer un lieu nouveau",
+      "Une bonne série"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "C'est quoi ta relation avec la solitude ?",
+    "answers": [
+      "Je l'apprécie beaucoup",
+      "J'en ai besoin à petites doses",
+      "Je préfère être accompagné·e",
+      "J'apprends à l'apprécier"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Introverti·e ou extraverti·e ?",
+    "answers": [
+      "Introverti·e total·e",
+      "Extraverti·e total·e",
+      "Ambiverti·e",
+      "Introverti·e qui semble extraverti·e"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu penses quoi des secondes chances ?",
+    "answers": [
+      "Il faut toujours en donner",
+      "Ça dépend de la situation",
+      "Très rarement",
+      "Une seule suffit"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Comment tu gères le stress ?",
+    "answers": [
+      "Sport",
+      "En parlant à quelqu'un",
+      "Musique et solitude",
+      "Comfort food"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ta plus grande peur en couple ?",
+    "answers": [
+      "Perdre mon indépendance",
+      "Que ce ne soit pas réciproque",
+      "La monotonie",
+      "Ne pas être à la hauteur"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu te considères compétitif·ve ?",
+    "answers": [
+      "Très compétitif·ve",
+      "Seulement dans ce qui m'importe",
+      "Pas du tout",
+      "En compétition avec moi-même"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "L'honnêteté c'est important pour toi à quel point ?",
+    "answers": [
+      "Le plus important",
+      "Crucial mais avec tact",
+      "Ça dépend du contexte",
+      "Honnêteté brutale toujours"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Comment tu célèbres tes réussites ?",
+    "answers": [
+      "Fête avec les amis",
+      "Un dîner spécial",
+      "Un cadeau pour moi",
+      "Je partage sur les réseaux"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu es rancunier·ère ?",
+    "answers": [
+      "Je pardonne facilement",
+      "Je pardonne mais n'oublie pas",
+      "J'ai du mal à pardonner",
+      "Ça dépend de la gravité"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Comment tu te décris en trois mots ?",
+    "answers": [
+      "Loyal·e, drôle, passionné·e",
+      "Calme, créatif·ve, gentil·le",
+      "Aventurier·ère, intense, honnête",
+      "Responsable, tendre, ambitieux·se"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Qu'est-ce qui t'inspire le plus ?",
+    "answers": [
+      "La nature",
+      "Les gens",
+      "L'art",
+      "Les voyages"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ta plus grande qualité ?",
+    "answers": [
+      "La patience",
+      "L'empathie",
+      "La détermination",
+      "Le sens de l'humour"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu préfères parler ou écouter ?",
+    "answers": [
+      "Parler sans arrêt",
+      "Écouter attentivement",
+      "Ça dépend de la personne",
+      "Un bon équilibre des deux"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Comment tu exprimes ta créativité ?",
+    "answers": [
+      "En écrivant",
+      "En cuisinant",
+      "En décorant des espaces",
+      "Par ma façon de m'habiller"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Que signifie la liberté pour toi ?",
+    "answers": [
+      "Pouvoir choisir mon chemin",
+      "Ne dépendre de personne",
+      "Voyager sans contraintes",
+      "Être authentique toujours"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu es patient·e à quel point ?",
+    "answers": [
+      "Très patient·e",
+      "Ça dépend de la situation",
+      "Peu patient·e",
+      "Patient·e avec les gens, impatient·e avec les choses"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu fais vite confiance aux autres ?",
+    "answers": [
+      "Oui, je suis très ouvert·e",
+      "Ça me prend du temps",
+      "Seulement avec des signes clairs",
+      "Je fais confiance mais je vérifie"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu préfères une vie prévisible ou imprévisible ?",
+    "answers": [
+      "Prévisible et stable",
+      "Imprévisible et excitante",
+      "Un peu des deux",
+      "Prévisible avec des touches de folie"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Comment tu affrontes une rupture ?",
+    "answers": [
+      "Je me permets de pleurer et guérir",
+      "Je me distrais avec des activités",
+      "Je cherche du soutien chez mes amis",
+      "Je réfléchis et j'apprends"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu es nostalgique à quel point ?",
+    "answers": [
+      "Beaucoup, je vis de souvenirs",
+      "Un peu, juste ce qu'il faut",
+      "Je préfère regarder vers l'avenir",
+      "Seulement avec la musique ou les photos"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu es plus du genre à agir ou à réfléchir ?",
+    "answers": [
+      "J'agis d'abord",
+      "Je réfléchis longtemps avant",
+      "Ça dépend de l'urgence",
+      "J'agis et après je regrette"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Qu'est-ce que tu values le plus : la loyauté ou la sincérité ?",
+    "answers": [
+      "Loyauté",
+      "Sincérité",
+      "Les deux à parts égales",
+      "Sincérité loyale"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu aimes sortir de ta zone de confort ?",
+    "answers": [
+      "Je cherche toujours de nouveaux défis",
+      "De temps en temps",
+      "Ça me coûte mais j'essaie",
+      "Je préfère ma zone sûre"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Comment tu te sens sur les relations à distance ?",
+    "answers": [
+      "Ça peut marcher avec effort",
+      "C'est pas pour moi",
+      "Seulement temporairement",
+      "Avec la bonne personne, oui"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu es ordonné·e à quel point ?",
+    "answers": [
+      "Très ordonné·e",
+      "Chaos organisé",
+      "Ça dépend du jour",
+      "J'essaie mais ça rate"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Que penses-tu de l'engagement ?",
+    "answers": [
+      "C'est naturel quand on aime",
+      "Ça me fait un peu peur",
+      "Ça dépend de la personne",
+      "Je le cherche activement"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Ville ou campagne pour vivre ?",
+    "answers": [
+      "Grande ville",
+      "Village tranquille",
+      "Ville moyenne",
+      "Village près de la ville"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Quel type d'hébergement tu préfères en voyage ?",
+    "answers": [
+      "Hôtel boutique",
+      "Airbnb charmant",
+      "Auberge pour socialiser",
+      "Camping sous les étoiles"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Quel pays francophone tu aimerais visiter ?",
+    "answers": [
+      "Le Maroc",
+      "Le Québec",
+      "La Belgique",
+      "La Suisse"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Tu voyages léger ou avec une grosse valise ?",
+    "answers": [
+      "Juste l'essentiel",
+      "Grande valise au cas où",
+      "Ça dépend de la destination",
+      "Je fais toujours trop de bagages"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Ton moyen de transport préféré pour voyager ?",
+    "answers": [
+      "Avion pour aller loin",
+      "Train avec vue",
+      "Voiture pour la liberté",
+      "Bateau pour se relaxer"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Tu préfères le tourisme culturel ou l'aventure ?",
+    "answers": [
+      "Culturel : musées et art",
+      "Aventure : sports extrêmes",
+      "Gastronomique",
+      "Un mix de tout"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Ta destination européenne préférée ?",
+    "answers": [
+      "Paris bien sûr",
+      "Rome",
+      "Amsterdam",
+      "Lisbonne"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Tu voyages mieux seul·e ou en groupe ?",
+    "answers": [
+      "Seul·e pour me découvrir",
+      "Avec mon·ma partenaire",
+      "En groupe d'amis",
+      "En famille"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Qu'est-ce qui ne peut pas manquer dans un voyage ?",
+    "answers": [
+      "Goûter la cuisine locale",
+      "Rencontrer des gens",
+      "Des photos épiques",
+      "Déconnecter du téléphone"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Côte d'Azur ou Bretagne ?",
+    "answers": [
+      "Côte d'Azur sans hésiter",
+      "Bretagne toujours",
+      "Alterner entre les deux",
+      "La Corse plutôt"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Tu déménagerais sur un autre continent par amour ?",
+    "answers": [
+      "Sans hésiter",
+      "J'y réfléchirais beaucoup",
+      "Seulement temporairement",
+      "Jamais"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Quelle ville française tu adores ?",
+    "answers": [
+      "Paris",
+      "Lyon",
+      "Bordeaux",
+      "Nice"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Climat chaud ou froid tu préfères ?",
+    "answers": [
+      "Chaud toute l'année",
+      "Froid et manteaux",
+      "Les quatre saisons",
+      "Tempéré et agréable"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Que ferais-tu lors d'un voyage d'un jour ?",
+    "answers": [
+      "Excursion en montagne",
+      "Village de charme",
+      "Plage à proximité",
+      "Ville voisine inconnue"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Aventure ou détente en vacances ?",
+    "answers": [
+      "Aventure pure",
+      "Détente totale",
+      "Moitié aventure moitié détente",
+      "Ça dépend avec qui j'y vais"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Comment tu choisis ta prochaine destination ?",
+    "answers": [
+      "Instagram et TikTok",
+      "Recommandations d'amis",
+      "Documentaires",
+      "Prix du vol"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Quel souvenir tu achètes toujours ?",
+    "answers": [
+      "Magnet de frigo",
+      "Nourriture ou boisson locale",
+      "Artisanat fait main",
+      "Rien, juste des photos"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Tu aimes planifier chaque jour du voyage ?",
+    "answers": [
+      "Oui, itinéraire complet",
+      "Juste les grandes lignes",
+      "Rien, j'improvise tout",
+      "Je planifie mais je reste flexible"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Quelle nourriture tu goûterais dans un nouveau pays ?",
+    "answers": [
+      "Tout ce qu'on me propose",
+      "Seulement ce que je connais",
+      "Le plus exotique possible",
+      "Le plus populaire du coin"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Animaux : chien, chat ou rien ?",
+    "answers": [
+      "Chien sans hésiter",
+      "Chat indépendant",
+      "Les deux",
+      "Aucun pour l'instant"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "C'est quoi ton logement idéal ?",
+    "answers": [
+      "Appart en centre-ville",
+      "Maison avec jardin",
+      "Loft industriel",
+      "Petite maison de campagne"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Tu dors combien d'heures en général ?",
+    "answers": [
+      "Moins de 6",
+      "6 à 7 heures",
+      "8 heures pile",
+      "Plus de 8, j'adore dormir"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Comment tu commences ta matinée ?",
+    "answers": [
+      "Café obligatoire",
+      "Sport le matin",
+      "En regardant mon téléphone",
+      "Tranquillement sans précipitation"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Tu vis seul·e ou accompagné·e ?",
+    "answers": [
+      "Seul·e et content·e",
+      "En colocation",
+      "Avec ma famille",
+      "Avec mon·ma partenaire"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Tu fais du sport régulièrement ?",
+    "answers": [
+      "Tous les jours",
+      "3-4 fois par semaine",
+      "Quand je m'en souviens",
+      "Marcher jusqu'au frigo ça compte ?"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Quel style vestimentaire tu préfères ?",
+    "answers": [
+      "Casual et confortable",
+      "Élégant toujours",
+      "Streetwear",
+      "Ça dépend de l'humeur"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Comment tu dépenses ton argent en plus ?",
+    "answers": [
+      "Voyages",
+      "Fringues et mode",
+      "Expériences gastronomiques",
+      "Épargne et investissement"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Tu te considères minimaliste ou maximaliste ?",
+    "answers": [
+      "Minimaliste total·e",
+      "Le juste milieu",
+      "Je collectionne tout",
+      "Maximaliste avec style"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Ta saison préférée ?",
+    "answers": [
+      "L'été pour la plage",
+      "L'automne pour les balades",
+      "L'hiver pour le canapé",
+      "Le printemps pour tout"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Télétravail ou bureau ?",
+    "answers": [
+      "Maison toujours",
+      "Bureau pour socialiser",
+      "Hybride parfait",
+      "Dans un café sympa"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Tu lis régulièrement ?",
+    "answers": [
+      "Je lis beaucoup",
+      "Un livre par mois",
+      "Quand je trouve un bon bouquin",
+      "Je préfère les podcasts ou audiobooks"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Comment tu définis le succès ?",
+    "answers": [
+      "Bonheur personnel",
+      "Liberté financière",
+      "Faire ce que j'aime",
+      "Avoir des gens qui m'aiment"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Tu médites ou pratiques la pleine conscience ?",
+    "answers": [
+      "Oui, quotidiennement",
+      "De temps en temps",
+      "J'ai essayé",
+      "C'est pas mon truc"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Tu sors en semaine ou juste le week-end ?",
+    "answers": [
+      "En semaine aussi",
+      "Seulement vendredi et samedi",
+      "Quand l'occasion se présente",
+      "Je préfère rester à la maison"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "C'est quoi ta relation avec la cuisine ?",
+    "answers": [
+      "J'adore cuisiner",
+      "Je cuisine le minimum",
+      "Je commande en ligne",
+      "J'apprends"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Quelle habitude tu voudrais arrêter ?",
+    "answers": [
+      "Regarder le téléphone avant de dormir",
+      "Tout remettre au lendemain",
+      "Manger par stress",
+      "Dormir trop peu"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Ta façon préférée d'apprendre quelque chose de nouveau ?",
+    "answers": [
+      "Vidéos et tutos",
+      "En lisant des livres",
+      "En pratiquant directement",
+      "Que quelqu'un m'enseigne"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Tu préfères épargner ou dépenser ?",
+    "answers": [
+      "Épargner d'abord",
+      "Dépenser et profiter",
+      "Un équilibre sain",
+      "Investir mes économies"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Si tu étais un animal, lequel serais-tu ?",
+    "answers": [
+      "Aigle : libre et fort",
+      "Dauphin : sociable et fun",
+      "Chat : indépendant et mystérieux",
+      "Loup : loyal et protecteur"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Que ferais-tu dans un apocalypse zombie ?",
+    "answers": [
+      "Leader du groupe",
+      "Chercher un bunker",
+      "M'allier aux zombies",
+      "Cuisiner pour l'équipe"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Quelle époque du passé tu visiterais ?",
+    "answers": [
+      "Les années 80 pour la musique",
+      "La Renaissance",
+      "La Belle Époque à Paris",
+      "Les années folles"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Ton guilty pleasure ?",
+    "answers": [
+      "La téléréalité",
+      "Fast food à minuit",
+      "Des chansons ringardes que j'assume pas",
+      "Marathon de TikTok"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Quel talent caché tu as ?",
+    "answers": [
+      "Des imitations géniales",
+      "Cuisiner sans recette",
+      "Chanter sous la douche comme un pro",
+      "Deviner la fin des films"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Si tu pouvais dîner avec quelqu'un de célèbre ?",
+    "answers": [
+      "Zidane",
+      "Victor Hugo",
+      "Édith Piaf",
+      "Thomas Pesquet"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Karaoké ou piste de danse ?",
+    "answers": [
+      "Karaoké à fond",
+      "Piste de danse non-stop",
+      "Les deux",
+      "Aucun, je préfère regarder"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Que ferais-tu si l'argent n'existait pas ?",
+    "answers": [
+      "Voyager autour du monde",
+      "Être artiste",
+      "Aider les autres",
+      "Vivre au bord de la mer"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Ton plan parfait pour une soirée pluvieuse ?",
+    "answers": [
+      "Film et couverture",
+      "Cuisiner un bon plat",
+      "Lire aux chandelles",
+      "Jeux de société"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Si ta vie était une chanson, quel genre serait-ce ?",
+    "answers": [
+      "Chanson française : romantique",
+      "Rap : rythmé et intense",
+      "Rock : intensité pure",
+      "Jazz : improvisée et libre"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Quelle série tu re-regarderais sans te lasser ?",
+    "answers": [
+      "Friends",
+      "Lupin",
+      "Breaking Bad",
+      "Kaamelott"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Ton moment préféré de la journée ?",
+    "answers": [
+      "Le lever du soleil",
+      "L'heure du déjeuner",
+      "Le coucher de soleil",
+      "La nuit profonde"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Si tu pouvais vivre dans un film, lequel ?",
+    "answers": [
+      "Harry Potter",
+      "Le fabuleux destin d'Amélie Poulain",
+      "Intouchables",
+      "Ratatouille"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Quel métier tu aurais dans une autre vie ?",
+    "answers": [
+      "Chef étoilé",
+      "Photographe du National Geographic",
+      "Astronaute",
+      "Musicien·ne professionnel·le"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Ton snack de minuit préféré ?",
+    "answers": [
+      "Du fromage",
+      "Un bout de baguette",
+      "Des restes du frigo",
+      "Du chocolat"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Quel nom tu donnerais à ton animal ?",
+    "answers": [
+      "Quelque chose de drôle comme Croissant",
+      "Un prénom humain élégant",
+      "Quelque chose d'un film ou série",
+      "Ça dépend de sa personnalité"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Dernier à arriver ou premier à partir de la fête ?",
+    "answers": [
+      "Dernier arrivé, dernier parti",
+      "Premier arrivé, premier parti",
+      "Parmi les derniers toujours",
+      "Ça dépend de l'ambiance"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ta cuisine préférée du monde ?",
+    "answers": [
+      "Française évidemment",
+      "Italienne",
+      "Japonaise",
+      "Libanaise"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Sucré ou salé ?",
+    "answers": [
+      "Sucré toujours",
+      "Salé sans hésiter",
+      "Ça dépend du moment",
+      "Les deux en même temps"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ton petit-déjeuner parfait ?",
+    "answers": [
+      "Croissant beurre et café",
+      "Tartine confiture maison",
+      "Fruits et yaourt",
+      "Café et rien d'autre"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Tu cuisines avec une recette ou tu improvises ?",
+    "answers": [
+      "Toujours avec recette",
+      "J'improvise tout",
+      "Je commence avec recette puis j'improvise",
+      "J'appelle ma mère"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ta boisson préférée ?",
+    "answers": [
+      "Café",
+      "Vin",
+      "Bière artisanale",
+      "Thé"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Street food ou restaurant chic ?",
+    "answers": [
+      "Street food sans réfléchir",
+      "Restaurant chic",
+      "Ça dépend de l'occasion",
+      "Fait maison c'est mieux"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Quel plat tu ne te lasses jamais de manger ?",
+    "answers": [
+      "Pizza",
+      "Pâtes",
+      "Sushi",
+      "Crêpes"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Végétarien, végan ou omnivore ?",
+    "answers": [
+      "Omnivore",
+      "Végétarien·ne",
+      "Végan·e",
+      "Flexitarien·ne"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ton plat réconfortant favori ?",
+    "answers": [
+      "Blanquette de veau",
+      "Soupe à l'oignon",
+      "Tartiflette",
+      "Chocolat chaud"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Épicé : oui ou non ?",
+    "answers": [
+      "J'adore le piquant",
+      "Juste un peu",
+      "Pas du tout épicé",
+      "Ça dépend du plat"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Tu préfères cuisiner ensemble ou qu'on te cuisine ?",
+    "answers": [
+      "Cuisiner ensemble c'est romantique",
+      "Qu'on me cuisine",
+      "Je cuisine pour impressionner",
+      "On commande et c'est réglé"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Café au lait ou espresso ?",
+    "answers": [
+      "Espresso serré",
+      "Café au lait doux",
+      "Cappuccino artistique",
+      "Je bois pas de café"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ton marché préféré ?",
+    "answers": [
+      "Le marché d'Aligre à Paris",
+      "Le marché de Noailles à Marseille",
+      "Le marché de mon quartier",
+      "Le supermarché ça va"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Quel plat tu goûterais que tu n'as jamais essayé ?",
+    "answers": [
+      "Insectes comestibles",
+      "Sushi de haute gamme",
+      "Cuisine éthiopienne",
+      "Plats fermentés coréens"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ton dessert français préféré ?",
+    "answers": [
+      "Crème brûlée",
+      "Tarte Tatin",
+      "Paris-Brest",
+      "Mille-feuille"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Quel type de vin tu préfères ?",
+    "answers": [
+      "Rouge bordeaux",
+      "Blanc frais",
+      "Rosé de Provence",
+      "Je suis pas trop vin"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Concert ou festival ?",
+    "answers": [
+      "Concert intime",
+      "Grand festival",
+      "Les deux",
+      "Musique à la maison"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Quel artiste français te marque ?",
+    "answers": [
+      "Stromae",
+      "Angèle",
+      "Jacques Brel",
+      "MC Solaar"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Ta chanson pour te remonter le moral ?",
+    "answers": [
+      "Du rap qui motive",
+      "Rock énergique",
+      "Pop dansante",
+      "Chanson française classique"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Tu écoutes de la nouvelle musique ou tu répètes les classiques ?",
+    "answers": [
+      "Toujours à la recherche du nouveau",
+      "Mes classiques de toujours",
+      "Un mix des deux",
+      "Ça dépend de l'humeur"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Ton instrument préféré ?",
+    "answers": [
+      "Guitare",
+      "Piano",
+      "Batterie",
+      "L'accordéon"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Tu danses bien ou tu essaies juste ?",
+    "answers": [
+      "Je danse super bien",
+      "J'essaie avec enthousiasme",
+      "Seulement avec quelques verres",
+      "Zéro rythme mais je m'amuse"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Quel genre musical tu supportes pas ?",
+    "answers": [
+      "Le rap",
+      "Le métal",
+      "La musique classique",
+      "Je supporte tout"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Quelle musique tu mets pour te relaxer ?",
+    "answers": [
+      "Lo-fi et chill",
+      "Jazz parisien",
+      "Classique douce",
+      "Sons de la nature"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Ton album préféré de tous les temps ?",
+    "answers": [
+      "Quelque chose de Daft Punk",
+      "Un album de Stromae",
+      "Discovery de Daft Punk",
+      "Quelque chose de Serge Gainsbourg"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Tu chantes sous la douche ?",
+    "answers": [
+      "Concert complet",
+      "Seulement quand je suis content·e",
+      "Jamais",
+      "Je fredonne plus que je chante"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Playlist organisée ou lecture aléatoire ?",
+    "answers": [
+      "Playlists parfaites pour chaque mood",
+      "Aléatoire toujours",
+      "Radio ou ce qui passe",
+      "L'algorithme décide"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "La chanson française : ça t'émeut ?",
+    "answers": [
+      "Ça me donne des frissons",
+      "J'aime bien mais je cherche pas",
+      "C'est pas trop mon truc",
+      "C'est un patrimoine culturel incroyable"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Ton genre de ciné préféré ?",
+    "answers": [
+      "Comédie",
+      "Thriller",
+      "Drame",
+      "Science-fiction"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Ciné ou canapé streaming ?",
+    "answers": [
+      "Ciné pour l'expérience",
+      "Canapé toujours",
+      "Ça dépend du film",
+      "Ciné en plein air"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Netflix, Canal+ ou Disney+ ?",
+    "answers": [
+      "Netflix",
+      "Canal+",
+      "Disney+",
+      "Tous et plus"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Ton film français préféré ?",
+    "answers": [
+      "Intouchables",
+      "Amélie Poulain",
+      "Le Dîner de Cons",
+      "La Haine"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Documentaires : oui ou non ?",
+    "answers": [
+      "Je les adore",
+      "Seulement les bons",
+      "Je m'endors parfois",
+      "Je préfère la fiction"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Ton personnage fictif préféré ?",
+    "answers": [
+      "Astérix",
+      "Le Petit Prince",
+      "Arsène Lupin",
+      "Jean-Claude Van Damme (il est belge mais bon)"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Popcorn sucré ou salé ?",
+    "answers": [
+      "Sucré",
+      "Salé",
+      "Caramel",
+      "Des bonbons plutôt"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Les films d'horreur, tu aimes ?",
+    "answers": [
+      "J'adore",
+      "Seulement avec quelqu'un à côté",
+      "Jamais de la vie",
+      "Seulement les psychologiques"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Saga préférée ?",
+    "answers": [
+      "Star Wars",
+      "Le Seigneur des Anneaux",
+      "Marvel",
+      "Harry Potter"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Sous-titres ou doublage ?",
+    "answers": [
+      "VO sous-titrée",
+      "Doublage toujours",
+      "Ça dépend de la langue",
+      "VO si c'est anglais"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Tu pleures devant les films ?",
+    "answers": [
+      "Toujours",
+      "Seulement les très émouvants",
+      "Jamais",
+      "Je fais semblant d'être fort·e"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Quelle série tu recommanderais à tout le monde ?",
+    "answers": [
+      "Lupin",
+      "Dix pour cent",
+      "Dark",
+      "Stranger Things"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Ton sport préféré à regarder ?",
+    "answers": [
+      "Football",
+      "Rugby",
+      "Tennis",
+      "Formule 1"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Salle de sport, running ou sport d'équipe ?",
+    "answers": [
+      "Salle pour se muscler",
+      "Running en plein air",
+      "Sport d'équipe",
+      "Yoga ou pilates"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Tu as déjà fait un sport extrême ?",
+    "answers": [
+      "Parachutisme",
+      "Surf ou wakeboard",
+      "Escalade",
+      "Non mais j'aimerais bien"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Tu irais à une Coupe du Monde ?",
+    "answers": [
+      "Mon rêve",
+      "Seulement si la France joue",
+      "Je préfère le regarder au café",
+      "Le foot m'intéresse pas"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Sport en solo ou en équipe ?",
+    "answers": [
+      "Solo pour me concentrer",
+      "En équipe pour la motivation",
+      "Ça dépend du sport",
+      "Avec mon·ma partenaire idéalement"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Ton sportif préféré ?",
+    "answers": [
+      "Mbappé",
+      "Teddy Riner",
+      "Tony Parker",
+      "Zinédine Zidane"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Le paddle : tu as essayé ?",
+    "answers": [
+      "Je suis accro",
+      "J'ai essayé et j'ai aimé",
+      "Pas encore mais j'ai envie",
+      "C'est pas mon truc"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Nager dans la mer ou en piscine ?",
+    "answers": [
+      "Mer toujours",
+      "Piscine plus propre",
+      "Les deux",
+      "Je préfère ne pas nager"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Tu ferais un marathon un jour ?",
+    "answers": [
+      "Je l'ai déjà fait",
+      "C'est mon objectif",
+      "Un semi-marathon plutôt",
+      "Jamais de la vie"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Ski ou snowboard ?",
+    "answers": [
+      "Ski classique",
+      "Snowboard c'est plus cool",
+      "Je préfère le chocolat chaud",
+      "Je suis jamais allé·e à la neige"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Ta blague préférée pour briser la glace ?",
+    "answers": [
+      "Un jeu de mots bien nul",
+      "Une anecdote embarrassante de moi",
+      "Un compliment inattendu",
+      "Je pose une question absurde"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Qu'est-ce qui te fait le plus rire ?",
+    "answers": [
+      "Les memes du moment",
+      "L'humour noir bien fait",
+      "Les chutes et fails",
+      "Les comédies de situation"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Ton humoriste préféré·e ?",
+    "answers": [
+      "Jamel Debbouze",
+      "Florence Foresti",
+      "Gad Elmaleh",
+      "Blanche Gardin"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Quel est le plus petit mensonge que tu dis souvent ?",
+    "answers": [
+      "J'arrive (encore à la maison)",
+      "Ça a l'air super (pas intéressé·e)",
+      "J'ai plus de batterie",
+      "Encore 5 minutes"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Si ta vie était un meme, lequel serait-ce ?",
+    "answers": [
+      "Le chien dans la pièce en feu",
+      "This is fine",
+      "Le chat confus avec les maths",
+      "Spiderman qui se montre du doigt"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Que ferais-tu si tu restes coincé dans un ascenseur avec ton crush ?",
+    "answers": [
+      "J'en profite pour faire connaissance",
+      "Je deviens nerveux·se et je dis rien",
+      "Je fais des blagues pour détendre",
+      "J'appelle le 112 immédiatement"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Ton excuse préférée pour annuler des plans ?",
+    "answers": [
+      "J'ai mal à la tête",
+      "Mon chat a besoin de moi",
+      "J'ai trop de travail",
+      "Je suis honnête : j'ai pas envie"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Que ferais-tu si tu vois ton ex dans un bar ?",
+    "answers": [
+      "Je fais semblant de pas le/la voir",
+      "Je dis bonjour naturellement",
+      "Je change de bar",
+      "Je lui demande de me rembourser ce dîner"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Ta plus grande maladresse quotidienne ?",
+    "answers": [
+      "Trébucher sur tout",
+      "Oublier les prénoms instantanément",
+      "Perdre mes clés chaque jour",
+      "Envoyer des messages au mauvais groupe"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Que penserait ton toi de 15 ans de toi maintenant ?",
+    "answers": [
+      "Il/elle serait fier·e",
+      "Il/elle rirait de mes soucis",
+      "Il/elle me reconnaîtrait pas",
+      "Il/elle demanderait où est passé le rock'n'roll"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Quel serait ton slogan personnel ?",
+    "answers": [
+      "Vivre et laisser vivre",
+      "Si c'est pas aujourd'hui ce sera demain",
+      "Avec du café tout est possible",
+      "C'est toujours le bon moment pour manger"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Quelle série décrit ton groupe d'amis ?",
+    "answers": [
+      "Friends évidemment",
+      "How I Met Your Mother",
+      "Brooklyn Nine-Nine",
+      "Kaamelott"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ton passe-temps favori un jour de congé ?",
+    "answers": [
+      "Peindre ou dessiner",
+      "Jeux vidéo",
+      "Lire un bon bouquin",
+      "Balade en plein air"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Tu collectionnes quelque chose ?",
+    "answers": [
+      "Vinyles ou musique",
+      "Livres",
+      "Expériences et souvenirs",
+      "Rien, je suis minimaliste"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Tu joues aux jeux vidéo ?",
+    "answers": [
+      "Gamer de coeur",
+      "Casual de temps en temps",
+      "Seulement les jeux mobile",
+      "C'est pas mon truc"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Tu joues d'un instrument ?",
+    "answers": [
+      "Guitare",
+      "Piano",
+      "Un autre instrument",
+      "Non mais j'aimerais apprendre"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ton genre de livre préféré ?",
+    "answers": [
+      "Fiction et romans",
+      "Développement personnel",
+      "Histoire et biographies",
+      "Science-fiction et fantasy"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Tu as déjà fait du bénévolat ?",
+    "answers": [
+      "Oui, régulièrement",
+      "Quelques fois",
+      "J'aimerais commencer",
+      "Non mais je soutiens autrement"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Photo au téléphone ou appareil pro ?",
+    "answers": [
+      "Le téléphone suffit",
+      "Appareil professionnel",
+      "Ça dépend du moment",
+      "Je préfère vivre le moment sans photos"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Les plantes chez toi : tu les gardes en vie ?",
+    "answers": [
+      "J'ai un jardin intérieur",
+      "Elles meurent toutes",
+      "Seulement les résistantes",
+      "Des fleurs artificielles plutôt"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Tu préfères un hobby créatif ou actif ?",
+    "answers": [
+      "Créatif : art et musique",
+      "Actif : sport et aventure",
+      "Un peu de chaque",
+      "Aucun : se reposer c'est mon hobby"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Tu aimes faire des puzzles ?",
+    "answers": [
+      "Ça me relaxe beaucoup",
+      "Seulement en groupe",
+      "Trop de patience",
+      "Je préfère les mots croisés"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ton podcast préféré ?",
+    "answers": [
+      "True crime",
+      "Humour et divertissement",
+      "Développement personnel",
+      "J'écoute pas de podcasts"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Le bricolage, tu gères ?",
+    "answers": [
+      "Je suis très bricoleur·se",
+      "J'essaie mais ça rate",
+      "Seulement avec des tutos",
+      "Je préfère acheter tout fait"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Tu aimes aller aux musées ?",
+    "answers": [
+      "J'adore l'art",
+      "Seulement les interactifs",
+      "Quand je voyage oui",
+      "C'est pas mon truc"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ta série de jeux vidéo préférée ?",
+    "answers": [
+      "FIFA/EA FC",
+      "The Legend of Zelda",
+      "GTA",
+      "Je joue pas aux jeux vidéo"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "iPhone ou Android ?",
+    "answers": [
+      "iPhone toujours",
+      "Android pour la liberté",
+      "Ça m'est égal",
+      "Celui avec la meilleure caméra"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Comment tu te sens à propos de l'intelligence artificielle ?",
+    "answers": [
+      "Ça me fascine",
+      "Ça me fait un peu peur",
+      "C'est un outil utile",
+      "Je comprends pas trop"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Montre connectée : besoin ou gadget ?",
+    "answers": [
+      "Je peux pas vivre sans",
+      "C'est un gadget sympa",
+      "Je préfère une montre classique",
+      "Je porte pas de montre"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Combien d'heures par jour tu regardes ton téléphone ?",
+    "answers": [
+      "Moins de 2 heures",
+      "2-4 heures",
+      "4-6 heures",
+      "Je préfère pas savoir"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Maison connectée : oui ou exagéré ?",
+    "answers": [
+      "J'ai tout automatisé",
+      "Juste le basique : lumières et musique",
+      "C'est exagéré",
+      "C'est l'avenir"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Comment tu rencontres de nouvelles personnes ?",
+    "answers": [
+      "Apps de rencontre",
+      "Par des amis",
+      "Événements et activités",
+      "Au travail ou en études"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Appel vidéo ou rendez-vous en personne ?",
+    "answers": [
+      "Appel vidéo pour le quotidien",
+      "Toujours en personne",
+      "Ça dépend de la distance",
+      "Un mix des deux"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Podcast ou radio traditionnelle ?",
+    "answers": [
+      "Podcast toujours",
+      "La radio a son charme",
+      "Les deux selon le moment",
+      "Aucun, juste de la musique"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Ton réseau social préféré ?",
+    "answers": [
+      "Instagram",
+      "TikTok",
+      "Twitter/X",
+      "YouTube"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Tu ferais une digital detox ?",
+    "answers": [
+      "J'en ai besoin d'urgence",
+      "Une semaine sans problème",
+      "Juste un week-end",
+      "Impossible pour moi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Comment tu vis avec la routine ?",
+    "answers": [
+      "J'en ai besoin pour fonctionner",
+      "Ça m'ennuie vite",
+      "J'aime avec des variations",
+      "Je l'évite au maximum"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Qu'est-ce qui te donne le plus de paix ?",
+    "answers": [
+      "Le bruit de la mer",
+      "Le silence total",
+      "Une musique douce",
+      "Une bonne conversation"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu préfères offrir ou recevoir des cadeaux ?",
+    "answers": [
+      "Offrir me rend plus heureux·se",
+      "Recevoir sans culpabilité",
+      "Les deux à parts égales",
+      "Je préfère des expériences partagées"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu dis toujours ce que tu penses ?",
+    "answers": [
+      "Toujours, sans filtre",
+      "Avec tact mais sincèrement",
+      "Seulement quand on me demande",
+      "Je garde pour moi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Qu'est-ce qui compte plus : la destination ou le chemin ?",
+    "answers": [
+      "Le chemin c'est le beau",
+      "La destination c'est le but",
+      "Les deux également",
+      "Le chemin si c'est en bonne compagnie"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "L'opinion des autres pèse combien pour toi ?",
+    "answers": [
+      "Rien, je vis à ma façon",
+      "Je la considère mais je décide",
+      "Plus que ça devrait",
+      "Seulement celle des proches"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Comment tu montres que quelqu'un compte pour toi ?",
+    "answers": [
+      "En étant présent·e toujours",
+      "Par des petites attentions",
+      "En disant ce que je ressens",
+      "En faisant des choses pour cette personne"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu aimes débattre ou tu évites les confrontations ?",
+    "answers": [
+      "J'adore débattre",
+      "Seulement sur des sujets que je maîtrise",
+      "J'évite les confrontations",
+      "Je débats avec respect"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Quelle activité tu ferais dans une nouvelle ville ?",
+    "answers": [
+      "Free tour de la ville",
+      "Cours de cuisine locale",
+      "Excursion nature",
+      "Me perdre dans les rues"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Tu as déjà voyagé seul·e ?",
+    "answers": [
+      "Oui et j'ai adoré",
+      "Non mais j'ai envie",
+      "Je n'oserais pas",
+      "Seulement des voyages courts"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Combien de pays tu as visités ?",
+    "answers": [
+      "Moins de 5",
+      "5 à 10",
+      "Plus de 10",
+      "Il m'en reste encore beaucoup"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Tu suis un régime ?",
+    "answers": [
+      "Je mange sain mais sans restrictions",
+      "Régime strict",
+      "Intuitif : ce que mon corps demande",
+      "J'essaie mais je craque souvent"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Ton guilty pleasure alimentaire ?",
+    "answers": [
+      "Pizza à 2h du mat",
+      "Glace du pot",
+      "Des bonbons",
+      "Fast food sans remords"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Tu es organisé·e financièrement ?",
+    "answers": [
+      "Budget mensuel strict",
+      "Plus ou moins contrôlé",
+      "Je dépense puis je m'inquiète",
+      "J'utilise des apps pour tout"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Tu serais quoi dans un groupe de survie ?",
+    "answers": [
+      "Le leader stratégique",
+      "Celui/celle qui trouve la nourriture",
+      "Le motivateur du groupe",
+      "Celui/celle qui fait rire tout le monde"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Si tu pouvais avoir une capacité magique ?",
+    "answers": [
+      "Parler toutes les langues",
+      "Cuisiner comme un chef pro",
+      "Jouer de n'importe quel instrument",
+      "Me téléporter"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Que ferais-tu avec un jour supplémentaire par semaine ?",
+    "answers": [
+      "Dormir toute la journée",
+      "Un nouveau hobby",
+      "Être avec mes proches",
+      "Aventure spontanée"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ton plat de bistrot français préféré ?",
+    "answers": [
+      "Steak frites",
+      "Confit de canard",
+      "Moules-frites",
+      "Croque-monsieur"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Déjeuner tôt ou tard façon française ?",
+    "answers": [
+      "12h pile",
+      "Plus tard vers 13h30",
+      "Quand j'ai faim",
+      "Je grignote et je dîne bien"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Rap français ou variété ?",
+    "answers": [
+      "Rap français toujours",
+      "Variété pour chanter",
+      "Les deux",
+      "Ni l'un ni l'autre"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Tu es déjà allé·e à un concert qui a changé ta vie ?",
+    "answers": [
+      "Oui, c'était magique",
+      "Pas encore mais j'espère",
+      "Tous me touchent",
+      "Les concerts c'est pas mon truc"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Tu préfères un film classique ou récent ?",
+    "answers": [
+      "Classique : il y a des chefs-d'oeuvre",
+      "Récent : meilleurs effets",
+      "Ça dépend du genre",
+      "Un bon film est bon quelle que soit l'époque"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Tu marches beaucoup chaque jour ?",
+    "answers": [
+      "Plus de 10 000 pas",
+      "Juste pour aller au travail",
+      "Je préfère le vélo ou la trottinette",
+      "Marcher c'est ma méditation"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Ton moment le plus gênant en public ?",
+    "answers": [
+      "Saluer quelqu'un que je connaissais pas",
+      "Trébucher devant plein de monde",
+      "Envoyer un audio au mauvais groupe",
+      "Appeler mon prof papa"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Apprendre des langues, ça te plaît ?",
+    "answers": [
+      "J'adore ça",
+      "Seulement si c'est nécessaire",
+      "J'essaie mais c'est dur",
+      "J'en parle déjà plusieurs"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Achats en ligne ou en magasin ?",
+    "answers": [
+      "En ligne toujours",
+      "En magasin pour essayer",
+      "Ça dépend du produit",
+      "Amazon Prime c'est ma vie"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu crois au destin ou tu crées ton propre chemin ?",
+    "answers": [
+      "Au destin",
+      "Je crée mon chemin",
+      "Un peu des deux",
+      "Le destin aide si tu fais des efforts"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu aimes les surprises ?",
+    "answers": [
+      "Je les adore",
+      "Seulement les bonnes",
+      "Je préfère savoir ce qui se passe",
+      "Ça dépend de qui les fait"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Qu'emporterais-tu sur une île déserte ?",
+    "answers": [
+      "Un couteau multifonction",
+      "Ma guitare",
+      "Un gros livre",
+      "Mon·ma meilleur·e ami·e"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Comment tu déconnectes du travail ?",
+    "answers": [
+      "Sport",
+      "Sortir dîner",
+      "Séries et canapé",
+      "Hobbies créatifs"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Quel nom tu donnerais à ton restaurant ?",
+    "answers": [
+      "Quelque chose avec mon nom de famille",
+      "Un jeu de mots rigolo",
+      "Quelque chose dans une autre langue",
+      "Le nom de ma grand-mère"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ton fruit préféré ?",
+    "answers": [
+      "Mangue",
+      "Fraise",
+      "Pastèque",
+      "Avocat (c'est un fruit !)"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Ta chanson de l'été préférée ?",
+    "answers": [
+      "Quelque chose de Stromae",
+      "Papaoutai",
+      "Daft Punk Get Lucky",
+      "Ça change chaque été"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Tu t'identifies plus au héros ou au méchant ?",
+    "answers": [
+      "Héros sans hésiter",
+      "Le méchant a une meilleure histoire",
+      "Le personnage secondaire drôle",
+      "L'anti-héros"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "À la plage : repos ou sports nautiques ?",
+    "answers": [
+      "Serviette et relax",
+      "Surf et paddle",
+      "Beach-volley",
+      "Un peu de tout"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Ta technique de drague la plus efficace ?",
+    "answers": [
+      "Humour : je les fais rire",
+      "Contact visuel intense",
+      "Être sincèrement intéressé·e",
+      "Je drague pas, j'attends qu'on vienne"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Quel hobby tu partages avec tes amis ?",
+    "answers": [
+      "Sport ensemble",
+      "Gaming en ligne",
+      "Cuisiner pour eux",
+      "Sortir en soirée ça compte"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Tu utilises des apps de productivité ?",
+    "answers": [
+      "Je suis très organisé·e numériquement",
+      "Juste l'agenda",
+      "J'essaie mais ça marche pas",
+      "Papier et stylo à l'ancienne"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Quel type d'intelligence tu values le plus ?",
+    "answers": [
+      "Émotionnelle",
+      "Logique",
+      "Créative",
+      "Sociale"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu es plutôt improvisation ou planification ?",
+    "answers": [
+      "Je planifie tout",
+      "J'improvise avec style",
+      "Je planifie puis j'improvise",
+      "Ça dépend si je suis seul·e ou accompagné·e"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Ton aéroport préféré ?",
+    "answers": [
+      "Paris CDG",
+      "Nice Côte d'Azur",
+      "Celui qui m'emmène loin",
+      "Je déteste les aéroports"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Tu vois ta famille à quelle fréquence ?",
+    "answers": [
+      "Chaque semaine",
+      "Chaque mois",
+      "Aux vacances et fêtes",
+      "On vit ensemble"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Ta couleur préférée dit quoi de toi ?",
+    "answers": [
+      "Bleu : calme",
+      "Rouge : passionné·e",
+      "Vert : nature",
+      "Noir : élégant·e"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ton parfum de glace préféré ?",
+    "answers": [
+      "Chocolat",
+      "Vanille",
+      "Pistache",
+      "Citron"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu penses quoi de vivre ensemble avant le mariage ?",
+    "answers": [
+      "Indispensable",
+      "Bonne idée",
+      "Ça dépend de la relation",
+      "Je préfère attendre"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Ta priorité cette année ?",
+    "answers": [
+      "Santé et bien-être",
+      "Carrière professionnelle",
+      "Relations personnelles",
+      "Voyager plus"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Si tu pouvais changer une chose dans le monde ?",
+    "answers": [
+      "Éliminer la pauvreté",
+      "Sauver l'environnement",
+      "Plus d'empathie entre les gens",
+      "WiFi gratuit partout"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Dîner romantique ou dîner fun ?",
+    "answers": [
+      "Romantique avec des bougies",
+      "Fun avec des rires",
+      "Les deux",
+      "Dîner cuisiné à la maison"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu es aventurier·ère avec la nourriture ?",
+    "answers": [
+      "Je mange de tout sans peur",
+      "J'essaie des trucs nouveaux parfois",
+      "Je suis assez sélectif·ve",
+      "Seulement ce que je connais"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Comment tu te sens à propos de la vie nocturne ?",
+    "answers": [
+      "J'adore sortir la nuit",
+      "Je préfère des plans tranquilles",
+      "Ça dépend de la compagnie",
+      "De moins en moins fêtard·e"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Quel serait ton nom de DJ ?",
+    "answers": [
+      "DJ Croissant",
+      "Quelque chose avec mon signe astro",
+      "Mon surnom d'enfance",
+      "Je préfère être dans le public"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu te considères romantique ?",
+    "answers": [
+      "Très romantique",
+      "À ma façon",
+      "Seulement quand je suis amoureux·se",
+      "Pas du tout"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Tu es connecté·e à la nature ?",
+    "answers": [
+      "Beaucoup, j'ai besoin de vert",
+      "J'aime mais je vis en ville",
+      "Seulement en vacances",
+      "Je suis plutôt urbain·e"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Se lever tôt pour un vol pas cher ?",
+    "answers": [
+      "Aucun problème",
+      "Seulement si ça vaut le coup",
+      "Je préfère payer plus et dormir",
+      "Le voyage commence à l'aéroport"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Petit-déj sucré ou salé ?",
+    "answers": [
+      "Sucré avec viennoiseries",
+      "Salé style oeufs et jambon",
+      "Mixte",
+      "Juste un café"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Qu'est-ce que tu as appris pendant la pandémie ?",
+    "answers": [
+      "À cuisiner",
+      "À apprécier les choses simples",
+      "Une nouvelle compétence",
+      "Que j'ai besoin des gens"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Streaming musical : Spotify ou Apple Music ?",
+    "answers": [
+      "Spotify toujours",
+      "Apple Music",
+      "Deezer",
+      "Je télécharge encore la musique"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Quelle phrase te définit ?",
+    "answers": [
+      "Carpe diem",
+      "Que sera sera",
+      "Mieux vaut prévenir que guérir",
+      "La vie est belle"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Comment tu t'excuses ?",
+    "answers": [
+      "En face à face",
+      "Avec une attention ou un cadeau",
+      "Un long message sincère",
+      "Avec humour pour adoucir"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Tu as un rituel avant de dormir ?",
+    "answers": [
+      "Lire un peu",
+      "Scroller les réseaux",
+      "Méditation ou respiration",
+      "Séries jusqu'à ce que je m'endorme"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Quel type de fête tu préfères ?",
+    "answers": [
+      "Grande boîte de nuit",
+      "Dîner intime entre amis",
+      "Soirée à la maison",
+      "Festival en plein air"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ton repas du dimanche préféré ?",
+    "answers": [
+      "Rôti familial",
+      "Brunch tardif",
+      "Poulet rôti du marché",
+      "Ce que grand-mère cuisine"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Musique électronique ou acoustique ?",
+    "answers": [
+      "Électro pour danser",
+      "Acoustique pour l'émotion",
+      "Les deux",
+      "Ni l'un ni l'autre"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Tu préfères lire le livre ou voir le film ?",
+    "answers": [
+      "Le livre toujours",
+      "Le film c'est plus facile",
+      "Les deux et je compare",
+      "Ça dépend de quel est sorti en premier"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Vélo de route ou VTT ?",
+    "answers": [
+      "Route pour la vitesse",
+      "VTT pour l'aventure",
+      "Les deux",
+      "Ni l'un ni l'autre"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Ta pire blague préférée ?",
+    "answers": [
+      "C'est l'histoire d'un toit... bof",
+      "Les blagues de papa toujours",
+      "Je retiens jamais les blagues",
+      "Toutes mes blagues sont nulles"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Le bricolage tu gères ?",
+    "answers": [
+      "J'adore réparer des trucs",
+      "J'essaie mais j'appelle un pro",
+      "Seulement les meubles simples",
+      "C'est pas mon truc"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Comment tu vois le futur des rencontres en ligne ?",
+    "answers": [
+      "C'est le présent et le futur",
+      "Un complément au réel",
+      "Je préfère le traditionnel",
+      "La réalité virtuelle va tout changer"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ton plus grand rêve ?",
+    "answers": [
+      "Voyager dans le monde entier",
+      "Avoir mon propre business",
+      "Fonder une famille heureuse",
+      "Laisser un héritage positif"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Que changerais-tu si tu pouvais revenir en arrière ?",
+    "answers": [
+      "Prendre plus de risques",
+      "M'inquiéter moins",
+      "Étudier autre chose",
+      "Rien du tout"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Comment tu te sens à propos du mariage ?",
+    "answers": [
+      "Mon objectif",
+      "Si ça vient tant mieux",
+      "Je crois pas au mariage",
+      "Seulement avec la bonne personne"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Tu values combien ton espace personnel ?",
+    "answers": [
+      "Beaucoup, c'est sacré",
+      "Important mais flexible",
+      "Pas tant, je suis très sociable",
+      "J'apprends à le valoriser"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Tu irais à un voyage surprise sans connaître la destination ?",
+    "answers": [
+      "Oui, ça m'excite",
+      "Seulement avec quelqu'un de confiance",
+      "J'ai besoin de savoir au moins le climat",
+      "Jamais, je dois planifier"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Qu'est-ce que tu fais en premier au réveil ?",
+    "answers": [
+      "Regarder mon téléphone",
+      "M'étirer",
+      "Café direct",
+      "Remercier pour un nouveau jour"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu préfères beaucoup d'amis ou peu mais vrais ?",
+    "answers": [
+      "Peu mais intimes",
+      "Beaucoup et variés",
+      "Un cercle petit et fort",
+      "Des amis pour chaque occasion"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Apéro : olives ou chips ?",
+    "answers": [
+      "Olives toujours",
+      "Chips",
+      "Les deux avec un verre",
+      "Cacahuètes plutôt"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Quel rôle tu as dans ton groupe d'amis ?",
+    "answers": [
+      "L'organisateur·rice",
+      "Le/la drôle",
+      "Le/la conseiller·ère",
+      "Celui/celle qui arrive toujours en retard"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Quel café tu commandes ?",
+    "answers": [
+      "Espresso serré",
+      "Café au lait doux",
+      "Café glacé",
+      "Déca (me jugez pas)"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Que fais-tu quand quelqu'un te plaît ?",
+    "answers": [
+      "Je fonce directement",
+      "Je suis subtil·e avec des indices",
+      "J'attends des signes",
+      "Je deviens nerveux·se et fais rien"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Escapade week-end : plage ou montagne ?",
+    "answers": [
+      "Plage à proximité",
+      "Montagne avec rando",
+      "Un village de charme",
+      "Une autre ville que je connais pas"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Tu fais du bénévolat ou soutiens des causes sociales ?",
+    "answers": [
+      "Activement",
+      "Des dons quand je peux",
+      "J'aimerais commencer",
+      "Je soutiens sur les réseaux"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu demandes de l'aide facilement ?",
+    "answers": [
+      "Sans problème",
+      "Ça me coûte mais je le fais",
+      "J'essaie de me débrouiller seul·e",
+      "Seulement à des proches"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Comment tu réagis quand quelqu'un pleure ?",
+    "answers": [
+      "J'enlace et j'écoute",
+      "J'essaie de résoudre le problème",
+      "Je m'émotionne aussi",
+      "C'est gênant mais je reste"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu penses quoi des rendez-vous à l'aveugle ?",
+    "answers": [
+      "Ça m'excite",
+      "Ça me stresse un peu",
+      "Seulement si je fais confiance à qui me les organise",
+      "Je les préfère aux apps"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Pardonner ou oublier : c'est quoi le plus dur ?",
+    "answers": [
+      "Pardonner c'est dur",
+      "Oublier c'est impossible",
+      "Les deux me coûtent autant",
+      "Ni l'un ni l'autre, j'avance vite"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Qu'est-ce qui t'attire le plus : l'esprit ou le physique ?",
+    "answers": [
+      "L'esprit sans hésiter",
+      "Le physique d'abord",
+      "Un équilibre des deux",
+      "L'énergie qu'elle/il dégage"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Comment tu es quand tu es amoureux·se ?",
+    "answers": [
+      "Très attentionné·e et aux petits soins",
+      "Intense et passionné·e",
+      "Calme mais constant·e",
+      "Timide au début"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ton signe astrologique et tu y crois ?",
+    "answers": [
+      "Je le connais et ça me définit",
+      "Je le connais mais j'y crois pas",
+      "Aucune idée de quel c'est",
+      "Je l'utilise pour draguer"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Qu'est-ce qui te préoccupe le plus pour l'avenir ?",
+    "answers": [
+      "Ma carrière",
+      "Le changement climatique",
+      "Trouver la bonne personne",
+      "Garder mes proches près de moi"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Qu'est-ce que tu ferais pour la personne que tu aimes ?",
+    "answers": [
+      "Tout ce qui est possible",
+      "Soutenir ses rêves",
+      "Donner de l'espace quand c'est nécessaire",
+      "Préparer le meilleur petit-déj toujours"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "C'est quoi la meilleure façon d'entamer une conversation avec toi ?",
+    "answers": [
+      "Avec de l'humour",
+      "Avec une question intéressante",
+      "Avec un compliment sincère",
+      "Avec un sujet qui me passionne"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "La ponctualité c'est ton truc ?",
+    "answers": [
+      "Je suis toujours à l'heure",
+      "5 minutes de retard c'est ma marque",
+      "La ponctualité c'est pas mon fort",
+      "J'arrive avant tout le monde"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Tu préfères avoir de la chance ou être très intelligent·e ?",
+    "answers": [
+      "La chance aide toujours",
+      "L'intelligence ouvre des portes",
+      "Les deux ensemble",
+      "La chance avec de l'effort"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Tu recycles ?",
+    "answers": [
+      "Tout bien trié",
+      "J'essaie",
+      "Seulement le facile",
+      "Je devrais m'améliorer"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu préfères la vérité qui blesse ou un mensonge bienveillant ?",
+    "answers": [
+      "La vérité toujours",
+      "Un mensonge bienveillant parfois",
+      "Ça dépend de la situation",
+      "La vérité dite avec douceur"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Combien de cafés par jour ?",
+    "answers": [
+      "Un seul et c'est bon",
+      "2-3 cafés",
+      "4 ou plus, je suis accro",
+      "Je bois pas de café"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Quelle série de ton enfance tu reverrrais ?",
+    "answers": [
+      "Dragon Ball",
+      "Les Mystérieuses Cités d'Or",
+      "Les Simpson",
+      "Bob l'Éponge"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Fromage : tu en manges combien ?",
+    "answers": [
+      "Tous les jours évidemment",
+      "Souvent",
+      "Parfois",
+      "Je suis pas trop fromage"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Comment tu passes la Saint-Sylvestre ?",
+    "answers": [
+      "Grande fête",
+      "Dîner en famille",
+      "Voyage ailleurs",
+      "Tranquille à la maison"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Que ferais-tu avec plus de temps libre ?",
+    "answers": [
+      "Apprendre une nouvelle langue",
+      "Voyager plus",
+      "Me consacrer à un hobby",
+      "Me reposer sans rien faire"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Photo ou vidéo : tu préfères partager quoi ?",
+    "answers": [
+      "Photos retouchées",
+      "Vidéos spontanées",
+      "Les deux",
+      "Je partage rien"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Qu'est-ce qu'une bonne conversation t'apporte ?",
+    "answers": [
+      "Énergie et motivation",
+      "De nouvelles perspectives",
+      "Connexion émotionnelle",
+      "Du fun et des rires"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Tu célèbres la Saint-Valentin ?",
+    "answers": [
+      "Chaque année à fond",
+      "Un petit geste symbolique",
+      "Je crois pas à ces fêtes",
+      "L'amour se fête tous les jours"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Quel cadeau te ferait le plus plaisir ?",
+    "answers": [
+      "Un voyage surprise",
+      "Des places de concert",
+      "Quelque chose fait main",
+      "Du temps ensemble sans plans"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Comment tu gères l'incertitude ?",
+    "answers": [
+      "Avec calme, on verra bien",
+      "Ça me génère de l'anxiété",
+      "Je planifie des scénarios",
+      "Je fais confiance que tout se résout"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Le physique c'est important pour toi chez un·e partenaire ?",
+    "answers": [
+      "Très important",
+      "Important mais pas l'essentiel",
+      "La personnalité c'est tout",
+      "L'attirance doit exister"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Baguette tradition ou pain de campagne ?",
+    "answers": [
+      "Baguette tradition croustillante",
+      "Pain de campagne rustique",
+      "Les deux selon le repas",
+      "Pain au levain"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Tu es du genre à aller au cinéma seul·e ?",
+    "answers": [
+      "Oui, c'est génial",
+      "Seulement avec quelqu'un",
+      "Jamais essayé mais je le ferais",
+      "Je vais pas au ciné"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Ton jour de la semaine préféré ?",
+    "answers": [
+      "Vendredi soir",
+      "Samedi toute la journée",
+      "Dimanche relax",
+      "Jeudi c'est presque vendredi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "C'est quoi le mieux d'être en couple ?",
+    "answers": [
+      "Avoir un·e compagnon·ne de vie",
+      "Les moments partagés",
+      "Grandir ensemble",
+      "Ne plus jamais manger seul·e"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "WhatsApp ou Telegram ?",
+    "answers": [
+      "WhatsApp comme tout le monde",
+      "Telegram c'est supérieur",
+      "Les deux pour différentes personnes",
+      "Ça m'est égal"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Tu aimes le théâtre ?",
+    "answers": [
+      "J'adore y aller",
+      "Je préfère le ciné",
+      "Si c'est une comédie musicale oui",
+      "J'y suis jamais allé·e"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Voiture électrique ou essence ?",
+    "answers": [
+      "Électrique c'est le futur",
+      "Essence encore",
+      "Hybride en compromis",
+      "J'ai pas de voiture"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Tu es plus Batman ou Superman ?",
+    "answers": [
+      "Batman : mystérieux et sombre",
+      "Superman : noble et fort",
+      "Iron Man : génie et charisme",
+      "Wonder Woman : puissance et justice"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "La durabilité c'est important pour toi ?",
+    "answers": [
+      "Très, je change mes habitudes",
+      "J'essaie de contribuer",
+      "Ça me préoccupe mais je change pas grand chose",
+      "C'est pas ma priorité"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Visiter la même ville deux fois ou toujours du nouveau ?",
+    "answers": [
+      "Toujours de nouvelles destinations",
+      "Je retourne à celles que j'aime",
+      "Ça dépend à quel point j'ai aimé",
+      "Revisiter c'est découvrir autrement"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Tu fais des listes de tâches ?",
+    "answers": [
+      "Toujours, c'est comme ça que je m'organise",
+      "Parfois quand je suis débordé·e",
+      "Jamais, tout est dans ma tête",
+      "Oui mais je les perds"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Quand est-ce que tu es sorti·e de ta zone de confort pour la dernière fois ?",
+    "answers": [
+      "Cette semaine",
+      "Récemment",
+      "Je me souviens pas",
+      "J'essaie constamment"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Road trip ou vol direct ?",
+    "answers": [
+      "Road trip avec des arrêts",
+      "Vol pour arriver vite",
+      "Train si possible",
+      "Ça dépend de la distance"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Quel serait ton dernier repas ?",
+    "answers": [
+      "Le plat de ma mère",
+      "Sushi du meilleur restaurant",
+      "Un bon steak frites",
+      "Pizza napolitaine"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Tu fais quelque chose d'artistique ?",
+    "answers": [
+      "Je peins ou dessine",
+      "Je joue de la musique",
+      "J'écris",
+      "J'ai aucun talent artistique"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Tu navigues avec des onglets organisés ou c'est le chaos ?",
+    "answers": [
+      "Peu d'onglets, tout propre",
+      "100 onglets ouverts minimum",
+      "Je les ferme mais ils reviennent",
+      "J'utilise les favoris comme un pro"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Que ferais-tu si tu étais invisible un jour ?",
+    "answers": [
+      "Espionner ce qu'on dit de moi",
+      "Voyager gratuitement",
+      "Faire des blagues à mes amis",
+      "Aller à un concert exclusif"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Fait maison ou restaurant ?",
+    "answers": [
+      "Fait maison toujours",
+      "Restaurant pour découvrir",
+      "Maison en semaine, resto le week-end",
+      "Livraison c'est ma troisième option"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Les brocantes et marchés aux puces, tu aimes ?",
+    "answers": [
+      "J'adore",
+      "Seulement les marchés de Noël",
+      "De temps en temps",
+      "C'est pas mon truc"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Ta relation avec l'alcool ?",
+    "answers": [
+      "Social et modéré",
+      "Je bois pas",
+      "J'aime profiter",
+      "Seulement vin ou bière"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Tu es plus plage avec musique ou plage en silence ?",
+    "answers": [
+      "Musique et ambiance",
+      "Silence et vagues",
+      "Musique douce en fond",
+      "J'alterne dans la journée"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Comment tu décrirais ton sens de l'humour ?",
+    "answers": [
+      "Noir comme le café",
+      "Absurde et random",
+      "Sarcastique mais avec amour",
+      "Blagues de papa avec fierté"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Tu as déjà utilisé l'IA pour quelque chose de personnel ?",
+    "answers": [
+      "Oui, pour plein de choses",
+      "Juste par curiosité",
+      "J'ai pas confiance",
+      "C'est mon assistant quotidien"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Quelle chanson tu chanterais au karaoké ?",
+    "answers": [
+      "Ne me quitte pas de Jacques Brel",
+      "Formidable de Stromae",
+      "Bohemian Rhapsody",
+      "Quelque chose d'ABBA"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Remake ou original ?",
+    "answers": [
+      "Original toujours",
+      "Certains remakes sont meilleurs",
+      "Ça dépend du film",
+      "Je vois les deux et compare"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Tu as déjà couru une course populaire ?",
+    "answers": [
+      "Plusieurs fois",
+      "Une et ça a suffi",
+      "C'est mon objectif",
+      "Je cours seulement quand on me poursuit"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Si tu étais un condiment, lequel serais-tu ?",
+    "answers": [
+      "Sel : essentiel",
+      "Poivre : avec du piquant",
+      "Piment : intense",
+      "Sucre : doux"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Jeux de société en groupe ?",
+    "answers": [
+      "J'adore",
+      "Seulement les compétitifs",
+      "Je préfère les jeux vidéo",
+      "Trivial Pursuit toujours"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "La mode c'est important pour toi ?",
+    "answers": [
+      "Je suis les tendances",
+      "J'ai mon propre style",
+      "Le minimum pour bien paraître",
+      "Les fringues m'importent pas"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Ton endroit préféré dans ta ville ?",
+    "answers": [
+      "Un parc en particulier",
+      "Mon café de confiance",
+      "Le centre historique",
+      "Mon quartier"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Au restaurant : tu goûtes du nouveau ou tu prends le classique ?",
+    "answers": [
+      "Toujours le même",
+      "Quelque chose de nouveau à chaque fois",
+      "J'alterne",
+      "Je demande au serveur"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tu préfères écouter des conseils ou décider seul·e ?",
+    "answers": [
+      "J'écoute mais je décide seul·e",
+      "J'aime les conseils des autres",
+      "Je décide seul·e toujours",
+      "Ça dépend de l'importance"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Chanson de chagrin d'amour qui te touche ?",
+    "answers": [
+      "Ne me quitte pas de Brel",
+      "Quelque chose d'Adele",
+      "Formidable de Stromae",
+      "Une chanson de Barbara"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Quel sport tu ne ferais jamais ?",
+    "answers": [
+      "Saut à l'élastique",
+      "Boxe",
+      "Escalade libre",
+      "Je tenterais n'importe quoi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Ton acteur ou actrice français·e préféré·e ?",
+    "answers": [
+      "Marion Cotillard",
+      "Jean Dujardin",
+      "Léa Seydoux",
+      "Omar Sy"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Ton bar idéal ?",
+    "answers": [
+      "Terrasse avec vue",
+      "Pub irlandais",
+      "Bar à cocktails chic",
+      "Bistrot de quartier"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vin rouge ou champagne ?",
+    "answers": [
+      "Vin rouge classique",
+      "Champagne pour célébrer",
+      "Ça dépend de l'occasion",
+      "Ni l'un ni l'autre"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Comment tu t'adaptes à de nouvelles personnes ?",
+    "answers": [
+      "Très facilement",
+      "Ça me prend un peu de temps",
+      "Ça dépend de la chimie",
+      "Je suis timide au début"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  }
+]

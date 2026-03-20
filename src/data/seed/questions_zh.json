@@ -1,0 +1,5196 @@
+[
+  {
+    "category": "personality",
+    "question_text": "第一次约会，什么最让你印象深刻？",
+    "answers": [
+      "一家隐藏的酒吧",
+      "去书店逛逛",
+      "外滩夜景散步",
+      "美术馆约会"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "累了一周怎么给自己充电？",
+    "answers": [
+      "追剧马拉松",
+      "和朋友出去嗨",
+      "爬山徒步",
+      "做顿好吃的"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "恋爱中你的聊天风格是？",
+    "answers": [
+      "表情包轰炸",
+      "每天早安晚安",
+      "语音消息派",
+      "简短甜蜜型"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "一起过一天，谁来做计划？",
+    "answers": [
+      "我来给你惊喜",
+      "你来决定",
+      "一起商量",
+      "随心所欲"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "另一半最重要的品质是？",
+    "answers": [
+      "幽默感",
+      "上进心",
+      "善良",
+      "聪明"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "恋爱中吵架了怎么办？",
+    "answers": [
+      "马上坐下来谈",
+      "先冷静一下",
+      "写下来发给对方",
+      "用幽默化解"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "你是早起鸟还是夜猫子？",
+    "answers": [
+      "早起党",
+      "夜猫子本猫",
+      "看心情",
+      "都不是——睡眠不足"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "你的爱情语言是什么？",
+    "answers": [
+      "甜言蜜语",
+      "陪伴时光",
+      "送礼物",
+      "肢体接触"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "约会想去中国哪个城市？",
+    "answers": [
+      "成都——火锅和熊猫",
+      "杭州——西湖浪漫",
+      "厦门——文艺小清新",
+      "大理——风花雪月"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "和特别的人的梦想旅行？",
+    "answers": [
+      "巴黎——爱情之都",
+      "马尔代夫——水上屋",
+      "瑞士——雪山",
+      "巴厘岛——热带天堂"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "完美的周日早晨？",
+    "answers": [
+      "去买豆浆油条",
+      "睡到中午",
+      "晨跑",
+      "咖啡店吃早午餐"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "最爱的街边小吃？",
+    "answers": [
+      "煎饼果子",
+      "烤串",
+      "臭豆腐",
+      "麻辣烫"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "想去哪个音乐节？",
+    "answers": [
+      "草莓音乐节",
+      "迷笛音乐节",
+      "电音节",
+      "出国去Coachella"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "film",
+    "question_text": "你的guilty pleasure中国电影？",
+    "answers": [
+      "大话西游",
+      "功夫",
+      "夏洛特烦恼",
+      "你好，李焕英"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "sports",
+    "question_text": "约会想一起做什么运动？",
+    "answers": [
+      "攀岩",
+      "滑冰",
+      "乒乓球",
+      "骑行"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "你属于哪种幽默风格？",
+    "answers": [
+      "冷幽默",
+      "无厘头搞笑",
+      "谐音梗",
+      "黑色幽默"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "hobby",
+    "question_text": "约会想分享什么爱好？",
+    "answers": [
+      "一起做饭",
+      "桌游之夜",
+      "一起爬山",
+      "去看演出"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "科技在你生活中有多重要？",
+    "answers": [
+      "没手机活不了",
+      "用但不依赖",
+      "想数字排毒",
+      "数码产品发烧友"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "一天超能力，你选什么？",
+    "answers": [
+      "读心术",
+      "飞行",
+      "时间旅行",
+      "隐身"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "你最先注意一个人的什么？",
+    "answers": [
+      "笑容",
+      "眼睛",
+      "声音",
+      "气场"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "你是计划型还是随性型？",
+    "answers": [
+      "完全随性",
+      "什么都要计划",
+      "两者结合",
+      "看情况"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "露营还是豪华酒店？",
+    "answers": [
+      "云南露营",
+      "五星级度假酒店",
+      "特色民宿",
+      "房车自驾游"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "下班后怎么过？",
+    "answers": [
+      "去健身房",
+      "窝在沙发上",
+      "和朋友出去",
+      "试个新食谱"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "如果变成动物，你是？",
+    "answers": [
+      "鹰——自由翱翔",
+      "猫——独立自在",
+      "海豚——活泼爱玩",
+      "熊猫——慵懒可爱"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "你的comfort food是什么？",
+    "answers": [
+      "妈妈做的红烧肉",
+      "火锅",
+      "一碗热汤面",
+      "炒饭"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "恋爱中什么时刻最幸福？",
+    "answers": [
+      "一起冒险",
+      "深夜畅谈",
+      "小小的惊喜",
+      "安静地待在一起"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "你怎么表达喜欢一个人？",
+    "answers": [
+      "为ta做饭",
+      "发甜蜜的消息",
+      "策划惊喜",
+      "默默陪在身边"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "约会中最不能接受的是？",
+    "answers": [
+      "一直看手机",
+      "对服务员没礼貌",
+      "只聊自己",
+      "迟到不说"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "你是哪种恋爱类型？",
+    "answers": [
+      "保护者",
+      "冒险家",
+      "浪漫主义者",
+      "像好朋友一样的恋人"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "想和心仪的人去哪旅行？",
+    "answers": [
+      "巴黎——埃菲尔铁塔前",
+      "圣托里尼——日落",
+      "纽约——大都市",
+      "丽江——古城浪漫"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "旅行怎么规划？",
+    "answers": [
+      "详细攻略",
+      "说走就走",
+      "大方向定了就行",
+      "让别人安排"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "房间里不能缺少什么？",
+    "answers": [
+      "好音响",
+      "满满的书架",
+      "游戏设备",
+      "满屋绿植"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "约会穿什么？",
+    "answers": [
+      "休闲优雅",
+      "运动休闲",
+      "精心打扮",
+      "舒服就行"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "想给对方做什么菜？",
+    "answers": [
+      "手工意面",
+      "完美牛排",
+      "亲手包饺子",
+      "还是点外卖吧"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "晚餐喝啤酒还是红酒？",
+    "answers": [
+      "精酿啤酒",
+      "一瓶好红酒",
+      "鸡尾酒",
+      "我不喝酒"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "什么歌让你立刻想跳舞？",
+    "answers": [
+      "抖音神曲",
+      "电子音乐",
+      "复古迪斯科",
+      "最新流行歌"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "另一半的音乐品味重要吗？",
+    "answers": [
+      "超级重要",
+      "有的话更好",
+      "不同也挺好",
+      "音乐无所谓"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "film",
+    "question_text": "窝在家看什么类型的片？",
+    "answers": [
+      "浪漫喜剧",
+      "悬疑惊悚",
+      "科幻片",
+      "纪录片"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "film",
+    "question_text": "电影院还是在家看？",
+    "answers": [
+      "电影院——大银幕加爆米花",
+      "在家——裹着毯子",
+      "夏天露天电影",
+      "都喜欢"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "sports",
+    "question_text": "最常做的运动？",
+    "answers": [
+      "篮球",
+      "跑步健身",
+      "羽毛球",
+      "游泳"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "什么一定能让你笑？",
+    "answers": [
+      "突然的冷笑话",
+      "精准的吐槽",
+      "搞怪表情",
+      "自嘲"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "喜欢哪种喜剧节目？",
+    "answers": [
+      "脱口秀",
+      "即兴喜剧",
+      "情景喜剧",
+      "搞笑短视频"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "hobby",
+    "question_text": "想尝试但没勇气的爱好？",
+    "answers": [
+      "跳伞",
+      "尝试脱口秀",
+      "学乐器",
+      "画画"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "hobby",
+    "question_text": "桌游还是电子游戏？",
+    "answers": [
+      "狼人杀！",
+      "Switch或PS5",
+      "纸牌——斗地主",
+      "更喜欢户外"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "苹果还是安卓？",
+    "answers": [
+      "苹果——当然",
+      "安卓——自由度高",
+      "都行",
+      "经常换"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "对智能家居有兴趣吗？",
+    "answers": [
+      "全部智能化",
+      "只要灯光就好",
+      "有点害怕",
+      "想试试"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "丧尸末日——你的策略？",
+    "answers": [
+      "逃到深山",
+      "组建队伍",
+      "躲在超市里",
+      "我大概最先被咬"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "什么宠物适合你？",
+    "answers": [
+      "狗——忠诚伙伴",
+      "猫——独立如我",
+      "仓鼠——小巧可爱",
+      "不养宠物"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "内向还是外向？",
+    "answers": [
+      "内向且自豪",
+      "外向且热闹",
+      "看心情",
+      "自己也不清楚"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "忠诚对你意味着什么？",
+    "answers": [
+      "情感专一",
+      "身体忠诚",
+      "完全信任",
+      "开放的沟通"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "生活中什么最激励你？",
+    "answers": [
+      "大自然",
+      "有创造力的人",
+      "旅行和文化",
+      "科技进步"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "你怎么定义成功？",
+    "answers": [
+      "内心平静",
+      "财务自由",
+      "充满爱的关系",
+      "事业成就"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "相信一见钟情吗？",
+    "answers": [
+      "绝对相信！",
+      "那是吸引力不是爱",
+      "爱需要时间",
+      "看情况"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "现在最想改变生活中的什么？",
+    "answers": [
+      "多旅行",
+      "少工作",
+      "更多时间给爱好",
+      "什么都不改——挺满意"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "最欣赏别人什么品质？",
+    "answers": [
+      "勇气",
+      "同理心",
+      "自律",
+      "创造力"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "恋爱中独立性有多重要？",
+    "answers": [
+      "很重要——需要个人空间",
+      "亲密和自由的平衡",
+      "喜欢时时刻刻在一起",
+      "信任中的自由"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "最大的梦想是什么？",
+    "answers": [
+      "组建家庭",
+      "环游世界",
+      "自己创业",
+      "留下些有意义的东西"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "面对变化怎么应对？",
+    "answers": [
+      "喜欢变化",
+      "需要时间适应",
+      "看情况",
+      "变化让我害怕"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "家对你意味着什么？",
+    "answers": [
+      "家人在的地方",
+      "让我舒服的地方",
+      "出生的城市",
+      "心里的港湾"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "出国游还是国内游？",
+    "answers": [
+      "出国——越远越好",
+      "国内风景够了",
+      "轮流来",
+      "只要出门就好"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "东南亚最想去哪？",
+    "answers": [
+      "泰国——美食和寺庙",
+      "日本——文化和美食",
+      "越南——街头小吃",
+      "印尼——巴厘岛"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "理想假期多长？",
+    "answers": [
+      "长周末就够",
+      "至少两周",
+      "一个月",
+      "越长越好"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "独自旅行还是两个人？",
+    "answers": [
+      "独自——完全自由",
+      "两个人更浪漫",
+      "小团队",
+      "看目的地"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "城市还是乡村？",
+    "answers": [
+      "北上广深",
+      "小城市",
+      "乡下有院子",
+      "海边"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "环保意识强吗？",
+    "answers": [
+      "很强——绿色生活",
+      "尽力而为",
+      "不太关注",
+      "觉得被高估了"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "什么时候效率最高？",
+    "answers": [
+      "一大早",
+      "深夜",
+      "下午喝完咖啡",
+      "截止日期前"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "无肉不欢还是素食主义？",
+    "answers": [
+      "必须有肉",
+      "大部分时候吃素",
+      "纯素",
+      "弹性素食"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "最爱哪国菜？",
+    "answers": [
+      "意大利菜",
+      "日料",
+      "泰国菜",
+      "川菜"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "黑胶还是流媒体？",
+    "answers": [
+      "黑胶——音质不同",
+      "网易云/QQ音乐",
+      "看心情",
+      "B站够了"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "现场演出还是DJ之夜？",
+    "answers": [
+      "现场——live的能量",
+      "夜店DJ",
+      "古典音乐会",
+      "小酒吧现场"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "一口气追完还是每天一集？",
+    "answers": [
+      "一口气追到凌晨三点",
+      "每天一集慢慢享受",
+      "交替来",
+      "还是看书吧"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "支持哪个球队？",
+    "answers": [
+      "CBA球队",
+      "中超球队",
+      "没有特别的",
+      "追国外联赛"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "尴尬的时候怎么办？",
+    "answers": [
+      "自嘲一下",
+      "恨不得找个地缝钻进去",
+      "变成段子",
+      "假装什么都没发生"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "有什么创意类爱好？",
+    "answers": [
+      "摄影",
+      "做音乐",
+      "写作",
+      "画画或设计"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "社交媒体是好事还是坏事？",
+    "answers": [
+      "好事——连接人",
+      "坏事——上瘾",
+      "一半一半",
+      "我很少用"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "想生活在哪个年代？",
+    "answers": [
+      "唐朝——盛世风华",
+      "80年代——改革开放",
+      "90年代——怀旧",
+      "现在最好"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "你是哪个星期几？",
+    "answers": [
+      "周一——动力满满",
+      "周三——平衡稳定",
+      "周五——派对时间",
+      "周日——放松休闲"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "用脑还是跟着感觉走？",
+    "answers": [
+      "总是理性思考",
+      "跟着直觉",
+      "两者结合",
+      "问别人的意见"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "诚实重要还是圆滑重要？",
+    "answers": [
+      "诚实，永远",
+      "圆滑能保持和平",
+      "看场合",
+      "带着温柔的诚实"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "紧张的时候会怎样？",
+    "answers": [
+      "话变多",
+      "变得安静",
+      "紧张地笑",
+      "开玩笑"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "你容易信任别人吗？",
+    "answers": [
+      "是的，很快",
+      "需要时间",
+      "只有强烈连接时",
+      "信任需要积累"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "一个词形容自己？",
+    "answers": [
+      "乐观主义者",
+      "现实主义者",
+      "理想主义者",
+      "实干家"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "共同价值观有多重要？",
+    "answers": [
+      "不可或缺",
+      "重要但不是全部",
+      "不同也是丰富",
+      "看什么价值观"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "你的guilty pleasure？",
+    "answers": [
+      "看综艺",
+      "半夜吃零食",
+      "听土味情歌",
+      "整天赖在床上"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "规划未来还是活在当下？",
+    "answers": [
+      "有五年计划",
+      "活在当下",
+      "大方向就行",
+      "计划了又改"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "怎么缓解压力？",
+    "answers": [
+      "运动",
+      "冥想和安静",
+      "找朋友聊",
+      "听音乐放松"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "被夸了怎么反应？",
+    "answers": [
+      "大方接受，谢谢！",
+      "会脸红",
+      "习惯性否认",
+      "看谁夸的"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "给年轻时的自己什么建议？",
+    "answers": [
+      "别那么焦虑",
+      "更勇敢一点",
+      "享受当下",
+      "听从内心"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "喜欢惊喜吗？",
+    "answers": [
+      "超喜欢！",
+      "看情况",
+      "不太喜欢",
+      "只要好的惊喜"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "聊天中你是倾听者还是表达者？",
+    "answers": [
+      "喜欢说",
+      "喜欢听",
+      "轮流来",
+      "看话题"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "什么事最让你生气？",
+    "answers": [
+      "说谎",
+      "不守时",
+      "傲慢",
+      "冷漠"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "生日怎么过？",
+    "answers": [
+      "大party",
+      "和几个好友吃饭",
+      "自己做件特别的事",
+      "出去旅行"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "你多快会爱上一个人？",
+    "answers": [
+      "挺快的",
+      "慢慢来",
+      "对了才会",
+      "很少心动"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "个人成长有多重要？",
+    "answers": [
+      "最高优先级",
+      "重要但不是全部",
+      "自然发生的",
+      "现在的我挺好"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "你输得起吗？",
+    "answers": [
+      "完全可以",
+      "我很好胜",
+      "看什么比赛",
+      "输？不存在的"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "更浪漫——日出还是日落？",
+    "answers": [
+      "日出——新的开始",
+      "日落——魔幻时刻",
+      "满天星星",
+      "都很美"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "在意别人的看法吗？",
+    "answers": [
+      "完全不在意",
+      "亲近的人会在意一点",
+      "挺在意的",
+      "只在意尊重的人"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "无聊的时候做什么？",
+    "answers": [
+      "总能找到事做",
+      "刷视频到停不下来",
+      "出门见朋友",
+      "搞创作"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "友情中最看重什么？",
+    "answers": [
+      "真诚和忠诚",
+      "一起经历的事",
+      "深度对话",
+      "一起笑"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "相信缘分吗？",
+    "answers": [
+      "相信——一切都有原因",
+      "不信——自己创造命运",
+      "一半一半",
+      "不确定"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "面对批评怎么反应？",
+    "answers": [
+      "虚心接受",
+      "先不爽再反思",
+      "看谁说的",
+      "什么都质疑"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "不考虑钱想做什么工作？",
+    "answers": [
+      "旅行博主",
+      "动物保护者",
+      "艺术家或音乐人",
+      "开咖啡店"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "有几个真正的好朋友？",
+    "answers": [
+      "一两个够了",
+      "一只手数得过来",
+      "很多",
+      "独行侠"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "更看重自由还是安全感？",
+    "answers": [
+      "自由至上",
+      "安全感让我安心",
+      "平衡最重要",
+      "安全感中的自由"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "海滩还是高山？",
+    "answers": [
+      "海滩——阳光和大海",
+      "高山——清新空气和美景",
+      "轮流来",
+      "城市游更好"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "旅行中最看重什么？",
+    "answers": [
+      "美食",
+      "文化历史",
+      "放松",
+      "冒险刺激"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "飞机、高铁还是自驾？",
+    "answers": [
+      "飞机——快",
+      "高铁——舒适",
+      "自驾——自由",
+      "绿皮火车——慢旅行"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "亚洲以外的梦想目的地？",
+    "answers": [
+      "意大利——美食和艺术",
+      "新西兰——大自然",
+      "冰岛——极光",
+      "秘鲁——马丘比丘"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "你怎么收拾行李？",
+    "answers": [
+      "列清单完美打包",
+      "最后一分钟塞进去",
+      "极简主义",
+      "总是带太多"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "青旅还是民宿？",
+    "answers": [
+      "青旅——认识新朋友",
+      "民宿——像当地人一样",
+      "酒店——要舒适",
+      "沙发客——冒险精神"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "中国还没去过哪里想去？",
+    "answers": [
+      "西藏——朝圣之路",
+      "新疆——大美风光",
+      "张家界——阿凡达世界",
+      "敦煌——千年文化"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "温泉旅行去哪？",
+    "answers": [
+      "日本——正宗温泉",
+      "云南——腾冲温泉",
+      "海南——热带温泉",
+      "自家浴缸就行"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "去旅游会学当地话吗？",
+    "answers": [
+      "会尝试学",
+      "英语走天下",
+      "学几个词",
+      "翻译APP搞定"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "一次长假还是多次短途？",
+    "answers": [
+      "一年一次长假",
+      "多次周末游",
+      "两者都要",
+      "不怎么旅行"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "旅行必带什么？",
+    "answers": [
+      "相机",
+      "一本好书",
+      "耳机和歌单",
+      "只带必需品"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "会为爱情换城市吗？",
+    "answers": [
+      "马上就搬",
+      "国内都行",
+      "条件都对了才行",
+      "不会，家在这里"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "自驾游必带零食？",
+    "answers": [
+      "辣条",
+      "各种卤味",
+      "水果和坚果",
+      "服务区随便买"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "游轮还是帆船？",
+    "answers": [
+      "游轮——豪华享受",
+      "帆船——冒险精神",
+      "还是陆地好",
+      "皮划艇更带劲"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "赏樱花去哪？",
+    "answers": [
+      "武汉——武大樱花",
+      "日本——东京上野",
+      "昆明——圆通山",
+      "就在小区里赏"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "春节在哪过？",
+    "answers": [
+      "回老家团圆",
+      "出国旅行",
+      "城市里自己过",
+      "和朋友聚会"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "早上的习惯？",
+    "answers": [
+      "咖啡是命",
+      "晨练",
+      "先刷手机",
+      "慢慢吃早饭"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "爱整洁还是创意乱？",
+    "answers": [
+      "每样东西有位置",
+      "创意性凌乱",
+      "基本整洁",
+      "乱但找得到"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "喜欢看什么书？",
+    "answers": [
+      "小说",
+      "商业书和传记",
+      "网络文章",
+      "不太看书"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "健身房还是户外运动？",
+    "answers": [
+      "健身房撸铁",
+      "户外跑步骑车",
+      "瑜伽普拉提",
+      "运动？算了吧"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "周五晚上怎么过？",
+    "answers": [
+      "和朋友出去",
+      "宅在家里",
+      "约会之夜",
+      "搞创作"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "猫派还是狗派？",
+    "answers": [
+      "狗——最好的朋友",
+      "猫——独立精神",
+      "都要！",
+      "都不养"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "咖啡还是茶？",
+    "answers": [
+      "咖啡——黑的",
+      "茶——各种都爱",
+      "看心情",
+      "都不喝——白水"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "手机用多长时间？",
+    "answers": [
+      "太多了",
+      "需要的时候用",
+      "在努力减少",
+      "一直在线"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "省钱还是花钱？",
+    "answers": [
+      "存钱有纪律",
+      "对自己好一点",
+      "存花平衡",
+      "钱就是用来花的"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "出去喝什么？",
+    "answers": [
+      "啤酒",
+      "威士忌",
+      "鸡尾酒",
+      "奶茶或果汁"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "怎么保持身材？",
+    "answers": [
+      "规律健身",
+      "散步就够",
+      "跳舞",
+      "健身APP"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "健康饮食重要吗？",
+    "answers": [
+      "很重要——讲究营养",
+      "工作日健康周末放飞",
+      "想吃什么吃什么",
+      "健康烹饪是爱好"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "上班还是创业？",
+    "answers": [
+      "创业——自己当老板",
+      "上班——稳定",
+      "梦想创业中",
+      "什么都行，开心就好"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "几点睡？",
+    "answers": [
+      "十点前",
+      "十二点左右",
+      "凌晨一点后",
+      "没固定时间"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "对纹身怎么看？",
+    "answers": [
+      "喜欢——自己也有",
+      "别人的挺好看",
+      "不是我的风格",
+      "想纹但不敢"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "梦想的房子？",
+    "answers": [
+      "市中心的公寓",
+      "有花园的房子",
+      "乡村小院",
+      "极简小户型"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "通勤时做什么？",
+    "answers": [
+      "听播客",
+      "听音乐",
+      "听有声书",
+      "安静地待着"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "多久自己做饭一次？",
+    "answers": [
+      "几乎每天",
+      "一周几次",
+      "很少——基本外卖",
+      "周末才认真做"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "逛街还是网购？",
+    "answers": [
+      "逛街——淘宝贝",
+      "网购——方便",
+      "商场逛逛",
+      "不太购物"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "合租还是独居？",
+    "answers": [
+      "合租——有伴",
+      "独居——自己的空间",
+      "和对象一起",
+      "只和好朋友合租"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "有时间机器——过去还是未来？",
+    "answers": [
+      "过去——体验历史",
+      "未来——看看会怎样",
+      "重温完美的一天",
+      "还是现在好"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "什么颜色代表你的性格？",
+    "answers": [
+      "红——热情",
+      "蓝——沉稳",
+      "黄——乐观",
+      "绿——自然"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "荒岛带一样东西？",
+    "answers": [
+      "看不完的书",
+      "一把吉他",
+      "钓鱼竿和刀",
+      "手机（有信号）"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "你的人生座右铭？",
+    "answers": [
+      "活在当下",
+      "一切都是最好的安排",
+      "越挫越勇",
+      "开心最重要"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "最常用的表情包？",
+    "answers": [
+      "😂 笑哭",
+      "❤️ 爱心",
+      "🔥 火",
+      "🙏 拜托"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "如果出名会因为什么？",
+    "answers": [
+      "音乐或艺术",
+      "科学发现",
+      "体育冠军",
+      "网红"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "相信外星人吗？",
+    "answers": [
+      "绝对有",
+      "可能吧",
+      "大概没有",
+      "我们就是外星人"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "在奇幻世界里你是？",
+    "answers": [
+      "法师",
+      "武士",
+      "精灵",
+      "龙"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "KTV必唱歌？",
+    "answers": [
+      "华语经典情歌",
+      "流行神曲",
+      "英文歌",
+      "我只听不唱"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "中彩票先做什么？",
+    "answers": [
+      "环游世界",
+      "买房",
+      "给家人朋友",
+      "投资创业"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "你的恋爱像哪部电影？",
+    "answers": [
+      "大话西游——经典",
+      "喜欢你——吃货恋爱",
+      "前任3——复杂",
+      "怦然心动——纯真"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "没计划的一天怎么过？",
+    "answers": [
+      "睡到自然醒",
+      "随性出门逛",
+      "清待办事项",
+      "去大自然"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "哪个中国文化特点像你？",
+    "answers": [
+      "好客热情",
+      "美食家",
+      "勤奋上进",
+      "注重面子"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "你是哪个季节？",
+    "answers": [
+      "春天——充满活力",
+      "夏天——热情似火",
+      "秋天——温暖舒适",
+      "冬天——酷酷的"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "你的约会风格是哪道菜？",
+    "answers": [
+      "白米饭——简单温暖",
+      "火锅——热辣共享",
+      "小笼包——精致有层次",
+      "烧烤——轻松随意"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "中秋节怎么过？",
+    "answers": [
+      "和家人吃月饼赏月",
+      "朋友聚会",
+      "出去旅行",
+      "一个人也挺好"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "只能吃一样东西一辈子？",
+    "answers": [
+      "火锅",
+      "饺子",
+      "米饭配菜",
+      "面条"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "你的精神动物？",
+    "answers": [
+      "熊猫——慵懒可爱",
+      "狐狸——聪明",
+      "猫——高冷自在",
+      "金鱼——快乐健忘"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "你是什么交通工具？",
+    "answers": [
+      "跑车——快和刺激",
+      "自行车——慢但环保",
+      "高铁——快又舒适",
+      "热气球——自由冒险"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "和朋友聚会做什么？",
+    "answers": [
+      "打麻将",
+      "KTV",
+      "火锅局",
+      "密室逃脱"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "你是什么饮料？",
+    "answers": [
+      "浓缩咖啡——浓烈",
+      "奶茶——甜蜜温暖",
+      "啤酒——随和",
+      "香槟——特别"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "上海完美周日？",
+    "answers": [
+      "外滩散步",
+      "武康路咖啡",
+      "迪士尼一日游",
+      "弄堂里吃小笼包"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "最爱的早餐？",
+    "answers": [
+      "豆浆油条",
+      "包子馒头",
+      "粥和小菜",
+      "咖啡就够了"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "能吃辣吗？",
+    "answers": [
+      "越辣越好",
+      "中辣",
+      "完全不行",
+      "看什么菜"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "咖啡配什么甜点？",
+    "answers": [
+      "蛋黄酥",
+      "芝士蛋糕",
+      "提拉米苏",
+      "牛角面包"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "自己做还是点外卖？",
+    "answers": [
+      "自己做有趣",
+      "外卖方便",
+      "交替来",
+      "一起做——浪漫！"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "看电影配什么？",
+    "answers": [
+      "爆米花",
+      "薯片",
+      "巧克力",
+      "卤味零食"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "什么食物让你想起小时候？",
+    "answers": [
+      "妈妈的红烧肉",
+      "外婆的饺子",
+      "学校门口的炸鸡腿",
+      "过年的年夜饭"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "约会去什么餐厅？",
+    "answers": [
+      "隐藏的意大利餐厅",
+      "日料——寿司柜台",
+      "氛围好的小酒馆",
+      "逛夜市吃小吃"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "甜口还是咸口？",
+    "answers": [
+      "甜——甜品控",
+      "咸——下饭菜",
+      "都行",
+      "早上不吃饭"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "你是什么咖啡？",
+    "answers": [
+      "美式——简单有力",
+      "拿铁——温和",
+      "冰咖啡",
+      "手冲"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "烧烤吃什么？",
+    "answers": [
+      "羊肉串",
+      "海鲜",
+      "蔬菜和豆腐",
+      "什么都来"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "最爱的冰淇淋口味？",
+    "answers": [
+      "巧克力",
+      "抹茶",
+      "芒果",
+      "香草"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "过年吃什么？",
+    "answers": [
+      "饺子——北方经典",
+      "年糕——年年高",
+      "火锅——一家团圆",
+      "海鲜大餐"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "敢尝新奇食物吗？",
+    "answers": [
+      "什么都试",
+      "有点犹豫",
+      "在餐厅才敢",
+      "还是熟悉的好"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "最爱的面？",
+    "answers": [
+      "兰州拉面",
+      "重庆小面",
+      "阳春面",
+      "方便面——深夜神器"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "吃饭喝什么？",
+    "answers": [
+      "白水",
+      "茶",
+      "可乐",
+      "果汁"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "最爱的音乐类型？",
+    "answers": [
+      "华语流行",
+      "摇滚",
+      "说唱",
+      "电子音乐"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "会乐器吗？",
+    "answers": [
+      "吉他",
+      "钢琴",
+      "不会但想学",
+      "只会听"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "最喜欢的华语歌手？",
+    "answers": [
+      "周杰伦",
+      "林俊杰",
+      "邓紫棋",
+      "毛不易"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "歌单什么风格？",
+    "answers": [
+      "夏天感觉",
+      "忧郁思考",
+      "嗨到爆",
+      "chill Lo-Fi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "上次去的演出？",
+    "answers": [
+      "摇滚或独立",
+      "说唱现场",
+      "音乐节",
+      "古典或爵士"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "做饭时放音乐吗？",
+    "answers": [
+      "必须——没音乐不做饭",
+      "看心情",
+      "要安静",
+      "听播客"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "洗澡唱歌吗？",
+    "answers": [
+      "每天开演唱会",
+      "没人听到才唱",
+      "绝对不唱",
+      "哼哼歌"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "广场舞音乐——爱还是恨？",
+    "answers": [
+      "偷偷觉得挺带感",
+      "有共鸣的旋律",
+      "完全不是我的菜",
+      "凤凰传奇yyds"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "自驾放什么歌？",
+    "answers": [
+      "经典老歌",
+      "最新榜单",
+      "什么都放",
+      "让副驾选"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "大型音乐节还是小型现场？",
+    "answers": [
+      "大型——万人狂欢",
+      "小型——离乐手近",
+      "都有魅力",
+      "音乐厅"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "什么歌叫你起床？",
+    "answers": [
+      "温柔的歌",
+      "嗨歌",
+      "鸟叫声就行",
+      "任何闹钟都是敌人"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "最爱的电影类型？",
+    "answers": [
+      "动作惊悚",
+      "喜剧",
+      "剧情文艺",
+      "科幻奇幻"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "最近在追什么剧？",
+    "answers": [
+      "悬疑犯罪",
+      "科幻",
+      "甜剧",
+      "纪录片"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "春晚看吗？",
+    "answers": [
+      "年年看",
+      "偶尔看看",
+      "太长了",
+      "只看小品"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "爱奇艺、腾讯还是B站？",
+    "answers": [
+      "爱奇艺",
+      "腾讯视频",
+      "B站——万能的",
+      "都有会员"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "字幕还是配音？",
+    "answers": [
+      "原声字幕",
+      "配音方便",
+      "看语言",
+      "中文字幕就行"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "最触动你的电影？",
+    "answers": [
+      "爱情片",
+      "战争片",
+      "传记片",
+      "动画片"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "恐怖片——敢看吗？",
+    "answers": [
+      "超爱！",
+      "有人陪才行",
+      "不行——睡不着",
+      "心理悬疑可以"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "经典还是新片？",
+    "answers": [
+      "经典更有味道",
+      "新片更刺激",
+      "混着看",
+      "好看就行"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "看动漫吗？",
+    "answers": [
+      "是的——二次元",
+      "偶尔看",
+      "不太看",
+      "只看宫崎骏"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "电影院吃什么？",
+    "answers": [
+      "爆米花——焦糖味",
+      "爆米花——咸味",
+      "奶茶",
+      "什么都不吃——专心看"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "冬天喜欢什么运动？",
+    "answers": [
+      "滑雪",
+      "滑冰",
+      "泡温泉",
+      "窝在家里"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "运动是自己做还是看别人？",
+    "answers": [
+      "自己做",
+      "看比赛",
+      "都一样喜欢",
+      "都不"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "练过瑜伽吗？",
+    "answers": [
+      "经常练",
+      "试过几次",
+      "不适合我",
+      "想试试"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "最爱的户外运动？",
+    "answers": [
+      "爬山徒步",
+      "骑行",
+      "游泳",
+      "跑步"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "看奥运会吗？",
+    "answers": [
+      "每项都看",
+      "只看某些",
+      "只看开幕式",
+      "不太关注"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "极限运动想试吗？",
+    "answers": [
+      "蹦极跳伞都要！",
+      "鼓起勇气也许",
+      "太危险了",
+      "看别人就好"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "运动约会做什么？",
+    "answers": [
+      "保龄球",
+      "一起学跳舞",
+      "卡丁车",
+      "公园跑步"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "你有多好胜？",
+    "answers": [
+      "超好胜",
+      "有点竞争心",
+      "重在参与",
+      "一点也不——开心就好"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "水上运动还是山上运动？",
+    "answers": [
+      "冲浪潜水",
+      "爬山攀岩",
+      "看季节",
+      "都不"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "世界杯看吗？",
+    "answers": [
+      "必须看——熬夜也看",
+      "决赛看看",
+      "足球不如篮球",
+      "不看体育比赛"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "喜欢什么搞笑风格？",
+    "answers": [
+      "脱口秀",
+      "小品",
+      "即兴喜剧",
+      "讽刺段子"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "最喜欢的脱口秀演员？",
+    "answers": [
+      "李诞",
+      "杨笠",
+      "呼兰",
+      "王建国"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "冷笑话怎么反应？",
+    "answers": [
+      "礼貌笑一下",
+      "翻白眼",
+      "讲个更冷的",
+      "面无表情"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "你讲笑话好笑吗？",
+    "answers": [
+      "能逗笑所有人",
+      "经常忘了笑点",
+      "我是情境幽默",
+      "更喜欢听别人讲"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "刷表情包多吗？",
+    "answers": [
+      "天天——手机全是",
+      "偶尔看看好笑的",
+      "大部分看不懂",
+      "自己P表情包"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "家族微信群什么体验？",
+    "answers": [
+      "早安图片淹没",
+      "偶尔有搞笑内容",
+      "已静音",
+      "我是搞笑担当"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "小时候最爱的动画片？",
+    "answers": [
+      "大闹天宫",
+      "黑猫警长",
+      "葫芦兄弟",
+      "喜羊羊"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "含蓄幽默还是闹腾？",
+    "answers": [
+      "含蓄——慢慢品",
+      "闹腾——大笑",
+      "都能欣赏",
+      "无厘头最好"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "你的笑点在哪？",
+    "answers": [
+      "犀利的一句话",
+      "铺垫很长最后抖包袱",
+      "出其不意的转折",
+      "夸张的表演"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "翻车视频还是萌宠视频更好笑？",
+    "answers": [
+      "翻车——笑到肚子疼",
+      "萌宠——太可爱了",
+      "萌宠翻车——最高",
+      "现实生活更搞笑"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "周末最爱的爱好？",
+    "answers": [
+      "爬山",
+      "做饭烘焙",
+      "打游戏",
+      "拍照"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "纸质书还是电子书？",
+    "answers": [
+      "纸质书最好",
+      "Kindle通勤看",
+      "有声书",
+      "不太看书"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "喜欢种花种草吗？",
+    "answers": [
+      "绿手指达人",
+      "阳台几盆花",
+      "总是养死",
+      "没兴趣"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "收藏什么东西？",
+    "answers": [
+      "手办或周边",
+      "唱片",
+      "收藏体验不收藏东西",
+      "有但不说"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "做DIY吗？",
+    "answers": [
+      "喜欢自己动手",
+      "小红书找灵感",
+      "手残党",
+      "需要时才做"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "博物馆还是画廊？",
+    "answers": [
+      "国家博物馆",
+      "当代艺术馆",
+      "科技馆",
+      "沉浸式展览"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "做手工吗？",
+    "answers": [
+      "做——很放松",
+      "感兴趣但不做",
+      "手残不行",
+      "想学"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "密室逃脱玩得怎样？",
+    "answers": [
+      "每次都通关",
+      "出主意的人",
+      "会慌",
+      "还没玩过"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "想学什么乐器？",
+    "answers": [
+      "钢琴——优雅",
+      "吉他——万能",
+      "鼓——有力量",
+      "古筝——中国风"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "听播客——什么主题？",
+    "answers": [
+      "犯罪悬疑",
+      "商业成长",
+      "脱口秀搞笑",
+      "访谈类"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "做志愿者吗？",
+    "answers": [
+      "经常",
+      "偶尔",
+      "没有但应该",
+      "更多是捐款"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "喜欢跳舞吗？",
+    "answers": [
+      "超爱！",
+      "喝了酒才跳",
+      "两只左脚",
+      "自己在家跳"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "梦想的创意项目？",
+    "answers": [
+      "写本小说",
+      "作曲",
+      "拍短片",
+      "开发APP"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "AI——兴奋还是担心？",
+    "answers": [
+      "兴奋——未来已来",
+      "担心——会去哪里",
+      "好奇但谨慎",
+      "无所谓"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "浏览器开了几个标签页？",
+    "answers": [
+      "5个以下",
+      "10-20个",
+      "50+——有问题",
+      "用收藏夹"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "打游戏吗？",
+    "answers": [
+      "硬核玩家",
+      "偶尔放松",
+      "只玩手游",
+      "完全不玩"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "电动车还是油车？",
+    "answers": [
+      "电动——未来趋势",
+      "油车——靠谱",
+      "地铁加共享单车",
+      "能开就行"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "新科技多快尝试？",
+    "answers": [
+      "第一天就买",
+      "等评测",
+      "大家都用了再说",
+      "慢半拍"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "密码怎么管？",
+    "answers": [
+      "密码管理器",
+      "到处同一个（糟糕）",
+      "写在纸上",
+      "指纹/人脸识别"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "VR体验过吗？",
+    "answers": [
+      "超棒！",
+      "一次——很惊艳",
+      "没有但想试",
+      "不感兴趣"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "订阅了几个会员？",
+    "answers": [
+      "1-2个够了",
+      "3-4个",
+      "5+——都需要",
+      "不订——蹭朋友的"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "智能手表还是传统手表？",
+    "answers": [
+      "智能手表——数据重要",
+      "传统——经典",
+      "不戴表",
+      "看场合"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "对交友软件怎么看？",
+    "answers": [
+      "最好的发明",
+      "还行吧，但线下更好",
+      "有好有坏",
+      "你不就在用吗？"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "想家了怎么办？",
+    "answers": [
+      "打电话给家人",
+      "做家乡菜",
+      "听熟悉的歌",
+      "我很少想家"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "奢侈对你是什么？",
+    "answers": [
+      "自己的时间",
+      "旅行和体验",
+      "美食",
+      "物质享受"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "你是给予者还是索取者？",
+    "answers": [
+      "给予——喜欢分享",
+      "平衡重要",
+      "看情况",
+      "说实话给太多了"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "最勇敢的时刻？",
+    "answers": [
+      "做了个大改变",
+      "表白了",
+      "一个人去陌生地方",
+      "还在等那个时刻"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "对传统怎么看？",
+    "answers": [
+      "很喜欢",
+      "有些行有些不行",
+      "喜欢创新",
+      "传统过时了"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "完美的夜晚是？",
+    "answers": [
+      "烛光下深聊",
+      "笑到肚子疼",
+      "一起体验新事物",
+      "安静的二人世界"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "有计划还是随缘？",
+    "answers": [
+      "随缘是生活的调料",
+      "需要大方向",
+      "一切都要按计划",
+      "计划了又改"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "陌生人说过最好的话？",
+    "answers": [
+      "你笑起来真好看",
+      "你的能量很感染人",
+      "你很勇敢",
+      "不记得了"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "五感中最重要的？",
+    "answers": [
+      "视觉——看世界",
+      "听觉——音乐和声音",
+      "味觉——美食",
+      "触觉——温暖和联系"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "怎么表达感情？",
+    "answers": [
+      "小举动",
+      "说出来",
+      "用行动",
+      "拥抱"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "守时重要吗？",
+    "answers": [
+      "很重要——永远不迟到",
+      "大部分时候准时",
+      "迟到五分钟可以",
+      "时间是相对的"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "隐藏的优点？",
+    "answers": [
+      "共情力",
+      "耐心",
+      "创造力",
+      "适应力"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "打电话还是发消息？",
+    "answers": [
+      "打电话——更亲切",
+      "发消息——有时间想",
+      "语音消息",
+      "看对象"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "去过多少个国家？",
+    "answers": [
+      "5个以下",
+      "5-15个",
+      "15-30个",
+      "30+"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "跟团还是自由行？",
+    "answers": [
+      "自由行——自己的节奏",
+      "小团队",
+      "跟团——省心",
+      "两个人最好"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "数字游牧想试吗？",
+    "answers": [
+      "马上出发！",
+      "几周可以",
+      "不行要舒适",
+      "梦想中"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "冥想吗？",
+    "answers": [
+      "每天",
+      "偶尔",
+      "坐不住",
+      "没试过"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "时尚重要吗？",
+    "answers": [
+      "追潮流",
+      "自己的风格更重要",
+      "舒服优先",
+      "不在意"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "喜欢泡澡吗？",
+    "answers": [
+      "超喜欢——放松",
+      "偶尔",
+      "淋浴够了",
+      "温泉更好"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "日程怎么管理？",
+    "answers": [
+      "日历APP",
+      "手写计划本",
+      "脑子记——基本靠谱",
+      "不管理——随缘"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "最爱的冰淇淋？",
+    "answers": [
+      "巧克力",
+      "抹茶",
+      "草莓",
+      "芒果"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "看美食节目吗？",
+    "answers": [
+      "舌尖上的中国",
+      "B站美食UP主",
+      "自己做更好",
+      "看了饿"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "买面包还是自己烤？",
+    "answers": [
+      "楼下面包店",
+      "周末自己烤",
+      "超市面包就行",
+      "不怎么吃面包"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "唱歌好听吗？",
+    "answers": [
+      "挺好的",
+      "浴室里是巨星",
+      "不好但声音大",
+      "从不唱"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "怎么发现新音乐？",
+    "answers": [
+      "网易云每日推荐",
+      "朋友推荐",
+      "抖音/短视频",
+      "电台"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "能反复看的电影？",
+    "answers": [
+      "搞笑喜剧",
+      "史诗冒险",
+      "引人深思的",
+      "小时候的电影"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "纪录片——什么主题？",
+    "answers": [
+      "自然动物",
+      "犯罪悬疑",
+      "历史",
+      "科技未来"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "马拉松跑得了吗？",
+    "answers": [
+      "是我的目标",
+      "半马也许",
+      "5公里就行",
+      "跑步不如骑车"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "跳舞算运动吗？",
+    "answers": [
+      "当然！",
+      "想学拉丁舞",
+      "不太适合我",
+      "零节奏感"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "能笑自己吗？",
+    "answers": [
+      "总能——自嘲是强项",
+      "大部分时候",
+      "小事上可以",
+      "太认真了"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "谐音梗——喜欢还是讨厌？",
+    "answers": [
+      "喜欢——越烂越好",
+      "偶尔好笑",
+      "多数时候无聊",
+      "我是谐音梗大王"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "有什么奇特爱好？",
+    "answers": [
+      "有，很骄傲",
+      "收藏些奇怪的东西",
+      "都很普通",
+      "活着就是爱好"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "拼图——放松还是抓狂？",
+    "answers": [
+      "放松",
+      "20分钟就厌了",
+      "有人陪还行",
+      "数独更好"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "软件更新马上装吗？",
+    "answers": [
+      "马上",
+      "拖好几周",
+      "只装安全更新",
+      "自动更新"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "一周没网能活吗？",
+    "answers": [
+      "没问题",
+      "难但能做到",
+      "不可能",
+      "度假时可以"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "早上的仪式感？",
+    "answers": [
+      "咖啡和新闻",
+      "运动加洗澡",
+      "赖床五次",
+      "感恩冥想"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "你是什么元素？",
+    "answers": [
+      "火——热情",
+      "水——适应力强",
+      "土——踏实",
+      "风——自由"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "工作有多重要？",
+    "answers": [
+      "定义了我",
+      "重要但不是全部",
+      "谋生手段",
+      "工作生活平衡更重要"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "有人哭了你会？",
+    "answers": [
+      "拥抱ta",
+      "倾听",
+      "想办法逗笑",
+      "有点手足无措"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "能量来源是？",
+    "answers": [
+      "和人在一起",
+      "独处时光",
+      "新体验",
+      "创作"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "宁可感受太多还是太少？",
+    "answers": [
+      "太多——我很感性",
+      "太少——自我保护",
+      "刚刚好",
+      "情感是力量"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "探险游还是全包游？",
+    "answers": [
+      "探险——每天都新鲜",
+      "全包——泳池和自助餐",
+      "两者结合",
+      "文化游"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "打过工度假吗？",
+    "answers": [
+      "最好的经历",
+      "想去但没去成",
+      "错过了",
+      "数字游牧更好"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "川藏线想走吗？",
+    "answers": [
+      "必须走一次！",
+      "318国道自驾梦",
+      "高原反应怕",
+      "长途不适合我"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "跨年怎么过？",
+    "answers": [
+      "派对倒计时",
+      "和好友小聚",
+      "旅行跨年",
+      "没特别的"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "需要睡多久？",
+    "answers": [
+      "6小时够了",
+      "必须8小时",
+      "越多越好",
+      "不规律"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "阳台、花园还是天台？",
+    "answers": [
+      "花园烧烤",
+      "城市阳台",
+      "天台看风景",
+      "有窗户就行"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "地铁还是开车？",
+    "answers": [
+      "地铁公交",
+      "自己开车",
+      "共享单车",
+      "走路"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "下雨天怎么过？",
+    "answers": [
+      "窝在家里",
+      "去博物馆或电影院",
+      "室内运动",
+      "照样出门"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "收藏者还是极简主义？",
+    "answers": [
+      "收藏——都是回忆",
+      "极简——少就是多",
+      "中间",
+      "在断舍离中"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "早午餐必点什么？",
+    "answers": [
+      "班尼迪克蛋",
+      "牛油果吐司",
+      "松饼",
+      "鲜榨果汁"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "冬天喝什么汤？",
+    "answers": [
+      "排骨汤",
+      "酸辣汤",
+      "鸡汤",
+      "冬阴功"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "什么歌代表你的恋爱？",
+    "answers": [
+      "甜蜜情歌",
+      "伤感ballad",
+      "嗨歌",
+      "还在找"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "你是电影里的什么角色？",
+    "answers": [
+      "搞笑配角",
+      "神秘主角",
+      "浪漫女/男主",
+      "聪明军师"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "骑行多远？",
+    "answers": [
+      "家附近转转",
+      "20-50公里",
+      "100+公里",
+      "不骑车"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "发生过最搞笑的事？",
+    "answers": [
+      "尴尬的误会",
+      "公共场合出糗",
+      "朋友间的梗",
+      "我自己就是笑话"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "集过邮/盖章吗？",
+    "answers": [
+      "经常收集",
+      "试过一次",
+      "感兴趣",
+      "那是什么"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "无人机还是运动相机？",
+    "answers": [
+      "无人机——上帝视角",
+      "运动相机——第一视角",
+      "都要",
+      "手机够了"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "cos什么？",
+    "answers": [
+      "动漫角色",
+      "搞笑的",
+      "和朋友统一",
+      "绝对不cos"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "推荐一本书？",
+    "answers": [
+      "感人的小说",
+      "解释世界的非虚构",
+      "搞笑漫画",
+      "推荐电影不推荐书"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "能接受异地恋吗？",
+    "answers": [
+      "可以",
+      "最好不要",
+      "限定时间可以",
+      "看对方"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "睡不着做什么？",
+    "answers": [
+      "看书",
+      "听播客",
+      "写日记",
+      "数羊"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "你是好的倾听者吗？",
+    "answers": [
+      "大家都这么说",
+      "在努力",
+      "有时走神",
+      "更喜欢说"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "小成就怎么庆祝？",
+    "answers": [
+      "吃顿好的",
+      "和朋友分享",
+      "默默开心",
+      "设下一个目标"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "怕坐飞机吗？",
+    "answers": [
+      "一点不——喜欢飞",
+      "起飞有点紧张",
+      "怕但还是坐",
+      "所以坐高铁"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "旅行纪念品买什么？",
+    "answers": [
+      "冰箱贴",
+      "当地特产",
+      "只拍照和回忆",
+      "不买纪念品"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "圣诞/平安夜怎么过？",
+    "answers": [
+      "和对象浪漫过",
+      "和朋友聚会",
+      "和家人",
+      "不过圣诞"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "家里有几盆植物？",
+    "answers": [
+      "绿色丛林",
+      "精选几盆",
+      "一盆在坚持",
+      "没有"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "夜宵吃什么？",
+    "answers": [
+      "方便面",
+      "烧烤",
+      "水果",
+      "忍住不吃"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "哪个调料不能缺？",
+    "answers": [
+      "盐和胡椒",
+      "大蒜",
+      "老干妈",
+      "辣椒"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "有没有让你想起某个人的歌？",
+    "answers": [
+      "有——让我开心",
+      "有——有点苦涩",
+      "好几首",
+      "不会把歌和人联系"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "最喜欢的导演？",
+    "answers": [
+      "张艺谋",
+      "诺兰",
+      "是枝裕和",
+      "不太注意导演"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "跑过半马吗？",
+    "answers": [
+      "跑过好几次",
+      "一次",
+      "在愿望清单上",
+      "绝对不会"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "三个词形容你的幽默？",
+    "answers": [
+      "冷、黑、机智",
+      "活泼、傻、自然",
+      "含蓄、荒诞、出其不意",
+      "温暖、友善、软萌"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "想写书吗？",
+    "answers": [
+      "想写小说",
+      "专业领域的书",
+      "旅行博客够了",
+      "写作不适合我"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "手机装了多少APP？",
+    "answers": [
+      "只装必要的",
+      "正常数量",
+      "太多——从不清理",
+      "经常试新的"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "隐身一天会做什么？",
+    "answers": [
+      "溜进禁区",
+      "整朋友",
+      "就看看",
+      "什么都不做——乖乖的"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "妥协怎么看？",
+    "answers": [
+      "很灵活",
+      "重要的事不让步",
+      "妥协是关键",
+      "喜欢找创意解决方案"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "最近第一次做了什么？",
+    "answers": [
+      "试了新菜",
+      "去了没去过的地方",
+      "尝试了运动",
+      "跟人道了歉"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "最喜欢的机场？",
+    "answers": [
+      "浦东——国际范",
+      "首都/大兴",
+      "新加坡樟宜",
+      "机场都一样"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "喝果昔吗？",
+    "answers": [
+      "每天早上",
+      "偶尔",
+      "做起来麻烦",
+      "直接吃水果"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "最爱的主食？",
+    "answers": [
+      "米饭",
+      "面条",
+      "馒头",
+      "饺子"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "古典音乐——无聊还是感动？",
+    "answers": [
+      "感动——起鸡皮疙瘩",
+      "偶尔用来放松",
+      "有点无聊",
+      "只听电影配乐"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "一天看多久屏幕？",
+    "answers": [
+      "不到一小时",
+      "1-2小时",
+      "3+小时",
+      "不看电视——只看手机"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "乒乓球还是羽毛球？",
+    "answers": [
+      "乒乓球——国球",
+      "羽毛球",
+      "篮球！",
+      "都不"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "什么梗代表你的人生？",
+    "answers": [
+      "一切都在燃烧但我微笑",
+      "期望vs现实",
+      "这很好的狗",
+      "我就是梗王"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "厨艺什么水平？",
+    "answers": [
+      "大厨——全套菜",
+      "进阶——爱实验",
+      "新手——基础菜",
+      "泡面冠军"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "想要家用机器人吗？",
+    "answers": [
+      "扫地机器人已有",
+      "什么都要机器人",
+      "自己做",
+      "太科幻了"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "想流利说什么语言？",
+    "answers": [
+      "英语——全球通用",
+      "日语——文化迷",
+      "法语——浪漫",
+      "西班牙语——全球使用"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "人生愿望清单第一项？",
+    "answers": [
+      "看极光",
+      "跳伞",
+      "出本书",
+      "走遍每个大洲"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "孤独怎么面对？",
+    "answers": [
+      "享受独处",
+      "打电话给人",
+      "去人多的地方",
+      "有点难受"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "放下过去容易吗？",
+    "answers": [
+      "容易——向前看",
+      "需要点时间",
+      "有些事放不下",
+      "在练习中"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "在朋友圈里你是？",
+    "answers": [
+      "规划者",
+      "气氛组",
+      "安静的那个",
+      "和事佬"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "旅行照怎么拍？",
+    "answers": [
+      "相机必带",
+      "手机够了",
+      "用眼睛记住",
+      "自拍多"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "周一怎么熬？",
+    "answers": [
+      "积极——新的一周",
+      "周一犯困",
+      "周二才有状态",
+      "周一和其他天一样"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "包子还是饺子？",
+    "answers": [
+      "灌汤包",
+      "韭菜鸡蛋饺子",
+      "都爱",
+      "馄饨"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "最好的音乐年代？",
+    "answers": [
+      "80年代——经典",
+      "90年代——华语黄金期",
+      "00年代——周杰伦时代",
+      "现在的音乐最好"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "电影马拉松看什么系列？",
+    "answers": [
+      "哈利·波特",
+      "指环王",
+      "漫威",
+      "星球大战"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "早上练还是晚上练？",
+    "answers": [
+      "早上——一天的能量",
+      "晚上——释放压力",
+      "午休时",
+      "运动不看时间"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "中文里最搞笑的词？",
+    "answers": [
+      "给力",
+      "佛系",
+      "内卷",
+      "搞笑的是人不是词"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "拍照用什么？",
+    "answers": [
+      "相机——画质",
+      "手机——随时拍",
+      "胶片相机——复古",
+      "不怎么拍照"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "在数码产品上花多少钱？",
+    "answers": [
+      "很多——追新",
+      "只买需要的",
+      "二手和打折",
+      "尽量少花"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "活在哪句话里？",
+    "answers": [
+      "车到山前必有路",
+      "天道酬勤",
+      "开心就好",
+      "既来之则安之"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "日常怎么表达爱？",
+    "answers": [
+      "端杯咖啡/茶到床边",
+      "牵手散步",
+      "认真倾听",
+      "小惊喜"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "天气影响心情吗？",
+    "answers": [
+      "很大——喜欢晴天",
+      "不太——保持乐观",
+      "下雨有点郁闷",
+      "什么天气都喜欢"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "高铁上吃什么？",
+    "answers": [
+      "泡面——经典",
+      "自带零食",
+      "高铁盒饭",
+      "不在车上吃"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "在家穿什么？",
+    "answers": [
+      "运动裤T恤",
+      "睡衣",
+      "和出门一样",
+      "舒服的家居服"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "最爱的奶茶口味？",
+    "answers": [
+      "珍珠奶茶",
+      "杨枝甘露",
+      "芋泥奶茶",
+      "不喝奶茶"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "什么让你笑开花？",
+    "answers": [
+      "真诚的夸赞",
+      "温暖的拥抱",
+      "好的聊天",
+      "美丽的风景"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "在家光脚还是穿袜子？",
+    "answers": [
+      "光脚",
+      "毛绒袜",
+      "拖鞋",
+      "穿到脱鞋为止"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "最疯狂的梦想？",
+    "answers": [
+      "搬到小岛上",
+      "开自己的餐厅",
+      "环球航海",
+      "破个世界纪录"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "三亚还是哈尔滨？",
+    "answers": [
+      "三亚——海滩",
+      "哈尔滨——冰雪世界",
+      "看季节",
+      "都想去"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "你在城市最爱的地方？",
+    "answers": [
+      "常去的咖啡店",
+      "公园",
+      "河边或湖边",
+      "家里的沙发"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "对恋爱有什么期望？",
+    "answers": [
+      "深度连接",
+      "一起成长",
+      "快乐轻松",
+      "安全感和归属感"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "回消息多快？",
+    "answers": [
+      "秒回",
+      "一小时内",
+      "想起来才回",
+      "我回复很慢"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "午饭吃什么？",
+    "answers": [
+      "自带便当",
+      "食堂",
+      "出去吃",
+      "有时候跳过"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "创意型还是分析型？",
+    "answers": [
+      "创意——艺术和点子",
+      "分析——数据和逻辑",
+      "都有",
+      "都不是——实干型"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "导航靠地图还是直觉？",
+    "answers": [
+      "导航——永远",
+      "自己城市记得路",
+      "手机地图",
+      "喜欢问路"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "冒险型还是稳妥型？",
+    "answers": [
+      "冒险——不冒险不收获",
+      "计算过的风险",
+      "安全第一",
+      "看领域"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "你是哪个武侠人物？",
+    "answers": [
+      "令狐冲——潇洒",
+      "郭靖——忠厚",
+      "黄蓉——聪明",
+      "韦小宝——机灵"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "涂防晒吗？",
+    "answers": [
+      "SPF50必须",
+      "大部分时候",
+      "经常忘",
+      "就要晒黑"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "最爱的市场？",
+    "answers": [
+      "菜市场——新鲜",
+      "跳蚤市场",
+      "美食节",
+      "网上买"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "下一个想去的地方？",
+    "answers": [
+      "土耳其——伊斯坦布尔",
+      "挪威——峡湾",
+      "摩洛哥——异域风情",
+      "台湾——夜市美食"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "早晨BGM？",
+    "answers": [
+      "活力pop",
+      "chill Lo-Fi",
+      "新闻播客",
+      "安静——不要声音"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "当一天别人会选谁？",
+    "answers": [
+      "著名音乐人",
+      "航天员",
+      "动物园管理员",
+      "国家领导人"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "醒来第一件事？",
+    "answers": [
+      "看手机",
+      "喝水",
+      "伸懒腰",
+      "想继续睡"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "失望了怎么办？",
+    "answers": [
+      "学习然后前进",
+      "允许自己难过",
+      "找朋友聊",
+      "扎进工作"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "交友软件最真实的stereotype？",
+    "answers": [
+      "都不认真",
+      "确实有好人",
+      "选择太多",
+      "更了解自己了"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "日常解压方式？",
+    "answers": [
+      "运动",
+      "泡澡",
+      "和朋友聊天",
+      "到大自然走走"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "最感恩什么？",
+    "answers": [
+      "家人和朋友",
+      "健康",
+      "自由",
+      "每一个新的一天"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  }
+]

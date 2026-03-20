@@ -1,0 +1,5434 @@
+[
+  {
+    "category": "personality",
+    "question_text": "ماذا يثير إعجابك في أول موعد؟",
+    "answers": [
+      "مقهى مخفي في حي قديم",
+      "جولة في سوق تقليدي",
+      "عشاء على سطح بإطلالة",
+      "مشي على الكورنيش"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "كيف تعيد شحن طاقتك بعد أسبوع طويل؟",
+    "answers": [
+      "ماراثون مسلسلات",
+      "خروج مع الأصدقاء",
+      "رحلة للطبيعة",
+      "طبخ شيء مميز"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "ما هو أسلوبك في الرسائل في العلاقة؟",
+    "answers": [
+      "ميمز طوال اليوم",
+      "صباح الخير مع صورة",
+      "رسائل صوتية طويلة",
+      "رسائل قصيرة ومباشرة"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "لو قضينا يوم سوا، مين يخطط؟",
+    "answers": [
+      "أنا أفاجئك",
+      "أنت تقرر",
+      "نخطط سوا",
+      "نمشي على المزاج"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "أي صفة تقدرها أكثر في الشريك؟",
+    "answers": [
+      "حس الفكاهة",
+      "الطموح",
+      "الحنان",
+      "روح المغامرة"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "كيف تعبر عن حبك؟",
+    "answers": [
+      "بالكلام الحلو",
+      "بالطبخ للشخص",
+      "بهدايا مفاجئة",
+      "بوقت مميز معاً"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "أي نوع من الفكاهة يجذبك؟",
+    "answers": [
+      "السخرية الذكية",
+      "الكوميديا العفوية",
+      "الفكاهة السوداء",
+      "الفكاهة العبثية"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "هل أنت شخص صباحي أم ليلي؟",
+    "answers": [
+      "صباحي وأستغل يومي",
+      "ليلي دائماً",
+      "حسب البرنامج",
+      "أتكيف مع اللي معي"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "كيف تصف نفسك في الحفلات؟",
+    "answers": [
+      "روح الحفلة",
+      "أتكلم مع القليل بعمق",
+      "على حلبة الرقص",
+      "عند البوفيه"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "ما الذي يخليك تحب شخص؟",
+    "answers": [
+      "ضحكته",
+      "ذكاؤه",
+      "شغفه بشيء معين",
+      "طريقته مع الناس"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "أي نوع سفر تفضل؟",
+    "answers": [
+      "باكباكر في جنوب شرق آسيا",
+      "منتجع شامل",
+      "رحلة بالسيارة في المغرب",
+      "جولة ثقافية في أوروبا"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "بحر أم جبل للإجازة؟",
+    "answers": [
+      "شاطئ استوائي",
+      "جبال لبنان",
+      "بحيرة هادئة",
+      "مدينة ساحلية"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "كيف يومك المثالي يوم الجمعة؟",
+    "answers": [
+      "فطور متأخر وسوق شعبي",
+      "كنبة ومسلسل",
+      "رياضة في الهواء الطلق",
+      "طبخ طوال اليوم"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "ما أهمية عملك في حياتك؟",
+    "answers": [
+      "هو الأولوية الأولى",
+      "مهم لكن مو كل شيء",
+      "أفضل التوازن",
+      "أعيش لأستمتع"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "أي قوة خارقة تختار؟",
+    "answers": [
+      "الانتقال الآني",
+      "قراءة الأفكار",
+      "الطيران",
+      "السفر عبر الزمن"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "ما هو أكلك المفضل للراحة؟",
+    "answers": [
+      "شاورما",
+      "كبسة",
+      "كشري",
+      "منسف"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "أي نوع موسيقى يعبر عنك؟",
+    "answers": [
+      "راب عربي",
+      "طرب كلاسيكي",
+      "بوب عربي",
+      "خليجي"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "film",
+    "question_text": "أي نوع أفلام تفضل في موعد؟",
+    "answers": [
+      "كوميديا رومانسية",
+      "إثارة وتشويق",
+      "دراما عميقة",
+      "أنيميشن بيكسار"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "sports",
+    "question_text": "أي رياضة تعشقها؟",
+    "answers": [
+      "كرة قدم",
+      "بادل",
+      "سباحة",
+      "جري"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "ما أكثر عذر إبداعي للتأخر عن موعد؟",
+    "answers": [
+      "ضعت وأنا أشوف ميمز",
+      "قطتي خبت مفاتيحي",
+      "الخرائط وداني مدينة ثانية",
+      "كنت أختار البلايلست المثالية"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "hobby",
+    "question_text": "أي هواية تحب تتعلمها مع شريكك؟",
+    "answers": [
+      "رقص السالسا",
+      "طبخ عالمي",
+      "تسلق",
+      "تصوير"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "كيف تستخدم جوالك في العلاقة؟",
+    "answers": [
+      "رسائل مستمرة",
+      "مكالمات مهمة فقط",
+      "مشاركة ميمز وريلز",
+      "أقل استخدام ممكن"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "ما أول شيء تلاحظينه في شخص؟",
+    "answers": [
+      "ابتسامته",
+      "طريقة كلامه",
+      "ستايله",
+      "طاقته"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "هل أنتِ غيورة في العلاقة؟",
+    "answers": [
+      "ولا شوي",
+      "شوي بس",
+      "حسب الموقف",
+      "كثير، أنا حساسة"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "تفضلين الفكاهة أم الرومانسية؟",
+    "answers": [
+      "فكاهة دائماً",
+      "رومانسية كلاسيكية",
+      "مزيج مثالي",
+      "بالأفعال مو الكلام"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "كيف تتعاملين مع الخلافات في العلاقة؟",
+    "answers": [
+      "أتكلم فوراً",
+      "أحتاج مساحتي أول",
+      "أكتب رسالة طويلة",
+      "بالفكاهة أخفف التوتر"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "وجهتك الحلم لشهر العسل؟",
+    "answers": [
+      "المالديف",
+      "باريس",
+      "اليابان",
+      "سانتوريني"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "ما روتين العناية اللي ما تتخلين عنه؟",
+    "answers": [
+      "سكن كير كامل",
+      "يوغا أو تأمل",
+      "كتابة يوميات",
+      "تمارين بدون أعذار"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "لو كنتِ شخصية في مسلسل عربي، مين تكونين؟",
+    "answers": [
+      "البطلة الدرامية",
+      "الشريرة الأنيقة",
+      "الصاحبة المضحكة",
+      "الغامضة اللي تظهر آخر شيء"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "أي حلو يسعدك أكثر؟",
+    "answers": [
+      "كنافة نابلسية",
+      "أم علي",
+      "بقلاوة",
+      "آيس كريم يدوي"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "أي أغنية تحطينها للرقص مع شريكك؟",
+    "answers": [
+      "أغنية فيروز",
+      "أغنية عمرو دياب",
+      "أغنية نانسي عجرم",
+      "أغنية خليجية حماسية"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "film",
+    "question_text": "أي مسلسل يشدك الحين؟",
+    "answers": [
+      "دراما كورية",
+      "إثارة نتفلكس",
+      "كوميديا خفيفة",
+      "وثائقي مثير"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "sports",
+    "question_text": "أي نشاط بدني يحفزك أكثر؟",
+    "answers": [
+      "بيلاتس",
+      "رقص",
+      "سباحة",
+      "مشي في الطبيعة"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "ماذا تفعلين لو موعدك جاب ورد ذابل؟",
+    "answers": [
+      "أضحك وأحسه لطيف",
+      "أتظاهر إني ما شفته",
+      "أعلمه يختار ورد",
+      "أحطه بالماء وإن شاء الله يعيش"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "hobby",
+    "question_text": "ما هوايتك السرية؟",
+    "answers": [
+      "كتابة شعر",
+      "رسم",
+      "أشغال يدوية",
+      "غناء لما محد يسمع"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "كم تأخذين وقت ترد على رسالة من شخص يعجبك؟",
+    "answers": [
+      "فوراً",
+      "أنتظر شوي عشان ما أبان متحمسة",
+      "لما أتذكر",
+      "حسب مزاجي"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "هل تؤمنين بالحب من أول نظرة؟",
+    "answers": [
+      "تماماً",
+      "أؤمن بالانجذاب من أول نظرة",
+      "لا، الحب يُبنى",
+      "بس في الأفلام"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "أي تطبيق تستخدمينه أكثر للتعارف؟",
+    "answers": [
+      "ستوريات إنستغرام",
+      "تيك توك",
+      "واتساب مباشر",
+      "بالواقع، بدون تطبيقات"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "تفضلين سفر عشوائي أم مخطط؟",
+    "answers": [
+      "عشوائي بالكامل",
+      "كل شيء مخطط",
+      "نص ونص",
+      "شريكي يقرر"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "ما أكثر شيء تقدرينه بيومك؟",
+    "answers": [
+      "وقت مع صديقاتي",
+      "استقلاليتي",
+      "لحظات هدوء",
+      "تجارب جديدة"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "أي إيموجي يمثلك؟",
+    "answers": [
+      "اللي دايم تضحك",
+      "النارية",
+      "الحالمة",
+      "الشقية"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "مشروبك المفضل لسهرة مع صديقاتك؟",
+    "answers": [
+      "عصير رمان طازج",
+      "شاي مغربي بالنعناع",
+      "قهوة عربية",
+      "سموذي صحي"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "أي فنان تحطينه بعرسك؟",
+    "answers": [
+      "عمرو دياب",
+      "فيروز",
+      "تامر حسني",
+      "بلقيس"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "تعتبرين نفسك عقلانية أم عاطفية؟",
+    "answers": [
+      "عقلانية جداً",
+      "عاطفية كثير",
+      "حسب الموقف",
+      "مزيج متوازن"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "hobby",
+    "question_text": "أي خطة نهاية أسبوع تفرحك أكثر؟",
+    "answers": [
+      "سبا",
+      "سوق عتيق",
+      "ورشة فخار",
+      "فطور مع صديقاتي"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "ما رأيك بالتعارف عبر التطبيقات؟",
+    "answers": [
+      "أحبه، ممتع",
+      "أفضل التعارف بالواقع",
+      "مكمل للواقع",
+      "هو مستقبل الحب"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "تفضلين المباشرة أم اللطف في الكلام؟",
+    "answers": [
+      "مباشر بدون لف",
+      "بلطف وحنان",
+      "حسب الموضوع",
+      "مكتوب عشان أستوعب"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "film",
+    "question_text": "فيلمك الرومانسي المفضل؟",
+    "answers": [
+      "الحب في زمن الكوليرا",
+      "تايتانيك",
+      "عمارة يعقوبيان",
+      "لا لا لاند"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "sports",
+    "question_text": "تروحين مباراة كرة قدم مع شريكك؟",
+    "answers": [
+      "أحب كرة القدم",
+      "بس لو الجو حلو",
+      "أفضل خطط ثانية",
+      "بس عشان الأكل"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "ماذا لو شريكك يطبخ سيء بس بكل حب؟",
+    "answers": [
+      "آكل كل شيء بابتسامة",
+      "أقترح نتعلم نطبخ سوا",
+      "أطلب أكل بالسر",
+      "أطبخ أنا المرة الجاية"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "ما الذي يحفزك أكثر في الحياة؟",
+    "answers": [
+      "التطور المهني",
+      "العلاقات العميقة",
+      "التجارب الفريدة",
+      "بناء بيت سعيد"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كيف ترى حياتك بعد 5 سنوات؟",
+    "answers": [
+      "مسافر حول العالم",
+      "مستقر مع عائلة",
+      "أبدأ مشروعي الخاص",
+      "أستمتع بكل يوم بدون ضغط"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ما دور العائلة في حياتك؟",
+    "answers": [
+      "أهم شيء",
+      "مهمة بحدود",
+      "أصدقائي هم عائلتي",
+      "أبني عائلتي الخاصة"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ماذا تعلمت من علاقاتك السابقة؟",
+    "answers": [
+      "التواصل الأفضل",
+      "عدم فقدان نفسي",
+      "أن الاحترام هو الأساس",
+      "عدم إجبار الأمور"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ماذا تبحث عنه في علاقة جدية؟",
+    "answers": [
+      "شراكة وفريق",
+      "شغف مستمر",
+      "استقرار وسلام",
+      "نمو متبادل"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "رحلتك القادمة المثالية؟",
+    "answers": [
+      "سفاري في أفريقيا",
+      "طريق التوابل في المغرب",
+      "معابد اليابان",
+      "جزر اليونان"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "هل تعيش في بلد آخر؟",
+    "answers": [
+      "نعم، عندي خطة",
+      "بس مؤقتاً",
+      "أفضل بلدي",
+      "مع الشخص المناسب، أي مكان"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "كيف روتينك الصباحي؟",
+    "answers": [
+      "قهوة وأخبار",
+      "رياضة بدري",
+      "تأمل وكتابة",
+      "غفوة لآخر لحظة"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "كم المال مهم لك؟",
+    "answers": [
+      "أداة لحياة أفضل",
+      "الأمان أولاً",
+      "مو أهم شيء",
+      "حرية الاختيار"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "ماذا تفعل لو ربحت اليانصيب؟",
+    "answers": [
+      "أستثمر وأبدأ مشروع",
+      "أسافر سنة كاملة",
+      "أشتري بيت لأهلي",
+      "أفتح مقهى على البحر"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "ماذا تطبخ لما تبي تبهر أحد؟",
+    "answers": [
+      "كبسة لحم فاخرة",
+      "مشاوي مختلطة",
+      "باستا بيتية",
+      "سمك مشوي"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "أي موسيقى تسمع وأنت تسوق؟",
+    "answers": [
+      "روك كلاسيك",
+      "راب عربي",
+      "بودكاست فعلياً",
+      "اللي يجي بالراديو"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "مخرجك المفضل؟",
+    "answers": [
+      "يوسف شاهين",
+      "كريستوفر نولان",
+      "ريدلي سكوت",
+      "نادين لبكي"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "أي فريق كرة قدم تشجع؟",
+    "answers": [
+      "ريال مدريد",
+      "برشلونة",
+      "الأهلي",
+      "فريق محلي"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "ما أسوأ مهارة منزلية عندك؟",
+    "answers": [
+      "كي الملابس",
+      "طبخ الأرز بدون حرق",
+      "تركيب أثاث ايكيا",
+      "تذكر إخراج القمامة"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "هوايتك المثالية نهاية الأسبوع؟",
+    "answers": [
+      "إصلاحات بالبيت",
+      "رحلة بالدراجة",
+      "قراءة كتاب جيد",
+      "التسوق والطبخ"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "أي تطبيق ما تقدر تعيش بدونه؟",
+    "answers": [
+      "سبوتيفاي",
+      "خرائط قوقل",
+      "واتساب",
+      "تطبيق البنك"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "أيهما أهم: الحرية أم الأمان؟",
+    "answers": [
+      "حرية مطلقة",
+      "أمان أولاً",
+      "توازن بين الاثنين",
+      "حسب مرحلة الحياة"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ماذا تتوقعين من شريك على المدى الطويل؟",
+    "answers": [
+      "يكون أعز صديق لي",
+      "يضحكني دائماً",
+      "أهداف مشتركة",
+      "يعطيني مساحة للنمو"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كيف تشعرين عن إنجاب أطفال؟",
+    "answers": [
+      "أريدهم بالتأكيد",
+      "ربما لاحقاً",
+      "أفضل عدم الإنجاب",
+      "منفتحة لما يأتي"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ما أهم شيء في الصداقة بالنسبة لك؟",
+    "answers": [
+      "الوفاء بلا شروط",
+      "الصراحة الكاملة",
+      "التواجد في السراء والضراء",
+      "يضحكوني"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "وين تعيشين سنة؟",
+    "answers": [
+      "إيطاليا",
+      "تركيا",
+      "بالي",
+      "نيويورك"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "ما الشيء الضروري في شنطة سفرك؟",
+    "answers": [
+      "كتاب حلو",
+      "سكن كير كامل",
+      "سناكات من البيت",
+      "كاميرتي"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "كيف توازنين بين العمل والحياة الشخصية؟",
+    "answers": [
+      "مواعيد صارمة",
+      "بشكل طبيعي",
+      "لازلت أتعلم",
+      "العمل هو شغفي"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "طقسك المفضل للعناية بالنفس؟",
+    "answers": [
+      "يوغا عند الشروق",
+      "ليلة سكن كير",
+      "علاج نفسي منتظم",
+      "وقت بالطبيعة لوحدي"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "ما أفضل وصف ليوم الاثنين عندك؟",
+    "answers": [
+      "تحفيز كامل",
+      "قهوة ونجاة",
+      "أزمة وجودية صغيرة",
+      "بلايلست تحفيزية"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "مطعمك المثالي لموعد خاص؟",
+    "answers": [
+      "مطعم لبناني أصيل",
+      "ياباني أوماكاسي",
+      "تراس بإطلالة",
+      "مطبخ فيوجن إبداعي"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "أي أغنية تهدينها لشخص مميز؟",
+    "answers": [
+      "أغنية لفيروز",
+      "أغنية لوردة الجزائرية",
+      "Perfect لإد شيران",
+      "أغنية لكاظم الساهر"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "المتعة المذنبة في المسلسلات؟",
+    "answers": [
+      "برامج الواقع",
+      "مسلسلات تركية",
+      "ترو كرايم",
+      "دراما مراهقين"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "أي رياضة تمارسينها مع شريكك؟",
+    "answers": [
+      "تنس أو بادل",
+      "جري معاً",
+      "تسلق صخور",
+      "ركوب أمواج"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "أكبر علامة تحذير في الموعد؟",
+    "answers": [
+      "يطالع جواله طول الوقت",
+      "يتعامل بسوء مع النادل",
+      "يتكلم عن نفسه فقط",
+      "ما عنده حس فكاهة"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "نشاطك المفضل للانفصال عن الروتين؟",
+    "answers": [
+      "قراءة روايات",
+      "رسم أو فن",
+      "حديقة ونباتات",
+      "طبخ وصفات جديدة"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "سوشال ميديا: حضور نشط أم بروفايل شبح؟",
+    "answers": [
+      "أنشر كثير",
+      "ستوريات أحياناً",
+      "أتابع بس ما أنشر",
+      "تقريباً ما أستخدم"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "أنت أكثر قائد أم تابع؟",
+    "answers": [
+      "قائد بالفطرة",
+      "أفضل أتبع",
+      "حسب المجموعة",
+      "أقود لما يحتاج الأمر"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كيف تتعامل مع التغييرات المفاجئة؟",
+    "answers": [
+      "أتكيف بسرعة",
+      "أتوتر شوية",
+      "أشوفها مغامرة",
+      "أحتاج وقت أستوعب"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ما هي لغة الحب عندك؟",
+    "answers": [
+      "كلمات التقدير",
+      "الخدمات والأفعال",
+      "اللمس والعناق",
+      "وقت الجودة"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "تفضل الاستقرار أم الإثارة المستمرة؟",
+    "answers": [
+      "استقرار هادئ",
+      "إثارة وأدرينالين",
+      "استقرار مع مفاجآت",
+      "إثارة على أساس آمن"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كم أنت عفوي؟",
+    "answers": [
+      "عفوي جداً",
+      "أخطط لكل شيء",
+      "عفوي بحدود",
+      "حسب اليوم"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ما الشيء الذي ينسيك الوقت؟",
+    "answers": [
+      "محادثة عميقة",
+      "هواية إبداعية",
+      "استكشاف مكان جديد",
+      "مسلسل حلو"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كيف علاقتك بالوحدة؟",
+    "answers": [
+      "أستمتع فيها كثير",
+      "أحتاجها بجرعات",
+      "أفضل أكون مع أحد",
+      "أتعلم أستمتع فيها"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "انطوائي أم اجتماعي؟",
+    "answers": [
+      "انطوائي تماماً",
+      "اجتماعي تماماً",
+      "بين بين",
+      "انطوائي يبان اجتماعي"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ما رأيك بالفرص الثانية؟",
+    "answers": [
+      "لازم نعطيها دائماً",
+      "حسب الموقف",
+      "نادراً جداً",
+      "مرة وحدة تكفي"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كيف تتعامل مع الضغط؟",
+    "answers": [
+      "رياضة",
+      "أتكلم مع أحد",
+      "موسيقى ووحدة",
+      "أكل مريح"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "أكبر خوف عندك في العلاقة؟",
+    "answers": [
+      "فقدان استقلاليتي",
+      "عدم المقابلة بالمثل",
+      "الروتين والملل",
+      "أن لا أكون كافي"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "تعتبر نفسك تنافسي؟",
+    "answers": [
+      "تنافسي جداً",
+      "بس فيما يهمني",
+      "أبداً",
+      "أنافس نفسي بس"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كم الصدق مهم لك؟",
+    "answers": [
+      "أهم شيء",
+      "مهم جداً بلطف",
+      "حسب السياق",
+      "صدق قاسي دائماً"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كيف تحتفل بإنجازاتك؟",
+    "answers": [
+      "حفلة مع الأصدقاء",
+      "عشاء مميز",
+      "هدية لنفسي",
+      "أشارك بالسوشال ميديا"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "هل أنت من النوع الحقود؟",
+    "answers": [
+      "أسامح بسهولة",
+      "أسامح لكن لا أنسى",
+      "يصعب علي المسامحة",
+      "حسب حجم الموضوع"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "صف نفسك بثلاث كلمات؟",
+    "answers": [
+      "وفي، مرح، شغوف",
+      "هادئ، مبدع، لطيف",
+      "مغامر، صريح، حماسي",
+      "مسؤول، حنون، طموح"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ما الذي يلهمك أكثر؟",
+    "answers": [
+      "الطبيعة",
+      "الناس",
+      "الفن",
+      "السفر"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "أكبر ميزة عندك؟",
+    "answers": [
+      "الصبر",
+      "التعاطف",
+      "الإصرار",
+      "حس الفكاهة"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "أنت أكثر تتكلم أو تسمع؟",
+    "answers": [
+      "أتكلم بدون توقف",
+      "أسمع بانتباه",
+      "حسب الشخص",
+      "توازن جيد بينهم"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كيف تعبر عن إبداعك؟",
+    "answers": [
+      "بالكتابة",
+      "بالطبخ",
+      "بتصميم الأماكن",
+      "بأسلوب لبسي"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ما معنى الحرية بالنسبة لك؟",
+    "answers": [
+      "أقدر أختار طريقي",
+      "عدم الاعتماد على أحد",
+      "السفر بدون قيود",
+      "أكون حقيقي دائماً"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كم أنت صبور؟",
+    "answers": [
+      "صبور جداً",
+      "حسب الموقف",
+      "قليل الصبر",
+      "صبور مع الناس، مستعجل مع الأشياء"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "هل تثق بالناس بسرعة؟",
+    "answers": [
+      "نعم، أنا منفتح",
+      "يأخذ وقت",
+      "بس مع إشارات واضحة",
+      "أثق لكن أتحقق"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "تفضل حياة متوقعة أم غير متوقعة؟",
+    "answers": [
+      "متوقعة ومستقرة",
+      "غير متوقعة ومثيرة",
+      "شوي من كل واحد",
+      "متوقعة مع لمسات جنون"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كيف تتعامل مع الانفصال؟",
+    "answers": [
+      "أسمح لنفسي بالحزن والتعافي",
+      "أشتت نفسي بالنشاطات",
+      "أطلب دعم الأصدقاء",
+      "أتأمل وأتعلم"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كم أنت حنيني؟",
+    "answers": [
+      "كثير، أعيش بالذكريات",
+      "شوي، القدر المناسب",
+      "أفضل أنظر للمستقبل",
+      "بس مع الموسيقى والصور"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "أنت من النوع اللي يتصرف أو يفكر؟",
+    "answers": [
+      "أتصرف أول",
+      "أفكر كثير قبل",
+      "حسب الضرورة",
+      "أتصرف وبعدين أندم"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "أيهما أهم: الوفاء أم الصراحة؟",
+    "answers": [
+      "الوفاء",
+      "الصراحة",
+      "الاثنين بالتساوي",
+      "صراحة وفية"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "تحب تطلع من منطقة الراحة؟",
+    "answers": [
+      "دائماً أبحث عن تحديات جديدة",
+      "أحياناً",
+      "يصعب علي بس أحاول",
+      "أفضل منطقتي الآمنة"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "رأيك بالعلاقات عن بُعد؟",
+    "answers": [
+      "ممكن تنجح بجهد",
+      "مو لي",
+      "بس مؤقتاً",
+      "مع الشخص الصح، نعم"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كم أنت منظم؟",
+    "answers": [
+      "منظم جداً",
+      "فوضى منظمة",
+      "حسب اليوم",
+      "أحاول بس أفشل"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ما رأيك بالالتزام؟",
+    "answers": [
+      "طبيعي لما يكون فيه حب",
+      "يخوفني شوية",
+      "حسب الشخص",
+      "أبحث عنه بنشاط"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "مدينة أم قرية للسكن؟",
+    "answers": [
+      "مدينة كبيرة",
+      "قرية هادئة",
+      "مدينة متوسطة",
+      "قرية قريبة من المدينة"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "أي نوع إقامة تفضل بالسفر؟",
+    "answers": [
+      "فندق بوتيك",
+      "إير بي إن بي مميز",
+      "هوستل للتعارف",
+      "تخييم تحت النجوم"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "أي بلد عربي تحب تزوره؟",
+    "answers": [
+      "المغرب",
+      "الأردن",
+      "عُمان",
+      "مصر"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "تسافر خفيف أم بشنط كبيرة؟",
+    "answers": [
+      "الأساسيات فقط",
+      "شنطة كبيرة للاحتياط",
+      "حسب الوجهة",
+      "دائماً أبالغ بالتعبئة"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "وسيلة سفرك المفضلة؟",
+    "answers": [
+      "طائرة للمسافات البعيدة",
+      "قطار بإطلالات",
+      "سيارة للحرية",
+      "سفينة للاسترخاء"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "سياحة ثقافية أم مغامرات؟",
+    "answers": [
+      "ثقافية: متاحف وفن",
+      "مغامرات: رياضات متطرفة",
+      "طعام ومأكولات",
+      "مزيج من كل شيء"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "وجهتك الأوروبية المفضلة؟",
+    "answers": [
+      "إسطنبول",
+      "برشلونة",
+      "لندن",
+      "أمستردام"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "تسافر أفضل لوحدك أم مع مجموعة؟",
+    "answers": [
+      "لوحدي لأكتشف نفسي",
+      "مع شريكي",
+      "مع مجموعة أصدقاء",
+      "مع العائلة"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "ما الشيء الضروري في كل رحلة؟",
+    "answers": [
+      "تجربة الأكل المحلي",
+      "التعرف على ناس جدد",
+      "صور مميزة",
+      "الانقطاع عن الجوال"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "شاطئ كاريبي أم ساحل متوسطي؟",
+    "answers": [
+      "كاريبي بدون تفكير",
+      "متوسطي دائماً",
+      "أتنقل بينهم",
+      "شاطئ خليجي"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "تنتقل لقارة ثانية من أجل الحب؟",
+    "answers": [
+      "بدون تردد",
+      "أفكر فيها كثير",
+      "بس لو مؤقت",
+      "أبداً"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "أي مدينة عربية تحبها؟",
+    "answers": [
+      "دبي",
+      "مراكش",
+      "بيروت",
+      "القاهرة"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "تفضل الطقس الحار أم البارد؟",
+    "answers": [
+      "حار طول السنة",
+      "بارد ومعاطف",
+      "أربع فصول",
+      "معتدل ومريح"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "ماذا تفعل في رحلة يوم واحد؟",
+    "answers": [
+      "رحلة للجبل",
+      "قرية جميلة",
+      "شاطئ قريب",
+      "مدينة مجاورة ما زرتها"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "مغامرة أم استرخاء بالإجازة؟",
+    "answers": [
+      "مغامرة خالصة",
+      "استرخاء كامل",
+      "نص ونص",
+      "حسب مع مين"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "كيف تختار وجهتك القادمة؟",
+    "answers": [
+      "إنستغرام وتيك توك",
+      "توصيات أصدقاء",
+      "وثائقيات",
+      "سعر التذكرة"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "أي تذكار تشتري دائماً؟",
+    "answers": [
+      "مغناطيس ثلاجة",
+      "أكل أو شرب محلي",
+      "حرف يدوية",
+      "ما أشتري، بس صور"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "تحب تخطط كل يوم بالرحلة؟",
+    "answers": [
+      "نعم، جدول كامل",
+      "الأساسيات بس",
+      "لا، أرتجل كل شيء",
+      "أخطط بس أبقى مرن"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "أي أكل تجرب ببلد جديد؟",
+    "answers": [
+      "كل شيء يقدمونه",
+      "بس اللي أعرفه",
+      "أغرب شيء ممكن",
+      "أشهر أكل المكان"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "حيوانات أليفة: قطة، كلب، أم لا؟",
+    "answers": [
+      "كلب بدون شك",
+      "قطة مستقلة",
+      "الاثنين",
+      "لا حالياً"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "كيف بيتك المثالي؟",
+    "answers": [
+      "شقة وسط المدينة",
+      "بيت بحديقة",
+      "لوفت صناعي",
+      "بيت ريفي"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "كم ساعة تنام عادة؟",
+    "answers": [
+      "أقل من 6",
+      "6 إلى 7 ساعات",
+      "8 ساعات بالضبط",
+      "أكثر من 8، أحب النوم"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "كيف تبدأ صباحك؟",
+    "answers": [
+      "قهوة إجبارية",
+      "رياضة بدري",
+      "أتصفح الجوال",
+      "بهدوء وبدون عجلة"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "تعيش لوحدك أم مع أحد؟",
+    "answers": [
+      "لوحدي وسعيد",
+      "مع شركاء سكن",
+      "مع العائلة",
+      "مع شريك حياتي"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "تمارس رياضة بانتظام؟",
+    "answers": [
+      "كل يوم",
+      "3-4 مرات بالأسبوع",
+      "لما أتذكر",
+      "المشي للثلاجة يعتبر؟"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "أي نوع ملابس تفضل؟",
+    "answers": [
+      "كاجوال ومريح",
+      "أنيق دائماً",
+      "ستريت وير",
+      "حسب المزاج"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "كيف تصرف فلوسك الزيادة؟",
+    "answers": [
+      "سفر",
+      "ملابس وموضة",
+      "تجارب طعام",
+      "توفير واستثمار"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "تعتبر نفسك حد أدنى أم أقصى؟",
+    "answers": [
+      "حد أدنى تماماً",
+      "أحب القدر المناسب",
+      "أجمع كل شيء",
+      "أقصى بأناقة"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "فصلك المفضل من السنة؟",
+    "answers": [
+      "الصيف للبحر",
+      "الخريف للمشي",
+      "الشتاء للكنبة",
+      "الربيع لكل شيء"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "عمل من البيت أم المكتب؟",
+    "answers": [
+      "البيت دائماً",
+      "المكتب للاجتماعية",
+      "هايبرد مثالي",
+      "في مقهى جميل"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "تقرأ كتب بانتظام؟",
+    "answers": [
+      "أقرأ كثير",
+      "كتاب بالشهر",
+      "لما ألاقي شيء حلو",
+      "أفضل بودكاست أو كتب صوتية"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "كيف تعرف النجاح؟",
+    "answers": [
+      "السعادة الشخصية",
+      "الحرية المالية",
+      "أسوي اللي أحبه",
+      "ناس تحبني حولي"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "تتأمل أو تمارس اليقظة الذهنية؟",
+    "answers": [
+      "نعم، يومياً",
+      "أحياناً",
+      "جربت",
+      "مو أسلوبي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "تطلع بنص الأسبوع أم بس نهاية الأسبوع؟",
+    "answers": [
+      "بنص الأسبوع بعد",
+      "بس الخميس والجمعة",
+      "لما يصير برنامج",
+      "أفضل أجلس بالبيت"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "كيف علاقتك بالمطبخ؟",
+    "answers": [
+      "أحب الطبخ",
+      "أطبخ الأساسي",
+      "أطلب توصيل",
+      "أتعلم"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "أي عادة تبي تتخلص منها؟",
+    "answers": [
+      "الجوال قبل النوم",
+      "التأجيل المستمر",
+      "الأكل العاطفي",
+      "النوم القليل"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "طريقتك المفضلة لتعلم شيء جديد؟",
+    "answers": [
+      "فيديوهات ودروس",
+      "قراءة كتب",
+      "تطبيق مباشر",
+      "أحد يعلمني"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "تفضل توفر أم تصرف؟",
+    "answers": [
+      "أوفر أول",
+      "أصرف وأستمتع",
+      "توازن صحي",
+      "أستثمر اللي أوفره"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "لو كنت حيوان، أي واحد تكون؟",
+    "answers": [
+      "نسر: حر وقوي",
+      "دولفين: اجتماعي وممتع",
+      "قطة: مستقل وغامض",
+      "ذئب: وفي وحامي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "ماذا تفعل في نهاية العالم؟",
+    "answers": [
+      "قائد المجموعة",
+      "أبحث عن ملجأ",
+      "أتحالف مع الزومبيز",
+      "أطبخ للفريق"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "أي حقبة من الماضي تزورها؟",
+    "answers": [
+      "الثمانينات للموسيقى",
+      "العصر الذهبي الإسلامي",
+      "مصر الفرعونية",
+      "الأندلس"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "متعتك المذنبة؟",
+    "answers": [
+      "برامج الواقع",
+      "أكل سريع بنص الليل",
+      "أغاني محرجة ما أعترف فيها",
+      "ماراثون تيك توك"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "ما موهبتك المخفية؟",
+    "answers": [
+      "تقليد أصوات",
+      "طبخ بدون وصفة",
+      "غناء بالحمام زي محترف",
+      "أحزر نهاية الأفلام"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "لو تتعشى مع شخص مشهور، مين يكون؟",
+    "answers": [
+      "محمد صلاح",
+      "نزار قباني",
+      "فيروز",
+      "إيلون ماسك"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "كاريوكي أم حلبة رقص؟",
+    "answers": [
+      "كاريوكي بكل قوة",
+      "حلبة رقص بدون توقف",
+      "الاثنين",
+      "ولا واحد، أفضل أتفرج"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "ماذا تفعل لو ما فيه فلوس بالعالم؟",
+    "answers": [
+      "أسافر حول العالم",
+      "أصير فنان",
+      "أساعد الناس",
+      "أعيش على البحر"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "خطتك المثالية لليلة مطر؟",
+    "answers": [
+      "فيلم وبطانية",
+      "طبخ شيء لذيذ",
+      "قراءة بالشموع",
+      "ألعاب طاولة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "لو حياتك أغنية، أي نوع تكون؟",
+    "answers": [
+      "خليجي: إيقاع وطاقة",
+      "طرب: عواطف عميقة",
+      "روك: حماسة خالصة",
+      "جاز: حرة ومرتجلة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "أي مسلسل تعيده بدون ملل؟",
+    "answers": [
+      "فريندز",
+      "باب الحارة",
+      "بريكنغ باد",
+      "صراع العروش"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "وقتك المفضل باليوم؟",
+    "answers": [
+      "الشروق",
+      "بعد الغداء",
+      "الغروب",
+      "آخر الليل"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "لو تعيش في فيلم، أي فيلم؟",
+    "answers": [
+      "هاري بوتر",
+      "سيد الخواتم",
+      "علاء الدين",
+      "رسالة من المجهول"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "أي مهنة بحياة ثانية؟",
+    "answers": [
+      "شيف مطبخ فاخر",
+      "مصور ناشونال جيوغرافيك",
+      "رائد فضاء",
+      "موسيقي محترف"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "سناك منتصف الليل المفضل؟",
+    "answers": [
+      "شيبس",
+      "فلافل",
+      "فواكه مع ليمون وملح",
+      "سندويش مرتجل"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "أي اسم تحطه لحيوانك الأليف؟",
+    "answers": [
+      "شيء مضحك مثل فلافل",
+      "اسم إنسان أنيق",
+      "اسم من فيلم أو مسلسل",
+      "حسب شخصيته"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "آخر واحد يوصل أم أول واحد يمشي من الحفلة؟",
+    "answers": [
+      "آخر واحد يوصل وآخر واحد يمشي",
+      "أول واحد يوصل وأول واحد يمشي",
+      "من آخر الناس دايماً",
+      "حسب مين موجود"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "مطبخك المفضل بالعالم؟",
+    "answers": [
+      "لبناني",
+      "إيطالي",
+      "ياباني",
+      "مصري"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "حلو أم مالح؟",
+    "answers": [
+      "حلو دائماً",
+      "مالح بدون شك",
+      "حسب اللحظة",
+      "الاثنين معاً"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "فطورك المثالي؟",
+    "answers": [
+      "فول وحمص وزيتون",
+      "كنافة",
+      "فواكه وزبادي",
+      "قهوة وبس"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "تطبخ بوصفة أم ترتجل؟",
+    "answers": [
+      "دائماً بوصفة",
+      "أرتجل كل شيء",
+      "أبدأ بوصفة وبعدين أرتجل",
+      "أسأل أمي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "مشروبك المفضل؟",
+    "answers": [
+      "قهوة عربية",
+      "شاي بالنعناع",
+      "عصير طازج",
+      "ماء بالليمون"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "أكل شارع أم مطعم فاخر؟",
+    "answers": [
+      "أكل شارع بدون تفكير",
+      "مطعم خاص",
+      "حسب المناسبة",
+      "البيت أفضل"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "أي أكلة ما تمل منها؟",
+    "answers": [
+      "شاورما",
+      "مندي",
+      "سوشي",
+      "فتة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "نباتي أم آكل كل شيء؟",
+    "answers": [
+      "آكل كل شيء",
+      "نباتي",
+      "نباتي صرف",
+      "مرن"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "أكل الراحة المفضل لك؟",
+    "answers": [
+      "ورق عنب",
+      "مجبوس",
+      "كشري",
+      "شوكولاتة ساخنة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "حار: نعم أم لا؟",
+    "answers": [
+      "أعشق الحار",
+      "شوية بس",
+      "ولا شي حار",
+      "حسب الأكلة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "تفضل نطبخ سوا أم يُطبخ لك؟",
+    "answers": [
+      "نطبخ سوا رومانسي",
+      "يُطبخ لي",
+      "أنا أطبخ عشان أبهر",
+      "نطلب ونرتاح"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "قهوة عربية أم تركية؟",
+    "answers": [
+      "عربية بالهيل",
+      "تركية ثقيلة",
+      "كابتشينو",
+      "ما أشرب قهوة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "سوقك المفضل؟",
+    "answers": [
+      "سوق واقف في الدوحة",
+      "سوق الحميدية في دمشق",
+      "سوق حارتك",
+      "السوبرماركت يكفي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "أي أكل تجربه ما جربته قبل؟",
+    "answers": [
+      "حشرات صالحة للأكل",
+      "سوشي فاخر",
+      "أكل إثيوبي",
+      "أكل كوري مخمر"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "حلوياتك العربية المفضلة؟",
+    "answers": [
+      "كنافة",
+      "بقلاوة",
+      "بسبوسة",
+      "لقيمات"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "أي عصير تفضل؟",
+    "answers": [
+      "رمان طازج",
+      "مانجو",
+      "ليمون بالنعناع",
+      "أفوكادو"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "حفلة أم مهرجان؟",
+    "answers": [
+      "حفلة حميمة",
+      "مهرجان كبير",
+      "الاثنين",
+      "موسيقى بالبيت"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "أي فنان عربي يعجبك؟",
+    "answers": [
+      "عمرو دياب",
+      "فيروز",
+      "كاظم الساهر",
+      "محمد عبده"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "أغنيتك لرفع المعنويات؟",
+    "answers": [
+      "شيء من الراب",
+      "روك تحفيزي",
+      "بوب عربي راقص",
+      "خليجي حماسي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "تسمع موسيقى جديدة أم تكرر القديم؟",
+    "answers": [
+      "دائماً أبحث عن الجديد",
+      "كلاسيكياتي دائماً",
+      "مزيج بينهم",
+      "حسب المزاج"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "آلتك الموسيقية المفضلة؟",
+    "answers": [
+      "العود",
+      "البيانو",
+      "الطبلة",
+      "الصوت كآلة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "ترقص كويس أم تحاول بس؟",
+    "answers": [
+      "أرقص ممتاز",
+      "أحاول بحماس",
+      "بس بعد كم كوب",
+      "ما عندي إيقاع بس أستمتع"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "أي نوع موسيقى ما تتحمله؟",
+    "answers": [
+      "الراب",
+      "الهيفي ميتال",
+      "الكلاسيك",
+      "أتحمل كل شيء"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "أي موسيقى تحطها للاسترخاء؟",
+    "answers": [
+      "لو-فاي",
+      "عود هادئ",
+      "كلاسيك ناعم",
+      "أصوات الطبيعة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "ألبومك المفضل على الإطلاق؟",
+    "answers": [
+      "شيء لعمرو دياب",
+      "ألبوم لفيروز",
+      "ثريلر لمايكل جاكسون",
+      "شيء لمارسيل خليفة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "تغني بالحمام؟",
+    "answers": [
+      "حفلة كاملة",
+      "بس لما أكون سعيد",
+      "أبداً",
+      "أدندن أكثر من غناء"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "بلايلست منظمة أم عشوائي؟",
+    "answers": [
+      "بلايلست مثالية لكل مود",
+      "عشوائي دائماً",
+      "راديو أو اللي يجي",
+      "الخوارزمية تقرر"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "الطرب العربي: يأثر فيك؟",
+    "answers": [
+      "يقشعر بدني",
+      "أحبه بس ما أبحث عنه",
+      "مو نوعي",
+      "تراث ثقافي رائع"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "نوع الأفلام المفضل لك؟",
+    "answers": [
+      "كوميديا",
+      "إثارة وتشويق",
+      "دراما",
+      "خيال علمي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "سينما أم كنبة وستريمنغ؟",
+    "answers": [
+      "سينما للتجربة",
+      "كنبة دائماً",
+      "حسب الفيلم",
+      "سينما في الهواء الطلق"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "نتفلكس أم شاهد أم ديزني+؟",
+    "answers": [
+      "نتفلكس",
+      "شاهد",
+      "ديزني+",
+      "الكل وأكثر"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "فيلمك العربي المفضل؟",
+    "answers": [
+      "الفيل الأزرق",
+      "كراميل",
+      "الباب المفتوح",
+      "كفرناحوم"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "وثائقيات: نعم أم لا؟",
+    "answers": [
+      "أحبها",
+      "بس الجيدة",
+      "أنام أحياناً",
+      "أفضل الخيال"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "شخصيتك الخيالية المفضلة؟",
+    "answers": [
+      "علاء الدين",
+      "سندباد",
+      "باتمان",
+      "الجوكر"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "بوبكورن حلو أم مالح؟",
+    "answers": [
+      "حلو",
+      "مالح",
+      "كراميل",
+      "ناتشوز أفضل"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "تحب أفلام الرعب؟",
+    "answers": [
+      "أعشقها",
+      "بس مع أحد جنبي",
+      "أبداً",
+      "بس النفسية"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "سلسلة أفلامك المفضلة؟",
+    "answers": [
+      "ستار وورز",
+      "سيد الخواتم",
+      "مارفل",
+      "هاري بوتر"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "ترجمة أم دبلجة؟",
+    "answers": [
+      "لغة أصلية بترجمة",
+      "دبلجة دائماً",
+      "حسب اللغة",
+      "أصلي لو إنجليزي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "تبكي مع الأفلام؟",
+    "answers": [
+      "دائماً",
+      "بس المؤثرة جداً",
+      "أبداً",
+      "أتماسك بس من جوا أبكي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "أي مسلسل تنصح فيه الكل؟",
+    "answers": [
+      "صراع العروش",
+      "عمر",
+      "بريكنغ باد",
+      "ستراينجر ثينغز"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "رياضتك المفضلة للمشاهدة؟",
+    "answers": [
+      "كرة قدم",
+      "كرة سلة",
+      "تنس",
+      "فورمولا 1"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "جيم أم جري أم رياضة جماعية؟",
+    "answers": [
+      "جيم لبناء العضلات",
+      "جري بالهواء الطلق",
+      "رياضة جماعية",
+      "يوغا أو بيلاتس"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "سويت رياضة متطرفة قبل؟",
+    "answers": [
+      "قفز بالمظلة",
+      "ركوب أمواج",
+      "تسلق",
+      "لا بس أبي أجرب"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "تروح كأس عالم؟",
+    "answers": [
+      "حلمي",
+      "بس لو منتخبي يلعب",
+      "أفضل أشوفه بمقهى",
+      "كرة القدم ما تهمني"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "رياضة فردية أم جماعية؟",
+    "answers": [
+      "فردية للتركيز",
+      "جماعية للتحفيز",
+      "حسب الرياضة",
+      "مع شريكي مثالي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "رياضيك المفضل؟",
+    "answers": [
+      "محمد صلاح",
+      "حبيب نورمحمدوف",
+      "رافا نادال",
+      "نوال المتوكل"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "البادل: جربته؟",
+    "answers": [
+      "مدمن عليه",
+      "جربته وعجبني",
+      "ما جربته بس أبي",
+      "مو نوعي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "سباحة بالبحر أم مسبح؟",
+    "answers": [
+      "بحر دائماً",
+      "مسبح أنظف",
+      "الاثنين",
+      "أفضل ما أسبح"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "تركض ماراثون يوم من الأيام؟",
+    "answers": [
+      "سويتها قبل",
+      "هدفي",
+      "نص ماراثون أفضل",
+      "ولا بالأحلام"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "تزلج أم سنوبورد؟",
+    "answers": [
+      "تزلج كلاسيك",
+      "سنوبورد أحلى",
+      "أفضل الشوكولاتة الحارة",
+      "عمري ما رحت الثلج"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "نكتتك المفضلة لكسر الجليد؟",
+    "answers": [
+      "نكتة سخيفة متعمدة",
+      "قصة محرجة عني",
+      "مجاملة غير متوقعة",
+      "أسأل سؤال غريب"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "ما الذي يضحكك أكثر؟",
+    "answers": [
+      "ميمز اللحظة",
+      "فكاهة سوداء",
+      "مقالب وسقطات",
+      "كوميديا مواقف"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "ممثلك الكوميدي المفضل؟",
+    "answers": [
+      "عادل إمام",
+      "محمد هنيدي",
+      "أحمد حلمي",
+      "باسم يوسف"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "أي كذبة بريئة تقولها كثير؟",
+    "answers": [
+      "أنا بالطريق (وأنا بالبيت)",
+      "يبان حلو (ما يهمني)",
+      "بطاريتي خلصت",
+      "بس 5 دقائق"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "لو حياتك ميم، أي واحد؟",
+    "answers": [
+      "الكلب بالغرفة المحترقة",
+      "ذس إز فاين",
+      "القطة المحتارة بالرياضيات",
+      "سبايدرمان يشير لنفسه"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "ماذا تفعل لو انحبست بالمصعد مع كرشك؟",
+    "answers": [
+      "أستغل الفرصة للتعارف",
+      "أتوتر وما أتكلم",
+      "أسوي نكت عشان أخفف",
+      "أتصل بالطوارئ فوراً"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "عذرك المفضل لإلغاء خطط؟",
+    "answers": [
+      "رأسي يعور",
+      "قطتي تحتاجني",
+      "عندي شغل كثير",
+      "أكون صريح: ما أبي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "ماذا تفعل لو شفت حبيبك السابق بمطعم؟",
+    "answers": [
+      "أتظاهر ما شفته",
+      "أسلم بطبيعية",
+      "أروح مطعم ثاني",
+      "أطلب منه يرجع لي فلوس العشاء"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "أكبر خبطة يومية عندك؟",
+    "answers": [
+      "أتعثر بكل شيء",
+      "أنسى الأسماء فوراً",
+      "أضيع مفاتيحي كل يوم",
+      "أرسل رسائل للقروب الغلط"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "ماذا يفكر نسخة الـ15 سنة منك عنك الحين؟",
+    "answers": [
+      "يكون فخور",
+      "يضحك على همومي",
+      "ما يعرفني",
+      "يسألني وين الحماس"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "ما شعارك الشخصي؟",
+    "answers": [
+      "عش ودع غيرك يعيش",
+      "إن لم يكن اليوم فغداً",
+      "مع القهوة كل شيء ممكن",
+      "دائماً وقت مناسب للأكل"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "أي مسلسل يوصف مجموعة أصدقائك؟",
+    "answers": [
+      "فريندز",
+      "شباب البومب",
+      "بروكلين ناين-ناين",
+      "باب الحارة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "هوايتك المفضلة بيوم إجازة؟",
+    "answers": [
+      "رسم أو تلوين",
+      "ألعاب فيديو",
+      "قراءة كتاب حلو",
+      "رحلة بالطبيعة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "تجمع شيء؟",
+    "answers": [
+      "اسطوانات أو موسيقى",
+      "كتب",
+      "تجارب وذكريات",
+      "لا، أنا حد أدنى"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "تلعب ألعاب فيديو؟",
+    "answers": [
+      "قيمر بالقلب",
+      "كاجوال أحياناً",
+      "بس ألعاب الجوال",
+      "مو نوعي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "تعزف آلة موسيقية؟",
+    "answers": [
+      "عود",
+      "بيانو",
+      "آلة ثانية",
+      "لا بس أبي أتعلم"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "نوع كتبك المفضل؟",
+    "answers": [
+      "روايات وقصص",
+      "تطوير ذات",
+      "تاريخ وسير",
+      "خيال علمي وفانتازيا"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "سويت تطوع قبل؟",
+    "answers": [
+      "نعم بانتظام",
+      "مرتين",
+      "أبي أبدأ",
+      "لا بس أدعم بطرق ثانية"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "تصوير بالجوال أم كاميرا محترفة؟",
+    "answers": [
+      "الجوال يكفي",
+      "كاميرا محترفة",
+      "حسب اللحظة",
+      "أفضل أعيش اللحظة بدون صور"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "نباتات بالبيت: تحافظ عليها؟",
+    "answers": [
+      "عندي حديقة داخلية",
+      "تموت كلها",
+      "بس القوية",
+      "ورد صناعي أفضل"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "تفضل هواية إبداعية أم نشطة؟",
+    "answers": [
+      "إبداعية: فن وموسيقى",
+      "نشطة: رياضة ومغامرة",
+      "شوي من كل واحد",
+      "لا شيء: الراحة هي هوايتي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "تحب البازل؟",
+    "answers": [
+      "تريحني كثير",
+      "بس بمجموعة",
+      "تحتاج صبر كثير",
+      "أفضل كلمات متقاطعة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "بودكاستك المفضل؟",
+    "answers": [
+      "جريمة حقيقية",
+      "فكاهة وترفيه",
+      "تطوير ذات",
+      "ما أسمع بودكاست"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "أشغال يدوية: تجيدها؟",
+    "answers": [
+      "شاطر جداً",
+      "أحاول بس ما تطلع",
+      "بس مع شروحات",
+      "أفضل أشتري جاهز"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "تحب تروح متاحف؟",
+    "answers": [
+      "أحب الفن",
+      "بس التفاعلية",
+      "لما أسافر نعم",
+      "مو نوعي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "سلسلة ألعاب الفيديو المفضلة؟",
+    "answers": [
+      "فيفا",
+      "زيلدا",
+      "جي تي أي",
+      "ما ألعب ألعاب فيديو"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "آيفون أم أندرويد؟",
+    "answers": [
+      "آيفون دائماً",
+      "أندرويد للحرية",
+      "ما يفرق معي",
+      "اللي فيه أفضل كاميرا"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "ما رأيك بالذكاء الاصطناعي؟",
+    "answers": [
+      "يثيرني",
+      "يخوفني شوية",
+      "أداة مفيدة",
+      "ما أفهمه كثير"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "ساعة ذكية: ضرورة أم رفاهية؟",
+    "answers": [
+      "ما أقدر أعيش بدونها",
+      "رفاهية حلوة",
+      "أفضل ساعة كلاسيك",
+      "ما ألبس ساعة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "كم ساعة تطالع جوالك باليوم؟",
+    "answers": [
+      "أقل من ساعتين",
+      "2-4 ساعات",
+      "4-6 ساعات",
+      "أفضل ما أعرف"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "بيت ذكي: نعم أم مبالغة؟",
+    "answers": [
+      "كل شيء أتوماتيك",
+      "بس الأساسي: إضاءة وموسيقى",
+      "مبالغة",
+      "هو المستقبل"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "كيف تتعرف على ناس جدد؟",
+    "answers": [
+      "تطبيقات تعارف",
+      "عن طريق أصدقاء",
+      "فعاليات وأنشطة",
+      "بالعمل أو الدراسة"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "مكالمة فيديو أم لقاء شخصي؟",
+    "answers": [
+      "فيديو لليومي",
+      "شخصي دائماً",
+      "حسب المسافة",
+      "مزيج بينهم"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "بودكاست أم راديو تقليدي؟",
+    "answers": [
+      "بودكاست دائماً",
+      "الراديو له سحره",
+      "الاثنين حسب الوقت",
+      "لا شيء، بس موسيقى"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "منصتك المفضلة؟",
+    "answers": [
+      "إنستغرام",
+      "تيك توك",
+      "تويتر/إكس",
+      "يوتيوب"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "تسوي ديتوكس رقمي؟",
+    "answers": [
+      "أحتاجه عاجل",
+      "أسبوع بدون مشكلة",
+      "بس نهاية أسبوع",
+      "مستحيل علي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كيف تتعامل مع الروتين؟",
+    "answers": [
+      "أحتاجه عشان أشتغل",
+      "يملني بسرعة",
+      "أحبه بتغييرات",
+      "أتجنبه قدر الإمكان"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ما الذي يعطيك أكثر سلام؟",
+    "answers": [
+      "صوت البحر",
+      "الصمت الكامل",
+      "موسيقى هادئة",
+      "محادثة حلوة"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "تفضل تعطي هدايا أم تستقبل؟",
+    "answers": [
+      "العطاء يسعدني أكثر",
+      "الاستقبال بدون ذنب",
+      "الاثنين بالتساوي",
+      "أفضل تجارب مشتركة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "هل تقول دائماً ما تفكر فيه؟",
+    "answers": [
+      "دائماً بدون فلتر",
+      "بلطف وصراحة",
+      "بس لما يسألوني",
+      "أخليه لنفسي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "أيهما أهم: الوجهة أم الطريق؟",
+    "answers": [
+      "الطريق هو الجمال",
+      "الوجهة هي الهدف",
+      "الاثنين بالتساوي",
+      "الطريق لو بصحبة حلوة"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كم يهمك رأي الناس؟",
+    "answers": [
+      "ولا شي، أعيش بطريقتي",
+      "أعتبره بس أقرر بنفسي",
+      "أكثر مما لازم",
+      "بس رأي المقربين"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كيف تبين إن شخص يهمك؟",
+    "answers": [
+      "بالتواجد الدائم",
+      "بتفاصيل صغيرة",
+      "بقول اللي أحسه",
+      "بأفعالي مو كلامي"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "تحب النقاش أم تتجنب المواجهات؟",
+    "answers": [
+      "أحب النقاش",
+      "بس بالمواضيع اللي أعرفها",
+      "أتجنب المواجهات",
+      "أناقش باحترام"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "أي نشاط تسويه بمدينة جديدة؟",
+    "answers": [
+      "جولة مجانية بالمدينة",
+      "درس طبخ محلي",
+      "رحلة للطبيعة",
+      "أضيع بالشوارع"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "سافرت لوحدك قبل؟",
+    "answers": [
+      "نعم وعجبني",
+      "لا بس أبي",
+      "ما أجرؤ",
+      "بس رحلات قصيرة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "كم دولة زرت؟",
+    "answers": [
+      "أقل من 5",
+      "5 إلى 10",
+      "أكثر من 10",
+      "لازلي كثير"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "تتبع حمية معينة؟",
+    "answers": [
+      "آكل صحي بدون قيود",
+      "حمية صارمة",
+      "حدسي: أكل اللي جسمي يبيه",
+      "أحاول بس أفشل"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "متعتك المذنبة بالأكل؟",
+    "answers": [
+      "بيتزا الساعة 2 الليل",
+      "آيس كريم من العلبة",
+      "حلويات",
+      "أكل سريع بدون ندم"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "كم أنت منظم مالياً؟",
+    "answers": [
+      "ميزانية شهرية صارمة",
+      "تقريباً مسيطر",
+      "أصرف وبعدين أقلق",
+      "أستخدم تطبيقات لكل شيء"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "ماذا تكون بمجموعة نجاة؟",
+    "answers": [
+      "القائد الاستراتيجي",
+      "اللي يلاقي الأكل",
+      "المحفز للمجموعة",
+      "اللي يضحك الكل"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "لو عندك قدرة سحرية؟",
+    "answers": [
+      "أتكلم كل اللغات",
+      "أطبخ مثل شيف محترف",
+      "أعزف أي آلة",
+      "أنتقل آنياً"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "ماذا تفعل بيوم إضافي بالأسبوع؟",
+    "answers": [
+      "أنام طول اليوم",
+      "هواية جديدة",
+      "أقضيه مع أحبابي",
+      "مغامرة عفوية"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "أكلتك العربية المفضلة؟",
+    "answers": [
+      "مناقيش",
+      "فلافل",
+      "كبسة",
+      "طاجين مغربي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "تتعشى بدري أم متأخر؟",
+    "answers": [
+      "بدري قبل 8",
+      "متأخر بعد 10",
+      "لما أجوع",
+      "أخنقل وأتعشى خفيف"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "بوب عربي أم راب عربي؟",
+    "answers": [
+      "بوب عربي طول العمر",
+      "راب عربي",
+      "الاثنين",
+      "ولا واحد"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "رحت حفلة غيرت حياتك؟",
+    "answers": [
+      "نعم، كان سحر",
+      "لا بعد بس أنتظر",
+      "كلهم يأثرون فيني",
+      "الحفلات مو نوعي"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "تفضل فيلم كلاسيك أم جديد؟",
+    "answers": [
+      "كلاسيك فيه تحف",
+      "جديد: مؤثرات أفضل",
+      "حسب النوع",
+      "الحلو حلو مهما كان عمره"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "تمشي كثير باليوم؟",
+    "answers": [
+      "أكثر من 10 آلاف خطوة",
+      "القدر اللازم للعمل",
+      "أفضل الدراجة أو السكوتر",
+      "المشي تأملي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "أكثر موقف محرج لك بالعام؟",
+    "answers": [
+      "سلمت على شخص ما أعرفه",
+      "تعثرت قدام ناس كثير",
+      "أرسلت صوتية للقروب الغلط",
+      "ناديت المدير بابا"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "تعلم لغات: يعجبك؟",
+    "answers": [
+      "أعشقه",
+      "بس لو ضروري",
+      "أحاول بس يصعب",
+      "أتكلم عدة لغات"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "شراء أونلاين أم من المحل؟",
+    "answers": [
+      "أونلاين دائماً",
+      "المحل عشان أجرب",
+      "حسب المنتج",
+      "أمازون حياتي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "تؤمن بالقدر أم تصنع طريقك؟",
+    "answers": [
+      "بالقدر",
+      "أصنع طريقي",
+      "شوي من كل واحد",
+      "القدر يساعد لو اجتهدت"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "تحب المفاجآت؟",
+    "answers": [
+      "أعشقها",
+      "بس الحلوة",
+      "أفضل أعرف وش يصير",
+      "حسب مين يسويها"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "ماذا تاخذ لجزيرة مهجورة؟",
+    "answers": [
+      "سكين متعدد الاستخدامات",
+      "عودي",
+      "كتاب سميك",
+      "أعز صديق لي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "كيف تنفصل عن العمل؟",
+    "answers": [
+      "رياضة",
+      "أطلع أتعشى",
+      "مسلسلات وكنبة",
+      "هوايات إبداعية"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "أي اسم تحطه لمطعمك؟",
+    "answers": [
+      "شيء بلقب عائلتي",
+      "تلاعب بالكلمات",
+      "شيء بلغة ثانية",
+      "اسم جدتي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "فاكهتك المفضلة؟",
+    "answers": [
+      "مانجو",
+      "فراولة",
+      "بطيخ",
+      "أفوكادو (فاكهة!)"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "أغنية الصيف المفضلة لك؟",
+    "answers": [
+      "شيء لعمرو دياب",
+      "تامر حسني",
+      "شيء خليجي حماسي",
+      "تتغير كل صيف"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "تتعرف أكثر بالبطل أم الشرير؟",
+    "answers": [
+      "البطل بدون شك",
+      "الشرير عنده قصة أفضل",
+      "الشخصية الثانوية المضحكة",
+      "ضد البطل"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "بالبحر: استرخاء أم رياضات مائية؟",
+    "answers": [
+      "فوطة واسترخاء",
+      "سيرف وبادل",
+      "كرة طائرة شاطئية",
+      "شوي من كل شيء"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "طريقتك الأكثر فعالية للتودد؟",
+    "answers": [
+      "فكاهة: أضحكهم",
+      "نظرات عميقة",
+      "اهتمام حقيقي",
+      "ما أتودد، أنتظر يجون"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "أي هواية تشاركها مع أصدقائك؟",
+    "answers": [
+      "رياضة سوا",
+      "قيمنق أونلاين",
+      "أطبخ لهم",
+      "السهر طلعات يعتبر"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "تستخدم تطبيقات إنتاجية؟",
+    "answers": [
+      "منظم رقمياً جداً",
+      "بس التقويم",
+      "أحاول بس ما تنفع",
+      "ورق وقلم من زمان"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "أي نوع ذكاء تقدره أكثر؟",
+    "answers": [
+      "عاطفي",
+      "منطقي",
+      "إبداعي",
+      "اجتماعي"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "أنت أكثر ارتجال أم تخطيط؟",
+    "answers": [
+      "أخطط لكل شيء",
+      "أرتجل بأناقة",
+      "أخطط وبعدين أرتجل",
+      "حسب إذا لوحدي أو مع أحد"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "أكبر حلم عندك؟",
+    "answers": [
+      "أسافر حول العالم",
+      "أملك مشروعي الخاص",
+      "أكوّن عائلة سعيدة",
+      "أترك أثر إيجابي"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ماذا تغير لو ترجع بالزمن؟",
+    "answers": [
+      "أخاطر أكثر",
+      "أقلق أقل",
+      "أدرس شيء مختلف",
+      "ما أغير شيء"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "ما شعورك تجاه الزواج؟",
+    "answers": [
+      "هدفي أتزوج",
+      "إذا جاء خير",
+      "ما أؤمن بالزواج",
+      "بس مع الشخص المثالي"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "كم تقدر مساحتك الشخصية؟",
+    "answers": [
+      "كثير، مقدسة",
+      "مهمة بس مرنة",
+      "مو كثير، أنا اجتماعي",
+      "أتعلم أقدرها"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "تروح رحلة مفاجئة بدون ما تعرف الوجهة؟",
+    "answers": [
+      "نعم يحمسني",
+      "بس مع شخص أثق فيه",
+      "أحتاج أعرف الطقس على الأقل",
+      "أبداً لازم أخطط"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ماذا تفعل أول ما تصحى؟",
+    "answers": [
+      "أطالع الجوال",
+      "أتمدد",
+      "قهوة مباشرة",
+      "أشكر الله على يوم جديد"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "تفضل أصدقاء كثير أم قليل وأوفياء؟",
+    "answers": [
+      "قليل ومقربين",
+      "كثير ومتنوعين",
+      "دائرة صغيرة وقوية",
+      "أصدقاء لكل مناسبة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ما دورك في مجموعة أصدقائك؟",
+    "answers": [
+      "المنظم",
+      "المضحك",
+      "المستشار",
+      "اللي دائماً يتأخر"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ماذا تفعل لما يعجبك شخص؟",
+    "answers": [
+      "أروح مباشر",
+      "ألمح بذكاء",
+      "أنتظر إشارات",
+      "أتوتر وما أسوي شيء"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كيف تكون لما تحب؟",
+    "answers": [
+      "اهتمام بكل التفاصيل",
+      "حماسي وعاطفي",
+      "هادئ بس ثابت",
+      "خجول بالبداية"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ما أفضل طريقة لبدء محادثة معك؟",
+    "answers": [
+      "بفكاهة",
+      "بسؤال مثير للاهتمام",
+      "بمجاملة صادقة",
+      "بموضوع أحبه"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ما رأيك بالمواعيد العمياء؟",
+    "answers": [
+      "تحمسني",
+      "تقلقني شوية",
+      "بس لو أثق بمن رتبها",
+      "أفضلها على التطبيقات"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "المسامحة أم النسيان: أيهما أصعب؟",
+    "answers": [
+      "المسامحة صعبة",
+      "النسيان مستحيل",
+      "الاثنين يتعبوني بالتساوي",
+      "ولا واحد، أمشي بسرعة"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ما يجذبك أكثر: العقل أم الشكل؟",
+    "answers": [
+      "العقل بدون شك",
+      "الشكل أولاً",
+      "توازن بينهم",
+      "الطاقة اللي يبثها"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "تفضل الحقيقة المؤلمة أم الكذبة اللطيفة؟",
+    "answers": [
+      "الحقيقة دائماً",
+      "كذبة لطيفة أحياناً",
+      "حسب الموقف",
+      "الحقيقة بلطف"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ما أفضل شيء بالعلاقة؟",
+    "answers": [
+      "رفيق حياة",
+      "اللحظات المشتركة",
+      "النمو معاً",
+      "ما تأكل لوحدك أبداً"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ماذا تفعل للشخص اللي تحبه؟",
+    "answers": [
+      "كل شيء ممكن",
+      "أدعم أحلامه",
+      "أعطيه مساحة لما يحتاج",
+      "أحضر أفضل فطور دائماً"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ما يقلقك أكثر عن المستقبل؟",
+    "answers": [
+      "مسيرتي المهنية",
+      "تغير المناخ",
+      "إيجاد الشخص المناسب",
+      "إبقاء أحبابي قريبين"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كيف تتكيف مع ناس جدد؟",
+    "answers": [
+      "بسهولة جداً",
+      "يأخذ وقت شوي",
+      "حسب الكيمياء",
+      "أكون خجول بالبداية"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كيف تتعامل مع عدم اليقين؟",
+    "answers": [
+      "بهدوء، بنشوف",
+      "يسبب لي قلق",
+      "أخطط سيناريوهات",
+      "أثق إن كل شيء يتحل"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "برجك وتصدقه؟",
+    "answers": [
+      "أعرفه ويوصفني",
+      "أعرفه بس ما أصدقه",
+      "ما أدري وش هو",
+      "أستخدمه للتودد"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "تطلب مساعدة بسهولة أم يصعب عليك؟",
+    "answers": [
+      "بدون مشكلة",
+      "يصعب بس أسويها",
+      "أحاول أحل لوحدي",
+      "بس من المقربين"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كيف تتصرف لما أحد يبكي؟",
+    "answers": [
+      "أحضنه وأسمعه",
+      "أحاول أحل المشكلة",
+      "أتأثر أنا بعد",
+      "يربكني بس أبقى موجود"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "كم أنت دقيق بالمواعيد؟",
+    "answers": [
+      "أوصل دائماً بالوقت",
+      "5 دقائق تأخير ماركتي",
+      "المواعيد مو نقطة قوتي",
+      "أوصل قبل الكل"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "كم القهوة تشرب باليوم؟",
+    "answers": [
+      "وحدة وتكفي",
+      "2-3 فناجين",
+      "4 أو أكثر أنا مدمن",
+      "ما أشرب قهوة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "الشكل مهم لك بالشريك؟",
+    "answers": [
+      "مهم جداً",
+      "يهم بس مو الأساس",
+      "الشخصية هي كل شيء",
+      "الانجذاب لازم يكون موجود"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "الاستدامة مهمة لك؟",
+    "answers": [
+      "جداً، أغير عاداتي",
+      "أحاول أساهم",
+      "يهمني بس ما أغير كثير",
+      "مو أولويتي"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "أي هدية تفرحك أكثر؟",
+    "answers": [
+      "رحلة مفاجئة",
+      "تذاكر حفلة",
+      "شيء مصنوع يدوياً",
+      "وقت معاً بدون خطط"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "تحتفل بعيد الحب؟",
+    "answers": [
+      "كل سنة بكل شيء",
+      "لمسة بسيطة رمزية",
+      "ما أؤمن بهالمناسبات",
+      "الحب يتحتفل فيه كل يوم"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "تفضل حظ أم ذكاء كبير؟",
+    "answers": [
+      "الحظ يساعد دائماً",
+      "الذكاء يفتح أبواب",
+      "الاثنين معاً",
+      "حظ مع جهد"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "أي يوم بالأسبوع المفضل لك؟",
+    "answers": [
+      "ليلة الخميس",
+      "الجمعة كامل",
+      "السبت للراحة",
+      "الأربعاء تقريباً خميس"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "ماذا تفعل لو تصير غير مرئي ليوم؟",
+    "answers": [
+      "أتجسس على اللي يقولونه عني",
+      "أسافر ببلاش",
+      "أسوي مقالب على أصدقائي",
+      "أروح حفلة حصرية"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "علاقتك مع الحياة الليلية؟",
+    "answers": [
+      "أحب أطلع بالليل",
+      "أفضل خطط هادية",
+      "حسب الصحبة",
+      "كل ما كبرت قل حماسي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "تعتبر نفسك رومانسي؟",
+    "answers": [
+      "جداً",
+      "بطريقتي",
+      "بس لما أحب",
+      "أبداً"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "كيف علاقتك بالطبيعة؟",
+    "answers": [
+      "قوية، أحتاج الخضار",
+      "أحبها بس أعيش بالمدينة",
+      "بس بالإجازات",
+      "أنا أكثر مدني"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كيف تتأقلم مع أشخاص جدد؟",
+    "answers": [
+      "بسهولة كبيرة",
+      "يأخذ مني وقت",
+      "حسب الكيمياء بيننا",
+      "أكون خجول أول"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "واتساب أم تلغرام؟",
+    "answers": [
+      "واتساب مثل الكل",
+      "تلغرام أفضل",
+      "الاثنين لناس مختلفة",
+      "ما يفرق معي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "كيف ترى مستقبل المواعيد الإلكترونية؟",
+    "answers": [
+      "هو الحاضر والمستقبل",
+      "مكمل للواقع",
+      "أفضل التقليدي",
+      "الواقع الافتراضي بيغير كل شيء"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "استخدمت الذكاء الاصطناعي لشيء شخصي؟",
+    "answers": [
+      "نعم لأشياء كثيرة",
+      "بس من باب الفضول",
+      "ما أثق فيه",
+      "هو مساعدي اليومي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "صورة أم فيديو: ماذا تفضل تشارك؟",
+    "answers": [
+      "صور معدلة",
+      "فيديوهات عفوية",
+      "الاثنين",
+      "ما أشارك شيء"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "سيارة كهربائية أم بنزين؟",
+    "answers": [
+      "كهربائية هي المستقبل",
+      "بنزين لسه",
+      "هايبرد وسط",
+      "ما عندي سيارة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "تحب المسرح؟",
+    "answers": [
+      "أحب أروح",
+      "أفضل السينما",
+      "لو ميوزيكال نعم",
+      "عمري ما رحت"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "ماذا تفعل لو عندك وقت فراغ أكثر؟",
+    "answers": [
+      "أتعلم لغة جديدة",
+      "أسافر أكثر",
+      "أتفرغ لهواية",
+      "أرتاح بدون شيء"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "تسوي شيء فني؟",
+    "answers": [
+      "أرسم",
+      "أعزف موسيقى",
+      "أكتب",
+      "ما عندي موهبة فنية"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "ماذا تعلمت بالجائحة؟",
+    "answers": [
+      "الطبخ",
+      "تقدير البساطة",
+      "مهارة جديدة",
+      "إني أحتاج الناس"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "تحب الأسواق الشعبية والبازارات؟",
+    "answers": [
+      "أعشقها",
+      "بس المناسبات الخاصة",
+      "أحياناً",
+      "مو نوعي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "ألعاب طاولة مع الأصدقاء؟",
+    "answers": [
+      "أحبها",
+      "بس التنافسية",
+      "أفضل ألعاب الفيديو",
+      "UNO دائماً"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "تسوي قوائم مهام؟",
+    "answers": [
+      "دائماً هكذا أنظم نفسي",
+      "أحياناً لما أنضغط",
+      "أبداً كلها برأسي",
+      "أسويها بس أضيعها"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "عندك طقس قبل النوم؟",
+    "answers": [
+      "أقرأ شوي",
+      "أتصفح السوشال ميديا",
+      "تأمل أو تنفس",
+      "مسلسلات لين أنام"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "أي نوع حفلة تفضل؟",
+    "answers": [
+      "نادي كبير",
+      "عشاء مع أصدقاء مقربين",
+      "حفلة بالبيت",
+      "مهرجان بالهواء الطلق"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "الموضة مهمة لك؟",
+    "answers": [
+      "أتابع الترندات",
+      "عندي ستايلي الخاص",
+      "الحد الأدنى عشان أبان كويس",
+      "الملابس ما تهمني"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "تعيد تدوير النفايات؟",
+    "answers": [
+      "كل شيء مفروز صح",
+      "أحاول",
+      "بس السهل",
+      "لازم أتحسن"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "أي مسلسل من طفولتك تعيده؟",
+    "answers": [
+      "دراغون بول",
+      "كابتن ماجد",
+      "سيمبسونز",
+      "سبونج بوب"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "أنت أكثر باتمان أم سوبرمان؟",
+    "answers": [
+      "باتمان: غامض ومظلم",
+      "سوبرمان: نبيل وقوي",
+      "آيرون مان: ذكي وكاريزمي",
+      "ووندر وومان: قوة وعدالة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "لو تغير شيء واحد بالعالم؟",
+    "answers": [
+      "أمحي الفقر",
+      "أنقذ البيئة",
+      "أكثر تعاطف بين الناس",
+      "واي فاي مجاني بكل مكان"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "عشاء رومانسي أم ممتع؟",
+    "answers": [
+      "رومانسي بشموع",
+      "ممتع بضحك",
+      "الاثنين",
+      "عشاء مطبوخ بالبيت"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "فطور حلو أم مالح؟",
+    "answers": [
+      "حلو مع معجنات",
+      "مالح مثل بيض وجبنة",
+      "مختلط",
+      "بس قهوة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "بالمطعم: تجرب جديد أم تطلب المعتاد؟",
+    "answers": [
+      "دائماً نفس الشيء",
+      "شيء جديد كل مرة",
+      "أتنقل بينهم",
+      "أسأل النادل"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "آيس كريم المفضل؟",
+    "answers": [
+      "شوكولاتة",
+      "فانيلا",
+      "فستق",
+      "مانجو"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "أي أغنية تغنيها بالكاريوكي؟",
+    "answers": [
+      "حاجة لعمرو دياب",
+      "شيء لفيروز",
+      "بوهيميان رابسودي",
+      "أغنية حماسية عربية"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "أغنية حزن تأثر فيك؟",
+    "answers": [
+      "شيء لكاظم الساهر",
+      "أغنية لفيروز",
+      "أغنية لأم كلثوم",
+      "شيء لعبد الحليم حافظ"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "ريميك أم الأصل؟",
+    "answers": [
+      "الأصل دائماً",
+      "بعض الريميكات أفضل",
+      "حسب الفيلم",
+      "أشوف الاثنين وأقارن"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "ممثلك العربي المفضل؟",
+    "answers": [
+      "أحمد حلمي",
+      "عادل إمام",
+      "نادين لبكي",
+      "ياسمين عبد العزيز"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "أي رياضة عمرك ما تجربها؟",
+    "answers": [
+      "القفز بالحبل العالي",
+      "ملاكمة",
+      "تسلق حر",
+      "أجرب أي شيء"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "كيف تصف حس الفكاهة عندك؟",
+    "answers": [
+      "أسود مثل القهوة",
+      "عبثي وعشوائي",
+      "ساخر بس بحب",
+      "نكت أبوية بفخر"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "ستريمنغ موسيقى: سبوتيفاي أم أبل ميوزك؟",
+    "answers": [
+      "سبوتيفاي دائماً",
+      "أبل ميوزك",
+      "أنغامي",
+      "لازلت أحمل الموسيقى"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "أي عبارة تعبر عنك؟",
+    "answers": [
+      "عش يومك",
+      "اللي بيصير خير",
+      "الوقاية خير من العلاج",
+      "الحمد لله على كل حال"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كيف تعتذر؟",
+    "answers": [
+      "وجهاً لوجه",
+      "بهدية أو لفتة",
+      "رسالة طويلة صادقة",
+      "بفكاهة عشان أخفف"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "أي أولوية هالسنة؟",
+    "answers": [
+      "الصحة والعافية",
+      "المسيرة المهنية",
+      "العلاقات الشخصية",
+      "أسافر أكثر"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "كم أنت مغامر بالأكل؟",
+    "answers": [
+      "آكل كل شيء بدون خوف",
+      "أجرب أشياء جديدة أحياناً",
+      "صعب الإرضاء",
+      "بس اللي أعرفه"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "ما رأيك بالسكن مع بعض قبل الزواج؟",
+    "answers": [
+      "ضروري",
+      "فكرة جيدة",
+      "حسب العلاقة",
+      "أفضل أنتظر"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "رود ترب أم طيران مباشر؟",
+    "answers": [
+      "رود ترب بمحطات",
+      "طيران عشان أوصل بسرعة",
+      "قطار لو ممكن",
+      "حسب المسافة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "ماذا تكون آخر وجبة لك؟",
+    "answers": [
+      "أكل أمي",
+      "سوشي من أفضل مطعم",
+      "مشاوي فاخرة",
+      "بيتزا نابولي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "كيف تحتفل برأس السنة؟",
+    "answers": [
+      "حفلة كبيرة",
+      "عشاء عائلي",
+      "سفر لمكان ثاني",
+      "بالبيت بهدوء"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "كيف تنفصل عن الشغل؟",
+    "answers": [
+      "رياضة",
+      "أطلع أتعشى",
+      "مسلسلات وكنبة",
+      "هوايات إبداعية"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "مكانك المفضل بمدينتك؟",
+    "answers": [
+      "حديقة معينة",
+      "مقهاي المفضل",
+      "المنطقة القديمة",
+      "حيّي"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "تشوف عائلتك كم مرة؟",
+    "answers": [
+      "كل أسبوع",
+      "كل شهر",
+      "بالإجازات والمناسبات",
+      "نسكن سوا"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "لونك المفضل يقول عنك إيش؟",
+    "answers": [
+      "أزرق: هادي",
+      "أحمر: عاطفي",
+      "أخضر: طبيعي",
+      "أسود: أنيق"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "متى آخر مرة طلعت من منطقة الراحة؟",
+    "answers": [
+      "هالأسبوع",
+      "مؤخراً",
+      "ما أتذكر",
+      "أحاول باستمرار"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "تفضل تسمع نصائح أم تقرر لوحدك؟",
+    "answers": [
+      "أسمع بس أقرر بنفسي",
+      "أحب نصائح غيري",
+      "أقرر لوحدي دائماً",
+      "حسب أهمية الموضوع"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ما تعطيك المحادثة الجيدة؟",
+    "answers": [
+      "طاقة وتحفيز",
+      "منظورات جديدة",
+      "ارتباط عاطفي",
+      "متعة وضحك"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "أكلة البيت أم المطعم؟",
+    "answers": [
+      "البيت دائماً",
+      "المطعم لتجربة جديدة",
+      "البيت بالأسبوع والمطعم نهاية الأسبوع",
+      "التوصيل خياري الثالث"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "أكلتك المفضلة يوم الجمعة؟",
+    "answers": [
+      "كبسة عائلية",
+      "مشاوي مع الأصدقاء",
+      "برنش متأخر",
+      "اللي أمي تطبخه"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "تفضل تقرأ الكتاب أم تشوف الفيلم؟",
+    "answers": [
+      "الكتاب دائماً",
+      "الفيلم أسهل",
+      "الاثنين وأقارن",
+      "حسب أيهم طلع أول"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "دراجة جبلية أم عادية؟",
+    "answers": [
+      "جبلية للمغامرة",
+      "عادية للتنقل",
+      "الاثنين",
+      "ولا وحدة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "أسوأ نكتة تحبها؟",
+    "answers": [
+      "نكت أبوية من زمان",
+      "تورية سخيفة",
+      "ما أحفظ نكت",
+      "كل نكتي سخيفة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "تصحى بدري عشان رحلة رخيصة؟",
+    "answers": [
+      "بدون مشكلة",
+      "بس لو تستاهل",
+      "أفضل أدفع أكثر وأنام",
+      "الرحلة تبدأ من المطار"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "زيارة نفس المدينة مرتين أم دائماً جديد؟",
+    "answers": [
+      "دائماً وجهات جديدة",
+      "أرجع للي حبيتها",
+      "حسب كم حبيتها",
+      "الزيارة الثانية تكشف أشياء جديدة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "إجازة نهاية الأسبوع: بحر أم جبل؟",
+    "answers": [
+      "شاطئ قريب",
+      "جبل برحلة",
+      "قرية جميلة",
+      "مدينة ثانية ما أعرفها"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "تدعم قضايا اجتماعية؟",
+    "answers": [
+      "بشكل فعال",
+      "تبرعات لما أقدر",
+      "أبي أبدأ",
+      "أدعم بالسوشال ميديا"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "تحب تروح السينما لوحدك؟",
+    "answers": [
+      "نعم ممتع",
+      "بس مع أحد",
+      "عمري ما جربت بس أسويها",
+      "ما أروح السينما"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "القيلولة: مقدسة أم مضيعة وقت؟",
+    "answers": [
+      "مقدسة، 20 دقيقة",
+      "أتمنى بس ما أقدر",
+      "مضيعة وقت",
+      "بس يوم الجمعة"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  }
+]

@@ -1,0 +1,5196 @@
+[
+  {
+    "category": "personality",
+    "question_text": "初デートで一番印象に残ることは？",
+    "answers": [
+      "隠れ家バーに連れて行ってくれる",
+      "下北沢で古本屋巡り",
+      "東京タワーの夜景",
+      "美術館デート"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "疲れた週末のリフレッシュ方法は？",
+    "answers": [
+      "アニメ一気見",
+      "友達と居酒屋",
+      "温泉でゆっくり",
+      "カフェで読書"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "恋人とのLINEスタイルは？",
+    "answers": [
+      "スタンプ連打",
+      "おはようLINE毎日",
+      "ボイスメッセージ派",
+      "既読早めの短文派"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "デートプランは誰が決める？",
+    "answers": [
+      "サプライズで僕が決める",
+      "君に任せる",
+      "一緒に相談して",
+      "流れに任せよう"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "パートナーに一番大切なものは？",
+    "answers": [
+      "ユーモアのセンス",
+      "向上心",
+      "優しさ",
+      "知性"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "ケンカしたらどう対処する？",
+    "answers": [
+      "すぐ話し合う",
+      "少し距離を置く",
+      "手紙やLINEで気持ちを伝える",
+      "笑いで解決する"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "朝型？夜型？",
+    "answers": [
+      "朝型 – 早起きは三文の徳",
+      "夜型 – 夜が本番",
+      "日によって変わる",
+      "どっちでもない – 寝不足"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "あなたの愛情表現は？",
+    "answers": [
+      "言葉で伝える",
+      "一緒に過ごす時間",
+      "プレゼントを贈る",
+      "スキンシップ"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "デートで行きたい日本の場所は？",
+    "answers": [
+      "京都 – 着物で散策",
+      "沖縄 – ビーチリゾート",
+      "北海道 – 美食の旅",
+      "鎌倉 – 江ノ電デート"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "特別な人との理想の旅行先は？",
+    "answers": [
+      "パリ – 愛の街",
+      "ハワイ – 南国パラダイス",
+      "ニューヨーク – 大都会",
+      "バリ島 – 熱帯の楽園"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "理想の日曜日の朝は？",
+    "answers": [
+      "コンビニでおにぎり買って公園",
+      "昼まで寝る",
+      "朝ランニング",
+      "モーニングのあるカフェ"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "一番好きなストリートフードは？",
+    "answers": [
+      "たこ焼き",
+      "焼き鳥",
+      "クレープ",
+      "たい焼き"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "フェスに行くならどれ？",
+    "answers": [
+      "フジロック",
+      "サマソニ",
+      "ROCK IN JAPAN",
+      "コーチェラに行きたい"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "film",
+    "question_text": "好きなジブリ映画は？",
+    "answers": [
+      "千と千尋の神隠し",
+      "もののけ姫",
+      "天空の城ラピュタ",
+      "となりのトトロ"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "sports",
+    "question_text": "デートでやりたいスポーツは？",
+    "answers": [
+      "ボルダリング",
+      "サーフィン体験",
+      "卓球",
+      "ビーチバレー"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "どんなユーモアが好き？",
+    "answers": [
+      "シュールなボケ",
+      "ツッコミ芸",
+      "ダジャレ",
+      "ブラックユーモア"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "hobby",
+    "question_text": "デートで共有したい趣味は？",
+    "answers": [
+      "一緒に料理する",
+      "ゲーム対戦",
+      "散歩やハイキング",
+      "カラオケ"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "テクノロジーとの付き合い方は？",
+    "answers": [
+      "スマホなしでは生きられない",
+      "使うけど依存はしない",
+      "デジタルデトックスしたい",
+      "ガジェット大好き"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "一日だけ超能力を持てるなら？",
+    "answers": [
+      "テレパシー",
+      "空を飛ぶ",
+      "タイムトラベル",
+      "透明になれる"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "人の第一印象で最初に気づくことは？",
+    "answers": [
+      "笑顔",
+      "目",
+      "声",
+      "雰囲気"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "計画派？それとも即興派？",
+    "answers": [
+      "完全に即興",
+      "きっちり計画する",
+      "両方のミックス",
+      "状況次第"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "キャンプ派？高級ホテル派？",
+    "answers": [
+      "河口湖でグランピング",
+      "温泉旅館",
+      "リゾートホテル",
+      "車中泊ロードトリップ"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "仕事終わりの過ごし方は？",
+    "answers": [
+      "ジムで筋トレ",
+      "ソファでゴロゴロ",
+      "友達と飲みに行く",
+      "新しいレシピに挑戦"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "もし動物に生まれ変わるなら？",
+    "answers": [
+      "鷹 – 自由に空を飛ぶ",
+      "猫 – 気ままな生活",
+      "イルカ – 海で遊ぶ",
+      "柴犬 – 愛される存在"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "元気が出るご飯は？",
+    "answers": [
+      "ラーメン一択",
+      "焼肉",
+      "お寿司",
+      "お母さんの手料理"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "恋愛で一番幸せを感じる瞬間は？",
+    "answers": [
+      "一緒に冒険する時",
+      "深い話ができた時",
+      "小さなサプライズの時",
+      "無言でも心地よい時"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "好きな人への気持ちの伝え方は？",
+    "answers": [
+      "手料理でアピール",
+      "甘いメッセージを送る",
+      "サプライズを計画する",
+      "いつもそばにいる"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "デートで絶対NGなことは？",
+    "answers": [
+      "ずっとスマホを見る",
+      "店員に失礼な態度",
+      "自分の話ばかり",
+      "遅刻して連絡なし"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "あなたの恋愛タイプは？",
+    "answers": [
+      "頼れる存在",
+      "冒険好き",
+      "ロマンチスト",
+      "親友みたいな恋人"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "理想の女性との旅行先は？",
+    "answers": [
+      "パリ – エッフェル塔の前で",
+      "モルディブ – 水上コテージ",
+      "バルセロナ – 情熱の街",
+      "東京ディズニーリゾート"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "旅行の計画はどうする？",
+    "answers": [
+      "完璧にプラン立てる",
+      "ノープランで行く",
+      "大まかなルートだけ決める",
+      "相手に任せる"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "部屋に欠かせないものは？",
+    "answers": [
+      "レコードプレーヤー",
+      "本棚いっぱいの漫画",
+      "ゲーミングセットアップ",
+      "観葉植物たくさん"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "デートの服装は？",
+    "answers": [
+      "カジュアルだけどお洒落",
+      "スポーティーカジュアル",
+      "ちょっとキメすぎ",
+      "とにかく楽な服"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "気合を入れて作る料理は？",
+    "answers": [
+      "手作りパスタ",
+      "完璧なステーキ",
+      "手巻き寿司パーティー",
+      "料理は苦手…出前で"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "お酒はビール派？日本酒派？",
+    "answers": [
+      "クラフトビール",
+      "日本酒をちびちび",
+      "ハイボール",
+      "お酒は飲まない"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "すぐ踊り出す曲は？",
+    "answers": [
+      "YOASOBI – 夜に駆ける",
+      "テクノビート",
+      "80年代シティポップ",
+      "最新J-POP"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "パートナーの音楽の趣味は重要？",
+    "answers": [
+      "超重要",
+      "あったらいいけど必須じゃない",
+      "違いも楽しい",
+      "音楽にこだわらない"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "film",
+    "question_text": "おうちデートで観るジャンルは？",
+    "answers": [
+      "ラブコメ",
+      "サスペンス",
+      "SF映画",
+      "ドキュメンタリー"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "film",
+    "question_text": "映画館派？おうち派？",
+    "answers": [
+      "映画館 – 大画面とポップコーン",
+      "おうち – ブランケットに包まって",
+      "野外上映会",
+      "どっちも好き"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "sports",
+    "question_text": "よくやるスポーツは？",
+    "answers": [
+      "サッカー",
+      "ランニングと筋トレ",
+      "テニス",
+      "スキー・スノーボード"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "絶対笑っちゃうことは？",
+    "answers": [
+      "予想外のボケ",
+      "的確なツッコミ",
+      "変顔",
+      "自虐ネタ"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "好きなお笑い芸人のタイプは？",
+    "answers": [
+      "漫才師",
+      "コント師",
+      "一発芸人",
+      "トーク力のある芸人"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "hobby",
+    "question_text": "やってみたいけど勇気がない趣味は？",
+    "answers": [
+      "スカイダイビング",
+      "お笑いライブに出る",
+      "楽器を始める",
+      "絵を描く"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "hobby",
+    "question_text": "ボードゲーム派？テレビゲーム派？",
+    "answers": [
+      "人生ゲーム！",
+      "Switch・PS5",
+      "トランプや花札",
+      "外で体を動かす派"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "iPhone派？Android派？",
+    "answers": [
+      "iPhone – もちろん",
+      "Android – 自由度が高い",
+      "どっちでもいい",
+      "よく変える"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "スマートホームに興味ある？",
+    "answers": [
+      "全部スマート化したい",
+      "照明くらいなら",
+      "なんか怖い",
+      "試してみたい"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "ゾンビ映画の世界、あなたの戦略は？",
+    "answers": [
+      "山奥に逃げる",
+      "仲間を集める",
+      "コンビニに立てこもる",
+      "たぶん最初にやられる"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "どんなペットが合う？",
+    "answers": [
+      "犬 – 忠実な相棒",
+      "猫 – マイペース同士",
+      "うさぎ – 癒し系",
+      "ペットは飼えない"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "内向的？外向的？",
+    "answers": [
+      "内向的で誇り高い",
+      "外向的でにぎやか",
+      "その時の気分次第",
+      "自分でもわからない"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "「誠実さ」って何だと思う？",
+    "answers": [
+      "心の独占",
+      "体の誠実さ",
+      "完全な信頼",
+      "オープンなコミュニケーション"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "人生で一番インスピレーションを受けるものは？",
+    "answers": [
+      "自然の美しさ",
+      "クリエイティブな人々",
+      "旅と異文化",
+      "科学と技術の進歩"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "「成功」の定義は？",
+    "answers": [
+      "心の平和",
+      "経済的自由",
+      "愛ある人間関係",
+      "仕事での達成"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "一目惚れを信じる？",
+    "answers": [
+      "絶対信じる！",
+      "惹かれるのと恋は違う",
+      "愛は時間がかかる",
+      "状況による"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "今すぐ人生で変えたいことは？",
+    "answers": [
+      "もっと旅行する",
+      "仕事を減らす",
+      "趣味の時間を増やす",
+      "何も変えない – 満足"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "他人のどんな資質を尊敬する？",
+    "answers": [
+      "勇気",
+      "共感力",
+      "規律",
+      "創造性"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "恋愛での独立性、どれくらい大事？",
+    "answers": [
+      "とても大事 – 自分の時間必要",
+      "距離と親密さのバランス",
+      "いつも一緒がいい",
+      "信頼の中の自由"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "一番大きな夢は？",
+    "answers": [
+      "家庭を築く",
+      "世界一周",
+      "自分のビジネス",
+      "後世に残るものを作る"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "変化への対処法は？",
+    "answers": [
+      "変化大好き",
+      "時間が必要",
+      "場合による",
+      "変化は少し怖い"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "「ふるさと」ってあなたにとって何？",
+    "answers": [
+      "家族がいる場所",
+      "心地よい場所",
+      "生まれ育った街",
+      "心の中にある"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "海外旅行と国内旅行、どっち？",
+    "answers": [
+      "海外 – 遠いほど良い",
+      "国内で十分楽しめる",
+      "交互に両方",
+      "とにかくどこかへ"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "ヨーロッパで一番行きたい国は？",
+    "answers": [
+      "イタリア – 食とアート",
+      "スペイン – 太陽とフィエスタ",
+      "北欧 – 自然と洗練",
+      "ギリシャ – 島々と海"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "理想の休暇の長さは？",
+    "answers": [
+      "3連休で十分",
+      "2週間は欲しい",
+      "1ヶ月の長期休暇",
+      "できるだけ長く"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "一人旅と二人旅、どっち？",
+    "answers": [
+      "一人旅 – 完全な自由",
+      "二人旅 – ロマンチック",
+      "少人数グループ",
+      "目的地次第"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "都会派？田舎派？",
+    "answers": [
+      "東京か大阪の都会",
+      "のんびりした地方都市",
+      "田舎で庭付きの家",
+      "海の近くがいい"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "環境意識、どれくらい高い？",
+    "answers": [
+      "とても – エコ生活してる",
+      "できる範囲で頑張る",
+      "あまり意識してない",
+      "そこまで気にしない"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "一番生産性が上がる時間帯は？",
+    "answers": [
+      "朝早く",
+      "夜遅く",
+      "午後のコーヒー後",
+      "締め切り前"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "肉食派？ベジタリアン？",
+    "answers": [
+      "肉なしでは生きられない",
+      "ほぼベジタリアン",
+      "ヴィーガン",
+      "フレキシタリアン"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "世界で一番好きな料理は？",
+    "answers": [
+      "イタリアン",
+      "和食",
+      "メキシカン",
+      "タイ料理"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "レコード派？サブスク派？",
+    "answers": [
+      "レコード – 音が違う",
+      "Spotify – 便利で手軽",
+      "気分で使い分け",
+      "YouTubeで十分"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "ライブ派？DJイベント派？",
+    "answers": [
+      "ライブ – 生のエネルギー",
+      "クラブでDJセット",
+      "クラシックコンサート",
+      "小さなジャズバー"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "一気見する？一日一話？",
+    "answers": [
+      "一気見 – 深夜3時まで",
+      "一日一話 – 楽しみを延ばす",
+      "交互に",
+      "本の方が好き"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "応援してるスポーツチームは？",
+    "answers": [
+      "サッカーJリーグ",
+      "プロ野球",
+      "特にない",
+      "海外リーグを追ってる"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "恥ずかしい場面、どうする？",
+    "answers": [
+      "自分で笑い飛ばす",
+      "穴があったら入りたい",
+      "ネタにする",
+      "何事もなかったように"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "クリエイティブな趣味ある？",
+    "answers": [
+      "写真撮影",
+      "音楽制作",
+      "文章を書く",
+      "イラスト・デザイン"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "SNSは味方？敵？",
+    "answers": [
+      "味方 – 人と繋がれる",
+      "敵 – 依存性が怖い",
+      "両方",
+      "ほとんど使わない"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "どの時代に生まれたかった？",
+    "answers": [
+      "大正ロマン",
+      "昭和レトロの60年代",
+      "バブルの80年代",
+      "令和で十分"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "自分を曜日に例えると？",
+    "answers": [
+      "月曜日 – やる気満々",
+      "水曜日 – バランス型",
+      "金曜日 – パーティー",
+      "日曜日 – のんびり派"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "頭で考える？直感で動く？",
+    "answers": [
+      "いつも論理的に",
+      "直感を信じる",
+      "両方合わせて",
+      "人に相談する"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "正直さと外交的対応、どっちが大事？",
+    "answers": [
+      "正直さ、いつも",
+      "外交的対応で平和を保つ",
+      "場面による",
+      "思いやりのある正直さ"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "緊張するとどうなる？",
+    "answers": [
+      "よく喋る",
+      "黙り込む",
+      "笑いが出る",
+      "ジョークを言う"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "人をすぐ信用できる？",
+    "answers": [
+      "うん、すぐ信じる",
+      "時間がかかる",
+      "強い絆を感じた時だけ",
+      "信頼は積み重ね"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "自分を一言で表すと？",
+    "answers": [
+      "楽観主義者",
+      "現実的な希望者",
+      "夢見る理想家",
+      "実用的な行動派"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "共通の価値観、どれくらい大事？",
+    "answers": [
+      "不可欠",
+      "大事だけど全てじゃない",
+      "違いも豊かさ",
+      "価値観による"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ギルティプレジャーは？",
+    "answers": [
+      "バラエティ番組を見ること",
+      "深夜のお菓子",
+      "ダサいJ-POP",
+      "一日中ベッドにいること"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "将来の計画派？今を楽しむ派？",
+    "answers": [
+      "5年計画がある",
+      "今を生きる",
+      "ざっくりした方向だけ",
+      "計画しては変える"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ストレス解消法は？",
+    "answers": [
+      "運動で発散",
+      "瞑想や静けさ",
+      "友達と話す",
+      "音楽を聴いてリラックス"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "褒められたらどうする？",
+    "answers": [
+      "素直にありがとう",
+      "照れちゃう",
+      "つい否定しちゃう",
+      "誰に言われたかによる"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "若い自分にアドバイスするなら？",
+    "answers": [
+      "心配しすぎないで",
+      "もっと勇気を持って",
+      "今を楽しんで",
+      "心に従って"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "サプライズは好き？",
+    "answers": [
+      "大好き！",
+      "内容による",
+      "あまり好きじゃない",
+      "嬉しいサプライズだけ"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "会話では聞き役？話し役？",
+    "answers": [
+      "話すのが好き",
+      "聞く方が好き",
+      "交互に",
+      "話題による"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "怒りのスイッチは？",
+    "answers": [
+      "嘘をつかれること",
+      "時間を守らないこと",
+      "上から目線の態度",
+      "無関心"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "誕生日の理想の過ごし方は？",
+    "answers": [
+      "みんなでパーティー",
+      "少人数でディナー",
+      "一人で特別なことを",
+      "旅行に出かける"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "恋に落ちるスピードは？",
+    "answers": [
+      "結構早い",
+      "ゆっくり時間をかける",
+      "ピンと来た時だけ",
+      "めったに恋しない"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "自己成長、どれくらい大事？",
+    "answers": [
+      "最優先事項",
+      "大事だけど全てじゃない",
+      "自然に起こるもの",
+      "今の自分で十分"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "負けず嫌い？",
+    "answers": [
+      "めちゃくちゃ負けず嫌い",
+      "少しは競争心ある",
+      "勝ち負けより楽しさ",
+      "負けても大丈夫"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ロマンチックなのは朝日？夕日？",
+    "answers": [
+      "朝日 – 新しい始まり",
+      "夕日 – マジックアワー",
+      "満天の星空",
+      "どっちも美しい"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "他人の意見、気にする？",
+    "answers": [
+      "全然気にしない",
+      "親しい人の意見だけ",
+      "結構気にする",
+      "尊敬する人だけ"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "暇な時どうする？",
+    "answers": [
+      "何かしら見つける",
+      "動画を延々と見る",
+      "外出して人に会う",
+      "クリエイティブなことをする"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "友情で一番大切なのは？",
+    "answers": [
+      "誠実さと忠誠心",
+      "一緒の経験",
+      "深い会話",
+      "一緒に笑えること"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "運命を信じる？",
+    "answers": [
+      "信じる – すべてに意味がある",
+      "信じない – 自分で作る",
+      "半々",
+      "わからない"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "批判にどう反応する？",
+    "answers": [
+      "建設的に受け止める",
+      "最初はムッとする、後で考える",
+      "誰からかによる",
+      "全部疑問に思う"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "お金が無限にあったら何の仕事する？",
+    "answers": [
+      "トラベルブロガー",
+      "動物保護活動家",
+      "アーティストかミュージシャン",
+      "カフェのオーナー"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "親友の数は？",
+    "answers": [
+      "1人か2人で十分",
+      "片手で数えるくらい",
+      "たくさんいる",
+      "一匹狼タイプ"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "自由と安定、どっちが大事？",
+    "answers": [
+      "自由が全て",
+      "安定が安心",
+      "バランスが大事",
+      "安定の中の自由"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "ビーチ派？山派？",
+    "answers": [
+      "ビーチ – 太陽と海",
+      "山 – 清々しい空気と絶景",
+      "交互に両方",
+      "都市旅行の方がいい"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "旅行で一番大切なのは？",
+    "answers": [
+      "美味しいご飯",
+      "文化と歴史",
+      "リラックス",
+      "冒険とアクション"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "移動手段は？飛行機？新幹線？車？",
+    "answers": [
+      "飛行機 – 速くて効率的",
+      "新幹線 – 快適でリラックス",
+      "車 – 自由とフレキシビリティ",
+      "青春18きっぷ – ゆっくり旅"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "アジア以外の夢の旅行先は？",
+    "answers": [
+      "イタリア – 食とアート",
+      "ニュージーランド – 大自然",
+      "アイスランド – オーロラ",
+      "ペルー – マチュピチュ"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "荷造りのスタイルは？",
+    "answers": [
+      "リスト作って完璧に",
+      "ギリギリに詰め込む",
+      "ミニマリスト – 少なく",
+      "いつも多すぎる"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "ゲストハウスとAirbnb、どっち？",
+    "answers": [
+      "ゲストハウス – 出会いがある",
+      "Airbnb – 地元民みたいに",
+      "ホテル – 快適が一番",
+      "カプセルホテル – 日本らしい"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "日本でまだ行ったことない場所は？",
+    "answers": [
+      "屋久島 – 縄文杉を見たい",
+      "小笠原諸島 – 秘境",
+      "四国のお遍路",
+      "奄美大島 – 自然の宝庫"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "温泉旅行、どこがいい？",
+    "answers": [
+      "箱根 – 東京から近い",
+      "別府 – 地獄めぐり",
+      "草津 – 名湯",
+      "道後温泉 – 歴史ある"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "旅先での言葉、頑張る？",
+    "answers": [
+      "現地語を勉強していく",
+      "英語でなんとかなる",
+      "いくつかのフレーズだけ",
+      "翻訳アプリに頼る"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "長い一回の旅行と短い複数回、どっち？",
+    "answers": [
+      "年に一度の長い旅行",
+      "週末旅行をたくさん",
+      "両方できたら最高",
+      "あまり旅行しない"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "旅行に必ず持っていくものは？",
+    "answers": [
+      "カメラ",
+      "お気に入りの本",
+      "ヘッドホンとプレイリスト",
+      "必要最低限だけ"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "好きな人のために引っ越せる？",
+    "answers": [
+      "すぐに、迷わず",
+      "日本国内なら",
+      "全てが揃ったら",
+      "いや、自分の場所が大事"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "ロードトリップのお菓子は？",
+    "answers": [
+      "じゃがりこ",
+      "おにぎりとお茶",
+      "チョコレート",
+      "コンビニで全部買う"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "クルーズとヨット、どっち？",
+    "answers": [
+      "クルーズ – 豪華な船旅",
+      "ヨット – 冒険的",
+      "陸の方がいい",
+      "釣り船がいい"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "紅葉を見るならどこ？",
+    "answers": [
+      "京都 – 東福寺",
+      "日光 – いろは坂",
+      "奥入瀬渓流",
+      "嵐山 – トロッコ列車"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "花火大会、どこで見る？",
+    "answers": [
+      "隅田川花火大会",
+      "長岡花火",
+      "神宮外苑",
+      "穴場の地元の花火"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "朝の習慣は？",
+    "answers": [
+      "コーヒーが命",
+      "朝のストレッチ",
+      "まずSNSチェック",
+      "ゆっくり朝ごはん"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "きれい好き？散らかし派？",
+    "answers": [
+      "全てに場所がある",
+      "クリエイティブな散らかし",
+      "基本きれいだけど例外あり",
+      "散らかってても見つけられる"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "何を読むのが好き？",
+    "answers": [
+      "小説・文芸書",
+      "ビジネス書・自己啓発",
+      "ネットニュースや記事",
+      "漫画一択"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "ジム派？外で運動派？",
+    "answers": [
+      "ジムで筋トレ",
+      "外でランニングやサイクリング",
+      "ヨガやピラティス",
+      "運動は苦手"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "金曜の夜の過ごし方は？",
+    "answers": [
+      "友達と飲みに行く",
+      "家でゆっくり",
+      "デートナイト",
+      "創作活動 – 音楽やアート"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "犬派？猫派？",
+    "answers": [
+      "犬 – 親友",
+      "猫 – 自由な精神",
+      "両方！",
+      "どちらも飼えない"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "コーヒー派？お茶派？",
+    "answers": [
+      "コーヒー – ブラックで",
+      "日本茶 – 抹茶もOK",
+      "気分で使い分け",
+      "どちらも飲まない – 水派"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "スマホの使用時間は？",
+    "answers": [
+      "多すぎる、正直",
+      "必要な時だけ",
+      "減らそうとしてる",
+      "常にオンライン"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "貯金派？消費派？",
+    "answers": [
+      "コツコツ貯金",
+      "自分へのご褒美派",
+      "バランスを取る",
+      "お金は使うためにある"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "飲みに行くなら何を頼む？",
+    "answers": [
+      "生ビール",
+      "日本酒",
+      "ハイボール",
+      "ノンアルコール"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "運動不足解消法は？",
+    "answers": [
+      "定期的にジム通い",
+      "散歩で十分",
+      "ダンスや体を動かす遊び",
+      "フィットネスアプリ"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "健康的な食事、意識してる？",
+    "answers": [
+      "とても – 栄養バランス重視",
+      "平日は健康的、週末は自由",
+      "食べたいもの食べる",
+      "健康料理が趣味"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "フリーランスと会社員、どっち？",
+    "answers": [
+      "フリーランス – 自分がボス",
+      "会社員 – 安定が大事",
+      "フリーランスに憧れる",
+      "何でもいい、楽しければ"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "寝る時間はいつ？",
+    "answers": [
+      "22時前",
+      "0時頃",
+      "深夜1時以降",
+      "決まってない"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "タトゥーについてどう思う？",
+    "answers": [
+      "好き – 自分もある",
+      "他の人のは素敵",
+      "あまり好きじゃない",
+      "入れたいけど勇気がない"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "理想の住まいは？",
+    "answers": [
+      "都心のマンション",
+      "郊外の一戸建て",
+      "古民家リノベ",
+      "ミニマルなワンルーム"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "通勤中は何してる？",
+    "answers": [
+      "ポッドキャスト",
+      "音楽を聴く",
+      "オーディオブック",
+      "静かに過ごす"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "どれくらい自炊する？",
+    "answers": [
+      "ほぼ毎日",
+      "週に何回か",
+      "ほとんどしない – UberEats",
+      "週末だけ凝った料理"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "古着屋とネットショッピング、どっち？",
+    "answers": [
+      "古着屋 – 一点もの探し",
+      "ネット – 便利",
+      "実店舗でじっくり",
+      "あまり買い物しない"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "シェアハウスと一人暮らし、どっち？",
+    "answers": [
+      "シェアハウス – 人と一緒がいい",
+      "一人暮らし – 自分の空間",
+      "恋人と同棲",
+      "友達とだけシェア"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "タイムマシンがあったら？過去？未来？",
+    "answers": [
+      "過去 – 歴史を体験",
+      "未来 – 何が待ってる？",
+      "最高の一日をもう一度",
+      "今がいい"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "自分を色に例えると？",
+    "answers": [
+      "赤 – 情熱的",
+      "青 – 落ち着いている",
+      "黄色 – 明るく前向き",
+      "緑 – 自然体"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "無人島に一つだけ持っていくなら？",
+    "answers": [
+      "読み終わらない本",
+      "楽器",
+      "釣り竿とナイフ",
+      "スマホ（電波あり）"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "人生のモットーは？",
+    "answers": [
+      "一期一会",
+      "なるようになる",
+      "七転び八起き",
+      "笑う門には福来たる"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "一番使う絵文字は？",
+    "answers": [
+      "😂 – 爆笑",
+      "❤️ – ハート",
+      "🔥 – 炎",
+      "🙏 – お願い"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "もし有名になるとしたら何で？",
+    "answers": [
+      "音楽やアート",
+      "科学的発見",
+      "スポーツチャンピオン",
+      "YouTuberやインフルエンサー"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "宇宙人はいると思う？",
+    "answers": [
+      "絶対いる",
+      "いるかもしれない",
+      "たぶんいない",
+      "僕たちが宇宙人かも"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "ファンタジーの世界なら何になる？",
+    "answers": [
+      "魔法使い",
+      "侍",
+      "エルフ",
+      "ドラゴン"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "カラオケの十八番は？",
+    "answers": [
+      "アニソン",
+      "J-POPの名曲",
+      "洋楽",
+      "歌わない – 見てる派"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "宝くじが当たったら最初にすること？",
+    "answers": [
+      "世界一周旅行",
+      "家を買う",
+      "家族と友達にプレゼント",
+      "起業する"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "あなたの恋愛を昔話に例えると？",
+    "answers": [
+      "かぐや姫 – 手が届かない",
+      "桃太郎 – 冒険しながら",
+      "浦島太郎 – 時間があっという間",
+      "鶴の恩返し – 献身的"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "予定のない休日は何する？",
+    "answers": [
+      "ひたすらゴロゴロ",
+      "思いつきで出かける",
+      "やることリスト消化",
+      "自然の中でリフレッシュ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "日本の文化で自分に当てはまるのは？",
+    "answers": [
+      "几帳面さ",
+      "食へのこだわり",
+      "おもてなし精神",
+      "空気を読む力"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "あなたはどの季節？",
+    "answers": [
+      "春 – 新しいエネルギー",
+      "夏 – 情熱的",
+      "秋 – 落ち着いた雰囲気",
+      "冬 – クールでミステリアス"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "自分のデートスタイルを食べ物に例えると？",
+    "answers": [
+      "おにぎり – シンプルで温かい",
+      "寿司 – 洗練されている",
+      "ラーメン – 熱くて濃い",
+      "鍋 – みんなで楽しむ"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "お正月の過ごし方は？",
+    "answers": [
+      "おせちと家族団らん",
+      "初詣で願い事",
+      "寝正月",
+      "海外で年越し"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "一生同じものしか食べられないなら？",
+    "answers": [
+      "お寿司",
+      "ラーメン",
+      "カレーライス",
+      "焼肉"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "自分のスピリットアニマルは？",
+    "answers": [
+      "猫 – マイペース",
+      "犬 – 忠実で元気",
+      "パンダ – のんびり",
+      "カワウソ – 遊び好き"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "乗り物に例えると？",
+    "answers": [
+      "スポーツカー – 速くて刺激的",
+      "自転車 – のんびり持続可能",
+      "新幹線 – 速くて快適",
+      "気球 – 自由で冒険的"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "友達と遊ぶなら何する？",
+    "answers": [
+      "ボドゲカフェ",
+      "カラオケ",
+      "居酒屋ハシゴ",
+      "BBQ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "自分を飲み物に例えると？",
+    "answers": [
+      "エスプレッソ – 濃くてパワフル",
+      "抹茶ラテ – 和と洋のミックス",
+      "ビール – フレンドリー",
+      "シャンパン – 特別感"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "東京で過ごす理想の日曜日は？",
+    "answers": [
+      "渋谷でショッピング",
+      "代々木公園でピクニック",
+      "秋葉原でオタ活",
+      "下北沢でカフェ巡り"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "好きな朝ごはんは？",
+    "answers": [
+      "和食 – 味噌汁とご飯",
+      "パンとコーヒー",
+      "フルーツとヨーグルト",
+      "コーヒーだけで十分"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "辛いもの好き？",
+    "answers": [
+      "辛ければ辛いほどいい",
+      "中辛くらい",
+      "全然ダメ",
+      "料理による"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "コーヒーと一緒に食べたいスイーツは？",
+    "answers": [
+      "抹茶ケーキ",
+      "チーズケーキ",
+      "たい焼き",
+      "クロワッサン"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "自炊と出前、どっち派？",
+    "answers": [
+      "自炊が楽しい",
+      "出前 – 便利でおいしい",
+      "交互に",
+      "一緒に作ろう！"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "映画のお供は？",
+    "answers": [
+      "ポップコーン – 塩味",
+      "ポテトチップス",
+      "チョコレート",
+      "枝豆とビール"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "子供の頃の懐かしい味は？",
+    "answers": [
+      "お母さんのカレー",
+      "給食の揚げパン",
+      "駄菓子屋のお菓子",
+      "おばあちゃんの煮物"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "デートで行きたいレストランは？",
+    "answers": [
+      "隠れ家イタリアン",
+      "おまかせ寿司カウンター",
+      "雰囲気のいい焼き鳥屋",
+      "屋台フードツアー"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "甘い派？しょっぱい派？",
+    "answers": [
+      "甘い – スイーツ大好き",
+      "しょっぱい – おつまみ系",
+      "両方いける",
+      "朝ごはんは食べない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "コーヒーの種類は？",
+    "answers": [
+      "エスプレッソ – 濃いめ",
+      "カフェラテ – ミルク多め",
+      "アイスコーヒー一択",
+      "ドリップ – ハンドドリップ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "BBQで焼くなら何？",
+    "answers": [
+      "牛カルビとタン",
+      "海鮮 – エビとイカ",
+      "野菜と焼きおにぎり",
+      "全部まとめて"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "好きなアイスの味は？",
+    "answers": [
+      "抹茶 – 定番",
+      "チョコレート",
+      "フルーツシャーベット",
+      "バニラ – 王道"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "年末年始の定番料理は？",
+    "answers": [
+      "おせち料理",
+      "年越しそば",
+      "お雑煮",
+      "すき焼き"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "珍しい食べ物、挑戦する？",
+    "answers": [
+      "何でも試す",
+      "ちょっと慎重",
+      "レストランなら",
+      "知ってるものがいい"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "好きなラーメンの種類は？",
+    "answers": [
+      "豚骨 – 濃厚",
+      "醤油 – あっさり",
+      "味噌 – コクがある",
+      "塩 – シンプル"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "食事中の飲み物は？",
+    "answers": [
+      "お水 – いつも",
+      "お茶",
+      "ビール",
+      "ジュースやソフトドリンク"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "好きな音楽ジャンルは？",
+    "answers": [
+      "J-POP",
+      "ロック・オルタナティブ",
+      "ヒップホップ・ラップ",
+      "EDM・テクノ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "楽器は弾ける？",
+    "answers": [
+      "ギター弾ける",
+      "ピアノ・キーボード",
+      "弾けないけど弾きたい",
+      "聴く専門"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "好きな日本のアーティストは？",
+    "answers": [
+      "米津玄師",
+      "King Gnu",
+      "あいみょん",
+      "Official髭男dism"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "プレイリストの雰囲気は？",
+    "answers": [
+      "サマーバイブス",
+      "エモくてメランコリック",
+      "パワフルでアゲアゲ",
+      "チルでLo-Fi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "最後に行ったライブは？",
+    "answers": [
+      "ロックかインディー",
+      "ラッパーのライブ",
+      "DJイベントかフェス",
+      "クラシックかジャズ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "料理中の音楽は？",
+    "answers": [
+      "必須 – 音楽なしでは無理",
+      "気分次第",
+      "静かな方がいい",
+      "ポッドキャスト派"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "お風呂で歌う？",
+    "answers": [
+      "毎日コンサート",
+      "誰もいない時だけ",
+      "絶対歌わない",
+      "鼻歌派"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "演歌、好き？嫌い？",
+    "answers": [
+      "実は好き",
+      "居酒屋で歌う",
+      "全然聴かない",
+      "祖父母の影響で少し"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "ドライブ中の音楽は？",
+    "answers": [
+      "懐メロ",
+      "最新チャート",
+      "何でもミックス",
+      "同乗者に任せる"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "大型フェスと小さなライブハウス、どっち？",
+    "answers": [
+      "大型フェス – 大勢の熱気",
+      "ライブハウス – アーティストが近い",
+      "どっちも最高",
+      "コンサートホール派"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "目覚まし音楽は？",
+    "answers": [
+      "優しい曲",
+      "元気が出る曲",
+      "鳥のさえずりで十分",
+      "どの音も敵"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "好きな映画ジャンルは？",
+    "answers": [
+      "アクション・スリラー",
+      "コメディ",
+      "ドラマ・インディー",
+      "SF・ファンタジー"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "今ハマってるドラマは？",
+    "answers": [
+      "サスペンス・ミステリー",
+      "SF・ファンタジー",
+      "恋愛ドラマ",
+      "ドキュメンタリー"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "大河ドラマ、見る？",
+    "answers": [
+      "毎週見る",
+      "たまに",
+      "テンポが遅い",
+      "戦国時代の時だけ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Netflix、Amazon Prime、Disney+?",
+    "answers": [
+      "Netflix – 一番豊富",
+      "Amazon Prime – お買い物もできる",
+      "Disney+ – 子供心を忘れない",
+      "全部入ってる"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "字幕派？吹き替え派？",
+    "answers": [
+      "字幕 – オリジナルの声で",
+      "吹き替え – 楽に見れる",
+      "言語による",
+      "字幕でも日本語字幕"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "一番心に残った映画は？",
+    "answers": [
+      "恋愛映画",
+      "戦争ドラマ",
+      "伝記映画",
+      "アニメ映画"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "ホラー映画、大丈夫？",
+    "answers": [
+      "大好き！",
+      "誰かと一緒なら",
+      "無理 – 眠れなくなる",
+      "心理スリラーならOK"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "名作と新作、どっち見る？",
+    "answers": [
+      "名作に魂がある",
+      "新作の方がワクワク",
+      "両方バランスよく",
+      "面白ければ何でも"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "アニメ好き？",
+    "answers": [
+      "大好き – オタクです",
+      "たまに見る",
+      "あまり見ない",
+      "ジブリだけ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "映画館のスナックは？",
+    "answers": [
+      "ポップコーン キャラメル味",
+      "ポップコーン 塩味",
+      "ホットドッグ",
+      "何も食べない – 集中"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "冬のスポーツ好き？",
+    "answers": [
+      "スキー – ゲレンデ最高",
+      "スノーボード",
+      "スケート",
+      "冬は温泉でのんびり"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "スポーツは見る派？やる派？",
+    "answers": [
+      "やる派 – いつも",
+      "見る派 – スタジアムで",
+      "両方同じくらい",
+      "どちらも"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "ヨガ、やったことある？",
+    "answers": [
+      "定期的にやってる",
+      "何回か試した",
+      "合わなかった",
+      "やってみたい"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "好きなアウトドアスポーツは？",
+    "answers": [
+      "登山・ハイキング",
+      "サイクリング",
+      "海で泳ぐ",
+      "ランニング"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "オリンピック、見る？",
+    "answers": [
+      "全競技見る",
+      "特定の競技だけ",
+      "開会式だけ",
+      "あまり興味ない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "エクストリームスポーツに興味ある？",
+    "answers": [
+      "やってみたい！バンジーもスカイダイビングも",
+      "勇気を出せば…",
+      "危なすぎる",
+      "見るだけで十分"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "スポーツデート、何がいい？",
+    "answers": [
+      "ボウリング",
+      "ダンスレッスン",
+      "バッティングセンター",
+      "一緒にジョギング"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "どれくらい負けず嫌い？",
+    "answers": [
+      "超負けず嫌い",
+      "少しは競争心ある",
+      "参加することに意義がある",
+      "全然 – 楽しければOK"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "海のスポーツと山のスポーツ、どっち？",
+    "answers": [
+      "サーフィンやダイビング",
+      "登山やトレッキング",
+      "季節で使い分け",
+      "どちらもしない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "甲子園、見る？",
+    "answers": [
+      "毎年熱くなる",
+      "決勝だけ",
+      "野球よりサッカー",
+      "スポーツ中継見ない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "好きなお笑いスタイルは？",
+    "answers": [
+      "漫才 – ボケとツッコミ",
+      "コント – 演技力",
+      "ピン芸 – 一人の世界",
+      "バラエティトーク"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "好きなお笑い芸人は？",
+    "answers": [
+      "千鳥",
+      "かまいたち",
+      "サンドウィッチマン",
+      "ぺこぱ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "つまらないジョークへの反応は？",
+    "answers": [
+      "礼儀で笑う",
+      "目を泳がせる",
+      "もっとつまらないジョークで返す",
+      "真顔を貫く"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "おもしろい話、上手い？",
+    "answers": [
+      "場を盛り上げられる",
+      "オチを忘れがち",
+      "状況に合わせたユーモア",
+      "聞く方が好き"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "ネットミーム、よく見る？",
+    "answers": [
+      "毎日 – スマホの半分がミーム",
+      "たまに面白いの見つける",
+      "よくわからない",
+      "自分で作ったりする"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "お花見で一番楽しいのは？",
+    "answers": [
+      "桜の下で宴会",
+      "写真撮影",
+      "のんびり散歩",
+      "場所取りの戦い"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "子供の頃好きだった番組は？",
+    "answers": [
+      "ドラえもん",
+      "クレヨンしんちゃん",
+      "ポケモン",
+      "名探偵コナン"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "シュールとドタバタ、どっち？",
+    "answers": [
+      "シュール – じわじわ笑える",
+      "ドタバタ – 大爆笑",
+      "両方楽しめる",
+      "不条理ギャグが最高"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "あなたの笑いのツボは？",
+    "answers": [
+      "キレのいいワンライナー",
+      "長い話からのオチ",
+      "予想外の展開",
+      "大げさなリアクション"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "面白いのは失敗動画？動物動画？",
+    "answers": [
+      "失敗動画 – 他人の不幸は蜜の味",
+      "動物動画 – 癒される",
+      "動物の失敗動画 – 最強",
+      "実生活の方が面白い"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "週末の一番の趣味は？",
+    "answers": [
+      "ハイキング・自然散策",
+      "料理・お菓子作り",
+      "ゲーム",
+      "カメラ・写真"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "紙の本派？電子書籍派？",
+    "answers": [
+      "紙の本が一番",
+      "Kindleで通勤中に",
+      "オーディオブック",
+      "あまり読まない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "園芸は好き？",
+    "answers": [
+      "緑の親指を持ってる",
+      "ベランダの植物くらい",
+      "すぐ枯らしちゃう",
+      "興味ない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "何かコレクションしてる？",
+    "answers": [
+      "フィギュア・グッズ",
+      "レコードやCD",
+      "体験と思い出",
+      "秘密のコレクション"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "DIY、やる？",
+    "answers": [
+      "大好き – 何でも作る",
+      "YouTubeを見て参考にする",
+      "不器用なんです",
+      "必要な時だけ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "美術館とギャラリー、どっち？",
+    "answers": [
+      "歴史ある美術館",
+      "現代アートギャラリー",
+      "科学博物館",
+      "チームラボみたいな体験型"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "手芸や工芸、やる？",
+    "answers": [
+      "やる – リラックスする",
+      "興味はあるけどやらない",
+      "そういうのは苦手",
+      "習ってみたい"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "脱出ゲーム、どうだった？",
+    "answers": [
+      "毎回クリアする",
+      "チームのひらめき役",
+      "パニックになる",
+      "まだやったことない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "弾いてみたい楽器は？",
+    "answers": [
+      "ピアノ – エレガント",
+      "ギター – 万能",
+      "ドラム – パワフル",
+      "三味線 – 和の響き"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "ポッドキャスト、どんなテーマ？",
+    "answers": [
+      "事件・ミステリー",
+      "ビジネス・自己啓発",
+      "お笑い・バラエティ",
+      "インタビュー系"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "ボランティア活動してる？",
+    "answers": [
+      "定期的にやってる",
+      "たまに",
+      "やってないけど、やるべき",
+      "寄付の方が多い"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "踊るの好き？",
+    "answers": [
+      "大好き！",
+      "お酒があれば",
+      "二本の左足",
+      "家で一人で踊る"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "やりたいクリエイティブプロジェクトは？",
+    "answers": [
+      "小説を書く",
+      "曲を作る",
+      "短編映画を撮る",
+      "アプリを開発する"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "AI – ワクワクする？心配？",
+    "answers": [
+      "ワクワク – 未来は今",
+      "心配 – どこに向かうの？",
+      "興味あるけど慎重",
+      "どうでもいい"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "今ブラウザのタブ何個開いてる？",
+    "answers": [
+      "5個以下 – 整理整頓",
+      "10-20個 – 普通",
+      "50個以上 – 問題あり",
+      "ブックマーク使ってる"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "ゲームとの関係は？",
+    "answers": [
+      "ガチゲーマー",
+      "たまにリラックスで",
+      "スマホゲームだけ",
+      "全然やらない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "電気自動車と普通車、どっち？",
+    "answers": [
+      "EV – 未来の車",
+      "普通車 – 信頼性",
+      "電車と自転車で十分",
+      "走ればOK"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "新しいテクノロジー、すぐ試す？",
+    "answers": [
+      "発売日に買う",
+      "レビューを待つ",
+      "みんなが使い始めてから",
+      "遅れがちだけど気にしない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "パスワード管理どうしてる？",
+    "answers": [
+      "パスワードマネージャー",
+      "全部同じ（やばい）",
+      "紙に書いてる",
+      "指紋認証・顔認証"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "VR、体験したことある？",
+    "answers": [
+      "すごかった！",
+      "一回だけ感動した",
+      "まだ – やってみたい",
+      "興味ない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "サブスクいくつ入ってる？",
+    "answers": [
+      "1-2個で十分",
+      "3-4個",
+      "5個以上 – 全部必要",
+      "入ってない – 友達と共有"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "スマートウォッチとアナログ時計、どっち？",
+    "answers": [
+      "スマートウォッチ – データが大事",
+      "アナログ – 時代を超える",
+      "時計をしない",
+      "場面で使い分け"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "マッチングアプリについてどう思う？",
+    "answers": [
+      "最高の発明",
+      "まあまあ、でもリアルが良い",
+      "良い面も悪い面もある",
+      "だからここにいるでしょ？"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "ホームシック、どう対処する？",
+    "answers": [
+      "家族に電話する",
+      "地元の料理を作る",
+      "懐かしい音楽を聴く",
+      "めったにホームシックにならない"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "「贅沢」って何だと思う？",
+    "answers": [
+      "自分だけの時間",
+      "旅行と体験",
+      "美味しいものを食べること",
+      "物質的なもの"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "与える派？もらう派？",
+    "answers": [
+      "与える派 – 分かち合いたい",
+      "バランスが大事",
+      "状況次第",
+      "正直、あげすぎかも"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "人生で一番勇気を出した瞬間は？",
+    "answers": [
+      "大きな変化に飛び込んだ",
+      "気持ちを告白した",
+      "一人で知らない国に行った",
+      "まだその瞬間を待ってる"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "伝統についてどう思う？",
+    "answers": [
+      "大切にしたい",
+      "ものによる",
+      "新しいものを作りたい",
+      "伝統は古い"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "最高の夜ってどんな夜？",
+    "answers": [
+      "キャンドルの灯りで深い会話",
+      "お腹が痛くなるまで笑う",
+      "一緒に新しい体験をする",
+      "静かな二人の時間"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "計画性がある？ない？",
+    "answers": [
+      "自然が人生のスパイス",
+      "大まかな計画は必要",
+      "全部計画通りに",
+      "計画して変更するタイプ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "知らない人に言われた最高の褒め言葉は？",
+    "answers": [
+      "素敵な笑顔ですね",
+      "エネルギーが伝染する",
+      "勇気がある人ですね",
+      "覚えてない"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "五感で一番大事なのは？",
+    "answers": [
+      "視覚 – 世界を見たい",
+      "聴覚 – 音楽と声",
+      "味覚 – 美味しいもの",
+      "触覚 – ぬくもりと繋がり"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "愛情表現の方法は？",
+    "answers": [
+      "小さな行動で",
+      "言葉で伝える",
+      "行動で示す",
+      "ハグで"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "時間厳守、どれくらい大事？",
+    "answers": [
+      "絶対遅刻しない",
+      "だいたい時間通り",
+      "5分の遅れはOK",
+      "時間は相対的"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "隠れた強みは？",
+    "answers": [
+      "共感力",
+      "忍耐力",
+      "創造力",
+      "適応力"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "電話派？テキスト派？",
+    "answers": [
+      "電話 – 声が聞きたい",
+      "テキスト – 考える時間がある",
+      "ボイスメッセージ",
+      "相手による"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "何カ国行ったことある？",
+    "answers": [
+      "5カ国未満",
+      "5-15カ国",
+      "15-30カ国",
+      "30カ国以上"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "グループ旅行と個人旅行、どっち？",
+    "answers": [
+      "個人 – 自分のペースで",
+      "少人数グループ",
+      "ツアー – ストレスフリー",
+      "二人旅が一番"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "ワーケーション、やってみたい？",
+    "answers": [
+      "すぐにでも – 自由!",
+      "数週間ならアリ",
+      "無理、快適さが必要",
+      "デジタルノマドに憧れる"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "瞑想してる？",
+    "answers": [
+      "毎日",
+      "たまに",
+      "じっとしてられない",
+      "やったことない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "ファッション、どれくらい大事？",
+    "answers": [
+      "トレンドを追う",
+      "自分のスタイルが大事",
+      "快適さ優先",
+      "興味ない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "銭湯、好き？",
+    "answers": [
+      "大好き – 週末の癒し",
+      "たまに行く",
+      "ちょっと恥ずかしい",
+      "温泉の方が好き"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "日常のスケジュール管理は？",
+    "answers": [
+      "カレンダーアプリ",
+      "手帳に手書き",
+      "頭の中で管理",
+      "スケジュール？何それ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "好きなアイスの味は？",
+    "answers": [
+      "抹茶",
+      "ストロベリー",
+      "チョコミント",
+      "バニラ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "料理番組、見る？",
+    "answers": [
+      "鉄人シェフ系が好き",
+      "料理動画はYouTubeで",
+      "自分で作る方がいい",
+      "食べる専門"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "パン屋と自家製パン、どっち？",
+    "answers": [
+      "近所のパン屋",
+      "週末は自分で焼く",
+      "コンビニのパンで十分",
+      "パンはあまり食べない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "歌は上手い？",
+    "answers": [
+      "かなり上手い方",
+      "お風呂ではスター",
+      "下手だけど大声で",
+      "絶対歌わない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "新しい音楽の発見方は？",
+    "answers": [
+      "Spotifyのおすすめ",
+      "友達に教えてもらう",
+      "SNSやTikTok",
+      "ラジオ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "何度でも見返せる映画は？",
+    "answers": [
+      "笑える映画",
+      "壮大な冒険映画",
+      "考えさせられる映画",
+      "子供の頃の映画"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "ドキュメンタリー、どんなテーマ？",
+    "answers": [
+      "自然・動物",
+      "事件・ミステリー",
+      "歴史",
+      "テクノロジー・未来"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "マラソン、走れる？",
+    "answers": [
+      "目標にしてる",
+      "ハーフならいけるかも",
+      "5kmが限界",
+      "走るより自転車"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "ダンスはスポーツ？",
+    "answers": [
+      "もちろん",
+      "サルサやバチャータ習いたい",
+      "あまり興味ない",
+      "リズム感ゼロ"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "自分を笑える？",
+    "answers": [
+      "いつも – 自虐は得意",
+      "だいたい",
+      "小さいことだけ",
+      "真面目すぎるかも"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "ダジャレ、好き？嫌い？",
+    "answers": [
+      "好き – 悪ければ悪いほど良い",
+      "たまに面白い",
+      "たいてい寒い",
+      "自分が一番のダジャレ王"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "変わった趣味ある？",
+    "answers": [
+      "ある、自慢できる",
+      "変わった収集品がある",
+      "普通の趣味ばかり",
+      "人生が趣味"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "パズル – 楽しい？イライラ？",
+    "answers": [
+      "リラックスできる",
+      "20分で飽きる",
+      "誰かと一緒なら",
+      "数独の方が好き"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "ソフトウェアのアップデート、すぐする？",
+    "answers": [
+      "すぐインストール",
+      "何週間も無視",
+      "セキュリティだけ",
+      "自動更新に任せる"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "1週間ネットなしで生きられる？",
+    "answers": [
+      "むしろ歓迎",
+      "難しいけどできる",
+      "無理、絶対無理",
+      "旅行中なら"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "朝のルーティンは？",
+    "answers": [
+      "コーヒーとニュース",
+      "運動とシャワー",
+      "スヌーズ5回",
+      "感謝の瞑想"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "自分を元素に例えると？",
+    "answers": [
+      "火 – 情熱的",
+      "水 – 適応力がある",
+      "土 – 堅実",
+      "風 – 自由"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "仕事はどれくらい大事？",
+    "answers": [
+      "仕事が自分を定義する",
+      "大事だけど全てじゃない",
+      "生活の手段",
+      "ワークライフバランスが大事"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "誰かが泣いていたらどうする？",
+    "answers": [
+      "抱きしめる",
+      "話を聞く",
+      "元気づけようとする",
+      "ちょっと困る"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "エネルギーの源は？",
+    "answers": [
+      "人と過ごす時間",
+      "一人の時間",
+      "新しい経験",
+      "クリエイティブな作業"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "感じすぎるのと感じなさすぎるの、どっち？",
+    "answers": [
+      "感じすぎる – 感情豊か",
+      "感じなさすぎる – 防御壁",
+      "ちょうど真ん中",
+      "感情は強さ"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "アドベンチャー旅行とオールインクルーシブ、どっち？",
+    "answers": [
+      "アドベンチャー – 毎日が冒険",
+      "オールインクルーシブ – リラックス",
+      "両方ミックス",
+      "文化ツアー"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "ワーキングホリデー、やった？",
+    "answers": [
+      "最高の経験だった",
+      "やりたかったけど…",
+      "タイミングが合わなかった",
+      "デジタルノマドの方が"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "日本アルプスでハイキング、やってみたい？",
+    "answers": [
+      "ぜひ！上高地が好き",
+      "槍ヶ岳に登りたい",
+      "高い山は怖い",
+      "ハイキングは苦手"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "年越し、どう過ごす？",
+    "answers": [
+      "パーティーとカウントダウン",
+      "仲のいい友達と少人数",
+      "旅行で年越し",
+      "特に何もしない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "睡眠時間はどれくらい？",
+    "answers": [
+      "6時間で十分",
+      "8時間は必要",
+      "多ければ多いほど",
+      "不規則"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "ベランダ、庭、屋上？",
+    "answers": [
+      "庭でBBQ",
+      "都会のベランダ",
+      "屋上テラスで景色",
+      "窓があれば十分"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "電車と車、どっち派？",
+    "answers": [
+      "電車・地下鉄",
+      "車 – 自由に移動",
+      "カーシェアで十分",
+      "歩くのが好き"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "雨の日の過ごし方は？",
+    "answers": [
+      "家でまったり",
+      "美術館や映画館",
+      "室内スポーツ",
+      "雨でも外に出る"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "ミニマリスト？コレクター？",
+    "answers": [
+      "コレクター – 思い出がいっぱい",
+      "ミニマリスト – 少ない方がいい",
+      "中間くらい",
+      "断捨離中"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "ブランチで外せないものは？",
+    "answers": [
+      "エッグベネディクト",
+      "アボカドトースト",
+      "パンケーキ",
+      "フレッシュジュース"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "冬に飲みたいスープは？",
+    "answers": [
+      "豚汁",
+      "クリームシチュー",
+      "ミネストローネ",
+      "トムヤムクン"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "恋愛ソングと言えば？",
+    "answers": [
+      "甘い J-POP",
+      "切ないバラード",
+      "激しいロック",
+      "まだ探し中"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "映画のキャラ、自分はどれ？",
+    "answers": [
+      "面白い脇役",
+      "ミステリアスな主人公",
+      "ロマンチックなヒロイン",
+      "頭脳派の策士"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "サイクリング、どれくらい走る？",
+    "answers": [
+      "近所だけ",
+      "20-50kmの日帰り",
+      "100km以上のロング",
+      "自転車乗らない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "人生で一番面白かった出来事は？",
+    "answers": [
+      "恥ずかしい勘違い",
+      "公共の場でのミス",
+      "友達との内輪ネタ",
+      "自分自身がネタ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "御朱印集めてる？",
+    "answers": [
+      "集めてる – 趣味",
+      "一度だけもらった",
+      "興味ある",
+      "何それ？"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "ドローンとアクションカメラ、どっち？",
+    "answers": [
+      "ドローン – 空からの景色",
+      "アクションカメラ – 迫力映像",
+      "両方で完璧な動画",
+      "スマホで十分"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "コスプレするなら？",
+    "answers": [
+      "好きなアニメキャラ",
+      "面白い仮装",
+      "グループでお揃い",
+      "絶対しない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "みんなに勧めたい本は？",
+    "answers": [
+      "心を動かす小説",
+      "世界を理解するノンフィクション",
+      "面白い漫画",
+      "本より映画を勧める"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "遠距離恋愛、できる？",
+    "answers": [
+      "できる自信ある",
+      "できれば避けたい",
+      "期間限定なら",
+      "相手次第"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "眠れない夜、何する？",
+    "answers": [
+      "本を読む",
+      "ポッドキャストを聴く",
+      "考え事を書き出す",
+      "羊を数える"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "いい聞き手？",
+    "answers": [
+      "みんなにそう言われる",
+      "努力してる",
+      "たまに気が散る",
+      "話す方が好き"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "小さな成功のお祝い方は？",
+    "answers": [
+      "美味しいものを食べる",
+      "友達と共有する",
+      "静かな満足感",
+      "次の目標を立てる"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "飛行機、怖い？",
+    "answers": [
+      "全然平気 – 飛ぶの好き",
+      "離陸の時ちょっと",
+      "怖いけど乗る",
+      "だから別の手段で旅する"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "旅行のお土産は？",
+    "answers": [
+      "ご当地マグネット",
+      "現地のお菓子や食べ物",
+      "写真と思い出だけ",
+      "お土産は買わない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "クリスマスの過ごし方は？",
+    "answers": [
+      "恋人とロマンチックに",
+      "友達とパーティー",
+      "家族と過ごす",
+      "特に何もしない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "家に観葉植物、何個ある？",
+    "answers": [
+      "ジャングル状態",
+      "いくつか選んだもの",
+      "一つだけ生き残ってる",
+      "ない – サボテンも枯らす"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "夜食、何を食べる？",
+    "answers": [
+      "おにぎり",
+      "カップ麺",
+      "ヨーグルト",
+      "我慢する – 偉い"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "外せない調味料は？",
+    "answers": [
+      "醤油 – 万能",
+      "わさび",
+      "七味唐辛子",
+      "マヨネーズ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "誰かを思い出す曲、ある？",
+    "answers": [
+      "ある – 幸せな気持ちになる",
+      "ある – ちょっと切ない",
+      "いくつもある",
+      "音楽と人を結びつけない"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "好きな監督は？",
+    "answers": [
+      "宮崎駿",
+      "新海誠",
+      "クリストファー・ノーラン",
+      "監督は気にしない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "ハーフマラソン、走ったことある？",
+    "answers": [
+      "何回も",
+      "一回だけ",
+      "バケットリストに入ってる",
+      "絶対無理"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "あなたのユーモアを3語で表すと？",
+    "answers": [
+      "ドライ、ダーク、クレバー",
+      "明るい、おバカ、自然",
+      "シュール、不条理、予想外",
+      "温かい、やさしい、ほのぼの"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "本を書いてみたい？",
+    "answers": [
+      "小説を書きたい",
+      "専門分野の本",
+      "旅行ブログで十分",
+      "書くのは苦手"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "スマホにアプリ何個入ってる？",
+    "answers": [
+      "必要最低限だけ",
+      "普通の数",
+      "多すぎる – 整理しない",
+      "新しいのをよく試す"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "一日透明人間になったら？",
+    "answers": [
+      "入れない場所に忍び込む",
+      "友達にいたずらする",
+      "ただ観察する",
+      "何も変わらない – おとなしくする"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "妥協について、どう思う？",
+    "answers": [
+      "とても柔軟",
+      "大事なことは譲らない",
+      "妥協は鍵",
+      "クリエイティブな解決策を探す"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "最近初めてやったことは？",
+    "answers": [
+      "新しい料理を試した",
+      "行ったことない場所に行った",
+      "スポーツに挑戦した",
+      "誰かに謝った"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "好きな空港は？",
+    "answers": [
+      "羽田 – 便利",
+      "成田 – 国際線",
+      "シンガポール・チャンギ",
+      "空港はどこも同じ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "スムージー飲む？",
+    "answers": [
+      "毎朝",
+      "たまに",
+      "作るのが面倒",
+      "果物はそのまま食べる"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "好きな麺類は？",
+    "answers": [
+      "ラーメン",
+      "うどん",
+      "そば",
+      "パスタ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "クラシック音楽、退屈？感動？",
+    "answers": [
+      "感動する – 鳥肌が立つ",
+      "リラックスに使う",
+      "退屈かな",
+      "映画音楽だけ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "一日何時間テレビ見る？",
+    "answers": [
+      "1時間以下",
+      "1-2時間",
+      "3時間以上",
+      "テレビ見ない – 配信だけ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "テニスかバドミントン、どっち？",
+    "answers": [
+      "テニス",
+      "バドミントン – 速い！",
+      "卓球！",
+      "どちらもしない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "自分の人生をミームにするなら？",
+    "answers": [
+      "全部燃えてるけど笑顔",
+      "理想と現実",
+      "This is fineの犬",
+      "ミーム王は私"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "料理スキルは？",
+    "answers": [
+      "プロ級 – コース料理作れる",
+      "上級 – 実験も好き",
+      "初心者 – 基本レシピ",
+      "カップ麺チャンピオン"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "お掃除ロボット、欲しい？",
+    "answers": [
+      "もう持ってる",
+      "全部ロボットに任せたい",
+      "自分でやる派",
+      "SF的で面白い"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "ペラペラになりたい言語は？",
+    "answers": [
+      "英語 – グローバルに",
+      "フランス語 – 愛の言語",
+      "韓国語 – K-POPのために",
+      "スペイン語 – 世界で使える"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "バケットリストの1位は？",
+    "answers": [
+      "オーロラを見る",
+      "スカイダイビング",
+      "本を出版する",
+      "全大陸を制覇する"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "孤独との付き合い方は？",
+    "answers": [
+      "一人の時間を楽しむ",
+      "誰かに連絡する",
+      "人のいる場所に行く",
+      "ちょっと辛い"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "過去を手放すの、得意？",
+    "answers": [
+      "得意 – 前を見る",
+      "少し時間がかかる",
+      "引きずることもある",
+      "練習中"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "友達グループでの役割は？",
+    "answers": [
+      "プランナー",
+      "盛り上げ役",
+      "静かな人",
+      "まとめ役"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "旅行の写真、どう撮る？",
+    "answers": [
+      "カメラ必須",
+      "スマホで十分",
+      "目に焼き付ける派",
+      "自撮り多め"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "月曜日、どう乗り越える？",
+    "answers": [
+      "ポジティブに – 新しい週",
+      "月曜は眠い",
+      "火曜からが本番",
+      "月曜も他の日と同じ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "たこ焼きとお好み焼き、どっち？",
+    "answers": [
+      "たこ焼き – 大阪の味",
+      "お好み焼き – 広島風",
+      "両方最高",
+      "もんじゃ焼き派"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "最高の音楽の年代は？",
+    "answers": [
+      "70年代 – ロックの黄金期",
+      "80年代 – シティポップ",
+      "90年代 – J-POP全盛期",
+      "2000年代 – R&B"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "映画マラソンするならどのシリーズ？",
+    "answers": [
+      "ハリーポッター",
+      "ロード・オブ・ザ・リング",
+      "スターウォーズ",
+      "マーベル"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "朝トレと夜トレ、どっち？",
+    "answers": [
+      "朝 – 一日のエネルギー",
+      "夜 – ストレス発散",
+      "昼休みに",
+      "運動に時間は関係ない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "日本語で一番面白い言葉は？",
+    "answers": [
+      "木漏れ日 – 美しすぎて笑える",
+      "おなら – 子供心",
+      "わくわく – 音が楽しい",
+      "面白い言葉はない、面白い人がいる"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "写真は何で撮る？",
+    "answers": [
+      "カメラ – 画質重視",
+      "スマホ – いつでも",
+      "フィルムカメラ – レトロ",
+      "あまり撮らない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "テクノロジーにいくら使う？",
+    "answers": [
+      "結構 – 最新ガジェット好き",
+      "必要なものだけ",
+      "中古やセール品",
+      "できるだけ少なく"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "座右の銘にしたいことわざは？",
+    "answers": [
+      "石の上にも三年",
+      "急がば回れ",
+      "笑う門には福来たる",
+      "案ずるより産むが易し"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "日常の愛情表現は？",
+    "answers": [
+      "朝のコーヒーを入れてあげる",
+      "手を繋いで散歩",
+      "話をちゃんと聞く",
+      "ちょっとしたサプライズ"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "天気に気分が左右される？",
+    "answers": [
+      "とても – 晴れの日が好き",
+      "あまり – ポジティブに過ごす",
+      "雨の日は憂鬱になる",
+      "すべての天気が好き"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "駅弁の好きな種類は？",
+    "answers": [
+      "牛肉弁当",
+      "海鮮系",
+      "幕の内弁当",
+      "駅弁は買わない"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "部屋着、どんなスタイル？",
+    "answers": [
+      "ジャージかスウェット",
+      "パジャマ",
+      "普段着のまま",
+      "甚平か浴衣"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "おにぎりの具、一番好きなのは？",
+    "answers": [
+      "鮭",
+      "明太子",
+      "ツナマヨ",
+      "梅干し"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "何に一番笑顔になる？",
+    "answers": [
+      "素直な褒め言葉",
+      "温かいハグ",
+      "楽しい会話",
+      "きれいな景色"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "裸足派？靴下派？",
+    "answers": [
+      "裸足 – 自然体",
+      "もこもこ靴下",
+      "スリッパ派",
+      "靴脱がない派"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "将来の突拍子もない夢は？",
+    "answers": [
+      "南の島に移住",
+      "自分のレストランを開く",
+      "世界一周ヨットの旅",
+      "ギネス記録に挑戦"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "沖縄と北海道、どっちに行く？",
+    "answers": [
+      "沖縄 – 海とビーチ",
+      "北海道 – 大自然とグルメ",
+      "季節で使い分け",
+      "どっちも最高"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "お気に入りの場所は？",
+    "answers": [
+      "行きつけのカフェ",
+      "公園や緑地",
+      "川や海の近く",
+      "家のソファ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "恋愛に何を求める？",
+    "answers": [
+      "深いつながり",
+      "一緒に成長すること",
+      "楽しさと笑い",
+      "安心感と安定"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "メッセージの返信スピードは？",
+    "answers": [
+      "即レス – いつでも",
+      "1時間以内",
+      "思い出した時に",
+      "返信遅い方です"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "ランチは弁当派？外食派？",
+    "answers": [
+      "手作り弁当",
+      "コンビニ弁当",
+      "外食 – ランチタイム",
+      "食べない時もある"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "クリエイティブ派？分析派？",
+    "answers": [
+      "クリエイティブ – アートとアイデア",
+      "分析 – 数字とロジック",
+      "場面で使い分け",
+      "どちらでもない – 実践派"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "カーナビとカン、どっち？",
+    "answers": [
+      "カーナビ – いつも",
+      "地元は覚えてる",
+      "Googleマップ",
+      "人に聞く方が好き"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "リスクテイカー？安全派？",
+    "answers": [
+      "リスクテイカー – 攻めの姿勢",
+      "計算されたリスク",
+      "安全第一",
+      "分野による"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "ジブリキャラなら誰？",
+    "answers": [
+      "トトロ – 穏やかで不思議",
+      "ハウル – かっこよくてミステリアス",
+      "キキ – 冒険好き",
+      "カオナシ – 静かだけど深い"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "日焼け止め、ちゃんと塗る？",
+    "answers": [
+      "SPF50必須",
+      "だいたい塗る",
+      "よく忘れる",
+      "焼きたい派"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "好きなマーケットは？",
+    "answers": [
+      "朝市で新鮮野菜",
+      "フリーマーケット",
+      "フードフェスティバル",
+      "ネットスーパー"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "次に行きたい国は？",
+    "answers": [
+      "ポルトガル – エッグタルトと波",
+      "モロッコ – 異国情緒",
+      "クロアチア – アドリア海",
+      "台湾 – 夜市とグルメ"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "朝のBGMは？",
+    "answers": [
+      "元気が出るポップ",
+      "チルなLo-Fi",
+      "ニュースポッドキャスト",
+      "静かに – 音なしで"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "一日だけ別人になれるなら？",
+    "answers": [
+      "有名ミュージシャン",
+      "宇宙飛行士",
+      "動物園の飼育員",
+      "総理大臣"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "朝起きて最初にすることは？",
+    "answers": [
+      "スマホチェック",
+      "水を飲む",
+      "伸びとあくび",
+      "もう一回寝たい"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "失望への対処法は？",
+    "answers": [
+      "学んで前に進む",
+      "悲しむ時間を取る",
+      "友達と話す",
+      "仕事に没頭する"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "マッチングアプリあるあるは？",
+    "answers": [
+      "みんな真剣じゃない",
+      "素敵な人がたくさんいる",
+      "選択肢が多すぎる",
+      "自分のことをよく知れる"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "ストレス解消法は？",
+    "answers": [
+      "運動する",
+      "お風呂にゆっくり浸かる",
+      "友達と会う",
+      "自然の中を散歩"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "感謝していることは？",
+    "answers": [
+      "家族と友達",
+      "健康",
+      "自由",
+      "毎日新しい一日"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  }
+]
