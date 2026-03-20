@@ -1,18 +1,23 @@
-import { QUESTION_COUNT_MULTIPLIERS, GREEN_DIAMOND_REWARD_RATIO } from "../types/index.js";
-
 /**
  * Calculate power cost based on base cost and question count multiplier.
  */
-export function calculatePowerCost(baseCost: number, questionCount: number): number {
-  const multiplier = QUESTION_COUNT_MULTIPLIERS[questionCount] ?? 1.0;
+export function calculatePowerCost(
+  baseCost: number,
+  questionCount: number,
+  multipliers: Record<string, number>,
+): number {
+  const multiplier = multipliers[String(questionCount)] ?? 1.0;
   return Math.ceil(baseCost * multiplier);
 }
 
 /**
  * Calculate green diamond reward from purple diamonds spent.
  */
-export function calculateGreenReward(purpleSpent: number): number {
-  return Math.floor(purpleSpent * GREEN_DIAMOND_REWARD_RATIO);
+export function calculateGreenReward(
+  purpleSpent: number,
+  rewardRatio: number,
+): number {
+  return Math.floor(purpleSpent * rewardRatio);
 }
 
 /**

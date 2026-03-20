@@ -22,7 +22,7 @@ export const getSubscriptionStatusHandler = async (
 ) => {
   try {
     const status = await subscriptionService.getStatus(req.user!.userId);
-    const limits = subscriptionService.getLimits(status.plan);
+    const limits = await subscriptionService.getLimits(status.plan);
     res.json({ subscription: status, limits });
   } catch (error) {
     next(error);
@@ -57,7 +57,7 @@ export const activateSubscriptionHandler = async (
     );
 
     const status = await subscriptionService.getStatus(userId);
-    const limits = subscriptionService.getLimits(status.plan);
+    const limits = await subscriptionService.getLimits(status.plan);
 
     res.json({
       message: 'Subscription activated',

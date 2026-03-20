@@ -1,9 +1,8 @@
 import { supabase } from "../config/supabase.js";
 import { diamondService } from "./diamond.service.js";
+import { economyConfigService } from "./economy-config.service.js";
 import { Errors } from "../utils/errors.js";
 
-const REFERRAL_REWARD = 25;
-const MAX_COMPLETED_REFERRALS = 10;
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no I/O/0/1
 
 export class ReferralService {
@@ -103,11 +102,15 @@ export class ReferralService {
 
     if (updateErr || !updated) return;
 
+    const config = await economyConfigService.getConfig();
+    const referralReward = config.rewards.referralPurple;
+    const maxCompleted = config.rewards.maxCompletedReferrals;
+
     // Reward referee (always)
     try {
       await diamondService.addPurple(
         userId,
-        REFERRAL_REWARD,
+        referralReward,
         "REFERRAL_REWARD_REFEREE",
         referral.id,
       );
@@ -119,18 +122,18 @@ export class ReferralService {
       // Best effort
     }
 
-    // Reward referrer only if <= 10 completed referrals
+    // Reward referrer only if <= max completed referrals
     const { count } = await supabase
       .from("referrals")
       .select("id", { count: "exact", head: true })
       .eq("referrer_id", referral.referrer_id)
       .eq("status", "completed");
 
-    if ((count ?? 0) <= MAX_COMPLETED_REFERRALS) {
+    if ((count ?? 0) <= maxCompleted) {
       try {
         await diamondService.addPurple(
           referral.referrer_id,
-          REFERRAL_REWARD,
+          referralReward,
           "REFERRAL_REWARD_REFERRER",
           referral.id,
         );
@@ -145,6 +148,9 @@ export class ReferralService {
   }
 
   async getStats(userId: string) {
+    const config = await economyConfigService.getConfig();
+    const maxCompleted = config.rewards.maxCompletedReferrals;
+
     const { count: total } = await supabase
       .from("referrals")
       .select("id", { count: "exact", head: true })
@@ -163,7 +169,7 @@ export class ReferralService {
       .eq("status", "completed");
 
     const completedCount = completed ?? 0;
-    const remaining = Math.max(0, MAX_COMPLETED_REFERRALS - completedCount);
+    const remaining = Math.max(0, maxCompleted - completedCount);
 
     return {
       total: total ?? 0,

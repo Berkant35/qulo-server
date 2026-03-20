@@ -1,18 +1,21 @@
 import { supabase } from "../config/supabase.js";
 import { diamondService } from "../services/diamond.service.js";
 import { Errors } from "../utils/errors.js";
-import { GREEN_TO_PURPLE_RATIO } from "../types/index.js";
+import { economyConfigService } from "./economy-config.service.js";
 
 class ExchangeService {
-  // ── Convert green diamonds to purple (3:1 ratio) ──────────────
+  // ── Convert green diamonds to purple (dynamic ratio) ──────────────
   async convertGreenToPurple(userId: string, greenAmount: number) {
-    if (greenAmount <= 0 || greenAmount % GREEN_TO_PURPLE_RATIO !== 0) {
+    const config = await economyConfigService.getConfig();
+    const ratio = config.core.greenToPurpleRatio;
+
+    if (greenAmount <= 0 || greenAmount % ratio !== 0) {
       throw Errors.VALIDATION_ERROR({
-        greenAmount: `Must be a positive multiple of ${GREEN_TO_PURPLE_RATIO}`,
+        greenAmount: `Must be a positive multiple of ${ratio}`,
       });
     }
 
-    const purpleAmount = greenAmount / GREEN_TO_PURPLE_RATIO;
+    const purpleAmount = greenAmount / ratio;
 
     // Spend green diamonds first
     await diamondService.spendGreen(
@@ -170,6 +173,8 @@ class ExchangeService {
 
   // ── Get conversion rates & power prices ───────────────────────
   async getRates() {
+    const config = await economyConfigService.getConfig();
+
     const { data, error } = await supabase
       .from("powers")
       .select("name, base_cost, green_cost, purple_cost, accuracy_rate")
@@ -180,7 +185,7 @@ class ExchangeService {
     }
 
     return {
-      convert_ratio: GREEN_TO_PURPLE_RATIO,
+      convert_ratio: config.core.greenToPurpleRatio,
       powers: (data ?? []).map((p) => ({
         name: p.name,
         base_cost: p.base_cost,

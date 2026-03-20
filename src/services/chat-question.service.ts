@@ -7,11 +7,11 @@ import { matchingService } from "./matching.service.js";
 import { NotificationService } from "./notification.service.js";
 import { calculatePowerCost, calculateGreenReward } from "../utils/math.js";
 import {
-  CHAT_QUESTION_LIMITS,
   CHAT_QUESTION_POWERS_2,
   CHAT_QUESTION_POWERS_4,
   type PowerName,
 } from "../types/index.js";
+import { economyConfigService } from "./economy-config.service.js";
 import type {
   CreateChatQuestionInput,
   AnswerChatQuestionInput,
@@ -181,7 +181,8 @@ export class ChatQuestionService {
 
     // ── Subscription-aware daily limits ──
     const tier = await this.getUserTier(senderId);
-    const limits = CHAT_QUESTION_LIMITS[tier];
+    const config = await economyConfigService.getConfig();
+    const limits = config.subscriptionLimits[tier];
 
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
@@ -199,7 +200,7 @@ export class ChatQuestionService {
     }
 
     const questionsToday = todayQuestions?.length ?? 0;
-    if (questionsToday >= limits.daily) {
+    if (questionsToday >= limits.chatQuestionDaily) {
       throw Errors.DAILY_LIMIT_EXCEEDED("chat_questions");
     }
 
@@ -207,7 +208,7 @@ export class ChatQuestionService {
       const unmatchRiskToday = (todayQuestions ?? []).filter(
         (q: any) => q.has_unmatch_risk,
       ).length;
-      if (unmatchRiskToday >= limits.unmatchRisk) {
+      if (unmatchRiskToday >= limits.chatQuestionUnmatchRisk) {
         throw Errors.DAILY_LIMIT_EXCEEDED("unmatch_risk_questions");
       }
     }
@@ -305,11 +306,12 @@ export class ChatQuestionService {
       }
 
       const power = await this.fetchPower("SKIP");
-      const cost = calculatePowerCost(power.purple_cost ?? power.base_cost ?? 0, 1);
+      const ecConfig = await economyConfigService.getConfig();
+      const cost = calculatePowerCost(power.purple_cost ?? power.base_cost ?? 0, 1, ecConfig.core.questionCountMultipliers);
       await this.tryUseOrSpend(userId, "SKIP", cost, "chat_question_skip", questionId);
 
-      // Calculate green reward for sender (30%)
-      const greenReward = calculateGreenReward(cost);
+      // Calculate green reward for sender (dynamic ratio)
+      const greenReward = calculateGreenReward(cost, ecConfig.core.greenDiamondRewardRatio);
       if (greenReward > 0) {
         try {
           await diamondService.earnGreen(
@@ -370,10 +372,11 @@ export class ChatQuestionService {
       throw Errors.SERVER_ERROR();
     }
 
-    // Reward sender with green diamonds if correct (30%)
+    // Reward sender with green diamonds if correct (dynamic ratio)
     if (isCorrect) {
       // Use a base reward of 10 for free questions
-      const greenReward = calculateGreenReward(10);
+      const ecRewardConfig = await economyConfigService.getConfig();
+      const greenReward = calculateGreenReward(10, ecRewardConfig.core.greenDiamondRewardRatio);
       if (greenReward > 0) {
         try {
           await diamondService.earnGreen(
@@ -440,10 +443,11 @@ export class ChatQuestionService {
 
     // Pay for SKIP
     const power = await this.fetchPower("SKIP");
-    const cost = calculatePowerCost(power.purple_cost ?? power.base_cost ?? 0, 1);
+    const ecConfig2 = await economyConfigService.getConfig();
+    const cost = calculatePowerCost(power.purple_cost ?? power.base_cost ?? 0, 1, ecConfig2.core.questionCountMultipliers);
     await this.tryUseOrSpend(userId, "SKIP", cost, "chat_question_rescue", questionId);
 
-    const greenReward = calculateGreenReward(cost);
+    const greenReward = calculateGreenReward(cost, ecConfig2.core.greenDiamondRewardRatio);
     if (greenReward > 0) {
       try {
         await diamondService.earnGreen(
@@ -565,11 +569,12 @@ export class ChatQuestionService {
 
     // ── Normal power handling (ORACLE, HALF, HINT, TIME_EXTEND) ──
     const power = await this.fetchPower(powerName);
-    const cost = calculatePowerCost(power.purple_cost ?? power.base_cost ?? 0, 1);
+    const ecConfig3 = await economyConfigService.getConfig();
+    const cost = calculatePowerCost(power.purple_cost ?? power.base_cost ?? 0, 1, ecConfig3.core.questionCountMultipliers);
     await this.tryUseOrSpend(userId, powerName, cost, `chat_question_power_${powerName.toLowerCase()}`, questionId);
 
     // Calculate green reward for sender
-    const greenReward = calculateGreenReward(cost);
+    const greenReward = calculateGreenReward(cost, ecConfig3.core.greenDiamondRewardRatio);
     if (greenReward > 0) {
       try {
         await diamondService.earnGreen(

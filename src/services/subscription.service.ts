@@ -1,10 +1,10 @@
 import { supabase } from '../config/supabase.js';
 import { diamondService } from './diamond.service.js';
+import { economyConfigService } from './economy-config.service.js';
 import { Errors } from '../utils/errors.js';
-import {
+import type {
   SubscriptionPlan,
   SubscriptionInfo,
-  SUBSCRIPTION_LIMITS,
 } from '../types/index.js';
 
 class SubscriptionService {
@@ -61,7 +61,8 @@ class SubscriptionService {
       })
       .eq('id', userId);
 
-    const bonus = SUBSCRIPTION_LIMITS[plan].monthlyPurpleBonus;
+    const config = await economyConfigService.getConfig();
+    const bonus = config.subscriptionLimits[plan].monthlyPurpleBonus;
     if (bonus > 0) {
       await diamondService.addPurple(
         userId,
@@ -101,7 +102,8 @@ class SubscriptionService {
       .update({ subscription_expires_at: expiresAt })
       .eq('id', userId);
 
-    const bonus = SUBSCRIPTION_LIMITS[plan].monthlyPurpleBonus;
+    const config = await economyConfigService.getConfig();
+    const bonus = config.subscriptionLimits[plan].monthlyPurpleBonus;
     if (bonus > 0) {
       await diamondService.addPurple(
         userId,
@@ -201,18 +203,20 @@ class SubscriptionService {
       ? new Date(user.subscription_expires_at) > now
       : false;
     const effectivePlan = isActive ? (plan || 'free') : 'free';
-    const limits = SUBSCRIPTION_LIMITS[effectivePlan];
+    const config = await economyConfigService.getConfig();
+    const limits = config.subscriptionLimits[effectivePlan];
 
     const { count: questionsCreated } = await supabase
       .from('questions')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', userId);
 
+    const UNLIMITED_THRESHOLD = 999999;
     return {
       dailyDiscoversUsed: dailySwipesUsed,
-      dailyDiscoversLimit: limits.dailyDiscovers === Infinity ? -1 : limits.dailyDiscovers,
+      dailyDiscoversLimit: limits.dailyDiscovers >= UNLIMITED_THRESHOLD ? -1 : limits.dailyDiscovers,
       dailyUndosUsed: dailyUndosUsed,
-      dailyUndosLimit: limits.dailyUndos === Infinity ? -1 : limits.dailyUndos,
+      dailyUndosLimit: limits.dailyUndos >= UNLIMITED_THRESHOLD ? -1 : limits.dailyUndos,
       questionsCreated: questionsCreated ?? 0,
       questionsLimit: limits.maxQuestions,
       monthlyPurpleBonus: limits.monthlyPurpleBonus,
@@ -243,8 +247,9 @@ class SubscriptionService {
       .eq('id', userId);
   }
 
-  getLimits(plan: SubscriptionPlan | null) {
-    return SUBSCRIPTION_LIMITS[plan || 'free'];
+  async getLimits(plan: SubscriptionPlan | null) {
+    const config = await economyConfigService.getConfig();
+    return config.subscriptionLimits[plan || 'free'];
   }
 }
 

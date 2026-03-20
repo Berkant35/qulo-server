@@ -1,6 +1,7 @@
 import { supabase } from "../config/supabase.js";
 import { diamondService } from "./diamond.service.js";
 import { referralService } from "./referral.service.js";
+import { economyConfigService } from "./economy-config.service.js";
 import { Errors } from "../utils/errors.js";
 import { haversineDistance } from "../utils/math.js";
 import type { UpdateProfileInput, UpdateDetailsInput } from "../validators/user.validator.js";
@@ -269,10 +270,10 @@ export class UserService {
   }
 
   async boost(userId: string) {
-    // Spend 30 green diamonds
-    await diamondService.spendGreen(userId, 30, "BOOST");
+    const config = await economyConfigService.getConfig();
+    await diamondService.spendGreen(userId, config.core.boostCostGreen, "BOOST");
 
-    const boostUntil = new Date(Date.now() + 30 * 60 * 1000).toISOString();
+    const boostUntil = new Date(Date.now() + config.core.boostDurationMinutes * 60 * 1000).toISOString();
 
     const { error } = await supabase
       .from("users")

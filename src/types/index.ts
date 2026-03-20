@@ -13,28 +13,9 @@ export type PowerName =
   | "POWER_BLOCK"
   | "POWER_UNBLOCK";
 
-export const QUESTION_COUNT_MULTIPLIERS: Record<number, number> = {
-  2: 0.5,
-  3: 0.75,
-  4: 1.0,
-  5: 1.25,
-  6: 1.5,
-};
-
-export const GREEN_DIAMOND_REWARD_RATIO = 0.3;
-
-export const GREEN_TO_PURPLE_RATIO = 3;
-
 // Chat question power sets (which powers are available per option count)
 export const CHAT_QUESTION_POWERS_2: PowerName[] = ["ORACLE", "SKIP"];
 export const CHAT_QUESTION_POWERS_4: PowerName[] = ["ORACLE", "SKIP", "HALF", "HINT", "TIME_EXTEND"];
-
-// Chat question daily limits per subscription tier
-export const CHAT_QUESTION_LIMITS = {
-  free: { daily: 2, unmatchRisk: 1 },
-  plus: { daily: 5, unmatchRisk: 2 },
-  premium: { daily: Infinity, unmatchRisk: Infinity },
-} as const;
 
 // Subscription Plans
 export type SubscriptionPlan = 'plus' | 'premium';
@@ -46,34 +27,6 @@ export interface SubscriptionInfo {
   expiresAt: string | null;
   isActive: boolean;
 }
-
-// Subscription limits
-export const SUBSCRIPTION_LIMITS = {
-  free: {
-    dailyDiscovers: 50,
-    maxQuestions: 4,
-    dailyUndos: 0,
-    monthlyPurpleBonus: 0,
-    passportMode: false,
-    hasAds: true,
-  },
-  plus: {
-    dailyDiscovers: Infinity,
-    maxQuestions: 6,
-    dailyUndos: 3,
-    monthlyPurpleBonus: 500,
-    passportMode: false,
-    hasAds: false,
-  },
-  premium: {
-    dailyDiscovers: Infinity,
-    maxQuestions: 10,
-    dailyUndos: Infinity,
-    monthlyPurpleBonus: 1500,
-    passportMode: true,
-    hasAds: false,
-  },
-} as const;
 
 // RevenueCat webhook event types
 export type RCEventType =

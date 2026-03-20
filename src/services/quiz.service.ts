@@ -3,6 +3,7 @@ import { Errors } from "../utils/errors.js";
 import { calculatePowerCost, calculateGreenReward, shuffleArray } from "../utils/math.js";
 import { diamondService } from "./diamond.service.js";
 import { exchangeService } from "./exchange.service.js";
+import { economyConfigService } from "./economy-config.service.js";
 import { NotificationService } from "./notification.service.js";
 import { userLanguageService } from "./user-language.service.js";
 import type { PowerName } from "../types/index.js";
@@ -229,8 +230,9 @@ export class QuizService {
       const usedFromInventory = await exchangeService.tryUseInventory(solverId, powerUsed);
 
       if (!usedFromInventory) {
-        const cost = calculatePowerCost(powerData.base_cost, session.total_questions);
-        const greenReward = calculateGreenReward(cost);
+        const config = await economyConfigService.getConfig();
+        const cost = calculatePowerCost(powerData.base_cost, session.total_questions, config.core.questionCountMultipliers);
+        const greenReward = calculateGreenReward(cost, config.core.greenDiamondRewardRatio);
 
         // Spend purple diamonds from solver
         await diamondService.spendPurple(solverId, cost, `POWER_USED:${powerUsed}`, sessionId);
@@ -658,8 +660,9 @@ export class QuizService {
     const usedFromInventory = await exchangeService.tryUseInventory(solverId, powerType);
 
     if (!usedFromInventory) {
-      const cost = calculatePowerCost(power.base_cost, session.total_questions);
-      const greenReward = calculateGreenReward(cost);
+      const config = await economyConfigService.getConfig();
+      const cost = calculatePowerCost(power.base_cost, session.total_questions, config.core.questionCountMultipliers);
+      const greenReward = calculateGreenReward(cost, config.core.greenDiamondRewardRatio);
 
       await diamondService.spendPurple(solverId, cost, `POWER_USED:${powerType}_RESCUE`, sessionId);
       await diamondService.earnGreen(session.target_id, greenReward, `POWER_REWARD:${powerType}_RESCUE`, sessionId);
