@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { diamondService } from "../services/diamond.service.js";
+import { revenueCatService } from "../services/revenuecat.service.js";
 import { IAP_PRODUCT_MAP } from "../types/index.js";
 import type { HistoryQuery, PurchaseInput } from "../validators/diamond.validator.js";
 
@@ -35,7 +36,13 @@ export async function purchaseHandler(req: Request, res: Response, next: NextFun
       return;
     }
 
-    // TODO: Production'da Apple/Google receipt validation eklenecek
+    // Verify purchase with RevenueCat
+    const verification = await revenueCatService.verifyPurchase(userId, product_id, transaction_id);
+    if (!verification.valid) {
+      res.status(403).json({ error: "INVALID_PURCHASE", message: verification.error });
+      return;
+    }
+
     const result = await diamondService.addPurple(
       userId,
       purpleAmount,

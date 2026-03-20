@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { subscriptionService } from '../services/subscription.service.js';
+import { revenueCatService } from '../services/revenuecat.service.js';
 import { SUBSCRIPTION_PRODUCT_MAP } from '../types/index.js';
 
 export const dailyStatsHandler = async (
@@ -44,10 +45,16 @@ export const activateSubscriptionHandler = async (
       return;
     }
 
-    // 30 gün sonrası (development — production'da Apple/Google receipt'ten alınacak)
-    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    // Verify subscription with RevenueCat
+    const verification = await revenueCatService.verifySubscription(userId, product_id);
+    if (!verification.valid) {
+      res.status(403).json({ error: 'INVALID_SUBSCRIPTION', message: verification.error });
+      return;
+    }
 
-    // TODO: Production'da Apple/Google receipt validation eklenecek
+    const expiresAt = verification.expiresAt
+      ?? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+
     await subscriptionService.activateSubscription(
       userId,
       plan,
