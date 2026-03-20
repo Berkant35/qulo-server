@@ -1,6 +1,7 @@
 import { supabase } from "../config/supabase.js";
 import { AppError, Errors } from "../utils/errors.js";
 import type { CreateQuestionInput, UpdateQuestionInput } from "../validators/question.validator.js";
+import { aiSuggestService } from './ai-suggest.service.js';
 
 export class QuestionService {
   async getMyQuestions(userId: string) {
@@ -58,6 +59,12 @@ export class QuestionService {
       }
       throw Errors.SERVER_ERROR();
     }
+
+    // Fire-and-forget: track if this question came from AI suggestion bank
+    aiSuggestService.trackSelection(
+      input.locale || 'tr',
+      input.question_text,
+    ).catch(() => {}); // Never block question creation
 
     return data;
   }
