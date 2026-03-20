@@ -85,6 +85,8 @@ const powerCostsSchema = z.object({
   SKIP_ALL: powerCostSchema,
   TIME_EXTEND: powerCostSchema,
   HINT: powerCostSchema,
+  POWER_BLOCK: powerCostSchema,
+  POWER_UNBLOCK: powerCostSchema,
 });
 
 // ── Main schema ──

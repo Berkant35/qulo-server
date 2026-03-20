@@ -10,7 +10,9 @@ SET config = config || '{
     "SKIP":        { "greenCost": 60,  "purpleCost": 20 },
     "SKIP_ALL":    { "greenCost": 180, "purpleCost": 60 },
     "TIME_EXTEND": { "greenCost": 15,  "purpleCost": 5  },
-    "HINT":        { "greenCost": 24,  "purpleCost": 8  }
+    "HINT":        { "greenCost": 24,  "purpleCost": 8  },
+    "POWER_BLOCK":   { "greenCost": 45, "purpleCost": 15 },
+    "POWER_UNBLOCK": { "greenCost": 45, "purpleCost": 15 }
   }
 }'::jsonb
 WHERE is_active = true;
