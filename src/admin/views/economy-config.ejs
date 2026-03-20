@@ -1,0 +1,63 @@
+<%- include('_header') %>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+  <h2>Economy Config (v<%= version %>)</h2>
+  <a href="/admin/economy-config/history" class="btn btn-primary">Version History</a>
+</div>
+
+<% if (success) { %>
+<div class="alert" style="background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0;">Configuration saved successfully as v<%= version %>.</div>
+<% } %>
+
+<% if (error) { %>
+<div class="alert alert-error"><%= error %></div>
+<% } %>
+
+<% if (!config) { %>
+<div class="card">
+  <p style="color: #999;">No active economy config found. Paste the initial JSON below and save.</p>
+</div>
+<% } %>
+
+<form method="POST" action="/admin/economy-config">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+  <div class="card">
+    <h3 style="margin-bottom: 12px;">Config JSON</h3>
+    <p style="font-size: 12px; color: #999; margin-bottom: 8px;">Edit the full economy configuration as JSON. The schema will be validated on save.</p>
+    <textarea name="config_json" rows="30" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:4px; font-family:'SF Mono',Monaco,Consolas,monospace; font-size:13px; background:#1a1a2e; color:#4ade80; resize:vertical; line-height:1.5;"><%= config ? JSON.stringify(config, null, 2) : '{\n  "core": {},\n  "subscriptionLimits": {},\n  "rewards": {},\n  "timing": {}\n}' %></textarea>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom: 12px;">Change Reason</h3>
+    <textarea name="change_reason" rows="2" required placeholder="Why are you making this change?" style="width:100%; padding:8px 12px; border:1px solid #ddd; border-radius:4px; font-size:14px; font-family:inherit; resize:vertical;"></textarea>
+  </div>
+
+  <div style="text-align: right;">
+    <button type="submit" class="btn btn-primary" style="padding: 10px 32px; font-size: 15px;">Save New Version</button>
+  </div>
+</form>
+
+<div class="card" style="margin-top: 24px;">
+  <h3 style="margin-bottom: 12px;">Boundary Reference</h3>
+  <p style="font-size: 12px; color: #999; margin-bottom: 12px;">These are the allowed min/max ranges for each config field (enforced by Zod validation).</p>
+  <table>
+    <thead>
+      <tr><th>Field</th><th>Min</th><th>Max</th></tr>
+    </thead>
+    <tbody>
+      <% const flat = (obj, prefix) => {
+        Object.entries(obj).forEach(([k, v]) => {
+          if (v && typeof v === 'object' && 'min' in v) { %>
+            <tr><td style="font-family:monospace; font-size:13px;"><%= prefix ? prefix + '.' + k : k %></td><td><%= v.min %></td><td><%= v.max %></td></tr>
+          <% } else if (v && typeof v === 'object') {
+            flat(v, prefix ? prefix + '.' + k : k);
+          }
+        });
+      };
+      flat(boundaries, ''); %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('_footer') %>

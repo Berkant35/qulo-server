@@ -3,6 +3,8 @@ import { adminService } from "./admin.service.js";
 import { campaignService } from "../services/campaign.service.js";
 import { appConfigService } from "../services/app-config.service.js";
 import { NotificationService } from "../services/notification.service.js";
+import { economyConfigService } from "../services/economy-config.service.js";
+import { economyConfigSchema, ECONOMY_BOUNDARIES } from "../types/economy-config.schema.js";
 import { supabase } from "../config/supabase.js";
 
 class AdminController {
@@ -312,6 +314,76 @@ class AdminController {
       return res.redirect("/admin/questions?deleted=1");
     }
     res.redirect(`/admin/questions/${id}`);
+  }
+
+  // ── Economy Config management ──────────────────────────────────
+  async economyConfig(req: Request, res: Response) {
+    try {
+      const { version, config } = await economyConfigService.getActiveConfig();
+      res.render("economy-config", {
+        config,
+        version,
+        boundaries: ECONOMY_BOUNDARIES,
+        success: req.query.success,
+        error: req.query.error,
+        session: req.session,
+        csrfToken: req.session.csrfToken,
+      });
+    } catch (err: any) {
+      res.render("economy-config", {
+        config: null,
+        version: 0,
+        boundaries: ECONOMY_BOUNDARIES,
+        success: null,
+        error: err.message,
+        session: req.session,
+        csrfToken: req.session.csrfToken,
+      });
+    }
+  }
+
+  async updateEconomyConfig(req: Request, res: Response) {
+    try {
+      const configJson = JSON.parse(req.body.config_json);
+      const reason = (req.body.change_reason || "").trim();
+      if (!reason) {
+        return res.redirect("/admin/economy-config?error=" + encodeURIComponent("Change reason is required"));
+      }
+      const parsed = economyConfigSchema.parse(configJson);
+      await economyConfigService.createVersion(parsed, req.session.adminEmail || "admin", reason);
+      res.redirect("/admin/economy-config?success=1");
+    } catch (err: any) {
+      const message = err instanceof SyntaxError ? "Invalid JSON format" : err.message;
+      res.redirect("/admin/economy-config?error=" + encodeURIComponent(message));
+    }
+  }
+
+  async economyConfigHistory(req: Request, res: Response) {
+    try {
+      const history = await economyConfigService.getHistory(50);
+      res.render("economy-config-history", { history, session: req.session });
+    } catch (err: any) {
+      res.render("economy-config-history", { history: [], session: req.session });
+    }
+  }
+
+  async economyConfigCompare(req: Request, res: Response) {
+    try {
+      const v1 = parseInt(req.query.v1 as string);
+      const v2 = parseInt(req.query.v2 as string);
+      if (isNaN(v1) || isNaN(v2)) {
+        return res.render("economy-config-compare", { diff: null, v1Data: null, v2Data: null, error: "Invalid version numbers", session: req.session });
+      }
+      const v1Data = await economyConfigService.getVersion(v1);
+      const v2Data = await economyConfigService.getVersion(v2);
+      if (!v1Data || !v2Data) {
+        return res.render("economy-config-compare", { diff: null, v1Data: null, v2Data: null, error: "Version not found", session: req.session });
+      }
+      const diff = economyConfigService.compareVersions(v1Data, v2Data);
+      res.render("economy-config-compare", { diff, v1Data, v2Data, error: null, session: req.session });
+    } catch (err: any) {
+      res.render("economy-config-compare", { diff: null, v1Data: null, v2Data: null, error: err.message, session: req.session });
+    }
   }
 }
 

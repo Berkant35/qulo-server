@@ -1,0 +1,57 @@
+<%- include('_header') %>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+  <h2>Economy Config — Version History</h2>
+  <a href="/admin/economy-config" class="btn btn-primary">Back to Config</a>
+</div>
+
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>Version</th>
+        <th>Active</th>
+        <th>Changed By</th>
+        <th>Reason</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (history.length === 0) { %>
+      <tr><td colspan="6" style="text-align:center; color:#999;">No versions found.</td></tr>
+      <% } %>
+      <% history.forEach((h) => { %>
+      <tr>
+        <td><strong>v<%= h.version %></strong></td>
+        <td>
+          <% if (h.is_active) { %>
+            <span class="badge badge-online">Active</span>
+          <% } else { %>
+            <span class="badge badge-offline">Inactive</span>
+          <% } %>
+        </td>
+        <td><%= h.changed_by || '—' %></td>
+        <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= h.change_reason || '—' %></td>
+        <td><%= h.created_at ? new Date(h.created_at).toLocaleString('tr-TR') : '—' %></td>
+        <td>
+          <% if (history.length > 1 && !h.is_active) { %>
+            <% const activeVersion = history.find(x => x.is_active); %>
+            <% if (activeVersion) { %>
+              <a href="/admin/economy-config/compare?v1=<%= h.version %>&v2=<%= activeVersion.version %>" class="btn btn-sm btn-primary">Compare with Active</a>
+            <% } %>
+          <% } %>
+          <% if (history.length > 1) { %>
+            <% const prevIdx = history.findIndex(x => x.version === h.version) + 1; %>
+            <% if (prevIdx < history.length) { %>
+              <a href="/admin/economy-config/compare?v1=<%= history[prevIdx].version %>&v2=<%= h.version %>" class="btn btn-sm" style="background:#6b7280; color:#fff;">Diff with Previous</a>
+            <% } %>
+          <% } %>
+        </td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('_footer') %>

@@ -48,6 +48,11 @@ router.post("/questions/:id/action", csrfValidate, (req, res) => adminController
 router.get("/app-config", (req, res) => adminController.appConfig(req, res));
 router.post("/app-config", csrfValidate, (req, res) => adminController.updateAppConfig(req, res));
 
+router.get("/economy-config", (req, res) => adminController.economyConfig(req, res));
+router.post("/economy-config", csrfValidate, (req, res) => adminController.updateEconomyConfig(req, res));
+router.get("/economy-config/history", (req, res) => adminController.economyConfigHistory(req, res));
+router.get("/economy-config/compare", (req, res) => adminController.economyConfigCompare(req, res));
+
 router.get("/campaigns", (req, res) => adminController.campaigns(req, res));
 router.get("/campaigns/new", (req, res) => adminController.campaignNew(req, res));
 router.post("/campaigns", csrfValidate, (req, res) => adminController.campaignCreate(req, res));
