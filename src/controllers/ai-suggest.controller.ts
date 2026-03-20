@@ -12,7 +12,7 @@ export async function aiSuggestHandler(
     if (profile_based) {
       suggestions = await aiSuggestService.getProfileBasedSuggestions(userId, locale, count);
     } else if (category) {
-      suggestions = await aiSuggestService.getCachedSuggestions(category, locale, count);
+      suggestions = await aiSuggestService.getCachedSuggestions(userId, category, locale, count);
     } else {
       return res.status(400).json({ error: 'category or profile_based required' });
     }

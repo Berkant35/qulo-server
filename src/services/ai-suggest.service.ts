@@ -1,118 +1,155 @@
 import { supabase } from '../config/supabase.js';
-import { env } from '../config/env.js';
 import { Errors } from '../utils/errors.js';
 
-const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+interface QuestionBankRow {
+  id: string;
+  locale: string;
+  category: string;
+  question_text: string;
+  answers: string[];
+  hint: string | null;
+  target_gender: string | null;
+  target_age_min: number | null;
+  target_age_max: number | null;
+  tone: string;
+  shown_count: number;
+  selected_count: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+interface ScoredQuestion extends QuestionBankRow {
+  score: number;
+}
 
 class AiSuggestService {
-  async getCachedSuggestions(category: string, locale: string = 'tr', count: number = 5) {
+  async getCachedSuggestions(
+    userId: string,
+    category: string,
+    locale: string = 'tr',
+    count: number = 5,
+  ) {
+    const existingTexts = await this.getUserQuestionTexts(userId);
+
     const { data, error } = await supabase
-      .from('ai_question_suggestions')
+      .from('ai_question_bank')
       .select('*')
-      .eq('category', category)
       .eq('locale', locale)
-      .limit(count * 3);
+      .eq('category', category)
+      .eq('is_active', true)
+      .limit(200);
 
     if (error) throw Errors.SERVER_ERROR();
-    if (!data || data.length === 0) {
-      return this.generateAndCache(category, locale, count);
-    }
+    if (!data || data.length === 0) return [];
 
-    const shuffled = data.sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, count).map(s => ({
+    const filtered = (data as QuestionBankRow[]).filter(
+      (q) => !existingTexts.has(q.question_text.toLowerCase().trim()),
+    );
+    if (filtered.length === 0) return [];
+
+    const suggestions = this.scoreAndPick(filtered, count);
+    await this.incrementShownCount(suggestions.map((s) => s.id));
+
+    return suggestions.map((s) => ({
       question_text: s.question_text,
       answers: s.answers,
-      correct_answer: s.correct_answer,
-      hint: s.hint,
+      correct_answer: 1,
+      hint: s.hint ?? null,
       category: s.category,
     }));
   }
 
-  async getProfileBasedSuggestions(userId: string, locale: string = 'tr', count: number = 5) {
-    if (!env.GEMINI_API_KEY) throw Errors.SERVER_ERROR();
-
+  async getProfileBasedSuggestions(
+    userId: string,
+    locale: string = 'tr',
+    count: number = 5,
+  ) {
     const { data: user } = await supabase
       .from('users')
-      .select('name, age, gender, bio')
+      .select('age, gender')
       .eq('id', userId)
       .single();
 
     if (!user) throw Errors.USER_NOT_FOUND();
 
-    const profileContext = [
-      user.name ? `İsim: ${user.name}` : '',
-      user.age ? `Yaş: ${user.age}` : '',
-      user.gender ? `Cinsiyet: ${user.gender}` : '',
-      user.bio ? `Bio: ${user.bio}` : '',
-    ].filter(Boolean).join(', ');
+    const existingTexts = await this.getUserQuestionTexts(userId);
 
-    return this.callGemini(profileContext, locale, count);
-  }
+    const { data, error } = await supabase
+      .from('ai_question_bank')
+      .select('*')
+      .eq('locale', locale)
+      .eq('is_active', true)
+      .limit(500);
 
-  private async callGemini(context: string, locale: string, count: number) {
-    if (!env.GEMINI_API_KEY) return [];
+    if (error) throw Errors.SERVER_ERROR();
+    if (!data || data.length === 0) return [];
 
-    const lang = locale === 'tr' ? 'Türkçe' : 'English';
-    const prompt = `Sen bir dating uygulaması için kişisel soru oluşturucususun.
-
-Kurallar:
-- Sorular kişisel olmalı, Google'da aranamaz olmalı
-- Her sorunun 4 şıkkı ve 1 doğru cevabı olmalı
-- Sorular eğlenceli, flörtöz veya kişilik yansıtıcı olmalı
-- ${lang} dilinde yaz
-- JSON formatında dön
-
-Profil bilgisi: ${context || 'Genel profil'}
-
-${count} adet soru üret. Her soru için:
-{
-  "question_text": "soru metni",
-  "answers": ["şık1", "şık2", "şık3", "şık4"],
-  "correct_answer": 1,
-  "hint": "ipucu (opsiyonel)",
-  "category": "personality"
-}
-
-Sadece JSON array dön, başka bir şey yazma: [...]`;
-
-    const response = await fetch(`${GEMINI_URL}?key=${env.GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.9, maxOutputTokens: 2048 },
-      }),
+    const filtered = (data as QuestionBankRow[]).filter((q) => {
+      if (existingTexts.has(q.question_text.toLowerCase().trim())) return false;
+      if (q.target_gender && q.target_gender !== user.gender) return false;
+      if (user.age) {
+        if (q.target_age_min && user.age < q.target_age_min) return false;
+        if (q.target_age_max && user.age > q.target_age_max) return false;
+      }
+      return true;
     });
 
-    if (!response.ok) throw Errors.SERVER_ERROR();
+    if (filtered.length === 0) return [];
 
-    const result = await response.json() as any;
-    const text = result.candidates?.[0]?.content?.parts?.[0]?.text ?? '[]';
+    const suggestions = this.scoreAndPick(filtered, count);
+    await this.incrementShownCount(suggestions.map((s) => s.id));
 
+    return suggestions.map((s) => ({
+      question_text: s.question_text,
+      answers: s.answers,
+      correct_answer: 1,
+      hint: s.hint ?? null,
+      category: s.category,
+    }));
+  }
+
+  async trackSelection(locale: string, questionText: string): Promise<void> {
     try {
-      const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-      const suggestions = JSON.parse(cleaned);
-      return Array.isArray(suggestions) ? suggestions.slice(0, count) : [];
+      await supabase.rpc('increment_selected_count', {
+        p_locale: locale,
+        p_question_text: questionText,
+      });
     } catch {
-      return [];
+      // Fire-and-forget
     }
   }
 
-  private async generateAndCache(category: string, locale: string, count: number) {
-    const suggestions = await this.callGemini(`Kategori: ${category}`, locale, count);
+  private scoreAndPick(questions: QuestionBankRow[], count: number): ScoredQuestion[] {
+    const scored: ScoredQuestion[] = questions.map((q) => ({
+      ...q,
+      score: (q.selected_count + 1) / (q.shown_count + 2),
+    }));
 
-    for (const s of suggestions) {
-      await supabase.from('ai_question_suggestions').insert({
-        category,
-        question_text: s.question_text,
-        answers: s.answers,
-        correct_answer: s.correct_answer,
-        hint: s.hint ?? null,
-        locale,
-      }); // ignore errors silently
+    scored.sort((a, b) => b.score - a.score);
+    const pool = scored.slice(0, count * 3);
+    const shuffled = pool.sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, count);
+  }
+
+  private async getUserQuestionTexts(userId: string): Promise<Set<string>> {
+    const { data } = await supabase
+      .from('questions')
+      .select('question_text')
+      .eq('user_id', userId);
+
+    return new Set(
+      (data ?? []).map((q: any) => (q.question_text as string).toLowerCase().trim()),
+    );
+  }
+
+  private async incrementShownCount(ids: string[]): Promise<void> {
+    if (ids.length === 0) return;
+    try {
+      await supabase.rpc('increment_shown_count', { question_ids: ids });
+    } catch {
+      // Non-critical
     }
-
-    return suggestions;
   }
 }
 
