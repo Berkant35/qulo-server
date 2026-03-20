@@ -12,6 +12,7 @@ export const ECONOMY_BOUNDARIES = {
   timeExtendSeconds: { min: 5, max: 60 },
   referralPurple: { min: 5, max: 100 },
   maxCompletedReferrals: { min: 1, max: 50 },
+  powerCost: { min: 1, max: 500 },
   // Subscription tier boundaries
   free: {
     dailyDiscovers: { min: 10, max: 200 },
@@ -72,12 +73,27 @@ const timingSchema = z.object({
   timePresets: z.array(z.number().int().min(5).max(300)),
 });
 
+const powerCostSchema = z.object({
+  greenCost: z.number().int().min(B.powerCost.min).max(B.powerCost.max),
+  purpleCost: z.number().int().min(B.powerCost.min).max(B.powerCost.max),
+});
+
+const powerCostsSchema = z.object({
+  ORACLE: powerCostSchema,
+  HALF: powerCostSchema,
+  SKIP: powerCostSchema,
+  SKIP_ALL: powerCostSchema,
+  TIME_EXTEND: powerCostSchema,
+  HINT: powerCostSchema,
+});
+
 // ── Main schema ──
 export const economyConfigSchema = z.object({
   core: coreSchema,
   subscriptionLimits: subscriptionLimitsSchema,
   rewards: rewardsSchema,
   timing: timingSchema,
+  powerCosts: powerCostsSchema,
 });
 
 // ── TypeScript types (inferred from Zod) ──
@@ -87,6 +103,7 @@ export type TierLimits = z.infer<typeof tierLimitsSchema>;
 export type SubscriptionLimitsConfig = z.infer<typeof subscriptionLimitsSchema>;
 export type RewardsConfig = z.infer<typeof rewardsSchema>;
 export type TimingConfig = z.infer<typeof timingSchema>;
+export type PowerCostsConfig = z.infer<typeof powerCostsSchema>;
 
 export interface EconomyConfigVersion {
   id: string;

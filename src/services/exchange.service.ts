@@ -62,8 +62,13 @@ class ExchangeService {
       throw Errors.VALIDATION_ERROR({ powerName: "Power not found or inactive" });
     }
 
-    const unitCost =
-      diamondType === "GREEN" ? power.green_cost : power.purple_cost;
+    const config = await economyConfigService.getConfig();
+    const powerCosts = config.powerCosts;
+    const configCost = powerCosts[powerName as keyof typeof powerCosts];
+
+    const unitCost = configCost
+      ? (diamondType === "GREEN" ? configCost.greenCost : configCost.purpleCost)
+      : (diamondType === "GREEN" ? power.green_cost : power.purple_cost);
 
     if (!unitCost || unitCost <= 0) {
       throw Errors.VALIDATION_ERROR({
@@ -177,20 +182,22 @@ class ExchangeService {
 
     const { data, error } = await supabase
       .from("powers")
-      .select("name, base_cost, green_cost, purple_cost, accuracy_rate")
+      .select("name, base_cost, accuracy_rate")
       .eq("is_active", true);
 
     if (error) {
       throw Errors.SERVER_ERROR();
     }
 
+    const powerCosts = config.powerCosts;
+
     return {
       convert_ratio: config.core.greenToPurpleRatio,
       powers: (data ?? []).map((p) => ({
         name: p.name,
         base_cost: p.base_cost,
-        green_cost: p.green_cost,
-        purple_cost: p.purple_cost,
+        green_cost: powerCosts[p.name as keyof typeof powerCosts]?.greenCost ?? p.base_cost * 3,
+        purple_cost: powerCosts[p.name as keyof typeof powerCosts]?.purpleCost ?? p.base_cost,
         accuracy_rate: p.accuracy_rate,
       })),
     };
