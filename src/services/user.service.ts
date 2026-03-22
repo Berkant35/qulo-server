@@ -2,6 +2,7 @@ import { supabase } from "../config/supabase.js";
 import { diamondService } from "./diamond.service.js";
 import { referralService } from "./referral.service.js";
 import { economyConfigService } from "./economy-config.service.js";
+import { userLanguageService } from "./user-language.service.js";
 import { Errors } from "../utils/errors.js";
 import { haversineDistance } from "../utils/math.js";
 import type { UpdateProfileInput, UpdateDetailsInput } from "../validators/user.validator.js";
@@ -11,7 +12,7 @@ export class UserService {
     const { data: user, error } = await supabase
       .from("users")
       .select(
-        "id, email, name, surname, bio, age, gender, gender_pref, match_radius_km, age_pref_min, age_pref_max, city, country, locale, lat, lng, photos, profile_completion, green_diamonds, purple_diamonds, is_online, last_seen_at, push_token, email_verified, passport_city, passport_lat, passport_lng, boost_until, like_received_count, times_shown_count, badge_rewards_claimed, subscription_plan, subscription_expires_at, daily_swipes_used, daily_swipes_reset_at, daily_undos_used, created_at",
+        "id, email, name, surname, bio, age, gender, gender_pref, match_radius_km, age_pref_min, age_pref_max, city, country, locale, lat, lng, photos, profile_completion, green_diamonds, purple_diamonds, is_online, last_seen_at, push_token, email_verified, passport_city, passport_lat, passport_lng, boost_until, like_received_count, times_shown_count, badge_rewards_claimed, preferred_languages, completion_rewards_claimed, relationship_goal, subscription_plan, subscription_expires_at, daily_swipes_used, daily_swipes_reset_at, daily_undos_used, strict_language_mode, created_at",
       )
       .eq("id", userId)
       .eq("is_deleted", false)
@@ -52,7 +53,7 @@ export class UserService {
       .eq("id", userId)
       .eq("is_deleted", false)
       .select(
-        "id, email, name, surname, bio, age, gender, gender_pref, match_radius_km, age_pref_min, age_pref_max, city, country, locale, lat, lng, photos, profile_completion, purple_diamonds, green_diamonds, is_online, last_seen_at, email_verified, created_at",
+        "id, email, name, surname, bio, age, gender, gender_pref, match_radius_km, age_pref_min, age_pref_max, city, country, locale, lat, lng, photos, profile_completion, preferred_languages, purple_diamonds, green_diamonds, is_online, last_seen_at, email_verified, strict_language_mode, created_at",
       )
       .maybeSingle();
 
@@ -62,6 +63,15 @@ export class UserService {
     }
     if (!user) {
       throw Errors.USER_NOT_FOUND();
+    }
+
+    // Sync user_languages table if preferred_languages was updated
+    if (data.preferred_languages && Array.isArray(data.preferred_languages)) {
+      try {
+        await userLanguageService.setUserLanguages(userId, data.preferred_languages);
+      } catch (err) {
+        console.error("[updateProfile] sync user_languages error:", err);
+      }
     }
 
     try {
@@ -448,12 +458,16 @@ export class UserService {
 
     for (const m of milestones) {
       if (newCompletion >= m.threshold && !claimed[String(m.threshold)]) {
-        await diamondService.addPurple(userId, m.reward, 'PROFILE_COMPLETION', `milestone_${m.threshold}`);
-        claimed[String(m.threshold)] = true;
+        try {
+          await diamondService.addPurple(userId, m.reward, 'PROFILE_COMPLETION', `milestone_${m.threshold}`);
+          claimed[String(m.threshold)] = true;
 
-        if (m.threshold === 100) {
-          const boostUntil = new Date(Date.now() + 24 * 60 * 60 * 1000);
-          await supabase.from('users').update({ boost_until: boostUntil.toISOString() }).eq('id', userId);
+          if (m.threshold === 100) {
+            const boostUntil = new Date(Date.now() + 24 * 60 * 60 * 1000);
+            await supabase.from('users').update({ boost_until: boostUntil.toISOString() }).eq('id', userId);
+          }
+        } catch (err) {
+          console.error(`[recalculateProfileCompletion] Milestone ${m.threshold} reward failed:`, err);
         }
       }
     }

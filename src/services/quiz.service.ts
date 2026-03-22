@@ -42,6 +42,16 @@ interface PowerRow {
 }
 
 export class QuizService {
+  /**
+   * Order questions so solver's preferred languages come first, others follow.
+   */
+  private orderByLanguagePreference(questions: any[], solverLanguages: string[]) {
+    if (!solverLanguages.length) return questions;
+    const preferred = questions.filter((q: any) => solverLanguages.includes(q.locale || 'tr'));
+    const others = questions.filter((q: any) => !solverLanguages.includes(q.locale || 'tr'));
+    return [...preferred, ...others];
+  }
+
   // ─── Start Session ─────────────────────────────────────────────
   async startSession(solverId: string, targetId: string) {
     // 1. Fetch target's questions with locale
@@ -54,16 +64,12 @@ export class QuizService {
     if (qErr) throw Errors.SERVER_ERROR();
     if (!allQuestions || allQuestions.length < 2) throw Errors.NO_QUESTIONS();
 
-    // Filter questions by solver's languages
+    // Order questions by solver's language preference (preferred first, others after)
     const solverLanguages = await userLanguageService.getUserLanguages(solverId);
-    let filteredQuestions = allQuestions;
-    if (solverLanguages.length > 0) {
-      filteredQuestions = allQuestions.filter((q: any) =>
-        solverLanguages.includes(q.locale || 'tr')
-      );
-    }
+    const filteredQuestions = this.orderByLanguagePreference(allQuestions, solverLanguages);
 
     const totalQuestions = filteredQuestions.length;
+    // NO_QUESTIONS only when total < 2 (regardless of language)
     if (totalQuestions < 2) throw Errors.NO_QUESTIONS();
 
     // 2. Check no active IN_PROGRESS session for this solver+target pair
@@ -134,20 +140,15 @@ export class QuizService {
 
     if (qErr || !questions || questions.length === 0) throw Errors.SERVER_ERROR();
 
-    // Filter by solver's languages
+    // Order by solver's language preference (preferred first)
     const solverLanguages = await userLanguageService.getUserLanguages(solverId);
-    let filteredQuestions = questions;
-    if (solverLanguages.length > 0) {
-      filteredQuestions = questions.filter((q: any) =>
-        solverLanguages.includes(q.locale || 'tr')
-      );
-    }
+    const orderedQuestions = this.orderByLanguagePreference(questions, solverLanguages);
 
     // Get current question (index = current_q - 1)
     const questionIndex = session.current_q - 1;
-    if (questionIndex >= filteredQuestions.length) throw Errors.SERVER_ERROR();
+    if (questionIndex >= orderedQuestions.length) throw Errors.SERVER_ERROR();
 
-    const q = filteredQuestions[questionIndex];
+    const q = orderedQuestions[questionIndex];
 
     // Build answers and shuffle
     const answers = [
@@ -189,14 +190,9 @@ export class QuizService {
 
     if (qErr || !allQuestions || allQuestions.length === 0) throw Errors.SERVER_ERROR();
 
-    // Filter by solver's languages
+    // Order by solver's language preference (preferred first)
     const solverLanguages = await userLanguageService.getUserLanguages(solverId);
-    let questions = allQuestions;
-    if (solverLanguages.length > 0) {
-      questions = allQuestions.filter((q: any) =>
-        solverLanguages.includes(q.locale || 'tr')
-      );
-    }
+    const questions = this.orderByLanguagePreference(allQuestions, solverLanguages);
 
     const questionIndex = session.current_q - 1;
     const currentQuestion = questions[questionIndex] as unknown as QuestionRow;
@@ -702,12 +698,7 @@ export class QuizService {
 
       if (allQuestions) {
         const solverLanguages = await userLanguageService.getUserLanguages(solverId);
-        let questions = allQuestions;
-        if (solverLanguages.length > 0) {
-          questions = allQuestions.filter((q: any) =>
-            solverLanguages.includes(q.locale || 'tr')
-          );
-        }
+        const questions = this.orderByLanguagePreference(allQuestions, solverLanguages);
 
         // Mevcut sorudan sonraki soruları işaretle
         for (let i = session.current_q; i < questions.length; i++) {

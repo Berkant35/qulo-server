@@ -7,7 +7,7 @@ export const updateProfileSchema = z.object({
   bio: z.string().max(500).optional(),
   age: z.number().int().min(18).max(99).optional(),
   gender_pref: z.enum(["MAN", "WOMAN", "BOTH"]).optional(),
-  match_radius_km: z.number().int().min(5).max(200).optional(),
+  match_radius_km: z.number().int().min(5).max(500).optional(),
   age_pref_min: z.number().int().min(18).max(99).optional(),
   age_pref_max: z.number().int().min(18).max(99).optional(),
   city: z.string().max(100).optional(),
@@ -16,6 +16,7 @@ export const updateProfileSchema = z.object({
   photos: z.array(z.string().url()).max(6).optional(),
   relationship_goal: z.enum(["SERIOUS", "FRIENDSHIP", "NOT_SURE"]).optional(),
   preferred_languages: z.array(z.enum(["tr", "en", "de", "fr", "ar", "ru", "es"])).min(1).max(7).optional(),
+  strict_language_mode: z.boolean().optional(),
 });
 
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
