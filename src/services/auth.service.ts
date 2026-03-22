@@ -6,6 +6,7 @@ import { sendVerificationEmail, sendPasswordResetEmail } from "../utils/email.js
 import type { RegisterInput, LoginInput } from "../validators/auth.validator.js";
 import { userLanguageService } from "./user-language.service.js";
 import { referralService } from "./referral.service.js";
+import { consentService } from "./consent.service.js";
 import { assertUuid } from "../utils/validation.js";
 
 export class AuthService {
@@ -55,6 +56,11 @@ export class AuthService {
       console.error("[register] Insert user failed:", error?.message, error?.code);
       throw Errors.SERVER_ERROR();
     }
+
+    // Record ToS + Privacy Policy consent (non-blocking)
+    consentService.recordRegistrationConsents(user.id).catch((err) => {
+      console.error("[auth] Failed to record consents:", err);
+    });
 
     // Apply referral code if provided (don't block registration on failure)
     if (data.referral_code) {
@@ -308,6 +314,7 @@ export class AuthService {
       { table: "referrals", column: "referee_id" },
       { table: "user_languages", column: "user_id" },
       { table: "user_details", column: "user_id" },
+      { table: "user_consents", column: "user_id" },
       { table: "refresh_tokens", column: "user_id" },
     ];
 

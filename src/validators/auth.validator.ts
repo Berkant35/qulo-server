@@ -11,6 +11,9 @@ export const registerSchema = z.object({
   lat: z.number().min(-90).max(90).optional(),
   lng: z.number().min(-180).max(180).optional(),
   referral_code: z.string().min(1).max(10).optional(),
+  tos_accepted: z.literal(true, {
+    errorMap: () => ({ message: "Terms of Service must be accepted" }),
+  }),
 });
 
 export const loginSchema = z.object({
