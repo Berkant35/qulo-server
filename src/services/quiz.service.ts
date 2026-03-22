@@ -45,7 +45,8 @@ interface PowerRow {
 
 export class QuizService {
   /**
-   * Filter questions to only include those matching solver's preferred languages.
+   * Filter questions to only those matching solver's preferred languages.
+   * If solverLanguages is empty, returns all questions (no filtering).
    */
   private filterByLanguagePreference(questions: any[], solverLanguages: string[]): any[] {
     if (!solverLanguages.length) return questions;
@@ -81,13 +82,11 @@ export class QuizService {
     if (qErr) throw Errors.SERVER_ERROR();
     if (!allQuestions || allQuestions.length < 2) throw Errors.NO_QUESTIONS();
 
-    // Filter questions by solver's language preference
+    // Sort questions by solver's language preference (preferred first, others after)
     const solverLanguages = await this.resolveSolverLanguages(solverId);
     const filteredQuestions = this.filterByLanguagePreference(allQuestions, solverLanguages);
 
     const totalQuestions = filteredQuestions.length;
-    // NO_QUESTIONS only when total < 2 (regardless of language)
-    if (totalQuestions < 2) throw Errors.NO_QUESTIONS();
 
     // 2. Check no active IN_PROGRESS session for this solver+target pair
     const { data: existing, error: existErr } = await supabase
