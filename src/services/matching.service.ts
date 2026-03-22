@@ -60,7 +60,7 @@ export class MatchingService {
       supabase
         .from("users")
         .select(
-          "id, gender_pref, age_pref_min, age_pref_max, match_radius_km, lat, lng, passport_lat, passport_lng, preferred_languages, strict_language_mode",
+          "id, gender_pref, age_pref_min, age_pref_max, match_radius_km, lat, lng, passport_lat, passport_lng, preferred_languages",
         )
         .eq("id", userId)
         .eq("is_deleted", false)
@@ -245,22 +245,13 @@ export class MatchingService {
           questionLocalesByUser.set(q.user_id as string, locales);
         }
 
-        // Split candidates: preferred (2+ questions in user's languages) vs fallback (rest)
-        const preferredCandidates = discoverableFiltered.filter((c) => {
+        // Language-based filtering: candidate MUST have 2+ questions in user's languages
+        // Always strict — no fallback candidates
+        discoverableFiltered = discoverableFiltered.filter((c) => {
           const qLocales = questionLocalesByUser.get(c.id) || [];
           const matchingCount = qLocales.filter((l: string) => langPrefs.includes(l)).length;
           return matchingCount >= 2;
         });
-        const fallbackCandidates = discoverableFiltered.filter((c) => {
-          const qLocales = questionLocalesByUser.get(c.id) || [];
-          const matchingCount = qLocales.filter((l: string) => langPrefs.includes(l)).length;
-          return matchingCount < 2;
-        });
-
-        const isStrictMode = (user as any).strict_language_mode === true;
-        discoverableFiltered = isStrictMode
-          ? preferredCandidates
-          : [...preferredCandidates, ...fallbackCandidates];
       }
     }
 
@@ -357,26 +348,15 @@ export class MatchingService {
 
       if (qError) throw Errors.SERVER_ERROR();
 
-      // Fetch swiper's strict_language_mode
-      const { data: swiperUser } = await supabase
-        .from("users")
-        .select("strict_language_mode")
-        .eq("id", swiperId)
-        .single();
-
-      const isStrictMode = swiperUser?.strict_language_mode === true;
-
+      // Always filter by swiper's language preferences
+      const swiperLanguages = await userLanguageService.getUserLanguages(swiperId);
       let compatibleCount = targetQuestions?.length ?? 0;
-      if (isStrictMode) {
-        // Strict mode: only count questions in swiper's languages
-        const swiperLanguages = await userLanguageService.getUserLanguages(swiperId);
-        if (swiperLanguages.length > 0 && targetQuestions) {
-          compatibleCount = targetQuestions.filter(
-            (q: any) => swiperLanguages.includes(q.locale || 'tr')
-          ).length;
-        }
+
+      if (swiperLanguages.length > 0 && targetQuestions) {
+        compatibleCount = targetQuestions.filter(
+          (q: any) => swiperLanguages.includes(q.locale || 'tr')
+        ).length;
       }
-      // Non-strict: total question count is used (no language filter)
 
       if (compatibleCount < 2) throw Errors.NO_QUESTIONS();
     }
