@@ -17,6 +17,15 @@ const ACTION_URL_MAP: Partial<Record<PushType, string>> = {
   passport_expired: '/profile/passport',
 };
 
+const TYPE_TO_CATEGORY: Partial<Record<PushType, string>> = {
+  new_message: 'messages',
+  new_message_image: 'messages',
+  new_match: 'matches',
+  new_match_solver: 'matches',
+  chat_question_answered: 'matches',
+  campaign: 'campaigns',
+};
+
 function interpolate(template: string, params: Record<string, string>): string {
   // Replace known params, strip any remaining unresolved placeholders
   const result = template.replace(/\{(\w+)\}/g, (_, key: string) => params[key] ?? '');
@@ -63,7 +72,7 @@ export class NotificationService {
       // 1. Get user's push_token and locale
       const { data: user, error } = await supabase
         .from('users')
-        .select('push_token, locale')
+        .select('push_token, locale, notification_preferences')
         .eq('id', userId)
         .single();
 
@@ -118,6 +127,18 @@ export class NotificationService {
         })
         .select('id')
         .single();
+
+      // Check notification preferences — if category disabled, skip push but keep DB record
+      const category = TYPE_TO_CATEGORY[type];
+      if (category) {
+        const prefs = user.notification_preferences as Record<string, boolean> | null;
+        const enabled = prefs?.[category] ?? true; // NULL = all enabled
+        if (!enabled) {
+          console.log(`[NotificationService] Push suppressed: user=${userId} disabled category=${category} (type=${type})`);
+          return false;
+        }
+      }
+      // System notifications (no category mapping) always send push
 
       // 5. Send via FCM
       if (!user.push_token) {
