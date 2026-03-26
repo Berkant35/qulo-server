@@ -488,6 +488,47 @@ export class UserService {
       // Best effort — referrals table may not exist yet
     }
   }
+  private static readonly DEFAULT_NOTIFICATION_PREFERENCES = {
+    messages: true,
+    matches: true,
+    campaigns: true,
+  };
+
+  async getNotificationPreferences(userId: string) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('notification_preferences')
+      .eq('id', userId)
+      .single();
+
+    if (error || !data) {
+      throw Errors.USER_NOT_FOUND();
+    }
+
+    return {
+      ...UserService.DEFAULT_NOTIFICATION_PREFERENCES,
+      ...(data.notification_preferences ?? {}),
+    };
+  }
+
+  async updateNotificationPreferences(
+    userId: string,
+    input: { messages?: boolean; matches?: boolean; campaigns?: boolean },
+  ) {
+    const current = await this.getNotificationPreferences(userId);
+    const merged = { ...current, ...input };
+
+    const { error } = await supabase
+      .from('users')
+      .update({ notification_preferences: merged })
+      .eq('id', userId);
+
+    if (error) {
+      throw Errors.USER_NOT_FOUND();
+    }
+
+    return merged;
+  }
 }
 
 export const userService = new UserService();

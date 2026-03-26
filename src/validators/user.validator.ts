@@ -49,3 +49,14 @@ export const updatePushTokenSchema = z.object({
 });
 
 export type UpdatePushTokenInput = z.infer<typeof updatePushTokenSchema>;
+
+export const notificationPreferencesSchema = z.object({
+  messages: z.boolean().optional(),
+  matches: z.boolean().optional(),
+  campaigns: z.boolean().optional(),
+}).refine(
+  (data) => Object.keys(data).length > 0,
+  { message: 'At least one preference must be provided' },
+);
+
+export type NotificationPreferencesInput = z.infer<typeof notificationPreferencesSchema>;
