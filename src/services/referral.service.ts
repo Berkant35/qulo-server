@@ -227,6 +227,29 @@ export class ReferralService {
 
     return { valid: true, referrerName: referrer.name };
   }
+
+  async getMyReferrer(userId: string) {
+    const { data: referral } = await supabase
+      .from("referrals")
+      .select("referrer_id, status")
+      .eq("referee_id", userId)
+      .maybeSingle();
+
+    if (!referral) {
+      return { referrerName: null, status: null };
+    }
+
+    const { data: referrer } = await supabase
+      .from("users")
+      .select("name")
+      .eq("id", referral.referrer_id)
+      .single();
+
+    return {
+      referrerName: referrer?.name ?? "Unknown",
+      status: referral.status,
+    };
+  }
 }
 
 export const referralService = new ReferralService();

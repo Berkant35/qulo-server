@@ -3,7 +3,7 @@ import type { Request, Response, NextFunction } from "express";
 import { authMiddleware } from "../middleware/auth.js";
 import { generalLimiter } from "../middleware/rateLimit.js";
 import { validate } from "../middleware/validate.js";
-import { validateCodeSchema } from "../validators/referral.validator.js";
+import { validateCodeSchema, applyCodeSchema } from "../validators/referral.validator.js";
 import { referralService } from "../services/referral.service.js";
 import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
@@ -59,6 +59,27 @@ router.post("/validate-code", validate(validateCodeSchema), async (req: Request,
   try {
     const { code } = req.body;
     const result = await referralService.validateCode(code);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /apply — apply a referral code (post-login, one-time)
+router.post("/apply", validate(applyCodeSchema), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { code } = req.body;
+    const result = await referralService.applyReferralCode(req.user!.userId, code);
+    res.json({ referrerName: result.referrerName });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /my-referrer — get who referred the current user
+router.get("/my-referrer", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await referralService.getMyReferrer(req.user!.userId);
     res.json(result);
   } catch (err) {
     next(err);
