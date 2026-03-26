@@ -6,6 +6,7 @@ import type {
   UpdateDetailsInput,
   UpdateLocationInput,
   UpdatePushTokenInput,
+  NotificationPreferencesInput,
 } from "../validators/user.validator.js";
 import { AppError } from "../utils/errors.js";
 
@@ -122,6 +123,25 @@ export async function deleteAccountHandler(req: Request, res: Response, next: Ne
   try {
     await userService.deleteAccount(req.user!.userId);
     res.json({ message: "Account deleted" });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getNotificationPreferencesHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const result = await userService.getNotificationPreferences(req.user!.userId);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function updateNotificationPreferencesHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const data = req.body as NotificationPreferencesInput;
+    const result = await userService.updateNotificationPreferences(req.user!.userId, data);
+    res.json(result);
   } catch (err) {
     next(err);
   }

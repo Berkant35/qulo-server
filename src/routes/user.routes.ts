@@ -8,6 +8,7 @@ import {
   updateDetailsSchema,
   updateLocationSchema,
   updatePushTokenSchema,
+  notificationPreferencesSchema,
 } from "../validators/user.validator.js";
 import { userLanguageService } from "../services/user-language.service.js";
 import { setUserLanguagesSchema } from "../validators/user-language.validator.js";
@@ -23,6 +24,8 @@ import {
   claimBadgeRewardHandler,
   getPublicProfileHandler,
   deleteAccountHandler,
+  getNotificationPreferencesHandler,
+  updateNotificationPreferencesHandler,
 } from "../controllers/user.controller.js";
 import { AppError } from "../utils/errors.js";
 
@@ -52,6 +55,9 @@ router.post("/me/photos", upload.single("photo"), uploadPhotoHandler);
 router.post("/me/boost", boostHandler);
 router.post("/me/claim-badge-reward", claimBadgeRewardHandler);
 router.delete("/me/photos/:index", deletePhotoHandler);
+
+router.get("/me/notification-preferences", getNotificationPreferencesHandler);
+router.patch("/me/notification-preferences", validate(notificationPreferencesSchema), updateNotificationPreferencesHandler);
 
 // GET /me/languages — Get user's language preferences
 router.get("/me/languages", async (req, res, next) => {
