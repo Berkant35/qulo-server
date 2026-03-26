@@ -25,7 +25,7 @@ router.use(authMiddleware, generalLimiter);
 
 router.get("/me", getMyQuestionsHandler);
 router.post("/me", validate(createQuestionSchema), createQuestionHandler);
-router.put("/me/:order", validate(updateQuestionSchema), updateQuestionHandler);
+router.patch("/me/:order", validate(updateQuestionSchema), updateQuestionHandler);
 router.delete("/me/:order", deleteQuestionHandler);
 router.get("/count/me", getQuestionCountHandler);
 router.get("/me/analytics", getQuestionAnalyticsHandler);

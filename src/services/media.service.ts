@@ -88,9 +88,11 @@ export class MediaService {
 
     // Notify the other user
     const otherUserId = isUser1 ? match.user2_id : match.user1_id;
-    NotificationService.sendPush(otherUserId, "new_message", {}, undefined, {
-      actionUrl: `/matches/chat/${match.id}`,
-    }).catch(() => {});
+    NotificationService.getUserDisplayName(requesterId).then((senderName) =>
+      NotificationService.sendPush(otherUserId, "new_message", { name: senderName }, undefined, {
+        actionUrl: `/chat/${match.id}`,
+      }),
+    ).catch(() => {});
 
     return request;
   }
@@ -149,10 +151,12 @@ export class MediaService {
         throw Errors.SERVER_ERROR();
       }
 
-      // Notify requester
-      NotificationService.sendPush(request.requester_id, "new_message", {}, undefined, {
-        actionUrl: `/matches/chat/${match.id}`,
-      }).catch(() => {});
+      // Notify requester (userId = responder, so that's the "sender name")
+      NotificationService.getUserDisplayName(userId).then((senderName) =>
+        NotificationService.sendPush(request.requester_id, "new_message", { name: senderName }, undefined, {
+          actionUrl: `/chat/${match.id}`,
+        }),
+      ).catch(() => {});
 
       return { status: "accepted", media_enabled: true };
     } else {

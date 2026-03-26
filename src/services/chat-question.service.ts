@@ -266,9 +266,11 @@ export class ChatQuestionService {
 
     // ── Push notification (fire-and-forget) ──
     const otherUserId = match.user1_id === senderId ? match.user2_id : match.user1_id;
-    NotificationService.sendPush(otherUserId, "new_message", {}, undefined, {
-      actionUrl: `/matches/chat/${matchId}`,
-    }).catch(() => {});
+    NotificationService.getUserDisplayName(senderId).then((senderName) =>
+      NotificationService.sendPush(otherUserId, "new_message", { name: senderName }, undefined, {
+        actionUrl: `/chat/${matchId}`,
+      }),
+    ).catch(() => {});
 
     return question;
   }
@@ -408,8 +410,8 @@ export class ChatQuestionService {
       question.sender_id,
       "chat_question_answered",
       { result: isCorrect ? "correct" : "wrong" },
-      undefined,
-      { actionUrl: `/matches/chat/${question.match_id}` },
+      { question_id: question.id, match_id: question.match_id },
+      { actionUrl: `/chat/${question.match_id}` },
     ).catch(() => {});
 
     return {

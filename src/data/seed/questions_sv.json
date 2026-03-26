@@ -1,0 +1,3602 @@
+[
+  {
+    "category": "personality",
+    "question_text": "Vad skulle imponera mest på dig på en första dejt?",
+    "answers": ["En hemlig cocktailbar", "Ett besök i en bokhandel", "Utomhusbio på ett tak", "En nattlig museitur"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur laddar du batterierna efter en tung vecka?",
+    "answers": ["Netflix-maraton ensam", "Ut med vännerna", "En lång promenad", "Laga något gott"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur skickar du meddelanden i en relation?",
+    "answers": ["Memes hela dagen", "Godmorgon-meddelanden", "Röstmeddelanden istället för att skriva", "Kort och koncist"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Om vi spenderade en dag tillsammans, vem planerar?",
+    "answers": ["Jag överraskar dig", "Du bestämmer", "Vi planerar ihop", "Vi tar det som det kommer"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad är viktigast hos en partner?",
+    "answers": ["Humor", "Ambition", "Vänlighet", "Intelligens"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur hanterar du konflikter i en relation?",
+    "answers": ["Pratar ut direkt", "Tar avstånd först", "Skriver ner mina känslor", "Humor löser allt"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad är ditt kärleksspråk?",
+    "answers": ["Bekräftande ord", "Kvalitetstid", "Fysisk beröring", "Att göra saker för varandra"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur ser din perfekta söndag ut?",
+    "answers": ["Sova länge och bruncha", "Vara sportigt aktiv", "En dag i naturen", "Kreativa aktiviteter"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vilken typ av vän är du?",
+    "answers": ["Lyssnaren", "Stämningshöjaren", "Rådgivaren", "Äventyraren"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad gör dig lyckligast?",
+    "answers": ["Resor och nya upplevelser", "Tid med nära och kära", "Personlig utveckling", "Lugn och ro"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Är du en morgon- eller kvällsmänniska?",
+    "answers": ["Morgonpigg", "Nattuggla", "Beror på dagen", "Alltid trött"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur reagerar du på en komplimang?",
+    "answers": ["Jag rodnar", "Jag ger en tillbaka", "Jag skrattar bort det", "Jag tackar uppriktigt"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad är din största röda flagga på en dejt?",
+    "answers": ["Oartig mot personalen", "Pratar bara om sig själv", "Kollar telefonen hela tiden", "Ingen humor"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Introvert, extrovert eller ambivert?",
+    "answers": ["Introvert och stolt", "Extrovert och energisk", "Ambivert — beror på situationen", "Vet faktiskt inte"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad gör du först när du vaknar?",
+    "answers": ["Kollar telefonen", "Brygger kaffe", "Snoosar lite till", "Tränar"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Spontan eller planerare?",
+    "answers": ["100% spontan", "Allt planerat", "En blandning", "Spontan med säkerhetsnät"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vilket ord beskriver dig bäst?",
+    "answers": ["Äventyrlig", "Omtänksam", "Kreativ", "Ambitiös"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur flörtar du?",
+    "answers": ["Med humor", "Ögonkontakt och leende", "Komplimanger", "Jag flörtar inte, jag är bara snäll"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad skulle du välja: alltid ärlig eller alltid snäll?",
+    "answers": ["Alltid ärlig", "Alltid snäll", "Ärlig men med takt", "Beror på situationen"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur snabbt blir du kär?",
+    "answers": ["Vid första ögonkastet", "Efter några dejter", "Långsamt men säkert", "Jag måste tänka igenom det rationellt"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad är din hemliga talang?",
+    "answers": ["Jag lagar bra mat", "Jag kan få alla att skratta", "Jag minns allt", "Jag är en bra lyssnare"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tror du på kärlek vid första ögonkastet?",
+    "answers": ["Absolut", "Nej, kärlek växer", "Bara attraktion vid första ögonkastet", "Jag vill gärna tro det"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad gillar du mest med att dejta?",
+    "answers": ["Att lära känna någon ny", "Fjärilarna i magen", "Samla roliga berättelser", "Möjligheten till något vackert"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur beskriver dina vänner dig?",
+    "answers": ["Den roliga", "Den pålitliga", "Den vilda", "Den kloka"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vilken egenskap värderar du mest?",
+    "answers": ["Ärlighet", "Lojalitet", "Mod", "Empati"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad irriterar dig snabbast?",
+    "answers": ["Opålitlighet", "Arrogans", "Passiv aggressivitet", "Negativitet"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad är ditt go-to samtalsämne på en dejt?",
+    "answers": ["Resor", "Drömmar och ambitioner", "Roliga historier", "Mat och restauranger"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur hanterar du stress?",
+    "answers": ["Tränar", "Pratar om det", "Vara ensam en stund", "Lyssnar på musik"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vilken årstid passar bäst till din personlighet?",
+    "answers": ["Sommar — energisk och varm", "Höst — mysig och reflekterande", "Vinter — lugn och djup", "Vår — fräsch och optimistisk"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad är du hemligt stolt över?",
+    "answers": ["Min uthållighet", "Min kreativitet", "Mina sociala färdigheter", "Min självständighet"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad skulle din partner upptäcka om dig först?",
+    "answers": ["Jag är hemligt romantisk", "Jag har en torr humor", "Jag är väldigt lojal", "Jag älskar att krama"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad är ditt livsmotto?",
+    "answers": ["YOLO", "Allt ordnar sig", "Jobba hårt, lek hårdare", "Var dig själv"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur skulle din idealrelation se ut?",
+    "answers": ["Bästa vänner som också är kära", "Äventyrlig och spontan", "Lugn och stabil", "Passionerad och intensiv"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad gör du helst en regnig dag?",
+    "answers": ["Tittar på film under en filt", "Läser en bok", "Bakar eller lagar mat", "Går ut ändå"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Är du mer givare eller mottagare i en relation?",
+    "answers": ["Givare — jag skämmer bort gärna", "Mottagare — jag njuter av det", "Fifty-fifty", "Beror på dagen"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur agerar du när du blir kär?",
+    "answers": ["Säger det direkt", "Hintar subtilt", "Väntar och ser", "Panik"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad gör ett samtal fascinerande?",
+    "answers": ["Djup och sårbarhet", "Humor och lätthet", "Gemensamma passioner", "Nya perspektiv"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Vilken filmgenre passar dig bäst?",
+    "answers": ["Romantisk komedi", "Action och äventyr", "Thriller eller skräck", "Dokumentär"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Netflix och myskvällar eller biodejt?",
+    "answers": ["Netflix i soffan", "Bio med popcorn", "Utomhusbio", "Filmen spelar ingen roll, sällskapet gör det"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Vilken film kan du se om och om igen?",
+    "answers": ["Nyckeln till frihet", "Harry Potter (hela serien)", "Forrest Gump", "Lejonkungen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Vilken typ av filmkaraktär skulle du vara?",
+    "answers": ["Hjälten", "Den roliga sidekicken", "Den mystiska främlingen", "Den romantiska huvudrollen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Hur tittar du helst på en serie?",
+    "answers": ["Binge-watcha på en helg", "Ett avsnitt per dag", "Titta tillsammans med någon", "Bara highlights på sociala medier"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Vilken biosnacks väljer du?",
+    "answers": ["Popcorn söta", "Popcorn salta", "Nachos", "Godis och choklad"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Vilken serie skulle du rekommendera på en första dejt?",
+    "answers": ["Friends", "Stranger Things", "The Office", "Dark"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Vad är din guilty pleasure-film?",
+    "answers": ["High School Musical", "Twilight", "Mean Girls", "Fast & Furious"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Gråter du vid filmer?",
+    "answers": ["Alltid, jag är känslig", "Ibland vid riktigt ledsna scener", "Aldrig, jag håller det inombords", "Bara när ingen ser"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Om ditt liv var en filmgenre, vilken?",
+    "answers": ["Romantisk komedi", "Äventyrsfilm", "Drama", "Science fiction"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Vilken Disney-film rör dig mest?",
+    "answers": ["Lejonkungen", "Aladdin", "Hitta Nemo", "Upp"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Undertexter eller dubbning?",
+    "answers": ["Alltid undertexter", "Dubbning funkar", "Originalspråk utan subs", "Beror på mitt humör"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Med vilken filmkaraktär skulle du vilja gå på dejt?",
+    "answers": ["James Bond", "Elizabeth Bennet", "Jack Sparrow", "Hermione Granger"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Vad är viktigare i en film: berättelsen eller bilderna?",
+    "answers": ["Berättelsen, alltid", "Visuellt måste det stämma", "Musiken gör filmen", "Karaktärerna intresserar mig mest"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Skräckfilm: våga eller skippa?",
+    "answers": ["Jag älskar det!", "Bara med någon bredvid", "Nej, för läskigt", "Jag tittar genom fingrarna"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Vilken regissör beundrar du?",
+    "answers": ["Christopher Nolan", "Quentin Tarantino", "Wes Anderson", "Studio Ghibli (Miyazaki)"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Marvel eller DC?",
+    "answers": ["Marvel, alltid", "DC har bättre berättelser", "Båda är bra", "Inget av dem"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Uppföljare: oftast bättre eller sämre?",
+    "answers": ["Oftast sämre", "Ibland överraskande bra", "Beror på serien", "Jag tittar alltid ändå"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Vilken film fick dig att tänka längst?",
+    "answers": ["Inception", "Interstellar", "The Matrix", "Fight Club"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Animation: Pixar eller Ghibli?",
+    "answers": ["Pixar — nostalgi", "Ghibli — vackert", "Klassisk Disney", "Jag tittar inte på animation"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Vilken svensk film rekommenderar du?",
+    "answers": ["Hundraåringen som klev ut genom fönstret", "Män som hatar kvinnor", "En man som heter Ove", "Fucking Åmål"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vad är din comfort food?",
+    "answers": ["Pizza", "Köttbullar med potatismos", "Pasta", "Pannkakor"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Laga mat eller beställa?",
+    "answers": ["Laga mat, alltid", "Beställa är min specialitet", "Laga mat ihop är bäst", "Beror på min energi"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vilket kök är din favorit?",
+    "answers": ["Italienskt", "Japanskt", "Mexikanskt", "Thailändskt"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Hur starkt gillar du din mat?",
+    "answers": ["Så starkt som möjligt", "Lite kick", "Milt tack", "Jag gråter redan av svartpeppar"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vilken är din ideala dejtmiddag?",
+    "answers": ["Romantisk restaurang", "Street food-marknad", "Laga mat hemma", "Picknick i parken"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Frukost: sött eller salt?",
+    "answers": ["Pannkakor med sylt", "Ägg och bröd", "Yoghurt med frukt", "Jag skippar frukost"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Kaffe eller te?",
+    "answers": ["Kaffe, svart", "Cappuccino eller latte", "Te i alla smaker", "Inget av dem"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vilken rätt vill du lära dig laga?",
+    "answers": ["Sushi", "Färsk pasta", "Thailändsk curry", "Fransk bakning"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vilken svensk maträtt är godast?",
+    "answers": ["Köttbullar med lingon", "Kanelbullar", "Räksmörgås", "Kroppkakor"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Är du äventyrlig med mat?",
+    "answers": ["Jag provar allt", "Ganska, men inga insekter", "Jag håller mig till det jag vet", "Jag är ganska kräsen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vad beställer du först på en uteservering?",
+    "answers": ["Öl eller vin", "En cocktail", "Kaffe eller te", "Läsk eller vatten"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Sushi: fan eller inte?",
+    "answers": ["Jag är beroende", "Ganska gott ibland", "Inte min grej", "Har aldrig provat"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Dessert: ja eller nej?",
+    "answers": ["Alltid ja!", "Bara om det är choklad", "Ibland om jag har plats", "Jag delar helst med någon"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vad lagar du när någon äter hos dig för första gången?",
+    "answers": ["Pasta — säkert kort", "Något imponerande", "Beställer för jag kan inte laga mat", "Frågar vad de gillar"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vegetarian, vegan eller allätare?",
+    "answers": ["Allätare", "Vegetarian", "Vegan", "Flexitarian"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vilken midnattssnack?",
+    "answers": ["Chips", "Ost och kex", "Glass", "Varm macka"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Hur viktigt är mat i en relation?",
+    "answers": ["Väldigt — att äta ihop är kärlek", "Vi måste ha liknande smak", "Inte så viktigt", "Kan du laga mat har du mitt hjärta"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Pizza: vilken topping?",
+    "answers": ["Margherita — enkelt är bäst", "Pepperoni — klassiker", "Quattro formaggi — mer ost mer kärlek", "Hawaii — ja, med ananas"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Om du kunde ha en superkraft, vilken?",
+    "answers": ["Flyga", "Läsa tankar", "Tidsresa", "Osynlighet"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Du vinner på lotto. Vad gör du först?",
+    "answers": ["Bokar en världsresa", "Köper hus", "Investerar allt", "Bjuder alla på fest"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Vilken emoji använder du mest?",
+    "answers": ["😂", "❤️", "🔥", "😅"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Om du kunde vara någon annan en dag, vem?",
+    "answers": ["En kändis", "En astronaut", "En kung eller drottning", "Mitt husdjur"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Vad är din konstigaste talang?",
+    "answers": ["Jag kan röra på öronen", "Jag imiterar accenter", "Jag äter supersnabbt", "Jag kan somna var som helst"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Sanning eller konsekvens?",
+    "answers": ["Sanning — jag är en öppen bok", "Konsekvens — jag vågar allt", "Beror på med vem", "Alltid sanning för säkerhets skull"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Vad finns på din bucket list?",
+    "answers": ["Se norrsken", "Hoppa fallskärm", "Skriva en bok", "Bo på en öde ö"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Om du fick ta med en sak till en öde ö?",
+    "answers": ["En bok", "En kniv", "Min telefon med laddare", "En hängmatta"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Vilken saga beskriver ditt kärleksliv?",
+    "answers": ["Askungen — väntar på prinsen/prinsessan", "Skönheten och Odjuret — ser bortom ytan", "Peter Pan — vägrar bli vuxen", "Rapunzel — fast i mitt torn"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Du får införa en lag. Vilken?",
+    "answers": ["Fyradagarsvecka", "Gratis kollektivtrafik", "Obligatorisk tupplur", "Inga måndagar mer"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Vilken fiktiv karaktär skulle vara din bästa vän?",
+    "answers": ["Chandler Bing", "Hermione Granger", "Shrek", "Pikachu"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Vad är din impopulära åsikt?",
+    "answers": ["Ananas hör hemma på pizza", "Morgonmänniskor är lyckligare", "Katter är bättre än hundar", "Jul är överskattad"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Om du hade en tidsmaskin, vart åker du?",
+    "answers": ["Se dinosaurierna", "Uppleva 80-talet", "100 år in i framtiden", "Bevittna min egen födelse"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Vilket djur vill du vara en dag?",
+    "answers": ["Örn — flyga!", "Delfin — simma i havet", "Katt — sova hela dagen", "Apa — gunga i träden"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Zombieapokalyps: vad är din strategi?",
+    "answers": ["Bygga en bunker", "Hitta en ö", "Bli ledare för en grupp", "Ärligt? Jag överlever inte"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Vad skulle du välja: alltid för tidig eller alltid för sen?",
+    "answers": ["Alltid för tidig", "Alltid för sen", "Jag är redan alltid sen", "Punktlig är min grej"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Vilken färg passar bäst till dig?",
+    "answers": ["Blå — lugn och pålitlig", "Röd — passionerad och energisk", "Grön — äventyrlig och fri", "Gul — glad och optimistisk"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Din dejt visar sig vara en vampyr. Vad gör du?",
+    "answers": ["Coolt, berätta mer", "Springer!", "Bara om de ser bra ut", "Frågar om jag också kan bli en"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Vad är din guilty pleasure?",
+    "answers": ["Titta på reality-TV", "Sjunga karaoke", "Binga skräpmat", "Kolla horoskopet"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Vilken superhjälte vill du vara?",
+    "answers": ["Spider-Man", "Wonder Woman", "Batman", "Ingen — jag är redan super"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Vilken veckodag är bäst?",
+    "answers": ["Fredag — helgen börjar!", "Lördag — inga måsten", "Söndag — slappa", "Måndag — ny start"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Hur spenderar du helst din fritid?",
+    "answers": ["Läsa", "Spela", "Sport", "Kreativa saker"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Vilken hobby vill du börja med?",
+    "answers": ["Surfa", "Måla", "Lära sig ett instrument", "Fotografi"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Spelar du lagsport?",
+    "answers": ["Ja, jag är en lagspelare", "Nej, individuell sport är min grej", "Jag tittar hellre", "Sport är inget för mig"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Vilken aktivitet skulle du göra på en dejt?",
+    "answers": ["Laga mat ihop", "Bowling eller minigolf", "Promenera i naturen", "Escape room"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Är du kreativ?",
+    "answers": ["Ja, jag skapar hela tiden", "Lite, när jag har inspiration", "Inte direkt, men uppskattar konst", "Jag är mer analytisk"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Gaming: ja eller nej?",
+    "answers": ["Ja, varje dag", "Ibland, casual spel", "Bara brädspel", "Nej, inte min grej"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Vad läser du helst?",
+    "answers": ["Romaner och fiktion", "Fakta och biografier", "Manga eller serier", "Jag läser inte så mycket"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Vilket brädspel vinner du alltid?",
+    "answers": ["Monopol", "Risk", "Trivial Pursuit", "Jag vinner aldrig men det är kul ändå"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Volontärarbetar du?",
+    "answers": ["Ja, regelbundet", "Ibland, när jag kan", "Nej, men jag skulle vilja", "Nej, ingen tid"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Hur viktig är en gemensam hobby i en relation?",
+    "answers": ["Väldigt — göra saker ihop", "Kul men inte nödvändigt", "Egna hobbyer är också bra", "Spelar ingen roll"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Utomhus- eller inomhusmänniska?",
+    "answers": ["Utomhus, alltid!", "Inomhus med en bra bok", "En blandning", "Beror på vädret"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Spelar du något instrument?",
+    "answers": ["Ja, gitarr", "Ja, piano", "Nej, men vill lära mig", "Jag spelar luftgitarr"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Vilken workshop vill du göra tillsammans?",
+    "answers": ["Keramik", "Mixologi", "Salsadans", "Vinprovning"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Hur ofta tränar du?",
+    "answers": ["Varje dag", "Några gånger i veckan", "Ibland", "Springa till bussen räknas va?"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Vilken typ av event besöker du helst?",
+    "answers": ["Musikfestival", "Matmarknad", "Konstutställning", "Sportmatch"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Hur ofta prövar du något nytt?",
+    "answers": ["Varje vecka något nytt", "Varje månad", "Några gånger per år", "Jag gillar rutiner"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Vilken typ av humor har du?",
+    "answers": ["Torr humor", "Slapstick", "Sarkasm", "Ordvitsar"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Tål du skämt om dig själv?",
+    "answers": ["Ja, jag skrattar hårdast åt mig själv", "Ibland, om det inte går för långt", "Inte riktigt, jag är känslig", "Jag gör sport av det"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Vad får dig att skratta snabbast?",
+    "answers": ["Memes", "Fails på video", "En bra berättelse", "Någon som inte tar sig själv på allvar"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Din dejt drar ett dåligt skämt. Hur reagerar du?",
+    "answers": ["Jag skrattar ändå", "Säger ärligt att det var dåligt", "Drar ett ännu sämre", "Artigt leende"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Hur viktigt är humor i en relation?",
+    "answers": ["Viktigast av allt", "Väldigt viktigt", "Kul men inte avgörande", "Jag söker mer djup"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Memes: vilken typ delar du mest?",
+    "answers": ["Relatable memes", "Djurmemes", "Mörk humor-memes", "Wholesome memes"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Kan du hålla pokerface?",
+    "answers": ["Nej, allt syns i mitt ansikte", "Ja, jag är oläsbar", "Bara vid kortspel", "Jag försöker men misslyckas alltid"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Vilken sitcom beskriver din vängrupp?",
+    "answers": ["Friends", "How I Met Your Mother", "The Office", "Brooklyn Nine-Nine"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Du måste få någon att skratta på 10 sekunder. Vad gör du?",
+    "answers": ["Berättar ett skämt", "Gör en rolig min", "Dansar", "Berättar något pinsamt om mig själv"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Pappaskämt: roliga eller hemska?",
+    "answers": ["Briljanta, alltid!", "Så dåliga att de är bra", "Hemska, sluta", "Jag drar dem själv hela tiden"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Skrattar du högt eller tyst?",
+    "answers": ["Högt och utan skam", "Tyst med tårar", "Jag fnisssnörvlar", "Beror på hur roligt det är"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Vilken humorshow skulle du ta din dejt till?",
+    "answers": ["Stand-up-kväll", "Improvisationsteater", "En rolig film", "Karaoke — det blir skratt"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Sarkastisk eller uppriktig — hur flörtar du?",
+    "answers": ["Sarkasm är mitt kärleksspråk", "Uppriktig och söt", "En mix av båda", "Jag flörtar av misstag"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Vad är det bästa sättet att höja humöret?",
+    "answers": ["Titta på roliga klipp", "Skratta med vänner", "Göra något dumt själv", "Få ett fint meddelande"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Vad är värre: en tråkig dejt eller en pinsam dejt?",
+    "answers": ["Tråkig — inget hopp", "Pinsam — jag dör av skam", "Pinsam blir en bra historia sen", "Båda lika illa"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Smart humor eller dum humor — vad är roligast?",
+    "answers": ["Smart — subtil och vass", "Dum — ju dummare desto bättre", "Båda på sitt sätt", "Mörk humor är roligast"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Stad eller landsbygd?",
+    "answers": ["Stad — jag älskar pulsen", "Landsbygd — lugn och ro", "Förort", "Spelar ingen roll bara jag är glad"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hur ser din perfekta helg ut?",
+    "answers": ["Fest och uteliv", "Slappa och kolla serier", "Utomhusäventyr", "Quality time med familjen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Husdjur: hund eller katt?",
+    "answers": ["Hund, absolut", "Katt, såklart", "Båda!", "Inga husdjur för mig"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hur viktig är hälsa för dig?",
+    "answers": ["Väldigt — jag tänker på allt", "Ganska viktigt men jag unnar mig också", "Jag försöker vara hälsosam", "YOLO, jag äter vad jag vill"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Bil, cykel eller kollektivtrafik?",
+    "answers": ["Bil — frihet", "Cykel — hållbart", "Kollektivtrafik — avslappnat", "Till fots om det går"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hur ser din morgonrutin ut?",
+    "answers": ["Väckarklocka, dusch, iväg!", "Lugn frukost och kaffe", "Snoosar till sista stund", "Yoga eller meditation"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Jobbar för att leva eller lever för att jobba?",
+    "answers": ["Jobbar för att leva", "Mitt jobb är min passion", "En hälsosam balans", "Vill gå i pension så snart som möjligt"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hur förhåller du dig till sociala medier?",
+    "answers": ["Jag postar mycket", "Jag lurkar bara", "Jag har knappt sociala medier", "Det är min guilty pleasure"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Var ser du dig själv om 5 år?",
+    "answers": ["Karriär på full fart", "Resa runt i världen", "Starta familj", "Ingen aning och det är ok"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hur minimalistisk är du?",
+    "answers": ["Väldigt — mindre är mer", "Lite — gillar ordning", "Inte direkt — jag samlar på saker", "Kaotisk men vet var allt är"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Vill du ha barn?",
+    "answers": ["Ja, absolut!", "Kanske nån gång", "Nej, inte för mig", "Vet inte ännu"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Festpransen eller hemma-mysen?",
+    "answers": ["Festen till solen går upp", "Hemma-mysen och stolt", "Omväxlande", "Festpransen som vill hem kl 23"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hur viktig är ekonomisk stabilitet?",
+    "answers": ["Väldigt viktig", "Viktig men inte avgörande", "Pengar ger inte lycka", "Jag jobbar på det"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Är du religiös eller andlig?",
+    "answers": ["Religiös", "Andlig", "Inget av det", "Jag söker"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Flytta ihop: hur snabbt i en relation?",
+    "answers": ["Efter några månader", "Efter minst ett år", "Först när vi gifter oss", "Hellre bo isär"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hur viktig är hållbarhet för dig?",
+    "answers": ["Väldigt — jag gör allt jag kan", "Försöker fatta medvetna val", "Tänker inte så mycket på det", "Har ibland dåligt samvete"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Vad är din ideala första dejt?",
+    "answers": ["Kaffe och promenad", "Middag vid levande ljus", "Göra något aktivt ihop", "Drinkar på en cool bar"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Meditation: gör du det?",
+    "answers": ["Ja, dagligen", "Ibland, när jag är stressad", "Provat men kan inte sitta still", "Nej, inte min grej"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vilken musikgenre lyssnar du mest på?",
+    "answers": ["Pop", "Hip-hop/R&B", "Rock/Indie", "Elektronisk"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Konsert eller festival?",
+    "answers": ["Intim konsert", "Stor festival", "Husrumsscen", "Lyssnar hellre hemma"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vilken låt sätter du på vid en road trip?",
+    "answers": ["Bohemian Rhapsody", "Något från topplistan", "En chill playlist", "Jag låter passageraren välja"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Sjunger du i duschen?",
+    "answers": ["Ja, för full hals!", "Bara när ingen är hemma", "Nej, sparar grannarna", "Nynnar lite"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vilken låt beskriver ditt kärleksliv?",
+    "answers": ["All By Myself", "Crazy in Love", "It's Complicated", "Still Waiting"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Spotify, Apple Music eller nåt annat?",
+    "answers": ["Spotify", "Apple Music", "YouTube Music", "Jag lyssnar fortfarande på radio"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Karaoke: vilken låt väljer du?",
+    "answers": ["Don't Stop Believin'", "Bohemian Rhapsody", "En svensk klassiker", "Jag vägrar sjunga"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Hur viktig är musiksmak i en relation?",
+    "answers": ["Väldigt — vi måste matcha", "Kul om det stämmer", "Inte viktigt", "Jag lär gärna mig ny musik"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vilket instrument tycker du är mest attraktivt?",
+    "answers": ["Gitarr", "Piano", "Trummor", "Fiol"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Lyssnar du på poddar?",
+    "answers": ["Ja, varje dag", "Ibland, på resan", "Nej, bara musik", "Vill börja"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vilken festival vill du besöka ihop?",
+    "answers": ["Way Out West", "Tomorrowland", "Bråvalla-vibes", "En liten lokal festival"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vinyl eller streaming?",
+    "answers": ["Vinyl — det varma ljudet", "Streaming — bekvämlighet", "Båda vid rätt tillfälle", "Spelar ingen roll, bara det finns musik"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vilken era hade den bästa musiken?",
+    "answers": ["80-talet", "90-talet", "2000-talet", "Just nu är bäst"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vilken låt gör dig alltid glad?",
+    "answers": ["Happy — Pharrell", "Mr. Brightside — The Killers", "Dancing Queen — ABBA", "En låt med minnen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Kan du dansa?",
+    "answers": ["Ja, jag älskar att dansa!", "Bara efter några drinkar", "Nej, men det stör mig inte", "Jag dansar som om ingen ser"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vilken genre är bäst på en dejt?",
+    "answers": ["Jazz — stämningsfullt", "R&B — romantiskt", "Akustiskt — intimt", "Spelar ingen roll — sällskapet räknas"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vilken låt gör dig emotionell?",
+    "answers": ["Fix You — Coldplay", "Someone Like You — Adele", "Hallelujah — Leonard Cohen", "Jag blir inte emotionell av musik"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Vilken sport tittar du helst på?",
+    "answers": ["Fotboll", "Ishockey", "Tennis", "Jag tittar inte på sport"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Gym, löpning eller simning?",
+    "answers": ["Gym — pumpa järn", "Löpning — vara ute", "Simning — lugnt och effektivt", "Inget av dessa"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Vilken sport vill du prova ihop?",
+    "answers": ["Padel", "Klättring", "Surfing", "Dans"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Är du tävlingsinriktad?",
+    "answers": ["Väldigt — jag vill alltid vinna", "Lite, på ett hälsosamt sätt", "Nej, att delta är viktigare", "Bara vid brädspel"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Vintersport: skidor eller snowboard?",
+    "answers": ["Skidor — klassiskt", "Snowboard — coolt", "After-ski är min sport", "Jag stannar hellre i solen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Yoga: avkoppling eller tortyr?",
+    "answers": ["Avkoppling — jag gör det varje vecka", "Gillar det ganska bra", "Tortyr — jag är för stel", "Har aldrig provat"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Har du sprungit ett maraton?",
+    "answers": ["Ja, flera!", "Ett halvmaraton", "Nej, men det står på listan", "Aldrig, och det förblir så"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Vilken extremsport skulle du våga?",
+    "answers": ["Fallskärmshoppning", "Bungeejump", "Paraglidning", "Nej tack, jag håller fötterna på marken"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Hur motiverar du dig att träna?",
+    "answers": ["Med en träningskompis", "Musik på och kör", "Sätta ett mål", "Jag behöver ingen motivation"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Vilken sport utövade du som barn?",
+    "answers": ["Fotboll", "Simning", "Gymnastik eller dans", "Jag lekte hellre utomhus"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Skulle du köra ett hinderbanelopp?",
+    "answers": ["Ja, låter grymt!", "Bara om min dejt hänger med", "Kanske om jag tränar mer", "Absolut inte"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Hur viktig är sport i en relation?",
+    "answers": ["Väldigt — träna ihop är kul", "Kul men inte nödvändigt", "Egen träningsrytm är okej", "Sport är inte min grej"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Vilken vattensport lockar dig?",
+    "answers": ["Surfing", "Segling", "SUP", "Vattenskidor eller wakeboard"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Är du en bra förlorare?",
+    "answers": ["Ja, jag förlorar med stil", "Inte direkt, det gör ont", "Jag låtsas att jag inte bryr mig", "Jag förlorar aldrig"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Fitness: kardio eller styrka?",
+    "answers": ["Kardio — rejäl svett", "Styrka — gains", "En mix av båda", "Jag tränar inte på gym"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Ishockey: följer du Allsvenskan eller SHL?",
+    "answers": ["SHL — högsta ligan!", "NHL är bättre", "Bara landslaget", "Jag tittar inte på hockey"],
+    "tone": "fun",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "iPhone eller Android?",
+    "answers": ["iPhone, alltid", "Android, mer frihet", "Spelar ingen roll", "Jag byter regelbundet"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Hur teknikintresserad är du?",
+    "answers": ["Väldigt — jag älskar prylar", "Medel — jag klarar mig", "Inte så — jag ber om hjälp", "Jag jobbar inom tech"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Sociala medier: vilken plattform använder du mest?",
+    "answers": ["Instagram", "TikTok", "X/Twitter", "Jag använder knappt sociala medier"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Vad tycker du om AI?",
+    "answers": ["Fascinerande och lovande", "Lite skrämmande", "Praktiskt som verktyg", "Det kommer ersätta oss alla"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Spelkonsol eller PC?",
+    "answers": ["PlayStation", "Xbox", "PC master race", "Jag spelar på mobilen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Smartwatch: praktiskt eller onödigt?",
+    "answers": ["Praktiskt, jag bär en", "Onödigt, jag har min mobil", "Bra för träning", "Jag bär hellre en vanlig klocka"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Hur snabbt uppgraderar du din telefon?",
+    "answers": ["Varje år senaste modellen", "Vartannat till vart tredje år", "När den går sönder", "Jag bryr mig inte om telefoner"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Vilken app klarar du dig inte utan?",
+    "answers": ["WhatsApp/Messenger", "Spotify", "Google Maps", "Instagram"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Hur känns det med dejtingappar?",
+    "answers": ["Bra — så träffar man folk", "Nödvändigt ont", "Lite awkward", "Kan vara kul med rätt app"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Netflix, Disney+ eller HBO Max?",
+    "answers": ["Netflix", "Disney+", "HBO Max", "Jag har alla"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Skulle du åka i en självkörande bil?",
+    "answers": ["Ja, gärna!", "Bara om det bevisats säkert", "Nej, jag kör hellre själv", "Det låter läskigt"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Hur mycket tid spenderar du på mobilen per dag?",
+    "answers": ["Mindre än 2 timmar", "2-4 timmar", "4-6 timmar", "Vill helst inte säga"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Smart hem: ja eller nej?",
+    "answers": ["Ja, allt är automatiserat", "Några smarta enheter", "Nej, håller det enkelt", "Vill men det är dyrt"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Hur reagerar du när WiFi går ner?",
+    "answers": ["Panik!", "Använder mobildata", "Äntligen lugn och ro", "Gör något offline"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Hur tänker du kring integritet online?",
+    "answers": ["Väldigt försiktig", "Ganska medveten", "Tänker inte så mycket på det", "Allt på privat"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Första meddelandet på en dejtingapp: vad skickar du?",
+    "answers": ["En kreativ fråga", "En komplimang", "Hej, hur mår du?", "En meme eller GIF"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Strand eller berg?",
+    "answers": ["Strand — sol och hav", "Berg — natur och äventyr", "Stad — kultur och mat", "En mix av allt"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Hur reser du helst?",
+    "answers": ["Flyga — snabbt och långt", "Tåg — se landskapet", "Roadtrip — frihet", "Backpacka — äventyr"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vilket land är högst på din bucket list?",
+    "answers": ["Japan", "Italien", "Nya Zeeland", "Colombia"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Hotell, Airbnb eller vandrarhem?",
+    "answers": ["Hotell — lyx och komfort", "Airbnb — som en lokal", "Vandrarhem — social stämning", "Camping!"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Resa ensam eller med någon?",
+    "answers": ["Ensam — frihet", "Med en partner — romantiskt", "Med vänner — roligt", "Gruppresa — stressfritt"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vilken typ av semester passar dig?",
+    "answers": ["All-inclusive avkoppling", "Äventyrlig rundresa", "Citybreak", "Roadtrip utan plan"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Hur många länder har du besökt?",
+    "answers": ["Färre än 5", "5-15", "15-30", "Mer än 30"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vad gör du först i en ny stad?",
+    "answers": ["Letar upp lokal mat", "Besöker turistplatserna", "Går vilse i gränderna", "Hittar utsiktspunkten"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Packa väskan: i god tid eller sista minuten?",
+    "answers": ["Flera dagar före", "Kvällen innan", "En timme före avfärd", "Jag glömmer alltid nåt"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vilken stad tycker du är mest romantisk?",
+    "answers": ["Paris", "Rom", "Barcelona", "Stockholm i skymningen"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Skulle du vilja bo utomlands?",
+    "answers": ["Ja, så snart som möjligt", "Kanske tillfälligt", "Nej, Sverige är hemma", "Jag bor redan utomlands"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vad tar du alltid med dig på resan?",
+    "answers": ["Mina hörlurar", "En bra bok", "Snacks till resan", "Min kamera"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Hur planerar du en resa?",
+    "answers": ["Allt planerat in i detalj", "Huvudlinjerna, resten spontant", "Ingen plan alls", "Jag låter nån annan planera"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vilken europeisk stad vill du besöka?",
+    "answers": ["Prag", "Lissabon", "Aten", "Edinburgh"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Långt flyg: hur överlever du?",
+    "answers": ["Filmer", "Sover", "Musik och läser", "Pratar med grannen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Ideal resmål för ett par?",
+    "answers": ["Santorini, Grekland", "Bali, Indonesien", "Toskana, Italien", "Maldiverna"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vad saknar du mest när du reser?",
+    "answers": ["Min egen säng", "Mitt husdjur", "Svensk mat", "Ingenting egentligen — jag njuter"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vilken kontinent vill du utforska?",
+    "answers": ["Sydamerika", "Asien", "Afrika", "Australien/Oceanien"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Flygplan: fönster eller gång?",
+    "answers": ["Fönster — utsikt!", "Gång — benutrymme", "Spelar ingen roll", "Jag flyger ogärna"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Favorit svensk stad för en weekend?",
+    "answers": ["Stockholm", "Göteborg", "Malmö", "Visby"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur hanterar du avvisning?",
+    "answers": ["Bearbetar det snabbt", "Det sårar mig djupt", "Jag lär mig av det", "Pratar om det med vänner"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad gör dig unik?",
+    "answers": ["Min humor", "Min passion", "Min empati", "Allt tillsammans"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur viktig är ensamtid för dig?",
+    "answers": ["Nödvändig — jag behöver det", "Ibland är det skönt", "Inte så viktigt", "Jag är hellre med folk"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad är din största rädsla?",
+    "answers": ["Ensamhet", "Att misslyckas", "Det okända", "Spindlar (förlåt)"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur hanterar du förändring?",
+    "answers": ["Omfamnar det", "Behöver tid", "Det gör mig nervös", "Förändring är tillväxt"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tar du snabbt risker?",
+    "answers": ["Ja, jag lever på kanten", "Ibland, kalkylerade risker", "Nej, jag är försiktig", "Bara i kärleken"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad söker du just nu i livet?",
+    "answers": ["Äventyr och tillväxt", "Stabilitet och lugn", "Kärlek och gemenskap", "Glädje och frihet"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Är du mer rationell eller emotionell?",
+    "answers": ["Rationell — huvudet över hjärtat", "Emotionell — jag känner djupt", "En mix", "Beror på situationen"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Tror du på ödet eller skapar du din egen lycka?",
+    "answers": ["Ödet bestämmer", "Jag skapar min egen lycka", "En kombination", "Jag vet inte riktigt"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Stor grupp eller litet sällskap?",
+    "answers": ["Stor grupp — ju fler desto roligare", "Litet sällskap — djupare samtal", "Beror på humöret", "Helst bara vi två"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad ger dig energi i en relation?",
+    "answers": ["Skratta ihop", "Djupa samtal", "Uppleva äventyr", "Bara vara tillsammans räcker"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur viktig är fysisk attraktion?",
+    "answers": ["Väldigt viktig", "Viktig men inte allt", "Personlighet går först", "Det växer med tiden"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Är du svartsjuk i en relation?",
+    "answers": ["Lite, det är mänskligt", "Nej, jag litar fullt ut", "Ibland, men jag jobbar på det", "Bara om det finns anledning"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur reagerar du när nån tycker om dig?",
+    "answers": ["Jag blir blyg", "Jag blir smickrad", "Jag flörtar tillbaka", "Jag tror inte på det"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad inspirerar dig mest?",
+    "answers": ["Naturen och världen runtom", "Människor som övervinner hinder", "Konst och kreativitet", "Vetenskap och upptäckter"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vilken komplimang uppskattar du mest?",
+    "answers": ["Om mitt utseende", "Om min personlighet", "Om mina prestationer", "Varje ärlig komplimang"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Är du mer ledare eller följare?",
+    "answers": ["Ledare — tar initiativ", "Följare — flyter med", "Beror på situationen", "Jag är en lagspelare"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Om du beskrev dig med tre ord?",
+    "answers": ["Äventyrlig, varm, ärlig", "Rolig, lojal, spontan", "Lugn, smart, empatisk", "Kreativ, ambitiös, snäll"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad är svårast i livet?",
+    "answers": ["Ha tålamod", "Säga nej", "Släppa taget", "Fatta beslut"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad vill du ändra hos dig själv?",
+    "answers": ["Oroa mig mindre", "Ha mer tålamod", "Mer självförtroende", "Inget — jag accepterar mig själv"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur viktiga är första intryck?",
+    "answers": ["Väldigt viktiga", "Jag ger folk en andra chans", "Inte så — folk förändras", "Mitt första intryck stämmer oftast"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Choklad: mörk, mjölk eller vit?",
+    "answers": ["Mörk — intensiv", "Mjölk — klassisk", "Vit — söt", "Alla tre!"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vad dricker du på en dejt?",
+    "answers": ["Vin", "Cocktail", "Öl", "Något alkoholfritt"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vilken glass smakar bäst?",
+    "answers": ["Vanilj — tidlös", "Choklad — intensiv", "Jordgubb — fräsch", "Cookie dough — allt i ett"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vilken maträtt kunde du äta varje dag?",
+    "answers": ["Pasta", "Sushi", "Pizza", "En bra sallad"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Du sitter fast i en hiss med din crush. Vad gör du?",
+    "answers": ["Börjar lugnt ett samtal", "Skämtar för att bryta isen", "Väntar tyst", "Det här är början på vår historia"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Om du levde i ett datorspel, vilken genre?",
+    "answers": ["RPG — äventyr och story", "Sandbox — obegränsad frihet", "Simulering — lugn och strategi", "Racing — fart!"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Vilken emoji beskriver ditt dejtingliv?",
+    "answers": ["🎢 — berg-och-dalbana", "😴 — lugnt till tråkigt", "🔥 — hett och spännande", "🤷 — ingen aning vad jag gör"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Om ditt liv var en låt, vad skulle titeln vara?",
+    "answers": ["Pågående arbete", "Den oväntade vändningen", "Fortfarande sökande", "Det vackraste äventyret"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Skulle du gå på danskurs med din dejt?",
+    "answers": ["Ja, låter romantiskt!", "Bara om jag inte behöver föra", "Nej, jag har två vänsterfötter", "Salsa eller tango låter kul"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Har du en samling?",
+    "answers": ["Ja, vinylskivor", "Ja, böcker", "Ja, sneakers", "Nej, jag samlar inget"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Podd eller ljudbok?",
+    "answers": ["Podd — varierat", "Ljudbok — hel historia", "Båda!", "Inget — jag läser hellre"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Har du ett husdjur?",
+    "answers": ["Ja, en hund", "Ja, en katt", "Ja, nåt annat", "Nej, men jag vill ha ett"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hur firar du din födelsedag?",
+    "answers": ["Stor fest", "Middag med nära vänner", "En utflykt", "Firar helst inte"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hur spenderar du helst pengar?",
+    "answers": ["Upplevelser och resor", "Bra mat", "Kläder och stil", "Sparar för framtiden"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hur länge klarar du dig utan mobilen?",
+    "answers": ["Några minuter max", "Några timmar", "En hel dag", "Önskar det kunde vara längre"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vilken låt skulle du spela på vår första dejt?",
+    "answers": ["Nåt av Frank Sinatra", "En chill lo-fi låt", "Vår favoritlåt — om vi hittar den", "Ingen musik, bara prata"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Första dansen på ett bröllop: vilken låt?",
+    "answers": ["Perfect — Ed Sheeran", "At Last — Etta James", "Nåt unikt för oss", "Jag vill helst inte dansa"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Vilken dans vill du lära dig?",
+    "answers": ["Salsa", "Tango", "Street dance", "Vals"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "E-bok eller fysisk bok?",
+    "answers": ["Fysisk — älskar doften", "E-bok — praktiskt", "Båda, beror på situationen", "Ljudbok är bäst"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Krypto: investerar du?",
+    "answers": ["Ja, aktivt", "Lite", "Nej, för riskabelt", "Förstår inte riktigt"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Vilken retroteknik saknar du?",
+    "answers": ["Nokia 3310 — oförstörbar", "iPod — ren musik", "MSN Messenger", "Inget, nu är bättre"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Sommar- eller vintersemester?",
+    "answers": ["Sommar — sol och strand", "Vinter — skidor och snö", "Båda!", "Jag reser hela året"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Hur lång är din ideala semester?",
+    "answers": ["Lång helg", "En vecka", "Två veckor", "En månad eller mer"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vilket land har bäst mat?",
+    "answers": ["Italien", "Japan", "Mexiko", "Thailand"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur lång tid tar det innan du litar på någon?",
+    "answers": ["Jag litar snabbt", "Efter några träffar", "Det tar lång tid", "Förtroende måste förtjänas"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Vilken typ av dokumentär fascinerar dig?",
+    "answers": ["Natur", "True crime", "Vetenskap", "Biografi"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Bokfilmatisering: bok eller film bättre?",
+    "answers": ["Boken är alltid bättre", "Ibland är filmen bättre", "Jag läser inte boken", "De kompletterar varandra"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Vilken skådespelare skulle spela dig i en film?",
+    "answers": ["Någon som liknar mig", "Ryan Gosling / Margot Robbie", "En okänd — jag är unik", "Spelar ingen roll bara storyn stämmer"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Vilken serie tittar du på nu?",
+    "answers": ["Nåt på Netflix", "En krimserie", "Jag tittar inte på nåt just nu", "För mycket att nämna"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Vilken filmklassiker har du inte sett?",
+    "answers": ["The Godfather", "Pulp Fiction", "Titanic", "Jag har sett alla"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Vilken serie har du sett tre gånger?",
+    "answers": ["Breaking Bad", "Friends", "Game of Thrones", "Jag tittar inget om igen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Vilken filmserie är överskattad?",
+    "answers": ["Star Wars", "Sagan om Ringen", "Fast & Furious", "Ingen — jag älskar alla"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vilket kök vill du behärska?",
+    "answers": ["Japanskt — precision och smak", "Italienskt — enkelt och gott", "Franskt — teknik och elegans", "Thailändskt — kryddor och balans"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vad dricker du på en klubb?",
+    "answers": ["Gin och tonic", "Öl", "Vodka med nåt", "Jag dricker inte"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vilken mat beskriver din personlighet?",
+    "answers": ["Pizza — mångsidig och omtyckt", "Sushi — förfinad och intressant", "Tacos — kul och äventyrlig", "Soppa — varm och tröstande"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vilken rätt misslyckas alltid?",
+    "answers": ["Pannkakor — alltid brända", "Ris — för blött eller för torrt", "Jag kan laga allt", "Allt misslyckas ärligt talat"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vilken frukost gör du till din partner?",
+    "answers": ["Pannkakor med färsk frukt", "Äggbenedict", "Croissanter ur ugnen", "Jag hämtar nåt från bageriet"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Om du bara fick äta ett kök resten av livet?",
+    "answers": ["Italienskt", "Japanskt", "Mexikanskt", "Svenskt — köttbullar för alltid"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vilket kök har du aldrig provat?",
+    "answers": ["Peruanskt", "Etiopiskt", "Koreanskt", "Jag har provat allt"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Du vaknar som det motsatta könet. Vad gör du först?",
+    "answers": ["Tittar i spegeln", "Shoppar nya kläder", "Ringer mina vänner", "Tar reda på hur jag kommer tillbaka"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Vilken årstid gör dig lyckligast?",
+    "answers": ["Sommar — värme och frihet", "Höst — mys", "Vinter — jul och snö", "Vår — allt blommar"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Vilken superkraft vore sämst att ha?",
+    "answers": ["Läsa tankar — för mycket info", "Allt du rör blir guld", "Evigt liv utan dina nära", "Alltid behöva säga sanningen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Vilken kändis bjuder du in på middag?",
+    "answers": ["Elon Musk", "Beyoncé", "Keanu Reeves", "Gordon Ramsay"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Vilket Hogwarts-ämne väljer du?",
+    "answers": ["Försvar mot svartkonster", "Trolldryckskonst", "Besvärjelser", "Skötsel av magiska djur"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Om du fick bemästra en färdighet perfekt?",
+    "answers": ["Tala ett språk flytande", "Spela ett instrument", "Professionellt laga mat", "Kampsport"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Om du var osynlig en dag?",
+    "answers": ["Spionera på kändisar", "Resa gratis", "Driva med folk", "Bara njuta av lugnet"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Om du grundade ett nytt land, vad heter det?",
+    "answers": ["Chillandia", "Fikastigen", "Lagomlandet", "Jag är nöjd med Sverige"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Vilken talang vill du ha?",
+    "answers": ["Sjunga som ett proffs", "Måla som en mästare", "Laga mat som en Michelinkock", "Dansa som en stjärna"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Vilken typ av resa kombinerar bäst med ditt hobby?",
+    "answers": ["Surftrip till Portugal", "Kulturresa genom Japan", "Matworkshop i Italien", "Vandring i Alperna"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Vad är ditt ideala kreativa utlopp?",
+    "answers": ["Rita eller måla", "Göra musik", "Skriva", "Laga mat"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Gillar du att pussla?",
+    "answers": ["Ja, jag älskar pussel", "Bara korsord", "Sudoku är min grej", "Nej, kräver för mycket tålamod"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Vilken färdighet vill du förbättra?",
+    "answers": ["Laga mat", "Lära mig ett språk", "Fitness", "Kommunikation"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Vad är din favoritaktivitet inomhus?",
+    "answers": ["Baka", "Pussla", "Spela", "Rita"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Vad är den bästa isbrytaren på en dejt?",
+    "answers": ["En rolig fråga", "En ärlig komplimang", "Berätta nåt pinsamt om sig själv", "Bara fråga hur det går"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Vad kallar du din partner i en relation?",
+    "answers": ["Älskling", "Vid deras namn", "Ett smeknamn bara vi förstår", "Baby eller babe"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Vilken typ av skämt drar du på fest?",
+    "answers": ["Ordvits", "En lång historia med twist", "Nåt som faktiskt hänt mig", "Jag drar inga skämt, jag är publiken"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Är du rolig eller tror du att du är rolig?",
+    "answers": ["Jag är objektivt rolig", "Tror det men är inte säker", "Min humor är en acquired taste", "Jag försöker inte ens"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Vad gör en relation roligare: insideskämt eller stora äventyr?",
+    "answers": ["Insideskämt — vår egen värld", "Stora äventyr ihop", "En kombination", "Bara vara tillsammans är kul"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Hur reagerar du på pinsam tystnad?",
+    "answers": ["Drar ett skämt", "Ställer en fråga", "Njuter av den — tystnad är ok", "Blir nervös"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hur hanterar du bakfylla?",
+    "answers": ["Mycket vatten och sova", "Fet mat", "Festar vidare", "Jag får aldrig bakfylla"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hur lång tid tar det att göra dig redo på morgonen?",
+    "answers": ["15 minuter", "30 minuter", "En timme eller mer", "För länge, jag är alltid sen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hur definierar du framgång?",
+    "answers": ["Att vara lycklig", "Finansiell frihet", "Bra relationer", "Följa min passion"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hur tar du hand om din mentala hälsa?",
+    "answers": ["Terapi eller coaching", "Träning och rörelse", "Prata med vänner", "Tid för mig själv"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Vad är din kvällsrutin?",
+    "answers": ["Läsa före sömn", "Scrolla telefonen", "Titta på en serie", "Dagbok eller reflektion"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hur länge klarar du dig utan mobilen?",
+    "answers": ["Några minuter max", "Några timmar", "En hel dag", "Önskar det kunde vara längre"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Vad är ditt favoritavslappningssätt?",
+    "answers": ["Ett varmt bad", "Promenad i naturen", "Lyssna på musik", "Yoga eller meditation"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Vilken typ av boende passar dig?",
+    "answers": ["Lägenhet i stan", "Radhus med trädgård", "Hus på landet", "Tiny house eller husbil"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hur hanterar du sociala medier i en relation?",
+    "answers": ["Vi postar allt ihop", "Privat — ingen annans sak", "Ibland nåt roligt", "Jag har inga sociala medier"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Vad är din favoritdejtdag?",
+    "answers": ["Fredagskväll", "Lördagskväll", "Vardag — mindre folk", "Varje kväll kan vara dejtkvällen"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Vad är din morgondryck?",
+    "answers": ["Espresso", "Grönt te", "Apelsinjuice", "Vatten räcker"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hur städar du hemma?",
+    "answers": ["Allt har sin plats", "Organiserat kaos", "Städar när det kommer besök", "Marie Kondo är min hjälte"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Om ditt liv hade en soundtrack, vilken genre?",
+    "answers": ["Pop — glad och catchy", "Rock — intensiv och energisk", "Jazz — smooth och oförutsägbar", "Klassisk — elegant och djup"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vilken låt kan du utantill?",
+    "answers": ["Bohemian Rhapsody", "En Disney-låt", "En låt av min favoritartist", "Jag kan inga texter utantill"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vilken låt sätter du på för att festa?",
+    "answers": ["Vad som helst — bara det rör sig", "En klassisk discohit", "Senaste etta-låten", "Väljer inget — dansar till allt"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vilken låt lyssnar du på när du är ledsen?",
+    "answers": ["Nåt glatt för att pigga upp", "En ledsen låt för att gråta till", "Lyssnar inte på musik när jag är ledsen", "Min feel-good spellista"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vilken svensk artist gillar du mest?",
+    "answers": ["Robyn", "Zara Larsson", "Håkan Hellström", "ABBA (klassiker!)"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Musik i bakgrunden eller fullt fokus?",
+    "answers": ["Alltid i bakgrunden", "Fullt fokus med hörlurar", "Beror på stunden", "Jag föredrar tystnad"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vilken låt gör dig nostalgisk?",
+    "answers": ["En låt från barndomen", "Titelmelodin från en barnserie", "Första låten jag dansade till", "Nåt mina föräldrar spelade"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "OS: vilken sport tittar du på?",
+    "answers": ["Friidrott", "Simning", "Gymnastik", "Allt!"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Löpning: morgon eller kväll?",
+    "answers": ["Morgon — fräsch start", "Kväll — rensa huvudet", "Jag springer inte", "När jag har lust"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Vilken sport är tråkigast att titta på?",
+    "answers": ["Golf", "Cricket", "Snooker", "All sport är tråkig"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Vilken sport är mest underskattad?",
+    "answers": ["Padel", "Badminton", "Handboll", "Klättring"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Vilken sport är mest romantisk?",
+    "answers": ["Ridning", "Salsadans", "Jogga vid soluppgång", "Skridskoåkning hand i hand"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Vilken sport är roligast att göra ihop?",
+    "answers": ["Padel — snabbt och socialt", "Vandring — lugnt och djupt", "Dans — romantiskt", "Klättring — bygga förtroende"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Vilken favoritgadget har du?",
+    "answers": ["Noise-cancelling hörlurar", "E-läsare", "Drönare", "Min mobil räcker"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "VR: framtiden eller en hype?",
+    "answers": ["Framtiden, absolut", "Kul men inte där ännu", "En hype som går över", "Har aldrig provat"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Vilken app skulle du bygga?",
+    "answers": ["En bättre dejtingapp", "Ett produktivitetsverktyg", "Ett spel", "Nåt för miljön"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Hur reagerar du på en blåbock utan svar?",
+    "answers": ["Väntar tålmodigt", "Skickar ett till meddelande", "Blir besviken men släpper det", "Blåbockar är avstängda hos mig"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Hur ofta kollar du mobilen per dag?",
+    "answers": ["Konstant", "Några gånger i timmen", "Bara när det behövs", "Försöker minska"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Foton: moln eller fysiska kopior?",
+    "answers": ["Moln — alltid säkert", "På datorn", "Jag skriver ut dem", "Glömmer spara dem"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Vilken techtrend är mest intressant?",
+    "answers": ["Artificiell intelligens", "Elbilar", "Virtual reality", "Rymdfart"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Vilken gadget vill du uppfinna?",
+    "answers": ["En teleporter", "En tankeläsare", "En tidsbromsare", "En osynlighetsmantel"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vad är det längsta du varit hemifrån?",
+    "answers": ["En annan kontinent", "Några tusen kilometer", "Bara inom Europa", "Jag är en hemmakvansen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Äventyrsresa: djungel eller öken?",
+    "answers": ["Djungel — mystisk och grön", "Öken — ändlös och fri", "Polarområde — unikt och kallt", "Jag stannar hellre i civilisationen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vilken typ av boende föredrar du på resa?",
+    "answers": ["Boutiquehotell", "Camping i naturen", "Mysigt Airbnb", "Lyxresort"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vilket transportmedel är mest romantiskt?",
+    "answers": ["Tåg genom Europa", "Båt på en sjö", "Cabriolet längs kusten", "Promenad genom en gammal stad"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vilken mat söker du först utomlands?",
+    "answers": ["Lokala specialiteter", "Street food", "En bra restaurang", "Nåt bekant för säkerhets skull"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vilken kultur fascinerar dig mest?",
+    "answers": ["Japansk", "Latinamerikansk", "Skandinavisk", "Afrikanska kulturer"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vilken resa gör du på din födelsedag?",
+    "answers": ["Citybreak till en europeisk stad", "Strandresa nånstans varmt", "Äventyrlig vandring", "Fira hemma är också fint"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vad är det mest äventyrliga du gjort på resa?",
+    "answers": ["Bungeejumpat", "Rest med en främling", "Gått vilse i ett främmande land", "Jag är inte så äventyrlig"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur hanterar du hemlängtan?",
+    "answers": ["Ringer hem", "Äter comfort food", "Gråter lite och går vidare", "Jag har ingen hemlängtan"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vilket Hogwarts-hus tillhör du?",
+    "answers": ["Gryffindor — modig", "Hufflepuff — lojal", "Ravenclaw — smart", "Slytherin — ambitiös"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vilket djur beskriver din personlighet?",
+    "answers": ["Hund — lojal och lekfull", "Katt — oberoende och mystisk", "Delfin — social och smart", "Björn — stark men gosig"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad betyder frihet för dig?",
+    "answers": ["Göra vad jag vill, när jag vill", "Finansiellt oberoende", "Emotionell frihet", "Resa utan begränsningar"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad är svårast att säga?",
+    "answers": ["Förlåt", "Jag älskar dig", "Nej", "Jag behöver hjälp"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur lojal är du?",
+    "answers": ["Extremt — för alltid", "Väldigt, men med gränser", "Lojal tills du behandlar mig illa", "Lojalitet måste vara ömsesidig"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad gör ett bra samtal bra?",
+    "answers": ["Ärlighet och öppenhet", "Humor och lätthet", "Djup och filosofi", "Lyssna och förstå"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur hanterar du förändring i en relation?",
+    "answers": ["Anpassar mig lätt", "Behöver tid", "Pratar öppet om det", "Förändring behövs för tillväxt"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vad tar du med som biosnacks?",
+    "answers": ["Popcorn och cola", "M&M's och nachos", "Smyginsmugglade godis", "Inget, jag äter innan"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hur spenderar du helst pengar?",
+    "answers": ["Upplevelser och resor", "Bra mat", "Kläder och stil", "Sparar för framtiden"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hur firar du din födelsedag?",
+    "answers": ["Stor fest", "Middag med nära vänner", "En utflykt", "Firar helst inte"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad är du mest tacksam för?",
+    "answers": ["Min familj och vänner", "Min hälsa", "Mina erfarenheter", "Att vara den jag är"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Vilken historisk period vill du uppleva?",
+    "answers": ["Antikens Grekland", "Renässansen i Italien", "20-talets glamour", "Vikingatiden"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Har du ett husdjur eller vill du ha ett?",
+    "answers": ["Ja, en hund", "Ja, en katt", "Nej, men drömmer om ett", "Jag är allergisk tyvärr"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Kan du en bra öppningsreplik?",
+    "answers": ["Ja, men jag använder dem aldrig", "Börjar hellre med ett skämt", "Säger bara hej", "Öppningsrepliker är cringe"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vilken artist vill du se live?",
+    "answers": ["Beyoncé", "Coldplay", "The Weeknd", "Adele"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Vad är din bästa sportprestation?",
+    "answers": ["Vinna en match", "Slå personligt rekord", "Fullfölja en utmaning", "Jag har inga sportprestationer"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Har du gjort en digital detox?",
+    "answers": ["Ja, och det var befriande", "Försökt men misslyckats", "Nej, men vill", "Varför skulle jag?"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vilken svensk plats borde fler besöka?",
+    "answers": ["Höga kusten", "Gotland", "Abisko", "Svenska fjällen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur hanterar du ensamhet?",
+    "answers": ["Jag njuter av det", "Ringer någon", "Går ut", "Tycker det är svårt"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Vilken filmklassiker förtjänar en remake?",
+    "answers": ["Dirty Dancing", "E.T.", "The Breakfast Club", "Ingen — lämna klassiker ifred"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vilket säsongsrecept gillar du bäst?",
+    "answers": ["Sparris på våren", "Grillat på sommaren", "Ärtsoppa på vintern", "Äppelpaj på hösten"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Planerar du i förväg eller i sista minuten?",
+    "answers": ["I förväg — allt i kalendern", "Sista minuten — lever farligare", "En mix", "Jag låter andra planera"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vilken genre lyssnar du hemligt på?",
+    "answers": ["K-pop", "Klassisk musik", "Country", "90-talshits"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Vilken sport vill du lära dig?",
+    "answers": ["Golf", "Boxning", "Surfning", "Ridning"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Vilken framtidsteknik vill du mest?",
+    "answers": ["Teleportering", "Flygande bilar", "Hjärngränssnitt", "Evigt liv-teknologi"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vad är det vackraste du sett på resa?",
+    "answers": ["Solnedgång på stranden", "Snöklädda berg", "En historisk stad", "Vilda djur i sin miljö"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Vilken true crime-dokumentär rekommenderar du?",
+    "answers": ["Making a Murderer", "Tiger King", "The Tinder Swindler", "Don't F**k with Cats"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Vem är din favoritskådespelare?",
+    "answers": ["Leonardo DiCaprio", "Margot Robbie", "Tom Hanks", "Zendaya"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vilken dryck passar bäst för dig?",
+    "answers": ["Rött vin — varmt och komplext", "Gin och tonic — fräscht och stiligt", "Öl — avslappnat och socialt", "Smoothie — hälsosamt och energiskt"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vilket köksmaskiner är oumbärlig?",
+    "answers": ["Airfryer", "Mixer", "Kaffebryggare", "Mikrovågsugn"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vilken är din favoritmåltid på dagen?",
+    "answers": ["Frukost — starta dagen rätt", "Lunch — ta en paus", "Middag — njut ordentligt", "Snacka mellan måltiderna"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Vilken historisk period vill du uppleva?",
+    "answers": ["Antikens Grekland", "Renässansen", "20-talets glamour", "Vikingatiden i Norden"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Om du kunde ta tillbaka ett livsbeslut?",
+    "answers": ["Skulle inte ta tillbaka något", "Ett karriärbeslut", "Ett relationsbeslut", "En flytt"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Om ditt liv var en serie, vilken genre?",
+    "answers": ["Romantisk komedi", "Äventyrsserie", "Drama", "Sci-fi"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Om du valde ett yrke som inte handlade om pengar?",
+    "answers": ["Djurskötare", "Reseguide", "Musiker", "Kock"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Vilken app skulle du bygga om du kunde?",
+    "answers": ["En ärlig dejtingapp", "En app som mäter humör", "En app för spontana planer", "En app som håller dig borta från telefonen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Har du gjort nåt med händerna?",
+    "answers": ["Ja, jag är ganska händig", "En gång, på en workshop", "Nej, men vill prova", "Hopplös med händerna"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Vilken typ av bok läser du helst?",
+    "answers": ["Thriller", "Romance", "Fantasy", "Personlig utveckling"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Vilken sport du utövade som barn saknar du?",
+    "answers": ["Fotboll", "Simning", "Dans", "Ingen, jag var lat"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Vilken typ av internethumor är din favorit?",
+    "answers": ["Memes", "TikTok-videor", "Reddit-trådar", "Twitter-skämt"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Vilken meme vill du ha på din gravsten?",
+    "answers": ["This is fine", "Stonks", "Surprised Pikachu", "Distracted boyfriend"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Vad ger dig en känsla av uppfyllelse?",
+    "answers": ["Hjälpa andra", "Nå mål", "Tid med nära och kära", "Skapa nåt nytt"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Vad är ditt favoritavslappningssätt?",
+    "answers": ["Middag med vänner", "Hemma med en bra bok", "Konsert eller show", "Drinkar på uteservering"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vilken låt beskriver hur du mår idag?",
+    "answers": ["Happy — allt är bra", "Stressed Out — stressig dag", "Believer — motiverad", "Lazy Song — lat dag"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Om du kunde återuppleva en konsert?",
+    "answers": ["Den bästa konserten jag varit på", "En legendarisk konsert från förr", "En festivalupplevelse", "Har aldrig varit på konsert"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "VM i fotboll: hur fanatisk är du?",
+    "answers": ["Blågult-galenskap!", "Tittar på matcherna", "Bara finalen", "Bryr mig inte"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Beachvolley: delta eller titta?",
+    "answers": ["Delta!", "Titta med en drink", "Bygger hellre sandslott", "Båda är kul"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Vilken sport vill du se på OS?",
+    "answers": ["Padel", "E-sport", "Klättring", "Breakdance"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Vilken app använder du mest för underhållning?",
+    "answers": ["YouTube", "TikTok", "Netflix", "Spotify"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Hur ofta kollar du din skärmtid?",
+    "answers": ["Varje vecka — försöker minska", "Aldrig — vill inte veta", "Ibland av nyfikenhet", "Har stängt av det"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vilket favorittransportmedel på semester?",
+    "answers": ["Skoter eller MC", "Cykel", "Till fots", "Hyrbil"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur reagerar du på överraskningar?",
+    "answers": ["Älskar dem!", "Beror på överraskningen", "Föredrar att veta i förväg", "Gillar inte överraskningar"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hur viktig är självständighet i en relation?",
+    "answers": ["Väldigt — behöver eget utrymme", "Viktig men gillar gemensam tid", "Medel — vi gör gärna allt ihop", "Självständighet är grunden"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad ger dig trygghet?",
+    "answers": ["Närhet med partner", "Ekonomisk stabilitet", "Hälsa och god form", "Stark vänskap"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vilken säsongsrätt gillar du bäst?",
+    "answers": ["Sparris på våren", "Grillat på sommaren", "Ärtsoppa på vintern", "Äppelpaj på hösten"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Har du en samling av nåt?",
+    "answers": ["Ja, vinylskivor", "Ja, böcker", "Ja, sneakers", "Nej, samlar inget"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hur hanterar du ensamhet?",
+    "answers": ["Njuter av det", "Ringer nån", "Går ut", "Tycker det är svårt"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vilken låt sätter du på för att städa?",
+    "answers": ["Nåt snabbt och energiskt", "En podcast istället", "Hela min favoritspellista", "Jag städar i tystnad"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Vilken sport utövade du som barn?",
+    "answers": ["Fotboll", "Simning", "Gymnastik eller dans", "Lekte hellre utomhus"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Vilken streamingtjänst är bäst?",
+    "answers": ["Netflix — mest innehåll", "HBO Max — bäst kvalitet", "Disney+ — nostalgi", "Jag har alla"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Norrsken: har du sett det?",
+    "answers": ["Ja, magiskt!", "Nej, men det är på min lista", "Bor i norra Sverige, ser det ofta", "Inte intresserad"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Vad är du mest tacksam för?",
+    "answers": ["Min familj och vänner", "Min hälsa", "Mina erfarenheter", "Att vara den jag är"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  }
+]

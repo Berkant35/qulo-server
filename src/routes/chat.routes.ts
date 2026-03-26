@@ -12,6 +12,7 @@ import {
   deleteMessageHandler,
   addReactionHandler,
   uploadMediaHandler,
+  uploadQuestionMediaHandler,
 } from "../controllers/chat.controller.js";
 import {
   createChatQuestionHandler,
@@ -47,6 +48,7 @@ router.use(chatLimiter);
 router.get("/:match_id/messages", validate(chatQuerySchema, "query"), getMessagesHandler);
 router.post("/:match_id/messages", validate(sendMessageSchema), sendMessageHandler);
 router.post("/:match_id/upload", upload.single("file"), uploadMediaHandler);
+router.post("/:match_id/question-upload", upload.single("file"), uploadQuestionMediaHandler);
 router.post("/:match_id/read", markAsReadHandler);
 router.delete("/:match_id/messages/:message_id", deleteMessageHandler);
 router.post("/:match_id/messages/:message_id/reactions", validate(reactionSchema), addReactionHandler);

@@ -541,6 +541,107 @@ class AdminService {
   async deleteQuestion(questionId: string) {
     await supabase.from("questions").delete().eq("id", questionId);
   }
+
+  /** Tüm eşleşmeleri kaldır + ilişkili messages, quiz_sessions, quiz_answers temizle */
+  async removeAllMatches() {
+    // Önce match ID'lerini al
+    const { data: matches } = await supabase
+      .from("matches")
+      .select("id");
+
+    const matchIds = (matches ?? []).map((m: any) => m.id);
+
+    if (matchIds.length > 0) {
+      // Quiz session'ları bul ve answer'ları temizle
+      const { data: sessions } = await supabase
+        .from("quiz_sessions")
+        .select("id")
+        .in("match_id", matchIds);
+
+      const sessionIds = (sessions ?? []).map((s: any) => s.id);
+      if (sessionIds.length > 0) {
+        await supabase.from("quiz_answers").delete().in("session_id", sessionIds);
+      }
+
+      // Quiz session'ları sil
+      await supabase.from("quiz_sessions").delete().in("match_id", matchIds);
+
+      // Messages sil
+      await supabase.from("messages").delete().in("match_id", matchIds);
+    }
+
+    // Tüm matches sil
+    const { error } = await supabase.from("matches").delete().gte("id", "00000000-0000-0000-0000-000000000000");
+    if (error) {
+      console.error("[admin] Remove all matches error:", error.message);
+      throw new Error("Failed to remove all matches");
+    }
+
+    // Tüm swipe'ları da sil (kullanıcılar birbirini tekrar görebilsin)
+    await supabase.from("swipes").delete().gte("id", "00000000-0000-0000-0000-000000000000");
+
+    // Tüm kullanıcıların daily_swipes_used'ını sıfırla
+    await supabase.from("users").update({ daily_swipes_used: 0 }).gte("id", "00000000-0000-0000-0000-000000000000");
+
+    return matchIds.length;
+  }
+
+  /** Belirli bir kullanıcının tüm discovery geçmişini sıfırla */
+  async resetUserDiscovery(userId: string) {
+    // 1) Kullanıcının dahil olduğu match'leri bul
+    const { data: userMatches } = await supabase
+      .from("matches")
+      .select("id")
+      .or(`user1_id.eq.${userId},user2_id.eq.${userId}`);
+
+    const matchIds = (userMatches ?? []).map((m: any) => m.id);
+    let matchesRemoved = 0;
+
+    if (matchIds.length > 0) {
+      // Quiz answer'ları temizle
+      const { data: sessions } = await supabase
+        .from("quiz_sessions")
+        .select("id")
+        .in("match_id", matchIds);
+
+      const sessionIds = (sessions ?? []).map((s: any) => s.id);
+      if (sessionIds.length > 0) {
+        await supabase.from("quiz_answers").delete().in("session_id", sessionIds);
+      }
+
+      // Quiz session'ları sil
+      await supabase.from("quiz_sessions").delete().in("match_id", matchIds);
+
+      // Messages sil
+      await supabase.from("messages").delete().in("match_id", matchIds);
+
+      // Matches sil
+      await supabase.from("matches").delete().in("id", matchIds);
+      matchesRemoved = matchIds.length;
+    }
+
+    // 2) Swipe'ları sil (hem swiper hem target olarak)
+    const { count: swipesAsSwiper } = await supabase
+      .from("swipes")
+      .select("*", { count: "exact", head: true })
+      .eq("swiper_id", userId);
+
+    const { count: swipesAsTarget } = await supabase
+      .from("swipes")
+      .select("*", { count: "exact", head: true })
+      .eq("target_id", userId);
+
+    await supabase.from("swipes").delete().eq("swiper_id", userId);
+    await supabase.from("swipes").delete().eq("target_id", userId);
+
+    // 3) Daily swipe counter sıfırla
+    await supabase.from("users").update({ daily_swipes_used: 0 }).eq("id", userId);
+
+    return {
+      matchesRemoved,
+      swipesRemoved: (swipesAsSwiper ?? 0) + (swipesAsTarget ?? 0),
+    };
+  }
 }
 
 export const adminService = new AdminService();

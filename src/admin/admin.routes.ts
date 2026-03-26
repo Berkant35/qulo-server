@@ -2,6 +2,7 @@ import { Router } from "express";
 import { adminController } from "./admin.controller.js";
 import { questionBankController } from "./question-bank.controller.js";
 import { adminAuth, superAdminOnly, ipWhitelist, csrfGenerate, csrfValidate } from "./admin.middleware.js";
+import adminCronRoutes from "./cron.routes.js";
 import rateLimit from "express-rate-limit";
 
 const router = Router();
@@ -29,12 +30,14 @@ router.get("/users", (req, res) => adminController.users(req, res));
 router.get("/users/:id", (req, res) => adminController.userDetail(req, res));
 router.post("/users/:id/action", csrfValidate, (req, res) => adminController.userAction(req, res));
 router.post("/users/:id/send-notification", csrfValidate, (req, res) => adminController.sendNotification(req, res));
+router.post("/users/:id/test-push", csrfValidate, (req, res) => adminController.testPush(req, res));
 
 router.get("/reports", (req, res) => adminController.reports(req, res));
 router.get("/reports/:id", (req, res) => adminController.reportDetail(req, res));
 router.post("/reports/:id/action", csrfValidate, (req, res) => adminController.reportAction(req, res));
 
 router.get("/matches", (req, res) => adminController.matches(req, res));
+router.post("/matches/remove-all", csrfValidate, (req, res) => adminController.removeAllMatches(req, res));
 
 router.get("/transactions", (req, res) => adminController.transactions(req, res));
 
@@ -73,5 +76,8 @@ router.post("/campaigns/preview-count", csrfValidate, (req, res) => adminControl
 router.get("/admins", superAdminOnly, (req, res) => adminController.admins(req, res));
 router.post("/admins", superAdminOnly, csrfValidate, (req, res) => adminController.createAdmin(req, res));
 router.post("/admins/:id/delete", superAdminOnly, csrfValidate, (req, res) => adminController.deleteAdminAction(req, res));
+
+// Cron management (JSON API)
+router.use("/crons", adminCronRoutes);
 
 export default router;

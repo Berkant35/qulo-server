@@ -1,5 +1,11 @@
 <%- include('_header') %>
-<h2 style="margin-bottom: 20px;">Matches (<%= total %>)</h2>
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+  <h2 style="margin:0;">Matches (<%= total %>)</h2>
+  <form method="POST" action="/admin/matches/remove-all" style="margin:0;">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <button type="submit" class="btn btn-danger" onclick="return confirm('WARNING: This will remove ALL matches, messages, quiz sessions, swipes, and reset daily swipe counters for ALL users. This cannot be undone.\n\nAre you sure?')">Remove All Matches & Reset Discovery</button>
+  </form>
+</div>
 <form class="filters" method="GET" action="/admin/matches">
   <select name="active">
     <option value="all" <%= active === 'all' ? 'selected' : '' %>>All</option>

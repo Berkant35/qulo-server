@@ -1,0 +1,3629 @@
+[
+  {
+    "category": "personality",
+    "question_text": "Wat zou je het meest imponeren op een eerste date?",
+    "answers": ["Een geheime cocktailbar", "Een bezoek aan een boekwinkel", "Film kijken op een dakterras", "Een nachtelijke museumtour"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoe laad jij je op na een drukke week?",
+    "answers": ["Netflix-marathon in m'n eentje", "Uitgaan met vrienden", "Een lange wandeling", "Iets lekkers koken"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat is jouw berichtstijl in een relatie?",
+    "answers": ["Memes de hele dag", "Goedemorgen-berichtjes", "Spraakberichten boven typen", "Kort en krachtig"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Als we samen een dag zouden doorbrengen, wie plant het?",
+    "answers": ["Ik verras je", "Jij beslist", "We plannen samen", "We zien wel waar het schip strandt"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat vind je het belangrijkst in een partner?",
+    "answers": ["Gevoel voor humor", "Ambitie", "Vriendelijkheid", "Intelligentie"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoe ga jij om met conflicten in een relatie?",
+    "answers": ["Meteen uitpraten", "Eerst afstand nemen", "Mijn gevoelens opschrijven", "Humor lost alles op"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat is jouw liefdestaal?",
+    "answers": ["Lieve woorden", "Quality time", "Fysiek contact", "Dingen voor elkaar doen"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoe zou jouw ideale zondag eruitzien?",
+    "answers": ["Uitslapen en brunchen", "Sportief bezig zijn", "Een dagje natuur in", "Creatief aan de slag"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Welk type vriend ben jij?",
+    "answers": ["De luisteraar", "De gangmaker", "De adviseur", "De avonturier"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat maakt je het meest gelukkig?",
+    "answers": ["Reizen en nieuwe ervaringen", "Tijd met dierbaren", "Persoonlijke groei", "Rust en stilte"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ben jij eerder een ochtend- of avondmens?",
+    "answers": ["Vroege vogel", "Nachtuil", "Hangt van de dag af", "Altijd moe"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoe reageer jij op een compliment?",
+    "answers": ["Ik word rood", "Ik geef er eentje terug", "Ik lach het weg", "Ik bedank oprecht"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat is jouw grootste rode vlag bij een date?",
+    "answers": ["Onbeleefd tegen personeel", "Alleen over zichzelf praten", "Constant op de telefoon", "Geen humor"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Introvert, extravert of ambivert?",
+    "answers": ["Introvert en trots", "Extravert en energiek", "Ambivert — hangt van de situatie af", "Weet ik eigenlijk niet"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat doe je als eerste als je wakker wordt?",
+    "answers": ["Telefoon checken", "Koffie zetten", "Nog even snoezen", "Sporten"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Spontaan of planmatig?",
+    "answers": ["100% spontaan", "Alles gepland", "Een mix van beide", "Spontaan met een vangnet"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Welk woord beschrijft jou het best?",
+    "answers": ["Avontuurlijk", "Zorgzaam", "Creatief", "Ambitieus"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoe flirt jij?",
+    "answers": ["Met humor", "Oogcontact en glimlachen", "Complimenten geven", "Ik flirt niet, ik ben gewoon lief"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat zou je kiezen: altijd eerlijk of altijd aardig?",
+    "answers": ["Altijd eerlijk", "Altijd aardig", "Eerlijk maar met tact", "Hangt van de situatie af"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoe snel val je voor iemand?",
+    "answers": ["Bij de eerste blik", "Na een paar dates", "Langzaam maar zeker", "Ik moet het eerst rationeel verwerken"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat is jouw geheime talent?",
+    "answers": ["Ik kan goed koken", "Ik kan iedereen aan het lachen maken", "Ik onthoud alles", "Ik kan goed luisteren"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Geloof je in liefde op het eerste gezicht?",
+    "answers": ["Absoluut", "Nee, liefde groeit", "Alleen aantrekkingskracht op het eerste gezicht", "Ik wil het graag geloven"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat vind je het leukst aan daten?",
+    "answers": ["Iemand nieuw leren kennen", "De vlinders in je buik", "Leuke verhalen verzamelen", "De mogelijkheid van iets moois"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoe beschrijven je vrienden jou?",
+    "answers": ["De grappige", "De betrouwbare", "De wilde", "De wijze"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Welke eigenschap waardeer je het meest?",
+    "answers": ["Eerlijkheid", "Loyaliteit", "Moed", "Empathie"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat irriteert je het snelst?",
+    "answers": ["Onbetrouwbaarheid", "Arrogantie", "Passief-agressief gedrag", "Negativiteit"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat is jouw go-to gespreksonderwerp op een date?",
+    "answers": ["Reizen", "Dromen en ambities", "Grappige verhalen", "Eten en restaurants"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoe ga je om met stress?",
+    "answers": ["Sporten", "Erover praten", "Even alleen zijn", "Muziek luisteren"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Welk seizoen past het best bij jouw persoonlijkheid?",
+    "answers": ["Zomer — energiek en warm", "Herfst — gezellig en reflectief", "Winter — rustig en diep", "Lente — fris en optimistisch"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Waar ben je stiekem trots op?",
+    "answers": ["Mijn doorzettingsvermogen", "Mijn creativiteit", "Mijn sociale vaardigheden", "Mijn onafhankelijkheid"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat zou je partner als eerste over je ontdekken?",
+    "answers": ["Ik ben stiekem heel romantisch", "Ik heb een droog gevoel voor humor", "Ik ben heel loyaal", "Ik houd van knuffelen"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat is jouw motto in het leven?",
+    "answers": ["YOLO", "Alles komt goed", "Werk hard, speel harder", "Wees jezelf"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoe zou jouw ideale relatie eruitzien?",
+    "answers": ["Beste vrienden die ook verliefd zijn", "Avontuurlijk en spontaan", "Rustig en stabiel", "Hartstochtelijk en intens"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat doe je het liefst op een regenachtige dag?",
+    "answers": ["Film kijken onder een dekentje", "Een boek lezen", "Bakken of koken", "Toch naar buiten gaan"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ben je meer een gever of ontvanger in een relatie?",
+    "answers": ["Gever — ik verwenk graag", "Ontvanger — ik geniet ervan", "Fifty-fifty", "Hangt af van de dag"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat maakt een gesprek echt boeiend voor jou?",
+    "answers": ["Diepgang en kwetsbaarheid", "Humor en luchtigheid", "Gedeelde passies", "Nieuwe perspectieven"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Welk dier beschrijft jouw persoonlijkheid?",
+    "answers": ["Hond — loyaal en speels", "Kat — onafhankelijk en mysterieus", "Dolfijn — sociaal en slim", "Beer — sterk maar knuffelbaar"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welk filmgenre past het best bij jou?",
+    "answers": ["Romantische komedie", "Actie en avontuur", "Thriller of horror", "Documentaire"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Netflix and chill of bioscoop-date?",
+    "answers": ["Netflix op de bank", "Bioscoop met popcorn", "Openluchtbioscoop", "Film maakt niet uit, het gezelschap wel"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welke film kun je eindeloos opnieuw kijken?",
+    "answers": ["The Shawshank Redemption", "Harry Potter (de hele reeks)", "Forrest Gump", "The Lion King"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welk type personage zou je zijn in een film?",
+    "answers": ["De held", "De grappige sidekick", "De mysterieuze vreemdeling", "De romantische lead"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Hoe kijk je het liefst een serie?",
+    "answers": ["Binge-watchen in één weekend", "Eén aflevering per dag", "Samen met iemand kijken", "Alleen de highlights op social media"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welke filmsnack kies jij?",
+    "answers": ["Popcorn zoet", "Popcorn zout", "Nachos", "Snoep en chocolade"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welke serie zou je aanbevelen op een eerste date?",
+    "answers": ["Friends", "Stranger Things", "The Office", "Dark"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Wat is jouw guilty pleasure film?",
+    "answers": ["High School Musical", "Twilight", "Mean Girls", "Fast & Furious"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Huil je bij films?",
+    "answers": ["Altijd, ik ben gevoelig", "Soms bij hele trieste scenes", "Nooit, ik hou het binnen", "Alleen als niemand kijkt"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Als jouw leven een filmgenre was, welk zou het zijn?",
+    "answers": ["Romantische komedie", "Avonturenfilm", "Drama", "Sciencefiction"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welke Disney-film raakt je het meest?",
+    "answers": ["The Lion King", "Aladdin", "Finding Nemo", "Up"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Ondertitels of dubbing?",
+    "answers": ["Altijd ondertitels", "Dubbing is prima", "Originele taal zonder subs", "Hangt van mijn humeur af"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Met welk filmpersonage zou je op date willen?",
+    "answers": ["James Bond", "Elizabeth Bennet", "Jack Sparrow", "Hermione Granger"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Wat is belangrijker in een film: het verhaal of de beelden?",
+    "answers": ["Het verhaal, altijd", "Visueel moet het kloppen", "De muziek maakt de film", "De personages boeien me het meest"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Hoe laat kijk jij het liefst een film?",
+    "answers": ["Overdag op een luie middag", "'s Avonds laat in het donker", "Maakt niet uit als het gezellig is", "Vroeg in de ochtend met koffie"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Horror: durven of overslaan?",
+    "answers": ["Ik hou ervan!", "Alleen met iemand naast me", "Nee, te eng", "Ik kijk door mijn vingers"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welke regisseur bewonder je?",
+    "answers": ["Christopher Nolan", "Quentin Tarantino", "Wes Anderson", "Studio Ghibli (Miyazaki)"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Wat is jouw comfort food?",
+    "answers": ["Pizza", "Pasta", "Stamppot", "Frietjes met mayo"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Koken of bestellen?",
+    "answers": ["Zelf koken, altijd", "Bestellen is mijn specialiteit", "Samen koken is het leukst", "Hangt af van mijn energie"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welke keuken is jouw favoriet?",
+    "answers": ["Italiaans", "Japans", "Mexicaans", "Thais"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Hoe pittig lust je je eten?",
+    "answers": ["Zo pittig mogelijk", "Een beetje kick", "Mild alsjeblieft", "Ik huil al bij zwarte peper"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Wat is jouw ideale date-diner?",
+    "answers": ["Romantisch restaurant", "Streetfood markt", "Zelf koken thuis", "Picknick in het park"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ontbijt: zoet of hartig?",
+    "answers": ["Pannenkoeken met stroop", "Eieren met brood", "Yoghurt met fruit", "Ik sla ontbijt over"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Koffie of thee?",
+    "answers": ["Koffie, zwart", "Cappuccino of latte", "Thee in alle smaken", "Geen van beide"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welk gerecht zou je willen leren maken?",
+    "answers": ["Sushi", "Verse pasta", "Thaise curry", "Frans gebak"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Hoe eet je je friet?",
+    "answers": ["Met mayo", "Met ketchup", "Met pinda- of satésaus", "Speciaal (alles erop)"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ben je avontuurlijk met eten?",
+    "answers": ["Ik probeer alles", "Best wel, maar geen insecten", "Ik blijf bij wat ik ken", "Ik ben best kieskeurig"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Wat bestel je als eerste op een terras?",
+    "answers": ["Bier of wijn", "Een cocktail", "Koffie of thee", "Fris of water"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Sushi: fan of niet?",
+    "answers": ["Ik ben verslaafd", "Best lekker af en toe", "Niet mijn ding", "Ik heb het nog nooit geprobeerd"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welk Nederlands gerecht is het lekkerst?",
+    "answers": ["Bitterballen", "Stroopwafels", "Stamppot boerenkool", "Poffertjes"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Dessert: ja of nee?",
+    "answers": ["Altijd ja!", "Alleen als het chocolade is", "Soms, als ik ruimte heb", "Ik deel liever met iemand"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Wat maak je als iemand voor het eerst bij je eet?",
+    "answers": ["Pasta — veilige keuze", "Iets indrukwekkends", "Bestellen want ik kan niet koken", "Ik vraag wat ze lekker vinden"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vegetarisch, veganistisch of alleseter?",
+    "answers": ["Alleseter", "Vegetarisch", "Veganistisch", "Flexitariër"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welke snack om middernacht?",
+    "answers": ["Chips", "Kaas en crackers", "Ijs", "Tosti"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Hoe belangrijk is eten in een relatie?",
+    "answers": ["Heel belangrijk — samen eten is liefde", "We moeten dezelfde smaak hebben", "Niet zo belangrijk", "Als je kunt koken, heb je mijn hart"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Als je één superkracht kon hebben, welke?",
+    "answers": ["Vliegen", "Gedachten lezen", "Tijdreizen", "Onzichtbaarheid"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Je wint de loterij. Wat doe je als eerste?",
+    "answers": ["Wereldreis boeken", "Huis kopen", "Alles investeren", "Een feest geven voor iedereen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welk emoji gebruik je het meest?",
+    "answers": ["😂", "❤️", "🔥", "😅"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Als je een dag iemand anders kon zijn, wie?",
+    "answers": ["Een beroemdheid", "Een astronaut", "Een koning of koningin", "Mijn huisdier"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Wat is je gekste talent?",
+    "answers": ["Ik kan mijn tong rollen", "Ik kan accenten nadoen", "Ik kan heel snel eten", "Ik kan overal in slaap vallen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Truth or dare?",
+    "answers": ["Truth — ik ben een open boek", "Dare — ik durf alles", "Hangt af van met wie", "Ik kies altijd truth uit veiligheid"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Wat staat er op je bucketlist?",
+    "answers": ["Noorderlicht zien", "Skydiven", "Een boek schrijven", "Op een onbewoond eiland leven"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Als je één ding mocht meenemen naar een onbewoond eiland?",
+    "answers": ["Een boek", "Een mes", "Mijn telefoon met oplader", "Een hangmat"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welk sprookje beschrijft jouw liefdesleven?",
+    "answers": ["Assepoester — nog wachtend op de prins(es)", "Schoonheid en het Beest — ik kijk voorbij het uiterlijk", "Peter Pan — nooit volwassen worden", "Rapunzel — ik zit vast in mijn toren"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Je mag één wet invoeren. Welke?",
+    "answers": ["Vierdaagse werkweek", "Gratis openbaar vervoer", "Verplicht middagdutje", "Geen maandagen meer"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welk fictief personage zou je beste vriend zijn?",
+    "answers": ["Chandler Bing", "Hermione Granger", "Shrek", "Pikachu"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Wat is jouw onpopulaire mening?",
+    "answers": ["Ananas hoort op pizza", "Ochtendmensen zijn gelukkiger", "Katten zijn beter dan honden", "Kerst is overrated"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Als je een tijdmachine had, waar ging je naartoe?",
+    "answers": ["De dinosaurussen zien", "De jaren '80 meemaken", "100 jaar in de toekomst", "Mijn eigen geboorte bijwonen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welk dier zou je willen zijn voor een dag?",
+    "answers": ["Adelaar — vliegen!", "Dolfijn — zwemmen in de oceaan", "Kat — de hele dag slapen", "Aap — door bomen slingeren"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Zombie-apocalyps: wat is je strategie?",
+    "answers": ["Een bunker bouwen", "Een eiland zoeken", "Leider worden van een groep", "Ik overleef het niet eerlijk gezegd"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Wat zou je kiezen: altijd te vroeg of altijd te laat?",
+    "answers": ["Altijd te vroeg", "Altijd te laat", "Ik ben al altijd te laat", "Precies op tijd is mijn ding"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welke kleur past het best bij jou?",
+    "answers": ["Blauw — rustig en betrouwbaar", "Rood — passioneel en energiek", "Groen — avontuurlijk en vrij", "Geel — vrolijk en optimistisch"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Je date blijkt een vampier te zijn. Wat doe je?",
+    "answers": ["Cool, vertel me meer", "Wegrennen!", "Alleen als ze er goed uitzien", "Ik vraag of ik ook een kan worden"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Wat is jouw guilty pleasure?",
+    "answers": ["Reality TV kijken", "Karaoke zingen", "Junkfood bingen", "Astrologie checken"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Hoe breng je het liefst je vrije tijd door?",
+    "answers": ["Lezen", "Gamen", "Sporten", "Creatief bezig zijn"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Welke hobby zou je willen oppakken?",
+    "answers": ["Surfen", "Schilderen", "Een instrument leren", "Fotografie"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Doe je aan een teamsport?",
+    "answers": ["Ja, ik ben een teamspeler", "Nee, individuele sport is mijn ding", "Ik kijk liever", "Sport is niet voor mij"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Welke activiteit zou je op een date doen?",
+    "answers": ["Samen koken", "Bowlen of minigolf", "Wandelen in de natuur", "Een escape room"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ben je creatief?",
+    "answers": ["Ja, ik maak altijd dingen", "Een beetje, als ik inspiratie heb", "Niet echt, maar ik waardeer kunst", "Ik ben meer analytisch"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Gamen: ja of nee?",
+    "answers": ["Ja, elke dag", "Soms, casual games", "Alleen bordspellen", "Nee, niet mijn ding"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Wat lees je het liefst?",
+    "answers": ["Romans en fictie", "Non-fictie en biografie", "Manga of comics", "Ik lees niet zo veel"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Houd je van tuinieren?",
+    "answers": ["Ja, ik heb groene vingers", "Ik probeer het maar alles gaat dood", "Planten in huis tellen toch?", "Niet echt mijn ding"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Welk bordspel win je altijd?",
+    "answers": ["Monopoly", "Risk", "Triviant", "Ik win nooit maar het is gezellig"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Doe je vrijwilligerswerk?",
+    "answers": ["Ja, regelmatig", "Soms, als ik kan", "Nee, maar ik zou willen", "Nee, geen tijd"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Hoe belangrijk is een gedeelde hobby in een relatie?",
+    "answers": ["Heel belangrijk — samen dingen doen", "Leuk maar niet nodig", "Eigen hobby's zijn ook goed", "Maakt niet uit"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Buitenmens of binnenmens?",
+    "answers": ["Buiten, altijd!", "Binnen met een goed boek", "Een mix van beide", "Hangt van het weer af"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Welke DIY zou je proberen?",
+    "answers": ["Meubels opknappen", "Kaarsen maken", "Kleding naaien", "Ik koop liever af"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Fotografie: smartphone of camera?",
+    "answers": ["Smartphone is genoeg", "Echte camera, ik ben serieus", "Ik maak nooit foto's", "Ik sta liever voor de camera"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Kun je een instrument bespelen?",
+    "answers": ["Ja, gitaar", "Ja, piano", "Nee, maar ik wil het leren", "Ik speel luchtgitaar"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Welke workshop zou je samen willen doen?",
+    "answers": ["Pottenbakken", "Cocktails maken", "Salsa dansen", "Wijnproeverij"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Hoe vaak sport je?",
+    "answers": ["Elke dag", "Een paar keer per week", "Af en toe", "Rennen naar de bus telt toch?"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Welk type humor heb jij?",
+    "answers": ["Droge humor", "Slapstick", "Sarcasme", "Woordgrappen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Kun je tegen zelfspot?",
+    "answers": ["Ja, ik lach het hardst om mezelf", "Soms, als het niet te ver gaat", "Niet echt, ik ben gevoelig", "Ik maak er een sport van"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Wat maakt je het snelst aan het lachen?",
+    "answers": ["Memes", "Fails op video", "Een goed verhaal", "Iemand die zichzelf niet serieus neemt"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Je date maakt een slechte grap. Hoe reageer je?",
+    "answers": ["Ik lach toch mee", "Ik zeg eerlijk dat het slecht was", "Ik maak een nog slechtere grap", "Beleefde glimlach"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Welke comedian is jouw favoriet?",
+    "answers": ["Kevin Hart", "Dave Chappelle", "Nederlandse cabaretiers", "Ik kijk geen stand-up"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Hoe belangrijk is humor in een relatie?",
+    "answers": ["Het allerbelangrijkst", "Heel belangrijk", "Leuk maar niet essentieel", "Ik zoek meer diepgang"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Memes: welk type deel je het meest?",
+    "answers": ["Relatable memes", "Dierenmemes", "Donkere humor memes", "Wholesome memes"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Kun je een pokerface houden?",
+    "answers": ["Nee, alles staat op mijn gezicht", "Ja, ik ben onleesbaar", "Alleen bij kaarten", "Ik probeer het maar faal altijd"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Welke sitcom beschrijft jouw vriendengroep?",
+    "answers": ["Friends", "How I Met Your Mother", "The Office", "Brooklyn Nine-Nine"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Je moet iemand aan het lachen maken in 10 seconden. Wat doe je?",
+    "answers": ["Een grap vertellen", "Een grappig gezicht trekken", "Een dans doen", "Iets gênants over mezelf vertellen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Dad jokes: leuk of verschrikkelijk?",
+    "answers": ["Briljant, altijd!", "Zo slecht dat ze goed zijn", "Verschrikkelijk, stop ermee", "Ik maak ze zelf constant"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Lach je hard of stilletjes?",
+    "answers": ["Hard en ongegeneerd", "Stilletjes met tranen", "Ik snurk-lach", "Hangt af van hoe grappig het is"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Welke humorshow zou je meenemen op een date?",
+    "answers": ["Stand-up comedy avond", "Improvisatietheater", "Een grappige film", "Karaoke — dat wordt lachen"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Sarcastisch of oprecht — hoe flirt jij?",
+    "answers": ["Sarcasme is mijn liefdestaal", "Oprecht en lief", "Een mix van beide", "Ik flirt per ongeluk"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Wat is de beste manier om je humeur te verbeteren?",
+    "answers": ["Grappige video's kijken", "Met vrienden lachen", "Zelf iets doms doen", "Een lief berichtje ontvangen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Welke meme zou je op je graftsteen willen?",
+    "answers": ["This is fine", "Stonks", "Surprised Pikachu", "Distracted boyfriend"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Stad of platteland?",
+    "answers": ["Stad — ik hou van de drukte", "Platteland — rust en ruimte", "Aan de rand van de stad", "Maakt niet uit als ik gelukkig ben"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hoe ziet jouw ideale weekend eruit?",
+    "answers": ["Uitgaan en feesten", "Relaxen en series kijken", "Outdoor avontuur", "Quality time met familie"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Huisdier: hond of kat?",
+    "answers": ["Hond, absoluut", "Kat, duidelijk", "Beide!", "Geen huisdier voor mij"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hoe belangrijk is gezondheid voor jou?",
+    "answers": ["Heel belangrijk — ik let op alles", "Best belangrijk maar ik geniet ook", "Ik probeer gezond te zijn", "YOLO, ik eet wat ik wil"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Auto, fiets of OV?",
+    "answers": ["Auto — vrijheid", "Fiets — typisch Nederlands", "OV — lekker ontspannen", "Te voet als het kan"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hoe ziet jouw ochtendroutine eruit?",
+    "answers": ["Wekker, douche, go!", "Rustig ontbijt en koffie", "Snoozen tot het laatste moment", "Yoga of meditatie"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Werk om te leven of leef om te werken?",
+    "answers": ["Werk om te leven", "Mijn werk is mijn passie", "Een gezonde balans", "Ik wil zo snel mogelijk met pensioen"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hoe ga je om met social media?",
+    "answers": ["Ik post veel", "Ik lurk alleen", "Ik heb nauwelijks social media", "Het is een guilty pleasure"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Waar zie je jezelf over 5 jaar?",
+    "answers": ["Carrière op volle toeren", "Reizend door de wereld", "Gezin beginnen", "Geen idee en dat is oké"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hoe minimalistisch ben jij?",
+    "answers": ["Heel — minder is meer", "Een beetje — ik hou van opgeruimd", "Niet echt — ik verzamel van alles", "Chaotisch maar ik weet waar alles ligt"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wil je ooit kinderen?",
+    "answers": ["Ja, zeker!", "Misschien ooit", "Nee, niet voor mij", "Ik weet het nog niet"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hoe belangrijk is financiële stabiliteit voor jou?",
+    "answers": ["Heel belangrijk", "Belangrijk maar niet allesbepalend", "Geld maakt niet gelukkig", "Ik werk eraan"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Ben je religieus of spiritueel?",
+    "answers": ["Religieus", "Spiritueel", "Geen van beide", "Ik ben zoekende"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Feestbeest of huismus?",
+    "answers": ["Feestbeest tot de zon opkomt", "Huismus en trots", "Afwisselend", "Feestbeest dat om 23:00 naar huis wil"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hoe ruim jij je huis op?",
+    "answers": ["Alles heeft een vaste plek", "Georganiseerde chaos", "Ik ruim op als er bezoek komt", "Marie Kondo is mijn held"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Samenwonen: hoe snel in een relatie?",
+    "answers": ["Na een paar maanden", "Na minstens een jaar", "Pas als we trouwen", "Liever apart wonen"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Welk type woning past bij jou?",
+    "answers": ["Appartement in de stad", "Rijtjeshuis met tuin", "Boerderij op het platteland", "Tiny house of camper"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welk muziekgenre draai jij het meest?",
+    "answers": ["Pop", "Hip-hop/R&B", "Rock/Indie", "Elektronisch"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Concert of festival?",
+    "answers": ["Intiem concert", "Groot festival", "Huiskamerconcert", "Ik luister liever thuis"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welk liedje zet je op voor een road trip?",
+    "answers": ["Bohemian Rhapsody", "Iets van de Top 40", "Een chille playlist", "Ik laat mijn passagier kiezen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Zing je onder de douche?",
+    "answers": ["Ja, volle bak!", "Alleen als niemand thuis is", "Nee, ik bespaar de buren", "Ik hum mee"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welk liedje beschrijft jouw liefdesleven?",
+    "answers": ["All By Myself", "Crazy in Love", "It's Complicated", "Still Waiting"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Spotify, Apple Music of iets anders?",
+    "answers": ["Spotify", "Apple Music", "YouTube Music", "Ik luister nog radio"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Karaoke: welk nummer kies jij?",
+    "answers": ["Don't Stop Believin'", "Bohemian Rhapsody", "Een Nederlands liedje", "Ik weiger te zingen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Hoe belangrijk is muzieksmaak in een relatie?",
+    "answers": ["Heel belangrijk — we moeten matchen", "Leuk als het overeenkomt", "Niet belangrijk", "Ik leer graag nieuwe muziek kennen"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welk instrument vind je het aantrekkelijkst?",
+    "answers": ["Gitaar", "Piano", "Drums", "Viool"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Luister je naar podcasts?",
+    "answers": ["Ja, elke dag", "Soms, onderweg", "Nee, alleen muziek", "Ik wil ermee beginnen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welk festival zou je samen willen bezoeken?",
+    "answers": ["Lowlands", "Tomorrowland", "Pinkpop", "Een klein lokaal festival"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vinyl of streaming?",
+    "answers": ["Vinyl — de warme klank", "Streaming — gemak boven alles", "Beide op hun eigen moment", "Maakt niet uit, als er maar muziek is"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welk tijdperk had de beste muziek?",
+    "answers": ["De jaren '80", "De jaren '90", "De jaren 2000", "Nu is het het best"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welk liedje maakt je altijd blij?",
+    "answers": ["Happy — Pharrell", "Mr. Brightside — The Killers", "Dancing Queen — ABBA", "Een nummer waar ik herinneringen bij heb"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Kun je dansen?",
+    "answers": ["Ja, ik hou van dansen!", "Alleen als ik genoeg heb gedronken", "Nee, maar het boeit me niet", "Ik dans alsof niemand kijkt"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Muziek als achtergrond of vol aandacht luisteren?",
+    "answers": ["Altijd op de achtergrond", "Vol aandacht met koptelefoon", "Hangt van het moment af", "Ik heb liever stilte"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Welke sport kijk je het liefst?",
+    "answers": ["Voetbal", "Formule 1", "Tennis", "Ik kijk geen sport"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Gym, hardlopen of zwemmen?",
+    "answers": ["Gym — ijzer pompen", "Hardlopen — buiten zijn", "Zwemmen — rustig en effectief", "Geen van deze"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Welke sport zou je samen willen proberen?",
+    "answers": ["Padel", "Klimmen", "Surfen", "Dansen"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Ben je competitief?",
+    "answers": ["Heel erg — ik wil altijd winnen", "Een beetje, op een gezonde manier", "Nee, meedoen is belangrijker", "Alleen bij bordspellen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Voetbal: welke competitie volg je?",
+    "answers": ["Eredivisie", "Premier League", "Champions League", "Ik kijk geen voetbal"],
+    "tone": "fun",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Wintersport: ski of snowboard?",
+    "answers": ["Ski — klassiek", "Snowboard — cool", "Après-ski is mijn sport", "Ik blijf liever in de zon"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Yoga: ontspanning of marteling?",
+    "answers": ["Ontspanning — ik doe het elke week", "Ik vind het best leuk", "Marteling — ik ben te stijf", "Nog nooit geprobeerd"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Heb je ooit een marathon gelopen?",
+    "answers": ["Ja, meerdere!", "Een halve marathon", "Nee, maar staat op mijn lijst", "Nooit, en dat blijft zo"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Welke extreme sport zou je durven?",
+    "answers": ["Skydiven", "Bungee-jumpen", "Paragliden", "Nee bedankt, ik hou mijn voeten op de grond"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Wielrennen: Tour de France of gewoon fietsen?",
+    "answers": ["Tour de France kijken!", "Gewoon lekker fietsen", "Mountainbiken", "Ik heb niet eens een fiets"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Schaatsen: kunstrijden of langebaan?",
+    "answers": ["Kunstrijden", "Langebaan als een Nederlander", "Schaatsen op natuurijs", "Ik val alleen maar"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Hoe motiveer jij jezelf om te sporten?",
+    "answers": ["Met een sportbuddy", "Muziek op en gaan", "Een doel stellen", "Ik heb geen motivatie nodig"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Welke sport deed je als kind?",
+    "answers": ["Voetbal", "Zwemmen", "Turnen of dans", "Ik speelde liever buiten"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Zou je meedoen aan een obstacle run?",
+    "answers": ["Ja, klinkt geweldig!", "Alleen als mijn date meegaat", "Misschien als ik meer train", "Absoluut niet"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Hoe belangrijk is sport in een relatie?",
+    "answers": ["Heel belangrijk — samen sporten is leuk", "Leuk maar niet nodig", "Eigen sportritme is prima", "Sport is niet mijn ding"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Welke watersport spreekt je aan?",
+    "answers": ["Surfen", "Zeilen", "Suppen", "Waterski of wakeboarden"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "iPhone of Android?",
+    "answers": ["iPhone, altijd", "Android, meer vrijheid", "Maakt me niet uit", "Ik wissel regelmatig"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Hoe tech-savvy ben jij?",
+    "answers": ["Heel erg — ik hou van gadgets", "Gemiddeld — ik kan me redden", "Niet zo — ik vraag altijd hulp", "Ik werk in tech"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Social media: welk platform gebruik je het meest?",
+    "answers": ["Instagram", "TikTok", "X/Twitter", "Ik gebruik nauwelijks social media"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Wat vind je van AI?",
+    "answers": ["Fascinerend en veelbelovend", "Een beetje eng", "Handig als hulpmiddel", "Het gaat ons allemaal vervangen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Gaming console of PC?",
+    "answers": ["PlayStation", "Xbox", "PC master race", "Ik game op mijn telefoon"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Smartwatch: handig of overbodig?",
+    "answers": ["Handig, ik draag er een", "Overbodig, ik heb mijn telefoon", "Leuk voor sport", "Ik draag liever een normaal horloge"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Hoe snel upgrade jij je telefoon?",
+    "answers": ["Elk jaar het nieuwste model", "Om de 2-3 jaar", "Als hij kapotgaat", "Ik geef niet om telefoons"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Welke app kun je niet zonder?",
+    "answers": ["WhatsApp", "Spotify", "Google Maps", "Instagram"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Hoe voel je je over dating apps?",
+    "answers": ["Geweldig — zo ontmoet je mensen", "Noodzakelijk kwaad", "Ik vind het awkward", "Het kan leuk zijn met de juiste app"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Netflix, Disney+ of HBO Max?",
+    "answers": ["Netflix", "Disney+", "HBO Max", "Ik heb ze allemaal"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Zou je in een zelfrijdende auto stappen?",
+    "answers": ["Ja, graag!", "Alleen als het bewezen veilig is", "Nee, ik rij liever zelf", "Dat klinkt eng"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Hoeveel tijd besteed je per dag aan je telefoon?",
+    "answers": ["Minder dan 2 uur", "2-4 uur", "4-6 uur", "Liever niet zeggen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Smart home: ja of nee?",
+    "answers": ["Ja, alles is geautomatiseerd", "Een paar slimme apparaten", "Nee, ik hou het simpel", "Ik wil het maar het is duur"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Wat is jouw favoriete gadget?",
+    "answers": ["Noise-cancelling koptelefoon", "E-reader", "Drone", "Mijn telefoon is genoeg"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "VR: de toekomst of een hype?",
+    "answers": ["De toekomst, absoluut", "Leuk maar nog niet daar", "Een hype die voorbijgaat", "Ik heb het nog nooit geprobeerd"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Hoe reageer je als je wifi uitvalt?",
+    "answers": ["Paniek!", "Ik gebruik mobiele data", "Eindelijk rust", "Ik ga iets offline doen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Strand of bergen?",
+    "answers": ["Strand — zon en zee", "Bergen — natuur en avontuur", "Stad — cultuur en eten", "Een mix van alles"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Hoe reis je het liefst?",
+    "answers": ["Vliegen — snel en ver", "Trein — het landschap zien", "Roadtrip — vrijheid", "Backpacken — avontuurlijk"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Welk land staat bovenaan je bucketlist?",
+    "answers": ["Japan", "Italië", "Nieuw-Zeeland", "Colombia"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Hotel, Airbnb of hostel?",
+    "answers": ["Hotel — luxe en comfort", "Airbnb — als een local", "Hostel — sociale sfeer", "Kamperen!"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Alleen reizen of met iemand?",
+    "answers": ["Alleen — vrijheid", "Met een partner — romantisch", "Met vrienden — gezellig", "In een groepsreis — zorgeloos"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Welk soort vakantie past bij jou?",
+    "answers": ["All-inclusive relaxen", "Avontuurlijke rondreis", "Stedentrip", "Road trip zonder plan"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Hoeveel landen heb je bezocht?",
+    "answers": ["Minder dan 5", "5-15", "15-30", "Meer dan 30"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Wat is het eerste dat je doet in een nieuwe stad?",
+    "answers": ["Lokaal eten zoeken", "De toeristische plekken bezoeken", "Verdwalen in de straatjes", "Naar het uitzichtpunt gaan"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Koffer inpakken: ruim van tevoren of last minute?",
+    "answers": ["Dagen van tevoren", "De avond ervoor", "Een uur voor vertrek", "Ik vergeet altijd iets"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Welke stad vind je het romantischst?",
+    "answers": ["Parijs", "Rome", "Barcelona", "Amsterdam bij nacht"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Zou je in het buitenland willen wonen?",
+    "answers": ["Ja, zo snel mogelijk", "Misschien tijdelijk", "Nee, Nederland is thuis", "Ik woon al in het buitenland"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Wat neem je altijd mee op reis?",
+    "answers": ["Mijn koptelefoon", "Een goed boek", "Snacks voor onderweg", "Mijn camera"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Hoe plan je een reis?",
+    "answers": ["Alles tot in detail gepland", "Hoofdlijnen gepland, rest spontaan", "Helemaal geen plan", "Ik laat iemand anders plannen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Welke Europese stad wil je nog bezoeken?",
+    "answers": ["Praag", "Lissabon", "Stockholm", "Athene"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Lange vlucht: hoe overleef je die?",
+    "answers": ["Films kijken", "Slapen", "Muziek en lezen", "Met mijn buurman praten"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Ideale reisbestemming voor een koppel?",
+    "answers": ["Santorini, Griekenland", "Bali, Indonesië", "Toscane, Italië", "Maldiven"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Wat mis je het meest als je op reis bent?",
+    "answers": ["Mijn eigen bed", "Mijn huisdier", "Nederlandse eten", "Eigenlijk niets — ik geniet"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welke Nederlandse film is een must-see?",
+    "answers": ["Turks Fruit", "De Tweeling", "Flodder", "Alles is Liefde"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Kroket of frikandel?",
+    "answers": ["Kroket, altijd", "Frikandel speciaal", "Kaassouflé", "Ze zijn allemaal lekker"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Als je één Nederlandse traditie moest afschaffen, welke?",
+    "answers": ["Verjaardagskring", "Drie zoenen", "Hagelslag op brood uitleggen aan buitenlanders", "Geen — ik hou van ze allemaal"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Houd je van puzzelen?",
+    "answers": ["Ja, ik ben gek op puzzels", "Alleen woordpuzzels", "Sudoku is mijn ding", "Nee, te veel geduld nodig"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Welke Nederlandse cabaretier is het grappigst?",
+    "answers": ["Theo Maassen", "Youp van 't Hek", "Peter Pannekoek", "Jochem Myjer"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hoe belangrijk is duurzaamheid voor jou?",
+    "answers": ["Heel belangrijk — ik doe er alles aan", "Ik probeer bewuste keuzes te maken", "Ik denk er niet zo over na", "Ik voel me er soms schuldig over"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welke Nederlandse artiest luister je het meest?",
+    "answers": ["Davina Michelle", "Snelle", "Goldband", "André Hazes"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "WK voetbal: hoe fanatiek ben jij?",
+    "answers": ["Oranje gekte — alles oranje!", "Ik kijk de wedstrijden", "Alleen de finale", "Maakt me niet uit"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Hoe ga je om met je privacy online?",
+    "answers": ["Heel voorzichtig", "Redelijk bewust", "Ik denk er niet zo over na", "Alles staat op privé"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Favoriete Nederlandse stad voor een dagje uit?",
+    "answers": ["Amsterdam", "Utrecht", "Rotterdam", "Den Haag"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoe ga je om met afwijzing?",
+    "answers": ["Ik verwerk het snel", "Het raakt me diep", "Ik leer ervan", "Ik praat erover met vrienden"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat maakt jou uniek?",
+    "answers": ["Mijn humor", "Mijn passie", "Mijn empathie", "Alles samen"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Wie is jouw favoriete acteur of actrice?",
+    "answers": ["Leonardo DiCaprio", "Margot Robbie", "Tom Hanks", "Zendaya"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welke keukenmachine is onmisbaar?",
+    "answers": ["Airfryer", "Blender", "Koffiezetapparaat", "Magnetron"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Als je een beroep moest kiezen dat niets met geld te maken heeft?",
+    "answers": ["Dierenverzorger", "Reisleider", "Muzikant", "Chef-kok"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Heb je een verzameling?",
+    "answers": ["Ja, vinyl platen", "Ja, boeken", "Ja, sneakers", "Nee, ik verzamel niets"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Wat is grappiger: slimme humor of domme humor?",
+    "answers": ["Slimme humor — subtiel en scherp", "Domme humor — hoe dommer hoe beter", "Beide op hun eigen manier", "Dark humor is het grappigst"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wat is jouw ochtenddrankje?",
+    "answers": ["Espresso", "Groene thee", "Sinaasappelsap", "Water is genoeg"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welk genre is het beste voor een date?",
+    "answers": ["Jazz — sfeervol", "R&B — romantisch", "Akoestisch — intiem", "Maakt niet uit — het gezelschap telt"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Strandvolleybal: meedoen of kijken?",
+    "answers": ["Meedoen!", "Kijken met een drankje", "Ik bouw liever zandkastelen", "Allebei leuk"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Welke tech-trend vind je het interessantst?",
+    "answers": ["Kunstmatige intelligentie", "Elektrische auto's", "Virtual reality", "Ruimtevaart"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Zomer of wintervakantie?",
+    "answers": ["Zomer — zon en strand", "Winter — skiën en sneeuw", "Allebei!", "Ik reis het hele jaar door"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoe belangrijk is alleen-tijd voor jou?",
+    "answers": ["Essentieel — ik heb het nodig", "Af en toe is fijn", "Niet zo belangrijk", "Ik ben liever met mensen"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat is jouw grootste angst?",
+    "answers": ["Alleen zijn", "Falen", "Het onbekende", "Spinnen (sorry)"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoe ga je om met verandering?",
+    "answers": ["Ik omarm het", "Ik heb tijd nodig", "Het maakt me nerveus", "Verandering is groei"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Sequel: meestal beter of slechter?",
+    "answers": ["Meestal slechter", "Soms verrassend goed", "Hangt van de franchise af", "Ik kijk ze altijd toch"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Broodje gezond of tosti?",
+    "answers": ["Broodje gezond — ik let op mezelf", "Tosti — smelt kaas is leven", "Afwisselend", "Ik sla lunch over"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Je mag één beroemdheid uitnodigen voor diner. Wie?",
+    "answers": ["Elon Musk", "Beyoncé", "Keanu Reeves", "Gordon Ramsay"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Welk type vakantie is ook een hobby?",
+    "answers": ["Duiken", "Fotografie-reis", "Kookcursus in het buitenland", "Surfkamp"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Wat is je favoriete type internethumor?",
+    "answers": ["Memes", "TikTok-video's", "Reddit-threads", "Twitter-grappen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Meditatie: doe je het?",
+    "answers": ["Ja, dagelijks", "Soms, als ik gestrest ben", "Ik heb het geprobeerd maar kan niet stilzitten", "Nee, niet mijn ding"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welk liedje zou je draaien op onze eerste date?",
+    "answers": ["Iets van Frank Sinatra", "Een chill lo-fi nummer", "Ons favoriete nummer — als we dat ontdekken", "Geen muziek, gewoon praten"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Hardlopen: 's ochtends of 's avonds?",
+    "answers": ["'s Ochtends — frisse start", "'s Avonds — hoofd leegmaken", "Ik ren niet", "Wanneer ik zin heb"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Welke app zou je ontwikkelen als je kon?",
+    "answers": ["Een betere dating app", "Een productiviteitstool", "Een game", "Iets voor het milieu"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Welk continent wil je nog ontdekken?",
+    "answers": ["Zuid-Amerika", "Azië", "Afrika", "Australië/Oceanië"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat is jouw Hogwarts-huis?",
+    "answers": ["Gryffindor — dapper", "Hufflepuff — loyaal", "Ravenklaw — slim", "Zwadderich — ambitieus"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoe handel je als je verliefd wordt?",
+    "answers": ["Ik zeg het meteen", "Ik hint subtiel", "Ik wacht af", "Ik raak in paniek"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Marvel of DC?",
+    "answers": ["Marvel, altijd", "DC heeft betere verhalen", "Allebei leuk", "Geen van beide"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Wat is jouw favoriete maaltijdmoment?",
+    "answers": ["Ontbijt — de dag goed beginnen", "Lunch — even pauze", "Diner — uitgebreid genieten", "Snacken tussendoor"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welke dag van de week is het best?",
+    "answers": ["Vrijdag — het weekend begint!", "Zaterdag — geen verplichtingen", "Zondag — relaxen", "Maandag — frisse start"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Wat is jouw ideale creatieve uitlaatklep?",
+    "answers": ["Tekenen of schilderen", "Muziek maken", "Schrijven", "Koken"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Welk type grap vertel je op een feestje?",
+    "answers": ["Een woordgrap", "Een lang verhaal met een twist", "Iets dat me echt is overkomen", "Ik maak geen grappen, ik ben het publiek"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wat is jouw avondritueel?",
+    "answers": ["Lezen voor het slapen", "Scrollen op mijn telefoon", "Een serie kijken", "Journalen of reflecteren"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Als je leven een soundtrack had, welk genre?",
+    "answers": ["Pop — vrolijk en catchy", "Rock — intens en energiek", "Jazz — smooth en onvoorspelbaar", "Klassiek — elegant en diep"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Olympische Spelen: welke sport kijk je?",
+    "answers": ["Atletiek", "Zwemmen", "Turnen", "Alles!"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Foto's: cloud of fysiek opslaan?",
+    "answers": ["Cloud — altijd veilig", "Op mijn computer", "Ik print ze uit", "Ik vergeet ze op te slaan"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Welk soort eten zoek je het eerst in het buitenland?",
+    "answers": ["Lokale specialiteiten", "Streetfood", "Een goed restaurant", "Iets bekends voor de zekerheid"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoe belangrijk zijn eerste indrukken voor jou?",
+    "answers": ["Heel belangrijk", "Ik geef mensen een tweede kans", "Niet zo — mensen veranderen", "Mijn eerste indruk klopt meestal"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat geeft je energie in een relatie?",
+    "answers": ["Samen lachen", "Diepgaande gesprekken", "Avonturen beleven", "Gewoon samen zijn is genoeg"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welke serie ben je nu aan het kijken?",
+    "answers": ["Iets op Netflix", "Een misdaadserie", "Ik kijk eigenlijk niets", "Te veel om op te noemen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Chocolade: puur, melk of wit?",
+    "answers": ["Puur — intens", "Melk — klassiek", "Wit — zoet", "Alledrie!"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welke superheld zou je willen zijn?",
+    "answers": ["Spider-Man", "Wonder Woman", "Batman", "Geen — ik ben al super"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Welk type evenement bezoek je het liefst?",
+    "answers": ["Muziekfestival", "Foodmarkt", "Kunsttentoonstelling", "Sportmatch"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Wat is de beste ijsbreker op een date?",
+    "answers": ["Een grappige vraag", "Een eerlijk compliment", "Iets gênants over jezelf vertellen", "Gewoon vragen hoe het gaat"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hoe besteed je je geld het liefst?",
+    "answers": ["Ervaringen en reizen", "Lekker eten", "Kleding en stijl", "Sparen voor de toekomst"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welk nummer ken je uit je hoofd?",
+    "answers": ["Bohemian Rhapsody", "Een Disney-liedje", "Een nummer van mijn favoriete artiest", "Ik ken geen teksten uit mijn hoofd"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Ben jij een goede verliezer?",
+    "answers": ["Ja, sportief verlies ik", "Niet echt, ik baal flink", "Ik doe alsof het me niet boeit", "Ik verlies nooit"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Eerste bericht op een dating app: wat stuur je?",
+    "answers": ["Een creatieve vraag", "Een compliment", "Hey, hoe gaat het?", "Een meme of GIF"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Avontuurlijke reis: jungle of woestijn?",
+    "answers": ["Jungle — mysterieus en groen", "Woestijn — eindeloos en vrij", "Poolgebied — uniek en koud", "Ik blijf liever bij de beschaving"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Neem jij snel risico's?",
+    "answers": ["Ja, ik leef op de rand", "Soms, berekende risico's", "Nee, ik ben voorzichtig", "Alleen in de liefde"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat zoek je op dit moment in je leven?",
+    "answers": ["Avontuur en groei", "Stabiliteit en rust", "Liefde en verbinding", "Plezier en vrijheid"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Animatiefilm: Pixar of Ghibli?",
+    "answers": ["Pixar — nostalgie", "Ghibli — prachtig", "Disney klassiekers", "Ik kijk geen animatie"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Wat drink je op een date?",
+    "answers": ["Wijn", "Cocktail", "Bier", "Iets zonder alcohol"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Je wordt wakker als het tegenovergestelde geslacht. Wat doe je eerst?",
+    "answers": ["In de spiegel kijken", "Shoppen voor nieuwe kleren", "Mijn vrienden bellen", "Uitzoeken hoe ik terugga"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Zou je een cursus dansen volgen met je date?",
+    "answers": ["Ja, klinkt romantisch!", "Alleen als ik niet hoef te leiden", "Nee, ik heb twee linkse voeten", "Salsa of tango klinkt leuk"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Ben je grappig of denk je dat je grappig bent?",
+    "answers": ["Ik ben objectief grappig", "Ik denk het maar weet het niet zeker", "Mijn humor is een acquired taste", "Ik probeer het niet eens"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hoe ga je om met een kater?",
+    "answers": ["Veel water en uitslapen", "Vette hap eten", "Doorfeesten", "Ik krijg nooit een kater"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welk liedje maakt je emotioneel?",
+    "answers": ["Fix You — Coldplay", "Someone Like You — Adele", "Hallelujah — Leonard Cohen", "Ik ben niet zo emotioneel bij muziek"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Welke sport vind je het saaiist om te kijken?",
+    "answers": ["Golf", "Cricket", "Snooker", "Ik vind alle sport saai"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Crypto: investeer je erin?",
+    "answers": ["Ja, actief", "Een klein beetje", "Nee, te riskant", "Ik snap het niet helemaal"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Hoe lang is jouw ideale vakantie?",
+    "answers": ["Een lang weekend", "Een week", "Twee weken", "Een maand of langer"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat zou je veranderen aan jezelf?",
+    "answers": ["Minder piekeren", "Meer geduld hebben", "Meer zelfvertrouwen", "Niets — ik accepteer mezelf"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welke filmklassieker heb je nog niet gezien?",
+    "answers": ["The Godfather", "Pulp Fiction", "Titanic", "Ik heb ze allemaal gezien"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Pizza: welke topping?",
+    "answers": ["Margherita — simpel is best", "Pepperoni — klassiek", "Vier kazen — hoe meer kaas hoe beter", "Hawaï — ja, met ananas"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Als je in een videogame leefde, welk genre?",
+    "answers": ["RPG — avontuur en verhaal", "Sandbox — onbeperkte vrijheid", "Simulatie — rustig en strategisch", "Racegame — snelheid!"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Welk talent zou je willen hebben?",
+    "answers": ["Zingen als een professional", "Schilderen als Vermeer", "Koken als een Michelin-chef", "Dansen als een ster"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hoe lang doe je erover om 's ochtends klaar te zijn?",
+    "answers": ["15 minuten", "30 minuten", "Een uur of meer", "Te lang, ik ben altijd laat"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ben je eerder rationeel of emotioneel?",
+    "answers": ["Rationeel — hoofd boven hart", "Emotioneel — ik voel alles diep", "Een mix", "Hangt van de situatie af"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welk drankje bestel je in een club?",
+    "answers": ["Gin-tonic", "Bier", "Vodka met iets", "Ik drink niet"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat valt je als eerste op bij iemand?",
+    "answers": ["Ogen", "Glimlach", "Stijl", "Uitstraling"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoe belangrijk is fysieke aantrekkingskracht?",
+    "answers": ["Heel belangrijk", "Belangrijk maar niet alles", "Persoonlijkheid gaat voor", "Het groeit met de tijd"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wat is jouw ideale eerste date?",
+    "answers": ["Koffie en wandelen", "Diner bij kaarslicht", "Iets actiefs samen doen", "Drankjes in een leuke bar"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ben je jaloers in een relatie?",
+    "answers": ["Een beetje, het is menselijk", "Nee, ik vertrouw volledig", "Soms, maar ik werk eraan", "Alleen als er reden voor is"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welke emoji beschrijft jouw dating-leven?",
+    "answers": ["🎢 — een achtbaan", "😴 — rustig tot saai", "🔥 — heet en spannend", "🤷 — geen idee wat ik doe"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hoe ga je om met social media in een relatie?",
+    "answers": ["We posten alles samen", "Privé houden — niemands zaak", "Af en toe iets leuks delen", "Ik heb geen social media"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat is jouw reactie als iemand je leuk vindt?",
+    "answers": ["Ik word verlegen", "Ik ben gevleid", "Ik flirt terug", "Ik geloof het niet"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welk eten beschrijft jouw persoonlijkheid?",
+    "answers": ["Pizza — veelzijdig en geliefd", "Sushi — verfijnd en interessant", "Tacos — leuk en avontuurlijk", "Soep — warm en troostend"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Wat is jouw favoriete type accommodatie?",
+    "answers": ["Boutique hotel", "Camping in de natuur", "Gezellig Airbnb", "Luxe resort"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Hoe vaak check je je telefoon per dag?",
+    "answers": ["Continu", "Een paar keer per uur", "Alleen als het nodig is", "Ik probeer het te minderen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Welke danssoort zou je willen leren?",
+    "answers": ["Salsa", "Tango", "Streetdance", "Wals"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Hoe noem jij je partner in een relatie?",
+    "answers": ["Schat of lief", "Bij hun naam", "Een bijnaam die alleen wij begrijpen", "Baby of babe"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Hoe vaak probeer je iets nieuws?",
+    "answers": ["Elke week iets nieuws", "Elke maand", "Een paar keer per jaar", "Ik hou van routine"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welke film liet je het langst nadenken?",
+    "answers": ["Inception", "Interstellar", "The Matrix", "Fight Club"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welk liedje beschrijft hoe je je vandaag voelt?",
+    "answers": ["Happy — alles gaat goed", "Stressed Out — drukke dag", "Believer — gemotiveerd", "Lazy Song — luie dag"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Geloof je in het lot of maak je je eigen geluk?",
+    "answers": ["Het lot bepaalt alles", "Ik maak mijn eigen geluk", "Een combinatie van beide", "Ik weet het niet zeker"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hoe lang kun je zonder je telefoon?",
+    "answers": ["Een paar minuten max", "Een paar uur", "Een hele dag", "Ik zou het graag langer willen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welk ijs smaakt het best?",
+    "answers": ["Vanille — tijdloos", "Chocolade — intens", "Aardbei — fris", "Cookie dough — alles in één"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welk seizoen van het jaar maakt je het gelukkigst?",
+    "answers": ["Zomer — warmte en vrijheid", "Herfst — gezelligheid", "Winter — kerst en sneeuw", "Lente — alles bloeit"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vliegtuig: raam of gangpad?",
+    "answers": ["Raam — uitzicht!", "Gangpad — beenruimte", "Maakt niet uit", "Ik vlieg niet graag"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Grote groep of klein gezelschap?",
+    "answers": ["Grote groep — hoe meer zielen hoe meer vreugd", "Klein gezelschap — diepere gesprekken", "Hangt van mijn humeur af", "Liefst met z'n tweeën"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wat is jouw favoriete manier om te ontspannen?",
+    "answers": ["Een warm bad nemen", "Wandelen in de natuur", "Muziek luisteren", "Yoga of meditatie"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ben je eerder een leider of volger?",
+    "answers": ["Leider — ik neem initiatief", "Volger — ik ga met de stroom mee", "Hangt van de situatie af", "Ik ben een teamspeler"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welke superkracht zou het slechtst zijn om te hebben?",
+    "answers": ["Gedachten lezen — te veel info", "Alles aanraken wordt goud", "Eeuwig leven zonder je dierbaren", "Altijd de waarheid moeten zeggen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Heb je een huisdier?",
+    "answers": ["Ja, een hond", "Ja, een kat", "Ja, iets anders", "Nee, maar ik wil er een"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Welke retro-technologie mis je?",
+    "answers": ["Nokia 3310 — onverwoestbaar", "iPod — muziek puur", "MSN Messenger", "Niets, nu is het beter"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Fitness: cardio of krachttraining?",
+    "answers": ["Cardio — lekker zweten", "Krachttraining — gains", "Een mix van beide", "Ik sport niet in de gym"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welk liedje zet je op als je verdrietig bent?",
+    "answers": ["Iets vrolijks om me op te beuren", "Een verdrietig nummer om mee te huilen", "Ik luister geen muziek als ik verdrietig ben", "Mijn 'feel-good' playlist"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Boekverfilming: boek of film beter?",
+    "answers": ["Het boek is altijd beter", "Soms is de film beter", "Ik lees het boek niet", "Ze vullen elkaar aan"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welke maaltijd zou je elke dag kunnen eten?",
+    "answers": ["Pasta", "Sushi", "Pizza", "Een goede salade"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat maakt een goed gesprek voor jou?",
+    "answers": ["Eerlijkheid en openheid", "Humor en lichtheid", "Diepgang en filosofie", "Luisteren en begrijpen"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hoe vier je je verjaardag?",
+    "answers": ["Groot feest", "Etentje met close vrienden", "Dagje weg", "Ik vier het liever niet"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Als je leven een liedje was, wat zou de titel zijn?",
+    "answers": ["Werk in uitvoering", "De onverwachte wending", "Altijd op zoek", "Het mooiste avontuur"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Welk seizoen is het best voor je favoriete hobby?",
+    "answers": ["Zomer — alles buiten", "Winter — gezellig binnen", "Lente — frisse start", "Mijn hobby kent geen seizoen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoe ga je om met heimwee?",
+    "answers": ["Bellen met thuis", "Comfort food eten", "Even uithuilen en doorgaan", "Ik heb geen heimwee"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Welk vervoersmiddel is het romantischst?",
+    "answers": ["Trein door Europa", "Bootje op een meer", "Cabrio langs de kust", "Wandelend door een oude stad"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Hoe reageer je op een blue tick zonder antwoord?",
+    "answers": ["Ik wacht geduldig", "Ik stuur nog een bericht", "Ik baal maar laat het gaan", "Blue ticks staan uit bij mij"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Welke sport zou je op de Olympische Spelen willen zien?",
+    "answers": ["Padel", "E-sports", "Klimmen", "Breakdance"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Wat maakt een relatie leuker: binnenpretjes of grote avonturen?",
+    "answers": ["Binnenpretjes — onze eigen wereld", "Grote avonturen samen", "Een combinatie", "Gewoon samen zijn is al leuk"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welke keuken zou je willen leren beheersen?",
+    "answers": ["Japans — precisie en smaak", "Italiaans — simpel en goed", "Frans — techniek en elegantie", "Thais — kruiden en balans"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welk type documentaire boeit je?",
+    "answers": ["Natuur", "True crime", "Wetenschap", "Biografie"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat vind je het moeilijkst in het leven?",
+    "answers": ["Geduld hebben", "Nee zeggen", "Loslaten", "Keuzes maken"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Welke dag in de week is jouw favoriete date-avond?",
+    "answers": ["Vrijdagavond", "Zaterdagavond", "Doordeweeks — minder druk", "Elke avond kan een date-avond zijn"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Je zit vast in een lift met je crush. Wat doe je?",
+    "answers": ["Rustig een gesprek beginnen", "Grappen maken om de spanning te breken", "Stilletjes wachten", "Dit is het begin van ons verhaal"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Welk type reis combineert het best met je hobby?",
+    "answers": ["Surftrip naar Portugal", "Culturele reis door Japan", "Kookworkshop in Italië", "Trektocht in de Alpen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welk liedje zet je op om te feesten?",
+    "answers": ["Anything goes — als het maar beweegt", "Een classic disco hit", "Het nieuwste nummer 1", "Ik kies niets — ik dans op alles"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Welke gadget zou je willen uitvinden?",
+    "answers": ["Een teleporter", "Een gedachtenlezer", "Een tijdvertrager", "Een onzichtbaarheidskap"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Welk sportmoment vind je het meest memorabel?",
+    "answers": ["WK finale winnen", "Een persoonlijk record breken", "Een team-overwinning vieren", "Ik heb geen sportmomenten"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Wat is het verste dat je van huis bent geweest?",
+    "answers": ["Een ander continent", "Een paar duizend kilometer", "Alleen binnen Europa", "Ik ben een thuisblijver"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Welk compliment waarder je het meest?",
+    "answers": ["Over mijn uiterlijk", "Over mijn persoonlijkheid", "Over mijn prestaties", "Elk oprecht compliment"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoe lang ken je iemand voordat je ze vertrouwt?",
+    "answers": ["Ik vertrouw snel", "Na een paar ontmoetingen", "Dat duurt lang bij mij", "Vertrouwen moet je verdienen"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welke acteur zou jou spelen in een film over je leven?",
+    "answers": ["Iemand die op me lijkt", "Ryan Gosling / Margot Robbie", "Een onbekende — ik ben uniek", "Maakt niet uit als het verhaal klopt"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hoe ga je om met eenzaamheid?",
+    "answers": ["Ik geniet ervan", "Ik bel iemand op", "Ik ga naar buiten", "Ik vind het moeilijk"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welk gerecht mislukt altijd bij jou?",
+    "answers": ["Pannenkoeken — altijd aangebrand", "Rijst — te nat of te droog", "Ik kan alles koken", "Alles mislukt eerlijk gezegd"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welk Hogwarts-vak zou je kiezen?",
+    "answers": ["Verweer tegen de Zwarte Kunsten", "Toverdranken", "Bezweringen", "Verzorging van Fabeldieren"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Podcast of audioboek?",
+    "answers": ["Podcast — gevarieerd", "Audioboek — een heel verhaal", "Allebei!", "Geen van beide — ik lees liever"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat inspireert je het meest?",
+    "answers": ["Natuur en de wereld om me heen", "Mensen die obstakels overwinnen", "Kunst en creativiteit", "Wetenschap en ontdekkingen"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Wat is erger: een saaie date of een gênante date?",
+    "answers": ["Saai — dan is er geen hoop", "Gênant — ik sterf van schaamte", "Gênant wordt later een goed verhaal", "Allebei even erg"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Eerste dans op een bruiloft: welk liedje?",
+    "answers": ["Perfect — Ed Sheeran", "At Last — Etta James", "Iets unieks voor ons", "Ik wil liever niet dansen"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "E-book of fysiek boek?",
+    "answers": ["Fysiek — ik hou van de geur", "E-book — praktisch", "Allebei, hangt van de situatie af", "Audioboek is het best"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Welk land heeft het beste eten?",
+    "answers": ["Italië", "Japan", "Mexico", "Thailand"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Welke sport is het meest ondergewaardeerd?",
+    "answers": ["Padel", "Badminton", "Handbal", "Klimmen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Als je jezelf in drie woorden moest beschrijven?",
+    "answers": ["Avontuurlijk, warm, eerlijk", "Grappig, trouw, spontaan", "Rustig, slim, empathisch", "Creatief, ambitieus, lief"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welke true crime documentaire zou je aanraden?",
+    "answers": ["Making a Murderer", "Tiger King", "The Tinder Swindler", "Don't F**k with Cats"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welke drank past het best bij jou?",
+    "answers": ["Rode wijn — warm en complex", "Gin-tonic — fris en stijlvol", "Bier — relaxed en gezellig", "Smoothie — gezond en energiek"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Als je een huisdier kon zijn, welk?",
+    "answers": ["Golden Retriever — vrolijk en loyaal", "Kat — onafhankelijk en eigenwijs", "Papegaai — praatgraag en kleurrijk", "Schildpad — rustig en wijs"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Wat is jouw favoriete indoor activiteit?",
+    "answers": ["Bakken", "Puzzelen", "Gamen", "Tekenen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Wat is het gênantste dat je op een date hebt meegemaakt?",
+    "answers": ["Eten gemorst op mezelf", "De verkeerde naam gezegd", "Op de verkeerde persoon gewacht", "Ik heb nog nooit een gênante date gehad"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hoe definieer jij succes?",
+    "answers": ["Gelukkig zijn", "Financiële vrijheid", "Goede relaties", "Mijn passie volgen"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welk nummer zou je zingen op een bruiloft?",
+    "answers": ["Perfect van Ed Sheeran", "At Last van Etta James", "Iets typisch Nederlands", "Ik zou niet durven zingen"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Hoe belangrijk is het dat je partner sportief is?",
+    "answers": ["Heel belangrijk", "Leuk maar niet nodig", "Maakt me niet uit", "We hoeven niet dezelfde sport te doen"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Welke app gebruik je het meest voor entertainment?",
+    "answers": ["YouTube", "TikTok", "Netflix", "Spotify"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Wat is het mooiste dat je ooit op reis hebt gezien?",
+    "answers": ["Een zonsondergang op het strand", "Bergen met sneeuw", "Een historische stad", "Wilde dieren in hun habitat"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoe ga je om met teleurstelling?",
+    "answers": ["Ik verwerk het snel", "Ik heb tijd nodig", "Ik praat erover", "Ik leer ervan en ga door"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welke filmreeks is overrated?",
+    "answers": ["Star Wars", "Lord of the Rings", "Fast & Furious", "Geen — ik hou van ze allemaal"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Wat is je favoriete seizoensgerecht?",
+    "answers": ["Asperges in de lente", "BBQ in de zomer", "Erwtensoep in de winter", "Appeltaart in de herfst"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Als je onzichtbaar was voor een dag, wat zou je doen?",
+    "answers": ["Achter de schermen kijken bij beroemdheden", "Gratis reizen", "Grappen uithalen", "Gewoon genieten van de rust"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Welk type boek lees je het liefst?",
+    "answers": ["Thriller", "Romantiek", "Fantasy", "Persoonlijke ontwikkeling"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Welk type grappen vertel je het liefst?",
+    "answers": ["Woordgrappen", "Situatiehumor", "Zelfspot", "Observatiehumor"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wat is je favoriete manier om een avond door te brengen?",
+    "answers": ["Uit eten met vrienden", "Thuis met een goed boek", "Naar een concert of show", "Borrelen op een terras"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welk nummer maakt je nostalgisch?",
+    "answers": ["Een nummer uit mijn jeugd", "De titelsong van een kinderserie", "Het eerste nummer waar ik op danste", "Iets van mijn ouders"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Welke sport zou je willen leren?",
+    "answers": ["Golf", "Boksen", "Surfen", "Paardrijden"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Wat zou je ontwikkelen als je programmeur was?",
+    "answers": ["Een betere dating app", "Een productiviteitsapp", "Een game", "Iets voor het milieu"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Wat is je favoriete vervoermiddel op vakantie?",
+    "answers": ["Scooter of motor", "Fiets", "Te voet", "Huurauto"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoe loyaal ben jij?",
+    "answers": ["Extreem loyaal — voor altijd", "Heel loyaal, maar met grenzen", "Loyaal totdat je me verkeerd behandelt", "Loyaliteit moet wederzijds zijn"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welke actrice bewonder je?",
+    "answers": ["Meryl Streep", "Carice van Houten", "Zendaya", "Florence Pugh"],
+    "tone": "fun",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welke snack neem je mee naar de bioscoop?",
+    "answers": ["Popcorn en cola", "M&M's en nachos", "Stiekem eigen snoep", "Niks, ik eet daarvoor"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Je mag één vaardigheid perfect beheersen. Welke?",
+    "answers": ["Een taal vloeiend spreken", "Een instrument bespelen", "Professioneel koken", "Martial arts"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Wat is jouw favoriete seizoen om buiten te zijn?",
+    "answers": ["Lente — alles bloeit", "Zomer — warm en lang licht", "Herfst — mooie kleuren", "Winter — sneeuw en frisse lucht"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Ken je een goede openingszin?",
+    "answers": ["Ja, maar ik gebruik ze nooit", "Ik begin liever met een grap", "Ik zeg gewoon hoi", "Openingszinnen zijn cringe"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Wat is je favoriete manier om te ontstressen?",
+    "answers": ["Een warm bad", "Muziek luisteren", "Een wandeling in de natuur", "Ademhalingsoefeningen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welke artiest zou je live willen zien?",
+    "answers": ["Beyoncé", "Coldplay", "The Weeknd", "Adele"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Welke sport is het leukst om samen te doen?",
+    "answers": ["Padel — snel en sociaal", "Wandelen — rustig en diep", "Dansen — romantisch", "Klimmen — vertrouwen opbouwen"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Hoe vaak kijk je naar je schermtijd?",
+    "answers": ["Elke week — ik probeer te minderen", "Nooit — ik wil het niet weten", "Soms uit nieuwsgierigheid", "Ik heb het uitgeschakeld"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Welk soort reis zou je doen voor je verjaardag?",
+    "answers": ["Stedentrip naar een Europese stad", "Strandvakantie ergens warm", "Avontuurlijke trektocht", "Thuis vieren is ook prima"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat vind je het moeilijkst om te zeggen?",
+    "answers": ["Sorry", "Ik hou van je", "Nee", "Ik heb hulp nodig"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welke filmklassieker verdient een remake?",
+    "answers": ["Dirty Dancing", "E.T.", "The Breakfast Club", "Geen enkele — laat klassiekers met rust"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welk ontbijtgerecht maak je voor je partner?",
+    "answers": ["Pannenkoeken met vers fruit", "Eieren Benedict", "Croissants uit de oven", "Ik haal iets bij de bakker"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Als je een nieuw land kon stichten, hoe zou het heten?",
+    "answers": ["Chillistan", "Biertopia", "Kaasland 2.0", "Ik ben al blij met Nederland"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Welke vaardigheid wil je verbeteren?",
+    "answers": ["Koken", "Een taal leren", "Fitness", "Communicatie"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Wat is jouw reactie op een awkward stilte?",
+    "answers": ["Ik maak een grap", "Ik stel een vraag", "Ik geniet ervan — stilte is oké", "Ik word nerveus"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Ben je een vroege planmaker of last-minute persoon?",
+    "answers": ["Vroeg — alles staat in mijn agenda", "Last-minute — leeft spannender", "Een mix van beide", "Ik laat anderen plannen maken"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Als je één concert opnieuw kon beleven, welk?",
+    "answers": ["Het beste concert dat ik ooit heb gezien", "Een legendarisch concert uit het verleden", "Een festival ervaring", "Ik ben nog nooit naar een concert geweest"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Wat is je grootste sportieve prestatie?",
+    "answers": ["Een wedstrijd winnen", "Een persoonlijk record breken", "Het afmaken van een uitdaging", "Ik heb geen sportieve prestaties"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Welke toekomstige technologie wil je het meest?",
+    "answers": ["Teleportatie", "Vliegende auto's", "Herseninterface", "Eeuwig leven-technologie"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Wat is het meest avontuurlijke dat je op reis hebt gedaan?",
+    "answers": ["Bungee jumpen", "Met een vreemdeling gereisd", "In een vreemd land verdwaald", "Ik ben niet zo avontuurlijk"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hoe ga je om met verandering in een relatie?",
+    "answers": ["Ik pas me makkelijk aan", "Ik heb tijd nodig", "Ik bespreek het openlijk", "Verandering is nodig voor groei"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Welke keuken heb je nog nooit geprobeerd?",
+    "answers": ["Peruviaans", "Ethiopisch", "Koreaans", "Ik heb alles al geprobeerd"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Welke app zou je uitvinden?",
+    "answers": ["Een eerlijke dating app", "Een app die je humeur peilt", "Een app voor spontane plannen", "Een app die je van je telefoon afhoudt"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Heb je weleens iets gemaakst met je handen?",
+    "answers": ["Ja, ik ben best handig", "Een keer, bij een workshop", "Nee, maar ik wil het proberen", "Ik ben hopeloos met mijn handen"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Hoe zorg je voor je mentale gezondheid?",
+    "answers": ["Therapie of coaching", "Sporten en bewegen", "Praten met vrienden", "Tijd voor mezelf nemen"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Welk genre luister je stiekem?",
+    "answers": ["K-pop", "Klassieke muziek", "Country", "Meezingers uit de jaren 90"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Welke sport is het meest romantisch?",
+    "answers": ["Paarrijden", "Salsa dansen", "Samen joggen bij zonsopgang", "IJsschaatsen hand in hand"],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Heb je ooit een digitale detox gedaan?",
+    "answers": ["Ja, en het was bevrijdend", "Geprobeerd maar mislukt", "Nee, maar ik zou het willen", "Waarom zou ik?"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Welke cultuur fascineert je het meest?",
+    "answers": ["Japanse cultuur", "Latijns-Amerikaanse cultuur", "Scandinavische cultuur", "Afrikaanse culturen"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Wat betekent vrijheid voor jou?",
+    "answers": ["Doen wat ik wil, wanneer ik wil", "Financieel onafhankelijk zijn", "Emotionele vrijheid", "Reizen zonder beperkingen"],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Welke serie heb je al drie keer gekeken?",
+    "answers": ["Breaking Bad", "Friends", "Game of Thrones", "Ik kijk niets opnieuw"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Als je één keuken de rest van je leven moest eten?",
+    "answers": ["Italiaans", "Japans", "Mexicaans", "Nederlands — stamppot voor altijd"],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  }
+]

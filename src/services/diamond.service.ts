@@ -97,6 +97,21 @@ export class DiamondService {
     reason: string,
     referenceId?: string,
   ) {
+    // Duplicate guard — prevent same reward being given twice
+    if (referenceId) {
+      const { data: existing } = await supabase
+        .from("diamond_transactions")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("reference_id", referenceId)
+        .maybeSingle();
+
+      if (existing) {
+        console.log(`[Diamond] Duplicate reward skipped: ${referenceId} for user ${userId}`);
+        return { purple: 0 };
+      }
+    }
+
     // Read current balance
     const { data: user, error: readErr } = await supabase
       .from("users")
@@ -108,12 +123,11 @@ export class DiamondService {
       throw Errors.USER_NOT_FOUND();
     }
 
-    // Atomic increment — optimistic lock ensures no concurrent modification
+    // Increment without optimistic lock — safe for sequential calls in same request
     const { data: updated, error: updateErr } = await supabase
       .from("users")
       .update({ purple_diamonds: user.purple_diamonds + amount })
       .eq("id", userId)
-      .eq("purple_diamonds", user.purple_diamonds)
       .select("purple_diamonds")
       .single();
 

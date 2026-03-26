@@ -22,11 +22,13 @@ import notificationRoutes from "./routes/notification.routes.js";
 import exchangeRoutes from "./routes/exchange.routes.js";
 import referralRoutes from "./routes/referral.routes.js";
 import appRoutes from "./routes/app.routes.js";
+import presenceRoutes from "./routes/presence.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { idempotencyMiddleware } from "./middleware/idempotency.js";
 import adminRoutes from "./admin/admin.routes.js";
 import { adminService } from "./admin/admin.service.js";
 import { ensureStorageBuckets } from "./config/supabase.js";
+import { initCrons } from "./cron/index.js";
 
 const app = express();
 app.set('trust proxy', 1);
@@ -42,6 +44,8 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+      "script-src": ["'self'", "'unsafe-inline'"],
+      "script-src-attr": ["'unsafe-inline'"],
       "form-action": ["'self'"],
       "img-src": ["'self'", "data:", "https:"],
       "upgrade-insecure-requests": env.NODE_ENV === "production" ? [] : null,
@@ -152,6 +156,7 @@ app.use("/api/v1/subscriptions", subscriptionRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/exchange", exchangeRoutes);
 app.use("/api/v1/referrals", referralRoutes);
+app.use("/api/v1/users/me/presence", presenceRoutes);
 
 // Error handler (must be last)
 app.use(errorHandler);
@@ -168,6 +173,9 @@ app.listen(env.PORT, () => {
   }
 
   ensureStorageBuckets().catch(console.error);
+
+  // Start cron jobs
+  initCrons();
 });
 
 export default app;

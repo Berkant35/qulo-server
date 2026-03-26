@@ -68,6 +68,8 @@ class AdminController {
       await adminService.cancelSubscription(id);
     } else if (action === "reset_swipes") {
       await adminService.resetSwipes(id);
+    } else if (action === "reset_discovery") {
+      await adminService.resetUserDiscovery(id);
     }
 
     res.redirect(`/admin/users/${id}`);
@@ -103,7 +105,17 @@ class AdminController {
     const active = req.query.active as string;
     const { matches, total } = await adminService.getMatches(page, 20, active);
     const totalPages = Math.ceil(total / 20);
-    res.render("matches", { matches, page, totalPages, total, active: active || "all", session: req.session });
+    res.render("matches", { matches, page, totalPages, total, active: active || "all", session: req.session, csrfToken: req.session.csrfToken });
+  }
+
+  async removeAllMatches(req: Request, res: Response) {
+    try {
+      const count = await adminService.removeAllMatches();
+      console.log(`[Admin] Removed all matches: ${count} matches deleted`);
+    } catch (err: any) {
+      console.error(`[Admin] Remove all matches failed:`, err.message);
+    }
+    res.redirect("/admin/matches");
   }
 
   async transactions(req: Request, res: Response) {
@@ -383,6 +395,57 @@ class AdminController {
       res.render("economy-config-compare", { diff, v1Data, v2Data, error: null, session: req.session });
     } catch (err: any) {
       res.render("economy-config-compare", { diff: null, v1Data: null, v2Data: null, error: err.message, session: req.session });
+    }
+  }
+
+  // ── Test Push — JSON API for quick FCM debugging ───────────────
+  async testPush(req: Request, res: Response) {
+    const userId = req.params.id as string;
+
+    try {
+      // Fetch user's token info
+      const { data: user } = await supabase
+        .from('users')
+        .select('id, email, name, push_token, locale')
+        .eq('id', userId)
+        .single();
+
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      const tokenInfo = {
+        hasToken: !!user.push_token,
+        tokenLength: user.push_token?.length ?? 0,
+        tokenPrefix: user.push_token?.substring(0, 20) ?? null,
+        locale: user.locale,
+      };
+
+      // Try sending a test push
+      const sent = await NotificationService.sendPush(
+        userId,
+        'campaign',
+        { body: 'Bu bir test bildirimidir / This is a test notification' },
+        undefined,
+        {
+          title: 'Qulo Test Push',
+          actionUrl: '/matches',
+        },
+      );
+
+      res.json({
+        success: sent,
+        user: { id: user.id, email: user.email, name: user.name },
+        token: tokenInfo,
+        message: sent
+          ? 'Push sent successfully — check device'
+          : 'Push failed — check server logs for [NotificationService] errors',
+      });
+    } catch (err: any) {
+      res.status(500).json({
+        success: false,
+        error: err.message,
+      });
     }
   }
 }

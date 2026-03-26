@@ -1,0 +1,5602 @@
+[
+  {
+    "category": "personality",
+    "question_text": "Что впечатлит тебя больше всего на первом свидании?",
+    "answers": [
+      "Скрытый бар-спикизи",
+      "Прогулка по книжному магазину",
+      "Кино на крыше",
+      "Ночная экскурсия в музей"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Как ты восстанавливаешься после тяжёлой недели?",
+    "answers": [
+      "Марафон сериалов в одиночестве",
+      "Тусовка с друзьями",
+      "Долгая прогулка на природе",
+      "Готовлю что-нибудь изысканное"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Какой у тебя стиль переписки в отношениях?",
+    "answers": [
+      "Мемы весь день",
+      "Сообщения с добрым утром",
+      "Голосовые вместо текста",
+      "Коротко и по делу"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Если бы мы провели день вместе, кто планирует?",
+    "answers": [
+      "Я устрою сюрприз",
+      "Ты решай",
+      "Спланируем вместе",
+      "Пойдём по течению"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Что для тебя важнее всего в партнёре?",
+    "answers": [
+      "Чувство юмора",
+      "Амбициозность",
+      "Доброта",
+      "Интеллект"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Как ты ведёшь себя во время конфликта?",
+    "answers": [
+      "Сразу обсуждаю",
+      "Беру паузу, потом возвращаюсь",
+      "Пишу свои чувства",
+      "Обнимаю и мирюсь"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Что ты делаешь первым делом, когда просыпаешься?",
+    "answers": [
+      "Смотрю телефон",
+      "Варю кофе",
+      "Иду в душ",
+      "Сплю ещё 5 минут"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Какое слово лучше всего описывает тебя?",
+    "answers": [
+      "Авантюрист",
+      "Задумчивый",
+      "Энергичный",
+      "Загадочный"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Как ты проявляешь заботу о близких?",
+    "answers": [
+      "Делаю маленькие сюрпризы",
+      "Всегда на связи",
+      "Готовлю для них",
+      "Провожу время вместе"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Какой суперсилой ты бы хотел обладать?",
+    "answers": [
+      "Читать мысли",
+      "Телепортация",
+      "Остановка времени",
+      "Невидимость"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Романтический вечер — какой он?",
+    "answers": [
+      "Ужин при свечах дома",
+      "Прогулка по ночному городу",
+      "Поездка за город",
+      "Настольные игры вдвоём"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Что тебя раздражает в людях?",
+    "answers": [
+      "Нечестность",
+      "Опоздания",
+      "Лицемерие",
+      "Невнимательность"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Твой идеальный выходной?",
+    "answers": [
+      "Весь день в кровати",
+      "Активный отдых",
+      "Встреча с друзьями",
+      "Творчество или хобби"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Как ты относишься к спонтанности?",
+    "answers": [
+      "Обожаю сюрпризы",
+      "Немного нервничаю, но нравится",
+      "Предпочитаю планы",
+      "Зависит от настроения"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Какой подарок ты бы оценил больше всего?",
+    "answers": [
+      "Что-то ручной работы",
+      "Впечатление, а не вещь",
+      "Полезный гаджет",
+      "Книга или альбом"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Что тебя мотивирует каждый день?",
+    "answers": [
+      "Мечта о будущем",
+      "Близкие люди",
+      "Желание быть лучше",
+      "Свобода и независимость"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ты скорее интроверт или экстраверт?",
+    "answers": [
+      "Интроверт на 100%",
+      "Экстраверт в чистом виде",
+      "Амбиверт — зависит от ситуации",
+      "Социальный интроверт"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Кофе или чай — и почему это говорит о тебе?",
+    "answers": [
+      "Кофе — мне нужна энергия",
+      "Чай — я ценю спокойствие",
+      "Оба — я многогранный",
+      "Ни то ни другое — вода рулит"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Как ты реагируешь на комплименты?",
+    "answers": [
+      "Краснею и теряюсь",
+      "Спокойно благодарю",
+      "Шучу в ответ",
+      "Делаю комплимент в ответ"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Что ты больше всего ценишь в дружбе?",
+    "answers": [
+      "Верность",
+      "Честность",
+      "Чувство юмора",
+      "Поддержку"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Какая твоя самая странная привычка?",
+    "answers": [
+      "Разговариваю сам с собой",
+      "Ем странные сочетания еды",
+      "Сплю с включённым ТВ",
+      "Не могу без музыки"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Идеальные отношения для тебя — это...",
+    "answers": [
+      "Лучшие друзья-любовники",
+      "Страсть и приключения",
+      "Спокойствие и надёжность",
+      "Партнёрство и рост"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ты — сова или жаворонок?",
+    "answers": [
+      "Сова — ночь моё время",
+      "Жаворонок — встаю с рассветом",
+      "Зависит от дня",
+      "Голубь — где-то посередине"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Как быстро ты привязываешься к людям?",
+    "answers": [
+      "Очень быстро",
+      "Нужно время",
+      "Зависит от человека",
+      "Стараюсь не привязываться"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Как ты себя ведёшь, когда влюблён(а)?",
+    "answers": [
+      "Становлюсь очень заботливым",
+      "Пишу стихи и песни",
+      "Постоянно улыбаюсь",
+      "Стараюсь скрывать чувства"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Что для тебя важнее — карьера или личная жизнь?",
+    "answers": [
+      "Карьера на первом месте",
+      "Личная жизнь важнее",
+      "Баланс — ключ ко всему",
+      "Сейчас карьера, потом семья"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Выбери занятие для пары:",
+    "answers": [
+      "Квест-комната",
+      "Винная дегустация",
+      "Наблюдение за звёздами",
+      "Танцы вдвоём"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Какой юмор тебя покоряет?",
+    "answers": [
+      "Сухой сарказм",
+      "Глупый и милый",
+      "Чёрный юмор",
+      "Умные каламбуры"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Как ты справляешься со стрессом?",
+    "answers": [
+      "Спорт",
+      "Медитация",
+      "Разговор с близким",
+      "Еда и сериалы"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Что ты делаешь, когда скучаешь по кому-то?",
+    "answers": [
+      "Сразу звоню",
+      "Пишу длинное сообщение",
+      "Жду, пока позвонят мне",
+      "Отвлекаюсь на дела"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Твоё главное жизненное правило?",
+    "answers": [
+      "Живи настоящим",
+      "Будь собой",
+      "Никогда не сдавайся",
+      "Относись к другим так, как хочешь к себе"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Как ты относишься к долгим разговорам по ночам?",
+    "answers": [
+      "Обожаю — это лучшее время",
+      "Иногда, когда есть настроение",
+      "Предпочитаю утренние беседы",
+      "Могу уснуть посреди разговора"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Что тебя вдохновляет?",
+    "answers": [
+      "Путешествия",
+      "Искусство и музыка",
+      "Истории успеха",
+      "Природа"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Как ты принимаешь важные решения?",
+    "answers": [
+      "Слушаю интуицию",
+      "Анализирую все за и против",
+      "Советуюсь с близкими",
+      "Откладываю до последнего"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Какой ты в компании?",
+    "answers": [
+      "Душа компании",
+      "Тихий наблюдатель",
+      "Зависит от людей",
+      "Тот, кто всех смешит"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "О чём ты мечтаешь?",
+    "answers": [
+      "Путешествовать по миру",
+      "Найти настоящую любовь",
+      "Открыть своё дело",
+      "Просто быть счастливым"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Куда ты хочешь поехать больше всего?",
+    "answers": [
+      "Япония",
+      "Италия",
+      "Исландия",
+      "Бразилия"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Какой тип отпуска тебе ближе?",
+    "answers": [
+      "Пляж и релакс",
+      "Городской туризм",
+      "Горы и природа",
+      "Культурное погружение"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Чемодан или рюкзак?",
+    "answers": [
+      "Чемодан — мне нужно пространство",
+      "Рюкзак — я минималист",
+      "Оба — я готов ко всему",
+      "Ручная кладь — путешествую налегке"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Приключенческая активность на отдыхе?",
+    "answers": [
+      "Банджи-джампинг",
+      "Параглайдинг",
+      "Рафтинг",
+      "Посижу в кафе и посмотрю"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Какой сувенир ты привозишь из путешествий?",
+    "answers": [
+      "Магниты на холодильник",
+      "Местное искусство",
+      "Фото достаточно",
+      "Местную еду и специи"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "С кем ты любишь путешествовать?",
+    "answers": [
+      "С партнёром",
+      "С друзьями",
+      "Один(а)",
+      "С семьёй"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Романтическая поездка — куда?",
+    "answers": [
+      "Париж",
+      "Мальдивы",
+      "Венеция",
+      "Горное шале"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Ты планируешь поездку заранее или спонтанно?",
+    "answers": [
+      "Всё по плану — до минуты",
+      "Общий план, детали по ходу",
+      "Полная спонтанность",
+      "Нахожу дешёвые билеты и лечу"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Какой город тебе ближе по духу?",
+    "answers": [
+      "Нью-Йорк — никогда не спит",
+      "Барселона — море и вечеринки",
+      "Токио — будущее уже здесь",
+      "Прага — уют и история"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Что самое важное в месте для отпуска?",
+    "answers": [
+      "Красивые пляжи",
+      "Богатая история",
+      "Потрясающая еда",
+      "Яркая ночная жизнь"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Жизнь за границей — ты бы решился?",
+    "answers": [
+      "Уже мечтаю об этом",
+      "На пару лет — да",
+      "Только если с партнёром",
+      "Нет, дома лучше"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Еда в путешествии — твоя стратегия?",
+    "answers": [
+      "Пробую всё местное",
+      "Ищу лучшие рестораны",
+      "Уличная еда — мой выбор",
+      "Беру знакомое — не рискую"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Как ты решаешь разногласия с партнёром в поездке?",
+    "answers": [
+      "Компромисс и очерёдность",
+      "Пусть он(а) решает",
+      "Планируем раздельно и объединяем",
+      "Кто настаивает — тот и прав"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Кемпинг или пятизвёздочный отель?",
+    "answers": [
+      "Кемпинг — ближе к природе",
+      "Отель — люблю комфорт",
+      "Глэмпинг — золотая середина",
+      "Хостел — люблю знакомиться"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Что ты обязательно делаешь в новом городе?",
+    "answers": [
+      "Иду в местный рынок",
+      "Поднимаюсь на смотровую площадку",
+      "Пробую местный кофе",
+      "Гуляю без карты"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Какая кухня — твоя любимая?",
+    "answers": [
+      "Итальянская",
+      "Японская",
+      "Мексиканская",
+      "Грузинская"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Как ты относишься к острой еде?",
+    "answers": [
+      "Чем острее — тем лучше",
+      "Немного перчика — да",
+      "Только мягкое",
+      "Зависит от блюда"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Готовить вместе или заказать доставку?",
+    "answers": [
+      "Готовить вместе — это романтично",
+      "Заказать — больше времени друг для друга",
+      "Я готовлю, ты отдыхаешь",
+      "Давай сходим в ресторан"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Твой идеальный завтрак?",
+    "answers": [
+      "Яичница с авокадо",
+      "Блинчики или сырники",
+      "Только кофе",
+      "Каша и фрукты"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Пицца — какая начинка?",
+    "answers": [
+      "Маргарита — классика",
+      "Пепперони",
+      "Четыре сыра",
+      "С ананасами (да, я такой)"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Как ты себя ведёшь в ресторане?",
+    "answers": [
+      "Заказываю что-то новое",
+      "Всегда одно и то же",
+      "Спрашиваю совет официанта",
+      "То, что закажет партнёр"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Сладкое или солёное?",
+    "answers": [
+      "Сладкое — всегда",
+      "Солёное — однозначно",
+      "Зависит от настроения",
+      "И то и другое одновременно"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ты умеешь готовить?",
+    "answers": [
+      "Шеф-повар в душе",
+      "Пара коронных блюд",
+      "Могу сварить макароны",
+      "Я мастер микроволновки"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Какой десерт ты выберешь?",
+    "answers": [
+      "Тирамису",
+      "Чизкейк",
+      "Мороженое",
+      "Шоколадный фондан"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Уличная еда — да или нет?",
+    "answers": [
+      "Обожаю — шаурма навсегда",
+      "Иногда — зависит от места",
+      "Нет — предпочитаю рестораны",
+      "Только в путешествиях"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Свидание в ресторане — что закажешь?",
+    "answers": [
+      "Стейк",
+      "Суши",
+      "Пасту",
+      "Всё меню"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Какой напиток ты закажешь на свидании?",
+    "answers": [
+      "Вино",
+      "Коктейль",
+      "Пиво",
+      "Что-нибудь безалкогольное"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Как ты относишься к вегетарианству?",
+    "answers": [
+      "Я вегетарианец",
+      "Уважаю, но люблю мясо",
+      "Иногда устраиваю разгрузочные дни",
+      "Мясо — это жизнь"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Лучшая еда для киновечера?",
+    "answers": [
+      "Попкорн",
+      "Пицца",
+      "Начос с соусом",
+      "Мороженое"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ты пробовал когда-нибудь что-то экзотическое?",
+    "answers": [
+      "Да, и хочу ещё",
+      "Да, и больше не буду",
+      "Нет, но хочу попробовать",
+      "Нет, и не планирую"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Борщ или пельмени?",
+    "answers": [
+      "Борщ — это святое",
+      "Пельмени — однозначно",
+      "Оба — не заставляй выбирать",
+      "Ни то ни другое — я за суши"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Какой жанр музыки ты слушаешь чаще всего?",
+    "answers": [
+      "Поп",
+      "Рок",
+      "Хип-хоп/Рэп",
+      "Электронная"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Караоке — какую песню споёшь?",
+    "answers": [
+      "Классику 90-х",
+      "Современный хит",
+      "Рок-балладу",
+      "Я не пою — танцую"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Концерт какого артиста ты бы хотел посетить?",
+    "answers": [
+      "Рок-легенду",
+      "Поп-звезду",
+      "Рэпера",
+      "Классического музыканта"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Музыка в машине — кто выбирает?",
+    "answers": [
+      "Водитель решает",
+      "По очереди",
+      "Я — у меня идеальный вкус",
+      "Тот, кто первый подключил Bluetooth"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Какое десятилетие в музыке было лучшим?",
+    "answers": [
+      "80-е — ничто не сравнится",
+      "90-е — хип-хоп и гранж",
+      "2000-е — золотой век попа",
+      "Сегодняшняя музыка другая"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Что ты поёшь в душе?",
+    "answers": [
+      "Мощные баллады",
+      "Текущие хиты",
+      "Классический рок",
+      "Я рэпер в душе"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Музыкальный фестиваль — твой стиль?",
+    "answers": [
+      "Первый ряд у сцены",
+      "VIP-зона с комфортом",
+      "На пледе с друзьями",
+      "Я предпочитаю концерты в залах"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Музыка для свидания — какая?",
+    "answers": [
+      "Джаз",
+      "R&B",
+      "Акустическая",
+      "Лоу-фай биты"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Ты играешь на каком-нибудь инструменте?",
+    "answers": [
+      "Гитара",
+      "Фортепиано",
+      "Барабаны",
+      "Нет, но хочу научиться"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Какая песня описывает твою жизнь сейчас?",
+    "answers": [
+      "Что-то мотивирующее",
+      "Грустная баллада",
+      "Весёлый танцевальный трек",
+      "Ещё ищу свой саундтрек"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Наушники или колонка?",
+    "answers": [
+      "Наушники — мой мир",
+      "Колонка — музыка для всех",
+      "Зависит от ситуации",
+      "Виниловый проигрыватель"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Как ты открываешь новую музыку?",
+    "answers": [
+      "Рекомендации Spotify",
+      "Друзья советуют",
+      "TikTok и соцсети",
+      "Сам ищу — у меня свой вкус"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Русский рок или русский рэп?",
+    "answers": [
+      "Русский рок — Кино, Наутилус",
+      "Русский рэп — новая волна",
+      "Оба — зависит от настроения",
+      "Ни то ни другое — слушаю зарубежное"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Какой жанр фильмов ты предпочитаешь?",
+    "answers": [
+      "Комедия",
+      "Триллер",
+      "Романтика",
+      "Фантастика"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Кино или сериал?",
+    "answers": [
+      "Кино — за два часа вся история",
+      "Сериал — люблю погружаться",
+      "Зависит от настроения",
+      "Документалки — я интеллектуал"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Кто бы сыграл тебя в фильме?",
+    "answers": [
+      "Кто-то невероятно красивый",
+      "Комедийный актёр",
+      "Кто-то неизвестный, но идеальный",
+      "Я сам себя сыграю"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Книга или фильм — что лучше?",
+    "answers": [
+      "Книга — всегда",
+      "Фильм — я визуал",
+      "Зависит от адаптации",
+      "Я не читаю книгу сначала"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Вечер кино — что смотрим?",
+    "answers": [
+      "Ужастик — прижмёшься ко мне",
+      "Комедию — посмеёмся",
+      "Романтику — для настроения",
+      "Ты выбирай — мне всё равно"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Какой фильм ты можешь пересматривать бесконечно?",
+    "answers": [
+      "Побег из Шоушенка",
+      "Гарри Поттер",
+      "Интерстеллар",
+      "Криминальное чтиво"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Кинотеатр или дома на диване?",
+    "answers": [
+      "Кинотеатр — большой экран",
+      "Дома — плед и попкорн",
+      "Зависит от фильма",
+      "Кинотеатр под открытым небом"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Любимый киновселенная?",
+    "answers": [
+      "Marvel",
+      "DC",
+      "Звёздные войны",
+      "Властелин колец"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Ты из тех, кто плачет в кино?",
+    "answers": [
+      "Да, и не стесняюсь",
+      "Только если очень грустно",
+      "Никогда — я скала",
+      "Только на Хатико"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Какой сериал ты сейчас смотришь?",
+    "answers": [
+      "Что-то на Netflix",
+      "Аниме",
+      "Турецкий сериал",
+      "Ничего — жду рекомендации"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Если бы ты жил в фильме, какой бы выбрал?",
+    "answers": [
+      "Один дома — весело",
+      "Матрица — круто",
+      "Ла-Ла Ленд — романтично",
+      "Назад в будущее — приключения"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Спойлеры — как ты к ним относишься?",
+    "answers": [
+      "Ненавижу — не говори ничего",
+      "Мне всё равно",
+      "Иногда даже сам читаю",
+      "Зависит от фильма"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Какой советский/российский фильм ты любишь?",
+    "answers": [
+      "Ирония судьбы",
+      "Бриллиантовая рука",
+      "Брат",
+      "Москва слезам не верит"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Какой вид спорта тебе нравится больше всего?",
+    "answers": [
+      "Футбол",
+      "Баскетбол",
+      "Теннис",
+      "Я за йогу"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Бег по утрам — ты за или против?",
+    "answers": [
+      "За — бегаю регулярно",
+      "Хочу начать, но лень",
+      "Только если кто-то гонится",
+      "Бег — это для утренних людей"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Спортивное свидание — что выберешь?",
+    "answers": [
+      "Боулинг",
+      "Катание на коньках",
+      "Пешая прогулка в горах",
+      "Пинг-понг"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Ты смотришь спорт по ТВ?",
+    "answers": [
+      "Каждый матч!",
+      "Только финалы",
+      "Олимпиада раз в 4 года",
+      "Не — лучше сам играю"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Тренажёрный зал или тренировки на улице?",
+    "answers": [
+      "Зал — там всё есть",
+      "Улица — свежий воздух",
+      "Дома — YouTube-тренировки",
+      "Я предпочитаю прогулки"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Какой экстремальный спорт хочешь попробовать?",
+    "answers": [
+      "Скалолазание",
+      "Серфинг",
+      "Прыжки с парашютом",
+      "Я не экстремал"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Командный или индивидуальный спорт?",
+    "answers": [
+      "Командный — люблю дух",
+      "Индивидуальный — сам за себя",
+      "Парный — как танцы",
+      "Зависит от настроения"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Как ты относишься к йоге?",
+    "answers": [
+      "Практикую регулярно",
+      "Хочу попробовать",
+      "Пробовал — не моё",
+      "Йога — это скучно"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Зимний спорт — что выберешь?",
+    "answers": [
+      "Лыжи",
+      "Сноуборд",
+      "Коньки",
+      "Горячий шоколад у камина"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Ты болеешь за какую-нибудь команду?",
+    "answers": [
+      "Да, фанат до мозга костей",
+      "Слежу, но без фанатизма",
+      "Болею только на ЧМ",
+      "Спорт — не моя тема"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Велосипед — транспорт или спорт?",
+    "answers": [
+      "Транспорт — езжу каждый день",
+      "Спорт — гонки и маршруты",
+      "Прогулочный — для удовольствия",
+      "Я на самокате"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Плавание — ты за?",
+    "answers": [
+      "Обожаю — хожу в бассейн",
+      "Только на море",
+      "Не умею, но хочу научиться",
+      "Вода — не моя стихия"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Спорт для тебя — это...",
+    "answers": [
+      "Образ жизни",
+      "Способ снять стресс",
+      "Повод встретиться с друзьями",
+      "Что-то, что я обещаю начать с понедельника"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Apple или Android?",
+    "answers": [
+      "Apple — без вариантов",
+      "Android — свобода выбора",
+      "Мне всё равно",
+      "У меня оба"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Как ты относишься к искусственному интеллекту?",
+    "answers": [
+      "Это будущее",
+      "Немного пугает",
+      "Уже пользуюсь каждый день",
+      "Пусть роботы работают, а я отдыхаю"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Сколько времени в день ты проводишь в телефоне?",
+    "answers": [
+      "Больше, чем хотелось бы",
+      "Пару часов",
+      "Я стараюсь ограничивать",
+      "Телефон — это часть меня"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Какая соцсеть — твоя любимая?",
+    "answers": [
+      "Instagram",
+      "Telegram",
+      "TikTok",
+      "Я не в соцсетях"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Видеоигры — играешь?",
+    "answers": [
+      "Заядлый геймер",
+      "Иногда на телефоне",
+      "Только с друзьями",
+      "Не интересно"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Умный дом — ты уже подключился?",
+    "answers": [
+      "Да, Алиса управляет всем",
+      "Пара умных устройств",
+      "Хочу, но пока нет",
+      "Мне и обычный дом нравится"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Криптовалюта — инвестируешь?",
+    "answers": [
+      "Да, активно",
+      "Немного — для эксперимента",
+      "Нет, не доверяю",
+      "Не разбираюсь в этом"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Как ты относишься к знакомствам через приложения?",
+    "answers": [
+      "Отлично — мы же тут",
+      "Немного стесняюсь",
+      "Пробую впервые",
+      "Предпочитаю живое общение"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Электромобиль или бензин?",
+    "answers": [
+      "Электро — будущее за ним",
+      "Бензин — люблю звук мотора",
+      "Гибрид — компромисс",
+      "Мне не нужна машина"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "VR — пробовал?",
+    "answers": [
+      "Да, это потрясающе",
+      "Хочу попробовать",
+      "Пробовал — укачивает",
+      "Не интересно"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Какой гаджет ты хочешь больше всего?",
+    "answers": [
+      "Новый iPhone",
+      "Дрон",
+      "Умные часы",
+      "VR-шлем"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Программирование — разбираешься?",
+    "answers": [
+      "Да, это моя работа",
+      "Базово — HTML/CSS",
+      "Хочу научиться",
+      "Нет, и не хочу"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Стриминг или телевидение?",
+    "answers": [
+      "Netflix/YouTube — только так",
+      "Телевизор по привычке",
+      "И то и другое",
+      "Подкасты — лучше слушать"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Утренний ритуал — какой он у тебя?",
+    "answers": [
+      "Спорт и завтрак",
+      "Кофе и новости",
+      "Максимально быстрые сборы",
+      "Медитация и благодарность"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Город или деревня?",
+    "answers": [
+      "Город — мне нужен ритм",
+      "Деревня — тишина и природа",
+      "Пригород — золотая середина",
+      "Город сейчас, деревня потом"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Как ты относишься к здоровому образу жизни?",
+    "answers": [
+      "Строго соблюдаю",
+      "Стараюсь, но без фанатизма",
+      "Ем что хочу, живу как хочу",
+      "Периодически пытаюсь"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Домашнее животное — есть или хочешь?",
+    "answers": [
+      "Кот — моя любовь",
+      "Собака — лучший друг",
+      "Хочу, но пока не могу",
+      "Не хочу — свобода важнее"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Как ты проводишь вечера?",
+    "answers": [
+      "Сериалы и книги",
+      "Тренировка или прогулка",
+      "Встречи с друзьями",
+      "Учёба или саморазвитие"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Порядок в доме — насколько важно?",
+    "answers": [
+      "Идеальная чистота",
+      "Организованный хаос",
+      "Убираю когда приходят гости",
+      "Минимализм — мало вещей, мало уборки"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Насколько важна карьера для твоей идентичности?",
+    "answers": [
+      "Она определяет меня",
+      "Важна, но не всё",
+      "Она финансирует мои увлечения",
+      "Пока разбираюсь"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Как ты относишься к финансам в отношениях?",
+    "answers": [
+      "Пополам — честно",
+      "Кто зарабатывает больше, тот платит",
+      "По очереди",
+      "Не думаю об этом — как пойдёт"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Идеальное место для жизни?",
+    "answers": [
+      "Москва или Питер",
+      "Европа",
+      "Тёплая страна у моря",
+      "Там, где любимые люди"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Как ты расслабляешься?",
+    "answers": [
+      "Горячая ванна",
+      "Массаж",
+      "Музыка и тишина",
+      "Прогулка на свежем воздухе"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Ты — минималист или максималист?",
+    "answers": [
+      "Минималист — меньше вещей, больше свободы",
+      "Максималист — люблю вещи",
+      "Где-то посередине",
+      "Стараюсь стать минималистом"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Самообразование — как ты к нему относишься?",
+    "answers": [
+      "Постоянно учусь новому",
+      "Читаю книги",
+      "Подкасты и YouTube",
+      "Жизнь сама учит"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Дресс-код — какой у тебя стиль?",
+    "answers": [
+      "Casual — удобство прежде всего",
+      "Классика — всегда элегантен",
+      "Streetwear — модно и ярко",
+      "Зависит от настроения"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Как ты относишься к алкоголю?",
+    "answers": [
+      "Бокал вина — иногда",
+      "Не пью вообще",
+      "В компании — почему нет",
+      "Только по праздникам"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Какое хобби ты бы хотел попробовать?",
+    "answers": [
+      "Рисование",
+      "Серфинг",
+      "Гончарное дело",
+      "Фотографию"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Как ты проводишь свободное время?",
+    "answers": [
+      "Читаю книги",
+      "Играю в игры",
+      "Творю что-нибудь",
+      "Гуляю и исследую"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Какой стиль фотографии тебе ближе?",
+    "answers": [
+      "Пейзажи и природа",
+      "Уличная фотография",
+      "Еда и натюрморты",
+      "Портреты людей"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Как ты относишься к пазлам?",
+    "answers": [
+      "Люблю на 1000 деталей",
+      "Кроссворды — моё",
+      "Квест-комнаты — мой формат",
+      "Пазлы — испытание терпения"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Настольные игры — играешь?",
+    "answers": [
+      "Обожаю — у меня целая коллекция",
+      "Иногда с друзьями",
+      "Только классику — шахматы и нарды",
+      "Не моё"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ты любишь читать?",
+    "answers": [
+      "Заядлый книголюб",
+      "Пара книг в год",
+      "Только аудиокниги",
+      "Предпочитаю статьи"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Рисование или музыка?",
+    "answers": [
+      "Рисование — я визуал",
+      "Музыка — чувствую ритм",
+      "Оба — я творческий",
+      "Ни то ни другое — я спортсмен"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Хобби для двоих — что выберешь?",
+    "answers": [
+      "Танцы",
+      "Кулинарный мастер-класс",
+      "Совместный поход",
+      "Рисование портретов друг друга"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Какой жанр книг ты предпочитаешь?",
+    "answers": [
+      "Фэнтези",
+      "Детективы",
+      "Научная фантастика",
+      "Нон-фикшн"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Садоводство — тебе интересно?",
+    "answers": [
+      "Да, выращиваю растения",
+      "Хочу попробовать",
+      "Только кактусы выживают",
+      "Я убиваю все растения"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ты занимаешься творчеством?",
+    "answers": [
+      "Да, это моя отдушина",
+      "Иногда — когда вдохновляет",
+      "Хочу начать",
+      "Нет — я больше потребитель"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Коллекционируешь что-нибудь?",
+    "answers": [
+      "Виниловые пластинки",
+      "Магниты из путешествий",
+      "Книги",
+      "Нет — я минималист"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Подкасты или аудиокниги?",
+    "answers": [
+      "Подкасты — люблю разнообразие",
+      "Аудиокниги — погружаюсь в историю",
+      "И то и другое",
+      "Ни то ни другое — только музыка"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Если бы у тебя был свободный год, чем бы занялся?",
+    "answers": [
+      "Путешествовал по миру",
+      "Написал книгу",
+      "Открыл бизнес",
+      "Изучал новые навыки"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Если бы ты был животным, кем бы был?",
+    "answers": [
+      "Кот — независимый",
+      "Собака — верный друг",
+      "Орёл — свобода",
+      "Дельфин — умный и весёлый"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Что самое смелое, что ты делал?",
+    "answers": [
+      "Прыжок с парашютом",
+      "Переезд в новый город",
+      "Заговорил с незнакомцем, который понравился",
+      "Уволился без плана"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Как бы ты назвал свою яхту?",
+    "answers": [
+      "Поймай ветер",
+      "Не работаю",
+      "Витамин М (море)",
+      "Бывает и хуже"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Зомби-апокалипсис — твоя роль?",
+    "answers": [
+      "Лидер группы выживших",
+      "Тихий стратег",
+      "Тот, кого спасают",
+      "Сражаюсь один как волк"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Если бы ты мог ужинать с любым человеком — с кем?",
+    "answers": [
+      "Илон Маск",
+      "Леонардо да Винчи",
+      "Моя будущая половинка",
+      "С бабушкой — ещё раз"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Какой талант ты бы хотел иметь?",
+    "answers": [
+      "Петь как звезда",
+      "Танцевать профессионально",
+      "Рисовать как художник",
+      "Готовить как шеф-повар"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Если бы ты выиграл миллион — что первое?",
+    "answers": [
+      "Путешествие мечты",
+      "Квартира",
+      "Вложу в бизнес",
+      "Помогу семье"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Твой знак зодиака важен для тебя?",
+    "answers": [
+      "Да, я верю в звёзды",
+      "Развлечение, не больше",
+      "Нет, это ерунда",
+      "Зависит от того, что написано"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Ты можешь путешествовать во времени — куда?",
+    "answers": [
+      "В будущее — хочу увидеть",
+      "В Древний Рим",
+      "В 80-е — за атмосферой",
+      "Никуда — мне и здесь хорошо"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Какой эмодзи описывает тебя?",
+    "answers": [
+      "😎 — крутой",
+      "🤓 — умник",
+      "😂 — смешной",
+      "🔥 — горячий"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Необитаемый остров — что возьмёшь?",
+    "answers": [
+      "Нож",
+      "Книгу",
+      "Зажигалку",
+      "Спутниковый телефон"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Какой суперзлодей из тебя бы вышел?",
+    "answers": [
+      "Гениальный стратег",
+      "Харизматичный лидер",
+      "Хаотичный безумец",
+      "Злодей с добрым сердцем"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Если бы ты открыл кафе — какое?",
+    "answers": [
+      "Кофейня с книгами",
+      "Бар с настолками",
+      "Тематическое с котами",
+      "Стрит-фуд точку"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Кем ты хотел стать в детстве?",
+    "answers": [
+      "Космонавтом",
+      "Врачом",
+      "Пожарным",
+      "Рок-звездой"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Твоя скрытая суперспособность?",
+    "answers": [
+      "Могу уснуть где угодно",
+      "Нахожу парковку с первого раза",
+      "Запоминаю все песни",
+      "Готовлю из ничего"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Дай мне два факта и одну ложь о себе?",
+    "answers": [
+      "Я был в 10+ странах",
+      "У меня есть скрытый талант",
+      "Я никогда не опаздываю",
+      "Я знаю три языка"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Если бы тебе дали роль в фильме — какая?",
+    "answers": [
+      "Супергерой",
+      "Романтичный главный герой",
+      "Комедийный персонаж",
+      "Загадочный злодей"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Какой мем описывает твою жизнь?",
+    "answers": [
+      "Это нормально (с огнём вокруг)",
+      "Девушка с математикой в голове",
+      "Кот за столом",
+      "Ты не ты, когда голоден"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Худшая тема для разговора на первом свидании?",
+    "answers": [
+      "Бывшие",
+      "Политика",
+      "Сколько зарабатываешь",
+      "Планы на свадьбу"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Если бы Siri/Алиса описала тебя одним словом?",
+    "answers": [
+      "Непредсказуемый",
+      "Ленивый гений",
+      "Голодный",
+      "Милый хаос"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Самая глупая причина ссоры в отношениях?",
+    "answers": [
+      "Кто не помыл посуду",
+      "Выбор ресторана",
+      "Температура в комнате",
+      "Кто первый положил трубку"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Твой самый нелепый страх?",
+    "answers": [
+      "Клоуны",
+      "Что Wi-Fi пропадёт навсегда",
+      "Голуби",
+      "Молчание в лифте"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Что бы написали на твоей футболке?",
+    "answers": [
+      "Не утро без кофе",
+      "Я тут за еду",
+      "Не будить",
+      "У меня есть план... примерно"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Если бы животные могли говорить — кого бы ты спросил?",
+    "answers": [
+      "Кота — о чём он думает",
+      "Собаку — почему ты такой счастливый",
+      "Попугая — что ты подслушал",
+      "Рыбу — не скучно ли тебе"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Самый странный комплимент, который ты получал?",
+    "answers": [
+      "У тебя красивые локти",
+      "Ты хорошо пахнешь для понедельника",
+      "Твой смех заразителен",
+      "У тебя симметричное лицо"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Твоя автобиография называлась бы...",
+    "answers": [
+      "Почему я такой?",
+      "Ещё 5 минут...",
+      "Голоден, но счастлив",
+      "История неожиданностей"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Что ты гуглил последним?",
+    "answers": [
+      "Как не выглядеть странно на свидании",
+      "Рецепт пасты",
+      "Почему коты мурлыкают",
+      "Лучше не знать"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Если бы ты был едой — какой?",
+    "answers": [
+      "Пицца — всем нравлюсь",
+      "Суши — утончённый",
+      "Борщ — с характером",
+      "Мороженое — сладкий, но могу растаять"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Какой ты персонаж из ситкома?",
+    "answers": [
+      "Чендлер — шучу в любой ситуации",
+      "Росс — немного неловкий",
+      "Моника — всё под контролем",
+      "Джоуи — еда прежде всего"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Что раздражает тебя больше всего в соцсетях?",
+    "answers": [
+      "Фотки еды",
+      "Цитаты из Tumblr",
+      "Fake lifestyle",
+      "Войсы на 3 минуты"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Как бы ты привлёк моё внимание в толпе?",
+    "answers": [
+      "Улыбнулся бы издалека",
+      "Подошёл бы и пошутил",
+      "Сделал бы вид, что мы знакомы",
+      "Уронил бы что-нибудь рядом"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Самый бесполезный навык, которым ты владеешь?",
+    "answers": [
+      "Шевелю ушами",
+      "Знаю столицы всех стран",
+      "Могу перевернуть блинчик в воздухе",
+      "Имитирую звуки животных"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Если бы ты был жанром кино — какой?",
+    "answers": [
+      "Комедия — жизнь весёлая",
+      "Триллер — со мной не скучно",
+      "Мелодрама — чувства наружу",
+      "Экшн — я в движении"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ты веришь в любовь с первого взгляда?",
+    "answers": [
+      "Да, безусловно",
+      "Скорее в химию",
+      "Нет — любовь растёт",
+      "Верю в симпатию с первого взгляда"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Как ты переживаешь расставание?",
+    "answers": [
+      "Погружаюсь в работу",
+      "Разговариваю с друзьями",
+      "Слушаю грустную музыку",
+      "Быстро двигаюсь дальше"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Путешествие мечты — куда бы поехал на месяц?",
+    "answers": [
+      "Юго-Восточная Азия",
+      "Южная Америка",
+      "Скандинавия",
+      "Кругосветка"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Завтрак в постель — что бы ты хотел?",
+    "answers": [
+      "Круассаны и кофе",
+      "Яичницу с беконом",
+      "Фрукты и йогурт",
+      "Блинчики с мёдом"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Песня для первого танца на свадьбе?",
+    "answers": [
+      "Что-то классическое",
+      "Наша любимая песня",
+      "Что-то неожиданное и весёлое",
+      "Ещё не думал об этом"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Какой фильм о любви ты бы пересмотрел?",
+    "answers": [
+      "Дневник памяти",
+      "Титаник",
+      "Вечное сияние чистого разума",
+      "Любовь по-настоящему"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Марафон — пробежишь?",
+    "answers": [
+      "Уже пробегал",
+      "Тренируюсь к этому",
+      "Максимум 5 км",
+      "Только до холодильника"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Робот-помощник дома — хочешь?",
+    "answers": [
+      "Да, пусть убирает",
+      "Немного жутко",
+      "Только если готовит",
+      "У меня уже есть робот-пылесос"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Дети — хочешь в будущем?",
+    "answers": [
+      "Да, мечтаю",
+      "Может быть, когда-нибудь",
+      "Не уверен(а)",
+      "Нет, не планирую"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "DIY-проекты — твоё?",
+    "answers": [
+      "Обожаю мастерить",
+      "Иногда, если вдохновляет",
+      "Pinterest — моё вдохновение",
+      "Лучше куплю готовое"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Если бы ты проснулся в другом теле на день — чьём?",
+    "answers": [
+      "Знаменитости",
+      "Противоположного пола",
+      "Президента",
+      "Своего питомца"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Твой навык на шоу талантов?",
+    "answers": [
+      "Пою — плохо, но с душой",
+      "Танцую — неловко, но смешно",
+      "Стендап — шутки на грани",
+      "Фокусы — сомнительные, но эффектные"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ревность — это нормально?",
+    "answers": [
+      "Немного — это мило",
+      "Нет — доверие важнее",
+      "Зависит от ситуации",
+      "Я стараюсь не ревновать"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Что для тебя означает преданность?",
+    "answers": [
+      "Быть рядом в трудные моменты",
+      "Честность всегда",
+      "Выбирать партнёра каждый день",
+      "Не искать лучше"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Транссибирская магистраль — поехал бы?",
+    "answers": [
+      "Мечта всей жизни",
+      "Звучит интересно",
+      "Слишком долго в поезде",
+      "Только если не один"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Утренний кофе — какой?",
+    "answers": [
+      "Эспрессо — крепкий и быстрый",
+      "Капучино — нежная пенка",
+      "Американо — классика",
+      "Раф — я сладкоежка"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Ты поёшь в машине?",
+    "answers": [
+      "Да, как рок-звезда",
+      "Только когда один",
+      "Нет, я стесняюсь",
+      "Я не пою — я рэплю"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Аниме — смотришь?",
+    "answers": [
+      "Фанат",
+      "Пару тайтлов видел",
+      "Хочу начать",
+      "Не моё"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Единоборства — пробовал?",
+    "answers": [
+      "Занимаюсь",
+      "Хочу попробовать",
+      "Только смотрю UFC",
+      "Нет, я мирный человек"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Как ты относишься к роботам-доставщикам?",
+    "answers": [
+      "Круто — будущее наступило",
+      "Пока не доверяю",
+      "Пусть несут мне еду",
+      "Скучаю по курьерам-людям"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Совместная жизнь — когда готов(а)?",
+    "answers": [
+      "Когда есть настоящее чувство",
+      "После года отношений",
+      "Не раньше помолвки",
+      "Уже сейчас — если человек тот"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Волонтёрство — участвуешь?",
+    "answers": [
+      "Регулярно",
+      "Иногда — когда есть время",
+      "Хочу начать",
+      "Предпочитаю помогать деньгами"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Если бы тебя пригласили на реалити-шоу — пошёл бы?",
+    "answers": [
+      "Да — покажу себя",
+      "Только если платят",
+      "Ни за что",
+      "Зависит от шоу"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Ты случайно лайкнул старое фото — что делаешь?",
+    "answers": [
+      "Удаляю лайк и паникую",
+      "Оставляю — пусть знает",
+      "Лайкаю ещё — чтобы было не так подозрительно",
+      "Удаляю аккаунт"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ты прощаешь легко?",
+    "answers": [
+      "Да, жизнь слишком коротка",
+      "Прощаю, но не забываю",
+      "Зависит от ситуации",
+      "Нет — доверие нужно заслужить"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Что тебе труднее — просить о помощи или помогать?",
+    "answers": [
+      "Просить — не привык",
+      "Помогать — иногда выгораю",
+      "Оба легко",
+      "Оба сложно"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Автостоп — ты бы рискнул?",
+    "answers": [
+      "Да — это приключение",
+      "Только с другом",
+      "Нет — слишком рискованно",
+      "Уже пробовал"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ты когда-нибудь готовил для партнёра?",
+    "answers": [
+      "Да, это моя фишка",
+      "Пару раз — с переменным успехом",
+      "Нет, но хочу",
+      "Я лучше закажу"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Какая музыка помогает тебе сосредоточиться?",
+    "answers": [
+      "Лоу-фай",
+      "Классическая",
+      "Мне нужна тишина",
+      "Любая — с наушниками"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Какой режиссёр тебе нравится?",
+    "answers": [
+      "Нолан — эпическое кино",
+      "Тарантино — стиль и диалоги",
+      "Линч — загадки и глубина",
+      "Не слежу за режиссёрами"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Танцы — это спорт?",
+    "answers": [
+      "Конечно — и какой!",
+      "Скорее искусство",
+      "И то и другое",
+      "Нет — это развлечение"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Ты доверяешь рекомендациям алгоритмов?",
+    "answers": [
+      "Да, они меня знают",
+      "Иногда попадают в точку",
+      "Нет — я сам выбираю",
+      "Только в музыке"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Как ты относишься к татуировкам?",
+    "answers": [
+      "У меня есть",
+      "Хочу сделать",
+      "Нравятся на других",
+      "Не моё"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Рыбалка или охота?",
+    "answers": [
+      "Рыбалка — медитативно",
+      "Ни то ни другое",
+      "Фоторyбалка — ловлю кадры",
+      "Я за грибами"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Какое название группы ты бы выбрал?",
+    "answers": [
+      "Электрические кактусы",
+      "Философия бутерброда",
+      "Синий понедельник",
+      "Тихий хаос"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Что ты скажешь, если опоздаешь на свидание?",
+    "answers": [
+      "Извини, пробки",
+      "Я выбирал лучший наряд для тебя",
+      "Я всегда стою ожидания",
+      "Честно скажу — проспал"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Как ты относишься к личному пространству?",
+    "answers": [
+      "Мне нужно своё время",
+      "Готов делить всё",
+      "Баланс важен",
+      "Я гибкий — подстроюсь"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Какой язык любви — твой?",
+    "answers": [
+      "Прикосновения",
+      "Слова поддержки",
+      "Подарки",
+      "Совместное время"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Самолёт или поезд?",
+    "answers": [
+      "Самолёт — быстро и эффективно",
+      "Поезд — романтика путешествий",
+      "Машина — свобода маршрута",
+      "Зависит от расстояния"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Поздний перекус — что ешь?",
+    "answers": [
+      "Бутерброд",
+      "Фрукты",
+      "Остатки ужина",
+      "Всё, что найду в холодильнике"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Грустная музыка — слушаешь, когда грустно?",
+    "answers": [
+      "Да — это терапия",
+      "Нет — ставлю весёлую",
+      "Иногда, чтобы выплакаться",
+      "Я не слушаю грустное"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Документалки — смотришь?",
+    "answers": [
+      "Обожаю — знания важны",
+      "Только о природе",
+      "True crime — моя слабость",
+      "Не — слишком скучно"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Ты танцуешь?",
+    "answers": [
+      "Да, и неплохо",
+      "Только после пары бокалов",
+      "Нет — две левые ноги",
+      "В душе — лучший танцор"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Ты пользуешься умными часами?",
+    "answers": [
+      "Да, не снимаю",
+      "Нет, предпочитаю обычные",
+      "Хочу купить",
+      "Зачем, если есть телефон"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Утро или вечер — когда ты продуктивнее?",
+    "answers": [
+      "Утро — свежая голова",
+      "Вечер — включаюсь к ночи",
+      "После обеда — нахожу баланс",
+      "Зависит от кофе"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ты пишешь — дневник, блог, стихи?",
+    "answers": [
+      "Дневник — для себя",
+      "Блог или соцсети",
+      "Стихи или рассказы",
+      "Нет — не моё"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Если бы у тебя была машина времени — одно правило?",
+    "answers": [
+      "Не менять прошлое",
+      "Только вперёд",
+      "Одна поездка",
+      "Никаких правил — я бунтарь"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Ты споткнулся на людях — что делаешь?",
+    "answers": [
+      "Притворяюсь, что танцую",
+      "Смеюсь над собой",
+      "Быстро иду дальше",
+      "Проверяю, не записал ли кто"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ты веришь в судьбу?",
+    "answers": [
+      "Да, всё предопределено",
+      "Частично — но мы создаём свой путь",
+      "Нет — только мои решения",
+      "Хочу верить"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Что делает тебя счастливым прямо сейчас?",
+    "answers": [
+      "Общение с хорошими людьми",
+      "Новые впечатления",
+      "Прогресс в целях",
+      "Маленькие радости каждого дня"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Языковой барьер в путешествии — пугает?",
+    "answers": [
+      "Нет — жесты и улыбка",
+      "Немного — но переводчик спасает",
+      "Да — я учу фразы заранее",
+      "Только англоязычные страны"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Какой коктейль закажешь?",
+    "answers": [
+      "Мохито",
+      "Маргарита",
+      "Аперол Шприц",
+      "Что-нибудь без алкоголя"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Какой плейлист у тебя самый длинный?",
+    "answers": [
+      "Для тренировок",
+      "Для настроения",
+      "Для вечеринок",
+      "Для грусти"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Короткометражки — смотришь?",
+    "answers": [
+      "Да — иногда гениально",
+      "Предпочитаю полный метр",
+      "Только на фестивалях",
+      "Что это?"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Шахматы — играешь?",
+    "answers": [
+      "Да, серьёзно",
+      "Знаю правила",
+      "Только в приложении",
+      "Предпочитаю шашки"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Нейросети для творчества — пользуешься?",
+    "answers": [
+      "Да, активно",
+      "Пробовал — интересно",
+      "Нет, предпочитаю своё",
+      "Что за нейросети?"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Как часто ты говоришь «нет»?",
+    "answers": [
+      "Легко — берегу энергию",
+      "Сложно — я не хочу обидеть",
+      "Учусь это делать",
+      "Зависит от ситуации"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Какое приложение ты используешь чаще всего?",
+    "answers": [
+      "Telegram",
+      "YouTube",
+      "Instagram",
+      "Spotify"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Что ты положишь в капсулу времени?",
+    "answers": [
+      "Любимую фотографию",
+      "Письмо себе будущему",
+      "Флешку с музыкой",
+      "Ничего — пусть будет сюрприз"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Ты на вечеринке, но устал — что делаешь?",
+    "answers": [
+      "Тихо ухожу по-английски",
+      "Говорю всем — пока, я устал",
+      "Прячусь с телефоном",
+      "Ищу тихий уголок и сижу"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Длинные отношения на расстоянии — выдержишь?",
+    "answers": [
+      "Да, если люблю",
+      "Временно — да",
+      "Нет, мне нужна близость",
+      "Попробую, но будет сложно"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ты романтик?",
+    "answers": [
+      "Безнадёжный романтик",
+      "Иногда — когда настроение",
+      "Практик, но ценю жесты",
+      "Нет — реалист"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Если бы ты мог жить в другой стране — где?",
+    "answers": [
+      "Испания",
+      "Новая Зеландия",
+      "Канада",
+      "Мне и в России хорошо"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Домашняя еда или ресторан?",
+    "answers": [
+      "Домашняя — с душой",
+      "Ресторан — люблю разнообразие",
+      "Зависит от дня",
+      "Доставка — компромисс"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Ты когда-нибудь плакал от музыки?",
+    "answers": [
+      "Да, не раз",
+      "Почти — мурашки",
+      "Нет, но чувствовал глубоко",
+      "Нет — я железный"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Фильм, который изменил твою жизнь?",
+    "answers": [
+      "В погоне за счастьем",
+      "Матрица",
+      "Форрест Гамп",
+      "У меня такого нет"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Олимпийские игры — какой вид смотришь?",
+    "answers": [
+      "Гимнастику",
+      "Плавание",
+      "Лёгкую атлетику",
+      "Церемонию открытия"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Космический туризм — полетишь?",
+    "answers": [
+      "Да, мечтаю",
+      "Только если безопасно",
+      "Нет — боюсь высоты",
+      "Слишком дорого"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Как ты встречаешь Новый год?",
+    "answers": [
+      "Шумная вечеринка",
+      "Семейный ужин",
+      "С друзьями у камина",
+      "Один(а) — в тишине"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Кулинарные эксперименты — твоё?",
+    "answers": [
+      "Да, люблю новые рецепты",
+      "Иногда — если настроение",
+      "Нет — готовлю проверенное",
+      "Я не готовлю вообще"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Какой был бы твой слоган?",
+    "answers": [
+      "Живи ярко",
+      "Ешь, спи, повторяй",
+      "Всегда вперёд",
+      "Жизнь — это приключение"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Утро понедельника — твоя реакция?",
+    "answers": [
+      "Новая неделя — новые возможности",
+      "Кофе. Много кофе",
+      "Почему выходные так быстро кончаются",
+      "Я ещё сплю"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Тебе легче говорить или слушать?",
+    "answers": [
+      "Говорить — я открытый",
+      "Слушать — я вникаю",
+      "Зависит от собеседника",
+      "И то и другое одинаково"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Ночной поезд или утренний рейс?",
+    "answers": [
+      "Ночной поезд — романтика",
+      "Утренний рейс — быстрее",
+      "Зависит от маршрута",
+      "Я вообще за машину"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ты делишься едой?",
+    "answers": [
+      "Конечно — угощайся",
+      "Только с любимым человеком",
+      "Зависит от блюда",
+      "НЕТ. Это моя еда"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Живая музыка или студийная запись?",
+    "answers": [
+      "Живая — энергия другая",
+      "Студийная — качество звука",
+      "Зависит от исполнителя",
+      "Мне всё равно"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "С каким персонажем ты себя ассоциируешь?",
+    "answers": [
+      "Шерлок — умный и странный",
+      "Железный человек — харизма",
+      "Гермиона — умная и ответственная",
+      "Джокер — немного хаоса"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Утренняя зарядка — делаешь?",
+    "answers": [
+      "Каждый день",
+      "Иногда",
+      "Моя зарядка — дойти до кофемашины",
+      "Планирую начать"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Ты следишь за новинками техники?",
+    "answers": [
+      "Да, всегда в курсе",
+      "Основное — да",
+      "Нет, пользуюсь тем, что есть",
+      "Только если красивое"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Ты веришь в work-life balance?",
+    "answers": [
+      "Да, это приоритет",
+      "Стараюсь, но не всегда получается",
+      "Работа — это жизнь",
+      "Жизнь — это не работа"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ты собираешь пазлы?",
+    "answers": [
+      "Обожаю — медитативно",
+      "Только с кем-то",
+      "Нет терпения",
+      "Предпочитаю кубик Рубика"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Какой сезон тебе нравится больше?",
+    "answers": [
+      "Лето — солнце и море",
+      "Осень — уют и кофе",
+      "Зима — снег и праздники",
+      "Весна — всё оживает"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Ты получил неловкое сообщение не тому — что делаешь?",
+    "answers": [
+      "Паникую и удаляю",
+      "Смеюсь и объясняю",
+      "Притворяюсь, что так и надо",
+      "Выключаю телефон навсегда"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Как ты выражаешь любовь?",
+    "answers": [
+      "Словами",
+      "Действиями",
+      "Подарками",
+      "Временем вместе"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Что тебя отталкивает в людях сразу?",
+    "answers": [
+      "Грубость",
+      "Высокомерие",
+      "Нечестность",
+      "Равнодушие"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Суп зимой — какой?",
+    "answers": [
+      "Борщ — классика",
+      "Том Ям — острый и согревающий",
+      "Куриный — бабушкин рецепт",
+      "Крем-суп из тыквы"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Как ты относишься к чтению перед сном?",
+    "answers": [
+      "Читаю каждый вечер",
+      "Иногда — когда нахожу хорошую книгу",
+      "Предпочитаю телефон",
+      "Засыпаю на первой странице"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ты ходишь в музеи?",
+    "answers": [
+      "Часто — люблю искусство",
+      "Иногда — на выставки",
+      "Только в путешествиях",
+      "Музеи — это скучно"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Что бы ты взял на необитаемый остров из роскоши?",
+    "answers": [
+      "Кофемашину",
+      "Матрас",
+      "Колонку с музыкой",
+      "Гамак"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Какую отмазку ты используешь чаще всего?",
+    "answers": [
+      "Пробки",
+      "Не увидел сообщение",
+      "Плохо себя чувствую",
+      "Телефон разрядился"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Утренние обнимашки или сразу кофе?",
+    "answers": [
+      "Обнимашки — самое важное",
+      "Кофе — потом обнимашки",
+      "Зависит от дня",
+      "Оба одновременно"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Круиз — хотел бы?",
+    "answers": [
+      "Да — мечтаю",
+      "Нет — я укачиваюсь",
+      "Только маленький корабль",
+      "Предпочитаю сушу"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ты ешь за компьютером?",
+    "answers": [
+      "Всегда — привычка",
+      "Стараюсь не есть",
+      "Только перекусы",
+      "Нет — ем за столом как человек"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Спой мне серенаду — какой песней?",
+    "answers": [
+      "Чем-нибудь на русском",
+      "Something international",
+      "Я придумаю свою",
+      "Лучше я станцую"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Мультфильмы — до сих пор смотришь?",
+    "answers": [
+      "Да — и не стесняюсь",
+      "Только Pixar/Disney",
+      "Иногда под настроение",
+      "Нет — я взрослый"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Пляжный волейбол — сыграешь?",
+    "answers": [
+      "Конечно — я люблю",
+      "Попробую, но я новичок",
+      "Лучше буду загорать",
+      "Только если в команде"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Ты бы вживил чип для удобства?",
+    "answers": [
+      "Да — это прогресс",
+      "Нет — слишком рисково",
+      "Зависит от функций",
+      "Я подожду лет 10"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Какой для тебя идеальный возраст?",
+    "answers": [
+      "Сейчас — каждый возраст прекрасен",
+      "25 — молодость и свобода",
+      "30 — опыт и энергия",
+      "Не задумываюсь об этом"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ты когда-нибудь учился чему-то по YouTube?",
+    "answers": [
+      "Постоянно — мой университет",
+      "Пару раз — полезно",
+      "Готовку — точно",
+      "Нет — предпочитаю курсы"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Каким был бы твой девиз на щите?",
+    "answers": [
+      "Смех и отвага",
+      "Тишина и мудрость",
+      "Страсть и свобода",
+      "Еда и сон"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Ты видишь паука дома — реакция?",
+    "answers": [
+      "Ловлю и выношу",
+      "Кричу и убегаю",
+      "Зову кого-нибудь",
+      "Мы теперь соседи"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ты легко адаптируешься к переменам?",
+    "answers": [
+      "Да — я гибкий",
+      "Нужно время",
+      "Зависит от перемены",
+      "Нет — я люблю стабильность"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Какая черта партнёра для тебя deal-breaker?",
+    "answers": [
+      "Ложь",
+      "Безответственность",
+      "Отсутствие амбиций",
+      "Эгоизм"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Фотографируешь всё в путешествии?",
+    "answers": [
+      "Да — каждый момент",
+      "Только красивые виды",
+      "Стараюсь жить моментом",
+      "Только селфи"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Готовить по рецепту или импровизировать?",
+    "answers": [
+      "По рецепту — точность важна",
+      "Импровизация — я шеф",
+      "Начинаю по рецепту, потом импровизирую",
+      "Рецепт? У меня есть YouTube"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Какой парфюм ты предпочитаешь?",
+    "answers": [
+      "Свежий и лёгкий",
+      "Терпкий и древесный",
+      "Сладкий и цветочный",
+      "Не ношу парфюм"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Если бы интернет пропал навсегда — что ты будешь делать?",
+    "answers": [
+      "Читать книги",
+      "Наконец выучу гитару",
+      "Паниковать первые 3 дня",
+      "Стану почтальоном"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Что бы ты сделал, если бы был невидимым на день?",
+    "answers": [
+      "Путешествовал бесплатно",
+      "Подслушивал, что обо мне говорят",
+      "Пугал друзей",
+      "Отдыхал от всех"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ты ведёшь список фильмов/книг?",
+    "answers": [
+      "Да — всё записано",
+      "В голове — примерно",
+      "Нет — смотрю/читаю что попадётся",
+      "У меня бесконечный watchlist"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Ты когда-нибудь бегал под дождём?",
+    "answers": [
+      "Да — это потрясающе",
+      "Нет — я не сумасшедший",
+      "Хочу попробовать",
+      "Только до машины"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Какой мессенджер ты предпочитаешь?",
+    "answers": [
+      "Telegram",
+      "WhatsApp",
+      "iMessage",
+      "Звоню по-старинке"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Ты бы пошёл на концерт один?",
+    "answers": [
+      "Да — наслаждаюсь музыкой",
+      "Нет — только с кем-то",
+      "Зависит от артиста",
+      "Уже ходил — и было круто"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Ты засыпаешь во время фильма?",
+    "answers": [
+      "Никогда — досматриваю до конца",
+      "Иногда — если скучно",
+      "Часто — кино меня усыпляет",
+      "Только дома на диване"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Как ты относишься к совместному быту?",
+    "answers": [
+      "Делим всё пополам",
+      "Каждый делает то, что умеет",
+      "Составляем график",
+      "Кто первый увидел — тот и делает"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Какой ты в путешествиях?",
+    "answers": [
+      "Планировщик до мелочей",
+      "Искатель приключений",
+      "Гурман — только за едой",
+      "Отдыхаю на пляже"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Что ты никогда не простишь?",
+    "answers": [
+      "Предательство",
+      "Ложь",
+      "Равнодушие в трудный момент",
+      "Я могу простить почти всё"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Какое море тебе ближе?",
+    "answers": [
+      "Средиземное",
+      "Чёрное",
+      "Карибское",
+      "Океан — мне нужны волны"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Ты бы прожил месяц в другой стране?",
+    "answers": [
+      "Да, легко",
+      "Только если с комфортом",
+      "С кем-то вместе — да",
+      "Нет, скучаю по дому"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Road trip — ты за?",
+    "answers": [
+      "Обожаю — свобода дороги",
+      "Только с хорошей компанией",
+      "Нет — слишком долго",
+      "Да, если я за рулём"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Что ты готовишь лучше всего?",
+    "answers": [
+      "Пасту",
+      "Стейк",
+      "Борщ",
+      "Бутерброды — и горжусь"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Фастфуд — как часто?",
+    "answers": [
+      "Раз в неделю",
+      "Только когда нет выбора",
+      "Стараюсь избегать",
+      "Почти каждый день — и не стыжусь"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Чай — какой пьёшь?",
+    "answers": [
+      "Чёрный с лимоном",
+      "Зелёный",
+      "Травяной",
+      "Я за кофе"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Танцевальная музыка — что предпочитаешь?",
+    "answers": [
+      "Техно",
+      "Хаус",
+      "Латина",
+      "Поп-хиты"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Будильник — какая мелодия?",
+    "answers": [
+      "Спокойная — просыпаюсь нежно",
+      "Громкая — иначе не встану",
+      "Любимая песня",
+      "Стандартная — ненавижу все будильники"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Какой жанр сериалов предпочитаешь?",
+    "answers": [
+      "Триллер/детектив",
+      "Комедия",
+      "Фэнтези",
+      "Дорама"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Какой фильм тебя разочаровал?",
+    "answers": [
+      "Продолжение любимого фильма",
+      "Разрекламированный блокбастер",
+      "Экранизация книги",
+      "Я не разочаровываюсь — принимаю всё"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Ты любишь бегать?",
+    "answers": [
+      "Да, это моя медитация",
+      "Только если кто-то со мной",
+      "Предпочитаю ходьбу",
+      "Только в экстренных случаях"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Какой вид фитнеса тебе нравится?",
+    "answers": [
+      "Кроссфит",
+      "Йога",
+      "Плавание",
+      "Танцы"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Ты бы доверил ИИ выбрать тебе свидание?",
+    "answers": [
+      "Да — алгоритмы знают лучше",
+      "Нет — сам разберусь",
+      "Попробовал бы из любопытства",
+      "Мы же тут — значит уже доверяю"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Как ты относишься к цифровому детоксу?",
+    "answers": [
+      "Регулярно устраиваю",
+      "Хочу, но не могу",
+      "Нет необходимости",
+      "Пробовал — продержался час"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Как ты относишься к сюрпризам?",
+    "answers": [
+      "Обожаю — удивляй меня",
+      "Приятные — да, неожиданные — нет",
+      "Предпочитаю знать заранее",
+      "Зависит от сюрприза"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Как ты относишься к соседям?",
+    "answers": [
+      "Дружу — знаю всех",
+      "Здороваюсь — и всё",
+      "Не знаю их в лицо",
+      "Стараюсь быть незаметным"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ты рисуешь?",
+    "answers": [
+      "Да, и неплохо",
+      "Только каракули",
+      "Хочу научиться",
+      "Палка-палка-огуречик — мой максимум"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Какой вид рукоделия тебе интересен?",
+    "answers": [
+      "Вязание",
+      "Работа с деревом",
+      "Лепка из глины",
+      "Ничего — у меня две левые руки"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Если бы у тебя была волшебная палочка — одно желание?",
+    "answers": [
+      "Мир во всём мире",
+      "Бесконечные деньги",
+      "Суперспособность",
+      "Найти свою любовь"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Какой день недели ты — и почему?",
+    "answers": [
+      "Пятница — я про веселье",
+      "Воскресенье — спокойный и тёплый",
+      "Среда — баланс",
+      "Понедельник — неожиданный, но продуктивный"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Ты бы хотел быть знаменитым?",
+    "answers": [
+      "Да — обожаю внимание",
+      "Немного известным — но не слишком",
+      "Нет — ценю приватность",
+      "Только в узких кругах"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Как ты реагируешь на плохую шутку?",
+    "answers": [
+      "Смеюсь из вежливости",
+      "Молчу и улыбаюсь",
+      "Говорю, что не смешно",
+      "Пытаюсь пошутить хуже"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Если бы ты был супергероем — какой слабость?",
+    "answers": [
+      "Кофе — без него я бесполезен",
+      "Кошки — не могу пройти мимо",
+      "Еда — меня легко купить пиццей",
+      "Комплименты — сразу таю"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Какой ты клиент в ресторане?",
+    "answers": [
+      "Вежливый и тихий",
+      "Тот, кто зовёт официанта глазами",
+      "Спрашиваю 10 вопросов о меню",
+      "Фоткаю еду 5 минут перед тем как есть"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ты умеешь хранить секреты?",
+    "answers": [
+      "Да — могила",
+      "Стараюсь, но иногда...",
+      "Только важные",
+      "Нет — у меня рот на замок не закрывается"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Как ты относишься к тишине в компании?",
+    "answers": [
+      "Мне комфортно",
+      "Стараюсь заполнить разговором",
+      "Зависит от человека",
+      "Неловко — включаю музыку"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Какой аэропорт — твой любимый?",
+    "answers": [
+      "Тот, где есть хороший лаунж",
+      "С бесплатным Wi-Fi",
+      "Мне все одинаковы",
+      "Тот, откуда я улетаю в отпуск"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Какой суп ты любишь больше?",
+    "answers": [
+      "Харчо",
+      "Том Ям",
+      "Мисо",
+      "Щи"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ты заказываешь десерт в ресторане?",
+    "answers": [
+      "Всегда — без десерта обед не полный",
+      "Если есть место",
+      "Редко — слежу за фигурой",
+      "Только если кто-то разделит"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Музыка для тренировки — какая?",
+    "answers": [
+      "Хип-хоп и рэп",
+      "Электроника и EDM",
+      "Рок",
+      "Подкаст — не трата времени"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Ты создаёшь плейлисты или слушаешь чужие?",
+    "answers": [
+      "Свои — я куратор",
+      "Чужие — лень создавать",
+      "Микс — добавляю в готовые",
+      "Радио — пусть удивляют"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Какой фильм тебя напугал?",
+    "answers": [
+      "Оно",
+      "Звонок",
+      "Я не смотрю ужасы",
+      "Ничто меня не пугает"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Ты смотришь фильмы в оригинале?",
+    "answers": [
+      "Всегда — субтитры",
+      "Иногда — если знаю язык",
+      "Нет — дубляж",
+      "Зависит от фильма"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Катание на роликах — пробовал?",
+    "answers": [
+      "Да, люблю",
+      "В детстве",
+      "Нет, но хочу",
+      "Боюсь упасть"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Ты участвовал в соревнованиях?",
+    "answers": [
+      "Да, и побеждал",
+      "Участвовал ради опыта",
+      "Нет, но хочу",
+      "Соревнуюсь только с собой"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Ты пользуешься планировщиками и заметками?",
+    "answers": [
+      "Да, всё организовано",
+      "Иногда — для важного",
+      "Нет — держу в голове",
+      "Пробовал — забросил через неделю"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Фото или видео — что чаще снимаешь?",
+    "answers": [
+      "Фото — запечатлеть момент",
+      "Видео — больше воспоминаний",
+      "Сторис в Instagram",
+      "Ничего — живу моментом"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Какой у тебя режим сна?",
+    "answers": [
+      "Строгий — ложусь и встаю вовремя",
+      "Хаотичный — как получится",
+      "Сплю мало, но продуктивно",
+      "Люблю поспать — 9+ часов"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Как ты относишься к социальной ответственности?",
+    "answers": [
+      "Активно участвую",
+      "Делаю что могу — сортировка мусора",
+      "Задумываюсь, но мало действую",
+      "Не думаю об этом"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Ты бережёшь окружающую среду?",
+    "answers": [
+      "Да, осознанно потребляю",
+      "Стараюсь — но не фанатично",
+      "Иногда забываю",
+      "Не особо задумываюсь"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ты ходишь на мастер-классы?",
+    "answers": [
+      "Регулярно — люблю учиться",
+      "Иногда — если интересная тема",
+      "Хочу начать",
+      "Нет — учусь сам"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ты занимаешься медитацией?",
+    "answers": [
+      "Каждый день",
+      "Иногда",
+      "Пробовал — не для меня",
+      "Хочу начать"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Какое телешоу ты бы вёл?",
+    "answers": [
+      "Кулинарное",
+      "Тревел-шоу",
+      "Комедийное",
+      "Шоу знакомств"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Если бы ты мог стать экспертом в чём-то за ночь?",
+    "answers": [
+      "Языки — все сразу",
+      "Музыкальный инструмент",
+      "Кулинария",
+      "Программирование"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Ты в лифте с незнакомцем — что делаешь?",
+    "answers": [
+      "Молчу и смотрю в телефон",
+      "Здороваюсь и улыбаюсь",
+      "Начинаю разговор",
+      "Притворяюсь невидимым"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Какой ты работник в офисе?",
+    "answers": [
+      "Тот, кто приносит печеньки",
+      "Тихий профессионал",
+      "Душа коллектива",
+      "Тот, кто считает минуты до конца"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Как ты относишься к открытости в отношениях?",
+    "answers": [
+      "Полная открытость — без секретов",
+      "Важно, но нужно личное пространство",
+      "Постепенно открываюсь",
+      "Мне сложно быть полностью открытым"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Что тебя заряжает энергией?",
+    "answers": [
+      "Общение с людьми",
+      "Одиночество и тишина",
+      "Новые идеи и проекты",
+      "Физическая активность"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Ты любишь аэропорты?",
+    "answers": [
+      "Да — чувство начала приключения",
+      "Нет — стресс и очереди",
+      "Только если есть лаунж",
+      "Люблю duty-free шоппинг"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Ты предпочитаешь есть один или в компании?",
+    "answers": [
+      "В компании — еда вкуснее",
+      "Один — мой момент тишины",
+      "Зависит от настроения",
+      "С кем-то, но без разговоров — молча"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Ты помнишь первый альбом, который купил?",
+    "answers": [
+      "Да, и до сих пор слушаю",
+      "Нет, но помню первую любимую песню",
+      "Я никогда не покупал альбомы",
+      "У меня был пиратский диск"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Какой актёр — твой любимый?",
+    "answers": [
+      "Тот, кто меняется в каждой роли",
+      "Комедийный — кто смешит",
+      "Экшн-герой",
+      "Не слежу за актёрами"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Как ты относишься к йоге для пар?",
+    "answers": [
+      "Романтично и полезно",
+      "Хочу попробовать",
+      "Это странно",
+      "Предпочитаю что-то активнее"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Облачное хранилище или флешка?",
+    "answers": [
+      "Облако — всё в одном месте",
+      "Флешка — я олдскул",
+      "Оба — на всякий случай",
+      "Я ничего не храню"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Как ты относишься к моде?",
+    "answers": [
+      "Слежу за трендами",
+      "Свой стиль важнее трендов",
+      "Не обращаю внимания",
+      "Удобство прежде всего"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ты ходишь в театр?",
+    "answers": [
+      "Регулярно — обожаю",
+      "Иногда — если пригласят",
+      "Хочу начать",
+      "Нет — не моё"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Если бы ты мог поменяться жизнями с кем-то на неделю?",
+    "answers": [
+      "С рок-звездой",
+      "С путешественником",
+      "С учёным",
+      "С моим котом"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Ты случайно назвал учителя мамой — что дальше?",
+    "answers": [
+      "Делаю вид, что ничего не было",
+      "Смеюсь вместе со всеми",
+      "Хочу провалиться сквозь землю",
+      "Это было так давно... или нет"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ты принимаешь критику?",
+    "answers": [
+      "Да — это помогает расти",
+      "Конструктивную — да",
+      "Стараюсь, но обидно бывает",
+      "Сложно — воспринимаю лично"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Какой момент в жизни тебя изменил?",
+    "answers": [
+      "Переезд в новый город",
+      "Потеря близкого человека",
+      "Путешествие",
+      "Встреча с правильным человеком"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Какой вид транспорта тебе ближе?",
+    "answers": [
+      "Поезд — смотрю в окно",
+      "Самолёт — быстро",
+      "Автомобиль — свобода",
+      "Велосипед — экология"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Какой твой comfort food?",
+    "answers": [
+      "Пельмени",
+      "Пицца",
+      "Мамина еда",
+      "Мороженое"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Саундтрек к своей жизни — кто бы написал?",
+    "answers": [
+      "Ханс Циммер",
+      "Любимая группа",
+      "ИИ — он знает всё",
+      "Я бы сам написал"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Какой сиквел лучше оригинала?",
+    "answers": [
+      "Тёмный рыцарь",
+      "Терминатор 2",
+      "Крёстный отец 2",
+      "Нет таких — оригинал всегда лучше"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Если бы ты стал профессиональным спортсменом — в каком спорте?",
+    "answers": [
+      "Футбол",
+      "Теннис",
+      "Баскетбол",
+      "Формула 1"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Какую технологию из фильмов ты бы хотел?",
+    "answers": [
+      "Телепортацию",
+      "Ховерборд из Назад в будущее",
+      "Железный костюм",
+      "Волшебную палочку"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Ты ведёшь бюджет?",
+    "answers": [
+      "Да, всё записано",
+      "Примерно — в голове",
+      "Нет — живу на вайбе",
+      "Пробовал — не получается"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Что для тебя лучший подарок?",
+    "answers": [
+      "Впечатление — концерт, поездка",
+      "Книга или альбом",
+      "Гаджет",
+      "Что-то сделанное руками"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Какой ты персонаж из Гарри Поттера?",
+    "answers": [
+      "Гарри — храбрый и верный",
+      "Гермиона — умная и ответственная",
+      "Рон — весёлый и лояльный",
+      "Драко — с характером"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Ты в магазине и не можешь найти выход — что делаешь?",
+    "answers": [
+      "Спрашиваю у кого-нибудь",
+      "Делаю круг и притворяюсь, что всё так и было",
+      "Следую за кем-то, кто уходит",
+      "Открываю карту на телефоне"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Совместный отпуск — как скоро в отношениях?",
+    "answers": [
+      "Через пару месяцев",
+      "Через полгода",
+      "Когда почувствую, что готов",
+      "Сразу — лучший тест совместимости"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Горнолыжный курорт или тропический остров?",
+    "answers": [
+      "Горы — снег и адреналин",
+      "Остров — солнце и море",
+      "Чередую — зимой горы, летом море",
+      "Ни то ни другое — городской отдых"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Какой перекус всегда с тобой?",
+    "answers": [
+      "Орехи",
+      "Шоколад",
+      "Фрукты",
+      "Я не перекусываю"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Ты ходил на концерт, который изменил твою жизнь?",
+    "answers": [
+      "Да — незабываемо",
+      "Нет, но мечтаю",
+      "Все концерты особенные",
+      "Я не хожу на концерты"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Ты любишь смотреть фильмы повторно?",
+    "answers": [
+      "Да — нахожу новые детали",
+      "Только любимые",
+      "Нет — слишком много нового",
+      "Иногда — для ностальгии"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Скакалка — серьёзный тренажёр?",
+    "answers": [
+      "Да — отличная кардио",
+      "Для детей — не для меня",
+      "Пробовал — выдохся за минуту",
+      "У боксёров же работает"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Ты доверяешь беспилотным автомобилям?",
+    "answers": [
+      "Да — технологии впереди",
+      "Пока нет — дайте время",
+      "Никогда — я сам за руль",
+      "Уже жду с нетерпением"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Как ты относишься к благотворительности?",
+    "answers": [
+      "Регулярно помогаю",
+      "Иногда — когда могу",
+      "Хочу, но не знаю как",
+      "Пока фокусируюсь на себе"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ты ведёшь блог или канал?",
+    "answers": [
+      "Да — активно",
+      "Хочу начать",
+      "Пробовал — забросил",
+      "Нет — я потребитель контента"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Ты бы полетел на Марс?",
+    "answers": [
+      "Да — первым рейсом",
+      "Только если можно вернуться",
+      "Нет — Земля мой дом",
+      "Зависит от компании"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Какой ты жилец в многоквартирном доме?",
+    "answers": [
+      "Тихий и незаметный",
+      "Тот, кто устраивает вечеринки",
+      "Дружу со всеми соседями",
+      "Тот, кого никто не видел"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Как ты относишься к неопределённости?",
+    "answers": [
+      "Нормально — жизнь непредсказуема",
+      "Тревожно — мне нужен план",
+      "Стараюсь принять",
+      "Ищу определённость во всём"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ты легко доверяешь людям?",
+    "answers": [
+      "Да — верю в лучшее",
+      "Нужно время — доверие заслуживают",
+      "Зависит от первого впечатления",
+      "Нет — был опыт"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Ты бы хотел пожить на острове?",
+    "answers": [
+      "Да — рай на земле",
+      "На пару недель",
+      "Нет — мне нужен город",
+      "Только с хорошим интернетом"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Брunch — любишь?",
+    "answers": [
+      "Обожаю — лучший приём пищи",
+      "Иногда по выходным",
+      "Нет — или завтрак, или обед",
+      "Если с шампанским — да"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Что ты думаешь о K-pop?",
+    "answers": [
+      "Обожаю",
+      "Не моё, но уважаю",
+      "Не слышал",
+      "Некоторые песни нравятся"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Какое кино ты бы посмотрел прямо сейчас?",
+    "answers": [
+      "Что-нибудь лёгкое и смешное",
+      "Глубокую драму",
+      "Экшн — для адреналина",
+      "Неважно — лишь бы с хорошей компанией"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Paddle или теннис?",
+    "answers": [
+      "Paddle — новый тренд",
+      "Теннис — классика",
+      "Оба — люблю ракеточные",
+      "Ни то ни другое"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "3D-принтер дома — хочешь?",
+    "answers": [
+      "Да — напечатаю всё",
+      "Было бы прикольно",
+      "Нет — зачем",
+      "Только если печатает еду"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Ты подписан на рассылки?",
+    "answers": [
+      "Да, на пару полезных",
+      "На кучу — но не читаю",
+      "Нет — ненавижу спам",
+      "Только от любимых брендов"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ты любишь кроссворды?",
+    "answers": [
+      "Да — тренировка для мозга",
+      "Только судоку",
+      "Нет терпения",
+      "Предпочитаю квизы"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Твоё тотемное животное?",
+    "answers": [
+      "Волк — сильный и верный",
+      "Лиса — хитрая и красивая",
+      "Медведь — мощный и спокойный",
+      "Кот — гуляет сам по себе"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Как ты ведёшь себя на собеседовании?",
+    "answers": [
+      "Уверенно — я знаю себе цену",
+      "Нервничаю, но стараюсь",
+      "Шучу — снимаю напряжение",
+      "Притворяюсь, что я лучше, чем есть"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Что ты цитируешь чаще всего?",
+    "answers": [
+      "Фильмы",
+      "Книги",
+      "Мемы",
+      "Собственные мудрости"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Ты собираешь магниты из стран?",
+    "answers": [
+      "Да, весь холодильник",
+      "Нет, но фотографии",
+      "Собираю что-то другое",
+      "Я не собираю сувениры"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Шашлык или стейк?",
+    "answers": [
+      "Шашлык — с друзьями на природе",
+      "Стейк — ресторанный шик",
+      "Оба — зависит от ситуации",
+      "Я вегетарианец"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Ты поёшь фальшиво, но с душой?",
+    "answers": [
+      "Да — и горжусь",
+      "Нет — у меня слух",
+      "Только в душе",
+      "Меня попросили перестать петь"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Какой твой guilty pleasure фильм?",
+    "answers": [
+      "Романтическая комедия",
+      "Ужастик из 90-х",
+      "Диснеевский мультик",
+      "У меня нет — я горжусь всем"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Ты участвовал в забеге?",
+    "answers": [
+      "Да — полумарафон",
+      "5К — мой максимум",
+      "Нет, но планирую",
+      "Только за автобусом"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Что тебя больше всего раздражает в технологиях?",
+    "answers": [
+      "Слабый интернет",
+      "Обновления ПО",
+      "Спам-уведомления",
+      "Зарядка, которая быстро садится"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Ты веришь в астрологию?",
+    "answers": [
+      "Да — звёзды не врут",
+      "Развлечение — не больше",
+      "Нет — это ненаучно",
+      "Читаю гороскоп — но не верю"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Ты играешь в покер?",
+    "answers": [
+      "Да, регулярно",
+      "Только с друзьями на фишки",
+      "Нет, но хочу научиться",
+      "Предпочитаю Уно"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Если бы ты был цветом — каким?",
+    "answers": [
+      "Красный — страсть",
+      "Синий — спокойствие",
+      "Зелёный — гармония",
+      "Чёрный — элегантность"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Как ты реагируешь на свою фотку из прошлого?",
+    "answers": [
+      "Смеюсь — какой я был",
+      "Ностальгирую",
+      "Удаляю — никто не должен видеть",
+      "Горжусь — я всегда был красавчик"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  }
+]

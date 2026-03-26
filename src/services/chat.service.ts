@@ -61,10 +61,10 @@ export class ChatService {
     };
   }
 
-  async uploadMedia(userId: string, matchId: string, fileBuffer: Buffer, mimeType: string) {
+  async uploadMedia(userId: string, matchId: string, fileBuffer: Buffer, mimeType: string, options?: { skipMediaCheck?: boolean }) {
     const match = await this.verifyMatchAccess(userId, matchId);
 
-    if (!match.media_enabled_by_user1 || !match.media_enabled_by_user2) {
+    if (!options?.skipMediaCheck && (!match.media_enabled_by_user1 || !match.media_enabled_by_user2)) {
       throw Errors.MEDIA_NOT_ENABLED();
     }
 
@@ -148,10 +148,14 @@ export class ChatService {
     const otherUserId = match.user1_id === userId ? match.user2_id : match.user1_id;
     const pushType = isImage ? "new_message_image" : "new_message";
 
-    // Fire-and-forget push notification
-    NotificationService.sendPush(otherUserId, pushType, {}, undefined, {
-      actionUrl: `/matches/chat/${match.id}`,
-    }).catch(() => {});
+    // Fire-and-forget push notification (resolve sender name for template)
+    NotificationService.getUserDisplayName(userId).then((senderName) =>
+      NotificationService.sendPush(otherUserId, pushType, { name: senderName }, undefined, {
+        actionUrl: `/chat/${match.id}`,
+      }),
+    ).catch((err) => {
+      console.error(`[chat] Push notification failed for match=${matchId}:`, err?.message ?? err);
+    });
 
     return message;
   }
