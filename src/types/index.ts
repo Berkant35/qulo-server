@@ -88,6 +88,11 @@ export interface AnswerQuestionResult {
   unmatched: boolean;
   skipped?: boolean;
   rescued?: boolean;
+  green_reward?: number;
+  powers_used?: string[];
+  correct_option?: string;
+  answered_option?: string;
+  time_spent?: number | null;
 }
 
 export interface UsePowerResult {

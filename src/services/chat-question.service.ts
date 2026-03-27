@@ -351,6 +351,11 @@ export class ChatQuestionService {
         is_correct: true,
         unmatched: false,
         skipped: true,
+        green_reward: greenReward,
+        powers_used: [...(question.powers_used ?? []), "SKIP"],
+        correct_option: question.correct_option,
+        answered_option: question.correct_option,
+        time_spent: timeSpent ?? null,
       };
     }
 
@@ -375,10 +380,11 @@ export class ChatQuestionService {
     }
 
     // Reward sender with green diamonds if correct (dynamic ratio)
+    let greenReward = 0;
     if (isCorrect) {
       // Use a base reward of 10 for free questions
       const ecRewardConfig = await economyConfigService.getConfig();
-      const greenReward = calculateGreenReward(10, ecRewardConfig.core.greenDiamondRewardRatio);
+      greenReward = calculateGreenReward(10, ecRewardConfig.core.greenDiamondRewardRatio);
       if (greenReward > 0) {
         try {
           await diamondService.earnGreen(
@@ -418,6 +424,11 @@ export class ChatQuestionService {
       question: this.sanitizeQuestion(updated, userId),
       is_correct: isCorrect,
       unmatched,
+      green_reward: greenReward,
+      powers_used: question.powers_used ?? [],
+      correct_option: question.correct_option,
+      answered_option: selectedOption,
+      time_spent: timeSpent ?? null,
     };
   }
 
@@ -485,6 +496,11 @@ export class ChatQuestionService {
       is_correct: true,
       unmatched: false,
       rescued: true,
+      green_reward: greenReward,
+      powers_used: [...(question.powers_used ?? []), "SKIP_RESCUE"],
+      correct_option: question.correct_option,
+      answered_option: question.correct_option,
+      time_spent: null,
     };
   }
 
