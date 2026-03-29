@@ -486,6 +486,11 @@ export class ChatQuestionService {
       throw Errors.VALIDATION_ERROR({ sender: "Only the answerer can rescue" });
     }
 
+    // Cannot rescue an abandoned question
+    if (question.is_abandoned) {
+      throw Errors.VALIDATION_ERROR({ state: "Cannot rescue an abandoned question" });
+    }
+
     // Must be answered AND wrong
     if (question.answered_option == null || question.is_correct) {
       throw Errors.VALIDATION_ERROR({ state: "Can only rescue a wrong answer" });
@@ -544,6 +549,7 @@ export class ChatQuestionService {
       correct_option: question.correct_option,
       answered_option: question.correct_option,
       time_spent: null,
+      is_abandoned: false,
     };
   }
 

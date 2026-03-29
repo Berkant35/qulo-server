@@ -80,6 +80,7 @@ export interface ChatQuestionBase {
   powers_used: string[];
   created_at: string;
   reward_locked: boolean;
+  is_abandoned: boolean;
 }
 
 export interface AnswerQuestionResult {
@@ -93,7 +94,7 @@ export interface AnswerQuestionResult {
   correct_option?: string;
   answered_option?: string | null;
   time_spent?: number | null;
-  is_abandoned?: boolean;
+  is_abandoned: boolean;
 }
 
 export interface UsePowerResult {
