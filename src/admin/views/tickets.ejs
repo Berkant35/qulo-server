@@ -1,0 +1,46 @@
+<%- include('_header') %>
+<h2 style="margin-bottom: 20px;">Support Tickets (<%= total %>)</h2>
+<form class="filters" method="GET" action="/admin/tickets">
+  <select name="status">
+    <option value="all" <%= status === 'all' ? 'selected' : '' %>>All Status</option>
+    <option value="OPEN" <%= status === 'OPEN' ? 'selected' : '' %>>Open</option>
+    <option value="IN_PROGRESS" <%= status === 'IN_PROGRESS' ? 'selected' : '' %>>In Progress</option>
+    <option value="RESOLVED" <%= status === 'RESOLVED' ? 'selected' : '' %>>Resolved</option>
+    <option value="CLOSED" <%= status === 'CLOSED' ? 'selected' : '' %>>Closed</option>
+  </select>
+  <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+<div class="card">
+  <table>
+    <thead><tr><th>User</th><th>Subject</th><th>Category</th><th>Status</th><th>Date</th><th></th></tr></thead>
+    <tbody>
+      <% tickets.forEach(function(t) { %>
+      <tr>
+        <td>
+          <% if (t.users) { %>
+          <a href="/admin/users/<%= t.user_id %>" style="color:#a855f7;"><%= t.users.name || t.users.email %></a>
+          <% } else { %>
+          <span style="color:#888;"><%= t.user_id.substring(0,8) %>...</span>
+          <% } %>
+        </td>
+        <td><%= t.subject ? t.subject.substring(0, 60) : '-' %></td>
+        <td><%= t.category || '-' %></td>
+        <td><span class="badge badge-<%= (t.status || 'open').toLowerCase() %>"><%= t.status || 'OPEN' %></span></td>
+        <td><%= new Date(t.created_at).toLocaleDateString() %></td>
+        <td><a href="/admin/tickets/<%= t.id %>" class="btn btn-primary btn-sm">Detail</a></td>
+      </tr>
+      <% }); %>
+      <% if (tickets.length === 0) { %>
+      <tr><td colspan="6" style="text-align:center; color:#888; padding:20px;">No tickets found</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<% if (totalPages > 1) { %>
+<div class="pagination">
+  <% for (var i = 1; i <= totalPages; i++) { %>
+  <a href="/admin/tickets?page=<%= i %>&status=<%= status %>" class="<%= i === page ? 'active' : '' %>"><%= i %></a>
+  <% } %>
+</div>
+<% } %>
+<%- include('_footer') %>

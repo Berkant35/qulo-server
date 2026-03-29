@@ -1,0 +1,59 @@
+<%- include('_header') %>
+<a href="/admin/tickets" style="color:#a855f7; text-decoration:none; font-size:14px;">&larr; Back to Tickets</a>
+<h2 style="margin: 12px 0 20px;">Ticket Detail</h2>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+  <div class="card">
+    <h3 style="margin-bottom: 12px;">User Info</h3>
+    <% if (ticket.users) { %>
+    <dl class="detail-grid">
+      <dt>Name</dt><dd><%= ticket.users.name || '-' %></dd>
+      <dt>Email</dt><dd><%= ticket.users.email %></dd>
+      <dt>User ID</dt><dd><%= ticket.user_id.substring(0,8) %>...</dd>
+    </dl>
+    <a href="/admin/users/<%= ticket.user_id %>" class="btn btn-primary btn-sm" style="margin-top:8px;">View Profile</a>
+    <% } else { %>
+    <p style="color:#888;">User not found</p>
+    <% } %>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom: 12px;">Ticket Info</h3>
+    <dl class="detail-grid">
+      <dt>Status</dt><dd><span class="badge badge-<%= (ticket.status || 'open').toLowerCase() %>"><%= ticket.status || 'OPEN' %></span></dd>
+      <dt>Category</dt><dd><%= ticket.category || '-' %></dd>
+      <dt>Created</dt><dd><%= new Date(ticket.created_at).toLocaleString() %></dd>
+      <% if (ticket.replied_at) { %><dt>Replied</dt><dd><%= new Date(ticket.replied_at).toLocaleString() %></dd><% } %>
+    </dl>
+  </div>
+</div>
+
+<div class="card">
+  <h3 style="margin-bottom: 12px;">Subject</h3>
+  <p style="font-size:16px; font-weight:600; margin:0;"><%= ticket.subject || '-' %></p>
+</div>
+
+<div class="card">
+  <h3 style="margin-bottom: 12px;">Message</h3>
+  <p style="white-space: pre-wrap; margin:0; line-height:1.6;"><%= ticket.message || '-' %></p>
+</div>
+
+<% if (ticket.admin_reply) { %>
+<div class="card" style="border-left: 4px solid #22c55e;">
+  <h3 style="margin-bottom: 12px; color:#22c55e;">Admin Reply</h3>
+  <p style="white-space: pre-wrap; margin:0; line-height:1.6; background:#0d2a1a; padding:12px; border-radius:6px;"><%= ticket.admin_reply %></p>
+</div>
+<% } else { %>
+<div class="card">
+  <h3 style="margin-bottom: 12px;">Reply to User</h3>
+  <form method="POST" action="/admin/tickets/<%= ticket.id %>/reply">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div style="margin-bottom:12px;">
+      <textarea name="reply" rows="6" required placeholder="Write your reply here..."
+        style="width:100%; background:#1a1a2e; color:#e2e8f0; border:1px solid #334155; border-radius:6px; padding:10px; font-size:14px; resize:vertical; box-sizing:border-box;"></textarea>
+    </div>
+    <button type="submit" class="btn btn-success">Send Reply & Resolve</button>
+  </form>
+</div>
+<% } %>
+<%- include('_footer') %>

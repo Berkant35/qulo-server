@@ -74,6 +74,12 @@ router.post("/campaigns/:id/send", csrfValidate, (req, res) => adminController.c
 router.post("/campaigns/:id/cancel", csrfValidate, (req, res) => adminController.campaignCancel(req, res));
 router.post("/campaigns/preview-count", csrfValidate, (req, res) => adminController.campaignPreviewCount(req, res));
 
+router.get("/tickets", (req, res) => adminController.tickets(req, res));
+router.get("/tickets/:id", (req, res) => adminController.ticketDetail(req, res));
+router.post("/tickets/:id/reply", csrfValidate, (req, res) => adminController.ticketReply(req, res));
+
+router.get("/blocks", (req, res) => adminController.blocks(req, res));
+
 router.get("/admins", superAdminOnly, (req, res) => adminController.admins(req, res));
 router.post("/admins", superAdminOnly, csrfValidate, (req, res) => adminController.createAdmin(req, res));
 router.post("/admins/:id/delete", superAdminOnly, csrfValidate, (req, res) => adminController.deleteAdminAction(req, res));

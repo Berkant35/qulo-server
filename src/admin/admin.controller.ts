@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { adminService } from "./admin.service.js";
+import { emailService } from "../services/email.service.js";
 import { campaignService } from "../services/campaign.service.js";
 import { appConfigService } from "../services/app-config.service.js";
 import { NotificationService } from "../services/notification.service.js";
@@ -413,6 +414,55 @@ class AdminController {
       res.redirect(`/admin/users/${id}?success=${encodeURIComponent("Gender preference updated")}`);
     } catch (err: any) {
       res.redirect(`/admin/users/${id}?error=${encodeURIComponent(err.message)}`);
+    }
+  }
+
+  // ── Ticket management ──────────────────────────────────────────
+  async tickets(req: Request, res: Response) {
+    try {
+      const page = Math.max(1, parseInt(req.query.page as string) || 1);
+      const status = req.query.status as string | undefined;
+      const { tickets, total } = await adminService.getTickets(page, 20, status);
+      const totalPages = Math.ceil(total / 20);
+      res.render("tickets", { tickets, page, totalPages, total, status: status || "all", session: req.session });
+    } catch (err) {
+      res.status(500).send("Error loading tickets");
+    }
+  }
+
+  async ticketDetail(req: Request, res: Response) {
+    try {
+      const ticket = await adminService.getTicketDetail(req.params.id as string);
+      res.render("ticket-detail", { ticket, session: req.session, csrfToken: req.session.csrfToken });
+    } catch (err) {
+      res.status(404).send("Ticket not found");
+    }
+  }
+
+  async ticketReply(req: Request, res: Response) {
+    try {
+      const { reply } = req.body;
+      const ticket = await adminService.replyToTicket(req.params.id as string, reply);
+
+      if (ticket.users?.email) {
+        await emailService.sendTicketReply(ticket.users.email, ticket.subject, reply, ticket.id);
+      }
+
+      res.redirect(`/admin/tickets/${req.params.id}`);
+    } catch (err) {
+      res.status(500).send("Error replying to ticket");
+    }
+  }
+
+  // ── Blocks management ──────────────────────────────────────────
+  async blocks(req: Request, res: Response) {
+    try {
+      const page = Math.max(1, parseInt(req.query.page as string) || 1);
+      const { blocks, total } = await adminService.getBlocks(page, 20);
+      const totalPages = Math.ceil(total / 20);
+      res.render("blocks", { blocks, page, totalPages, total, session: req.session });
+    } catch (err) {
+      res.status(500).send("Error loading blocks");
     }
   }
 

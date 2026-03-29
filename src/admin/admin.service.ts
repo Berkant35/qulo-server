@@ -660,6 +660,103 @@ class AdminService {
     };
   }
 
+  async getTickets(page: number, limit: number, status?: string) {
+    let query = supabase
+      .from("support_tickets")
+      .select("*", { count: "exact" })
+      .order("created_at", { ascending: false })
+      .range((page - 1) * limit, page * limit - 1);
+
+    if (status && status !== "all") {
+      query = query.eq("status", status);
+    }
+
+    const { data, error, count } = await query;
+    if (error) throw Errors.SERVER_ERROR();
+
+    const tickets = data ?? [];
+    if (tickets.length > 0) {
+      const userIds = [...new Set(tickets.map((t: any) => t.user_id))];
+      const { data: users } = await supabase
+        .from("users")
+        .select("id, name, email")
+        .in("id", userIds);
+      const userMap = new Map((users ?? []).map((u: any) => [u.id, u]));
+      tickets.forEach((t: any) => { t.users = userMap.get(t.user_id) || null; });
+    }
+
+    return { tickets, total: count ?? 0 };
+  }
+
+  async getTicketDetail(ticketId: string) {
+    const { data: ticket, error } = await supabase
+      .from("support_tickets")
+      .select("*")
+      .eq("id", ticketId)
+      .single();
+
+    if (error || !ticket) throw Errors.USER_NOT_FOUND();
+
+    const { data: user } = await supabase
+      .from("users")
+      .select("id, name, email, photos")
+      .eq("id", ticket.user_id)
+      .single();
+
+    return { ...ticket, users: user };
+  }
+
+  async replyToTicket(ticketId: string, reply: string) {
+    const { data, error } = await supabase
+      .from("support_tickets")
+      .update({
+        admin_reply: reply,
+        replied_at: new Date().toISOString(),
+        status: "RESOLVED",
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", ticketId)
+      .select("*")
+      .single();
+
+    if (error) throw Errors.SERVER_ERROR();
+
+    const { data: user } = await supabase
+      .from("users")
+      .select("id, name, email")
+      .eq("id", data.user_id)
+      .single();
+
+    return { ...data, users: user };
+  }
+
+  async getBlocks(page: number, limit: number) {
+    const { data, error, count } = await supabase
+      .from("blocks")
+      .select("id, blocker_id, blocked_id, created_at", { count: "exact" })
+      .order("created_at", { ascending: false })
+      .range((page - 1) * limit, page * limit - 1);
+
+    if (error) throw Errors.SERVER_ERROR();
+
+    const userIds = new Set<string>();
+    (data ?? []).forEach((b: any) => { userIds.add(b.blocker_id); userIds.add(b.blocked_id); });
+    const { data: users } = await supabase
+      .from("users")
+      .select("id, name, email")
+      .in("id", Array.from(userIds));
+
+    const userMap = new Map((users ?? []).map((u: any) => [u.id, u]));
+
+    const blocks = (data ?? []).map((b: any) => ({
+      ...b,
+      blocker: userMap.get(b.blocker_id),
+      blocked: userMap.get(b.blocked_id),
+    }));
+
+    return { blocks, total: count ?? 0 };
+  }
+
   async updateGenderPref(userId: string, genderPref: "MAN" | "WOMAN" | "BOTH", adminEmail: string): Promise<void> {
     const { error } = await supabase
       .from("users")
