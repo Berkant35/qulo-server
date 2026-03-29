@@ -23,6 +23,7 @@ import exchangeRoutes from "./routes/exchange.routes.js";
 import referralRoutes from "./routes/referral.routes.js";
 import appRoutes from "./routes/app.routes.js";
 import presenceRoutes from "./routes/presence.routes.js";
+import supportTicketRoutes from "./routes/support-ticket.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { idempotencyMiddleware } from "./middleware/idempotency.js";
 import adminRoutes from "./admin/admin.routes.js";
@@ -157,6 +158,7 @@ app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/exchange", exchangeRoutes);
 app.use("/api/v1/referrals", referralRoutes);
 app.use("/api/v1/users/me/presence", presenceRoutes);
+app.use("/api/v1/support-tickets", supportTicketRoutes);
 
 // Error handler (must be last)
 app.use(errorHandler);
