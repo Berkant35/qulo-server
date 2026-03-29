@@ -24,6 +24,7 @@ const envSchema = z.object({
   SMTP_PORT: z.coerce.number().optional(),
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
+  SMTP_FROM: z.string().default("noreply@quloapp.com"),
 
   // App
   APP_URL: z.string().url().default("http://localhost:3000"),
