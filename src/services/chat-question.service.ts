@@ -381,9 +381,8 @@ export class ChatQuestionService {
     // Reward sender with green diamonds if correct (dynamic ratio)
     let greenReward = 0;
     if (isCorrect) {
-      // Use a base reward of 10 for free questions
       const ecRewardConfig = await economyConfigService.getConfig();
-      greenReward = calculateGreenReward(10, ecRewardConfig.core.greenDiamondRewardRatio);
+      greenReward = calculateGreenReward(ecRewardConfig.core.baseAnswerReward ?? 10, ecRewardConfig.core.greenDiamondRewardRatio);
       if (greenReward > 0) {
         try {
           await diamondService.earnGreen(

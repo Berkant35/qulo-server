@@ -38,6 +38,7 @@ const coreSchema = z.object({
   boostDurationMinutes: z.number().int().min(B.boostDurationMinutes.min).max(B.boostDurationMinutes.max),
   greenDiamondRewardRatio: z.number().min(B.greenDiamondRewardRatio.min).max(B.greenDiamondRewardRatio.max),
   greenToPurpleRatio: z.number().int().min(B.greenToPurpleRatio.min).max(B.greenToPurpleRatio.max),
+  baseAnswerReward: z.number().int().min(1).max(100).default(10),
   questionCountMultipliers: z.record(
     z.string(),
     z.number().min(B.questionCountMultiplier.min).max(B.questionCountMultiplier.max),
