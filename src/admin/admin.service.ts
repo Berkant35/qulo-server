@@ -1,6 +1,7 @@
 import { supabase } from "../config/supabase.js";
 import { hashPassword, comparePassword, normalizeEmail } from "../utils/hash.js";
 import { sanitizeIlike } from "../utils/validation.js";
+import { Errors } from "../utils/errors.js";
 
 class AdminService {
   async findByEmail(email: string) {
@@ -130,12 +131,28 @@ class AdminService {
     return { user, details, questions: questions ?? [] };
   }
 
-  async banUser(userId: string) {
-    await supabase.from("users").update({ is_deleted: true }).eq("id", userId);
+  async banUser(userId: string, reason: string = "Banned by admin") {
+    const { error: banError } = await supabase
+      .from("users")
+      .update({ is_banned: true, banned_at: new Date().toISOString(), ban_reason: reason })
+      .eq("id", userId);
+
+    if (banError) throw Errors.SERVER_ERROR();
+
+    // Deactivate all matches
+    await supabase
+      .from("matches")
+      .update({ is_active: false })
+      .or(`user1_id.eq.${userId},user2_id.eq.${userId}`);
   }
 
   async unbanUser(userId: string) {
-    await supabase.from("users").update({ is_deleted: false }).eq("id", userId);
+    const { error } = await supabase
+      .from("users")
+      .update({ is_banned: false, banned_at: null, ban_reason: null })
+      .eq("id", userId);
+
+    if (error) throw Errors.SERVER_ERROR();
   }
 
   async deleteUser(userId: string) {

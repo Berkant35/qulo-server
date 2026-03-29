@@ -155,4 +155,7 @@ export const Errors = {
 
   CHAT_LOCKED: () =>
     new AppError("CHAT_LOCKED", 403, "Chat is locked until the question is answered"),
+
+  ACCOUNT_BANNED: () =>
+    new AppError("ACCOUNT_BANNED", 403, "Your account has been suspended"),
 } as const;

@@ -90,14 +90,16 @@ class AdminController {
   }
 
   async reportAction(req: Request, res: Response) {
-    const id = req.params.id as string;
+    const reportId = req.params.id as string;
     const { status, ban_user } = req.body;
-    await adminService.updateReportStatus(id, status);
-    if (ban_user) {
-      const detail = await adminService.getReportDetail(id);
-      if (detail?.reported) await adminService.banUser(detail.reported.id);
+    await adminService.updateReportStatus(reportId, status);
+    if (ban_user === "1") {
+      const detail = await adminService.getReportDetail(reportId);
+      if (detail?.reported) {
+        await adminService.banUser(detail.reported.id, `Banned via report #${reportId}`);
+      }
     }
-    res.redirect(`/admin/reports/${id}`);
+    res.redirect(`/admin/reports/${reportId}`);
   }
 
   async matches(req: Request, res: Response) {

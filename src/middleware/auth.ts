@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import { verifyAccessToken } from "../utils/jwt.js";
 import type { JwtPayload } from "../types/index.js";
 import { Errors } from "../utils/errors.js";
+import { supabase } from "../config/supabase.js";
 
 declare global {
   namespace Express {
@@ -11,23 +12,41 @@ declare global {
   }
 }
 
-export function authMiddleware(
+export async function authMiddleware(
   req: Request,
   _res: Response,
   next: NextFunction,
-): void {
+): Promise<void> {
   const header = req.headers.authorization;
 
   if (!header?.startsWith("Bearer ")) {
-    throw Errors.INVALID_TOKEN();
+    return next(Errors.INVALID_TOKEN());
   }
 
   const token = header.slice(7);
 
+  let decoded: JwtPayload;
   try {
-    req.user = verifyAccessToken(token);
+    decoded = verifyAccessToken(token);
+  } catch {
+    return next(Errors.TOKEN_EXPIRED());
+  }
+
+  try {
+    // Check if user is banned
+    const { data: userRow } = await supabase
+      .from("users")
+      .select("is_banned")
+      .eq("id", decoded.sub)
+      .single();
+
+    if (userRow?.is_banned) {
+      return next(Errors.ACCOUNT_BANNED());
+    }
+
+    req.user = decoded;
     next();
   } catch {
-    throw Errors.TOKEN_EXPIRED();
+    return next(Errors.SERVER_ERROR());
   }
 }
