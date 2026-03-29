@@ -39,7 +39,7 @@ class SupportTicketService {
       .eq("user_id", userId)
       .single();
 
-    if (error) throw Errors.NOT_FOUND();
+    if (error) throw Errors.TICKET_NOT_FOUND();
     return data;
   }
 }

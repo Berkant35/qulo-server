@@ -41,7 +41,7 @@ export async function getTicketHandler(
 ) {
   try {
     const result = await supportTicketService.getById(
-      req.params.id,
+      req.params.id as string,
       req.user!.userId,
     );
     res.json(result);

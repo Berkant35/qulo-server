@@ -37,7 +37,7 @@ export async function authMiddleware(
     const { data: userRow } = await supabase
       .from("users")
       .select("is_banned")
-      .eq("id", decoded.sub)
+      .eq("id", decoded.userId)
       .single();
 
     if (userRow?.is_banned) {

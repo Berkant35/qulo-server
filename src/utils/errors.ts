@@ -138,6 +138,9 @@ export const Errors = {
   MEDIA_REQUEST_NOT_FOUND: () =>
     new AppError("MEDIA_REQUEST_NOT_FOUND", 404, "Media request not found"),
 
+  TICKET_NOT_FOUND: () =>
+    new AppError("TICKET_NOT_FOUND", 404, "Support ticket not found"),
+
   MEDIA_REQUEST_NOT_RECIPIENT: () =>
     new AppError("MEDIA_REQUEST_NOT_RECIPIENT", 403, "Only the recipient can respond"),
 
