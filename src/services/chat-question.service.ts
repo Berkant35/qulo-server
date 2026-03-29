@@ -683,7 +683,7 @@ export class ChatQuestionService {
       throw Errors.SERVER_ERROR();
     }
 
-    return { power_name: powerName, ...powerResult };
+    return { power_name: powerName, cost, green_reward: greenReward, ...powerResult };
   }
 
   /* ================================================================ */
