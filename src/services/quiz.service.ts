@@ -260,7 +260,8 @@ export class QuizService {
 
       if (!usedFromInventory) {
         const config = await economyConfigService.getConfig();
-        const cost = calculatePowerCost(powerData.base_cost, session.total_questions, config.core.questionCountMultipliers);
+        const powerCostEntry = config.powerCosts[powerUsed as keyof typeof config.powerCosts];
+        const cost = calculatePowerCost(powerCostEntry.purpleCost, session.total_questions, config.core.questionCountMultipliers);
         const greenReward = calculateGreenReward(cost, config.core.greenDiamondRewardRatio);
 
         // Spend purple diamonds from solver
