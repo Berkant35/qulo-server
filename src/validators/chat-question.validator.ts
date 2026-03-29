@@ -30,7 +30,7 @@ export const createChatQuestionSchema = z.object({
 );
 
 export const answerChatQuestionSchema = z.object({
-  selected_option: z.enum(["A", "B", "C", "D"]),
+  selected_option: z.enum(["A", "B", "C", "D"]).nullable(),
   power_used: z.enum(["ORACLE", "SKIP", "HALF", "HINT", "TIME_EXTEND"]).optional(),
   time_spent: z.number().int().min(0).optional(),
 });
