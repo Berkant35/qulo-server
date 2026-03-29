@@ -91,8 +91,9 @@ export interface AnswerQuestionResult {
   green_reward?: number;
   powers_used?: string[];
   correct_option?: string;
-  answered_option?: string;
+  answered_option?: string | null;
   time_spent?: number | null;
+  is_abandoned?: boolean;
 }
 
 export interface UsePowerResult {

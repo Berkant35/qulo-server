@@ -281,7 +281,7 @@ export class ChatQuestionService {
   async answerQuestion(
     questionId: string,
     userId: string,
-    selectedOption: "A" | "B" | "C" | "D",
+    selectedOption: "A" | "B" | "C" | "D" | null,
     powerUsed?: string,
     timeSpent?: number,
   ): Promise<AnswerQuestionResult> {
@@ -299,6 +299,50 @@ export class ChatQuestionService {
 
     // Verify match access
     const match = await this.verifyMatchAccess(userId, question.match_id);
+
+    // ── ABANDON FLOW ──────────────────────────────────────
+    if (selectedOption === null) {
+      // Mark question as abandoned
+      const { data: abandoned, error: abandonErr } = await supabase
+        .from("chat_questions")
+        .update({
+          is_abandoned: true,
+          is_correct: false,
+          answered_at: new Date().toISOString(),
+          time_spent: timeSpent ?? null,
+        })
+        .eq("id", questionId)
+        .select()
+        .single();
+
+      if (abandonErr || !abandoned) {
+        throw Errors.SERVER_ERROR();
+      }
+
+      // If unmatch risk → trigger unmatch (same as wrong answer)
+      let unmatched = false;
+      if (question.has_unmatch_risk) {
+        try {
+          await matchingService.unmatch(question.sender_id, match.id);
+          unmatched = true;
+        } catch (err) {
+          console.error("[chat-question] Unmatch after abandon failed:", err);
+        }
+      }
+
+      return {
+        question: this.sanitizeQuestion(abandoned, userId),
+        is_correct: false,
+        unmatched,
+        green_reward: 0,
+        powers_used: question.powers_used ?? [],
+        correct_option: question.correct_option,
+        answered_option: null,
+        time_spent: timeSpent ?? null,
+        is_abandoned: true,
+      };
+    }
+    // ── END ABANDON FLOW ──────────────────────────────────
 
     // ── SKIP power: auto-correct, reward sender, reveal media ──
     if (powerUsed === "SKIP") {
@@ -355,6 +399,7 @@ export class ChatQuestionService {
         correct_option: question.correct_option,
         answered_option: question.correct_option,
         time_spent: timeSpent ?? null,
+        is_abandoned: false,
       };
     }
 
@@ -427,6 +472,7 @@ export class ChatQuestionService {
       correct_option: question.correct_option,
       answered_option: selectedOption,
       time_spent: timeSpent ?? null,
+      is_abandoned: false,
     };
   }
 
