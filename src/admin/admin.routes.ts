@@ -29,6 +29,7 @@ router.get("/", (req, res) => adminController.dashboard(req, res));
 router.get("/users", (req, res) => adminController.users(req, res));
 router.get("/users/:id", (req, res) => adminController.userDetail(req, res));
 router.post("/users/:id/action", csrfValidate, (req, res) => adminController.userAction(req, res));
+router.post("/users/:id/gender-pref", csrfValidate, (req, res) => adminController.updateUserGenderPref(req, res));
 router.post("/users/:id/send-notification", csrfValidate, (req, res) => adminController.sendNotification(req, res));
 router.post("/users/:id/test-push", csrfValidate, (req, res) => adminController.testPush(req, res));
 

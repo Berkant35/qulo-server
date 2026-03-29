@@ -398,6 +398,22 @@ class AdminController {
     }
   }
 
+  async updateUserGenderPref(req: Request, res: Response) {
+    const id = req.params.id as string;
+    try {
+      const gender_pref: string = String(req.body.gender_pref ?? "");
+
+      if (!["MAN", "WOMAN", "BOTH"].includes(gender_pref)) {
+        return res.redirect(`/admin/users/${id}?error=${encodeURIComponent("Invalid gender_pref value")}`);
+      }
+
+      await adminService.updateGenderPref(id, gender_pref as "MAN" | "WOMAN" | "BOTH", req.session.adminEmail!);
+      res.redirect(`/admin/users/${id}?success=${encodeURIComponent("Gender preference updated")}`);
+    } catch (err: any) {
+      res.redirect(`/admin/users/${id}?error=${encodeURIComponent(err.message)}`);
+    }
+  }
+
   // ── Test Push — JSON API for quick FCM debugging ───────────────
   async testPush(req: Request, res: Response) {
     const userId = req.params.id as string;

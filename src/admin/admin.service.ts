@@ -642,6 +642,18 @@ class AdminService {
       swipesRemoved: (swipesAsSwiper ?? 0) + (swipesAsTarget ?? 0),
     };
   }
+
+  async updateGenderPref(userId: string, genderPref: "MAN" | "WOMAN" | "BOTH", adminEmail: string): Promise<void> {
+    const { error } = await supabase
+      .from("users")
+      .update({ gender_pref: genderPref })
+      .eq("id", userId)
+      .eq("is_deleted", false);
+
+    if (error) throw new Error(`gender_pref update failed: ${error.message}`);
+
+    console.log(`[ADMIN] gender_pref updated: user=${userId} newPref=${genderPref} by=${adminEmail}`);
+  }
 }
 
 export const adminService = new AdminService();
