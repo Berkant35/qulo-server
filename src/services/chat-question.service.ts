@@ -330,6 +330,15 @@ export class ChatQuestionService {
         }
       }
 
+      // Push notification to sender (fire-and-forget)
+      NotificationService.sendPush(
+        question.sender_id,
+        "chat_question_answered",
+        { result: "abandoned" },
+        { question_id: question.id, match_id: question.match_id },
+        { actionUrl: `/chat/${question.match_id}` },
+      ).catch(() => {});
+
       return {
         question: this.sanitizeQuestion(abandoned, userId),
         is_correct: false,
@@ -423,9 +432,10 @@ export class ChatQuestionService {
       throw Errors.SERVER_ERROR();
     }
 
-    // Reward sender with green diamonds if correct (dynamic ratio)
+    // Reward sender with green diamonds if correct AND powers were used
     let greenReward = 0;
-    if (isCorrect) {
+    const powersUsed = question.powers_used ?? [];
+    if (isCorrect && powersUsed.length > 0) {
       const ecRewardConfig = await economyConfigService.getConfig();
       greenReward = calculateGreenReward(ecRewardConfig.core.baseAnswerReward ?? 10, ecRewardConfig.core.greenDiamondRewardRatio);
       if (greenReward > 0) {
