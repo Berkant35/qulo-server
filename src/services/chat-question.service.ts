@@ -215,8 +215,8 @@ export class ChatQuestionService {
 
     // ── Power Block handling ──
     if (data.use_power_block) {
-      const power = await this.fetchPower("POWER_BLOCK");
-      const cost = power.purple_cost ?? power.base_cost ?? 0;
+      const ecConfigPB = await economyConfigService.getConfig();
+      const cost = ecConfigPB.powerCosts.POWER_BLOCK.purpleCost;
       await this.tryUseOrSpend(senderId, "POWER_BLOCK", cost, "chat_question_power_block", matchId);
     }
 
@@ -307,9 +307,8 @@ export class ChatQuestionService {
         throw Errors.VALIDATION_ERROR({ power: "Power block is active. Use POWER_UNBLOCK first." });
       }
 
-      const power = await this.fetchPower("SKIP");
       const ecConfig = await economyConfigService.getConfig();
-      const cost = calculatePowerCost(power.purple_cost ?? power.base_cost ?? 0, 1, ecConfig.core.questionCountMultipliers);
+      const cost = calculatePowerCost(ecConfig.powerCosts.SKIP.purpleCost, 1, ecConfig.core.questionCountMultipliers);
       await this.tryUseOrSpend(userId, "SKIP", cost, "chat_question_skip", questionId);
 
       // Calculate green reward for sender (dynamic ratio)
@@ -455,9 +454,8 @@ export class ChatQuestionService {
     }
 
     // Pay for SKIP
-    const power = await this.fetchPower("SKIP");
     const ecConfig2 = await economyConfigService.getConfig();
-    const cost = calculatePowerCost(power.purple_cost ?? power.base_cost ?? 0, 1, ecConfig2.core.questionCountMultipliers);
+    const cost = calculatePowerCost(ecConfig2.powerCosts.SKIP.purpleCost, 1, ecConfig2.core.questionCountMultipliers);
     await this.tryUseOrSpend(userId, "SKIP", cost, "chat_question_rescue", questionId);
 
     const greenReward = calculateGreenReward(cost, ecConfig2.core.greenDiamondRewardRatio);
@@ -542,8 +540,9 @@ export class ChatQuestionService {
         throw Errors.VALIDATION_ERROR({ power: "No power block to remove" });
       }
 
-      const power = await this.fetchPower("POWER_UNBLOCK");
-      const cost = power.purple_cost ?? power.base_cost ?? 0;
+      const ecConfigUB = await economyConfigService.getConfig();
+      const cost = ecConfigUB.powerCosts.POWER_UNBLOCK.purpleCost;
+      const power = await this.fetchPower("POWER_UNBLOCK"); // KEEP — needed for special_green_reward
       await this.tryUseOrSpend(userId, "POWER_UNBLOCK", cost, "chat_question_power_unblock", questionId);
 
       // Green reward for question sender (from special_green_reward)
@@ -575,7 +574,7 @@ export class ChatQuestionService {
         throw Errors.SERVER_ERROR();
       }
 
-      return { unblocked: true };
+      return { unblocked: true, cost, green_reward: specialReward };
     }
 
     // ── Block check for normal powers ──
@@ -586,9 +585,10 @@ export class ChatQuestionService {
     }
 
     // ── Normal power handling (ORACLE, HALF, HINT, TIME_EXTEND) ──
-    const power = await this.fetchPower(powerName);
     const ecConfig3 = await economyConfigService.getConfig();
-    const cost = calculatePowerCost(power.purple_cost ?? power.base_cost ?? 0, 1, ecConfig3.core.questionCountMultipliers);
+    const powerCostEntry = ecConfig3.powerCosts[powerName as keyof typeof ecConfig3.powerCosts];
+    const cost = calculatePowerCost(powerCostEntry.purpleCost, 1, ecConfig3.core.questionCountMultipliers);
+    const power = await this.fetchPower(powerName); // KEEP — needed for ORACLE accuracy_rate
     await this.tryUseOrSpend(userId, powerName, cost, `chat_question_power_${powerName.toLowerCase()}`, questionId);
 
     // Calculate green reward for sender
