@@ -66,6 +66,31 @@ class BlockService {
 
     return (data ?? []).map((b: any) => b.blocker_id);
   }
+
+  async getBlockedUsers(blockerId: string) {
+    const { data: blocks, error } = await supabase
+      .from("blocks")
+      .select("id, blocked_id, created_at")
+      .eq("blocker_id", blockerId)
+      .order("created_at", { ascending: false });
+
+    if (error) throw Errors.SERVER_ERROR();
+    if (!blocks || blocks.length === 0) return [];
+
+    const blockedIds = blocks.map((b: any) => b.blocked_id);
+    const { data: users } = await supabase
+      .from("users")
+      .select("id, name, photos")
+      .in("id", blockedIds);
+
+    const userMap = new Map((users ?? []).map((u: any) => [u.id, u]));
+
+    return blocks.map((b: any) => ({
+      id: b.id,
+      blocked_at: b.created_at,
+      user: userMap.get(b.blocked_id) ?? { id: b.blocked_id, name: "Unknown", photos: [] },
+    }));
+  }
 }
 
 export const blockService = new BlockService();

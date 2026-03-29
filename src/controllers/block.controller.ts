@@ -21,3 +21,12 @@ export async function unblockUserHandler(req: Request, res: Response, next: Next
     next(err);
   }
 }
+
+export async function getBlockedUsersHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const result = await blockService.getBlockedUsers(req.user!.userId);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+}
