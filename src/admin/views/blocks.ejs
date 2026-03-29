@@ -1,0 +1,41 @@
+<%- include('_header') %>
+<h2 style="margin-bottom: 20px;">Blocks (<%= total %>)</h2>
+<div class="card">
+  <table>
+    <thead><tr><th>Blocker</th><th>Blocked</th><th>Date</th></tr></thead>
+    <tbody>
+      <% blocks.forEach(function(b) { %>
+      <tr>
+        <td>
+          <% if (b.blocker) { %>
+          <a href="/admin/users/<%= b.blocker_id %>" style="color:#a855f7;"><%= b.blocker.name || b.blocker.email %></a>
+          <br><small style="color:#888;"><%= b.blocker.email %></small>
+          <% } else { %>
+          <span style="color:#888;"><%= b.blocker_id.substring(0,8) %>...</span>
+          <% } %>
+        </td>
+        <td>
+          <% if (b.blocked) { %>
+          <a href="/admin/users/<%= b.blocked_id %>" style="color:#a855f7;"><%= b.blocked.name || b.blocked.email %></a>
+          <br><small style="color:#888;"><%= b.blocked.email %></small>
+          <% } else { %>
+          <span style="color:#888;"><%= b.blocked_id.substring(0,8) %>...</span>
+          <% } %>
+        </td>
+        <td><%= new Date(b.created_at).toLocaleDateString() %></td>
+      </tr>
+      <% }); %>
+      <% if (blocks.length === 0) { %>
+      <tr><td colspan="3" style="text-align:center; color:#888; padding:20px;">No blocks found</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<% if (totalPages > 1) { %>
+<div class="pagination">
+  <% for (var i = 1; i <= totalPages; i++) { %>
+  <a href="/admin/blocks?page=<%= i %>" class="<%= i === page ? 'active' : '' %>"><%= i %></a>
+  <% } %>
+</div>
+<% } %>
+<%- include('_footer') %>
