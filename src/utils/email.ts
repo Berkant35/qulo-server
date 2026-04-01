@@ -2,6 +2,10 @@ import nodemailer from "nodemailer";
 import type { Transporter } from "nodemailer";
 import { env } from "../config/env.js";
 
+if (env.NODE_ENV === 'production' && !env.SMTP_HOST) {
+  console.warn('[EMAIL] WARNING: SMTP not configured in production — email verification disabled');
+}
+
 let transporter: Transporter | null = null;
 
 function getTransporter(): Transporter | null {
