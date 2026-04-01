@@ -6,7 +6,6 @@ export const updateProfileSchema = z.object({
   surname: z.string().min(1).max(50).optional(),
   bio: z.string().max(500).optional(),
   age: z.number().int().min(18).max(99).optional(),
-  gender_pref: z.enum(["MAN", "WOMAN", "BOTH"]).optional(),
   match_radius_km: z.number().int().min(5).max(500).optional(),
   age_pref_min: z.number().int().min(18).max(99).optional(),
   age_pref_max: z.number().int().min(18).max(99).optional(),
@@ -60,3 +59,12 @@ export const notificationPreferencesSchema = z.object({
 );
 
 export type NotificationPreferencesInput = z.infer<typeof notificationPreferencesSchema>;
+
+export const completeProfileSchema = z.object({
+  birthday: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  gender: z.enum(["MAN", "WOMAN", "OTHER"]),
+  lat: z.number().min(-90).max(90).optional(),
+  lng: z.number().min(-180).max(180).optional(),
+});
+
+export type CompleteProfileInput = z.infer<typeof completeProfileSchema>;

@@ -146,3 +146,14 @@ export async function updateNotificationPreferencesHandler(req: Request, res: Re
     next(err);
   }
 }
+
+export async function completeProfileHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const userId = req.user!.userId;
+    const data = req.body as import("../validators/user.validator.js").CompleteProfileInput;
+    const result = await userService.completeProfile(userId, data);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+}

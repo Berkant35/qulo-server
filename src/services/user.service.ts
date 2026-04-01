@@ -529,6 +529,45 @@ export class UserService {
 
     return merged;
   }
+
+  async completeProfile(userId: string, data: {
+    birthday: string;
+    gender: string;
+    lat?: number;
+    lng?: number;
+  }) {
+    const birthDate = new Date(data.birthday);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
+    if (age < 18) {
+      const { error: deleteError } = await supabase.from("users").delete().eq("id", userId);
+      if (deleteError) console.error("[completeProfile] Failed to delete underage user:", deleteError.message);
+      throw Errors.UNDERAGE_USER();
+    }
+
+    if (age > 99) {
+      throw Errors.VALIDATION_ERROR({ birthday: "Invalid date of birth" });
+    }
+
+    const updateData: Record<string, unknown> = { age, gender: data.gender };
+    if (data.lat != null && data.lng != null) {
+      updateData.lat = data.lat;
+      updateData.lng = data.lng;
+    }
+
+    const { error } = await supabase.from("users").update(updateData).eq("id", userId);
+    if (error) {
+      console.error("[completeProfile] Update failed:", error.message);
+      throw Errors.SERVER_ERROR();
+    }
+
+    return { age, gender: data.gender };
+  }
 }
 
 export const userService = new UserService();

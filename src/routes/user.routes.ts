@@ -9,6 +9,7 @@ import {
   updateLocationSchema,
   updatePushTokenSchema,
   notificationPreferencesSchema,
+  completeProfileSchema,
 } from "../validators/user.validator.js";
 import { userLanguageService } from "../services/user-language.service.js";
 import { setUserLanguagesSchema } from "../validators/user-language.validator.js";
@@ -26,7 +27,9 @@ import {
   deleteAccountHandler,
   getNotificationPreferencesHandler,
   updateNotificationPreferencesHandler,
+  completeProfileHandler,
 } from "../controllers/user.controller.js";
+import { profileGuard } from "../middleware/profileGuard.js";
 import { AppError } from "../utils/errors.js";
 
 const upload = multer({
@@ -46,14 +49,15 @@ const router = Router();
 // All routes require authentication and general rate limiting
 router.use(authMiddleware, generalLimiter);
 
+router.post("/me/complete-profile", validate(completeProfileSchema), completeProfileHandler);
 router.get("/me", getMeHandler);
 router.patch("/me", validate(updateProfileSchema), updateProfileHandler);
 router.patch("/me/details", validate(updateDetailsSchema), updateDetailsHandler);
 router.patch("/me/location", validate(updateLocationSchema), updateLocationHandler);
 router.patch("/me/push-token", validate(updatePushTokenSchema), updatePushTokenHandler);
 router.post("/me/photos", upload.single("photo"), uploadPhotoHandler);
-router.post("/me/boost", boostHandler);
-router.post("/me/claim-badge-reward", claimBadgeRewardHandler);
+router.post("/me/boost", profileGuard, boostHandler);
+router.post("/me/claim-badge-reward", profileGuard, claimBadgeRewardHandler);
 router.delete("/me/photos/:index", deletePhotoHandler);
 
 router.get("/me/notification-preferences", getNotificationPreferencesHandler);
