@@ -40,6 +40,15 @@ const envSchema = z.object({
   // Deep Links
   ANDROID_SHA256_FINGERPRINT: z.string().default(''),
 
+  // Social Auth — Google
+  GOOGLE_CLIENT_ID_WEB: z.string().default(''),
+  GOOGLE_CLIENT_ID_IOS: z.string().default(''),
+  GOOGLE_CLIENT_ID_ANDROID: z.string().default(''),
+
+  // Social Auth — Apple
+  APPLE_BUNDLE_ID: z.string().default(''),
+  APPLE_TEAM_ID: z.string().default(''),
+
   // Admin
   ADMIN_SESSION_SECRET: z.string().min(1),
   ADMIN_SEED_EMAIL: z.string().email().optional(),
