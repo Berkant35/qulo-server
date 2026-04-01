@@ -179,4 +179,7 @@ export const Errors = {
 
   UNDERAGE_USER: () =>
     new AppError("UNDERAGE_USER", 403, "You must be at least 18 years old"),
+
+  DIAMOND_COOLDOWN: () =>
+    new AppError("DIAMOND_COOLDOWN", 403, "Diamond transactions are locked for 24 hours after social signup"),
 } as const;

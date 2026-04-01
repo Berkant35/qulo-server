@@ -2,6 +2,22 @@ import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
 
 export class DiamondService {
+  private async checkSocialCooldown(userId: string) {
+    const { data: user } = await supabase
+      .from("users")
+      .select("created_at, auth_provider")
+      .eq("id", userId)
+      .single();
+
+    if (user && user.auth_provider !== "email") {
+      const createdAt = new Date(user.created_at);
+      const hoursSinceCreation = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60);
+      if (hoursSinceCreation < 24) {
+        throw Errors.DIAMOND_COOLDOWN();
+      }
+    }
+  }
+
   async getBalance(userId: string) {
     const { data, error } = await supabase
       .from("users")
@@ -45,6 +61,9 @@ export class DiamondService {
     reason: string,
     referenceId?: string,
   ) {
+    // Check 24h cooldown for social signup users
+    await this.checkSocialCooldown(userId);
+
     // Read current balance for early validation
     const { data: user, error: readErr } = await supabase
       .from("users")
@@ -207,6 +226,9 @@ export class DiamondService {
     reason: string,
     referenceId?: string,
   ) {
+    // Check 24h cooldown for social signup users
+    await this.checkSocialCooldown(userId);
+
     // Read current balance for early validation
     const { data: user, error: readErr } = await supabase
       .from("users")
