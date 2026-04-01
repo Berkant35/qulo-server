@@ -257,7 +257,7 @@ export class UserService {
 
     const photos: string[] = user.photos ?? [];
     if (index < 0 || index >= photos.length) {
-      throw new (await import("../utils/errors.js")).AppError("INVALID_PHOTO_INDEX", 400, "Invalid photo index");
+      throw Errors.INVALID_PHOTO_INDEX();
     }
 
     const photoUrl = photos[index];
@@ -357,15 +357,23 @@ export class UserService {
     }
 
     // Question info
+    interface QuestionStats {
+      category: string | null;
+      stats_correct: number;
+      stats_wrong: number;
+      locale: string | null;
+    }
+
     const { data: questions } = await supabase
       .from("questions")
       .select("category, stats_correct, stats_wrong, locale")
-      .eq("user_id", targetId);
+      .eq("user_id", targetId)
+      .limit(100);
 
     let questionInfo = null;
     if (questions && questions.length > 0) {
-      const totalAttempts = questions.reduce((s: number, q: any) => s + q.stats_correct + q.stats_wrong, 0);
-      const totalCorrect = questions.reduce((s: number, q: any) => s + q.stats_correct, 0);
+      const totalAttempts = questions.reduce((s: number, q: QuestionStats) => s + q.stats_correct + q.stats_wrong, 0);
+      const totalCorrect = questions.reduce((s: number, q: QuestionStats) => s + q.stats_correct, 0);
       const successRate = totalAttempts > 0 ? (totalCorrect / totalAttempts) * 100 : 50;
 
       let difficulty = "unranked";
@@ -378,9 +386,9 @@ export class UserService {
 
       questionInfo = {
         count: questions.length,
-        categories: [...new Set(questions.map((q: any) => q.category).filter(Boolean))],
+        categories: [...new Set(questions.map((q: QuestionStats) => q.category).filter(Boolean))],
         avg_difficulty: difficulty,
-        languages: [...new Set(questions.map((q: any) => q.locale || "tr"))],
+        languages: [...new Set(questions.map((q: QuestionStats) => q.locale || "tr"))],
       };
     }
 

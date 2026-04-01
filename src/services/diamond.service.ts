@@ -38,7 +38,7 @@ export class DiamondService {
 
     const { data, error, count } = await supabase
       .from("diamond_transactions")
-      .select("*", { count: "exact" })
+      .select("id, user_id, type, amount, reason, reference_id, created_at", { count: "exact" })
       .eq("user_id", userId)
       .order("created_at", { ascending: false })
       .range(from, to);

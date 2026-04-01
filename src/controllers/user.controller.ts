@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { userService } from "../services/user.service.js";
 import { badgeService } from "../services/badge.service.js";
+import { userLanguageService } from "../services/user-language.service.js";
 import type {
   UpdateProfileInput,
   UpdateDetailsInput,
@@ -8,7 +9,7 @@ import type {
   UpdatePushTokenInput,
   NotificationPreferencesInput,
 } from "../validators/user.validator.js";
-import { AppError } from "../utils/errors.js";
+import { AppError, Errors } from "../utils/errors.js";
 
 export async function getMeHandler(req: Request, res: Response, next: NextFunction) {
   try {
@@ -80,7 +81,7 @@ export async function deletePhotoHandler(req: Request, res: Response, next: Next
   try {
     const index = parseInt(req.params.index as string, 10);
     if (isNaN(index)) {
-      throw new AppError("INVALID_PHOTO_INDEX", 400, "Invalid photo index");
+      throw Errors.INVALID_PHOTO_INDEX();
     }
     const result = await userService.deletePhoto(req.user!.userId, index);
     res.json(result);
@@ -153,6 +154,25 @@ export async function completeProfileHandler(req: Request, res: Response, next: 
     const data = req.body as import("../validators/user.validator.js").CompleteProfileInput;
     const result = await userService.completeProfile(userId, data);
     res.json(result);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getUserLanguagesHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const languages = await userLanguageService.getUserLanguages(req.user!.userId);
+    res.json({ languages });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function setUserLanguagesHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { languages } = req.body;
+    const result = await userLanguageService.setUserLanguages(req.user!.userId, languages);
+    res.json({ languages: result });
   } catch (err) {
     next(err);
   }

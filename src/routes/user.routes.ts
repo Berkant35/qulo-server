@@ -11,7 +11,6 @@ import {
   notificationPreferencesSchema,
   completeProfileSchema,
 } from "../validators/user.validator.js";
-import { userLanguageService } from "../services/user-language.service.js";
 import { setUserLanguagesSchema } from "../validators/user-language.validator.js";
 import {
   getMeHandler,
@@ -28,6 +27,8 @@ import {
   getNotificationPreferencesHandler,
   updateNotificationPreferencesHandler,
   completeProfileHandler,
+  getUserLanguagesHandler,
+  setUserLanguagesHandler,
 } from "../controllers/user.controller.js";
 import { profileGuard } from "../middleware/profileGuard.js";
 import { AppError } from "../utils/errors.js";
@@ -64,25 +65,10 @@ router.get("/me/notification-preferences", getNotificationPreferencesHandler);
 router.patch("/me/notification-preferences", validate(notificationPreferencesSchema), updateNotificationPreferencesHandler);
 
 // GET /me/languages — Get user's language preferences
-router.get("/me/languages", async (req, res, next) => {
-  try {
-    const languages = await userLanguageService.getUserLanguages(req.user!.userId);
-    res.json({ languages });
-  } catch (err) {
-    next(err);
-  }
-});
+router.get("/me/languages", getUserLanguagesHandler);
 
 // PUT /me/languages — Set user's language preferences (full replace)
-router.put("/me/languages", validate(setUserLanguagesSchema), async (req, res, next) => {
-  try {
-    const { languages } = req.body;
-    const result = await userLanguageService.setUserLanguages(req.user!.userId, languages);
-    res.json({ languages: result });
-  } catch (err) {
-    next(err);
-  }
-});
+router.put("/me/languages", validate(setUserLanguagesSchema), setUserLanguagesHandler);
 
 router.get("/:id/profile", getPublicProfileHandler);
 

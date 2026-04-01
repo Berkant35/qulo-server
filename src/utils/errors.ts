@@ -182,4 +182,7 @@ export const Errors = {
 
   DIAMOND_COOLDOWN: () =>
     new AppError("DIAMOND_COOLDOWN", 403, "Diamond transactions are locked for 24 hours after social signup"),
+
+  INVALID_PHOTO_INDEX: () =>
+    new AppError("INVALID_PHOTO_INDEX", 400, "Invalid photo index"),
 } as const;
