@@ -73,3 +73,13 @@ export async function resetPasswordHandler(req: Request, res: Response, next: Ne
     next(err);
   }
 }
+
+export async function socialLoginHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const data = req.body as import("../validators/auth.validator.js").SocialLoginInput;
+    const result = await authService.socialLogin(data);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+}

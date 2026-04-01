@@ -44,3 +44,13 @@ export type RefreshInput = z.infer<typeof refreshSchema>;
 export type VerifyEmailInput = z.infer<typeof verifyEmailSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+
+export const socialLoginSchema = z.object({
+  provider: z.enum(["google", "apple"]),
+  id_token: z.string().min(1),
+  name: z.string().optional(),
+  surname: z.string().optional(),
+  nonce: z.string().optional(),
+});
+
+export type SocialLoginInput = z.infer<typeof socialLoginSchema>;
