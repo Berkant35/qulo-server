@@ -8,6 +8,7 @@ import { userLanguageService } from "./user-language.service.js";
 import { referralService } from "./referral.service.js";
 import { consentService } from "./consent.service.js";
 import { assertUuid } from "../utils/validation.js";
+import { verifyGoogleToken, verifyAppleToken, type SocialAuthPayload } from "../utils/social-auth.js";
 
 export class AuthService {
   async register(data: RegisterInput) {
@@ -135,6 +136,11 @@ export class AuthService {
 
     if (user.is_deleted) {
       throw Errors.INVALID_CREDENTIALS();
+    }
+
+    // Social login users cannot use email/password login
+    if (!user.password_hash) {
+      throw Errors.SOCIAL_LOGIN_ONLY();
     }
 
     // Check password first — avoid RPC call for wrong passwords
@@ -370,6 +376,122 @@ export class AuthService {
       .eq("user_id", user.id);
 
     return { userId: user.id };
+  }
+
+  async socialLogin(data: {
+    provider: "google" | "apple";
+    id_token: string;
+    name?: string;
+    surname?: string;
+    nonce?: string;
+  }) {
+    // 1. Token verify
+    let socialPayload: SocialAuthPayload;
+    try {
+      if (data.provider === "google") {
+        socialPayload = await verifyGoogleToken(data.id_token);
+      } else {
+        socialPayload = await verifyAppleToken(data.id_token, data.nonce);
+      }
+    } catch (err) {
+      if (err instanceof AppError) throw err;
+      console.error("[social-login] Token verification failed:", err);
+      throw Errors.SOCIAL_AUTH_FAILED();
+    }
+
+    const email = normalizeEmail(socialPayload.email);
+    const providerId = socialPayload.providerId;
+    const name = socialPayload.name || data.name || "";
+    const surname = socialPayload.surname || data.surname || "";
+
+    // 2. Case A: provider_id match → login
+    const { data: existingByProvider } = await supabase
+      .from("users")
+      .select("id, email, is_deleted, is_banned, age")
+      .eq("provider_id", providerId)
+      .maybeSingle();
+
+    if (existingByProvider) {
+      if (existingByProvider.is_deleted) throw Errors.INVALID_CREDENTIALS();
+      if (existingByProvider.is_banned) throw Errors.ACCOUNT_BANNED();
+      return this.createSocialSession(existingByProvider.id, existingByProvider.email, existingByProvider.age);
+    }
+
+    // 3. Case B: email match → link account
+    if (email) {
+      const { data: existingByEmail } = await supabase
+        .from("users")
+        .select("id, email, is_deleted, is_banned, age, provider_id")
+        .eq("email", email)
+        .maybeSingle();
+
+      if (existingByEmail) {
+        if (existingByEmail.is_deleted) {
+          await this.hardDeleteUser(existingByEmail.id);
+        } else {
+          if (existingByEmail.is_banned) throw Errors.ACCOUNT_BANNED();
+          if (!existingByEmail.provider_id) {
+            await supabase
+              .from("users")
+              .update({ provider_id: providerId, auth_provider: data.provider })
+              .eq("id", existingByEmail.id);
+          }
+          return this.createSocialSession(existingByEmail.id, existingByEmail.email, existingByEmail.age);
+        }
+      }
+    }
+
+    // 4. Case C: New user
+    const referralCode = await referralService.generateUniqueCode();
+    const { data: newUser, error: insertError } = await supabase
+      .from("users")
+      .insert({
+        email: email || `${providerId}@social.qulo.app`,
+        name,
+        surname,
+        auth_provider: data.provider,
+        provider_id: providerId,
+        email_verified: true,
+        referral_code: referralCode,
+        locale: "tr",
+      })
+      .select("id, email, age")
+      .single();
+
+    if (insertError || !newUser) {
+      console.error("[social-login] Insert user failed:", insertError?.message);
+      throw Errors.SERVER_ERROR();
+    }
+
+    consentService.recordRegistrationConsents(newUser.id).catch((err) => {
+      console.error("[social-login] Failed to record consents:", err);
+    });
+    userLanguageService.addLanguage(newUser.id, "tr" as any).catch((err) => {
+      console.error("[social-login] Failed to add language:", err);
+    });
+
+    return this.createSocialSession(newUser.id, newUser.email, newUser.age);
+  }
+
+  private async createSocialSession(userId: string, email: string, age: number | null) {
+    const payload = { userId, email };
+    const accessToken = signAccessToken(payload);
+    const refreshToken = signRefreshToken(payload);
+    const refreshTokenHash = hashToken(refreshToken);
+
+    await Promise.all([
+      supabase.from("refresh_tokens").insert({
+        user_id: userId,
+        token_hash: refreshTokenHash,
+        expires_at: getRefreshTokenExpiry(),
+      }),
+      supabase
+        .from("users")
+        .update({ last_seen_at: new Date().toISOString(), is_online: true })
+        .eq("id", userId),
+    ]);
+
+    return { accessToken, refreshToken, userId, profileIncomplete: age == null };
   }
 }
 
