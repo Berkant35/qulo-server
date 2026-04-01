@@ -161,4 +161,22 @@ export const Errors = {
 
   ACCOUNT_BANNED: () =>
     new AppError("ACCOUNT_BANNED", 403, "Your account has been suspended"),
+
+  SOCIAL_AUTH_FAILED: () =>
+    new AppError("SOCIAL_AUTH_FAILED", 401, "Social authentication failed"),
+
+  SOCIAL_ACCOUNT_EXISTS: () =>
+    new AppError("SOCIAL_ACCOUNT_EXISTS", 409, "This social account is already linked to another user"),
+
+  PASSWORD_LOGIN_ONLY: () =>
+    new AppError("PASSWORD_LOGIN_ONLY", 400, "This account uses email/password login"),
+
+  SOCIAL_LOGIN_ONLY: () =>
+    new AppError("SOCIAL_LOGIN_ONLY", 400, "This account was created with social login. Use Google or Apple to sign in"),
+
+  PROFILE_NOT_COMPLETE: () =>
+    new AppError("PROFILE_NOT_COMPLETE", 403, "Profile must be completed before accessing this feature"),
+
+  UNDERAGE_USER: () =>
+    new AppError("UNDERAGE_USER", 403, "You must be at least 18 years old"),
 } as const;

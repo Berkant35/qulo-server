@@ -22,7 +22,7 @@ export const discoverLimiter = rateLimit({
 
 export const chatLimiter = rateLimit({
   windowMs: 60 * 1000,
-  limit: 60,
+  limit: 120,
   standardHeaders: true,
   legacyHeaders: false,
   message: rateLimitResponse,
@@ -50,4 +50,12 @@ export const generalLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: rateLimitResponse,
+});
+
+export const socialAuthLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 5, // 5 req/min/IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { code: "RATE_LIMITED", message: "Too many requests" },
 });
