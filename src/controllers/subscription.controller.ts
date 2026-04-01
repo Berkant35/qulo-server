@@ -52,8 +52,14 @@ export const activateSubscriptionHandler = async (
       return;
     }
 
-    const expiresAt = verification.expiresAt
-      ?? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    if (!verification.expiresAt) {
+      res.status(400).json({
+        error: 'MISSING_EXPIRATION',
+        message: 'Subscription expiration date could not be determined',
+      });
+      return;
+    }
+    const expiresAt = verification.expiresAt;
 
     await subscriptionService.activateSubscription(
       userId,

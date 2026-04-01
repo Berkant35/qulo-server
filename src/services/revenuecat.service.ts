@@ -34,8 +34,7 @@ class RevenueCatService {
     transactionId?: string,
   ): Promise<{ valid: boolean; error?: string }> {
     if (!env.REVENUECAT_API_KEY) {
-      // Development mode: skip validation if no key
-      if (env.NODE_ENV === 'development') return { valid: true };
+      if (env.IAP_SKIP_VALIDATION === 'true') return { valid: true };
       return { valid: false, error: 'IAP validation not configured' };
     }
 
@@ -70,8 +69,7 @@ class RevenueCatService {
     productId: string,
   ): Promise<{ valid: boolean; expiresAt?: string; error?: string }> {
     if (!env.REVENUECAT_API_KEY) {
-      if (env.NODE_ENV === 'development') {
-        // Dev mode: hardcoded 30 days
+      if (env.IAP_SKIP_VALIDATION === 'true') {
         return {
           valid: true,
           expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),

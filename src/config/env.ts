@@ -32,6 +32,7 @@ const envSchema = z.object({
   // RevenueCat
   REVENUECAT_WEBHOOK_SECRET: z.string().default(''),
   REVENUECAT_API_KEY: z.string().default(''),
+  IAP_SKIP_VALIDATION: z.string().default(''),
 
   // Gemini AI
   GEMINI_API_KEY: z.string().default(''),
