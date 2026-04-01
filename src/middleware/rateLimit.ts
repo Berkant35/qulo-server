@@ -54,7 +54,7 @@ export const generalLimiter = rateLimit({
 
 export const socialAuthLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
-  max: 5, // 5 req/min/IP
+  limit: 5, // 5 req/min/IP
   standardHeaders: true,
   legacyHeaders: false,
   message: { code: "RATE_LIMITED", message: "Too many requests" },

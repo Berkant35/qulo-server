@@ -12,11 +12,15 @@ export async function profileGuard(
     return next(Errors.INVALID_TOKEN());
   }
 
-  const { data: user } = await supabase
+  const { data: user, error } = await supabase
     .from("users")
     .select("age")
     .eq("id", userId)
     .single();
+
+  if (error) {
+    return next(Errors.SERVER_ERROR());
+  }
 
   if (!user || user.age == null) {
     return next(Errors.PROFILE_NOT_COMPLETE());

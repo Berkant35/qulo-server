@@ -31,6 +31,6 @@ router.post("/social-login", socialAuthLimiter, validate(socialLoginSchema), soc
 router.post("/refresh", validate(refreshSchema), refreshHandler);
 router.post("/logout", authMiddleware, logoutHandler);
 router.post("/forgot-password", authLimiter, validate(forgotPasswordSchema), forgotPasswordHandler);
-router.post("/reset-password", validate(resetPasswordSchema), resetPasswordHandler);
+router.post("/reset-password", authLimiter, validate(resetPasswordSchema), resetPasswordHandler);
 
 export default router;
