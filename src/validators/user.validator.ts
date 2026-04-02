@@ -63,6 +63,8 @@ export const completeProfileSchema = z.object({
   gender: z.enum(["MAN", "WOMAN", "OTHER"]),
   lat: z.number().min(-90).max(90).optional(),
   lng: z.number().min(-180).max(180).optional(),
+  name: z.string().min(1).max(50).optional(),
+  surname: z.string().min(1).max(50).optional(),
 });
 
 export type CompleteProfileInput = z.infer<typeof completeProfileSchema>;

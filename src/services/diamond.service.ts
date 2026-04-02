@@ -194,7 +194,7 @@ export class DiamondService {
       .from("users")
       .update({ green_diamonds: user.green_diamonds + amount })
       .eq("id", userId)
-      .eq("green_diamonds", user.green_diamonds)
+      .gte("green_diamonds", user.green_diamonds)
       .select("green_diamonds")
       .single();
 

@@ -3,21 +3,25 @@ import { supabase } from "../config/supabase.js";
 export class PresenceService {
   /** Update user's last_seen_at and set is_online = true */
   static async heartbeat(userId: string): Promise<void> {
-    await supabase
+    const { error } = await supabase
       .from("users")
       .update({
         last_seen_at: new Date().toISOString(),
         is_online: true,
       })
       .eq("id", userId);
+
+    if (error) throw error;
   }
 
   /** Set a specific user offline */
   static async setOffline(userId: string): Promise<void> {
-    await supabase
+    const { error } = await supabase
       .from("users")
       .update({ is_online: false })
       .eq("id", userId);
+
+    if (error) throw error;
   }
 
   /** Mark all users as offline if last_seen_at > threshold minutes ago */

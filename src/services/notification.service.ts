@@ -11,19 +11,23 @@ const locales: Record<string, Record<string, Record<string, string>>> = {
 
 type PushType = 'new_message' | 'new_message_image' | 'new_match' | 'new_match_solver' | 'passport_expired' | 'campaign' | 'chat_question_answered';
 
-const ACTION_URL_MAP: Partial<Record<PushType, string>> = {
-  new_match: '/matches',
-  new_match_solver: '/matches',
-  passport_expired: '/profile/passport',
-};
+interface NotificationTypeConfig {
+  actionUrl?: string;
+  category?: string;
+  /** Template key override; if absent, PushType itself is used */
+  templateKey?: string;
+  /** Badge-variant template key (used when params.badge is present) */
+  badgeTemplateKey?: string;
+}
 
-const TYPE_TO_CATEGORY: Partial<Record<PushType, string>> = {
-  new_message: 'messages',
-  new_message_image: 'messages',
-  new_match: 'matches',
-  new_match_solver: 'matches',
-  chat_question_answered: 'matches',
-  campaign: 'campaigns',
+const NOTIFICATION_CONFIG: Record<PushType, NotificationTypeConfig> = {
+  new_message:            { category: 'messages' },
+  new_message_image:      { category: 'messages' },
+  new_match:              { actionUrl: '/matches', category: 'matches', badgeTemplateKey: 'new_match_badge' },
+  new_match_solver:       { actionUrl: '/matches', category: 'matches' },
+  passport_expired:       { actionUrl: '/profile/passport' },
+  campaign:               { category: 'campaigns' },
+  chat_question_answered: { category: 'matches' },
 };
 
 function interpolate(template: string, params: Record<string, string>): string {
@@ -98,7 +102,8 @@ export class NotificationService {
         }
 
         // Use badge-specific template if badge param is present
-        const templateKey = (type === 'new_match' && params.badge) ? 'new_match_badge' : type;
+        const config = NOTIFICATION_CONFIG[type];
+        const templateKey = (params.badge && config.badgeTemplateKey) ? config.badgeTemplateKey : (config.templateKey ?? type);
         const template = locales[locale]?.push?.[templateKey];
         if (!template) {
           console.warn(`[NotificationService] No push template for type=${templateKey}, locale=${locale} — using fallback, still persisting to DB`);
@@ -110,7 +115,7 @@ export class NotificationService {
         }
       }
 
-      const actionUrl = options?.actionUrl ?? ACTION_URL_MAP[type] ?? null;
+      const actionUrl = options?.actionUrl ?? NOTIFICATION_CONFIG[type].actionUrl ?? null;
 
       // 4. Persist notification to DB (always, even if FCM unavailable)
       const { data: notification } = await supabase
@@ -129,7 +134,7 @@ export class NotificationService {
         .single();
 
       // Check notification preferences — if category disabled, skip push but keep DB record
-      const category = TYPE_TO_CATEGORY[type];
+      const category = NOTIFICATION_CONFIG[type].category;
       if (category) {
         const prefs = user.notification_preferences as Record<string, boolean> | null;
         const enabled = prefs?.[category] ?? true; // NULL = all enabled

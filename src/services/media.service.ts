@@ -92,7 +92,9 @@ export class MediaService {
       NotificationService.sendPush(otherUserId, "new_message", { name: senderName }, undefined, {
         actionUrl: `/chat/${match.id}`,
       }),
-    ).catch(() => {});
+    ).catch((err) => {
+      console.warn('[media] Push notification failed (requestMedia):', err?.message ?? err);
+    });
 
     return request;
   }
@@ -156,7 +158,9 @@ export class MediaService {
         NotificationService.sendPush(request.requester_id, "new_message", { name: senderName }, undefined, {
           actionUrl: `/chat/${match.id}`,
         }),
-      ).catch(() => {});
+      ).catch((err) => {
+        console.warn('[media] Push notification failed (respondToRequest):', err?.message ?? err);
+      });
 
       return { status: "accepted", media_enabled: true };
     } else {

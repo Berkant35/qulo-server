@@ -33,8 +33,8 @@ class RevenueCatService {
     productId: string,
     transactionId?: string,
   ): Promise<{ valid: boolean; error?: string }> {
+    if (env.IAP_SKIP_VALIDATION === 'true') return { valid: true };
     if (!env.REVENUECAT_API_KEY) {
-      if (env.IAP_SKIP_VALIDATION === 'true') return { valid: true };
       return { valid: false, error: 'IAP validation not configured' };
     }
 
@@ -56,7 +56,8 @@ class RevenueCatService {
 
       return { valid: true };
     } catch (err) {
-      console.error('[RevenueCat] Verification error:', err);
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      console.error('[RevenueCat] Verification error:', errorMsg);
       return { valid: false, error: 'Verification service unavailable' };
     }
   }
@@ -68,13 +69,13 @@ class RevenueCatService {
     userId: string,
     productId: string,
   ): Promise<{ valid: boolean; expiresAt?: string; error?: string }> {
+    if (env.IAP_SKIP_VALIDATION === 'true') {
+      return {
+        valid: true,
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      };
+    }
     if (!env.REVENUECAT_API_KEY) {
-      if (env.IAP_SKIP_VALIDATION === 'true') {
-        return {
-          valid: true,
-          expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        };
-      }
       return { valid: false, error: 'IAP validation not configured' };
     }
 
@@ -99,7 +100,8 @@ class RevenueCatService {
       // Lifetime subscription (no expiry)
       return { valid: true };
     } catch (err) {
-      console.error('[RevenueCat] Subscription verification error:', err);
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      console.error('[RevenueCat] Subscription verification error:', errorMsg);
       return { valid: false, error: 'Verification service unavailable' };
     }
   }

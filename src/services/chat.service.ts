@@ -12,6 +12,32 @@ interface Match {
   media_enabled_by_user2: boolean;
 }
 
+interface MessageReaction {
+  emoji: string;
+  user_id: string;
+}
+
+interface Message {
+  id: string;
+  match_id: string;
+  sender_id: string;
+  content: string;
+  is_image: boolean;
+  audio_url?: string | null;
+  audio_duration_seconds?: number | null;
+  read_at?: string | null;
+  deleted_at?: string | null;
+  created_at: string;
+  reactions: MessageReaction[];
+}
+
+interface GetMessagesResult {
+  messages: Message[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
 export class ChatService {
   private async verifyMatchAccess(userId: string, matchId: string): Promise<Match> {
     assertUuid(userId, "userId");
@@ -35,7 +61,7 @@ export class ChatService {
     return match as Match;
   }
 
-  async getMessages(userId: string, matchId: string, page = 1, limit = 30) {
+  async getMessages(userId: string, matchId: string, page = 1, limit = 30): Promise<GetMessagesResult> {
     const match = await this.verifyMatchAccess(userId, matchId);
 
     const offset = (page - 1) * limit;
@@ -149,12 +175,12 @@ export class ChatService {
     const pushType = isImage ? "new_message_image" : "new_message";
 
     // Fire-and-forget push notification (resolve sender name for template)
-    NotificationService.getUserDisplayName(userId).then((senderName) =>
+    void NotificationService.getUserDisplayName(userId).then((senderName) =>
       NotificationService.sendPush(otherUserId, pushType, { name: senderName }, undefined, {
         actionUrl: `/chat/${match.id}`,
       }),
     ).catch((err) => {
-      console.error(`[chat] Push notification failed for match=${matchId}:`, err?.message ?? err);
+      console.error(`[chat] Push notification failed for match=${matchId}:`, (err as Error)?.message ?? err);
     });
 
     return message;

@@ -473,16 +473,12 @@ export class MatchingService {
   async getMatches(userId: string) {
     assertUuid(userId, "userId");
 
-    console.log("[matching] getMatches called for userId:", userId);
-
     const { data: matches, error } = await supabase
       .from("matches")
       .select("id, user1_id, user2_id, matched_at, is_active")
       .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)
       .eq("is_active", true)
       .order("matched_at", { ascending: false });
-
-    console.log("[matching] getMatches result:", { matchCount: matches?.length ?? 0, error, matches });
 
     if (error) {
       console.error("[matching] Get matches error:", error);

@@ -8,7 +8,7 @@ export function validate(schema: ZodSchema, source: "body" | "query" | "params" 
 
     if (!result.success) {
       const details = result.error.flatten().fieldErrors;
-      throw Errors.VALIDATION_ERROR(details as Record<string, unknown>);
+      return next(Errors.VALIDATION_ERROR(details as Record<string, unknown>));
     }
 
     (req as unknown as Record<string, unknown>)[source] = result.data;

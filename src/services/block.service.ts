@@ -1,6 +1,19 @@
 import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
 
+interface BlockRow {
+  id: string;
+  blocker_id: string;
+  blocked_id: string;
+  created_at: string;
+}
+
+interface UserRow {
+  id: string;
+  name: string;
+  photos: string[];
+}
+
 class BlockService {
   async block(blockerId: string, blockedId: string) {
     if (blockerId === blockedId) throw Errors.CANNOT_BLOCK_SELF();
@@ -55,7 +68,7 @@ class BlockService {
       .select("blocked_id")
       .eq("blocker_id", userId);
 
-    return (data ?? []).map((b: any) => b.blocked_id);
+    return (data ?? []).map((b: Pick<BlockRow, "blocked_id">) => b.blocked_id);
   }
 
   async getBlockerIds(userId: string): Promise<string[]> {
@@ -64,7 +77,7 @@ class BlockService {
       .select("blocker_id")
       .eq("blocked_id", userId);
 
-    return (data ?? []).map((b: any) => b.blocker_id);
+    return (data ?? []).map((b: Pick<BlockRow, "blocker_id">) => b.blocker_id);
   }
 
   async getBlockedUsers(blockerId: string) {
@@ -77,15 +90,15 @@ class BlockService {
     if (error) throw Errors.SERVER_ERROR();
     if (!blocks || blocks.length === 0) return [];
 
-    const blockedIds = blocks.map((b: any) => b.blocked_id);
+    const blockedIds = blocks.map((b: Pick<BlockRow, "blocked_id">) => b.blocked_id);
     const { data: users } = await supabase
       .from("users")
       .select("id, name, photos")
       .in("id", blockedIds);
 
-    const userMap = new Map((users ?? []).map((u: any) => [u.id, u]));
+    const userMap = new Map((users ?? []).map((u: UserRow) => [u.id, u]));
 
-    return blocks.map((b: any) => ({
+    return blocks.map((b: Pick<BlockRow, "id" | "blocked_id" | "created_at">) => ({
       id: b.id,
       blocked_at: b.created_at,
       user: userMap.get(b.blocked_id) ?? { id: b.blocked_id, name: "Unknown", photos: [] },

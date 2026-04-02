@@ -15,19 +15,24 @@ export class ReferralService {
   }
 
   async generateUniqueCode(): Promise<string> {
-    for (let attempt = 0; attempt < 10; attempt++) {
+    let attempt = 0;
+    while (attempt < 50) {
       const code = this.generateCode();
 
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("users")
         .select("id")
         .eq("referral_code", code)
         .maybeSingle();
 
+      if (error) continue; // DB error — don't count this attempt
+
       if (!data) return code;
+
+      attempt++;
     }
 
-    throw Errors.SERVER_ERROR();
+    throw new Error("generateUniqueCode: exhausted 50 attempts generating unique referral code");
   }
 
   async applyReferralCode(refereeId: string, code: string) {

@@ -543,6 +543,8 @@ export class UserService {
     gender: string;
     lat?: number;
     lng?: number;
+    name?: string;
+    surname?: string;
   }) {
     const birthDate = new Date(data.birthday);
     const today = new Date();
@@ -567,6 +569,8 @@ export class UserService {
       updateData.lat = data.lat;
       updateData.lng = data.lng;
     }
+    if (data.name) updateData.name = data.name;
+    if (data.surname) updateData.surname = data.surname;
 
     const { error } = await supabase.from("users").update(updateData).eq("id", userId);
     if (error) {

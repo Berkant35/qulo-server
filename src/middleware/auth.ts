@@ -28,7 +28,12 @@ export async function authMiddleware(
   let decoded: JwtPayload;
   try {
     decoded = verifyAccessToken(token);
-  } catch {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown JWT error';
+    if (message.includes('expired')) {
+      return next(Errors.TOKEN_EXPIRED());
+    }
+    console.warn('[auth] JWT verification failed:', message);
     return next(Errors.TOKEN_EXPIRED());
   }
 

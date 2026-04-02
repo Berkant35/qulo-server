@@ -26,10 +26,10 @@ export async function ensureStorageBuckets() {
   for (const bucket of buckets) {
     const { error } = await supabase.storage.createBucket(bucket.id, bucket.options);
     if (error) {
-      if (error.message?.includes("already exists")) {
+      if (error.message && error.message.includes("already exists")) {
         console.log(`[storage] '${bucket.id}' bucket exists`);
       } else {
-        console.error(`[storage] Failed to create '${bucket.id}' bucket:`, error.message);
+        console.error(`[storage] Failed to create '${bucket.id}' bucket:`, error.message ?? error);
       }
     } else {
       console.log(`[storage] Created '${bucket.id}' bucket`);
