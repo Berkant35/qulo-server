@@ -1,8 +1,12 @@
 import nodemailer from "nodemailer";
 import type { Transporter } from "nodemailer";
 import { readFileSync } from "fs";
-import { join } from "path";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
 import { env } from "../config/env.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 if (env.NODE_ENV === "production" && !env.SMTP_HOST) {
   console.warn("[EMAIL] WARNING: SMTP not configured in production — emails disabled");
