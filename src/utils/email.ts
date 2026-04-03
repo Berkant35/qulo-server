@@ -1,5 +1,4 @@
-import nodemailer from "nodemailer";
-import type { Transporter } from "nodemailer";
+import { Resend } from "resend";
 import { readFileSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
@@ -8,26 +7,14 @@ import { env } from "../config/env.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-if (env.NODE_ENV === "production" && !env.SMTP_HOST) {
-  console.warn("[EMAIL] WARNING: SMTP not configured in production — emails disabled");
+// Resend HTTP API — no SMTP port issues on cloud providers
+const resendApiKey = env.RESEND_API_KEY;
+
+if (!resendApiKey) {
+  console.warn("[EMAIL] WARNING: RESEND_API_KEY not configured — emails disabled");
 }
 
-let transporter: Transporter | null = null;
-
-function getTransporter(): Transporter | null {
-  if (transporter) return transporter;
-  if (!env.SMTP_HOST || !env.SMTP_PORT || !env.SMTP_USER || !env.SMTP_PASS) {
-    console.warn("[email] SMTP not configured. Emails will not be sent.");
-    return null;
-  }
-  transporter = nodemailer.createTransport({
-    host: env.SMTP_HOST,
-    port: env.SMTP_PORT,
-    secure: env.SMTP_PORT === 465,
-    auth: { user: env.SMTP_USER, pass: env.SMTP_PASS },
-  });
-  return transporter;
-}
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
 // Template cache
 let templateCache: string | null = null;
@@ -85,9 +72,8 @@ export async function sendVerificationEmail(
   token: string,
   locale?: string,
 ): Promise<void> {
-  const t = getTransporter();
-  if (!t) {
-    console.warn(`[email] Verification email to ${to} skipped (SMTP not configured). Token: ${token}`);
+  if (!resend) {
+    console.warn(`[email] Verification email to ${to} skipped (Resend not configured). Token: ${token}`);
     return;
   }
 
@@ -95,13 +81,14 @@ export async function sendVerificationEmail(
   const url = `${env.APP_URL}/api/v1/auth/verify-email?token=${token}`;
   const html = renderTemplate(strings, url, "verify");
 
-  await t.sendMail({
-    from: `"Qulo" <${env.SMTP_FROM}>`,
+  const { error } = await resend.emails.send({
+    from: `Qulo <${env.SMTP_FROM}>`,
     to,
     subject: strings.verify_subject,
     html,
-    text: `${strings.verify_title}\n\n${strings.verify_body}\n\n${url}`,
   });
+
+  if (error) throw new Error(error.message);
 }
 
 export async function sendPasswordResetEmail(
@@ -109,9 +96,8 @@ export async function sendPasswordResetEmail(
   token: string,
   locale?: string,
 ): Promise<void> {
-  const t = getTransporter();
-  if (!t) {
-    console.warn(`[email] Password reset email to ${to} skipped (SMTP not configured). Token: ${token}`);
+  if (!resend) {
+    console.warn(`[email] Password reset email to ${to} skipped (Resend not configured). Token: ${token}`);
     return;
   }
 
@@ -120,11 +106,12 @@ export async function sendPasswordResetEmail(
   const url = `${env.WEB_URL}/${webLocale}/reset-password?token=${token}`;
   const html = renderTemplate(strings, url, "reset");
 
-  await t.sendMail({
-    from: `"Qulo" <${env.SMTP_FROM}>`,
+  const { error } = await resend.emails.send({
+    from: `Qulo <${env.SMTP_FROM}>`,
     to,
     subject: strings.reset_subject,
     html,
-    text: `${strings.reset_title}\n\n${strings.reset_body}\n\n${url}`,
   });
+
+  if (error) throw new Error(error.message);
 }

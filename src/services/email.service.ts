@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import path from "path";
 import { fileURLToPath } from "url";
 import ejs from "ejs";
@@ -8,25 +8,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 class EmailService {
-  private transporter: nodemailer.Transporter | null = null;
+  private resend: Resend | null = null;
 
-  private getTransporter(): nodemailer.Transporter {
-    if (!this.transporter) {
-      if (!env.SMTP_HOST) {
-        this.transporter = nodemailer.createTransport({ jsonTransport: true });
-        return this.transporter;
-      }
-      this.transporter = nodemailer.createTransport({
-        host: env.SMTP_HOST,
-        port: env.SMTP_PORT ?? 587,
-        secure: (env.SMTP_PORT ?? 587) === 465,
-        auth: {
-          user: env.SMTP_USER,
-          pass: env.SMTP_PASS,
-        },
-      });
+  private getResend(): Resend | null {
+    if (this.resend) return this.resend;
+    if (!env.RESEND_API_KEY) {
+      console.warn("[email.service] Resend not configured — ticket emails disabled");
+      return null;
     }
-    return this.transporter;
+    this.resend = new Resend(env.RESEND_API_KEY);
+    return this.resend;
   }
 
   async sendTicketReply(
@@ -45,18 +36,22 @@ class EmailService {
       ticketId,
     });
 
-    const info = await this.getTransporter().sendMail({
-      from: env.SMTP_FROM ?? "noreply@quloapp.com",
+    const r = this.getResend();
+    if (!r) {
+      console.log("[email.service] Dev mode - would send ticket reply to:", to);
+      return;
+    }
+
+    const { error } = await r.emails.send({
+      from: `Qulo Support <${env.SMTP_FROM}>`,
       to,
       subject: `Re: ${subject} - Qulo Support`,
       html,
     });
 
-    if (!env.SMTP_HOST) {
-      console.log(
-        "[email] Dev mode - would send:",
-        JSON.parse((info as { message: string }).message),
-      );
+    if (error) {
+      console.error("[email.service] Failed to send ticket reply:", error.message);
+      throw new Error(error.message);
     }
   }
 }
