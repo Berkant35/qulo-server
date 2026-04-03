@@ -1,0 +1,13 @@
+{
+  "tagline": "Lerne durch Fragen kennen, finde echte Matches",
+  "verify_subject": "Bestätige deine E-Mail-Adresse",
+  "verify_title": "Willkommen! 💜",
+  "verify_body": "Danke, dass du Qulo beigetreten bist! Klicke auf den Button unten, um dein Konto zu aktivieren.",
+  "verify_button": "E-Mail bestätigen",
+  "reset_subject": "Anfrage zur Passwortzurücksetzung",
+  "reset_title": "Passwort zurücksetzen 🔑",
+  "reset_body": "Klicke auf den Button unten, um dein Passwort zurückzusetzen. Dieser Link ist 1 Stunde gültig.",
+  "reset_button": "Passwort zurücksetzen",
+  "link_fallback": "Falls der Button nicht funktioniert:",
+  "footer_ignore": "Wenn du diese E-Mail nicht angefordert hast, kannst du sie sicher ignorieren."
+}

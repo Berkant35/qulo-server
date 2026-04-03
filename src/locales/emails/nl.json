@@ -1,0 +1,13 @@
+{
+  "tagline": "Ontmoet via vragen, maak een echte match",
+  "verify_subject": "Bevestig je e-mailadres",
+  "verify_title": "Welkom! 💜",
+  "verify_body": "Bedankt dat je lid bent geworden van Qulo! Klik op de knop hieronder om je account te activeren.",
+  "verify_button": "Mijn e-mail bevestigen",
+  "reset_subject": "Verzoek om wachtwoord opnieuw in te stellen",
+  "reset_title": "Wachtwoord opnieuw instellen 🔑",
+  "reset_body": "Klik op de knop hieronder om je wachtwoord opnieuw in te stellen. Deze link is 1 uur geldig.",
+  "reset_button": "Mijn wachtwoord opnieuw instellen",
+  "link_fallback": "Als de knop niet werkt:",
+  "footer_ignore": "Als je deze e-mail niet hebt aangevraagd, kun je deze veilig negeren."
+}

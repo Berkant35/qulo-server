@@ -1,0 +1,13 @@
+{
+  "tagline": "Rencontrez par les questions, connectez pour de vrai",
+  "verify_subject": "Vérifiez votre adresse e-mail",
+  "verify_title": "Bienvenue ! 💜",
+  "verify_body": "Merci d'avoir rejoint Qulo ! Cliquez sur le bouton ci-dessous pour activer votre compte.",
+  "verify_button": "Vérifier mon e-mail",
+  "reset_subject": "Demande de réinitialisation du mot de passe",
+  "reset_title": "Réinitialiser le mot de passe 🔑",
+  "reset_body": "Cliquez sur le bouton ci-dessous pour réinitialiser votre mot de passe. Ce lien est valable pendant 1 heure.",
+  "reset_button": "Réinitialiser mon mot de passe",
+  "link_fallback": "Si le bouton ne fonctionne pas :",
+  "footer_ignore": "Si vous n'avez pas demandé cet e-mail, vous pouvez l'ignorer en toute sécurité."
+}

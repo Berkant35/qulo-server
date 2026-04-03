@@ -1,0 +1,13 @@
+{
+  "tagline": "Incontra attraverso le domande, connettiti davvero",
+  "verify_subject": "Verifica il tuo indirizzo email",
+  "verify_title": "Benvenuto! 💜",
+  "verify_body": "Grazie per esserti unito a Qulo! Clicca il pulsante qui sotto per attivare il tuo account.",
+  "verify_button": "Verifica la mia email",
+  "reset_subject": "Richiesta di reimpostazione della password",
+  "reset_title": "Reimposta password 🔑",
+  "reset_body": "Clicca il pulsante qui sotto per reimpostare la tua password. Questo link è valido per 1 ora.",
+  "reset_button": "Reimposta la mia password",
+  "link_fallback": "Se il pulsante non funziona:",
+  "footer_ignore": "Se non hai richiesto questa email, puoi ignorarla in sicurezza."
+}

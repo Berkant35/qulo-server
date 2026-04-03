@@ -1,0 +1,13 @@
+{
+  "tagline": "Poznaj się przez pytania, dopasuj naprawdę",
+  "verify_subject": "Zweryfikuj swój adres e-mail",
+  "verify_title": "Witaj! 💜",
+  "verify_body": "Dziękujemy za dołączenie do Qulo! Kliknij poniższy przycisk, aby aktywować swoje konto.",
+  "verify_button": "Zweryfikuj mój e-mail",
+  "reset_subject": "Prośba o zresetowanie hasła",
+  "reset_title": "Resetowanie hasła 🔑",
+  "reset_body": "Kliknij poniższy przycisk, aby zresetować hasło. Ten link jest ważny przez 1 godzinę.",
+  "reset_button": "Zresetuj moje hasło",
+  "link_fallback": "Jeśli przycisk nie działa:",
+  "footer_ignore": "Jeśli nie prosiłeś o ten e-mail, możesz go bezpiecznie zignorować."
+}

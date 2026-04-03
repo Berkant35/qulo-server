@@ -75,22 +75,9 @@ export class AuthService {
     // Auto-add user's locale to user_languages
     await userLanguageService.addLanguage(user.id, (data.locale || 'tr') as import('../constants/locales.js').SupportedLocale);
 
-    // Create Supabase Auth user via signUp — triggers verification email
-    supabase.auth
-      .signUp({
-        email,
-        password: data.password,
-      })
-      .then(({ error: authErr }) => {
-        if (authErr) {
-          console.error("[auth] Supabase Auth signUp failed:", authErr.message);
-        } else {
-          console.log(`[auth] Supabase Auth verification email sent to ${data.email}`);
-        }
-      })
-      .catch((err) => {
-        console.error("[auth] Supabase Auth signUp error:", err);
-      });
+    sendVerificationEmail(email, verifyToken, data.locale).catch((err) => {
+      console.error('[auth] Failed to send verification email:', err instanceof Error ? err.message : err);
+    });
 
     return { userId: user.id, email: user.email };
   }

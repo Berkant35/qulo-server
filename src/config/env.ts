@@ -28,6 +28,7 @@ const envSchema = z.object({
 
   // App
   APP_URL: z.string().url().default("http://localhost:3000"),
+  WEB_URL: z.string().url().default("https://quloapp.com"),
 
   // RevenueCat
   REVENUECAT_WEBHOOK_SECRET: z.string().default(''),

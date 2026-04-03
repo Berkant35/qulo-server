@@ -1,59 +1,79 @@
 import nodemailer from "nodemailer";
 import type { Transporter } from "nodemailer";
+import { readFileSync } from "fs";
+import { join } from "path";
 import { env } from "../config/env.js";
 
-if (env.NODE_ENV === 'production' && !env.SMTP_HOST) {
-  console.warn('[EMAIL] WARNING: SMTP not configured in production — email verification disabled');
+if (env.NODE_ENV === "production" && !env.SMTP_HOST) {
+  console.warn("[EMAIL] WARNING: SMTP not configured in production — emails disabled");
 }
 
 let transporter: Transporter | null = null;
 
 function getTransporter(): Transporter | null {
   if (transporter) return transporter;
-
   if (!env.SMTP_HOST || !env.SMTP_PORT || !env.SMTP_USER || !env.SMTP_PASS) {
-    console.warn(
-      "[email] SMTP not configured. Emails will not be sent.",
-    );
+    console.warn("[email] SMTP not configured. Emails will not be sent.");
     return null;
   }
-
   transporter = nodemailer.createTransport({
     host: env.SMTP_HOST,
     port: env.SMTP_PORT,
     secure: env.SMTP_PORT === 465,
-    auth: {
-      user: env.SMTP_USER,
-      pass: env.SMTP_PASS,
-    },
+    auth: { user: env.SMTP_USER, pass: env.SMTP_PASS },
   });
-
   return transporter;
 }
 
-const i18n = {
-  tr: {
-    verifySubject: "E-posta adresinizi dogrulayın",
-    verifyBody: (url: string) =>
-      `Merhaba,\n\nE-posta adresinizi dogrulamak icin asagıdaki bağlantıya tıklayın:\n\n${url}\n\nBu bağlantı 24 saat boyunca gecerlidir.\n\nQulo Ekibi`,
-    resetSubject: "Sifre sıfırlama talebi",
-    resetBody: (url: string) =>
-      `Merhaba,\n\nSifrenizi sıfırlamak icin asagıdaki bağlantıya tıklayın:\n\n${url}\n\nBu bağlantı 1 saat boyunca gecerlidir.\n\nEger bu talebi siz yapmadıysanız, bu e-postayı gormezden gelebilirsiniz.\n\nQulo Ekibi`,
-  },
-  en: {
-    verifySubject: "Verify your email address",
-    verifyBody: (url: string) =>
-      `Hello,\n\nPlease verify your email address by clicking the link below:\n\n${url}\n\nThis link is valid for 24 hours.\n\nQulo Team`,
-    resetSubject: "Password reset request",
-    resetBody: (url: string) =>
-      `Hello,\n\nClick the link below to reset your password:\n\n${url}\n\nThis link is valid for 1 hour.\n\nIf you did not request this, you can ignore this email.\n\nQulo Team`,
-  },
-} as const;
+// Template cache
+let templateCache: string | null = null;
 
-type Locale = keyof typeof i18n;
+function getTemplate(): string {
+  if (templateCache) return templateCache;
+  const templatePath = join(__dirname, "..", "templates", "email-base.html");
+  templateCache = readFileSync(templatePath, "utf-8");
+  return templateCache;
+}
 
-function getLocale(locale?: string): Locale {
-  return locale === "tr" ? "tr" : "en";
+// Locale cache
+const localeCache = new Map<string, Record<string, string>>();
+
+const SUPPORTED_LOCALES = [
+  "tr", "en", "de", "fr", "es", "ar", "ru",
+  "pt", "it", "ja", "ko", "zh", "nl", "pl", "sv", "hi",
+];
+
+function getEmailLocale(locale?: string): Record<string, string> {
+  const loc = SUPPORTED_LOCALES.includes(locale ?? "") ? locale! : "en";
+  if (localeCache.has(loc)) return localeCache.get(loc)!;
+
+  try {
+    const filePath = join(__dirname, "..", "locales", "emails", `${loc}.json`);
+    const data = JSON.parse(readFileSync(filePath, "utf-8"));
+    localeCache.set(loc, data);
+    return data;
+  } catch {
+    if (loc !== "en") return getEmailLocale("en");
+    throw new Error("English email locale file not found");
+  }
+}
+
+function renderTemplate(
+  strings: Record<string, string>,
+  url: string,
+  type: "verify" | "reset",
+): string {
+  const template = getTemplate();
+  const prefix = type === "verify" ? "verify" : "reset";
+
+  return template
+    .replace(/\{\{TAGLINE\}\}/g, strings.tagline)
+    .replace(/\{\{TITLE\}\}/g, strings[`${prefix}_title`])
+    .replace(/\{\{BODY\}\}/g, strings[`${prefix}_body`])
+    .replace(/\{\{BUTTON_TEXT\}\}/g, strings[`${prefix}_button`])
+    .replace(/\{\{URL\}\}/g, url)
+    .replace(/\{\{LINK_FALLBACK\}\}/g, strings.link_fallback)
+    .replace(/\{\{FOOTER_IGNORE\}\}/g, strings.footer_ignore);
 }
 
 export async function sendVerificationEmail(
@@ -67,14 +87,16 @@ export async function sendVerificationEmail(
     return;
   }
 
-  const loc = getLocale(locale);
+  const strings = getEmailLocale(locale);
   const url = `${env.APP_URL}/api/v1/auth/verify-email?token=${token}`;
+  const html = renderTemplate(strings, url, "verify");
 
   await t.sendMail({
-    from: env.SMTP_USER,
+    from: `"Qulo" <${env.SMTP_FROM}>`,
     to,
-    subject: i18n[loc].verifySubject,
-    text: i18n[loc].verifyBody(url),
+    subject: strings.verify_subject,
+    html,
+    text: `${strings.verify_title}\n\n${strings.verify_body}\n\n${url}`,
   });
 }
 
@@ -89,13 +111,16 @@ export async function sendPasswordResetEmail(
     return;
   }
 
-  const loc = getLocale(locale);
-  const url = `${env.APP_URL}/reset-password?token=${token}`;
+  const strings = getEmailLocale(locale);
+  const webLocale = SUPPORTED_LOCALES.includes(locale ?? "") ? locale! : "en";
+  const url = `${env.WEB_URL}/${webLocale}/reset-password?token=${token}`;
+  const html = renderTemplate(strings, url, "reset");
 
   await t.sendMail({
-    from: env.SMTP_USER,
+    from: `"Qulo" <${env.SMTP_FROM}>`,
     to,
-    subject: i18n[loc].resetSubject,
-    text: i18n[loc].resetBody(url),
+    subject: strings.reset_subject,
+    html,
+    text: `${strings.reset_title}\n\n${strings.reset_body}\n\n${url}`,
   });
 }

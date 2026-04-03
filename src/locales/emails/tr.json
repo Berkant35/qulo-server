@@ -1,0 +1,13 @@
+{
+  "tagline": "Sorularla Tanış, Gerçekten Eşleş",
+  "verify_subject": "E-posta adresinizi doğrulayın",
+  "verify_title": "Hoş Geldin! 💜",
+  "verify_body": "Qulo ailesine katıldığın için teşekkürler! Hesabını aktifleştirmek için aşağıdaki butona tıkla.",
+  "verify_button": "E-postamı Doğrula",
+  "reset_subject": "Şifre sıfırlama talebi",
+  "reset_title": "Şifre Sıfırlama 🔑",
+  "reset_body": "Şifrenizi sıfırlamak için aşağıdaki butona tıklayın. Bu bağlantı 1 saat boyunca geçerlidir.",
+  "reset_button": "Şifremi Sıfırla",
+  "link_fallback": "Buton çalışmıyorsa:",
+  "footer_ignore": "Bu e-postayı siz talep etmediyseniz güvenle yok sayabilirsiniz."
+}

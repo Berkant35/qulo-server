@@ -1,0 +1,13 @@
+{
+  "tagline": "通过问题相识，真正匹配",
+  "verify_subject": "验证您的电子邮件地址",
+  "verify_title": "欢迎！ 💜",
+  "verify_body": "感谢加入 Qulo！请点击下方按钮激活您的账户。",
+  "verify_button": "验证我的邮箱",
+  "reset_subject": "密码重置请求",
+  "reset_title": "重置密码 🔑",
+  "reset_body": "请点击下方按钮重置您的密码。此链接有效期为1小时。",
+  "reset_button": "重置我的密码",
+  "link_fallback": "如果按钮无法使用：",
+  "footer_ignore": "如果您没有请求此邮件，可以放心忽略。"
+}

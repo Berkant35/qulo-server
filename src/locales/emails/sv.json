@@ -1,0 +1,13 @@
+{
+  "tagline": "Möts genom frågor, matcha på riktigt",
+  "verify_subject": "Verifiera din e-postadress",
+  "verify_title": "Välkommen! 💜",
+  "verify_body": "Tack för att du gick med i Qulo! Klicka på knappen nedan för att aktivera ditt konto.",
+  "verify_button": "Verifiera min e-post",
+  "reset_subject": "Begäran om lösenordsåterställning",
+  "reset_title": "Återställ lösenord 🔑",
+  "reset_body": "Klicka på knappen nedan för att återställa ditt lösenord. Denna länk är giltig i 1 timme.",
+  "reset_button": "Återställ mitt lösenord",
+  "link_fallback": "Om knappen inte fungerar:",
+  "footer_ignore": "Om du inte begärde detta e-postmeddelande kan du tryggt ignorera det."
+}

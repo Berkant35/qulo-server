@@ -1,0 +1,13 @@
+{
+  "tagline": "Conheça através de perguntas, conecte-se de verdade",
+  "verify_subject": "Verifique seu endereço de e-mail",
+  "verify_title": "Bem-vindo! 💜",
+  "verify_body": "Obrigado por se juntar ao Qulo! Clique no botão abaixo para ativar sua conta.",
+  "verify_button": "Verificar meu e-mail",
+  "reset_subject": "Solicitação de redefinição de senha",
+  "reset_title": "Redefinir senha 🔑",
+  "reset_body": "Clique no botão abaixo para redefinir sua senha. Este link é válido por 1 hora.",
+  "reset_button": "Redefinir minha senha",
+  "link_fallback": "Se o botão não funcionar:",
+  "footer_ignore": "Se você não solicitou este e-mail, pode ignorá-lo com segurança."
+}

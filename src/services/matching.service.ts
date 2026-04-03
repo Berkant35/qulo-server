@@ -165,25 +165,9 @@ export class MatchingService {
       filtered.push({ ...c, distance_km: Math.round(dist * 10) / 10 });
     }
 
-    // 5. Batch fetch question counts for candidates
+    // 5. Batch fetch question stats for candidates (single query — count derived in-memory)
     const candidateIds = filtered.map((c) => c.id);
     const questionCountMap = new Map<string, number>();
-
-    if (candidateIds.length > 0) {
-      const { data: qCounts } = await supabase
-        .from("questions")
-        .select("user_id")
-        .in("user_id", candidateIds);
-
-      if (qCounts) {
-        for (const row of qCounts) {
-          const uid = row.user_id as string;
-          questionCountMap.set(uid, (questionCountMap.get(uid) ?? 0) + 1);
-        }
-      }
-    }
-
-    // 5.2 — Enrich candidates with question info (category + difficulty)
     const questionInfoMap = new Map<string, QuestionInfo>();
 
     if (candidateIds.length > 0) {
@@ -192,6 +176,13 @@ export class MatchingService {
         .select('user_id, category, stats_correct, stats_wrong, locale')
         .in('user_id', candidateIds);
 
+      // Build count map in-memory from the single query result
+      for (const row of questionStats ?? []) {
+        const uid = row.user_id as string;
+        questionCountMap.set(uid, (questionCountMap.get(uid) ?? 0) + 1);
+      }
+
+      // 5.2 — Enrich candidates with question info (category + difficulty)
       for (const cId of candidateIds) {
         const userQuestions = (questionStats ?? []).filter((q: any) => q.user_id === cId);
         const totalAttempts = userQuestions.reduce((s: number, q: any) => s + q.stats_correct + q.stats_wrong, 0);

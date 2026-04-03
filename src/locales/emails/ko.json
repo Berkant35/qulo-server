@@ -1,0 +1,13 @@
+{
+  "tagline": "질문으로 만나고, 진짜로 연결되세요",
+  "verify_subject": "이메일 주소를 인증해 주세요",
+  "verify_title": "환영합니다! 💜",
+  "verify_body": "Qulo에 가입해 주셔서 감사합니다! 아래 버튼을 클릭하여 계정을 활성화하세요.",
+  "verify_button": "이메일 인증하기",
+  "reset_subject": "비밀번호 재설정 요청",
+  "reset_title": "비밀번호 재설정 🔑",
+  "reset_body": "아래 버튼을 클릭하여 비밀번호를 재설정하세요. 이 링크는 1시간 동안 유효합니다.",
+  "reset_button": "비밀번호 재설정하기",
+  "link_fallback": "버튼이 작동하지 않는 경우:",
+  "footer_ignore": "이 이메일을 요청하지 않으셨다면 무시하셔도 됩니다."
+}

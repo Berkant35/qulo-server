@@ -1,0 +1,13 @@
+{
+  "tagline": "Conócete a través de preguntas, conecta de verdad",
+  "verify_subject": "Verifica tu dirección de correo electrónico",
+  "verify_title": "¡Bienvenido! 💜",
+  "verify_body": "¡Gracias por unirte a Qulo! Haz clic en el botón de abajo para activar tu cuenta.",
+  "verify_button": "Verificar mi correo",
+  "reset_subject": "Solicitud de restablecimiento de contraseña",
+  "reset_title": "Restablecer contraseña 🔑",
+  "reset_body": "Haz clic en el botón de abajo para restablecer tu contraseña. Este enlace es válido durante 1 hora.",
+  "reset_button": "Restablecer mi contraseña",
+  "link_fallback": "Si el botón no funciona:",
+  "footer_ignore": "Si no solicitaste este correo, puedes ignorarlo con seguridad."
+}

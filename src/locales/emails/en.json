@@ -1,0 +1,13 @@
+{
+  "tagline": "Meet Through Questions, Match for Real",
+  "verify_subject": "Verify your email address",
+  "verify_title": "Welcome! 💜",
+  "verify_body": "Thanks for joining Qulo! Click the button below to activate your account.",
+  "verify_button": "Verify My Email",
+  "reset_subject": "Password reset request",
+  "reset_title": "Reset Password 🔑",
+  "reset_body": "Click the button below to reset your password. This link is valid for 1 hour.",
+  "reset_button": "Reset My Password",
+  "link_fallback": "If the button doesn't work:",
+  "footer_ignore": "If you didn't request this email, you can safely ignore it."
+}
