@@ -19,9 +19,12 @@ const envSchema = z.object({
   // Firebase
   FIREBASE_SERVICE_ACCOUNT: z.string().default("{}"),
 
-  // Email (Resend HTTP API)
-  RESEND_API_KEY: z.string().optional(),
-  SMTP_FROM: z.string().default("onboarding@resend.dev"),
+  // SMTP
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.coerce.number().optional(),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  SMTP_FROM: z.string().default("info@socrepho.com"),
 
   // App
   APP_URL: z.string().url().default("http://localhost:3000"),

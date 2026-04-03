@@ -1,4 +1,5 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
+import type { Transporter } from "nodemailer";
 import { readFileSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
@@ -7,16 +8,25 @@ import { env } from "../config/env.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Resend HTTP API — no SMTP port issues on cloud providers
-const resendApiKey = env.RESEND_API_KEY;
+let transporter: Transporter | null = null;
 
-if (!resendApiKey) {
-  console.warn("[EMAIL] WARNING: RESEND_API_KEY not configured — emails disabled");
+function getTransporter(): Transporter | null {
+  if (transporter) return transporter;
+  if (!env.SMTP_HOST || !env.SMTP_PORT || !env.SMTP_USER || !env.SMTP_PASS) {
+    return null;
+  }
+  transporter = nodemailer.createTransport({
+    host: env.SMTP_HOST,
+    port: env.SMTP_PORT,
+    secure: env.SMTP_PORT === 465,
+    auth: { user: env.SMTP_USER, pass: env.SMTP_PASS },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
+  });
+  return transporter;
 }
 
-const resend = resendApiKey ? new Resend(resendApiKey) : null;
-
-// Template cache
 let templateCache: string | null = null;
 
 function getTemplate(): string {
@@ -26,7 +36,6 @@ function getTemplate(): string {
   return templateCache;
 }
 
-// Locale cache
 const localeCache = new Map<string, Record<string, string>>();
 
 const SUPPORTED_LOCALES = [
@@ -37,7 +46,6 @@ const SUPPORTED_LOCALES = [
 function getEmailLocale(locale?: string): Record<string, string> {
   const loc = SUPPORTED_LOCALES.includes(locale ?? "") ? locale! : "en";
   if (localeCache.has(loc)) return localeCache.get(loc)!;
-
   try {
     const filePath = join(__dirname, "..", "locales", "emails", `${loc}.json`);
     const data = JSON.parse(readFileSync(filePath, "utf-8"));
@@ -56,7 +64,6 @@ function renderTemplate(
 ): string {
   const template = getTemplate();
   const prefix = type === "verify" ? "verify" : "reset";
-
   return template
     .replace(/\{\{TAGLINE\}\}/g, strings.tagline)
     .replace(/\{\{TITLE\}\}/g, strings[`${prefix}_title`])
@@ -72,23 +79,24 @@ export async function sendVerificationEmail(
   token: string,
   locale?: string,
 ): Promise<void> {
-  if (!resend) {
-    console.warn(`[email] Verification email to ${to} skipped (Resend not configured). Token: ${token}`);
+  const t = getTransporter();
+  if (!t) {
+    console.warn(`[email] Verification email to ${to} skipped (SMTP not configured)`);
     return;
   }
-
   const strings = getEmailLocale(locale);
   const url = `${env.APP_URL}/api/v1/auth/verify-email?token=${token}`;
   const html = renderTemplate(strings, url, "verify");
 
-  const { error } = await resend.emails.send({
-    from: `Qulo <${env.SMTP_FROM}>`,
+  console.log(`[email] Sending verification email to ${to}...`);
+  const info = await t.sendMail({
+    from: `"Qulo" <${env.SMTP_FROM}>`,
     to,
     subject: strings.verify_subject,
     html,
+    text: `${strings.verify_title}\n\n${strings.verify_body}\n\n${url}`,
   });
-
-  if (error) throw new Error(error.message);
+  console.log(`[email] Verification email sent: ${info.messageId}`);
 }
 
 export async function sendPasswordResetEmail(
@@ -96,22 +104,23 @@ export async function sendPasswordResetEmail(
   token: string,
   locale?: string,
 ): Promise<void> {
-  if (!resend) {
-    console.warn(`[email] Password reset email to ${to} skipped (Resend not configured). Token: ${token}`);
+  const t = getTransporter();
+  if (!t) {
+    console.warn(`[email] Password reset email to ${to} skipped (SMTP not configured)`);
     return;
   }
-
   const strings = getEmailLocale(locale);
   const webLocale = SUPPORTED_LOCALES.includes(locale ?? "") ? locale! : "en";
   const url = `${env.WEB_URL}/${webLocale}/reset-password?token=${token}`;
   const html = renderTemplate(strings, url, "reset");
 
-  const { error } = await resend.emails.send({
-    from: `Qulo <${env.SMTP_FROM}>`,
+  console.log(`[email] Sending password reset email to ${to}...`);
+  const info = await t.sendMail({
+    from: `"Qulo" <${env.SMTP_FROM}>`,
     to,
     subject: strings.reset_subject,
     html,
+    text: `${strings.reset_title}\n\n${strings.reset_body}\n\n${url}`,
   });
-
-  if (error) throw new Error(error.message);
+  console.log(`[email] Password reset email sent: ${info.messageId}`);
 }
