@@ -143,26 +143,6 @@ export class AuthService {
       throw Errors.INVALID_CREDENTIALS();
     }
 
-    // Sync email verification from Supabase Auth via RPC
-    if (!user.email_verified) {
-      try {
-        const { data: isVerified, error: rpcError } = await supabase.rpc(
-          "is_auth_email_verified",
-          { user_email: email },
-        );
-
-        if (!rpcError && isVerified) {
-          await supabase
-            .from("users")
-            .update({ email_verified: true })
-            .eq("id", user.id);
-          user.email_verified = true;
-        }
-      } catch (err) {
-        console.error("[auth] Failed to check Supabase Auth verification:", err);
-      }
-    }
-
     if (!user.email_verified) {
       throw Errors.EMAIL_NOT_VERIFIED();
     }
