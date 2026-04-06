@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc && cp -r src/locales/. dist/locales/ && cp -r src/admin/views dist/admin/views && cp -r src/templates dist/templates",
+    "build": "rm -rf dist && tsc && cp -r src/locales/. dist/locales/ && cp -r src/admin/views dist/admin/views && cp -r src/templates dist/templates",
     "start": "node dist/index.js",
     "test": "vitest"
   },
