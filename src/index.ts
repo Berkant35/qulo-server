@@ -131,11 +131,6 @@ app.get("/.well-known/assetlinks.json", (_req, res) => {
   ]);
 });
 
-// Email verification callback (Supabase Auth redirects here)
-app.get("/", (_req, res) => {
-  res.render("email-verified");
-});
-
 // Admin backoffice
 app.use("/admin", adminRoutes);
 
