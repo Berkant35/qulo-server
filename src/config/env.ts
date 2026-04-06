@@ -19,12 +19,9 @@ const envSchema = z.object({
   // Firebase
   FIREBASE_SERVICE_ACCOUNT: z.string().default("{}"),
 
-  // SMTP
-  SMTP_HOST: z.string().optional(),
-  SMTP_PORT: z.coerce.number().optional(),
-  SMTP_USER: z.string().optional(),
-  SMTP_PASS: z.string().optional(),
-  SMTP_FROM: z.string().default("info@socrepho.com"),
+  // Email (Gmail API)
+  GOOGLE_SERVICE_ACCOUNT_KEY: z.string().default("{}"),
+  EMAIL_FROM: z.string().default("info@socrepho.com"),
 
   // App
   APP_URL: z.string().url().default("http://localhost:3000"),
