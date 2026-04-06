@@ -52,6 +52,14 @@ export const generalLimiter = rateLimit({
   message: rateLimitResponse,
 });
 
+export const forgotPasswordLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  limit: 3,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitResponse,
+});
+
 export const socialAuthLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   limit: 5, // 5 req/min/IP
