@@ -32,7 +32,13 @@ export async function loginHandler(req: Request, res: Response, next: NextFuncti
     const { email, password } = req.body as LoginInput;
     const result = await authService.login(email, password);
     res.json(result);
-  } catch (err) {
+  } catch (err: unknown) {
+    const appErr = err as { code?: string; statusCode?: number; message?: string };
+    if (appErr.code && appErr.statusCode) {
+      res.status(appErr.statusCode).json({ error: { code: appErr.code } });
+      return;
+    }
+    console.error("[login] Unexpected error:", (err as Error).message);
     next(err);
   }
 }
