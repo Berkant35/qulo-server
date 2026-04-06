@@ -1,31 +1,11 @@
-import nodemailer from "nodemailer";
-import type { Transporter } from "nodemailer";
 import { readFileSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { env } from "../config/env.js";
+import { sendEmail } from "./gmail.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-let transporter: Transporter | null = null;
-
-function getTransporter(): Transporter | null {
-  if (transporter) return transporter;
-  if (!env.SMTP_HOST || !env.SMTP_PORT || !env.SMTP_USER || !env.SMTP_PASS) {
-    return null;
-  }
-  transporter = nodemailer.createTransport({
-    host: env.SMTP_HOST,
-    port: env.SMTP_PORT,
-    secure: env.SMTP_PORT === 465,
-    auth: { user: env.SMTP_USER, pass: env.SMTP_PASS },
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 15000,
-  });
-  return transporter;
-}
 
 let templateCache: string | null = null;
 
@@ -79,24 +59,18 @@ export async function sendVerificationEmail(
   token: string,
   locale?: string,
 ): Promise<void> {
-  const t = getTransporter();
-  if (!t) {
-    console.warn(`[email] Verification email to ${to} skipped (SMTP not configured)`);
-    return;
-  }
   const strings = getEmailLocale(locale);
   const url = `${env.APP_URL}/api/v1/auth/verify-email?token=${token}`;
   const html = renderTemplate(strings, url, "verify");
 
   console.log(`[email] Sending verification email to ${to}...`);
-  const info = await t.sendMail({
-    from: `"Qulo" <${env.SMTP_FROM}>`,
+  await sendEmail({
     to,
     subject: strings.verify_subject,
     html,
     text: `${strings.verify_title}\n\n${strings.verify_body}\n\n${url}`,
   });
-  console.log(`[email] Verification email sent: ${info.messageId}`);
+  console.log(`[email] Verification email sent to ${to}`);
 }
 
 export async function sendPasswordResetEmail(
@@ -104,23 +78,17 @@ export async function sendPasswordResetEmail(
   token: string,
   locale?: string,
 ): Promise<void> {
-  const t = getTransporter();
-  if (!t) {
-    console.warn(`[email] Password reset email to ${to} skipped (SMTP not configured)`);
-    return;
-  }
   const strings = getEmailLocale(locale);
   const webLocale = SUPPORTED_LOCALES.includes(locale ?? "") ? locale! : "en";
   const url = `${env.WEB_URL}/${webLocale}/reset-password?token=${token}`;
   const html = renderTemplate(strings, url, "reset");
 
   console.log(`[email] Sending password reset email to ${to}...`);
-  const info = await t.sendMail({
-    from: `"Qulo" <${env.SMTP_FROM}>`,
+  await sendEmail({
     to,
     subject: strings.reset_subject,
     html,
     text: `${strings.reset_title}\n\n${strings.reset_body}\n\n${url}`,
   });
-  console.log(`[email] Password reset email sent: ${info.messageId}`);
+  console.log(`[email] Password reset email sent to ${to}`);
 }
