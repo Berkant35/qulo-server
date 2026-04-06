@@ -59,7 +59,7 @@ app.use(helmet({
 }));
 app.use(cors({
   origin: env.NODE_ENV === 'production'
-    ? ['https://qulo-server-production.up.railway.app']
+    ? ['https://qulo-server-production.up.railway.app', 'https://quloapp.com']
     : true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Idempotency-Key'],
