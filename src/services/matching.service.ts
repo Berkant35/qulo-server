@@ -330,27 +330,7 @@ export class MatchingService {
     // Daily swipe limit check + increment
     await subscriptionService.incrementDailySwipes(swiperId);
 
-    // If LIKE, check target has >= 2 questions compatible with swiper's languages
-    if (action === "LIKE") {
-      const { data: targetQuestions, error: qError } = await supabase
-        .from("questions")
-        .select("id, locale")
-        .eq("user_id", targetId);
-
-      if (qError) throw Errors.SERVER_ERROR();
-
-      // Always filter by swiper's language preferences
-      const swiperLanguages = await userLanguageService.getUserLanguages(swiperId);
-      let compatibleCount = targetQuestions?.length ?? 0;
-
-      if (swiperLanguages.length > 0 && targetQuestions) {
-        compatibleCount = targetQuestions.filter(
-          (q: any) => swiperLanguages.includes(q.locale || 'tr')
-        ).length;
-      }
-
-      if (compatibleCount < 2) throw Errors.NO_QUESTIONS();
-    }
+    // Question compatibility is checked at quiz start, not at swipe time
 
     // Insert swipe
     const { error: swipeError } = await supabase
