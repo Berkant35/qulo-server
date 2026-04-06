@@ -35,6 +35,8 @@ export class AuthService {
     const verifyTokenHash = hashToken(verifyToken);
     const referralCode = await referralService.generateUniqueCode();
 
+    const tokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24 hours
+
     const { data: user, error } = await supabase
       .from("users")
       .insert({
@@ -46,6 +48,7 @@ export class AuthService {
         gender: data.gender,
         locale: data.locale,
         verify_token: verifyTokenHash,
+        token_expires_at: tokenExpiresAt,
         email_verified: false,
         referral_code: referralCode,
         ...(data.lat != null && data.lng != null ? { lat: data.lat, lng: data.lng } : {}),
@@ -87,7 +90,7 @@ export class AuthService {
 
     const { data: user, error } = await supabase
       .from("users")
-      .select("id")
+      .select("id, token_expires_at")
       .eq("verify_token", tokenHash)
       .eq("email_verified", false)
       .maybeSingle();
@@ -96,9 +99,13 @@ export class AuthService {
       throw Errors.INVALID_TOKEN();
     }
 
+    if (user.token_expires_at && new Date(user.token_expires_at) < new Date()) {
+      throw Errors.TOKEN_EXPIRED();
+    }
+
     const { error: updateError } = await supabase
       .from("users")
-      .update({ email_verified: true, verify_token: null })
+      .update({ email_verified: true, verify_token: null, token_expires_at: null })
       .eq("id", user.id);
 
     if (updateError) {
@@ -253,10 +260,11 @@ export class AuthService {
 
     const token = generateToken();
     const tokenHash = hashToken(token);
+    const tokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour
 
     await supabase
       .from("users")
-      .update({ verify_token: tokenHash })
+      .update({ verify_token: tokenHash, token_expires_at: tokenExpiresAt })
       .eq("id", user.id);
 
     console.log("[auth] forgotPassword: sending reset email to", email, "locale:", user.locale);
@@ -350,7 +358,7 @@ export class AuthService {
 
     const { data: user, error } = await supabase
       .from("users")
-      .select("id")
+      .select("id, token_expires_at")
       .eq("verify_token", tokenHash)
       .maybeSingle();
 
@@ -358,11 +366,15 @@ export class AuthService {
       throw Errors.INVALID_TOKEN();
     }
 
+    if (user.token_expires_at && new Date(user.token_expires_at) < new Date()) {
+      throw Errors.TOKEN_EXPIRED();
+    }
+
     const passwordHash = await hashPassword(password);
 
     await supabase
       .from("users")
-      .update({ password_hash: passwordHash, verify_token: null })
+      .update({ password_hash: passwordHash, verify_token: null, token_expires_at: null })
       .eq("id", user.id);
 
     // Delete all refresh tokens for this user
