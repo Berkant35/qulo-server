@@ -229,7 +229,7 @@ const PROFILES: StoreProfile[] = [
     green_diamonds: 22,
     is_online: true,
     photos: [
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80",
+      "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&q=80",
       "https://images.unsplash.com/photo-1524638431109-93d95c968f03?w=800&q=80",
       "https://images.unsplash.com/photo-1485893086445-ed75865251e0?w=800&q=80",
     ],
@@ -284,7 +284,7 @@ const PROFILES: StoreProfile[] = [
     green_diamonds: 15,
     is_online: false,
     photos: [
-      "https://images.unsplash.com/photo-1515023115894-bacee5634647?w=800&q=80",
+      "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=800&q=80",
       "https://images.unsplash.com/photo-1496440737103-cd596325d314?w=800&q=80",
       "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&q=80",
     ],
@@ -451,8 +451,8 @@ const PROFILES: StoreProfile[] = [
     is_online: true,
     photos: [
       "https://images.unsplash.com/photo-1516726817505-f5ed825624d8?w=800&q=80",
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&q=80",
-      "https://images.unsplash.com/photo-1523264653568-d452bc9d6e14?w=800&q=80",
+      "https://images.unsplash.com/photo-1589571894960-20bbe2828d0a?w=800&q=80",
+      "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=800&q=80",
       "https://images.unsplash.com/photo-1502767089025-6572583495f9?w=800&q=80",
     ],
     height: 167,
