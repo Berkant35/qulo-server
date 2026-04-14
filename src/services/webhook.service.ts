@@ -45,9 +45,11 @@ class WebhookService {
     const plan = SUBSCRIPTION_PRODUCT_MAP[productId];
     if (!plan) return;
 
-    const expiresAt = expiration_at_ms
-      ? new Date(expiration_at_ms).toISOString()
-      : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    if (!expiration_at_ms) {
+      console.error(`[webhook] Missing expiration_at_ms for event ${eventType}, product ${productId}, user ${userId}`);
+      return;
+    }
+    const expiresAt = new Date(expiration_at_ms).toISOString();
 
     switch (eventType) {
       case 'INITIAL_PURCHASE':

@@ -125,7 +125,7 @@ app.get("/.well-known/assetlinks.json", (_req, res) => {
       target: {
         namespace: "android_app",
         package_name: "com.wordpress.calikusuberkant.qulo",
-        sha256_cert_fingerprints: [env.ANDROID_SHA256_FINGERPRINT || "TODO:ADD_YOUR_SHA256_FINGERPRINT"],
+        sha256_cert_fingerprints: [env.ANDROID_SHA256_FINGERPRINT || "F4:49:81:0F:8E:DA:35:37:EC:7A:2A:EA:D2:AB:18:AC:D6:EF:4D:BD:96:58:53:FC:D7:E3:EC:53:72:55:EF:AC"],
       },
     },
   ]);
@@ -173,6 +173,16 @@ app.listen(env.PORT, () => {
 
   // Start cron jobs
   initCrons();
+});
+
+// Graceful error handlers
+process.on("unhandledRejection", (reason) => {
+  console.error("[server] Unhandled Rejection:", reason);
+});
+
+process.on("uncaughtException", (err) => {
+  console.error("[server] Uncaught Exception:", err.message, err.stack);
+  process.exit(1);
 });
 
 export default app;
