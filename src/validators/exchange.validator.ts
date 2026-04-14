@@ -7,7 +7,7 @@ export const convertSchema = z.object({
 });
 
 export const buyPowerSchema = z.object({
-  power_name: z.enum(["ORACLE", "HALF", "SKIP", "SKIP_ALL", "TIME_EXTEND", "HINT"]),
+  power_name: z.enum(["ORACLE", "HALF", "SKIP", "SKIP_ALL", "TIME_EXTEND", "HINT", "POWER_BLOCK", "POWER_UNBLOCK"]),
   diamond_type: z.enum(["GREEN", "PURPLE"]),
   quantity: z.number().int().min(1).max(50),
 });
