@@ -116,8 +116,6 @@ export class MatchingService {
     }
 
     // 3. Query candidates
-    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-
     let query = supabase
       .from("users")
       .select(
@@ -127,7 +125,6 @@ export class MatchingService {
       .eq("email_verified", true)
       .not("lat", "is", null)
       .not("lng", "is", null)
-      .gte("last_seen_at", sevenDaysAgo)
       .limit(50);
 
     // Age filter
