@@ -2,6 +2,7 @@ import { supabase } from "../config/supabase.js";
 import { AppError, Errors } from "../utils/errors.js";
 import type { CreateQuestionInput, UpdateQuestionInput } from "../validators/question.validator.js";
 import { aiSuggestService } from './ai-suggest.service.js';
+import { subscriptionService } from './subscription.service.js';
 
 export class QuestionService {
   async getMyQuestions(userId: string) {
@@ -19,17 +20,18 @@ export class QuestionService {
   }
 
   async createQuestion(userId: string, input: CreateQuestionInput) {
-    // Check count < 6
-    const { count, error: countError } = await supabase
-      .from("questions")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", userId);
+    // Check count against subscription tier limit
+    const [{ count, error: countError }, sub] = await Promise.all([
+      supabase.from("questions").select("*", { count: "exact", head: true }).eq("user_id", userId),
+      subscriptionService.getStatus(userId),
+    ]);
 
     if (countError) {
       throw Errors.SERVER_ERROR();
     }
 
-    if ((count ?? 0) >= 6) {
+    const limits = await subscriptionService.getLimits(sub.plan);
+    if ((count ?? 0) >= limits.maxQuestions) {
       throw Errors.MAX_QUESTIONS_REACHED();
     }
 
