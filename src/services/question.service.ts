@@ -152,26 +152,13 @@ export class QuestionService {
       throw new AppError("INVALID_REORDER", 400, "Order must contain exactly all question IDs");
     }
 
-    // Two-pass update to avoid UNIQUE(user_id, order_num) constraint violation
-    // Pass 1: Set all to negative temporary values
-    for (let i = 0; i < orderedIds.length; i++) {
-      const { error: tmpError } = await supabase
-        .from("questions")
-        .update({ order_num: -(i + 1) })
-        .eq("id", orderedIds[i]);
+    // Use RPC function for atomic reorder (single transaction, DEFERRED constraint)
+    const { error: rpcError } = await supabase.rpc('reorder_questions', {
+      p_user_id: userId,
+      p_ordered_ids: orderedIds,
+    });
 
-      if (tmpError) throw Errors.SERVER_ERROR();
-    }
-
-    // Pass 2: Set to final positive values
-    for (let i = 0; i < orderedIds.length; i++) {
-      const { error: updateError } = await supabase
-        .from("questions")
-        .update({ order_num: i + 1 })
-        .eq("id", orderedIds[i]);
-
-      if (updateError) throw Errors.SERVER_ERROR();
-    }
+    if (rpcError) throw Errors.SERVER_ERROR();
 
     return this.getMyQuestions(userId);
   }
