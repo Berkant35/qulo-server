@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { questionService } from "../services/question.service.js";
-import type { CreateQuestionInput, UpdateQuestionInput } from "../validators/question.validator.js";
+import type { CreateQuestionInput, UpdateQuestionInput, ReorderQuestionsInput } from "../validators/question.validator.js";
 
 export async function getMyQuestionsHandler(req: Request, res: Response, next: NextFunction) {
   try {
@@ -70,6 +70,17 @@ export async function getWeeklyReportHandler(req: Request, res: Response, next: 
   try {
     const userId = req.user!.userId;
     const data = await questionService.getWeeklyReport(userId);
+    res.json(data);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function reorderQuestionsHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const userId = req.user!.userId;
+    const { order } = req.body as ReorderQuestionsInput;
+    const data = await questionService.reorderByIds(userId, order);
     res.json(data);
   } catch (err) {
     next(err);

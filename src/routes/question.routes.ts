@@ -2,7 +2,7 @@ import { Router } from "express";
 import { generalLimiter } from "../middleware/rateLimit.js";
 import { validate } from "../middleware/validate.js";
 import { authMiddleware } from "../middleware/auth.js";
-import { createQuestionSchema, updateQuestionSchema } from "../validators/question.validator.js";
+import { createQuestionSchema, updateQuestionSchema, reorderQuestionsSchema } from "../validators/question.validator.js";
 import {
   getMyQuestionsHandler,
   createQuestionHandler,
@@ -11,6 +11,7 @@ import {
   getQuestionCountHandler,
   getQuestionAnalyticsHandler,
   getWeeklyReportHandler,
+  reorderQuestionsHandler,
 } from "../controllers/question.controller.js";
 import { aiSuggestHandler } from "../controllers/ai-suggest.controller.js";
 import { aiSuggestSchema } from "../validators/ai-suggest.validator.js";
@@ -25,6 +26,7 @@ router.use(authMiddleware, generalLimiter);
 
 router.get("/me", getMyQuestionsHandler);
 router.post("/me", validate(createQuestionSchema), createQuestionHandler);
+router.patch("/me/reorder", validate(reorderQuestionsSchema), reorderQuestionsHandler);
 router.patch("/me/:order", validate(updateQuestionSchema), updateQuestionHandler);
 router.delete("/me/:order", deleteQuestionHandler);
 router.get("/count/me", getQuestionCountHandler);

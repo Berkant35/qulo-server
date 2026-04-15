@@ -37,5 +37,10 @@ export const updateQuestionSchema = z.object({
   locale: z.enum(SUPPORTED_LOCALES as unknown as [string, ...string[]]).optional(),
 });
 
+export const reorderQuestionsSchema = z.object({
+  order: z.array(z.string().uuid()).min(1).max(10),
+});
+
 export type CreateQuestionInput = z.infer<typeof createQuestionSchema>;
 export type UpdateQuestionInput = z.infer<typeof updateQuestionSchema>;
+export type ReorderQuestionsInput = z.infer<typeof reorderQuestionsSchema>;

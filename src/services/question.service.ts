@@ -137,6 +137,33 @@ export class QuestionService {
     }
   }
 
+  async reorderByIds(userId: string, orderedIds: string[]) {
+    const { data: existing, error } = await supabase
+      .from("questions")
+      .select("id")
+      .eq("user_id", userId);
+
+    if (error) throw Errors.SERVER_ERROR();
+
+    const existingIds = new Set(existing.map((q) => q.id));
+    const inputIds = new Set(orderedIds);
+
+    if (existingIds.size !== inputIds.size || !orderedIds.every((id) => existingIds.has(id))) {
+      throw new AppError("INVALID_REORDER", 400, "Order must contain exactly all question IDs");
+    }
+
+    for (let i = 0; i < orderedIds.length; i++) {
+      const { error: updateError } = await supabase
+        .from("questions")
+        .update({ order_num: i + 1 })
+        .eq("id", orderedIds[i]);
+
+      if (updateError) throw Errors.SERVER_ERROR();
+    }
+
+    return this.getMyQuestions(userId);
+  }
+
   async getQuestionCount(userId: string) {
     const { count, error } = await supabase
       .from("questions")
