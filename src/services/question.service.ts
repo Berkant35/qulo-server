@@ -152,6 +152,18 @@ export class QuestionService {
       throw new AppError("INVALID_REORDER", 400, "Order must contain exactly all question IDs");
     }
 
+    // Two-pass update to avoid UNIQUE(user_id, order_num) constraint violation
+    // Pass 1: Set all to negative temporary values
+    for (let i = 0; i < orderedIds.length; i++) {
+      const { error: tmpError } = await supabase
+        .from("questions")
+        .update({ order_num: -(i + 1) })
+        .eq("id", orderedIds[i]);
+
+      if (tmpError) throw Errors.SERVER_ERROR();
+    }
+
+    // Pass 2: Set to final positive values
     for (let i = 0; i < orderedIds.length; i++) {
       const { error: updateError } = await supabase
         .from("questions")
