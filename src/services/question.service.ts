@@ -111,6 +111,30 @@ export class QuestionService {
     if (count === 0) {
       throw Errors.SESSION_NOT_FOUND();
     }
+
+    // Reorder remaining questions to fill the gap
+    await this.reorderQuestions(userId);
+  }
+
+  private async reorderQuestions(userId: string) {
+    const { data: remaining, error } = await supabase
+      .from("questions")
+      .select("id, order_num")
+      .eq("user_id", userId)
+      .order("order_num", { ascending: true });
+
+    if (error || !remaining) return;
+
+    const updates = remaining
+      .map((q, i) => ({ id: q.id, expectedOrder: i + 1, currentOrder: q.order_num }))
+      .filter((u) => u.currentOrder !== u.expectedOrder);
+
+    for (const u of updates) {
+      await supabase
+        .from("questions")
+        .update({ order_num: u.expectedOrder })
+        .eq("id", u.id);
+    }
   }
 
   async getQuestionCount(userId: string) {
