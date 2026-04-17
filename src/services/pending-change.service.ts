@@ -82,10 +82,17 @@ class PendingChangeService {
             .delete()
             .eq('id', change.question_id);
         } else if (change.change_type === 'UPDATE' && change.payload) {
-          await supabase
-            .from('questions')
-            .update(change.payload)
-            .eq('id', change.question_id);
+          const allowedFields = ['text', 'options', 'correct_answer', 'category_id', 'time_limit', 'difficulty'];
+          const safePayload: Record<string, unknown> = {};
+          for (const key of allowedFields) {
+            if (key in change.payload) safePayload[key] = change.payload[key];
+          }
+          if (Object.keys(safePayload).length > 0) {
+            await supabase
+              .from('questions')
+              .update(safePayload)
+              .eq('id', change.question_id);
+          }
         }
 
         await supabase

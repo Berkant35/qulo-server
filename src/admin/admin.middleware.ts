@@ -32,6 +32,10 @@ export function superAdminOnly(req: Request, res: Response, next: NextFunction):
 export function ipWhitelist(req: Request, res: Response, next: NextFunction): void {
   const allowedIps = env.ADMIN_ALLOWED_IPS;
   if (!allowedIps || allowedIps.trim() === "") {
+    if (env.NODE_ENV === "production") {
+      res.status(403).send("Forbidden");
+      return;
+    }
     next();
     return;
   }

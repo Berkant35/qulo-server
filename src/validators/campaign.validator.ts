@@ -10,7 +10,10 @@ export const segmentSchema = z.object({
   profile_completion_min: z.number().int().min(0).max(100).optional(),
   profile_completion_max: z.number().int().min(0).max(100).optional(),
   has_match: z.boolean().optional(),
-  registered_after: z.string().optional(),
+  registered_after: z.string().refine(
+    (v) => !isNaN(Date.parse(v)),
+    { message: "Must be a valid date string" },
+  ).optional(),
 });
 
 export type SegmentInput = z.infer<typeof segmentSchema>;
@@ -23,7 +26,10 @@ export const createCampaignSchema = z.object({
   action_url: z.string().max(200).optional(),
   action_label: z.string().max(50).optional(),
   segment: segmentSchema,
-  scheduled_at: z.string().optional(),
+  scheduled_at: z.string().refine(
+    (v) => !isNaN(Date.parse(v)),
+    { message: "Must be a valid date string" },
+  ).optional(),
 });
 
 export type CreateCampaignInput = z.infer<typeof createCampaignSchema>;

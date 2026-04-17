@@ -14,7 +14,10 @@ export const updateProfileSchema = z.object({
   relationship_goal: z.enum(["SERIOUS", "FRIENDSHIP", "NOT_SURE"]).optional(),
   preferred_languages: z.array(z.enum(["tr", "en", "de", "fr", "ar", "ru", "es"])).min(1).max(7).optional(),
   strict_language_mode: z.boolean().optional(),
-});
+}).refine(
+  (data) => !data.age_pref_min || !data.age_pref_max || data.age_pref_min <= data.age_pref_max,
+  { message: "age_pref_min must be less than or equal to age_pref_max", path: ["age_pref_max"] },
+);
 
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 
@@ -42,7 +45,8 @@ export const updateLocationSchema = z.object({
 export type UpdateLocationInput = z.infer<typeof updateLocationSchema>;
 
 export const updatePushTokenSchema = z.object({
-  push_token: z.string().min(1),
+  push_token: z.string().min(20).max(512)
+    .regex(/^[a-zA-Z0-9:_\-.]+$/, { message: "Invalid push token format" }),
 });
 
 export type UpdatePushTokenInput = z.infer<typeof updatePushTokenSchema>;
@@ -59,7 +63,10 @@ export const notificationPreferencesSchema = z.object({
 export type NotificationPreferencesInput = z.infer<typeof notificationPreferencesSchema>;
 
 export const completeProfileSchema = z.object({
-  birthday: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  birthday: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(
+    (v) => !isNaN(new Date(v + "T00:00:00Z").getTime()),
+    { message: "Invalid date" },
+  ),
   gender: z.enum(["MAN", "WOMAN", "OTHER"]),
   lat: z.number().min(-90).max(90).optional(),
   lng: z.number().min(-180).max(180).optional(),

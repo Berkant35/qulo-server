@@ -3,6 +3,7 @@ import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { env } from "../config/env.js";
 import { sendEmail } from "./gmail.js";
+import { maskEmail } from "./pii.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -63,14 +64,15 @@ export async function sendVerificationEmail(
   const url = `${env.APP_URL}/api/v1/auth/verify-email?token=${token}`;
   const html = renderTemplate(strings, url, "verify");
 
-  console.log(`[email] Sending verification email to ${to}...`);
+  const maskedTo = maskEmail(to);
+  console.log(`[email] Sending verification email to ${maskedTo}...`);
   await sendEmail({
     to,
     subject: strings.verify_subject,
     html,
     text: `${strings.verify_title}\n\n${strings.verify_body}\n\n${url}`,
   });
-  console.log(`[email] Verification email sent to ${to}`);
+  console.log(`[email] Verification email sent to ${maskedTo}`);
 }
 
 export async function sendPasswordResetEmail(
@@ -83,12 +85,13 @@ export async function sendPasswordResetEmail(
   const url = `${env.WEB_URL}/${webLocale}/reset-password?token=${token}`;
   const html = renderTemplate(strings, url, "reset");
 
-  console.log(`[email] Sending password reset email to ${to}...`);
+  const maskedTo = maskEmail(to);
+  console.log(`[email] Sending password reset email to ${maskedTo}...`);
   await sendEmail({
     to,
     subject: strings.reset_subject,
     html,
     text: `${strings.reset_title}\n\n${strings.reset_body}\n\n${url}`,
   });
-  console.log(`[email] Password reset email sent to ${to}`);
+  console.log(`[email] Password reset email sent to ${maskedTo}`);
 }

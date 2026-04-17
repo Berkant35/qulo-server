@@ -61,7 +61,12 @@ class AdminController {
     else if (action === "unban") await adminService.unbanUser(id);
     else if (action === "delete") await adminService.deleteUser(id);
     else if (action === "update_diamonds") {
-      await adminService.updateDiamonds(id, parseInt(green_diamonds), parseInt(purple_diamonds));
+      const green = parseInt(green_diamonds);
+      const purple = parseInt(purple_diamonds);
+      if (isNaN(green) || isNaN(purple) || green < 0 || purple < 0) {
+        return res.redirect(`/admin/users/${id}?error=invalid_diamonds`);
+      }
+      await adminService.updateDiamonds(id, green, purple);
     } else if (action === "set_subscription") {
       const { sub_plan, sub_days } = req.body;
       await adminService.setSubscription(id, sub_plan, parseInt(sub_days) || 30);

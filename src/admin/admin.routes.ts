@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { adminController } from "./admin.controller.js";
 import { questionBankController } from "./question-bank.controller.js";
+import { analyticsController } from "./analytics.controller.js";
 import { adminAuth, superAdminOnly, ipWhitelist, csrfGenerate, csrfValidate } from "./admin.middleware.js";
 import adminCronRoutes from "./cron.routes.js";
 import rateLimit from "express-rate-limit";
@@ -77,6 +78,10 @@ router.post("/campaigns/preview-count", csrfValidate, (req, res) => adminControl
 router.get("/tickets", (req, res) => adminController.tickets(req, res));
 router.get("/tickets/:id", (req, res) => adminController.ticketDetail(req, res));
 router.post("/tickets/:id/reply", csrfValidate, (req, res) => adminController.ticketReply(req, res));
+
+router.get("/analytics", (req, res) => analyticsController.page(req, res));
+router.get("/analytics/api", (req, res) => analyticsController.apiData(req, res));
+router.get("/analytics/export", (req, res) => analyticsController.exportCsv(req, res));
 
 router.get("/blocks", (req, res) => adminController.blocks(req, res));
 

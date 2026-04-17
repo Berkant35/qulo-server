@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const convertSchema = z.object({
-  green_amount: z.number().int().min(3).refine((v) => v % 3 === 0, {
+  green_amount: z.number().int().min(3).max(1000000).refine((v) => v % 3 === 0, {
     message: "green_amount must be a multiple of 3",
   }),
 });

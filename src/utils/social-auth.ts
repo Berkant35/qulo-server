@@ -97,9 +97,14 @@ export async function verifyAppleToken(
   }
 
   // Decode header to get kid
-  const header = JSON.parse(
-    Buffer.from(idToken.split(".")[0], "base64url").toString(),
-  );
+  let header: { kid?: string };
+  try {
+    header = JSON.parse(
+      Buffer.from(idToken.split(".")[0], "base64url").toString(),
+    );
+  } catch {
+    throw Errors.INVALID_TOKEN();
+  }
 
   // Fetch Apple public keys
   const jwks = await getApplePublicKeys();

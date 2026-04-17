@@ -49,6 +49,22 @@ class WebhookService {
       console.error(`[webhook] Missing expiration_at_ms for event ${eventType}, product ${productId}, user ${userId}`);
       return;
     }
+
+    // Idempotency check — skip if we've already processed this (transaction_id, event_type) pair
+    if (transaction_id) {
+      const { data: existing } = await supabase
+        .from('iap_transactions')
+        .select('id')
+        .eq('transaction_id', transaction_id)
+        .eq('rc_event_type', eventType)
+        .maybeSingle();
+
+      if (existing) {
+        console.log(`[webhook] Skipping duplicate ${eventType} for transaction ${transaction_id}`);
+        return;
+      }
+    }
+
     const expiresAt = new Date(expiration_at_ms).toISOString();
 
     switch (eventType) {

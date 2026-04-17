@@ -22,7 +22,15 @@ export const discoverLimiter = rateLimit({
 
 export const chatLimiter = rateLimit({
   windowMs: 60 * 1000,
-  limit: 120,
+  limit: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitResponse,
+});
+
+export const analyticsTrackLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 60, // 60 requests/min/user (each can contain up to 50 events = 3000 events/min max)
   standardHeaders: true,
   legacyHeaders: false,
   message: rateLimitResponse,
@@ -38,7 +46,7 @@ export const swipeLimiter = rateLimit({
 
 export const quizLimiter = rateLimit({
   windowMs: 60 * 1000,
-  limit: 60,
+  limit: 30,
   standardHeaders: true,
   legacyHeaders: false,
   message: rateLimitResponse,

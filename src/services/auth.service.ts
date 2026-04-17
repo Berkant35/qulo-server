@@ -232,11 +232,11 @@ export class AuthService {
 
     // Don't reveal whether email exists
     if (!user) {
-      console.log("[auth] forgotPassword: user not found for", email);
+      console.log("[auth] forgotPassword: user not found");
       return;
     }
 
-    console.log("[auth] forgotPassword: user found, generating token for", email);
+    console.log("[auth] forgotPassword: user found, generating token", { userId: user.id });
 
     const token = generateToken();
     const tokenHash = hashToken(token);
@@ -247,12 +247,12 @@ export class AuthService {
       .update({ verify_token: tokenHash, token_expires_at: tokenExpiresAt })
       .eq("id", user.id);
 
-    console.log("[auth] forgotPassword: sending reset email to", email, "locale:", user.locale);
+    console.log("[auth] forgotPassword: sending reset email", { userId: user.id, locale: user.locale });
 
     sendPasswordResetEmail(email, token, user.locale)
-      .then(() => console.log("[auth] forgotPassword: email sent successfully to", email))
+      .then(() => console.log("[auth] forgotPassword: email sent successfully", { userId: user.id }))
       .catch((err) => {
-        console.error("[auth] Failed to send password reset email:", err);
+        console.error("[auth] Failed to send password reset email:", err instanceof Error ? err.message : err);
       });
   }
 

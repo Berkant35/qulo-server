@@ -55,6 +55,7 @@ export class MatchingService {
    * Discover candidates for a user.
    */
   async discover(userId: string, page = 1): Promise<{ cards: ProfileCard[]; page: number; has_more: boolean }> {
+    assertUuid(userId, "userId");
     // 1. Get current user + already-swiped IDs in parallel
     const [userResult, swipedResult, matchResult] = await Promise.all([
       supabase
@@ -68,7 +69,8 @@ export class MatchingService {
       supabase
         .from("swipes")
         .select("target_id")
-        .eq("swiper_id", userId),
+        .eq("swiper_id", userId)
+        .limit(5000),
       supabase
         .from("matches")
         .select("user1_id, user2_id")
@@ -166,6 +168,7 @@ export class MatchingService {
     const candidateIds = filtered.map((c) => c.id);
     const questionCountMap = new Map<string, number>();
     const questionInfoMap = new Map<string, QuestionInfo>();
+    const questionLocalesByUser = new Map<string, string[]>();
 
     if (candidateIds.length > 0) {
       const { data: questionStats } = await supabase
@@ -173,10 +176,13 @@ export class MatchingService {
         .select('user_id, category, stats_correct, stats_wrong, locale')
         .in('user_id', candidateIds);
 
-      // Build count map in-memory from the single query result
+      // Build count map + raw locale list in-memory from the single query result
       for (const row of questionStats ?? []) {
         const uid = row.user_id as string;
         questionCountMap.set(uid, (questionCountMap.get(uid) ?? 0) + 1);
+        const locales = questionLocalesByUser.get(uid) ?? [];
+        locales.push((row.locale as string) || 'tr');
+        questionLocalesByUser.set(uid, locales);
       }
 
       // 5.2 — Enrich candidates with question info (category + difficulty)
@@ -219,28 +225,14 @@ export class MatchingService {
       : userLanguages;
 
     if (langPrefs.length > 0) {
-      const langCandidateIds = discoverableFiltered.map((c) => c.id);
-      if (langCandidateIds.length > 0) {
-        const { data: candidateQuestionData } = await supabase
-          .from('questions')
-          .select('user_id, locale')
-          .in('user_id', langCandidateIds);
-
-        const questionLocalesByUser = new Map<string, string[]>();
-        for (const q of candidateQuestionData || []) {
-          const locales = questionLocalesByUser.get(q.user_id as string) || [];
-          locales.push((q.locale as string) || 'tr');
-          questionLocalesByUser.set(q.user_id as string, locales);
-        }
-
-        // Language-based filtering: candidate MUST have 2+ questions in user's languages
-        // Always strict — no fallback candidates
-        discoverableFiltered = discoverableFiltered.filter((c) => {
-          const qLocales = questionLocalesByUser.get(c.id) || [];
-          const matchingCount = qLocales.filter((l: string) => langPrefs.includes(l)).length;
-          return matchingCount >= 2;
-        });
-      }
+      // Reuse locale data from step 5 (no extra DB query needed)
+      // Language-based filtering: candidate MUST have 2+ questions in user's languages
+      // Always strict — no fallback candidates
+      discoverableFiltered = discoverableFiltered.filter((c) => {
+        const qLocales = questionLocalesByUser.get(c.id) || [];
+        const matchingCount = qLocales.filter((l: string) => langPrefs.includes(l)).length;
+        return matchingCount >= 2;
+      });
     }
 
     // 6. Score each candidate

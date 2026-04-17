@@ -1,5 +1,6 @@
 import { google } from "googleapis";
 import { env } from "../config/env.js";
+import { maskEmail } from "./pii.js";
 
 let gmailClient: ReturnType<typeof google.gmail> | null = null;
 
@@ -83,10 +84,10 @@ export async function sendEmail(options: {
       userId: "me",
       requestBody: { raw },
     });
-    console.log(`[gmail] Email sent to ${options.to}, messageId: ${res.data.id}`);
+    console.log(`[gmail] Email sent to ${maskEmail(options.to)}, messageId: ${res.data.id}`);
     return res.data.id ?? null;
   } catch (err: unknown) {
-    console.error(`[gmail] Failed to send email to ${options.to}:`, err);
+    console.error(`[gmail] Failed to send email to ${maskEmail(options.to)}:`, err instanceof Error ? err.message : err);
     throw err;
   }
 }

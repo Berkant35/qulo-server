@@ -24,8 +24,10 @@ import referralRoutes from "./routes/referral.routes.js";
 import appRoutes from "./routes/app.routes.js";
 import presenceRoutes from "./routes/presence.routes.js";
 import supportTicketRoutes from "./routes/support-ticket.routes.js";
+import analyticsTrackRoutes from "./routes/analytics.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { idempotencyMiddleware } from "./middleware/idempotency.js";
+import { flowTracker, flushFlowEvents } from "./middleware/flowTracker.js";
 import adminRoutes from "./admin/admin.routes.js";
 import { adminService } from "./admin/admin.service.js";
 import { ensureStorageBuckets } from "./config/supabase.js";
@@ -45,7 +47,7 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-      "script-src": ["'self'", "'unsafe-inline'"],
+      "script-src": ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
       "script-src-attr": ["'unsafe-inline'"],
       "form-action": ["'self'"],
       "img-src": ["'self'", "data:", "https:"],
@@ -67,6 +69,9 @@ app.use(cors({
 }));
 app.use(express.json({ limit: "10mb" }));
 app.use(idempotencyMiddleware);
+
+// Flow analytics tracker (before auth, captures all API calls)
+app.use(flowTracker);
 
 // Admin session middleware
 app.use(
@@ -134,6 +139,13 @@ app.get("/.well-known/assetlinks.json", (_req, res) => {
 // Admin backoffice
 app.use("/admin", adminRoutes);
 
+// Prevent caching of authenticated API responses
+app.use("/api/v1", (_req, res, next) => {
+  res.setHeader("Cache-Control", "no-store, must-revalidate, private");
+  res.setHeader("Pragma", "no-cache");
+  next();
+});
+
 // Routes
 app.use("/api/v1/app", appRoutes);
 app.use("/api/v1/auth", authRoutes);
@@ -154,6 +166,7 @@ app.use("/api/v1/exchange", exchangeRoutes);
 app.use("/api/v1/referrals", referralRoutes);
 app.use("/api/v1/users/me/presence", presenceRoutes);
 app.use("/api/v1/support-tickets", supportTicketRoutes);
+app.use("/api/v1/analytics", analyticsTrackRoutes);
 
 // Error handler (must be last)
 app.use(errorHandler);
@@ -176,6 +189,12 @@ app.listen(env.PORT, () => {
 });
 
 // Graceful error handlers
+// Flush flow events before shutdown
+process.on("SIGTERM", async () => {
+  await flushFlowEvents();
+  process.exit(0);
+});
+
 process.on("unhandledRejection", (reason) => {
   console.error("[server] Unhandled Rejection:", reason);
 });

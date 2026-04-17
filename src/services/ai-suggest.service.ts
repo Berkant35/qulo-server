@@ -51,13 +51,7 @@ class AiSuggestService {
     const suggestions = this.scoreAndPick(filtered, count);
     await this.incrementShownCount(suggestions.map((s) => s.id));
 
-    return suggestions.map((s) => ({
-      question_text: s.question_text,
-      answers: s.answers,
-      correct_answer: 1,
-      hint: s.hint ?? null,
-      category: s.category,
-    }));
+    return suggestions.map((s) => this.shuffleAnswers(s));
   }
 
   async getProfileBasedSuggestions(
@@ -100,13 +94,30 @@ class AiSuggestService {
     const suggestions = this.scoreAndPick(filtered, count);
     await this.incrementShownCount(suggestions.map((s) => s.id));
 
-    return suggestions.map((s) => ({
+    return suggestions.map((s) => this.shuffleAnswers(s));
+  }
+
+  /**
+   * Shuffle answer order and track the new position of the correct answer (originally at index 0).
+   * Prevents predictable "always answer A" pattern for quiz solvers.
+   */
+  private shuffleAnswers(s: ScoredQuestion) {
+    const answers = [...s.answers];
+    const correctOriginal = answers[0];
+    // Fisher-Yates shuffle
+    for (let i = answers.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [answers[i], answers[j]] = [answers[j], answers[i]];
+    }
+    // correct_answer is 1-indexed (position of originally-correct answer in new array)
+    const correctAnswer = answers.indexOf(correctOriginal) + 1;
+    return {
       question_text: s.question_text,
-      answers: s.answers,
-      correct_answer: 1,
+      answers,
+      correct_answer: correctAnswer,
       hint: s.hint ?? null,
       category: s.category,
-    }));
+    };
   }
 
   async trackSelection(locale: string, questionText: string): Promise<void> {

@@ -32,14 +32,15 @@ export async function purchaseHandler(req: Request, res: Response, next: NextFun
 
     const purpleAmount = IAP_PRODUCT_MAP[product_id];
     if (!purpleAmount) {
-      res.status(400).json({ error: "UNKNOWN_PRODUCT", message: `Unknown product: ${product_id}` });
+      res.status(400).json({ error: "UNKNOWN_PRODUCT", message: "Unknown product identifier" });
       return;
     }
 
     // Verify purchase with RevenueCat
     const verification = await revenueCatService.verifyPurchase(userId, product_id, transaction_id);
     if (!verification.valid) {
-      res.status(403).json({ error: "INVALID_PURCHASE", message: verification.error });
+      console.warn("[diamond] Purchase verification failed:", verification.error);
+      res.status(403).json({ error: "INVALID_PURCHASE", message: "Purchase verification failed" });
       return;
     }
 

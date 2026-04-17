@@ -12,9 +12,13 @@ export const presenceCron = {
   start() {
     if (task) return;
     task = cron.schedule(this.schedule, async () => {
-      const count = await PresenceService.expireInactiveUsers(3);
-      if (count > 0) {
-        console.log(`[PresenceCron] Marked ${count} users offline`);
+      try {
+        const count = await PresenceService.expireInactiveUsers(3);
+        if (count > 0) {
+          console.log(`[PresenceCron] Marked ${count} users offline`);
+        }
+      } catch (err) {
+        console.error("[PresenceCron] Error:", err instanceof Error ? err.message : err);
       }
     });
     this.running = true;

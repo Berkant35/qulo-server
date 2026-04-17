@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { Request, Response, NextFunction } from 'express';
 import { webhookService } from '../services/webhook.service.js';
 import { env } from '../config/env.js';
@@ -9,12 +10,16 @@ export const revenueCatWebhookHandler = async (
   next: NextFunction
 ) => {
   try {
-    const authHeader = req.headers.authorization;
+    const authHeader = req.headers.authorization ?? '';
     if (!env.REVENUECAT_WEBHOOK_SECRET) {
       console.error('[webhook] REVENUECAT_WEBHOOK_SECRET is not set — rejecting request');
       throw Errors.INVALID_WEBHOOK_AUTH();
     }
-    if (authHeader !== `Bearer ${env.REVENUECAT_WEBHOOK_SECRET}`) {
+    const expected = `Bearer ${env.REVENUECAT_WEBHOOK_SECRET}`;
+    if (
+      authHeader.length !== expected.length ||
+      !crypto.timingSafeEqual(Buffer.from(authHeader), Buffer.from(expected))
+    ) {
       throw Errors.INVALID_WEBHOOK_AUTH();
     }
 

@@ -147,6 +147,9 @@ export const Errors = {
   MEDIA_NOT_ENABLED: () =>
     new AppError("MEDIA_NOT_ENABLED", 403, "Both users must enable media sharing"),
 
+  USER_BLOCKED: () =>
+    new AppError("USER_BLOCKED", 403, "Cannot send message to a blocked user"),
+
   ALREADY_BLOCKED: () =>
     new AppError("ALREADY_BLOCKED", 409, "User already blocked"),
 

@@ -1,7 +1,10 @@
 import { Router, Request, Response } from "express";
 import { getCronJobs, toggleCronJob } from "../cron/index.js";
+import { superAdminOnly } from "./admin.middleware.js";
 
 const router = Router();
+
+router.use(superAdminOnly);
 
 // GET /admin/crons — list all cron jobs
 router.get("/", (_req: Request, res: Response) => {

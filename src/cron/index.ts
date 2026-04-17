@@ -1,4 +1,5 @@
 import { presenceCron } from "./presence.cron.js";
+import { analyticsAggregateCron, analyticsCleanupCron } from "./analytics.cron.js";
 
 export interface CronJob {
   name: string;
@@ -9,7 +10,7 @@ export interface CronJob {
   stop(): void;
 }
 
-const jobs: CronJob[] = [presenceCron];
+const jobs: CronJob[] = [presenceCron, analyticsAggregateCron, analyticsCleanupCron];
 
 export function initCrons() {
   for (const job of jobs) {

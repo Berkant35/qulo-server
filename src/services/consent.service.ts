@@ -28,6 +28,7 @@ class ConsentService {
 
     if (error) {
       console.error("[consent] Failed to record consent:", error.message);
+      throw new Error(`Consent recording failed: ${error.code}`);
     }
   }
 
@@ -37,7 +38,7 @@ class ConsentService {
     appVersion?: string,
     platform?: string,
   ) {
-    const types: ConsentType[] = ["terms_of_service", "privacy_policy"];
+    const types: ConsentType[] = ["terms_of_service", "privacy_policy", "kvkk_explicit"];
     await Promise.all(
       types.map((consentType) =>
         this.recordConsent({ userId, consentType, ipAddress, appVersion, platform }),

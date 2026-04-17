@@ -1,5 +1,6 @@
 import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
+import { assertUuid } from "../utils/validation.js";
 
 interface BlockRow {
   id: string;
@@ -16,6 +17,8 @@ interface UserRow {
 
 class BlockService {
   async block(blockerId: string, blockedId: string) {
+    assertUuid(blockerId, "blockerId");
+    assertUuid(blockedId, "blockedId");
     if (blockerId === blockedId) throw Errors.CANNOT_BLOCK_SELF();
 
     const { data, error } = await supabase
@@ -51,6 +54,8 @@ class BlockService {
   }
 
   async isBlocked(userId1: string, userId2: string): Promise<boolean> {
+    assertUuid(userId1, "userId1");
+    assertUuid(userId2, "userId2");
     const { data } = await supabase
       .from("blocks")
       .select("id")

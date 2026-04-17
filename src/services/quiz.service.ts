@@ -318,26 +318,42 @@ export class QuizService {
             }
           }
 
-          for (const qId of remainingIds) {
-            const { data: qRow } = await supabase
+          if (remainingIds.length > 0) {
+            // Batch fetch all remaining questions in a single query
+            const { data: qRows } = await supabase
               .from("questions")
               .select("id, correct_answer")
-              .eq("id", qId)
-              .single();
-            if (!qRow) continue;
-            const q = qRow as any;
+              .in("id", remainingIds);
 
-            // Check if already answered
-            const { data: alreadyDone } = await supabase
+            // Batch fetch already-answered question IDs in a single query
+            const { data: existingAnswers } = await supabase
               .from("quiz_answers")
-              .select("id")
+              .select("question_id")
               .eq("session_id", sessionId)
-              .eq("question_id", q.id)
-              .maybeSingle();
+              .in("question_id", remainingIds);
 
-            if (!alreadyDone) {
-              await this.recordAnswer(sessionId, q.id, q.correct_answer, true, powerUsed, null);
-              await this.updateQuestionStats(q.id, true, powerUsed ?? null, null, q.correct_answer);
+            const answeredSet = new Set((existingAnswers ?? []).map((a: any) => a.question_id as string));
+            const toInsert = (qRows ?? [])
+              .filter((q: any) => !answeredSet.has(q.id))
+              .map((q: any) => ({
+                session_id: sessionId,
+                question_id: q.id,
+                selected_answer: q.correct_answer,
+                is_correct: true,
+                power_used: powerUsed ?? null,
+                time_spent: null,
+              }));
+
+            if (toInsert.length > 0) {
+              const { error: insertErr } = await supabase.from("quiz_answers").insert(toInsert);
+              if (insertErr) throw Errors.SERVER_ERROR();
+
+              // Stats update per question (cannot be batched with Supabase client)
+              for (const q of qRows ?? []) {
+                if (!answeredSet.has(q.id)) {
+                  await this.updateQuestionStats(q.id, true, powerUsed ?? null, null, q.correct_answer);
+                }
+              }
             }
           }
 
@@ -766,26 +782,35 @@ export class QuizService {
         }
       }
 
-      for (const qId of remainingQuestionIds) {
-        const { data: qData } = await supabase
+      if (remainingQuestionIds.length > 0) {
+        // Batch fetch all remaining questions in a single query
+        const { data: qRows } = await supabase
           .from("questions")
           .select("id, correct_answer")
-          .eq("id", qId)
-          .single();
+          .in("id", remainingQuestionIds);
 
-        if (qData) {
-          const q = qData as any;
+        // Batch fetch already-answered question IDs in a single query
+        const { data: existingAnswers } = await supabase
+          .from("quiz_answers")
+          .select("question_id")
+          .eq("session_id", sessionId)
+          .in("question_id", remainingQuestionIds);
 
-          const { data: alreadyDone } = await supabase
-            .from("quiz_answers")
-            .select("id")
-            .eq("session_id", sessionId)
-            .eq("question_id", q.id)
-            .maybeSingle();
+        const answeredSet = new Set((existingAnswers ?? []).map((a: any) => a.question_id as string));
+        const toInsert = (qRows ?? [])
+          .filter((q: any) => !answeredSet.has(q.id))
+          .map((q: any) => ({
+            session_id: sessionId,
+            question_id: q.id,
+            selected_answer: q.correct_answer,
+            is_correct: true,
+            power_used: "SKIP_ALL",
+            time_spent: null,
+          }));
 
-          if (!alreadyDone) {
-            await this.recordAnswer(sessionId, q.id, q.correct_answer, true, "SKIP_ALL", null);
-          }
+        if (toInsert.length > 0) {
+          const { error: insertErr } = await supabase.from("quiz_answers").insert(toInsert);
+          if (insertErr) throw Errors.SERVER_ERROR();
         }
       }
 

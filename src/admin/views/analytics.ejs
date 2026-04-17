@@ -1,0 +1,1555 @@
+<%- include('_header') %>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+  <h2>Flow Analytics</h2>
+  <div class="filters" style="gap: 8px;">
+    <select id="daysFilter" onchange="changeDays(this.value)" style="padding: 6px 12px; border-radius: 4px; border: 1px solid #ddd;">
+      <option value="1" <%= days === 1 ? 'selected' : '' %>>Last 24h</option>
+      <option value="7" <%= days === 7 ? 'selected' : '' %>>Last 7 days</option>
+      <option value="14" <%= days === 14 ? 'selected' : '' %>>Last 14 days</option>
+      <option value="30" <%= days === 30 ? 'selected' : '' %>>Last 30 days</option>
+      <option value="90" <%= days === 90 ? 'selected' : '' %>>Last 90 days</option>
+    </select>
+    <button class="btn btn-primary btn-sm" onclick="refreshData()" style="margin-left: 4px;" title="Force refresh (bypass 5-min cache)">Refresh</button>
+    <label style="display: flex; align-items: center; gap: 4px; font-size: 12px; color: #666; cursor: pointer; margin-left: 8px;">
+      <input type="checkbox" id="autoRefresh" onchange="toggleAutoRefresh(this.checked)" style="cursor: pointer;">
+      Auto (30s)
+    </label>
+    <span style="font-size: 10px; color: #999; margin-left: 4px;" title="Aggregate queries cached for 5 min. Real-time widgets (active users, recent events) always fresh.">&#9432; cached</span>
+  </div>
+</div>
+
+<!-- Alerts -->
+<% if (insights.alerts.length > 0) { %>
+<div style="margin-bottom: 16px;">
+  <% insights.alerts.forEach(function(a) { %>
+    <div class="alert" style="
+      background: <%= a.level === 'critical' ? '#fef2f2' : '#fffbeb' %>;
+      color: <%= a.level === 'critical' ? '#991b1b' : '#92400e' %>;
+      border: 1px solid <%= a.level === 'critical' ? '#fecaca' : '#fde68a' %>;
+      display: flex; align-items: center; gap: 8px;
+    ">
+      <span style="font-size: 16px;"><%= a.level === 'critical' ? '&#9888;' : '&#9888;' %></span>
+      <%= a.message %>
+    </div>
+  <% }); %>
+</div>
+<% } %>
+
+<!-- Auto Insights -->
+<% if (insights.insights.length > 0) { %>
+<div class="card" style="margin-bottom: 16px; background: linear-gradient(135deg, #faf5ff 0%, #f0f9ff 100%); border-left: 3px solid #a855f7;">
+  <h3 style="font-size: 14px; margin-bottom: 8px; color: #7c3aed;">Insights</h3>
+  <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #4b5563; line-height: 1.8;">
+    <% insights.insights.forEach(function(i) { %>
+      <li><%= i %></li>
+    <% }); %>
+  </ul>
+</div>
+<% } %>
+
+<!-- Overview Stats Row 1 -->
+<div class="stats-grid" style="grid-template-columns: repeat(6, 1fr);">
+  <div class="stat-card">
+    <div class="value"><%= overview.totalEvents.toLocaleString() %></div>
+    <div class="label">Total Events (<%= days %>d)</div>
+  </div>
+  <div class="stat-card">
+    <div class="value"><%= overview.totalUniqueUsers %></div>
+    <div class="label">Unique Users</div>
+  </div>
+  <div class="stat-card">
+    <div class="value"><%= overview.todayEvents.toLocaleString() %></div>
+    <div class="label">Today Events</div>
+  </div>
+  <div class="stat-card">
+    <div class="value"><%= overview.avgResponseTime %>ms</div>
+    <div class="label">Avg Response</div>
+  </div>
+  <div class="stat-card">
+    <div class="value" style="color: <%= overview.errorRate > 5 ? '#ef4444' : '#22c55e' %>;"><%= overview.errorRate %>%</div>
+    <div class="label">Error Rate</div>
+  </div>
+  <div class="stat-card">
+    <div class="value" style="color: #a855f7;"><%= activeNow.count %></div>
+    <div class="label">Active Now (5m)</div>
+  </div>
+</div>
+<!-- Overview Stats Row 2 -->
+<div class="stats-grid" style="grid-template-columns: repeat(5, 1fr); margin-top: -8px;">
+  <div class="stat-card">
+    <div class="value" style="color: <%= bounceRate.rate > 40 ? '#ef4444' : bounceRate.rate > 20 ? '#f59e0b' : '#22c55e' %>;"><%= bounceRate.rate %>%</div>
+    <div class="label">Bounce Rate</div>
+  </div>
+  <div class="stat-card">
+    <%
+      var avgMin = Math.floor(sessionDuration.avg_seconds / 60);
+      var avgSec = Math.round(sessionDuration.avg_seconds % 60);
+    %>
+    <div class="value"><%= avgMin %>:<%= avgSec < 10 ? '0' + avgSec : avgSec %></div>
+    <div class="label">Avg Session</div>
+  </div>
+  <div class="stat-card">
+    <%
+      var medMin = Math.floor(sessionDuration.median_seconds / 60);
+      var medSec = Math.round(sessionDuration.median_seconds % 60);
+    %>
+    <div class="value"><%= medMin %>:<%= medSec < 10 ? '0' + medSec : medSec %></div>
+    <div class="label">Median Session</div>
+  </div>
+  <div class="stat-card">
+    <div class="value"><%= sessionDuration.total_sessions %></div>
+    <div class="label">Total Sessions</div>
+  </div>
+  <div class="stat-card">
+    <% if (platforms.length > 0) { %>
+      <div class="value" style="font-size: 20px;">
+        <% platforms.forEach(function(p, pi) { %>
+          <span style="color: <%= p.platform === 'iOS' ? '#333' : p.platform === 'Android' ? '#22c55e' : '#999' %>;">
+            <%= p.platform %>:<%= p.user_count %>
+          </span>
+          <% if (pi < platforms.length - 1) { %> <span style="color: #ddd;">|</span> <% } %>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="value" style="color: #999;">-</div>
+    <% } %>
+    <div class="label">Platforms</div>
+  </div>
+</div>
+
+<!-- DAU/WAU/MAU + Stickiness (Dating App KPIs) -->
+<div class="stats-grid" style="grid-template-columns: repeat(4, 1fr); margin-top: -8px; margin-bottom: 16px;">
+  <div class="stat-card" style="border-top: 3px solid #10b981;">
+    <div class="value" style="color: #10b981;"><%= activeUsersMetrics.dau.toLocaleString() %></div>
+    <div class="label">DAU (Today)</div>
+  </div>
+  <div class="stat-card" style="border-top: 3px solid #3b82f6;">
+    <div class="value" style="color: #3b82f6;"><%= activeUsersMetrics.wau.toLocaleString() %></div>
+    <div class="label">WAU (7d)</div>
+  </div>
+  <div class="stat-card" style="border-top: 3px solid #a855f7;">
+    <div class="value" style="color: #a855f7;"><%= activeUsersMetrics.mau.toLocaleString() %></div>
+    <div class="label">MAU (30d)</div>
+  </div>
+  <div class="stat-card" style="border-top: 3px solid <%= activeUsersMetrics.stickiness > 20 ? '#22c55e' : activeUsersMetrics.stickiness > 10 ? '#f59e0b' : '#ef4444' %>;">
+    <div class="value" style="color: <%= activeUsersMetrics.stickiness > 20 ? '#22c55e' : activeUsersMetrics.stickiness > 10 ? '#f59e0b' : '#ef4444' %>;">
+      <%= activeUsersMetrics.stickiness %>%
+    </div>
+    <div class="label">Stickiness (DAU/MAU)</div>
+  </div>
+</div>
+
+<!-- DAU Trend Chart + Time-to-First-Action -->
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
+  <div class="card">
+    <h3 style="margin-bottom: 12px; font-size: 15px;">Daily Active Users (30 days)</h3>
+    <canvas id="dauChart" height="150"></canvas>
+    <p style="font-size: 11px; color: #999; margin-top: 8px;">Unique users per day. Noise events excluded.</p>
+  </div>
+  <div class="card">
+    <h3 style="margin-bottom: 12px; font-size: 15px;">Time to First Action</h3>
+    <% if (timeToFirstAction.length === 0) { %>
+      <p style="color: #999; font-size: 13px;">No registration data in last 30 days.</p>
+    <% } else { %>
+    <div>
+      <% var maxTtfa = timeToFirstAction.reduce(function(m, t) { return t.user_count > m ? t.user_count : m; }, 1); %>
+      <% timeToFirstAction.forEach(function(t) { %>
+        <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 12px;">
+          <span style="min-width: 70px; font-family: monospace; color: #666;"><%= t.bucket %></span>
+          <div style="flex: 1; background: #f3f4f6; border-radius: 4px; height: 18px; overflow: hidden;">
+            <div style="
+              background: <%= t.bucket === 'never' ? '#ef4444' : t.bucket_order <= 2 ? '#22c55e' : t.bucket_order <= 4 ? '#f59e0b' : '#ef4444' %>;
+              height: 100%;
+              width: <%= Math.round((t.user_count / maxTtfa) * 100) %>%;
+              border-radius: 4px;
+            "></div>
+          </div>
+          <span style="min-width: 40px; text-align: right; font-weight: 600;"><%= t.user_count %></span>
+        </div>
+      <% }); %>
+    </div>
+    <p style="font-size: 11px; color: #999; margin-top: 8px;">How quickly new users take their first meaningful action (swipe/quiz/message/photo).</p>
+    <% } %>
+  </div>
+</div>
+
+<!-- Charts Row 1: Daily Trend + Hourly Activity -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+  <div class="card">
+    <h3 style="margin-bottom: 12px; font-size: 15px;">Daily Trend</h3>
+    <canvas id="dailyChart" height="200"></canvas>
+  </div>
+  <div class="card">
+    <h3 style="margin-bottom: 12px; font-size: 15px;">Hourly Activity</h3>
+    <canvas id="hourlyChart" height="200"></canvas>
+  </div>
+</div>
+
+<!-- Charts Row 2: Conversion Funnel + Category Breakdown -->
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
+  <div class="card">
+    <h3 style="margin-bottom: 12px; font-size: 15px;">Conversion Funnel</h3>
+    <canvas id="funnelChart" height="200"></canvas>
+  </div>
+  <div class="card">
+    <h3 style="margin-bottom: 12px; font-size: 15px;">Category Breakdown</h3>
+    <canvas id="categoryChart" height="200"></canvas>
+  </div>
+</div>
+
+<!-- Custom Funnel Builder -->
+<div class="card" style="margin-bottom: 16px;">
+  <h3 style="margin-bottom: 12px; font-size: 15px;">Custom Funnel Builder</h3>
+  <p style="font-size: 12px; color: #666; margin-bottom: 12px;">Pick any two events and see conversion rate between them. Useful for ad-hoc funnel analysis.</p>
+
+  <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;">
+    <select id="funnelFrom" style="padding: 6px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; min-width: 180px;">
+      <option value="">From event...</option>
+      <% distinctEvents.forEach(function(e) { %>
+        <option value="<%= e.event_name %>"><%= e.event_name %> (<%= e.event_count %>)</option>
+      <% }); %>
+    </select>
+    <span style="color: #999;">&#8594;</span>
+    <select id="funnelTo" style="padding: 6px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; min-width: 180px;">
+      <option value="">To event...</option>
+      <% distinctEvents.forEach(function(e) { %>
+        <option value="<%= e.event_name %>"><%= e.event_name %> (<%= e.event_count %>)</option>
+      <% }); %>
+    </select>
+    <select id="funnelWindow" style="padding: 6px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;">
+      <option value="1">within 1h</option>
+      <option value="6">within 6h</option>
+      <option value="24" selected>within 24h</option>
+      <option value="72">within 3 days</option>
+      <option value="168">within 7 days</option>
+    </select>
+    <button class="btn btn-primary btn-sm" onclick="runCustomFunnel()">Calculate</button>
+  </div>
+
+  <div id="funnelResult" style="display: none; padding: 12px; background: #faf5ff; border-radius: 6px; border-left: 3px solid #a855f7;">
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; text-align: center;">
+      <div>
+        <div style="font-size: 11px; color: #666; margin-bottom: 4px;">From users</div>
+        <div style="font-size: 20px; font-weight: bold;" id="funnelFromUsers">-</div>
+      </div>
+      <div>
+        <div style="font-size: 11px; color: #666; margin-bottom: 4px;">Converted</div>
+        <div style="font-size: 20px; font-weight: bold;" id="funnelToUsers">-</div>
+      </div>
+      <div>
+        <div style="font-size: 11px; color: #666; margin-bottom: 4px;">Conversion Rate</div>
+        <div style="font-size: 24px; font-weight: bold; color: #a855f7;" id="funnelRate">-</div>
+      </div>
+      <div>
+        <div style="font-size: 11px; color: #666; margin-bottom: 4px;">Avg Time</div>
+        <div style="font-size: 16px; font-weight: bold;" id="funnelAvgTime">-</div>
+      </div>
+      <div>
+        <div style="font-size: 11px; color: #666; margin-bottom: 4px;">Median Time</div>
+        <div style="font-size: 16px; font-weight: bold;" id="funnelMedianTime">-</div>
+      </div>
+    </div>
+  </div>
+  <div id="funnelError" style="display: none; color: #ef4444; font-size: 12px; padding: 8px;"></div>
+</div>
+
+<!-- Peak Hours Heatmap + Period Comparison -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+  <!-- Peak Hours Heatmap -->
+  <div class="card">
+    <h3 style="margin-bottom: 12px; font-size: 15px;">Peak Hours Heatmap</h3>
+    <div style="overflow-x: auto;">
+      <table style="font-size: 11px; border-collapse: separate; border-spacing: 2px;">
+        <thead>
+          <tr>
+            <th style="font-size: 10px; padding: 2px 4px;"></th>
+            <% for (var h = 0; h < 24; h++) { %>
+              <th style="font-size: 10px; padding: 2px 3px; text-align: center; color: #999;"><%= h %></th>
+            <% } %>
+          </tr>
+        </thead>
+        <tbody>
+          <%
+            var dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            var heatMax = 1;
+            peakHours.forEach(function(row) { row.forEach(function(v) { if (v > heatMax) heatMax = v; }); });
+          %>
+          <% peakHours.forEach(function(row, di) { %>
+          <tr>
+            <td style="font-size: 10px; font-weight: 600; padding: 2px 4px; color: #666;"><%= dayNames[di] %></td>
+            <% row.forEach(function(val) { %>
+              <%
+                var intensity = heatMax > 0 ? val / heatMax : 0;
+                var bg = 'rgba(168, 85, 247, ' + (intensity * 0.8 + 0.05) + ')';
+                var textColor = intensity > 0.5 ? '#fff' : '#666';
+              %>
+              <td style="text-align: center; padding: 3px 2px; border-radius: 2px; background: <%= val > 0 ? bg : '#f9fafb' %>; color: <%= val > 0 ? textColor : '#e5e7eb' %>; min-width: 22px; font-size: 10px;">
+                <%= val > 0 ? val : '' %>
+              </td>
+            <% }); %>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size: 10px; color: #999; margin-top: 6px;">Darker = more events. UTC+3 assumed.</p>
+  </div>
+
+  <!-- Period Comparison -->
+  <div class="card">
+    <h3 style="margin-bottom: 12px; font-size: 15px;">Period Comparison (vs prev <%= days %>d)</h3>
+    <% if (comparison.length === 0) { %>
+      <p style="color: #999; font-size: 13px;">Not enough data for comparison.</p>
+    <% } else { %>
+    <div style="max-height: 340px; overflow-y: auto;">
+      <table style="font-size: 12px;">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Now</th>
+            <th>Prev</th>
+            <th>Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% comparison.slice(0, 20).forEach(function(c) { %>
+          <tr>
+            <td><code style="font-size: 11px;"><%= c.event_name %></code></td>
+            <td><%= c.current_count.toLocaleString() %></td>
+            <td style="color: #999;"><%= c.previous_count.toLocaleString() %></td>
+            <td>
+              <% if (c.change_pct > 0) { %>
+                <span style="color: #22c55e; font-weight: 600; font-size: 11px;">+<%= c.change_pct %>%</span>
+              <% } else if (c.change_pct < 0) { %>
+                <span style="color: #ef4444; font-weight: 600; font-size: 11px;"><%= c.change_pct %>%</span>
+              <% } else { %>
+                <span style="color: #999; font-size: 11px;">-</span>
+              <% } %>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+    <% } %>
+  </div>
+</div>
+
+<!-- Active Users + Recent Events Feed Row -->
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: 16px;">
+  <!-- Active Users Now -->
+  <div class="card">
+    <h3 style="margin-bottom: 12px; font-size: 15px;">Active Users (5 min)</h3>
+    <% if (activeNow.users.length === 0) { %>
+      <p style="color: #999; font-size: 13px;">No active users right now.</p>
+    <% } else { %>
+      <div style="max-height: 300px; overflow-y: auto;">
+        <% activeNow.users.forEach(function(u) { %>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f3f4f6;">
+          <div>
+            <a href="/admin/users/<%= u.user_id %>" style="font-size: 11px; color: #a855f7; text-decoration: none; font-family: monospace;"><%= u.user_id.substring(0, 8) %>...</a>
+            <div style="font-size: 11px; color: #666;"><%= u.last_event %></div>
+          </div>
+          <span class="badge badge-online" style="font-size: 10px;"><%= u.event_count %> events</span>
+        </div>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Recent Events Feed -->
+  <div class="card">
+    <h3 style="margin-bottom: 12px; font-size: 15px;">Recent Events Feed</h3>
+    <% if (recentEvents.length === 0) { %>
+      <p style="color: #999; font-size: 13px;">No events yet. Events will appear as users interact with the API.</p>
+    <% } else { %>
+      <div style="max-height: 300px; overflow-y: auto;">
+        <table style="font-size: 12px;">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Event</th>
+              <th>Category</th>
+              <th>User</th>
+              <th>Status</th>
+              <th>Speed</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% recentEvents.forEach(function(e) { %>
+            <tr>
+              <td style="font-size: 11px; color: #666; white-space: nowrap;"><%= new Date(e.created_at).toLocaleTimeString('tr-TR') %></td>
+              <td><code style="font-size: 11px;"><%= e.event_name %></code></td>
+              <td><span class="badge" style="background: <%= getCategoryColorByName(e.category) %>20; color: <%= getCategoryColorByName(e.category) %>; font-size: 10px;"><%= e.category %></span></td>
+              <td>
+                <% if (e.user_id) { %>
+                  <a href="#" class="user-journey-link" data-user-id="<%= e.user_id %>" style="font-size: 11px; color: #a855f7; text-decoration: none; font-family: monospace;"><%= e.user_id.substring(0, 8) %></a>
+                <% } else { %>
+                  <span style="color: #ccc; font-size: 11px;">anon</span>
+                <% } %>
+              </td>
+              <td>
+                <% if (e.status_code < 300) { %>
+                  <span style="color: #22c55e; font-size: 11px;"><%= e.status_code %></span>
+                <% } else if (e.status_code < 400) { %>
+                  <span style="color: #f59e0b; font-size: 11px;"><%= e.status_code %></span>
+                <% } else { %>
+                  <span style="color: #ef4444; font-weight: 600; font-size: 11px;"><%= e.status_code %></span>
+                <% } %>
+              </td>
+              <td style="font-size: 11px; color: <%= e.response_time_ms > 500 ? '#ef4444' : e.response_time_ms > 200 ? '#f59e0b' : '#22c55e' %>;"><%= e.response_time_ms %>ms</td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<!-- User Journey Lookup -->
+<div class="card" style="margin-bottom: 16px;">
+  <h3 style="margin-bottom: 12px; font-size: 15px;">User Journey Lookup</h3>
+  <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+    <input type="text" id="journeyUserId" placeholder="Enter User ID (UUID)" style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;">
+    <button class="btn btn-primary btn-sm" onclick="lookupUser(document.getElementById('journeyUserId').value)">Search</button>
+  </div>
+  <div id="journeyResults" style="display: none; max-height: 350px; overflow-y: auto;">
+    <table style="font-size: 12px;" id="journeyTable">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Action</th>
+          <th>Category</th>
+          <th>Status</th>
+          <th>Speed</th>
+        </tr>
+      </thead>
+      <tbody id="journeyBody"></tbody>
+    </table>
+  </div>
+  <div id="journeyEmpty" style="display: none; color: #999; font-size: 13px;">No journey data found for this user.</div>
+
+  <!-- Session Timeline (loaded via AJAX) -->
+  <div id="sessionTimeline" style="display: none; margin-top: 16px; border-top: 1px solid #eee; padding-top: 12px;">
+    <h4 style="font-size: 14px; margin-bottom: 8px;">Session Timeline</h4>
+    <div id="sessionContent"></div>
+  </div>
+</div>
+
+<!-- Flow Transition Matrix -->
+<div class="card" style="margin-bottom: 16px;">
+  <h3 style="margin-bottom: 12px; font-size: 15px;">Flow Transition Map (A &#8594; B)</h3>
+  <p style="font-size: 11px; color: #999; margin-bottom: 8px;">Shows which actions users take after each action. Only same-session transitions (within 30 min). Noise-filtered events excluded.</p>
+  <% if (transitions.length === 0) { %>
+    <p style="color: #999; font-size: 13px;">Not enough transition data yet.</p>
+  <% } else { %>
+  <div style="overflow-x: auto; max-height: 400px; overflow-y: auto;">
+    <table style="font-size: 12px;">
+      <thead>
+        <tr>
+          <th>From</th>
+          <th></th>
+          <th>To</th>
+          <th>Count</th>
+          <th>Users</th>
+          <th>Flow</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%
+          var maxTrans = transitions.length > 0 ? transitions[0].count : 1;
+        %>
+        <% transitions.forEach(function(t) { %>
+        <tr>
+          <td>
+            <span class="badge" style="background: <%= getCategoryColor(t.from_event) %>20; color: <%= getCategoryColor(t.from_event) %>; font-size: 11px;">
+              <%= t.from_event %>
+            </span>
+          </td>
+          <td style="color: #ccc; font-size: 14px; text-align: center;">&#8594;</td>
+          <td>
+            <span class="badge" style="background: <%= getCategoryColor(t.to_event) %>20; color: <%= getCategoryColor(t.to_event) %>; font-size: 11px;">
+              <%= t.to_event %>
+            </span>
+          </td>
+          <td><strong><%= t.count %></strong></td>
+          <td><%= t.unique_users %></td>
+          <td style="width: 120px;">
+            <div style="background: #f3f4f6; border-radius: 4px; height: 14px; overflow: hidden;">
+              <div style="background: linear-gradient(90deg, <%= getCategoryColor(t.from_event) %>, <%= getCategoryColor(t.to_event) %>); height: 100%; width: <%= Math.round((t.count / maxTrans) * 100) %>%; border-radius: 4px; opacity: 0.7;"></div>
+            </div>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
+</div>
+
+<!-- Flow Combinations Table -->
+<div class="card" style="margin-bottom: 16px;">
+  <h3 style="margin-bottom: 12px; font-size: 15px;">User Flow Combinations (Top Sessions)</h3>
+  <% if (flowCombinations.length === 0) { %>
+    <p style="color: #999; font-size: 14px;">No flow data yet. Events will appear as users interact with the API.</p>
+  <% } else { %>
+  <div style="overflow-x: auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Flow Sequence</th>
+          <th>Steps</th>
+          <th>Occurrences</th>
+          <th>Unique Users</th>
+          <th>Last Seen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% flowCombinations.forEach(function(flow, i) { %>
+        <tr>
+          <td><%= i + 1 %></td>
+          <td>
+            <div style="display: flex; flex-wrap: wrap; gap: 4px; max-width: 500px;">
+              <% flow.steps.forEach(function(step, si) { %>
+                <span class="badge" style="background: <%= getCategoryColor(step) %>20; color: <%= getCategoryColor(step) %>; font-size: 11px;">
+                  <%= step %>
+                </span>
+                <% if (si < flow.steps.length - 1) { %>
+                  <span style="color: #ccc; font-size: 10px; align-self: center;">&#8594;</span>
+                <% } %>
+              <% }); %>
+            </div>
+          </td>
+          <td><%= flow.steps.length %></td>
+          <td><strong><%= flow.total_occurrences %></strong></td>
+          <td><%= flow.unique_users %></td>
+          <td style="font-size: 12px; color: #666;"><%= new Date(flow.last_seen_at).toLocaleDateString('tr-TR') %></td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
+</div>
+
+<!-- Error Breakdown + Performance side by side -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+  <!-- Error Breakdown -->
+  <div class="card">
+    <h3 style="margin-bottom: 12px; font-size: 15px;">Error Hotspots</h3>
+    <% if (errors.length === 0) { %>
+      <p style="color: #22c55e; font-size: 13px;">No errors detected. All endpoints healthy.</p>
+    <% } else { %>
+    <div style="max-height: 350px; overflow-y: auto;">
+      <table style="font-size: 12px;">
+        <thead>
+          <tr>
+            <th>Endpoint</th>
+            <th>Errors</th>
+            <th>Total</th>
+            <th>Rate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% errors.forEach(function(e) { %>
+          <tr>
+            <td><code style="font-size: 11px;"><%= e.endpoint %></code></td>
+            <td style="color: #ef4444; font-weight: 600;"><%= e.error_count %></td>
+            <td><%= e.total_count %></td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <div style="background: #f3f4f6; border-radius: 4px; height: 12px; width: 60px; overflow: hidden;">
+                  <div style="background: <%= e.error_rate > 20 ? '#ef4444' : e.error_rate > 5 ? '#f59e0b' : '#22c55e' %>; height: 100%; width: <%= Math.min(e.error_rate, 100) %>%;"></div>
+                </div>
+                <span style="font-size: 11px; color: <%= e.error_rate > 20 ? '#ef4444' : '#666' %>;"><%= e.error_rate %>%</span>
+              </div>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+    <% } %>
+  </div>
+
+  <!-- Response Time Stats -->
+  <div class="card">
+    <h3 style="margin-bottom: 12px; font-size: 15px;">API Performance</h3>
+    <% if (responseTime.length === 0) { %>
+      <p style="color: #999; font-size: 13px;">No response time data yet.</p>
+    <% } else { %>
+    <div style="max-height: 350px; overflow-y: auto;">
+      <table style="font-size: 12px;">
+        <thead>
+          <tr>
+            <th>Endpoint</th>
+            <th>Avg</th>
+            <th>P95</th>
+            <th>Health</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% responseTime.slice(0, 15).forEach(function(r) { %>
+          <tr>
+            <td><code style="font-size: 11px;"><%= r.endpoint %></code></td>
+            <td><%= r.avg_ms %>ms</td>
+            <td><%= r.p95_ms %>ms</td>
+            <td>
+              <% if (r.avg_ms < 200) { %>
+                <span class="badge badge-resolved" style="font-size: 10px;">Fast</span>
+              <% } else if (r.avg_ms < 500) { %>
+                <span class="badge badge-pending" style="font-size: 10px;">OK</span>
+              <% } else { %>
+                <span class="badge" style="background: #fef2f2; color: #991b1b; font-size: 10px;">Slow</span>
+              <% } %>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+    <% } %>
+  </div>
+</div>
+
+<!-- Feature Usage Table -->
+<div class="card" style="margin-bottom: 16px;">
+  <h3 style="margin-bottom: 12px; font-size: 15px;">Feature Usage Breakdown</h3>
+  <% if (featureUsage.length === 0) { %>
+    <p style="color: #999; font-size: 14px;">No feature usage data yet.</p>
+  <% } else { %>
+  <div style="overflow-x: auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Category</th>
+          <th>Total Calls</th>
+          <th>Unique Users</th>
+          <th>Usage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% var maxUsage = featureUsage.length > 0 ? featureUsage[0].total_count : 1; %>
+        <% featureUsage.slice(0, 30).forEach(function(f) { %>
+        <tr>
+          <td><code style="font-size: 12px;"><%= f.event_name %></code></td>
+          <td><span class="badge" style="background: <%= getCategoryColorByName(f.category) %>20; color: <%= getCategoryColorByName(f.category) %>;"><%= f.category %></span></td>
+          <td><strong><%= f.total_count.toLocaleString() %></strong></td>
+          <td><%= f.unique_users %></td>
+          <td style="width: 180px;">
+            <div style="background: #f3f4f6; border-radius: 4px; height: 18px; overflow: hidden;">
+              <div style="background: #a855f7; height: 100%; width: <%= Math.round((f.total_count / maxUsage) * 100) %>%; border-radius: 4px;"></div>
+            </div>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
+</div>
+
+<!-- Top Endpoints -->
+<div class="card">
+  <h3 style="margin-bottom: 12px; font-size: 15px;">Top Endpoints</h3>
+  <% if (overview.topEndpoints.length === 0) { %>
+    <p style="color: #999; font-size: 14px;">No endpoint data yet.</p>
+  <% } else { %>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Endpoint</th>
+        <th>Calls</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% overview.topEndpoints.forEach(function(e, i) { %>
+      <tr>
+        <td><%= i + 1 %></td>
+        <td><code style="font-size: 12px;"><%= e.endpoint %></code></td>
+        <td><strong><%= e.count.toLocaleString() %></strong></td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+  <% } %>
+</div>
+
+<!-- Segment Comparison: Premium vs Plus vs Free -->
+<div class="card" style="margin-bottom: 16px;">
+  <h3 style="margin-bottom: 12px; font-size: 15px;">Subscription Segment Comparison</h3>
+  <% if (segmentComparison.length === 0) { %>
+    <p style="color: #999; font-size: 13px;">No segment data yet.</p>
+  <% } else { %>
+  <div style="overflow-x: auto;">
+    <table style="font-size: 13px;">
+      <thead>
+        <tr>
+          <th>Segment</th>
+          <th>Users</th>
+          <th>Total Events</th>
+          <th>Events/User</th>
+          <th>Distinct Actions</th>
+          <th>Avg Session</th>
+          <th>Engagement</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%
+          var segColors = { premium: '#f97316', plus: '#a855f7', free: '#6b7280' };
+          var maxEvents = segmentComparison.reduce(function(m, s) { return s.avg_events_per_user > m ? s.avg_events_per_user : m; }, 1);
+        %>
+        <% segmentComparison.forEach(function(s) { %>
+        <tr>
+          <td>
+            <span style="display: inline-block; padding: 3px 10px; background: <%= segColors[s.segment] || '#9ca3af' %>; color: white; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase;">
+              <%= s.segment %>
+            </span>
+          </td>
+          <td><strong><%= s.user_count %></strong></td>
+          <td><%= s.event_count.toLocaleString() %></td>
+          <td><strong style="color: <%= segColors[s.segment] || '#333' %>;"><%= s.avg_events_per_user %></strong></td>
+          <td><%= s.distinct_actions %></td>
+          <td><%= s.avg_session_minutes %> min</td>
+          <td style="width: 150px;">
+            <div style="background: #f3f4f6; border-radius: 4px; height: 16px; overflow: hidden;">
+              <div style="background: <%= segColors[s.segment] || '#6b7280' %>; height: 100%; width: <%= Math.round((s.avg_events_per_user / maxEvents) * 100) %>%; border-radius: 4px;"></div>
+            </div>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size: 11px; color: #999; margin-top: 8px;">Higher events/user and longer sessions indicate better engagement. Premium users typically show highest activity.</p>
+  <% } %>
+</div>
+
+<!-- Gender & Age Demographics -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+  <!-- Gender Breakdown -->
+  <div class="card">
+    <h3 style="margin-bottom: 12px; font-size: 15px;">Gender Activity</h3>
+    <% if (genderBreakdown.length === 0) { %>
+      <p style="color: #999; font-size: 13px;">No gender data yet.</p>
+    <% } else { %>
+    <%
+      var genderColors = { MALE: '#3b82f6', FEMALE: '#ec4899', OTHER: '#a855f7', unknown: '#9ca3af' };
+      var totalUsers = genderBreakdown.reduce(function(s, g) { return s + g.user_count; }, 0) || 1;
+    %>
+    <table style="font-size: 12px;">
+      <thead>
+        <tr><th>Gender</th><th>Users</th><th>%</th><th>Events</th><th>Avg/User</th></tr>
+      </thead>
+      <tbody>
+        <% genderBreakdown.forEach(function(g) { %>
+        <tr>
+          <td>
+            <span style="display: inline-block; padding: 2px 10px; background: <%= genderColors[g.gender] || '#9ca3af' %>; color: white; border-radius: 4px; font-size: 11px; font-weight: 600;">
+              <%= g.gender %>
+            </span>
+          </td>
+          <td><strong><%= g.user_count %></strong></td>
+          <td><%= Math.round((g.user_count / totalUsers) * 100) %>%</td>
+          <td><%= g.event_count.toLocaleString() %></td>
+          <td><strong style="color: <%= genderColors[g.gender] || '#333' %>;"><%= g.avg_events_per_user %></strong></td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+    <% } %>
+  </div>
+
+  <!-- Age Group Breakdown -->
+  <div class="card">
+    <h3 style="margin-bottom: 12px; font-size: 15px;">Age Group Activity</h3>
+    <% if (ageGroups.length === 0) { %>
+      <p style="color: #999; font-size: 13px;">No age data yet.</p>
+    <% } else { %>
+    <%
+      var maxAgeUsers = ageGroups.reduce(function(m, a) { return a.user_count > m ? a.user_count : m; }, 1);
+    %>
+    <table style="font-size: 12px;">
+      <thead>
+        <tr><th>Age</th><th>Users</th><th>Events/User</th><th>Distribution</th></tr>
+      </thead>
+      <tbody>
+        <% ageGroups.forEach(function(a) { %>
+        <tr>
+          <td><strong><%= a.age_group %></strong></td>
+          <td><%= a.user_count %></td>
+          <td style="color: <%= a.avg_events_per_user > 30 ? '#22c55e' : a.avg_events_per_user > 10 ? '#f59e0b' : '#6b7280' %>; font-weight: 600;">
+            <%= a.avg_events_per_user %>
+          </td>
+          <td style="width: 120px;">
+            <div style="background: #f3f4f6; border-radius: 4px; height: 14px; overflow: hidden;">
+              <div style="
+                background: linear-gradient(90deg, #3b82f6, #a855f7);
+                height: 100%;
+                width: <%= Math.round((a.user_count / maxAgeUsers) * 100) %>%;
+                border-radius: 4px;
+              "></div>
+            </div>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+    <% } %>
+  </div>
+</div>
+
+<!-- Top Cities by Activity -->
+<div class="card" style="margin-bottom: 16px;">
+  <h3 style="margin-bottom: 12px; font-size: 15px;">Top Cities by User Activity</h3>
+  <% if (cityBreakdown.length === 0) { %>
+    <p style="color: #999; font-size: 13px;">No city data yet.</p>
+  <% } else { %>
+  <%
+    var maxCityUsers = cityBreakdown.length > 0 ? cityBreakdown[0].user_count : 1;
+    var maxCityEvents = cityBreakdown.reduce(function(m, c) { return c.avg_events_per_user > m ? c.avg_events_per_user : m; }, 1);
+  %>
+  <div style="overflow-x: auto;">
+    <table style="font-size: 13px;">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>City</th>
+          <th>Users</th>
+          <th>Events</th>
+          <th>Avg/User</th>
+          <th>User Share</th>
+          <th>Engagement</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% cityBreakdown.forEach(function(c, i) { %>
+        <tr>
+          <td><%= i + 1 %></td>
+          <td><strong><%= c.city %></strong></td>
+          <td><%= c.user_count %></td>
+          <td><%= c.event_count.toLocaleString() %></td>
+          <td style="color: <%= c.avg_events_per_user > 30 ? '#22c55e' : c.avg_events_per_user > 10 ? '#f59e0b' : '#6b7280' %>; font-weight: 600;">
+            <%= c.avg_events_per_user %>
+          </td>
+          <td style="width: 100px;">
+            <div style="background: #f3f4f6; border-radius: 4px; height: 12px; overflow: hidden;">
+              <div style="background: #3b82f6; height: 100%; width: <%= Math.round((c.user_count / maxCityUsers) * 100) %>%; border-radius: 4px;"></div>
+            </div>
+          </td>
+          <td style="width: 100px;">
+            <div style="background: #f3f4f6; border-radius: 4px; height: 12px; overflow: hidden;">
+              <div style="background: #a855f7; height: 100%; width: <%= Math.round((c.avg_events_per_user / maxCityEvents) * 100) %>%; border-radius: 4px;"></div>
+            </div>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size: 11px; color: #999; margin-top: 8px;">Top <%= cityBreakdown.length %> cities by unique active users. User Share = % of max, Engagement = avg events/user.</p>
+  <% } %>
+</div>
+
+<!-- Gender-specific top features -->
+<% if (genderTopFeatures.length > 0) { %>
+<div class="card" style="margin-bottom: 16px;">
+  <h3 style="margin-bottom: 12px; font-size: 15px;">Top Actions by Gender</h3>
+  <%
+    var featuresByGender = {};
+    genderTopFeatures.forEach(function(f) {
+      if (!featuresByGender[f.gender]) featuresByGender[f.gender] = [];
+      featuresByGender[f.gender].push(f);
+    });
+    var genderColors = { MALE: '#3b82f6', FEMALE: '#ec4899', OTHER: '#a855f7', unknown: '#9ca3af' };
+    var genderKeys = Object.keys(featuresByGender);
+  %>
+  <div style="display: grid; grid-template-columns: repeat(<%= Math.min(genderKeys.length, 4) %>, 1fr); gap: 16px;">
+    <% genderKeys.forEach(function(gen) { %>
+      <div>
+        <h4 style="font-size: 13px; margin-bottom: 8px;">
+          <span style="display: inline-block; padding: 2px 8px; background: <%= genderColors[gen] || '#6b7280' %>; color: white; border-radius: 3px; font-size: 10px;">
+            <%= gen %>
+          </span>
+        </h4>
+        <% featuresByGender[gen].forEach(function(f, i) { %>
+          <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f3f4f6; font-size: 12px;">
+            <span style="color: #999; width: 18px;"><%= i + 1 %>.</span>
+            <code style="flex: 1; font-size: 11px;"><%= f.event_name %></code>
+            <strong style="margin-left: 8px;"><%= f.event_count %></strong>
+          </div>
+        <% }); %>
+      </div>
+    <% }); %>
+  </div>
+</div>
+<% } %>
+
+<!-- Segment Top Features -->
+<% if (segmentTopFeatures.length > 0) { %>
+<div class="card" style="margin-bottom: 16px;">
+  <h3 style="margin-bottom: 12px; font-size: 15px;">Top 5 Features per Segment</h3>
+  <%
+    var featuresBySegment = {};
+    segmentTopFeatures.forEach(function(f) {
+      if (!featuresBySegment[f.segment]) featuresBySegment[f.segment] = [];
+      featuresBySegment[f.segment].push(f);
+    });
+    var segmentOrder = ['premium', 'plus', 'free'];
+    var segColors = { premium: '#f97316', plus: '#a855f7', free: '#6b7280' };
+  %>
+  <div style="display: grid; grid-template-columns: repeat(<%= Math.min(Object.keys(featuresBySegment).length, 3) %>, 1fr); gap: 16px;">
+    <% segmentOrder.forEach(function(seg) { %>
+      <% if (featuresBySegment[seg]) { %>
+      <div>
+        <h4 style="font-size: 13px; margin-bottom: 8px;">
+          <span style="display: inline-block; padding: 2px 8px; background: <%= segColors[seg] %>; color: white; border-radius: 3px; font-size: 10px; text-transform: uppercase;">
+            <%= seg %>
+          </span>
+        </h4>
+        <% featuresBySegment[seg].forEach(function(f, i) { %>
+          <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f3f4f6; font-size: 12px;">
+            <span style="color: #999; width: 20px;"><%= i + 1 %>.</span>
+            <code style="flex: 1; font-size: 11px;"><%= f.event_name %></code>
+            <strong style="margin-left: 8px;"><%= f.event_count %></strong>
+          </div>
+        <% }); %>
+      </div>
+      <% } %>
+    <% }); %>
+  </div>
+</div>
+<% } %>
+
+<!-- Drop-off Analysis + Power Users -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+  <!-- Drop-off Analysis -->
+  <div class="card">
+    <h3 style="margin-bottom: 12px; font-size: 15px;">Funnel Drop-off Analysis</h3>
+    <% if (dropOff.length === 0) { %>
+      <p style="color: #999; font-size: 13px;">No funnel data yet.</p>
+    <% } else { %>
+    <table style="font-size: 12px;">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Step</th>
+          <th>Users</th>
+          <th>Drop-off</th>
+          <th>Visual</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% var maxDrop = dropOff.length > 0 ? dropOff[0].unique_users : 1; %>
+        <% dropOff.forEach(function(d) { %>
+        <tr>
+          <td><%= d.step_order %></td>
+          <td><code style="font-size: 11px;"><%= d.step_name %></code></td>
+          <td><strong><%= d.unique_users %></strong></td>
+          <td>
+            <% if (d.drop_off_pct > 0) { %>
+              <span style="color: <%= d.drop_off_pct > 50 ? '#ef4444' : d.drop_off_pct > 25 ? '#f59e0b' : '#22c55e' %>; font-weight: 600; font-size: 11px;">
+                -<%= d.drop_off_pct %>%
+              </span>
+            <% } else { %>
+              <span style="color: #999; font-size: 11px;">-</span>
+            <% } %>
+          </td>
+          <td style="width: 100px;">
+            <div style="background: #f3f4f6; border-radius: 4px; height: 14px; overflow: hidden;">
+              <div style="background: #a855f7; height: 100%; width: <%= maxDrop > 0 ? Math.round((d.unique_users / maxDrop) * 100) : 0 %>%; border-radius: 4px;"></div>
+            </div>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+    <% } %>
+  </div>
+
+  <!-- Power Users -->
+  <div class="card">
+    <h3 style="margin-bottom: 12px; font-size: 15px;">Power Users (Top 10)</h3>
+    <% if (powerUsers.length === 0) { %>
+      <p style="color: #999; font-size: 13px;">No user activity data yet.</p>
+    <% } else { %>
+    <div style="max-height: 350px; overflow-y: auto;">
+      <table style="font-size: 12px;">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Events</th>
+            <th>Actions</th>
+            <th>Sessions</th>
+            <th>Last Seen</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% powerUsers.forEach(function(u) { %>
+          <tr>
+            <td>
+              <a href="/admin/users/<%= u.user_id %>" style="font-size: 11px; color: #a855f7; text-decoration: none; font-family: monospace;">
+                <%= u.user_id.substring(0, 8) %>...
+              </a>
+            </td>
+            <td><strong><%= u.event_count %></strong></td>
+            <td><%= u.distinct_events %></td>
+            <td><%= u.session_count %></td>
+            <td style="font-size: 11px; color: #666;"><%= new Date(u.last_seen).toLocaleDateString('tr-TR') %></td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+    <% } %>
+  </div>
+</div>
+
+<!-- CSV Export -->
+<div class="card" style="margin-bottom: 16px;">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <h3 style="font-size: 15px;">Export Data</h3>
+    <div style="display: flex; gap: 8px;">
+      <a href="/admin/analytics/export?type=feature-usage&days=<%= days %>" class="btn btn-primary btn-sm" style="text-decoration: none;">Feature Usage CSV</a>
+      <a href="/admin/analytics/export?type=transitions&days=<%= days %>" class="btn btn-primary btn-sm" style="text-decoration: none;">Transitions CSV</a>
+      <a href="/admin/analytics/export?type=flow-combinations&days=<%= days %>" class="btn btn-primary btn-sm" style="text-decoration: none;">Flow Combos CSV</a>
+    </div>
+  </div>
+</div>
+
+<!-- Retention Cohort Heatmap -->
+<div class="card" style="margin-bottom: 16px; margin-top: 16px;">
+  <h3 style="margin-bottom: 12px; font-size: 15px;">Weekly Retention Cohort</h3>
+  <% if (retention.cohorts.length === 0) { %>
+    <p style="color: #999; font-size: 13px;">Not enough data for retention analysis. Need at least 1 week of flow events.</p>
+  <% } else { %>
+  <div style="overflow-x: auto;">
+    <table style="font-size: 12px;">
+      <thead>
+        <tr>
+          <th>Cohort Week</th>
+          <th>Users</th>
+          <% for (var w = 0; w <= 8; w++) { %>
+            <th style="text-align: center;">W<%= w %></th>
+          <% } %>
+        </tr>
+      </thead>
+      <tbody>
+        <% retention.cohorts.forEach(function(cohort, ci) { %>
+        <tr>
+          <td style="white-space: nowrap; font-weight: 600;"><%= cohort.week %></td>
+          <td><%= cohort.size %></td>
+          <% retention.matrix[ci].forEach(function(rate, wi) { %>
+            <td style="text-align: center; padding: 4px 8px;
+              <% if (rate !== null) { %>
+                background: rgba(<%= rate > 50 ? '34, 197, 94' : rate > 25 ? '251, 191, 36' : '239, 68, 68' %>, <%= Math.min(rate / 100, 0.5) + 0.05 %>);
+                color: <%= rate > 40 ? '#065f46' : rate > 15 ? '#92400e' : '#991b1b' %>;
+                font-weight: 600;
+              <% } else { %>
+                color: #e5e7eb;
+              <% } %>
+            ">
+              <%= rate !== null ? rate + '%' : '-' %>
+            </td>
+          <% }); %>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size: 11px; color: #999; margin-top: 8px;">W0 = registration week, W1 = 1 week after registration, etc. Excludes token_refresh, heartbeat, config calls.</p>
+  <% } %>
+</div>
+
+<!-- Database Stats -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+  <div class="card">
+    <h3 style="margin-bottom: 12px; font-size: 15px;">Analytics Table Stats</h3>
+    <% if (tableStats.length === 0) { %>
+      <p style="color: #999; font-size: 13px;">No table stats available.</p>
+    <% } else { %>
+    <table style="font-size: 13px;">
+      <thead>
+        <tr>
+          <th>Table</th>
+          <th>Rows</th>
+          <th>Size</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% tableStats.forEach(function(t) { %>
+        <tr>
+          <td><code><%= t.table_name %></code></td>
+          <td><%= t.row_count.toLocaleString() %></td>
+          <td><%= t.size_pretty %></td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+    <% } %>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom: 12px; font-size: 15px;">Cron Jobs Status</h3>
+    <table style="font-size: 13px;">
+      <tbody>
+        <tr>
+          <td><code>analytics-aggregate</code></td>
+          <td>Daily 02:05</td>
+          <td><span class="badge badge-online">Active</span></td>
+        </tr>
+        <tr>
+          <td><code>analytics-cleanup</code></td>
+          <td>Daily 03:15</td>
+          <td><span class="badge badge-online">Active</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size: 11px; color: #999; margin-top: 8px;">Cleanup: flow_events older than 90 days are removed. Aggregated stats in flow_daily_stats are preserved.</p>
+  </div>
+</div>
+
+<%
+  function getCategoryColor(step) {
+    if (['login', 'register', 'social_login', 'verify_email', 'forgot_password', 'reset_password', 'logout'].includes(step)) return '#3b82f6';
+    if (['discover_load', 'swipe', 'undo_swipe', 'get_matches_list', 'unmatch'].includes(step)) return '#f59e0b';
+    if (['quiz_start', 'quiz_answer', 'quiz_rescue', 'quiz_fail', 'quiz_result', 'quiz_summary', 'get_current_question'].includes(step)) return '#10b981';
+    if (['get_messages', 'send_message', 'upload_chat_media', 'mark_chat_read', 'add_reaction', 'delete_message'].includes(step)) return '#8b5cf6';
+    if (['create_question', 'get_my_questions', 'update_question', 'delete_question', 'get_question_analytics', 'ai_suggest_questions', 'create_chat_question', 'answer_chat_question'].includes(step)) return '#ec4899';
+    if (['purchase_diamonds', 'get_diamond_balance', 'exchange_convert', 'buy_power', 'get_powers', 'get_subscription_status', 'activate_subscription'].includes(step)) return '#f97316';
+    if (['get_profile', 'update_profile', 'upload_photo', 'complete_profile', 'update_details', 'boost_profile', 'view_public_profile'].includes(step)) return '#06b6d4';
+    if (['passport_activate', 'passport_deactivate'].includes(step)) return '#84cc16';
+    if (['get_notifications', 'notification_click', 'mark_notification_read'].includes(step)) return '#14b8a6';
+    return '#6b7280';
+  }
+
+  function getCategoryColorByName(cat) {
+    var colors = {
+      auth: '#3b82f6',
+      matching: '#f59e0b',
+      chat: '#8b5cf6',
+      questions: '#ec4899',
+      economy: '#f97316',
+      profile: '#06b6d4',
+      passport: '#84cc16',
+      notifications: '#14b8a6',
+      moderation: '#ef4444',
+      referral: '#a855f7',
+      support: '#6366f1',
+      webhook: '#78716c',
+      app: '#6b7280',
+      other: '#9ca3af',
+    };
+    return colors[cat] || '#6b7280';
+  }
+%>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+function changeDays(val) {
+  // Clean URL, no nocache — use cached results when available
+  window.location.href = '/admin/analytics?days=' + encodeURIComponent(val);
+}
+
+function refreshData() {
+  // Force bypass cache for fresh data
+  var url = new URL(window.location.href);
+  url.searchParams.set('nocache', '1');
+  window.location.href = url.toString();
+}
+
+// Custom Funnel Builder
+function runCustomFunnel() {
+  var from = document.getElementById('funnelFrom').value;
+  var to = document.getElementById('funnelTo').value;
+  var window = document.getElementById('funnelWindow').value;
+  var errorEl = document.getElementById('funnelError');
+  var resultEl = document.getElementById('funnelResult');
+
+  errorEl.style.display = 'none';
+  resultEl.style.display = 'none';
+
+  if (!from || !to) {
+    errorEl.textContent = 'Select both from and to events.';
+    errorEl.style.display = 'block';
+    return;
+  }
+  if (from === to) {
+    errorEl.textContent = 'From and to events must be different.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  var days = document.getElementById('daysFilter').value;
+  var url = '/admin/analytics/api?section=custom-funnel'
+    + '&from=' + encodeURIComponent(from)
+    + '&to=' + encodeURIComponent(to)
+    + '&window=' + encodeURIComponent(window)
+    + '&days=' + encodeURIComponent(days);
+
+  fetch(url)
+    .then(function(r) { return r.json(); })
+    .then(function(res) {
+      if (!res.ok) {
+        errorEl.textContent = res.error || 'Error computing funnel.';
+        errorEl.style.display = 'block';
+        return;
+      }
+      var d = res.data;
+      document.getElementById('funnelFromUsers').textContent = d.from_users;
+      document.getElementById('funnelToUsers').textContent = d.to_users;
+      document.getElementById('funnelRate').textContent = d.conversion_rate + '%';
+
+      function fmtTime(sec) {
+        if (!sec || sec === 0) return '-';
+        if (sec < 60) return Math.round(sec) + 's';
+        if (sec < 3600) return Math.round(sec / 60) + 'm';
+        if (sec < 86400) return (sec / 3600).toFixed(1) + 'h';
+        return (sec / 86400).toFixed(1) + 'd';
+      }
+      document.getElementById('funnelAvgTime').textContent = fmtTime(d.avg_time_seconds);
+      document.getElementById('funnelMedianTime').textContent = fmtTime(d.median_time_seconds);
+
+      // Color based on rate
+      var rate = d.conversion_rate;
+      var rateEl = document.getElementById('funnelRate');
+      rateEl.style.color = rate > 50 ? '#22c55e' : rate > 20 ? '#f59e0b' : rate > 5 ? '#a855f7' : '#ef4444';
+
+      resultEl.style.display = 'block';
+    })
+    .catch(function() {
+      errorEl.textContent = 'Network error.';
+      errorEl.style.display = 'block';
+    });
+}
+
+// Auto-refresh
+var autoRefreshTimer = null;
+function toggleAutoRefresh(enabled) {
+  if (enabled) {
+    autoRefreshTimer = setInterval(function() { window.location.reload(); }, 30000);
+  } else {
+    if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+    autoRefreshTimer = null;
+  }
+}
+
+// Event delegation for user journey links (safer than inline onclick)
+document.addEventListener('click', function(e) {
+  var el = e.target.closest('.user-journey-link');
+  if (el) {
+    e.preventDefault();
+    var uid = el.getAttribute('data-user-id');
+    if (uid) lookupUser(uid);
+  }
+});
+
+// User Journey Lookup — uses safe DOM methods (no innerHTML)
+function lookupUser(userId) {
+  if (!userId || userId.length < 8) return;
+  document.getElementById('journeyUserId').value = userId;
+  document.getElementById('journeyResults').style.display = 'none';
+  document.getElementById('journeyEmpty').style.display = 'none';
+
+  fetch('/admin/analytics/api?section=user-journey&userId=' + encodeURIComponent(userId))
+    .then(function(r) { return r.json(); })
+    .then(function(res) {
+      if (!res.ok || !res.data || res.data.length === 0) {
+        document.getElementById('journeyEmpty').style.display = 'block';
+        return;
+      }
+      var tbody = document.getElementById('journeyBody');
+      while (tbody.firstChild) tbody.removeChild(tbody.firstChild);
+
+      res.data.forEach(function(e) {
+        var tr = document.createElement('tr');
+
+        var tdTime = document.createElement('td');
+        tdTime.style.cssText = 'font-size:11px;color:#666;white-space:nowrap';
+        tdTime.textContent = new Date(e.created_at).toLocaleString('tr-TR');
+        tr.appendChild(tdTime);
+
+        var tdAction = document.createElement('td');
+        var code = document.createElement('code');
+        code.style.fontSize = '11px';
+        code.textContent = e.event_name;
+        tdAction.appendChild(code);
+        tr.appendChild(tdAction);
+
+        var tdCat = document.createElement('td');
+        var catSpan = document.createElement('span');
+        catSpan.style.cssText = 'font-size:10px;color:#666';
+        catSpan.textContent = e.category;
+        tdCat.appendChild(catSpan);
+        tr.appendChild(tdCat);
+
+        var tdStatus = document.createElement('td');
+        tdStatus.style.fontSize = '11px';
+        tdStatus.style.color = e.status_code < 300 ? '#22c55e' : e.status_code < 400 ? '#f59e0b' : '#ef4444';
+        tdStatus.textContent = String(e.status_code);
+        tr.appendChild(tdStatus);
+
+        var tdSpeed = document.createElement('td');
+        tdSpeed.style.fontSize = '11px';
+        tdSpeed.style.color = e.response_time_ms > 500 ? '#ef4444' : e.response_time_ms > 200 ? '#f59e0b' : '#22c55e';
+        tdSpeed.textContent = e.response_time_ms + 'ms';
+        tr.appendChild(tdSpeed);
+
+        tbody.appendChild(tr);
+      });
+      document.getElementById('journeyResults').style.display = 'block';
+
+      // Also load session timeline
+      loadSessionTimeline(userId);
+    })
+    .catch(function() {
+      document.getElementById('journeyEmpty').style.display = 'block';
+    });
+}
+
+function loadSessionTimeline(userId) {
+  var container = document.getElementById('sessionContent');
+  var wrapper = document.getElementById('sessionTimeline');
+  wrapper.style.display = 'none';
+  while (container.firstChild) container.removeChild(container.firstChild);
+
+  fetch('/admin/analytics/api?section=user-sessions&userId=' + encodeURIComponent(userId))
+    .then(function(r) { return r.json(); })
+    .then(function(res) {
+      if (!res.ok || !res.data || res.data.length === 0) return;
+
+      var catColors = {
+        auth: '#3b82f6', matching: '#f59e0b', chat: '#8b5cf6', questions: '#ec4899',
+        economy: '#f97316', profile: '#06b6d4', passport: '#84cc16', notifications: '#14b8a6',
+        moderation: '#ef4444', referral: '#a855f7', other: '#6b7280'
+      };
+
+      res.data.forEach(function(session) {
+        var sessionDiv = document.createElement('div');
+        sessionDiv.style.cssText = 'margin-bottom: 12px; padding: 10px; background: #fafafa; border-radius: 6px; border-left: 3px solid #a855f7;';
+
+        var header = document.createElement('div');
+        header.style.cssText = 'display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px;';
+
+        var left = document.createElement('span');
+        left.style.fontWeight = '600';
+        left.textContent = 'Session #' + session.session_num + ' (' + session.event_count + ' events)';
+        header.appendChild(left);
+
+        var right = document.createElement('span');
+        right.style.color = '#666';
+        var mins = Math.round(session.duration_seconds / 60);
+        right.textContent = new Date(session.session_start).toLocaleString('tr-TR') + ' | ' + (mins > 0 ? mins + 'min' : session.duration_seconds + 's');
+        header.appendChild(right);
+
+        sessionDiv.appendChild(header);
+
+        // Event dots timeline
+        var timeline = document.createElement('div');
+        timeline.style.cssText = 'display: flex; flex-wrap: wrap; gap: 3px;';
+
+        session.events.forEach(function(evt) {
+          var dot = document.createElement('span');
+          var color = catColors[evt.category] || '#6b7280';
+          dot.style.cssText = 'display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 10px; background: ' + color + '20; color: ' + color + ';';
+          dot.textContent = evt.name;
+          dot.title = evt.category + ' | ' + evt.status + ' | ' + evt.ms + 'ms | ' + new Date(evt.at).toLocaleTimeString('tr-TR');
+          timeline.appendChild(dot);
+        });
+
+        sessionDiv.appendChild(timeline);
+        container.appendChild(sessionDiv);
+      });
+
+      wrapper.style.display = 'block';
+    })
+    .catch(function() {});
+}
+
+// Chart.js defaults
+Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+Chart.defaults.font.size = 12;
+
+// DAU Trend Chart
+(function() {
+  var data = <%- JSON.stringify(dauTimeseries) %>;
+  if (data.length === 0) return;
+
+  new Chart(document.getElementById('dauChart'), {
+    type: 'line',
+    data: {
+      labels: data.map(function(d) { return d.day; }),
+      datasets: [{
+        label: 'DAU',
+        data: data.map(function(d) { return d.dau; }),
+        borderColor: '#10b981',
+        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 2,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: { beginAtZero: true },
+        x: { ticks: { maxTicksLimit: 10 } }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+})();
+
+// Daily Trend Chart
+(function() {
+  var data = <%- JSON.stringify(daily) %>;
+  if (data.length === 0) return;
+
+  new Chart(document.getElementById('dailyChart'), {
+    type: 'line',
+    data: {
+      labels: data.map(function(d) { return d.date; }),
+      datasets: [
+        {
+          label: 'Total Events',
+          data: data.map(function(d) { return d.count; }),
+          borderColor: '#a855f7',
+          backgroundColor: 'rgba(168, 85, 247, 0.1)',
+          fill: true,
+          tension: 0.3,
+        },
+        {
+          label: 'Unique Users',
+          data: data.map(function(d) { return d.unique_users; }),
+          borderColor: '#22c55e',
+          backgroundColor: 'rgba(34, 197, 94, 0.1)',
+          fill: true,
+          tension: 0.3,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: { beginAtZero: true },
+        x: { display: true, ticks: { maxTicksLimit: 10 } }
+      },
+      plugins: { legend: { position: 'top' } }
+    }
+  });
+})();
+
+// Hourly Activity Chart
+(function() {
+  var data = <%- JSON.stringify(hourly) %>;
+  if (data.length === 0) return;
+
+  new Chart(document.getElementById('hourlyChart'), {
+    type: 'bar',
+    data: {
+      labels: data.map(function(d) { return d.hour + ':00'; }),
+      datasets: [{
+        label: 'Events',
+        data: data.map(function(d) { return d.count; }),
+        backgroundColor: data.map(function(d) {
+          return d.hour >= 9 && d.hour <= 23 ? 'rgba(168, 85, 247, 0.7)' : 'rgba(168, 85, 247, 0.3)';
+        }),
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: { beginAtZero: true },
+        x: { ticks: { maxTicksLimit: 12 } }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+})();
+
+// Conversion Funnel Chart
+(function() {
+  var data = <%- JSON.stringify(funnel) %>;
+  if (data.length === 0) return;
+
+  var colors = ['#3b82f6', '#06b6d4', '#f59e0b', '#f97316', '#10b981', '#8b5cf6', '#ec4899', '#a855f7'];
+
+  new Chart(document.getElementById('funnelChart'), {
+    type: 'bar',
+    data: {
+      labels: data.map(function(d) { return d.label + ' (' + d.percentage + '%)'; }),
+      datasets: [{
+        label: 'Users',
+        data: data.map(function(d) { return d.count; }),
+        backgroundColor: colors.slice(0, data.length),
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: { x: { beginAtZero: true } },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              return ctx.parsed.x + ' users (' + data[ctx.dataIndex].percentage + '%)';
+            }
+          }
+        }
+      }
+    }
+  });
+})();
+
+// Category Breakdown Doughnut
+(function() {
+  var data = <%- JSON.stringify(categoryBreakdown) %>;
+  if (data.length === 0) return;
+
+  var colors = {
+    auth: '#3b82f6', matching: '#f59e0b', chat: '#8b5cf6', questions: '#ec4899',
+    economy: '#f97316', profile: '#06b6d4', passport: '#84cc16', notifications: '#14b8a6',
+    moderation: '#ef4444', referral: '#a855f7', support: '#6366f1', webhook: '#78716c',
+    app: '#6b7280', other: '#9ca3af',
+  };
+
+  new Chart(document.getElementById('categoryChart'), {
+    type: 'doughnut',
+    data: {
+      labels: data.map(function(d) { return d.category; }),
+      datasets: [{
+        data: data.map(function(d) { return d.count; }),
+        backgroundColor: data.map(function(d) { return colors[d.category] || '#9ca3af'; }),
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'right', labels: { padding: 12, font: { size: 11 } } },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              return ctx.label + ': ' + ctx.parsed + ' (' + data[ctx.dataIndex].percentage + '%)';
+            }
+          }
+        }
+      }
+    }
+  });
+})();
+</script>
+
+<%- include('_footer') %>

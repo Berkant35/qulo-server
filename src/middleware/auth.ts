@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
 import { verifyAccessToken } from "../utils/jwt.js";
 import type { JwtPayload } from "../types/index.js";
 import { Errors } from "../utils/errors.js";
@@ -29,12 +30,11 @@ export async function authMiddleware(
   try {
     decoded = verifyAccessToken(token);
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown JWT error';
-    if (message.includes('expired')) {
+    if (error instanceof jwt.TokenExpiredError) {
       return next(Errors.TOKEN_EXPIRED());
     }
-    console.warn('[auth] JWT verification failed:', message);
-    return next(Errors.TOKEN_EXPIRED());
+    console.warn('[auth] JWT verification failed:', error instanceof Error ? error.message : 'Unknown JWT error');
+    return next(Errors.INVALID_TOKEN());
   }
 
   try {

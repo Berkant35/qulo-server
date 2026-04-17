@@ -1,7 +1,9 @@
 import { supabase } from "../config/supabase.js";
 import { NotificationService } from "./notification.service.js";
+import { blockService } from "./block.service.js";
 import { Errors } from "../utils/errors.js";
 import { assertUuid } from "../utils/validation.js";
+import { env } from "../config/env.js";
 
 interface Match {
   id: string;
@@ -123,10 +125,24 @@ export class ChatService {
   ) {
     const match = await this.verifyMatchAccess(userId, matchId);
 
+    // Block check — prevent blocked users from sending messages
+    const recipientId = match.user1_id === userId ? match.user2_id : match.user1_id;
+    if (await blockService.isBlocked(userId, recipientId)) {
+      throw Errors.USER_BLOCKED();
+    }
+
     // Media permission check — both users must have enabled media sharing
     if (isImage || audioUrl) {
       if (!match.media_enabled_by_user1 || !match.media_enabled_by_user2) {
         throw Errors.MEDIA_NOT_ENABLED();
+      }
+    }
+
+    // Audio URL domain validation — only allow our Supabase storage
+    if (audioUrl) {
+      const expectedPrefix = `${env.SUPABASE_URL}/storage/v1/object/public/chat-media/`;
+      if (!audioUrl.startsWith(expectedPrefix)) {
+        throw Errors.VALIDATION_ERROR({ audio_url: "must reference chat-media storage" });
       }
     }
 
