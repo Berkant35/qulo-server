@@ -52,7 +52,7 @@ export const IAP_PRODUCT_MAP: Record<string, number> = {
 // Subscription product IDs
 export const SUBSCRIPTION_PRODUCT_MAP: Record<string, SubscriptionPlan> = {
   quloplusmonthly2: 'plus',
-  qulopremiummonthly: 'premium',
+  qulopremiummonthly2: 'premium',
 };
 
 /* ── Chat Question Response Types ─────────────────────────────────────── */
