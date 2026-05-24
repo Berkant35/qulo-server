@@ -395,13 +395,21 @@ export class AuthService {
     // 2. Case A: provider_id match → login
     const { data: existingByProvider } = await supabase
       .from("users")
-      .select("id, email, is_deleted, is_banned, age")
+      .select("id, email, is_deleted, is_banned, age, name, surname")
       .eq("provider_id", providerId)
       .maybeSingle();
 
     if (existingByProvider) {
       if (existingByProvider.is_deleted) throw Errors.INVALID_CREDENTIALS();
       if (existingByProvider.is_banned) throw Errors.ACCOUNT_BANNED();
+      // Backfill name/surname if missing and provider gave them this round (e.g. first sign-in
+      // saved an empty name due to a client bug — recover next time Apple/Google sends them).
+      const backfill: Record<string, string> = {};
+      if (!existingByProvider.name && name) backfill.name = name;
+      if (!existingByProvider.surname && surname) backfill.surname = surname;
+      if (Object.keys(backfill).length > 0) {
+        await supabase.from("users").update(backfill).eq("id", existingByProvider.id);
+      }
       return this.createSocialSession(existingByProvider.id, existingByProvider.email, existingByProvider.age);
     }
 
@@ -409,7 +417,7 @@ export class AuthService {
     if (email) {
       const { data: existingByEmail } = await supabase
         .from("users")
-        .select("id, email, is_deleted, is_banned, age, provider_id")
+        .select("id, email, is_deleted, is_banned, age, provider_id, name, surname")
         .eq("email", email)
         .maybeSingle();
 
@@ -418,11 +426,15 @@ export class AuthService {
           await this.hardDeleteUser(existingByEmail.id);
         } else {
           if (existingByEmail.is_banned) throw Errors.ACCOUNT_BANNED();
+          const linkUpdate: Record<string, string> = {};
           if (!existingByEmail.provider_id) {
-            await supabase
-              .from("users")
-              .update({ provider_id: providerId, auth_provider: data.provider })
-              .eq("id", existingByEmail.id);
+            linkUpdate.provider_id = providerId;
+            linkUpdate.auth_provider = data.provider;
+          }
+          if (!existingByEmail.name && name) linkUpdate.name = name;
+          if (!existingByEmail.surname && surname) linkUpdate.surname = surname;
+          if (Object.keys(linkUpdate).length > 0) {
+            await supabase.from("users").update(linkUpdate).eq("id", existingByEmail.id);
           }
           return this.createSocialSession(existingByEmail.id, existingByEmail.email, existingByEmail.age);
         }
