@@ -9,7 +9,23 @@ const locales: Record<string, Record<string, Record<string, string>>> = {
   tr: require('../locales/tr.json'),
 };
 
-type PushType = 'new_message' | 'new_message_image' | 'new_match' | 'new_match_solver' | 'passport_expired' | 'campaign' | 'chat_question_answered';
+export const PUSH_TYPES = [
+  'new_message',
+  'new_message_image',
+  'new_match',
+  'new_match_solver',
+  'new_match_badge',
+  'quiz_started',
+  'passport_expired',
+  'chat_question_answered',
+  'campaign',
+] as const;
+
+export type PushType = typeof PUSH_TYPES[number];
+export const SUPPORTED_LOCALES = ['tr', 'en'] as const;
+export type SupportedLocale = typeof SUPPORTED_LOCALES[number];
+
+export type ResolvedTemplate = { title: string; body: string } | null;
 
 interface NotificationTypeConfig {
   actionUrl?: string;
@@ -25,6 +41,8 @@ const NOTIFICATION_CONFIG: Record<PushType, NotificationTypeConfig> = {
   new_message_image:      { category: 'messages' },
   new_match:              { actionUrl: '/matches', category: 'matches', badgeTemplateKey: 'new_match_badge' },
   new_match_solver:       { actionUrl: '/matches', category: 'matches' },
+  new_match_badge:        { actionUrl: '/matches', category: 'matches' },
+  quiz_started:           { category: 'matches' },
   passport_expired:       { actionUrl: '/profile/passport' },
   campaign:               { category: 'campaigns' },
   chat_question_answered: { category: 'matches' },
@@ -53,6 +71,62 @@ export class NotificationService {
     } catch {
       return '';
     }
+  }
+
+  /**
+   * Resolve a push notification template for (type, locale).
+   *
+   * Lookup order:
+   *   1. push_messages DB override (per type+locale)
+   *   2. locales JSON default (src/locales/{locale}.json → push.<type>)
+   *
+   * Behavior:
+   * - If override row has is_active=false → returns null (push muted).
+   * - Override title/body are nullable — null fields fall back to locale default.
+   * - Locale defaults may be a plain string (legacy body-only) or { title, body }.
+   *   For string defaults, title falls back to 'Qulo'.
+   * - DB errors are swallowed (warn-logged) and we fall back to locale default.
+   * - Returns null when neither override nor default yields a usable title+body
+   *   (e.g. unknown type with no override row).
+   */
+  static async getTemplate(
+    type: PushType,
+    locale: SupportedLocale,
+  ): Promise<ResolvedTemplate> {
+    const safeLocale = locales[locale] ? locale : 'en';
+    const rawDefault = locales[safeLocale]?.push?.[type] as unknown;
+    let defaultTitle: string | undefined;
+    let defaultBody: string | undefined;
+    if (typeof rawDefault === 'string') {
+      defaultTitle = 'Qulo';
+      defaultBody = rawDefault;
+    } else if (rawDefault && typeof rawDefault === 'object') {
+      const obj = rawDefault as { title?: string; body?: string };
+      defaultTitle = obj.title;
+      defaultBody = obj.body;
+    }
+
+    type OverrideRow = { title: string | null; body: string | null; is_active: boolean };
+    let override: OverrideRow | null = null;
+    try {
+      const { data } = await supabase
+        .from('push_messages')
+        .select('title, body, is_active')
+        .eq('type', type)
+        .eq('locale', safeLocale)
+        .maybeSingle();
+      override = (data as OverrideRow | null) ?? null;
+    } catch (err) {
+      console.warn('[NotificationService] push_messages fetch failed, using locale default:', err);
+    }
+
+    if (override?.is_active === false) return null;
+
+    const title = override?.title ?? defaultTitle;
+    const body = override?.body ?? defaultBody;
+    if (!title || !body) return null;
+
+    return { title, body };
   }
 
   /**
@@ -88,6 +162,7 @@ export class NotificationService {
       // 2. Resolve title and body
       let title: string;
       let body: string;
+      let skipFcm = false;
 
       if (type === 'campaign' && options?.title) {
         // Campaign notifications use custom title/body from campaign data
@@ -95,6 +170,7 @@ export class NotificationService {
         body = params.body ?? options.title;
       } else {
         const locale = user.locale && locales[user.locale] ? user.locale : 'en';
+        const safeLocale: SupportedLocale = (locale === 'tr' || locale === 'en') ? locale : 'en';
 
         // Provide locale-aware fallback for {name} if empty
         if ('name' in params && !params.name) {
@@ -104,14 +180,16 @@ export class NotificationService {
         // Use badge-specific template if badge param is present
         const config = NOTIFICATION_CONFIG[type];
         const templateKey = (params.badge && config.badgeTemplateKey) ? config.badgeTemplateKey : (config.templateKey ?? type);
-        const template = locales[locale]?.push?.[templateKey];
-        if (!template) {
-          console.warn(`[NotificationService] No push template for type=${templateKey}, locale=${locale} — using fallback, still persisting to DB`);
+
+        const resolved = await NotificationService.getTemplate(templateKey as PushType, safeLocale);
+        if (!resolved) {
+          console.warn(`[NotificationService] No push template for type=${templateKey}, locale=${safeLocale} — DB persisted, FCM skipped`);
           body = `[${type}]`;
           title = options?.title ?? 'Qulo';
+          skipFcm = true;
         } else {
-          body = interpolate(template, params);
-          title = options?.title ?? 'Qulo';
+          body = interpolate(resolved.body, params);
+          title = options?.title ?? interpolate(resolved.title, params);
         }
       }
 
@@ -144,6 +222,11 @@ export class NotificationService {
         }
       }
       // System notifications (no category mapping) always send push
+
+      // If template resolution failed, DB has been persisted but skip FCM
+      if (skipFcm) {
+        return false;
+      }
 
       // 5. Send via FCM
       if (!user.push_token) {
