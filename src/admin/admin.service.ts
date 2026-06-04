@@ -2,6 +2,8 @@ import { supabase } from "../config/supabase.js";
 import { hashPassword, comparePassword, normalizeEmail } from "../utils/hash.js";
 import { sanitizeIlike } from "../utils/validation.js";
 import { Errors } from "../utils/errors.js";
+import { PUSH_TYPES } from "../services/notification.service.js";
+import { createRequire } from "node:module";
 
 class AdminService {
   async findByEmail(email: string) {
@@ -771,3 +773,108 @@ class AdminService {
 }
 
 export const adminService = new AdminService();
+
+// ── Push template admin service ─────────────────────────────────────────────
+// Manages dynamic push notification template overrides (push_messages table).
+// Locale JSON files store push entries as bare strings (legacy shape) — the
+// extractDefault helper adapts to both bare-string and { title, body } object
+// shapes so future migrations work without changes here.
+
+const adminRequire = createRequire(import.meta.url);
+const adminLocales = {
+  en: adminRequire("../locales/en.json"),
+  tr: adminRequire("../locales/tr.json"),
+} as Record<string, { push?: Record<string, unknown> }>;
+
+function extractDefault(loc: string, type: string): { title: string; body: string } {
+  const raw = adminLocales[loc]?.push?.[type];
+  if (typeof raw === "string") return { title: "Qulo", body: raw };
+  if (raw && typeof raw === "object") {
+    const r = raw as { title?: string; body?: string };
+    return { title: r.title ?? "Qulo", body: r.body ?? "" };
+  }
+  return { title: "", body: "" };
+}
+
+export const pushTemplateAdminService = {
+  async list(locale: string) {
+    const { data } = await supabase
+      .from("push_messages")
+      .select("type, title, body, is_active, updated_at, updated_by")
+      .eq("locale", locale);
+
+    const overridesByType = new Map((data ?? []).map((r: any) => [r.type, r]));
+
+    return PUSH_TYPES.map((type) => {
+      const o = overridesByType.get(type);
+      const def = extractDefault(locale, type);
+      return {
+        type,
+        default_title: def.title,
+        default_body: def.body,
+        override_title: o?.title ?? null,
+        override_body: o?.body ?? null,
+        is_active: o?.is_active ?? true,
+        updated_at: o?.updated_at ?? null,
+        updated_by: o?.updated_by ?? null,
+        has_override: !!o,
+      };
+    });
+  },
+
+  async getOne(type: string, locale: string) {
+    const { data } = await supabase
+      .from("push_messages")
+      .select("title, body, is_active, updated_at, updated_by")
+      .eq("type", type)
+      .eq("locale", locale)
+      .maybeSingle();
+    const def = extractDefault(locale, type);
+    return {
+      type,
+      locale,
+      default_title: def.title,
+      default_body: def.body,
+      override_title: data?.title ?? null,
+      override_body: data?.body ?? null,
+      is_active: data?.is_active ?? true,
+      updated_at: data?.updated_at ?? null,
+      updated_by: data?.updated_by ?? null,
+    };
+  },
+
+  async upsert(
+    type: string,
+    locale: string,
+    payload: { title?: string | null; body?: string | null; is_active: boolean },
+    actorEmail: string,
+  ) {
+    const { data, error } = await supabase
+      .from("push_messages")
+      .upsert(
+        {
+          type,
+          locale,
+          title: payload.title ?? null,
+          body: payload.body ?? null,
+          is_active: payload.is_active,
+          updated_at: new Date().toISOString(),
+          updated_by: actorEmail,
+        },
+        { onConflict: "type,locale" },
+      )
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async remove(type: string, locale: string) {
+    const { error } = await supabase
+      .from("push_messages")
+      .delete()
+      .eq("type", type)
+      .eq("locale", locale);
+    if (error) throw error;
+  },
+};

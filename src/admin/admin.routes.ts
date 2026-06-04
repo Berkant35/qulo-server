@@ -85,6 +85,13 @@ router.get("/analytics/export", (req, res) => analyticsController.exportCsv(req,
 
 router.get("/blocks", (req, res) => adminController.blocks(req, res));
 
+// Push notification templates (dynamic overrides)
+router.get("/push-messages", (req, res) => adminController.pushMessagesList(req, res));
+router.get("/push-messages/:type", (req, res) => adminController.pushMessageEdit(req, res));
+router.get("/api/push-messages/:type", (req, res) => adminController.pushMessageApiGet(req, res));
+router.put("/api/push-messages/:type", csrfValidate, (req, res) => adminController.pushMessageApiUpsert(req, res));
+router.delete("/api/push-messages/:type", csrfValidate, (req, res) => adminController.pushMessageApiRemove(req, res));
+
 router.get("/admins", superAdminOnly, (req, res) => adminController.admins(req, res));
 router.post("/admins", superAdminOnly, csrfValidate, (req, res) => adminController.createAdmin(req, res));
 router.post("/admins/:id/delete", superAdminOnly, csrfValidate, (req, res) => adminController.deleteAdminAction(req, res));

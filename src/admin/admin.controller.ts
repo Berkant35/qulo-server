@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { adminService } from "./admin.service.js";
+import { adminService, pushTemplateAdminService } from "./admin.service.js";
 import { emailService } from "../services/email.service.js";
 import { campaignService } from "../services/campaign.service.js";
 import { appConfigService } from "../services/app-config.service.js";
@@ -7,6 +7,11 @@ import { NotificationService } from "../services/notification.service.js";
 import { economyConfigService } from "../services/economy-config.service.js";
 import { economyConfigSchema, ECONOMY_BOUNDARIES } from "../types/economy-config.schema.js";
 import { supabase } from "../config/supabase.js";
+import {
+  pushTemplateParamsSchema,
+  pushTemplateQuerySchema,
+  pushTemplateBodySchema,
+} from "../validators/push-template.validator.js";
 
 class AdminController {
   loginPage(req: Request, res: Response) {
@@ -519,6 +524,76 @@ class AdminController {
         success: false,
         error: err.message,
       });
+    }
+  }
+
+  // ── Push notification templates (dynamic overrides) ─────────────
+  async pushMessagesList(req: Request, res: Response) {
+    const locale = (req.query.locale as string) || "tr";
+    if (!["tr", "en"].includes(locale)) {
+      return res.redirect("/admin/push-messages?locale=tr");
+    }
+    const rows = await pushTemplateAdminService.list(locale);
+    res.render("push-messages-list", { rows, locale, session: req.session, csrfToken: req.session.csrfToken });
+  }
+
+  async pushMessageEdit(req: Request, res: Response) {
+    const parsedParams = pushTemplateParamsSchema.safeParse(req.params);
+    const parsedQuery = pushTemplateQuerySchema.safeParse(req.query);
+    if (!parsedParams.success || !parsedQuery.success) {
+      return res.redirect("/admin/push-messages?locale=tr");
+    }
+    const item = await pushTemplateAdminService.getOne(parsedParams.data.type, parsedQuery.data.locale);
+    res.render("push-messages-edit", { item, session: req.session, csrfToken: req.session.csrfToken });
+  }
+
+  async pushMessageApiGet(req: Request, res: Response) {
+    const parsedParams = pushTemplateParamsSchema.safeParse(req.params);
+    const parsedQuery = pushTemplateQuerySchema.safeParse(req.query);
+    if (!parsedParams.success || !parsedQuery.success) {
+      return res.status(400).json({ error: "invalid_request" });
+    }
+    const item = await pushTemplateAdminService.getOne(parsedParams.data.type, parsedQuery.data.locale);
+    res.json(item);
+  }
+
+  async pushMessageApiUpsert(req: Request, res: Response) {
+    const parsedParams = pushTemplateParamsSchema.safeParse(req.params);
+    const parsedQuery = pushTemplateQuerySchema.safeParse(req.query);
+    const parsedBody = pushTemplateBodySchema.safeParse(req.body);
+    if (!parsedParams.success || !parsedQuery.success || !parsedBody.success) {
+      return res.status(400).json({
+        error: "invalid_request",
+        details: parsedBody.success ? null : parsedBody.error.issues,
+      });
+    }
+    const actor = req.session.adminEmail ?? "unknown";
+    try {
+      const row = await pushTemplateAdminService.upsert(
+        parsedParams.data.type,
+        parsedQuery.data.locale,
+        parsedBody.data,
+        actor,
+      );
+      res.json(row);
+    } catch (err: any) {
+      console.error("[Admin] push-messages upsert failed:", err?.message ?? err);
+      res.status(500).json({ error: "server_error" });
+    }
+  }
+
+  async pushMessageApiRemove(req: Request, res: Response) {
+    const parsedParams = pushTemplateParamsSchema.safeParse(req.params);
+    const parsedQuery = pushTemplateQuerySchema.safeParse(req.query);
+    if (!parsedParams.success || !parsedQuery.success) {
+      return res.status(400).json({ error: "invalid_request" });
+    }
+    try {
+      await pushTemplateAdminService.remove(parsedParams.data.type, parsedQuery.data.locale);
+      res.json({ ok: true });
+    } catch (err: any) {
+      console.error("[Admin] push-messages remove failed:", err?.message ?? err);
+      res.status(500).json({ error: "server_error" });
     }
   }
 }
