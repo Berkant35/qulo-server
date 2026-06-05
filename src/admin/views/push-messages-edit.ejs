@@ -1,0 +1,176 @@
+<%- include('_header') %>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+  <h2>
+    Push Mesajı:
+    <code style="font-size: 14px; background: #f3f4f6; padding: 2px 8px; border-radius: 4px;"><%= item.type %></code>
+    <span class="badge" style="background: #e0e7ff; color: #3730a3; margin-left: 6px;"><%= item.locale.toUpperCase() %></span>
+  </h2>
+  <a href="/admin/push-messages?locale=<%= item.locale %>" class="btn" style="background: #e5e7eb; color: #333;">← Geri</a>
+</div>
+
+<% if (item.updated_at) { %>
+<div style="font-size: 12px; color: #666; margin-bottom: 16px;">
+  Son düzenlenme: <%= new Date(item.updated_at).toLocaleString('tr-TR') %>
+  <% if (item.updated_by) { %>
+    <span style="color: #999;"> · <%= item.updated_by %></span>
+  <% } %>
+</div>
+<% } %>
+
+<form id="push-form" data-type="<%= item.type %>" data-locale="<%= item.locale %>">
+  <!-- Content Section -->
+  <div class="card">
+    <h3 style="margin-bottom: 16px; font-size: 16px; color: #1a1a2e;">İçerik</h3>
+
+    <div style="display: grid; gap: 16px;">
+      <!-- Title -->
+      <div>
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Başlık</label>
+        <input
+          type="text"
+          name="title"
+          id="f-title"
+          value="<%= item.override_title ?? '' %>"
+          maxlength="120"
+          placeholder="Boş bırakırsan default kullanılır"
+          style="width: 100%;"
+        />
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px; gap: 12px; flex-wrap: wrap;">
+          <small style="font-size: 12px; color: #666;">
+            Default:
+            <code id="d-title" style="background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;"><%= item.default_title %></code>
+          </small>
+          <button type="button" class="btn btn-sm" style="background: #e5e7eb; color: #333;" onclick="resetField('title')">Default'a dön</button>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div>
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Gövde</label>
+        <textarea
+          name="body"
+          id="f-body"
+          maxlength="280"
+          rows="3"
+          placeholder="Boş bırakırsan default kullanılır"
+          style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-family: inherit; resize: vertical;"
+        ><%= item.override_body ?? '' %></textarea>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px; gap: 12px; flex-wrap: wrap;">
+          <small style="font-size: 12px; color: #666;">
+            Default:
+            <code id="d-body" style="background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;"><%= item.default_body %></code>
+          </small>
+          <button type="button" class="btn btn-sm" style="background: #e5e7eb; color: #333;" onclick="resetField('body')">Default'a dön</button>
+        </div>
+      </div>
+
+      <!-- Active -->
+      <div>
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+          <input type="checkbox" name="is_active" id="f-active" <%= item.is_active ? 'checked' : '' %> />
+          <span>Aktif</span>
+        </label>
+        <p style="font-size: 12px; color: #999; margin-top: 4px;">Pasif yaparsan bu push hiç gönderilmez.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preview Section -->
+  <div class="card">
+    <h3 style="margin-bottom: 12px; font-size: 16px; color: #1a1a2e;">📱 Önizleme</h3>
+    <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px 16px; max-width: 420px;">
+      <div style="font-size: 11px; color: #999; margin-bottom: 4px;">QULO • şimdi</div>
+      <strong id="p-title" style="display: block; font-size: 14px; color: #111;"></strong>
+      <p id="p-body" style="font-size: 13px; color: #444; margin-top: 2px;"></p>
+    </div>
+    <p style="font-size: 12px; color: #999; margin-top: 8px;">Örnek parametreler: <code>{name}</code> → Berkant, <code>{badge}</code> → Altın Soru Çözücü, <code>{result}</code> → doğru</p>
+  </div>
+
+  <!-- Actions -->
+  <div style="display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap;">
+    <button type="submit" class="btn btn-primary" style="padding: 10px 24px; font-size: 14px;">Kaydet</button>
+    <a href="/admin/push-messages?locale=<%= item.locale %>" class="btn" style="background: #e5e7eb; color: #333; padding: 10px 24px; font-size: 14px;">İptal</a>
+    <% if (item.override_title || item.override_body) { %>
+      <button type="button" class="btn btn-danger" style="padding: 10px 24px; font-size: 14px; margin-left: auto;" onclick="resetAll()">Override'ı tamamen sil</button>
+    <% } %>
+  </div>
+</form>
+
+<script>
+  const PARAM_EXAMPLES = { name: 'Berkant', badge: 'Altın Soru Çözücü', result: 'doğru' };
+  const CSRF_TOKEN = '<%= csrfToken %>';
+
+  function fillPlaceholders(text) {
+    if (!text) return '';
+    return text.replace(/\{([a-zA-Z0-9_]+)\}/g, function (_, k) {
+      return PARAM_EXAMPLES[k] != null ? PARAM_EXAMPLES[k] : '{' + k + '}';
+    });
+  }
+
+  function updatePreview() {
+    const titleInput = document.getElementById('f-title').value;
+    const bodyInput = document.getElementById('f-body').value;
+    const title = titleInput || document.getElementById('d-title').textContent;
+    const body = bodyInput || document.getElementById('d-body').textContent;
+    document.getElementById('p-title').textContent = fillPlaceholders(title);
+    document.getElementById('p-body').textContent = fillPlaceholders(body);
+  }
+
+  function resetField(field) {
+    document.getElementById('f-' + field).value = '';
+    updatePreview();
+  }
+
+  async function resetAll() {
+    if (!confirm("Override tamamen silinecek ve default'a dönülecek. Emin misin?")) return;
+    const form = document.getElementById('push-form');
+    try {
+      const res = await fetch('/admin/api/push-messages/' + encodeURIComponent(form.dataset.type) + '?locale=' + encodeURIComponent(form.dataset.locale), {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ _csrf: CSRF_TOKEN }),
+      });
+      if (res.ok) {
+        location.reload();
+      } else {
+        const err = await res.json().catch(function () { return {}; });
+        alert('Hata: ' + (err.error || 'silinemedi'));
+      }
+    } catch (e) {
+      alert('Hata: ağ sorunu');
+    }
+  }
+
+  document.addEventListener('input', updatePreview);
+  updatePreview();
+
+  document.getElementById('push-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const form = e.target;
+    const isActive = document.getElementById('f-active').checked;
+    const titleVal = document.getElementById('f-title').value.trim();
+    const bodyVal = document.getElementById('f-body').value.trim();
+    const title = titleVal === '' ? null : titleVal;
+    const body = bodyVal === '' ? null : bodyVal;
+
+    if (!isActive && !confirm('Bu push artık hiç gönderilmeyecek. Emin misin?')) return;
+
+    try {
+      const res = await fetch('/admin/api/push-messages/' + encodeURIComponent(form.dataset.type) + '?locale=' + encodeURIComponent(form.dataset.locale), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: title, body: body, is_active: isActive, _csrf: CSRF_TOKEN }),
+      });
+      if (res.ok) {
+        alert('Kaydedildi');
+        location.reload();
+      } else {
+        const err = await res.json().catch(function () { return {}; });
+        alert('Hata: ' + (err.error || 'unknown'));
+      }
+    } catch (e) {
+      alert('Hata: ağ sorunu');
+    }
+  });
+</script>
+<%- include('_footer') %>
