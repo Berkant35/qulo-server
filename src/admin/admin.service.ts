@@ -2,8 +2,12 @@ import { supabase } from "../config/supabase.js";
 import { hashPassword, comparePassword, normalizeEmail } from "../utils/hash.js";
 import { sanitizeIlike } from "../utils/validation.js";
 import { Errors } from "../utils/errors.js";
-import { PUSH_TYPES } from "../services/notification.service.js";
-import { createRequire } from "node:module";
+import {
+  PUSH_TYPES,
+  loadDefaultTemplate,
+  type PushType,
+  type SupportedLocale,
+} from "../services/notification.service.js";
 
 class AdminService {
   async findByEmail(email: string) {
@@ -776,28 +780,12 @@ export const adminService = new AdminService();
 
 // ── Push template admin service ─────────────────────────────────────────────
 // Manages dynamic push notification template overrides (push_messages table).
-// Locale JSON files store push entries as bare strings (legacy shape) — the
-// extractDefault helper adapts to both bare-string and { title, body } object
-// shapes so future migrations work without changes here.
-
-const adminRequire = createRequire(import.meta.url);
-const adminLocales = {
-  en: adminRequire("../locales/en.json"),
-  tr: adminRequire("../locales/tr.json"),
-} as Record<string, { push?: Record<string, unknown> }>;
-
-function extractDefault(loc: string, type: string): { title: string; body: string } {
-  const raw = adminLocales[loc]?.push?.[type];
-  if (typeof raw === "string") return { title: "Qulo", body: raw };
-  if (raw && typeof raw === "object") {
-    const r = raw as { title?: string; body?: string };
-    return { title: r.title ?? "Qulo", body: r.body ?? "" };
-  }
-  return { title: "", body: "" };
-}
+// Default-template extraction is shared with NotificationService.getTemplate
+// via loadDefaultTemplate() — one source of truth for shape adaptation and
+// brand fallback ('Qulo').
 
 export const pushTemplateAdminService = {
-  async list(locale: string) {
+  async list(locale: SupportedLocale) {
     const { data } = await supabase
       .from("push_messages")
       .select("type, title, body, is_active, updated_at, updated_by")
@@ -807,7 +795,7 @@ export const pushTemplateAdminService = {
 
     return PUSH_TYPES.map((type) => {
       const o = overridesByType.get(type);
-      const def = extractDefault(locale, type);
+      const def = loadDefaultTemplate(type as PushType, locale);
       return {
         type,
         default_title: def.title,
@@ -822,14 +810,14 @@ export const pushTemplateAdminService = {
     });
   },
 
-  async getOne(type: string, locale: string) {
+  async getOne(type: PushType, locale: SupportedLocale) {
     const { data } = await supabase
       .from("push_messages")
       .select("title, body, is_active, updated_at, updated_by")
       .eq("type", type)
       .eq("locale", locale)
       .maybeSingle();
-    const def = extractDefault(locale, type);
+    const def = loadDefaultTemplate(type, locale);
     return {
       type,
       locale,
@@ -844,8 +832,8 @@ export const pushTemplateAdminService = {
   },
 
   async upsert(
-    type: string,
-    locale: string,
+    type: PushType,
+    locale: SupportedLocale,
     payload: { title?: string | null; body?: string | null; is_active: boolean },
     actorEmail: string,
   ) {
@@ -869,7 +857,7 @@ export const pushTemplateAdminService = {
     return data;
   },
 
-  async remove(type: string, locale: string) {
+  async remove(type: PushType, locale: SupportedLocale) {
     const { error } = await supabase
       .from("push_messages")
       .delete()

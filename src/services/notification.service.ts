@@ -27,6 +27,27 @@ export type SupportedLocale = typeof SUPPORTED_LOCALES[number];
 
 export type ResolvedTemplate = { title: string; body: string } | null;
 
+export const DEFAULT_PUSH_TITLE = 'Qulo';
+
+/**
+ * Resolve the locale-file default template for a (type, locale) pair.
+ * Handles BOTH legacy bare-string entries (body-only) and future {title, body} object shape.
+ * Returns { title: '', body: '' } when no entry exists.
+ */
+export function loadDefaultTemplate(
+  type: PushType,
+  locale: SupportedLocale,
+): { title: string; body: string } {
+  const safeLocale = locales[locale] ? locale : 'en';
+  const raw = locales[safeLocale]?.push?.[type] as unknown;
+  if (typeof raw === 'string') return { title: DEFAULT_PUSH_TITLE, body: raw };
+  if (raw && typeof raw === 'object') {
+    const r = raw as { title?: string; body?: string };
+    return { title: r.title ?? DEFAULT_PUSH_TITLE, body: r.body ?? '' };
+  }
+  return { title: '', body: '' };
+}
+
 interface NotificationTypeConfig {
   actionUrl?: string;
   category?: string;
@@ -93,18 +114,11 @@ export class NotificationService {
     type: PushType,
     locale: SupportedLocale,
   ): Promise<ResolvedTemplate> {
-    const safeLocale = locales[locale] ? locale : 'en';
-    const rawDefault = locales[safeLocale]?.push?.[type] as unknown;
-    let defaultTitle: string | undefined;
-    let defaultBody: string | undefined;
-    if (typeof rawDefault === 'string') {
-      defaultTitle = 'Qulo';
-      defaultBody = rawDefault;
-    } else if (rawDefault && typeof rawDefault === 'object') {
-      const obj = rawDefault as { title?: string; body?: string };
-      defaultTitle = obj.title;
-      defaultBody = obj.body;
-    }
+    const safeLocale: SupportedLocale = locales[locale] ? locale : 'en';
+    const def = loadDefaultTemplate(type, safeLocale);
+    // Empty strings from loadDefaultTemplate (unknown type) → treat as "no default".
+    const defaultTitle = def.title || undefined;
+    const defaultBody = def.body || undefined;
 
     type OverrideRow = { title: string | null; body: string | null; is_active: boolean };
     let override: OverrideRow | null = null;
