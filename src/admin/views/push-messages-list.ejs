@@ -1,0 +1,55 @@
+<%- include('_header') %>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+  <h2>Push Mesajları <span style="font-size: 14px; color: #666;">(<%= rows.length %> tip)</span></h2>
+  <div class="pagination" style="margin: 0;">
+    <% ['tr','en'].forEach(function(l) { %>
+      <a href="?locale=<%= l %>" class="<%= l === locale ? 'active' : '' %>"><%= l.toUpperCase() %></a>
+    <% }); %>
+  </div>
+</div>
+
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>Tip</th>
+        <th>Başlık</th>
+        <th>Durum</th>
+        <th>Son düzenlenme</th>
+        <th style="text-align: right;">İşlem</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (rows.length === 0) { %>
+      <tr><td colspan="5" style="text-align: center; color: #999; padding: 24px;">Kayıt yok</td></tr>
+      <% } %>
+      <% rows.forEach(function(row) { %>
+      <tr>
+        <td><code style="font-size: 12px; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;"><%= row.type %></code></td>
+        <td><%= row.override_title || row.default_title %></td>
+        <td>
+          <% if (row.is_active) { %>
+            <span class="badge" style="background: #d1fae5; color: #065f46;">🟢 Aktif</span>
+          <% } else { %>
+            <span class="badge" style="background: #fef2f2; color: #991b1b;">🔴 Pasif</span>
+          <% } %>
+        </td>
+        <td style="font-size: 12px; color: #666;">
+          <% if (row.has_override && row.updated_at) { %>
+            <%= new Date(row.updated_at).toLocaleString('tr-TR') %>
+            <% if (row.updated_by) { %>
+              <small style="color: #999;"> (<%= row.updated_by %>)</small>
+            <% } %>
+          <% } else { %>
+            <em style="color: #999;">default</em>
+          <% } %>
+        </td>
+        <td style="text-align: right;">
+          <a class="btn btn-primary btn-sm" href="/admin/push-messages/<%= row.type %>?locale=<%= locale %>">Düzenle</a>
+        </td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+<%- include('_footer') %>
