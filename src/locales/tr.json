@@ -5,8 +5,6 @@
     "new_match": "Yeni bir eslesme! Birisi tum sorularinizi dogru cozdu",
     "new_match_solver": "Tebrikler! Tum sorulari dogru cozdun, yeni bir eslesmen var!",
     "new_match_badge": "Birisi sorularini {badge} badge ile cozdu! Yeni eslesmen var!",
-    "quiz_started": "{name} sorularinizi cozmeye basladi",
-    "passport_expired": "Pasaport modunuz sona erdi",
     "chat_question_answered": "Sohbet sorunuz cevaplandi ({result})"
   }
 }

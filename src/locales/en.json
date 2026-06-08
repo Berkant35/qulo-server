@@ -5,8 +5,6 @@
     "new_match": "New match! Someone answered all your questions correctly",
     "new_match_solver": "Congratulations! You answered all questions correctly, you have a new match!",
     "new_match_badge": "Someone solved your quiz with {badge} badge! You have a new match!",
-    "quiz_started": "{name} started solving your questions",
-    "passport_expired": "Your passport mode has expired",
     "chat_question_answered": "Your chat question was answered ({result})"
   }
 }
