@@ -59,4 +59,12 @@ describe('NotificationService.getTemplate', () => {
     const tpl = await NotificationService.getTemplate('does_not_exist' as any, 'tr');
     expect(tpl).toBeNull();
   });
+
+  it('returns null for removed type quiz_started (locale entry deleted)', async () => {
+    mockSelect({ data: null, error: null });
+    // quiz_started was removed from PUSH_TYPES + locale files in Phase 1 closing.
+    // Cast bypasses the narrowed type — runtime behavior: no locale entry → no template → null.
+    const tpl = await NotificationService.getTemplate('quiz_started' as any, 'tr');
+    expect(tpl).toBeNull();
+  });
 });

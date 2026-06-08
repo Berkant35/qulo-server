@@ -54,4 +54,32 @@ describe('pushTemplateAdminService.list (shape)', () => {
       expect(r).toHaveProperty('is_active');
     });
   });
+
+  it('returns exactly 6 admin-editable types (no campaign, no quiz_started, no passport_expired)', async () => {
+    vi.resetModules();
+    vi.doMock('../../src/config/supabase.js', () => ({
+      supabase: {
+        from: () => ({
+          select: () => ({
+            eq: () => Promise.resolve({ data: [], error: null }),
+          }),
+        }),
+      },
+    }));
+    const { pushTemplateAdminService: svc } = await import('../../src/admin/admin.service.js');
+    const rows = await svc.list('tr');
+    expect(rows.length).toBe(6);
+    const types = rows.map((r) => r.type).sort();
+    expect(types).toEqual([
+      'chat_question_answered',
+      'new_match',
+      'new_match_badge',
+      'new_match_solver',
+      'new_message',
+      'new_message_image',
+    ]);
+    expect(types).not.toContain('campaign');
+    expect(types).not.toContain('quiz_started');
+    expect(types).not.toContain('passport_expired');
+  });
 });
