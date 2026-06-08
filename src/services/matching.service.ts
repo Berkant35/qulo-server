@@ -61,7 +61,7 @@ export class MatchingService {
       supabase
         .from("users")
         .select(
-          "id, gender_pref, age_pref_min, age_pref_max, match_radius_km, lat, lng, passport_lat, passport_lng, preferred_languages",
+          "id, gender_pref, age_pref_min, age_pref_max, match_radius_km, lat, lng, passport_lat, passport_lng, preferred_languages, is_test_admin",
         )
         .eq("id", userId)
         .eq("is_deleted", false)
@@ -128,6 +128,11 @@ export class MatchingService {
       .not("lat", "is", null)
       .not("lng", "is", null)
       .limit(50);
+
+    // Hide test accounts unless viewer is a test admin (TikTok seed users etc.)
+    if (!user.is_test_admin) {
+      query = query.eq("is_test_account", false);
+    }
 
     // Age filter
     if (user.age_pref_min != null) {

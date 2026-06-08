@@ -272,6 +272,7 @@ async function seedUsers() {
         preferred_languages: u.preferred_languages,
         referral_code: u.referral_code,
         last_seen_at: new Date().toISOString(),
+        is_test_account: true,
       })
       .select("id")
       .single();
