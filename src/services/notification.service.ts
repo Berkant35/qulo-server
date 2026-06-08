@@ -9,19 +9,27 @@ const locales: Record<string, Record<string, Record<string, string>>> = {
   tr: require('../locales/tr.json'),
 };
 
+// Admin-editable push template types (shown in /admin/push-messages panel).
+// Validator (pushTemplateParamsSchema) accepts only these.
 export const PUSH_TYPES = [
   'new_message',
   'new_message_image',
   'new_match',
   'new_match_solver',
   'new_match_badge',
-  'quiz_started',
-  'passport_expired',
   'chat_question_answered',
-  'campaign',
 ] as const;
 
 export type PushType = typeof PUSH_TYPES[number];
+
+// Internal push types — invoked by sendPush() but NOT editable from the admin panel.
+// Body comes from caller params (e.g. campaign.push_body), template lookup is bypassed.
+export const INTERNAL_PUSH_TYPES = ['campaign'] as const;
+export type InternalPushType = typeof INTERNAL_PUSH_TYPES[number];
+
+// Union accepted by sendPush, getTemplate, and NOTIFICATION_CONFIG.
+export type AnyPushType = PushType | InternalPushType;
+
 export const SUPPORTED_LOCALES = ['tr', 'en'] as const;
 export type SupportedLocale = typeof SUPPORTED_LOCALES[number];
 
@@ -35,7 +43,7 @@ export const DEFAULT_PUSH_TITLE = 'Qulo';
  * Returns { title: '', body: '' } when no entry exists.
  */
 export function loadDefaultTemplate(
-  type: PushType,
+  type: AnyPushType,
   locale: SupportedLocale,
 ): { title: string; body: string } {
   const safeLocale = locales[locale] ? locale : 'en';
@@ -57,16 +65,14 @@ interface NotificationTypeConfig {
   badgeTemplateKey?: string;
 }
 
-const NOTIFICATION_CONFIG: Record<PushType, NotificationTypeConfig> = {
+const NOTIFICATION_CONFIG: Record<AnyPushType, NotificationTypeConfig> = {
   new_message:            { category: 'messages' },
   new_message_image:      { category: 'messages' },
   new_match:              { actionUrl: '/matches', category: 'matches', badgeTemplateKey: 'new_match_badge' },
   new_match_solver:       { actionUrl: '/matches', category: 'matches' },
   new_match_badge:        { actionUrl: '/matches', category: 'matches' },
-  quiz_started:           { category: 'matches' },
-  passport_expired:       { actionUrl: '/profile/passport' },
-  campaign:               { category: 'campaigns' },
   chat_question_answered: { category: 'matches' },
+  campaign:               { category: 'campaigns' },
 };
 
 function interpolate(template: string, params: Record<string, string>): string {
@@ -111,7 +117,7 @@ export class NotificationService {
    *   (e.g. unknown type with no override row).
    */
   static async getTemplate(
-    type: PushType,
+    type: AnyPushType,
     locale: SupportedLocale,
   ): Promise<ResolvedTemplate> {
     const safeLocale: SupportedLocale = locales[locale] ? locale : 'en';
@@ -149,7 +155,7 @@ export class NotificationService {
    */
   static async sendPush(
     userId: string,
-    type: PushType,
+    type: AnyPushType,
     params: Record<string, string> = {},
     data?: Record<string, string>,
     options?: {
@@ -195,7 +201,7 @@ export class NotificationService {
         const config = NOTIFICATION_CONFIG[type];
         const templateKey = (params.badge && config.badgeTemplateKey) ? config.badgeTemplateKey : (config.templateKey ?? type);
 
-        const resolved = await NotificationService.getTemplate(templateKey as PushType, safeLocale);
+        const resolved = await NotificationService.getTemplate(templateKey as AnyPushType, safeLocale);
         if (!resolved) {
           console.warn(`[NotificationService] No push template for type=${templateKey}, locale=${safeLocale} — DB persisted, FCM skipped`);
           body = `[${type}]`;
