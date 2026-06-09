@@ -1,12 +1,27 @@
 import { createRequire } from 'node:module';
 import { getFcm, isFcmAvailable } from '../config/firebase.js';
 import { supabase } from '../config/supabase.js';
+import { resolveLocale } from '../utils/locales.js';
 
 const require = createRequire(import.meta.url);
 
 const locales: Record<string, Record<string, Record<string, string>>> = {
-  en: require('../locales/en.json'),
   tr: require('../locales/tr.json'),
+  en: require('../locales/en.json'),
+  de: require('../locales/de.json'),
+  fr: require('../locales/fr.json'),
+  es: require('../locales/es.json'),
+  ar: require('../locales/ar.json'),
+  ru: require('../locales/ru.json'),
+  pt: require('../locales/pt.json'),
+  it: require('../locales/it.json'),
+  ja: require('../locales/ja.json'),
+  ko: require('../locales/ko.json'),
+  zh: require('../locales/zh.json'),
+  nl: require('../locales/nl.json'),
+  pl: require('../locales/pl.json'),
+  sv: require('../locales/sv.json'),
+  hi: require('../locales/hi.json'),
 };
 
 // Admin-editable push template types (shown in /admin/push-messages panel).
@@ -30,8 +45,10 @@ export type InternalPushType = typeof INTERNAL_PUSH_TYPES[number];
 // Union accepted by sendPush, getTemplate, and NOTIFICATION_CONFIG.
 export type AnyPushType = PushType | InternalPushType;
 
-export const SUPPORTED_LOCALES = ['tr', 'en'] as const;
-export type SupportedLocale = typeof SUPPORTED_LOCALES[number];
+import { SUPPORTED_LOCALES } from '../constants/locales.js';
+import type { SupportedLocale } from '../constants/locales.js';
+export { SUPPORTED_LOCALES };
+export type { SupportedLocale };
 
 export type ResolvedTemplate = { title: string; body: string } | null;
 
@@ -73,6 +90,26 @@ const NOTIFICATION_CONFIG: Record<AnyPushType, NotificationTypeConfig> = {
   new_match_badge:        { actionUrl: '/matches', category: 'matches' },
   chat_question_answered: { category: 'matches' },
   campaign:               { category: 'campaigns' },
+};
+
+// 16 dilde "Birisi" karşılığı — push body'lerde {name} placeholder'ı boş kalırsa kullanılır
+const NAME_FALLBACK: Record<SupportedLocale, string> = {
+  tr: 'Birisi',
+  en: 'Someone',
+  de: 'Jemand',
+  fr: 'Quelqu\'un',
+  es: 'Alguien',
+  ar: 'شخص ما',
+  ru: 'Кто-то',
+  pt: 'Alguém',
+  it: 'Qualcuno',
+  ja: '誰か',
+  ko: '누군가',
+  zh: '有人',
+  nl: 'Iemand',
+  pl: 'Ktoś',
+  sv: 'Någon',
+  hi: 'कोई',
 };
 
 function interpolate(template: string, params: Record<string, string>): string {
@@ -189,12 +226,12 @@ export class NotificationService {
         title = options.title;
         body = params.body ?? options.title;
       } else {
-        const locale = user.locale && locales[user.locale] ? user.locale : 'en';
-        const safeLocale: SupportedLocale = (locale === 'tr' || locale === 'en') ? locale : 'en';
+        // Import edilen resolveLocale ile single source of truth — 16 dil
+        const safeLocale: SupportedLocale = resolveLocale(user.locale);
 
         // Provide locale-aware fallback for {name} if empty
         if ('name' in params && !params.name) {
-          params.name = locale === 'tr' ? 'Birisi' : 'Someone';
+          params.name = NAME_FALLBACK[safeLocale];
         }
 
         // Use badge-specific template if badge param is present
