@@ -5,6 +5,7 @@ import { diamondService } from "./diamond.service.js";
 import { exchangeService } from "./exchange.service.js";
 import { economyConfigService } from "./economy-config.service.js";
 import { NotificationService } from "./notification.service.js";
+import { matchEmailService } from "./match-email.service.js";
 import { userLanguageService } from "./user-language.service.js";
 import type { PowerName } from "../types/index.js";
 
@@ -552,6 +553,12 @@ export class QuizService {
       NotificationService.sendPush(solverId, "new_match_solver"),
       NotificationService.sendPush(targetId, "new_match", badgeParams),
     ]);
+
+    // Fire-and-forget match email to owner (target had their questions solved).
+    // Service handles opt-out, 24h inactive threshold, locale resolution, and swallows send errors.
+    matchEmailService.sendMatchEmail(targetId).catch((err) => {
+      console.error("[quiz.createMatch] match email failed", { targetId, err });
+    });
   }
 
   private async calculateBadge(sessionId: string): Promise<string> {
