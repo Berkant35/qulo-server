@@ -172,6 +172,16 @@ export class UserService {
     if (error) throw Errors.SERVER_ERROR();
   }
 
+  async heartbeat(userId: string): Promise<void> {
+    const { error } = await supabase
+      .from("users")
+      .update({ last_active_at: new Date().toISOString() })
+      .eq("id", userId);
+    if (error) {
+      console.warn("[user.service] heartbeat failed:", error);
+    }
+  }
+
   async deleteAccount(userId: string) {
     const { error } = await supabase
       .from("users")

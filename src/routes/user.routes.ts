@@ -18,6 +18,7 @@ import {
   updateDetailsHandler,
   updateLocationHandler,
   updatePushTokenHandler,
+  heartbeatHandler,
   uploadPhotoHandler,
   deletePhotoHandler,
   boostHandler,
@@ -56,6 +57,7 @@ router.patch("/me", validate(updateProfileSchema), updateProfileHandler);
 router.patch("/me/details", validate(updateDetailsSchema), updateDetailsHandler);
 router.patch("/me/location", validate(updateLocationSchema), updateLocationHandler);
 router.patch("/me/push-token", validate(updatePushTokenSchema), updatePushTokenHandler);
+router.post("/me/heartbeat", heartbeatHandler);
 router.post("/me/photos", upload.single("photo"), uploadPhotoHandler);
 router.post("/me/boost", profileGuard, boostHandler);
 router.post("/me/claim-badge-reward", profileGuard, claimBadgeRewardHandler);

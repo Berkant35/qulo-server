@@ -60,6 +60,15 @@ export async function updatePushTokenHandler(req: Request, res: Response, next: 
   }
 }
 
+export async function heartbeatHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    await userService.heartbeat(req.user!.userId);
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function uploadPhotoHandler(req: Request, res: Response, next: NextFunction) {
   try {
     if (!req.file) {
