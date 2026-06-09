@@ -1,0 +1,10 @@
+{
+  "push": {
+    "new_message": "{name} hat dir eine Nachricht geschickt",
+    "new_message_image": "{name} hat dir ein Foto geschickt",
+    "new_match": "Neue Übereinstimmung! Jemand hat alle deine Fragen richtig beantwortet",
+    "new_match_solver": "Glückwunsch! Du hast alle Fragen richtig beantwortet, du hast eine neue Übereinstimmung!",
+    "new_match_badge": "Jemand hat deine Fragen mit dem {badge}-Abzeichen gelöst! Du hast eine neue Übereinstimmung!",
+    "chat_question_answered": "Deine Chat-Frage wurde beantwortet ({result})"
+  }
+}

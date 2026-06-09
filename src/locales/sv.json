@@ -1,0 +1,10 @@
+{
+  "push": {
+    "new_message": "{name} skickade dig ett meddelande",
+    "new_message_image": "{name} skickade dig ett foto",
+    "new_match": "Ny matchning! Någon svarade rätt på alla dina frågor",
+    "new_match_solver": "Grattis! Du svarade rätt på alla frågor, du har en ny matchning!",
+    "new_match_badge": "Någon löste din quiz med {badge}-märket! Du har en ny matchning!",
+    "chat_question_answered": "Din chattfråga har besvarats ({result})"
+  }
+}

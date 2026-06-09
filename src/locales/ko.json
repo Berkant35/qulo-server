@@ -1,0 +1,10 @@
+{
+  "push": {
+    "new_message": "{name}님이 메시지를 보냈습니다",
+    "new_message_image": "{name}님이 사진을 보냈습니다",
+    "new_match": "새로운 매치! 누군가 당신의 모든 질문에 정답을 맞췄습니다",
+    "new_match_solver": "축하합니다! 모든 질문에 정답을 맞췄어요. 새로운 매치가 있습니다!",
+    "new_match_badge": "누군가가 {badge} 배지로 당신의 퀴즈를 풀었어요! 새로운 매치가 있습니다!",
+    "chat_question_answered": "채팅 질문에 답변이 달렸어요 ({result})"
+  }
+}

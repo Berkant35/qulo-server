@@ -1,0 +1,10 @@
+{
+  "push": {
+    "new_message": "{name} 给你发了一条消息",
+    "new_message_image": "{name} 给你发了一张照片",
+    "new_match": "新匹配！有人答对了你的所有问题",
+    "new_match_solver": "恭喜！你答对了所有问题，你有一个新匹配！",
+    "new_match_badge": "有人以 {badge} 徽章解开了你的问题！你有一个新匹配！",
+    "chat_question_answered": "你的聊天问题已被回答 ({result})"
+  }
+}

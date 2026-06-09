@@ -1,0 +1,10 @@
+{
+  "push": {
+    "new_message": "{name}さんからメッセージが届きました",
+    "new_message_image": "{name}さんから写真が届きました",
+    "new_match": "新しいマッチ！あなたの質問にすべて正解した人がいます",
+    "new_match_solver": "おめでとうございます！すべての質問に正解しました。新しいマッチがあります！",
+    "new_match_badge": "{badge}バッジで誰かがあなたのクイズを解きました！新しいマッチがあります！",
+    "chat_question_answered": "チャットの質問に回答がありました ({result})"
+  }
+}

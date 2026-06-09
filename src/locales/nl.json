@@ -1,0 +1,10 @@
+{
+  "push": {
+    "new_message": "{name} heeft je een bericht gestuurd",
+    "new_message_image": "{name} heeft je een foto gestuurd",
+    "new_match": "Nieuwe match! Iemand heeft al je vragen goed beantwoord",
+    "new_match_solver": "Gefeliciteerd! Je hebt alle vragen goed beantwoord, je hebt een nieuwe match!",
+    "new_match_badge": "Iemand heeft je quiz opgelost met de {badge}-badge! Je hebt een nieuwe match!",
+    "chat_question_answered": "Je chatvraag is beantwoord ({result})"
+  }
+}

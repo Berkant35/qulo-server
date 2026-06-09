@@ -1,0 +1,10 @@
+{
+  "push": {
+    "new_message": "{name} te envió un mensaje",
+    "new_message_image": "{name} te envió una foto",
+    "new_match": "¡Nueva coincidencia! Alguien respondió correctamente a todas tus preguntas",
+    "new_match_solver": "¡Felicidades! Respondiste correctamente a todas las preguntas, ¡tienes una nueva coincidencia!",
+    "new_match_badge": "¡Alguien resolvió tu cuestionario con la insignia {badge}! ¡Tienes una nueva coincidencia!",
+    "chat_question_answered": "Tu pregunta del chat fue respondida ({result})"
+  }
+}
