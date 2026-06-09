@@ -9,5 +9,13 @@
   "reset_body": "Clicca il pulsante qui sotto per reimpostare la tua password. Questo link è valido per 1 ora.",
   "reset_button": "Reimposta la mia password",
   "link_fallback": "Se il pulsante non funziona:",
-  "footer_ignore": "Se non hai richiesto questa email, puoi ignorarla in sicurezza."
+  "footer_ignore": "Se non hai richiesto questa email, puoi ignorarla in sicurezza.",
+  "match_new": {
+    "subject": "Qualcuno ha risolto le tue domande 🎉",
+    "preheader": "Hai una nuova corrispondenza",
+    "headline": "Qualcuno ha risposto a tutte le tue domande",
+    "body": "Hai una nuova corrispondenza su Qulo. Apri l'app per vedere chi è.",
+    "cta": "Vedi ora",
+    "unsubscribe_label": "Disattiva e-mail"
+  }
 }

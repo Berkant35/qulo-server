@@ -9,5 +9,13 @@
   "reset_body": "Şifrenizi sıfırlamak için aşağıdaki butona tıklayın. Bu bağlantı 1 saat boyunca geçerlidir.",
   "reset_button": "Şifremi Sıfırla",
   "link_fallback": "Buton çalışmıyorsa:",
-  "footer_ignore": "Bu e-postayı siz talep etmediyseniz güvenle yok sayabilirsiniz."
+  "footer_ignore": "Bu e-postayı siz talep etmediyseniz güvenle yok sayabilirsiniz.",
+  "match_new": {
+    "subject": "Birisi sorularını çözdü 🎉",
+    "preheader": "Yeni bir eşleşmen var",
+    "headline": "Birisi tüm sorularını çözdü",
+    "body": "Qulo'da yeni bir eşleşmen var. Şimdi kim olduğunu görmek için uygulamayı aç.",
+    "cta": "Şimdi gör",
+    "unsubscribe_label": "E-posta bildirimlerini kapat"
+  }
 }

@@ -9,5 +9,13 @@
   "reset_body": "Click the button below to reset your password. This link is valid for 1 hour.",
   "reset_button": "Reset My Password",
   "link_fallback": "If the button doesn't work:",
-  "footer_ignore": "If you didn't request this email, you can safely ignore it."
+  "footer_ignore": "If you didn't request this email, you can safely ignore it.",
+  "match_new": {
+    "subject": "Someone solved your questions 🎉",
+    "preheader": "You have a new match",
+    "headline": "Someone answered all your questions",
+    "body": "You have a new match on Qulo. Open the app to see who it is.",
+    "cta": "See now",
+    "unsubscribe_label": "Turn off email notifications"
+  }
 }

@@ -9,5 +9,13 @@
   "reset_body": "Kliknij poniższy przycisk, aby zresetować hasło. Ten link jest ważny przez 1 godzinę.",
   "reset_button": "Zresetuj moje hasło",
   "link_fallback": "Jeśli przycisk nie działa:",
-  "footer_ignore": "Jeśli nie prosiłeś o ten e-mail, możesz go bezpiecznie zignorować."
+  "footer_ignore": "Jeśli nie prosiłeś o ten e-mail, możesz go bezpiecznie zignorować.",
+  "match_new": {
+    "subject": "Ktoś rozwiązał Twoje pytania 🎉",
+    "preheader": "Masz nowe dopasowanie",
+    "headline": "Ktoś odpowiedział na wszystkie Twoje pytania",
+    "body": "Masz nowe dopasowanie na Qulo. Otwórz aplikację, aby zobaczyć, kto to.",
+    "cta": "Zobacz teraz",
+    "unsubscribe_label": "Wyłącz powiadomienia e-mail"
+  }
 }

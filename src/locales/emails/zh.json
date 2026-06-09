@@ -9,5 +9,13 @@
   "reset_body": "请点击下方按钮重置您的密码。此链接有效期为1小时。",
   "reset_button": "重置我的密码",
   "link_fallback": "如果按钮无法使用：",
-  "footer_ignore": "如果您没有请求此邮件，可以放心忽略。"
+  "footer_ignore": "如果您没有请求此邮件，可以放心忽略。",
+  "match_new": {
+    "subject": "有人解开了你的问题 🎉",
+    "preheader": "你有一个新匹配",
+    "headline": "有人回答了你的所有问题",
+    "body": "Qulo 上有了新匹配。打开应用查看是谁。",
+    "cta": "立即查看",
+    "unsubscribe_label": "关闭邮件通知"
+  }
 }

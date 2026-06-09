@@ -9,5 +9,13 @@
   "reset_body": "Cliquez sur le bouton ci-dessous pour réinitialiser votre mot de passe. Ce lien est valable pendant 1 heure.",
   "reset_button": "Réinitialiser mon mot de passe",
   "link_fallback": "Si le bouton ne fonctionne pas :",
-  "footer_ignore": "Si vous n'avez pas demandé cet e-mail, vous pouvez l'ignorer en toute sécurité."
+  "footer_ignore": "Si vous n'avez pas demandé cet e-mail, vous pouvez l'ignorer en toute sécurité.",
+  "match_new": {
+    "subject": "Quelqu'un a résolu tes questions 🎉",
+    "preheader": "Tu as un nouveau match",
+    "headline": "Quelqu'un a répondu à toutes tes questions",
+    "body": "Tu as un nouveau match sur Qulo. Ouvre l'application pour voir de qui il s'agit.",
+    "cta": "Voir maintenant",
+    "unsubscribe_label": "Désactiver les e-mails"
+  }
 }

@@ -9,5 +9,13 @@
   "reset_body": "Klicke auf den Button unten, um dein Passwort zurückzusetzen. Dieser Link ist 1 Stunde gültig.",
   "reset_button": "Passwort zurücksetzen",
   "link_fallback": "Falls der Button nicht funktioniert:",
-  "footer_ignore": "Wenn du diese E-Mail nicht angefordert hast, kannst du sie sicher ignorieren."
+  "footer_ignore": "Wenn du diese E-Mail nicht angefordert hast, kannst du sie sicher ignorieren.",
+  "match_new": {
+    "subject": "Jemand hat deine Fragen gelöst 🎉",
+    "preheader": "Du hast eine neue Übereinstimmung",
+    "headline": "Jemand hat alle deine Fragen beantwortet",
+    "body": "Du hast eine neue Übereinstimmung bei Qulo. Öffne die App, um zu sehen, wer es ist.",
+    "cta": "Jetzt ansehen",
+    "unsubscribe_label": "E-Mail-Benachrichtigungen deaktivieren"
+  }
 }

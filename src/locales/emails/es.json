@@ -9,5 +9,13 @@
   "reset_body": "Haz clic en el botón de abajo para restablecer tu contraseña. Este enlace es válido durante 1 hora.",
   "reset_button": "Restablecer mi contraseña",
   "link_fallback": "Si el botón no funciona:",
-  "footer_ignore": "Si no solicitaste este correo, puedes ignorarlo con seguridad."
+  "footer_ignore": "Si no solicitaste este correo, puedes ignorarlo con seguridad.",
+  "match_new": {
+    "subject": "Alguien resolvió tus preguntas 🎉",
+    "preheader": "Tienes una nueva coincidencia",
+    "headline": "Alguien respondió a todas tus preguntas",
+    "body": "Tienes una nueva coincidencia en Qulo. Abre la app para ver quién es.",
+    "cta": "Ver ahora",
+    "unsubscribe_label": "Desactivar correos"
+  }
 }

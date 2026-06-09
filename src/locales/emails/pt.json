@@ -9,5 +9,13 @@
   "reset_body": "Clique no botão abaixo para redefinir sua senha. Este link é válido por 1 hora.",
   "reset_button": "Redefinir minha senha",
   "link_fallback": "Se o botão não funcionar:",
-  "footer_ignore": "Se você não solicitou este e-mail, pode ignorá-lo com segurança."
+  "footer_ignore": "Se você não solicitou este e-mail, pode ignorá-lo com segurança.",
+  "match_new": {
+    "subject": "Alguém resolveu as suas perguntas 🎉",
+    "preheader": "Você tem uma nova combinação",
+    "headline": "Alguém respondeu a todas as suas perguntas",
+    "body": "Você tem uma nova combinação no Qulo. Abra o app para ver quem é.",
+    "cta": "Ver agora",
+    "unsubscribe_label": "Desativar e-mails"
+  }
 }
