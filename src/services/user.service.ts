@@ -510,6 +510,7 @@ export class UserService {
     messages: true,
     matches: true,
     campaigns: true,
+    email_matches: true,
   };
 
   async getNotificationPreferences(userId: string) {
@@ -531,14 +532,23 @@ export class UserService {
 
   async updateNotificationPreferences(
     userId: string,
-    input: { messages?: boolean; matches?: boolean; campaigns?: boolean },
+    input: { messages?: boolean; matches?: boolean; campaigns?: boolean; email_matches?: boolean },
   ) {
     const current = await this.getNotificationPreferences(userId);
     const merged = { ...current, ...input };
 
+    const update: Record<string, unknown> = {
+      notification_preferences: merged,
+    };
+
+    // email_matches mirrors indexed boolean column for inactive-owner filter
+    if (input.email_matches !== undefined) {
+      update.email_notifications_enabled = input.email_matches;
+    }
+
     const { error } = await supabase
       .from('users')
-      .update({ notification_preferences: merged })
+      .update(update)
       .eq('id', userId);
 
     if (error) {
