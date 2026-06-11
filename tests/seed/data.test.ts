@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { TR_CITIES, TOTAL_QUOTA } from '../../scripts/seed/data/tr-cities.js';
 import { TR_FEMALE_FIRST_NAMES, TR_SURNAMES } from '../../scripts/seed/data/tr-female-names.js';
 import { TR_BIO_TEMPLATES, TR_HOBBIES, TR_TRAITS, TR_JOBS, renderBio } from '../../scripts/seed/data/tr-bio-pool.js';
+import { buildPhotoPrompt } from '../../scripts/seed/data/photo-prompt-pools.js';
 
 describe('TR_CITIES', () => {
   it('quotas sum to 350', () => {
@@ -88,5 +89,23 @@ describe('TR bio pools', () => {
     // Some templates use {city}, some {job} — both should hit in 50 runs
     expect(cityHit).toBeGreaterThan(5);
     expect(jobHit).toBeGreaterThan(5);
+  });
+});
+
+describe('buildPhotoPrompt', () => {
+  it('returns deterministic-format string for fixed age', () => {
+    const p = buildPhotoPrompt(27);
+    expect(p.length).toBeGreaterThan(50);
+    expect(p).toContain('27');
+    expect(p).toContain('Turkish woman');
+    expect(p).toMatch(/photorealistic/i);
+  });
+
+  it('varies across calls (diversity check)', () => {
+    const seen = new Set<string>();
+    for (let i = 0; i < 50; i++) {
+      seen.add(buildPhotoPrompt(25));
+    }
+    expect(seen.size).toBeGreaterThan(10);
   });
 });
