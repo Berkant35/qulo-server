@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TR_CITIES, TOTAL_QUOTA } from '../../scripts/seed/data/tr-cities.js';
+import { TR_FEMALE_FIRST_NAMES, TR_SURNAMES } from '../../scripts/seed/data/tr-female-names.js';
 
 describe('TR_CITIES', () => {
   it('quotas sum to 350', () => {
@@ -28,5 +29,30 @@ describe('TR_CITIES', () => {
       expect(Number.isInteger(c.count)).toBe(true);
       expect(c.count).toBeGreaterThan(0);
     }
+  });
+});
+
+describe('TR_FEMALE_FIRST_NAMES', () => {
+  it('has at least 60 unique entries', () => {
+    expect(TR_FEMALE_FIRST_NAMES.length).toBeGreaterThanOrEqual(60);
+    expect(new Set(TR_FEMALE_FIRST_NAMES).size).toBe(TR_FEMALE_FIRST_NAMES.length);
+  });
+
+  it('all entries are non-empty trimmed strings', () => {
+    for (const n of TR_FEMALE_FIRST_NAMES) {
+      expect(n.length).toBeGreaterThan(0);
+      expect(n).toBe(n.trim());
+    }
+  });
+});
+
+describe('TR_SURNAMES', () => {
+  it('has at least 80 unique entries', () => {
+    expect(TR_SURNAMES.length).toBeGreaterThanOrEqual(80);
+    expect(new Set(TR_SURNAMES).size).toBe(TR_SURNAMES.length);
+  });
+
+  it('combinatorial space supports 350 unique pairs', () => {
+    expect(TR_FEMALE_FIRST_NAMES.length * TR_SURNAMES.length).toBeGreaterThan(350 * 10);
   });
 });
