@@ -3,3 +3,5 @@ dist
 .env
 *.log
 flows/
+seed-photos-cache/
+scripts/seed/output/
