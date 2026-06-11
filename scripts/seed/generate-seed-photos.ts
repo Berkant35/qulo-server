@@ -28,7 +28,7 @@ const CACHE_DIR = join(REPO_ROOT, 'seed-photos-cache');
 const MANIFEST_PATH = join(__dirname, 'output', 'photos-manifest.json');
 
 const TOTAL = 350;
-const CONCURRENCY = 6;
+const CONCURRENCY = 1;
 
 interface ManifestEntry {
   seq: number;

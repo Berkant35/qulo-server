@@ -7,7 +7,7 @@ if (!REPLICATE_TOKEN) {
 
 const client = new Replicate({ auth: REPLICATE_TOKEN });
 
-const MODEL = 'black-forest-labs/flux-schnell';
+const MODEL = 'bytedance/seedream-4';
 
 /**
  * Generate one image. Returns the temporary Replicate URL.
@@ -17,11 +17,8 @@ export async function generateImage(prompt: string): Promise<string> {
   const output = (await client.run(MODEL, {
     input: {
       prompt,
+      size: '1K',
       aspect_ratio: '3:4',
-      num_outputs: 1,
-      output_format: 'jpg',
-      output_quality: 90,
-      go_fast: true,
     },
   })) as unknown;
 
