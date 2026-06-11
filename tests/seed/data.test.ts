@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { TR_CITIES, TOTAL_QUOTA } from '../../scripts/seed/data/tr-cities.js';
 import { TR_FEMALE_FIRST_NAMES, TR_SURNAMES } from '../../scripts/seed/data/tr-female-names.js';
+import { TR_BIO_TEMPLATES, TR_HOBBIES, TR_TRAITS, TR_JOBS, renderBio } from '../../scripts/seed/data/tr-bio-pool.js';
 
 describe('TR_CITIES', () => {
   it('quotas sum to 350', () => {
@@ -54,5 +55,38 @@ describe('TR_SURNAMES', () => {
 
   it('combinatorial space supports 350 unique pairs', () => {
     expect(TR_FEMALE_FIRST_NAMES.length * TR_SURNAMES.length).toBeGreaterThan(350 * 10);
+  });
+});
+
+describe('TR bio pools', () => {
+  it('templates have at least 15 entries', () => {
+    expect(TR_BIO_TEMPLATES.length).toBeGreaterThanOrEqual(15);
+  });
+
+  it('hobbies/traits/jobs pools have enough entries', () => {
+    expect(TR_HOBBIES.length).toBeGreaterThanOrEqual(20);
+    expect(TR_TRAITS.length).toBeGreaterThanOrEqual(10);
+    expect(TR_JOBS.length).toBeGreaterThanOrEqual(20);
+  });
+
+  it('renderBio returns a non-empty string without placeholders', () => {
+    for (let i = 0; i < 50; i++) {
+      const bio = renderBio('İstanbul', 'Mimar');
+      expect(bio.length).toBeGreaterThan(10);
+      expect(bio).not.toMatch(/\{[a-z_]+\}/);
+    }
+  });
+
+  it('renderBio substitutes city and job into output', () => {
+    let cityHit = 0;
+    let jobHit = 0;
+    for (let i = 0; i < 50; i++) {
+      const bio = renderBio('İzmir', 'Avukat');
+      if (bio.includes('İzmir')) cityHit++;
+      if (bio.includes('Avukat')) jobHit++;
+    }
+    // Some templates use {city}, some {job} — both should hit in 50 runs
+    expect(cityHit).toBeGreaterThan(5);
+    expect(jobHit).toBeGreaterThan(5);
   });
 });
