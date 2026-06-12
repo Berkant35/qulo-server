@@ -6,6 +6,7 @@ import { blockService } from "./block.service.js";
 import { scoringService } from "./scoring.service.js";
 import { subscriptionService } from "./subscription.service.js";
 import { userLanguageService } from "./user-language.service.js";
+import { antiCheatService } from "./anti-cheat.service.js";
 
 const PAGE_SIZE = 10;
 
@@ -54,7 +55,11 @@ export class MatchingService {
   /**
    * Discover candidates for a user.
    */
-  async discover(userId: string, page = 1): Promise<{ cards: ProfileCard[]; page: number; has_more: boolean }> {
+  async discover(
+    userId: string,
+    page = 1,
+    viewerIp?: string | null,
+  ): Promise<{ cards: ProfileCard[]; page: number; has_more: boolean }> {
     assertUuid(userId, "userId");
     // 1. Get current user + already-swiped IDs in parallel
     const [userResult, swipedResult, matchResult] = await Promise.all([
@@ -223,6 +228,12 @@ export class MatchingService {
       return qCount >= 2;
     });
 
+    // Hard gate: must have at least 1 photo (profile-setup-gate enforcement)
+    discoverableFiltered = discoverableFiltered.filter((c) => {
+      const photoCount = c.photos?.length ?? 0;
+      return photoCount >= 1;
+    });
+
     // 5.6 — Language filter: candidate must have 2+ questions in user's languages
     // Use preferred_languages if set, otherwise fall back to userLanguages
     const langPrefs = user.preferred_languages && (user.preferred_languages as string[]).length > 0
@@ -238,6 +249,30 @@ export class MatchingService {
         const matchingCount = qLocales.filter((l: string) => langPrefs.includes(l)).length;
         return matchingCount >= 2;
       });
+    }
+
+    // 5.7 — Anti-Cheat L1: hide targets engaged by another nearby/same-IP solver
+    if (discoverableFiltered.length > 0) {
+      const viewerCtx = {
+        id: userId,
+        location: { lat: myLat as number, lng: myLng as number },
+        ip: viewerIp ?? null,
+      };
+      const hideChecks = await Promise.all(
+        discoverableFiltered.map(async (c) => ({
+          id: c.id,
+          hide: await antiCheatService
+            .shouldHideTargetInDiscover(viewerCtx, c.id)
+            .catch((err) => {
+              console.error("[matching] anti-cheat check failed for", c.id, err);
+              return false;
+            }),
+        })),
+      );
+      const hiddenIds = new Set(hideChecks.filter((h) => h.hide).map((h) => h.id));
+      if (hiddenIds.size > 0) {
+        discoverableFiltered = discoverableFiltered.filter((c) => !hiddenIds.has(c.id));
+      }
     }
 
     // 6. Score each candidate
