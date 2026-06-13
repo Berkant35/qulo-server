@@ -31,6 +31,7 @@ export class UserService {
 
     return {
       ...user,
+      // question_count is kept in sync by trigger trg_sync_user_question_count (migration 028)
       question_count: user.question_count ?? 0,
       subscriptionPlan: user.subscription_plan || null,
       subscriptionExpiresAt: user.subscription_expires_at || null,
