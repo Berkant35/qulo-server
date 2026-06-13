@@ -9,7 +9,27 @@ import type { SubscriptionPlan } from '../types/index.js';
 // the profile-setup gate. Aligns with discover filter (migration 028).
 const MIN_REQUIRED_QUESTIONS = 2;
 
+// Default per-question timer (seconds) used when the client omits time_limit
+// on user-created questions and for AI-quick-assigned rows.
+const DEFAULT_TIME_LIMIT = 30;
+
 export class QuestionService {
+  /**
+   * Maps a Postgres unique-violation (23505) on questions(user_id, order_num)
+   * to the public DUPLICATE_ORDER_NUM AppError. Any other error is returned
+   * unchanged so callers can decide whether to rethrow as-is or wrap.
+   */
+  private mapInsertError(err: unknown): Error {
+    if ((err as { code?: string }).code === "23505") {
+      return new AppError(
+        "DUPLICATE_ORDER_NUM",
+        409,
+        "Question with this order number already exists",
+      );
+    }
+    return err as Error;
+  }
+
   async getMyQuestions(userId: string) {
     const { data, error } = await supabase
       .from("questions")
@@ -53,16 +73,17 @@ export class QuestionService {
         answer_4: input.answer_4,
         hint_text: input.hint_text ?? null,
         category: input.category ?? null,
-        time_limit: input.time_limit ?? 30,
+        time_limit: input.time_limit ?? DEFAULT_TIME_LIMIT,
         locale: input.locale || 'tr',
       })
       .select("*")
       .single();
 
     if (error) {
-      // Unique constraint violation (user_id, order_num)
-      if (error.code === "23505") {
-        throw new AppError("DUPLICATE_ORDER_NUM", 409, "Question with this order number already exists");
+      // Unique constraint violation (user_id, order_num) → DUPLICATE_ORDER_NUM,
+      // any other DB error → opaque SERVER_ERROR (preserves existing contract).
+      if ((error as { code?: string }).code === "23505") {
+        throw this.mapInsertError(error);
       }
       throw Errors.SERVER_ERROR();
     }
@@ -132,7 +153,7 @@ export class QuestionService {
       hint_text: s.hint ?? null,
       category: s.category ?? null,
       locale,
-      time_limit: 30,
+      time_limit: DEFAULT_TIME_LIMIT,
     }));
 
     const { data: inserted, error: insertErr } = await supabase
@@ -141,10 +162,7 @@ export class QuestionService {
       .select("id");
 
     if (insertErr) {
-      if ((insertErr as { code?: string }).code === "23505") {
-        throw new AppError("DUPLICATE_ORDER_NUM", 409, "Question with this order number already exists");
-      }
-      throw insertErr;
+      throw this.mapInsertError(insertErr);
     }
 
     return {
