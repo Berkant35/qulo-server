@@ -1,13 +1,20 @@
 import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
 import { calculatePowerCost, calculateGreenReward, shuffleArray } from "../utils/math.js";
+import { seededShuffle } from "../utils/seeded-shuffle.js";
 import { diamondService } from "./diamond.service.js";
 import { exchangeService } from "./exchange.service.js";
 import { economyConfigService } from "./economy-config.service.js";
 import { NotificationService } from "./notification.service.js";
 import { matchEmailService } from "./match-email.service.js";
 import { userLanguageService } from "./user-language.service.js";
+import { antiCheatService } from "./anti-cheat.service.js";
 import type { PowerName } from "../types/index.js";
+
+interface StartSessionContext {
+  ip?: string | null;
+  location?: { lat: number; lng: number } | null;
+}
 
 interface SessionRow {
   id: string;
@@ -19,6 +26,7 @@ interface SessionRow {
   expires_at: string;
   completed_at: string | null;
   question_ids: string[] | null;
+  last_q_served_at: string | null;
 }
 
 interface QuestionRow {
@@ -72,7 +80,11 @@ export class QuizService {
   }
 
   // ─── Start Session ─────────────────────────────────────────────
-  async startSession(solverId: string, targetId: string) {
+  async startSession(
+    solverId: string,
+    targetId: string,
+    ctx: StartSessionContext = {},
+  ) {
     // 1. Fetch target's questions with locale
     const { data: allQuestions, error: qErr } = await supabase
       .from("questions")
@@ -128,17 +140,28 @@ export class QuizService {
 
     const questionIds = filteredQuestions.map((q: any) => q.id as string);
 
+    const startedAt = new Date().toISOString();
+
+    const sessionInsert: Record<string, unknown> = {
+      solver_id: solverId,
+      target_id: targetId,
+      status: "IN_PROGRESS",
+      current_q: 1,
+      total_questions: totalQuestions,
+      expires_at: expiresAt,
+      question_ids: questionIds,
+      start_ip: ctx.ip ?? null,
+      last_q_served_at: startedAt,
+    };
+
+    // PostGIS geography requires WKT-format text Postgrest will cast.
+    if (ctx.location) {
+      sessionInsert.start_location = `SRID=4326;POINT(${ctx.location.lng} ${ctx.location.lat})`;
+    }
+
     const { data: session, error: createErr } = await supabase
       .from("quiz_sessions")
-      .insert({
-        solver_id: solverId,
-        target_id: targetId,
-        status: "IN_PROGRESS",
-        current_q: 1,
-        total_questions: totalQuestions,
-        expires_at: expiresAt,
-        question_ids: questionIds,
-      })
+      .insert(sessionInsert)
       .select("id")
       .single();
 
@@ -183,7 +206,19 @@ export class QuizService {
       { index: 3, text: q.answer_3 as string },
       { index: 4, text: q.answer_4 as string },
     ];
-    const shuffledAnswers = shuffleArray(answers);
+
+    // L2c: per-viewer deterministic shuffle (config-gated).
+    // Same session+question = same order across reloads/rescue; different session = different order.
+    const useDeterministic = await antiCheatService.shuffleEnabled();
+    const shuffledAnswers = useDeterministic
+      ? seededShuffle(answers, antiCheatService.seedFromSession(sessionId) ^ session.current_q)
+      : shuffleArray(answers);
+
+    // Stamp question-served time for min think-time enforcement.
+    await supabase
+      .from("quiz_sessions")
+      .update({ last_q_served_at: new Date().toISOString() })
+      .eq("id", sessionId);
 
     return {
       session_id: sessionId,
@@ -206,6 +241,22 @@ export class QuizService {
     timeSpent?: number,
   ) {
     const session = await this.getActiveSession(sessionId, solverId);
+
+    // L2b: min think-time enforcement (skipped for in-flight powers that don't submit a final answer).
+    const isFinalAnswer = selectedAnswer != null || powerUsed === "SKIP" || powerUsed === "SKIP_ALL";
+    if (isFinalAnswer) {
+      const lastServed = session.last_q_served_at ? new Date(session.last_q_served_at) : null;
+      const ttCheck = await antiCheatService.enforceMinThinkTime(
+        sessionId,
+        solverId,
+        session.target_id,
+        lastServed,
+      );
+      if (!ttCheck.ok) {
+        throw Errors.THINK_TIME_VIOLATION(ttCheck.waitMs);
+      }
+    }
+
     const questionIndex = session.current_q - 1;
 
     let currentQuestion: QuestionRow;
@@ -481,7 +532,7 @@ export class QuizService {
   private async getActiveSession(sessionId: string, solverId: string): Promise<SessionRow> {
     const { data: session, error } = await supabase
       .from("quiz_sessions")
-      .select("id, solver_id, target_id, status, current_q, total_questions, expires_at, completed_at, question_ids")
+      .select("id, solver_id, target_id, status, current_q, total_questions, expires_at, completed_at, question_ids, last_q_served_at")
       .eq("id", sessionId)
       .eq("solver_id", solverId)
       .maybeSingle();

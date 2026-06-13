@@ -6,6 +6,8 @@ import { appConfigService } from "../services/app-config.service.js";
 import { NotificationService, type PushType, type SupportedLocale } from "../services/notification.service.js";
 import { economyConfigService } from "../services/economy-config.service.js";
 import { economyConfigSchema, ECONOMY_BOUNDARIES } from "../types/economy-config.schema.js";
+import { antiCheatConfigService } from "../services/anti-cheat-config.service.js";
+import { antiCheatConfigSchema } from "../types/anti-cheat-config.schema.js";
 import { supabase } from "../config/supabase.js";
 import {
   pushTemplateParamsSchema,
@@ -588,6 +590,117 @@ class AdminController {
       console.error("[Admin] push-messages upsert failed:", err?.message ?? err);
       res.status(500).json({ error: "server_error" });
     }
+  }
+
+  // ── Anti-Cheat Config management ───────────────────────────────
+  async antiCheatConfig(req: Request, res: Response) {
+    try {
+      const row = await antiCheatConfigService.getRow();
+      res.render("anti-cheat-config", {
+        config: row.config,
+        updatedAt: row.updated_at,
+        success: req.query.success,
+        error: req.query.error,
+        session: req.session,
+        csrfToken: req.session.csrfToken,
+      });
+    } catch (err: any) {
+      res.render("anti-cheat-config", {
+        config: null,
+        updatedAt: null,
+        success: null,
+        error: err.message,
+        session: req.session,
+        csrfToken: req.session.csrfToken,
+      });
+    }
+  }
+
+  async updateAntiCheatConfig(req: Request, res: Response) {
+    try {
+      const body = req.body as Record<string, string | undefined>;
+      const toBool = (v: string | undefined) => v === "on" || v === "true";
+      const toNum = (v: string | undefined, fallback: number) => {
+        const n = Number(v);
+        return Number.isFinite(n) ? n : fallback;
+      };
+
+      const next = {
+        proximity_exclusion: {
+          enabled: toBool(body.pe_enabled),
+          dry_run: toBool(body.pe_dry_run),
+          rollout_pct: toNum(body.pe_rollout_pct, 0),
+          radius_meters: toNum(body.pe_radius_meters, 50),
+          ttl_hours: toNum(body.pe_ttl_hours, 24),
+          ip_match_also: toBool(body.pe_ip_match_also),
+          require_location: toBool(body.pe_require_location),
+        },
+        drip_questions: {
+          enabled: toBool(body.dq_enabled),
+          dry_run: toBool(body.dq_dry_run),
+        },
+        min_think_time: {
+          enabled: toBool(body.mtt_enabled),
+          dry_run: toBool(body.mtt_dry_run),
+          min_seconds: toNum(body.mtt_min_seconds, 2.0),
+        },
+        viewer_specific_shuffle: {
+          enabled: toBool(body.vss_enabled),
+          dry_run: toBool(body.vss_dry_run),
+        },
+      };
+
+      const parsed = antiCheatConfigSchema.parse(next);
+      await antiCheatConfigService.updateConfig(parsed, req.session.adminId!);
+      res.redirect("/admin/anti-cheat-config?success=1");
+    } catch (err: any) {
+      const message = err?.errors
+        ? JSON.stringify(err.errors)
+        : err?.message ?? "Unknown error";
+      res.redirect("/admin/anti-cheat-config?error=" + encodeURIComponent(message));
+    }
+  }
+
+  async antiCheatStats(req: Request, res: Response) {
+    const days = Math.min(90, Math.max(1, parseInt(req.query.days as string) || 7));
+    const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+
+    // Capped to avoid memory blow-up on long retention windows.
+    const { data: byRule } = await supabase
+      .from("anti_cheat_decisions")
+      .select("rule, outcome")
+      .gte("decided_at", since)
+      .limit(50000);
+
+    const counts: Record<string, Record<string, number>> = {};
+    for (const row of (byRule ?? []) as Array<{ rule: string; outcome: string }>) {
+      counts[row.rule] ??= {};
+      counts[row.rule][row.outcome] = (counts[row.rule][row.outcome] ?? 0) + 1;
+    }
+
+    const { data: topTargets } = await supabase
+      .from("anti_cheat_decisions")
+      .select("target_id")
+      .gte("decided_at", since)
+      .in("outcome", ["BLOCKED", "DRY_RUN_BLOCKED"])
+      .not("target_id", "is", null)
+      .limit(5000);
+
+    const targetCounts: Record<string, number> = {};
+    for (const row of (topTargets ?? []) as Array<{ target_id: string }>) {
+      targetCounts[row.target_id] = (targetCounts[row.target_id] ?? 0) + 1;
+    }
+    const topExcluded = Object.entries(targetCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 20)
+      .map(([target_id, count]) => ({ target_id, count }));
+
+    res.render("anti-cheat-stats", {
+      days,
+      counts,
+      topExcluded,
+      session: req.session,
+    });
   }
 
   async pushMessageApiRemove(req: Request, res: Response) {

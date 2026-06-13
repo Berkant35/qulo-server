@@ -1,0 +1,72 @@
+<%- include('_header') %>
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+  <h2>Anti-Cheat Stats &mdash; last <%= days %> day(s)</h2>
+  <div>
+    <a href="/admin/anti-cheat-stats?days=1" class="btn">1d</a>
+    <a href="/admin/anti-cheat-stats?days=7" class="btn">7d</a>
+    <a href="/admin/anti-cheat-stats?days=30" class="btn">30d</a>
+    <a href="/admin/anti-cheat-stats?days=90" class="btn">90d</a>
+  </div>
+</div>
+
+<div class="card">
+  <h3 style="margin-bottom:12px;">Decisions by Rule</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Rule</th>
+        <th>BLOCKED</th>
+        <th>DRY_RUN_BLOCKED</th>
+        <th>ALLOWED</th>
+        <th>ERRORED</th>
+        <th>Block Rate (real)</th>
+        <th>Block Rate (dry)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% const rules = ['proximity_exclusion','drip_questions','min_think_time','viewer_specific_shuffle']; %>
+      <% rules.forEach(function(rule) {
+        const c = counts[rule] || {};
+        const blocked = c.BLOCKED || 0;
+        const dry = c.DRY_RUN_BLOCKED || 0;
+        const allowed = c.ALLOWED || 0;
+        const errored = c.ERRORED || 0;
+        const realTotal = blocked + allowed;
+        const dryTotal = dry + allowed;
+        const realPct = realTotal ? ((blocked / realTotal) * 100).toFixed(1) : '—';
+        const dryPct = dryTotal ? ((dry / dryTotal) * 100).toFixed(1) : '—'; %>
+        <tr>
+          <td style="font-family:monospace;"><%= rule %></td>
+          <td><%= blocked %></td>
+          <td><%= dry %></td>
+          <td><%= allowed %></td>
+          <td><%= errored %></td>
+          <td><%= realPct %><%= realPct !== '—' ? '%' : '' %></td>
+          <td><%= dryPct %><%= dryPct !== '—' ? '%' : '' %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h3 style="margin-bottom:12px;">Top Excluded Targets (BLOCKED + DRY_RUN_BLOCKED)</h3>
+  <% if (!topExcluded.length) { %>
+    <p style="color:#999;">No decisions in window.</p>
+  <% } else { %>
+    <table>
+      <thead><tr><th>Target ID</th><th>Exclusion Count</th></tr></thead>
+      <tbody>
+        <% topExcluded.forEach(function(row) { %>
+          <tr>
+            <td style="font-family:monospace; font-size:12px;"><a href="/admin/users/<%= row.target_id %>"><%= row.target_id %></a></td>
+            <td><%= row.count %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
+
+<%- include('_footer') %>

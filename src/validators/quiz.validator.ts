@@ -2,6 +2,12 @@ import { z } from "zod";
 
 export const startQuizSchema = z.object({
   target_id: z.string().uuid(),
+  location: z
+    .object({
+      lat: z.number().min(-90).max(90),
+      lng: z.number().min(-180).max(180),
+    })
+    .optional(),
 });
 
 export const answerQuizSchema = z.object({

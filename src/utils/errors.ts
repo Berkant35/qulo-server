@@ -87,6 +87,9 @@ export const Errors = {
   RATE_LIMITED: () =>
     new AppError("RATE_LIMITED", 429, "Too many requests"),
 
+  THINK_TIME_VIOLATION: (waitMs: number) =>
+    new AppError("THINK_TIME_VIOLATION", 429, "Answer submitted too quickly", { wait_ms: waitMs }),
+
   VALIDATION_ERROR: (details: Record<string, unknown>) =>
     new AppError("VALIDATION_ERROR", 400, "Validation error", { details }),
 

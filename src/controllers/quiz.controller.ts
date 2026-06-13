@@ -5,8 +5,11 @@ import type { StartQuizInput, AnswerQuizInput } from "../validators/quiz.validat
 export async function startQuizHandler(req: Request, res: Response, next: NextFunction) {
   try {
     const userId = req.user!.userId;
-    const { target_id } = req.body as StartQuizInput;
-    const data = await quizService.startSession(userId, target_id);
+    const { target_id, location } = req.body as StartQuizInput;
+    const data = await quizService.startSession(userId, target_id, {
+      ip: req.ip ?? null,
+      location: location ?? null,
+    });
     res.status(201).json(data);
   } catch (err) {
     next(err);

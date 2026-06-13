@@ -67,6 +67,10 @@ router.post("/economy-config", csrfValidate, (req, res) => adminController.updat
 router.get("/economy-config/history", (req, res) => adminController.economyConfigHistory(req, res));
 router.get("/economy-config/compare", (req, res) => adminController.economyConfigCompare(req, res));
 
+router.get("/anti-cheat-config", (req, res) => adminController.antiCheatConfig(req, res));
+router.post("/anti-cheat-config", csrfValidate, (req, res) => adminController.updateAntiCheatConfig(req, res));
+router.get("/anti-cheat-stats", (req, res) => adminController.antiCheatStats(req, res));
+
 router.get("/campaigns", (req, res) => adminController.campaigns(req, res));
 router.get("/campaigns/new", (req, res) => adminController.campaignNew(req, res));
 router.post("/campaigns", csrfValidate, (req, res) => adminController.campaignCreate(req, res));

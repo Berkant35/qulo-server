@@ -6,7 +6,7 @@ export async function discoverHandler(req: Request, res: Response, next: NextFun
   try {
     const userId = req.user!.userId;
     const { page } = req.query as unknown as DiscoverQuery;
-    const data = await matchingService.discover(userId, page);
+    const data = await matchingService.discover(userId, page, req.ip ?? null);
     res.json(data);
   } catch (err) {
     next(err);

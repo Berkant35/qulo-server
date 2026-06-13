@@ -1,0 +1,110 @@
+<%- include('_header') %>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+  <h2>Anti-Cheat Config</h2>
+  <a href="/admin/anti-cheat-stats" class="btn btn-primary">View Stats</a>
+</div>
+
+<% if (success) { %>
+<div class="alert" style="background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0;">Configuration saved.</div>
+<% } %>
+<% if (error) { %>
+<div class="alert alert-error"><%= error %></div>
+<% } %>
+
+<% if (!config) { %>
+<div class="card"><p style="color:#999;">Config row missing. Re-run migration 029.</p></div>
+<% } else { %>
+
+<p style="font-size:13px; color:#666; margin-bottom:12px;">Last updated: <%= updatedAt %></p>
+
+<form method="POST" action="/admin/anti-cheat-config">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+  <!-- L1: Proximity Exclusion -->
+  <div class="card">
+    <h3 style="margin-bottom:8px;">L1 &mdash; Proximity + IP Exclusion (Discover)</h3>
+    <p style="font-size:12px; color:#999; margin-bottom:12px;">Hide target from viewer's discover if another user started a quiz on that target within radius_meters and ttl_hours, or from the same IP.</p>
+
+    <label style="display:block; margin:8px 0;">
+      <input type="checkbox" name="pe_enabled" <%= config.proximity_exclusion.enabled ? 'checked' : '' %>>
+      <strong>Enabled</strong> &mdash; master switch
+    </label>
+    <label style="display:block; margin:8px 0;">
+      <input type="checkbox" name="pe_dry_run" <%= config.proximity_exclusion.dry_run ? 'checked' : '' %>>
+      <strong>Dry Run</strong> &mdash; log decisions only, do not apply
+    </label>
+    <label style="display:block; margin:8px 0;">
+      <input type="checkbox" name="pe_ip_match_also" <%= config.proximity_exclusion.ip_match_also ? 'checked' : '' %>>
+      <strong>IP Match Also</strong> &mdash; consider same-IP as proximity match
+    </label>
+    <label style="display:block; margin:8px 0;">
+      <input type="checkbox" name="pe_require_location" <%= config.proximity_exclusion.require_location ? 'checked' : '' %>>
+      <strong>Require Location</strong> &mdash; skip rule if viewer location unknown
+    </label>
+
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:12px;">
+      <label>Rollout %
+        <input type="number" name="pe_rollout_pct" min="0" max="100" value="<%= config.proximity_exclusion.rollout_pct %>" style="width:100%; padding:6px; border:1px solid #ddd; border-radius:4px;">
+      </label>
+      <label>Radius (meters)
+        <input type="number" name="pe_radius_meters" min="10" max="1000" value="<%= config.proximity_exclusion.radius_meters %>" style="width:100%; padding:6px; border:1px solid #ddd; border-radius:4px;">
+      </label>
+      <label>TTL (hours)
+        <input type="number" name="pe_ttl_hours" min="1" max="168" value="<%= config.proximity_exclusion.ttl_hours %>" style="width:100%; padding:6px; border:1px solid #ddd; border-radius:4px;">
+      </label>
+    </div>
+  </div>
+
+  <!-- L2a: Drip Questions -->
+  <div class="card">
+    <h3 style="margin-bottom:8px;">L2a &mdash; Drip Questions (Quiz)</h3>
+    <p style="font-size:12px; color:#999; margin-bottom:12px;">Return only one question per request; the next is delivered in the answer response.</p>
+    <label style="display:block; margin:8px 0;">
+      <input type="checkbox" name="dq_enabled" <%= config.drip_questions.enabled ? 'checked' : '' %>>
+      <strong>Enabled</strong>
+    </label>
+    <label style="display:block; margin:8px 0;">
+      <input type="checkbox" name="dq_dry_run" <%= config.drip_questions.dry_run ? 'checked' : '' %>>
+      <strong>Dry Run</strong>
+    </label>
+  </div>
+
+  <!-- L2b: Min Think Time -->
+  <div class="card">
+    <h3 style="margin-bottom:8px;">L2b &mdash; Min Think Time (Quiz)</h3>
+    <p style="font-size:12px; color:#999; margin-bottom:12px;">Reject answers submitted faster than min_seconds after question served.</p>
+    <label style="display:block; margin:8px 0;">
+      <input type="checkbox" name="mtt_enabled" <%= config.min_think_time.enabled ? 'checked' : '' %>>
+      <strong>Enabled</strong>
+    </label>
+    <label style="display:block; margin:8px 0;">
+      <input type="checkbox" name="mtt_dry_run" <%= config.min_think_time.dry_run ? 'checked' : '' %>>
+      <strong>Dry Run</strong>
+    </label>
+    <label style="display:block; margin:8px 0;">Min seconds
+      <input type="number" step="0.1" name="mtt_min_seconds" min="0.5" max="10" value="<%= config.min_think_time.min_seconds %>" style="width:120px; padding:6px; border:1px solid #ddd; border-radius:4px;">
+    </label>
+  </div>
+
+  <!-- L2c: Viewer-Specific Shuffle -->
+  <div class="card">
+    <h3 style="margin-bottom:8px;">L2c &mdash; Viewer-Specific Deterministic Shuffle (Quiz)</h3>
+    <p style="font-size:12px; color:#999; margin-bottom:12px;">Per-session deterministic question order + option-letter shuffle, so two viewers see different mappings.</p>
+    <label style="display:block; margin:8px 0;">
+      <input type="checkbox" name="vss_enabled" <%= config.viewer_specific_shuffle.enabled ? 'checked' : '' %>>
+      <strong>Enabled</strong>
+    </label>
+    <label style="display:block; margin:8px 0;">
+      <input type="checkbox" name="vss_dry_run" <%= config.viewer_specific_shuffle.dry_run ? 'checked' : '' %>>
+      <strong>Dry Run</strong>
+    </label>
+  </div>
+
+  <div style="text-align:right;">
+    <button type="submit" class="btn btn-primary" style="padding:10px 32px; font-size:15px;">Save</button>
+  </div>
+</form>
+<% } %>
+
+<%- include('_footer') %>
