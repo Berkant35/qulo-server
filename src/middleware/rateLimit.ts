@@ -75,3 +75,11 @@ export const socialAuthLimiter = rateLimit({
   legacyHeaders: false,
   message: { code: "RATE_LIMITED", message: "Too many requests" },
 });
+
+export const quickAssignLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  limit: 10, // 10 req/5min/user
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitResponse,
+});

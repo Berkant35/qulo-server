@@ -1,7 +1,7 @@
 import { Router } from "express";
 import multer from "multer";
 import { authMiddleware } from "../middleware/auth.js";
-import { generalLimiter } from "../middleware/rateLimit.js";
+import { generalLimiter, quickAssignLimiter } from "../middleware/rateLimit.js";
 import { validate } from "../middleware/validate.js";
 import {
   updateProfileSchema,
@@ -63,7 +63,7 @@ router.patch("/me/push-token", validate(updatePushTokenSchema), updatePushTokenH
 router.post("/me/heartbeat", heartbeatHandler);
 router.post("/me/photos", upload.single("photo"), uploadPhotoHandler);
 router.post("/me/interests", validate(setInterestsSchema), setInterestsHandler);
-router.post("/me/quick-assign-questions", quickAssignQuestionsHandler);
+router.post("/me/quick-assign-questions", quickAssignLimiter, quickAssignQuestionsHandler);
 router.post("/me/boost", profileGuard, boostHandler);
 router.post("/me/claim-badge-reward", profileGuard, claimBadgeRewardHandler);
 router.delete("/me/photos/:index", deletePhotoHandler);
