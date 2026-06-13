@@ -6,6 +6,7 @@ export const updateProfileSchema = z.object({
   name: z.string().trim().min(1).max(50).optional(),
   surname: z.string().trim().min(1).max(50).optional(),
   bio: z.string().trim().max(500).optional(),
+  gender_pref: z.enum(["MAN", "WOMAN", "BOTH"]).optional(),
   match_radius_km: z.number().int().min(5).max(500).optional(),
   age_pref_min: z.number().int().min(18).max(99).optional(),
   age_pref_max: z.number().int().min(18).max(99).optional(),

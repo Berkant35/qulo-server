@@ -7,6 +7,7 @@ export const registerSchema = z.object({
   surname: z.string().trim().min(1),
   age: z.number().int().min(18).max(99),
   gender: z.enum(["MAN", "WOMAN", "OTHER"]),
+  gender_pref: z.enum(["MAN", "WOMAN", "BOTH"]).optional(),
   locale: z.enum(["tr", "en"]).default("tr"),
   lat: z.number().min(-90).max(90).optional(),
   lng: z.number().min(-180).max(180).optional(),

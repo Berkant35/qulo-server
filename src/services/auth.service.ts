@@ -52,6 +52,9 @@ export class AuthService {
         email_verified: false,
         referral_code: referralCode,
         ...(data.lat != null && data.lng != null ? { lat: data.lat, lng: data.lng } : {}),
+        ...(data.gender_pref
+          ? { gender_pref: data.gender_pref, gender_pref_set_at: new Date().toISOString() }
+          : {}),
       })
       .select("id, email")
       .single();
