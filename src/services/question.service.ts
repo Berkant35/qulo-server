@@ -92,9 +92,8 @@ export class QuestionService {
       .eq("id", userId)
       .single();
 
-    if (userErr || !user) {
-      throw Errors.USER_NOT_FOUND();
-    }
+    if (userErr) throw userErr;
+    if (!user) throw Errors.USER_NOT_FOUND();
 
     const currentCount = user.question_count ?? 0;
     const locale = user.locale ?? "tr";
@@ -142,7 +141,10 @@ export class QuestionService {
       .select("id");
 
     if (insertErr) {
-      throw Errors.SERVER_ERROR();
+      if ((insertErr as { code?: string }).code === "23505") {
+        throw new AppError("DUPLICATE_ORDER_NUM", 409, "Question with this order number already exists");
+      }
+      throw insertErr;
     }
 
     return {

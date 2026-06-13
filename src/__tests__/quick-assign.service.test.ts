@@ -175,11 +175,49 @@ describe('QuestionService.quickAssignQuestions', () => {
     expect(insertMock).not.toHaveBeenCalled();
   });
 
-  it('throws USER_NOT_FOUND when user select fails', async () => {
-    userSingleMock.mockResolvedValue({ data: null, error: { message: 'no row' } });
+  it('throws USER_NOT_FOUND when user row is missing (no error, no data)', async () => {
+    userSingleMock.mockResolvedValue({ data: null, error: null });
 
     await expect(questionService.quickAssignQuestions('user-7')).rejects.toMatchObject({
       code: 'USER_NOT_FOUND',
+    });
+  });
+
+  it('propagates raw DB error from user select (does not mask as USER_NOT_FOUND)', async () => {
+    const dbErr = { code: 'PGRST500', message: 'connection refused' };
+    userSingleMock.mockResolvedValue({ data: null, error: dbErr });
+
+    await expect(questionService.quickAssignQuestions('user-8')).rejects.toBe(dbErr);
+  });
+
+  it('headroom is the binding constraint when subscription max < MIN_REQUIRED', async () => {
+    // count=0, maxQuestions=1 → needed should be 1 (headroom binds), not 2
+    userSingleMock.mockResolvedValue({
+      data: { question_count: 0, locale: 'tr', subscription_plan: null },
+      error: null,
+    });
+    getLimitsMock.mockResolvedValue({ maxQuestions: 1 });
+    suggestMock.mockResolvedValue([fakeSuggestion('Q1')]);
+    insertSelectMock.mockResolvedValue({ data: [{ id: 'qid-1' }], error: null });
+
+    const result = await questionService.quickAssignQuestions('user-9');
+
+    expect(suggestMock).toHaveBeenCalledWith('user-9', 'tr', 1);
+    expect(result.assignedCount).toBe(1);
+    expect(result.assignedQuestionIds).toEqual(['qid-1']);
+  });
+
+  it('maps Postgres 23505 (unique violation) to DUPLICATE_ORDER_NUM', async () => {
+    userSingleMock.mockResolvedValue({
+      data: { question_count: 0, locale: 'tr', subscription_plan: null },
+      error: null,
+    });
+    getLimitsMock.mockResolvedValue({ maxQuestions: 3 });
+    suggestMock.mockResolvedValue([fakeSuggestion('Q1'), fakeSuggestion('Q2')]);
+    insertSelectMock.mockResolvedValue({ data: null, error: { code: '23505', message: 'dup' } });
+
+    await expect(questionService.quickAssignQuestions('user-10')).rejects.toMatchObject({
+      code: 'DUPLICATE_ORDER_NUM',
     });
   });
 });
