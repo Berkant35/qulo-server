@@ -10,6 +10,7 @@ import {
   updatePushTokenSchema,
   notificationPreferencesSchema,
   completeProfileSchema,
+  setInterestsSchema,
 } from "../validators/user.validator.js";
 import { setUserLanguagesSchema } from "../validators/user-language.validator.js";
 import {
@@ -30,6 +31,7 @@ import {
   completeProfileHandler,
   getUserLanguagesHandler,
   setUserLanguagesHandler,
+  setInterestsHandler,
 } from "../controllers/user.controller.js";
 import { profileGuard } from "../middleware/profileGuard.js";
 import { AppError } from "../utils/errors.js";
@@ -59,6 +61,7 @@ router.patch("/me/location", validate(updateLocationSchema), updateLocationHandl
 router.patch("/me/push-token", validate(updatePushTokenSchema), updatePushTokenHandler);
 router.post("/me/heartbeat", heartbeatHandler);
 router.post("/me/photos", upload.single("photo"), uploadPhotoHandler);
+router.post("/me/interests", validate(setInterestsSchema), setInterestsHandler);
 router.post("/me/boost", profileGuard, boostHandler);
 router.post("/me/claim-badge-reward", profileGuard, claimBadgeRewardHandler);
 router.delete("/me/photos/:index", deletePhotoHandler);

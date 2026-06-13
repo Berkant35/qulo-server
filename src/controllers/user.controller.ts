@@ -2,12 +2,14 @@ import type { Request, Response, NextFunction } from "express";
 import { userService } from "../services/user.service.js";
 import { badgeService } from "../services/badge.service.js";
 import { userLanguageService } from "../services/user-language.service.js";
+import { setInterests } from "../services/user-interests.service.js";
 import type {
   UpdateProfileInput,
   UpdateDetailsInput,
   UpdateLocationInput,
   UpdatePushTokenInput,
   NotificationPreferencesInput,
+  SetInterestsInput,
 } from "../validators/user.validator.js";
 import { AppError, Errors } from "../utils/errors.js";
 
@@ -182,6 +184,16 @@ export async function setUserLanguagesHandler(req: Request, res: Response, next:
     const { languages } = req.body;
     const result = await userLanguageService.setUserLanguages(req.user!.userId, languages);
     res.json({ languages: result });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function setInterestsHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { interests } = req.body as SetInterestsInput;
+    const result = await setInterests(req.user!.userId, interests);
+    res.json({ success: true, ...result });
   } catch (err) {
     next(err);
   }
