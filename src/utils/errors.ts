@@ -188,4 +188,10 @@ export const Errors = {
 
   INVALID_PHOTO_INDEX: () =>
     new AppError("INVALID_PHOTO_INDEX", 400, "Invalid photo index"),
+
+  INTERESTS_INVALID: () =>
+    new AppError("INTERESTS_INVALID", 400, "Invalid interest tags"),
+
+  QUICK_ASSIGN_NO_BANK_MATCH: () =>
+    new AppError("QUICK_ASSIGN_NO_BANK_MATCH", 404, "No matching questions in bank"),
 } as const;

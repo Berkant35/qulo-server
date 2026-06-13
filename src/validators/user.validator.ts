@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { SUPPORTED_LOCALES } from '../constants/locales.js';
+import { INTEREST_POOL } from '../constants/interest-pool.js';
 
 export const updateProfileSchema = z.object({
   name: z.string().trim().min(1).max(50).optional(),
@@ -76,3 +77,11 @@ export const completeProfileSchema = z.object({
 });
 
 export type CompleteProfileInput = z.infer<typeof completeProfileSchema>;
+
+export const setInterestsSchema = z.object({
+  interests: z.array(z.enum(INTEREST_POOL as unknown as [string, ...string[]]))
+    .min(0)
+    .max(12),
+});
+
+export type SetInterestsInput = z.infer<typeof setInterestsSchema>;
