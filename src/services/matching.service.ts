@@ -223,6 +223,12 @@ export class MatchingService {
       return qCount >= 2;
     });
 
+    // Hard gate: must have at least 1 photo (profile-setup-gate enforcement)
+    discoverableFiltered = discoverableFiltered.filter((c) => {
+      const photoCount = c.photos?.length ?? 0;
+      return photoCount >= 1;
+    });
+
     // 5.6 — Language filter: candidate must have 2+ questions in user's languages
     // Use preferred_languages if set, otherwise fall back to userLanguages
     const langPrefs = user.preferred_languages && (user.preferred_languages as string[]).length > 0
