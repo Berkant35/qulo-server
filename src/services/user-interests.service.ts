@@ -1,5 +1,4 @@
 import { supabase } from "../config/supabase.js";
-import { Errors } from "../utils/errors.js";
 
 export async function setInterests(userId: string, interests: string[]) {
   // Deduplicate (schema allows duplicates by design; service hardens)
@@ -10,7 +9,7 @@ export async function setInterests(userId: string, interests: string[]) {
     .update({ interests: unique })
     .eq("id", userId);
 
-  if (error) throw Errors.INTERESTS_INVALID();
+  if (error) throw error;
 
   return { interests: unique };
 }
