@@ -32,6 +32,7 @@ import {
   getUserLanguagesHandler,
   setUserLanguagesHandler,
   setInterestsHandler,
+  quickAssignQuestionsHandler,
 } from "../controllers/user.controller.js";
 import { profileGuard } from "../middleware/profileGuard.js";
 import { AppError } from "../utils/errors.js";
@@ -62,6 +63,7 @@ router.patch("/me/push-token", validate(updatePushTokenSchema), updatePushTokenH
 router.post("/me/heartbeat", heartbeatHandler);
 router.post("/me/photos", upload.single("photo"), uploadPhotoHandler);
 router.post("/me/interests", validate(setInterestsSchema), setInterestsHandler);
+router.post("/me/quick-assign-questions", quickAssignQuestionsHandler);
 router.post("/me/boost", profileGuard, boostHandler);
 router.post("/me/claim-badge-reward", profileGuard, claimBadgeRewardHandler);
 router.delete("/me/photos/:index", deletePhotoHandler);

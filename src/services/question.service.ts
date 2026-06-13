@@ -3,6 +3,11 @@ import { AppError, Errors } from "../utils/errors.js";
 import type { CreateQuestionInput, UpdateQuestionInput } from "../validators/question.validator.js";
 import { aiSuggestService } from './ai-suggest.service.js';
 import { subscriptionService } from './subscription.service.js';
+import type { SubscriptionPlan } from '../types/index.js';
+
+// Minimum number of questions a user must have to be discoverable + to leave
+// the profile-setup gate. Aligns with discover filter (migration 028).
+const MIN_REQUIRED_QUESTIONS = 2;
 
 export class QuestionService {
   async getMyQuestions(userId: string) {
@@ -69,6 +74,81 @@ export class QuestionService {
     ).catch(() => {}); // Never block question creation
 
     return data;
+  }
+
+  /**
+   * Quick-assigns up to MIN_REQUIRED_QUESTIONS - currentCount questions to the
+   * user, pulling from the profile-based AI question bank. Used by the profile
+   * setup gate so users can leave setup with the minimum viable quiz.
+   *
+   * - Respects subscription `maxQuestions` headroom (won't exceed cap).
+   * - Skips AI lookup entirely when no slot is needed (idempotent for callers).
+   * - Migration 028 trigger keeps `users.question_count` in sync after insert.
+   */
+  async quickAssignQuestions(userId: string) {
+    const { data: user, error: userErr } = await supabase
+      .from("users")
+      .select("question_count, locale, subscription_plan")
+      .eq("id", userId)
+      .single();
+
+    if (userErr || !user) {
+      throw Errors.USER_NOT_FOUND();
+    }
+
+    const currentCount = user.question_count ?? 0;
+    const locale = user.locale ?? "tr";
+    const plan = (user.subscription_plan ?? null) as SubscriptionPlan | null;
+    const limits = await subscriptionService.getLimits(plan);
+
+    const headroom = Math.max(0, limits.maxQuestions - currentCount);
+    const needed = Math.min(
+      Math.max(0, MIN_REQUIRED_QUESTIONS - currentCount),
+      headroom,
+    );
+
+    if (needed === 0) {
+      return { assignedCount: 0, assignedQuestionIds: [] as string[] };
+    }
+
+    const suggestions = await aiSuggestService.getProfileBasedSuggestions(
+      userId,
+      locale,
+      needed,
+    );
+
+    if (!suggestions || suggestions.length === 0) {
+      throw Errors.QUICK_ASSIGN_NO_BANK_MATCH();
+    }
+
+    const rows = suggestions.slice(0, needed).map((s, i) => ({
+      user_id: userId,
+      order_num: currentCount + i + 1,
+      question_text: s.question_text,
+      answer_1: s.answers[0],
+      answer_2: s.answers[1],
+      answer_3: s.answers[2],
+      answer_4: s.answers[3],
+      correct_answer: s.correct_answer, // already 1-indexed from ai-suggest
+      hint_text: s.hint ?? null,
+      category: s.category ?? null,
+      locale,
+      time_limit: 30,
+    }));
+
+    const { data: inserted, error: insertErr } = await supabase
+      .from("questions")
+      .insert(rows)
+      .select("id");
+
+    if (insertErr) {
+      throw Errors.SERVER_ERROR();
+    }
+
+    return {
+      assignedCount: inserted?.length ?? 0,
+      assignedQuestionIds: (inserted ?? []).map((q: { id: string }) => q.id),
+    };
   }
 
   async updateQuestion(userId: string, orderNum: number, input: UpdateQuestionInput) {

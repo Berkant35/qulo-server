@@ -3,6 +3,7 @@ import { userService } from "../services/user.service.js";
 import { badgeService } from "../services/badge.service.js";
 import { userLanguageService } from "../services/user-language.service.js";
 import { setInterests } from "../services/user-interests.service.js";
+import { questionService } from "../services/question.service.js";
 import type {
   UpdateProfileInput,
   UpdateDetailsInput,
@@ -194,6 +195,15 @@ export async function setInterestsHandler(req: Request, res: Response, next: Nex
     const { interests } = req.body as SetInterestsInput;
     const result = await setInterests(req.user!.userId, interests);
     res.json({ success: true, ...result });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function quickAssignQuestionsHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const result = await questionService.quickAssignQuestions(req.user!.userId);
+    res.json(result);
   } catch (err) {
     next(err);
   }
