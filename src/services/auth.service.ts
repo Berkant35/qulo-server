@@ -403,17 +403,22 @@ export class AuthService {
       .maybeSingle();
 
     if (existingByProvider) {
-      if (existingByProvider.is_deleted) throw Errors.INVALID_CREDENTIALS();
-      if (existingByProvider.is_banned) throw Errors.ACCOUNT_BANNED();
-      // Backfill name/surname if missing and provider gave them this round (e.g. first sign-in
-      // saved an empty name due to a client bug — recover next time Apple/Google sends them).
-      const backfill: Record<string, string> = {};
-      if (!existingByProvider.name && name) backfill.name = name;
-      if (!existingByProvider.surname && surname) backfill.surname = surname;
-      if (Object.keys(backfill).length > 0) {
-        await supabase.from("users").update(backfill).eq("id", existingByProvider.id);
+      if (existingByProvider.is_deleted) {
+        // Soft-deleted: hard delete + fall through (Case B/C will create a fresh account).
+        // Mirrors Case B (email match) behavior — symmetric recovery for re-signups.
+        await this.hardDeleteUser(existingByProvider.id);
+      } else {
+        if (existingByProvider.is_banned) throw Errors.ACCOUNT_BANNED();
+        // Backfill name/surname if missing and provider gave them this round (e.g. first sign-in
+        // saved an empty name due to a client bug — recover next time Apple/Google sends them).
+        const backfill: Record<string, string> = {};
+        if (!existingByProvider.name && name) backfill.name = name;
+        if (!existingByProvider.surname && surname) backfill.surname = surname;
+        if (Object.keys(backfill).length > 0) {
+          await supabase.from("users").update(backfill).eq("id", existingByProvider.id);
+        }
+        return this.createSocialSession(existingByProvider.id, existingByProvider.email, existingByProvider.age);
       }
-      return this.createSocialSession(existingByProvider.id, existingByProvider.email, existingByProvider.age);
     }
 
     // 3. Case B: email match → link account
