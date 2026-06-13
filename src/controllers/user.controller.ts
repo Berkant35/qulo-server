@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import { userService } from "../services/user.service.js";
 import { badgeService } from "../services/badge.service.js";
 import { userLanguageService } from "../services/user-language.service.js";
-import { setInterests } from "../services/user-interests.service.js";
+import { userInterestsService } from "../services/user-interests.service.js";
 import { questionService } from "../services/question.service.js";
 import type {
   UpdateProfileInput,
@@ -193,7 +193,7 @@ export async function setUserLanguagesHandler(req: Request, res: Response, next:
 export async function setInterestsHandler(req: Request, res: Response, next: NextFunction) {
   try {
     const { interests } = req.body as SetInterestsInput;
-    const result = await setInterests(req.user!.userId, interests);
+    const result = await userInterestsService.setInterests(req.user!.userId, interests);
     res.json({ success: true, ...result });
   } catch (err) {
     next(err);
