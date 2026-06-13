@@ -44,7 +44,7 @@ export class UserService {
   async updateProfile(userId: string, data: UpdateProfileInput) {
     // gender_pref geldiyse set_at'i server-side stamp et (client'tan manipüle edilemez)
     const updates: Record<string, unknown> = { ...data };
-    if ((data as { gender_pref?: string }).gender_pref !== undefined) {
+    if (data.gender_pref !== undefined) {
       updates.gender_pref_set_at = new Date().toISOString();
     }
 
