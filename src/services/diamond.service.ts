@@ -9,13 +9,36 @@ export class DiamondService {
       .eq("id", userId)
       .single();
 
-    if (user && user.auth_provider !== "email") {
-      const createdAt = new Date(user.created_at);
-      const hoursSinceCreation = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60);
-      if (hoursSinceCreation < 24) {
-        throw Errors.DIAMOND_COOLDOWN();
-      }
-    }
+    if (!user || user.auth_provider === "email") return;
+
+    const createdAt = new Date(user.created_at);
+    const hoursSinceCreation = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60);
+    if (hoursSinceCreation >= 24) return;
+
+    // Anti-fraud cooldown is bypassed once user proves intent via real money:
+    // active subscription OR any IAP transaction (consumable diamond purchase).
+    const [subResult, iapResult] = await Promise.all([
+      supabase
+        .from("user_subscriptions")
+        .select("status, expires_at")
+        .eq("user_id", userId)
+        .eq("status", "active")
+        .maybeSingle(),
+      supabase
+        .from("iap_transactions")
+        .select("id")
+        .eq("user_id", userId)
+        .limit(1)
+        .maybeSingle(),
+    ]);
+
+    const sub = subResult.data;
+    const hasActiveSub = !!sub && (!sub.expires_at || new Date(sub.expires_at) > new Date());
+    const hasIap = !!iapResult.data;
+
+    if (hasActiveSub || hasIap) return;
+
+    throw Errors.DIAMOND_COOLDOWN();
   }
 
   async getBalance(userId: string) {
