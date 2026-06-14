@@ -73,6 +73,18 @@ export class QuizService {
 
   // ─── Start Session ─────────────────────────────────────────────
   async startSession(solverId: string, targetId: string) {
+    // 0. Defensive checks — fail fast on invalid pairs.
+    if (solverId === targetId) throw Errors.SELF_SWIPE();
+
+    const { data: target, error: targetErr } = await supabase
+      .from("users")
+      .select("id")
+      .eq("id", targetId)
+      .eq("is_deleted", false)
+      .maybeSingle();
+    if (targetErr) throw Errors.SERVER_ERROR();
+    if (!target) throw Errors.USER_NOT_FOUND();
+
     // 1. Fetch target's questions with locale
     const { data: allQuestions, error: qErr } = await supabase
       .from("questions")
@@ -86,6 +98,10 @@ export class QuizService {
     // Sort questions by solver's language preference (preferred first, others after)
     const solverLanguages = await this.resolveSolverLanguages(solverId);
     const filteredQuestions = this.filterByLanguagePreference(allQuestions, solverLanguages);
+
+    // Language filter can return <2 if solver changed prefs after discover loaded.
+    // Treat as NO_QUESTIONS instead of creating an empty session that immediately fails.
+    if (filteredQuestions.length < 2) throw Errors.NO_QUESTIONS();
 
     const totalQuestions = filteredQuestions.length;
 
