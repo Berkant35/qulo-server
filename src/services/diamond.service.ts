@@ -2,43 +2,13 @@ import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
 
 export class DiamondService {
-  private async checkSocialCooldown(userId: string) {
-    const { data: user } = await supabase
-      .from("users")
-      .select("created_at, auth_provider")
-      .eq("id", userId)
-      .single();
-
-    if (!user || user.auth_provider === "email") return;
-
-    const createdAt = new Date(user.created_at);
-    const hoursSinceCreation = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60);
-    if (hoursSinceCreation >= 24) return;
-
-    // Anti-fraud cooldown is bypassed once user proves intent via real money:
-    // active subscription OR any IAP transaction (consumable diamond purchase).
-    const [subResult, iapResult] = await Promise.all([
-      supabase
-        .from("user_subscriptions")
-        .select("status, expires_at")
-        .eq("user_id", userId)
-        .eq("status", "active")
-        .maybeSingle(),
-      supabase
-        .from("iap_transactions")
-        .select("id")
-        .eq("user_id", userId)
-        .limit(1)
-        .maybeSingle(),
-    ]);
-
-    const sub = subResult.data;
-    const hasActiveSub = !!sub && (!sub.expires_at || new Date(sub.expires_at) > new Date());
-    const hasIap = !!iapResult.data;
-
-    if (hasActiveSub || hasIap) return;
-
-    throw Errors.DIAMOND_COOLDOWN();
+  // 24h social-signup cooldown devre dışı.
+  // Anti-fraud değeri minimaldi (kullanıcı yine de hesap aç + bekle ile bypass edebilir)
+  // ama legitimate kullanıcının mor elmasını harcamasını engelliyordu (satın almadan sonra dahi).
+  // Re-enable etmek istenirse: user.auth_provider !== 'email' && hoursSinceCreation < 24
+  // && !hasActiveSub && !hasIap koşullarını yeniden ekle.
+  private async checkSocialCooldown(_userId: string) {
+    return;
   }
 
   async getBalance(userId: string) {
