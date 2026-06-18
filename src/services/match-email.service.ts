@@ -20,6 +20,7 @@ interface OwnerRow {
   locale: string | null;
   last_active_at: string | null;
   email_notifications_enabled: boolean;
+  is_deleted: boolean;
 }
 
 interface MatchNewTpl {
@@ -55,11 +56,14 @@ class MatchEmailService {
     try {
       const { data: owner } = await supabase
         .from("users")
-        .select("id, email, locale, last_active_at, email_notifications_enabled")
+        .select("id, email, locale, last_active_at, email_notifications_enabled, is_deleted")
         .eq("id", ownerId)
         .single();
       if (!owner) return;
       const o = owner as OwnerRow;
+
+      // 0) Soft-deleted user — never email
+      if (o.is_deleted) return;
 
       // 1) Opt-out kontrolü
       if (!o.email_notifications_enabled) return;
