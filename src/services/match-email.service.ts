@@ -6,6 +6,7 @@ import { supabase } from "../config/supabase.js";
 import { resolveLocale } from "../utils/locales.js";
 import { sendEmail } from "../utils/gmail.js";
 import { emailUnsubscribeTokenService } from "./email-unsubscribe-token.service.js";
+import { env } from "../config/env.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -76,8 +77,8 @@ class MatchEmailService {
       // 4) Unsubscribe token (idempotent per match notification — fresh token each send)
       const token = await emailUnsubscribeTokenService.create(o.id, "match_new");
 
-      // 5) URLs (env override; defaults to production Railway URL)
-      const appBaseUrl = process.env.APP_BASE_URL ?? "https://qulo-server-production.up.railway.app";
+      // 5) URLs — CTA → public web site, unsubscribe → API
+      const ctaUrl = env.WEB_URL;
       const apiBaseUrl = process.env.API_BASE_URL ?? "https://qulo-server-production.up.railway.app";
 
       // 6) Render
@@ -86,7 +87,7 @@ class MatchEmailService {
         {
           locale,
           match_new: tpl,
-          ctaUrl: `${appBaseUrl}/open`,
+          ctaUrl,
           unsubscribeUrl: `${apiBaseUrl}/unsubscribe?token=${token}`,
         },
       );
@@ -97,7 +98,7 @@ class MatchEmailService {
           to: o.email,
           subject: tpl.subject,
           html,
-          text: `${tpl.headline}\n\n${tpl.body}\n\n${tpl.cta}: ${appBaseUrl}/open`,
+          text: `${tpl.headline}\n\n${tpl.body}\n\n${tpl.cta}: ${ctaUrl}`,
         });
         console.log("[match-email] sent", { ownerId, locale });
       } catch (err) {
