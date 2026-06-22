@@ -9,6 +9,7 @@ declare module "express-session" {
     adminRole?: string;
     csrfToken?: string;
     campaignError?: string;
+    pageMessageError?: string;
   }
 }
 

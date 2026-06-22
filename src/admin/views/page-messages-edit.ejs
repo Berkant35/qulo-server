@@ -1,0 +1,126 @@
+<%- include('_header') %>
+<% const c = (l, f) => message && message.content && message.content[l] ? (message.content[l][f] || '') : ''; %>
+<a href="/admin/page-messages" class="btn" style="background:#e5e7eb;color:#333;">← Geri</a>
+<h2><%= message ? 'Mesajı Düzenle' : 'Yeni Mesaj' %></h2>
+
+<% if (error) { %>
+  <div style="color:#b91c1c;background:#fee2e2;padding:10px 14px;border-radius:6px;margin-bottom:16px;"><%= error %></div>
+<% } %>
+
+<form method="post" action="<%= message ? '/admin/page-messages/' + message.id : '/admin/page-messages' %>">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+  <div class="card">
+    <h3>Genel</h3>
+
+    <label>Admin başlığı (iç)</label>
+    <input name="title" value="<%= message ? message.title : '' %>" required style="width:100%;margin-bottom:12px;" />
+
+    <label>Sayfa</label>
+    <select name="page" style="width:100%;margin-bottom:12px;">
+      <% pages.forEach((p) => { %>
+        <option value="<%= p %>" <%= message && message.page === p ? 'selected' : '' %>><%= p %></option>
+      <% }); %>
+    </select>
+
+    <label>Format</label>
+    <select name="display_type" style="width:100%;margin-bottom:12px;">
+      <% ['banner','bottom_sheet','modal','inline_card'].forEach((d) => { %>
+        <option value="<%= d %>" <%= message && message.display_type === d ? 'selected' : '' %>><%= d %></option>
+      <% }); %>
+    </select>
+
+    <label>Frekans</label>
+    <select name="frequency" style="width:100%;margin-bottom:12px;">
+      <% ['once','every_visit','until_dismissed','daily'].forEach((f) => { %>
+        <option value="<%= f %>" <%= message && message.frequency === f ? 'selected' : '' %>><%= f %></option>
+      <% }); %>
+    </select>
+
+    <label>Öncelik</label>
+    <input type="number" name="priority" value="<%= message ? message.priority : 0 %>" style="width:100%;margin-bottom:12px;" />
+
+    <label>Görsel URL (https)</label>
+    <input name="image_url" value="<%= message ? (message.image_url || '') : '' %>" style="width:100%;margin-bottom:12px;" />
+
+    <label>Yönlendirme (action_url — /discover veya https://quloapp.com/...)</label>
+    <input name="action_url" value="<%= message ? (message.action_url || '') : '' %>" style="width:100%;margin-bottom:12px;" />
+
+    <label>
+      <input type="checkbox" name="is_active" <%= !message || message.is_active ? 'checked' : '' %> />
+      Aktif
+    </label>
+  </div>
+
+  <div class="card">
+    <h3>İçerik — en az bir dil yeterli</h3>
+    <p style="color:#6b7280;font-size:13px;margin:0 0 12px;">Boş bıraktığın diller mobilde otomatik olarak dolu bir dile düşer (öncelik: kullanıcının dili → İngilizce → ilk dolu dil). Bir dili kullanacaksan <b>hem başlık hem metnini</b> doldur.</p>
+    <% locales.forEach((l) => { %>
+      <fieldset style="border:1px solid #ddd;margin:8px 0;padding:12px;border-radius:6px;">
+        <legend style="font-weight:600;padding:0 6px;"><%= localeNames[l] %> (<%= l %>)</legend>
+        <input name="title_<%= l %>" placeholder="Başlık" value="<%= c(l, 'title') %>" style="width:100%;margin-bottom:8px;" />
+        <textarea name="body_<%= l %>" placeholder="Metin" style="width:100%;margin-bottom:8px;"><%= c(l, 'body') %></textarea>
+        <input name="cta_<%= l %>" placeholder="Buton metni (opsiyonel)" value="<%= c(l, 'cta_label') %>" style="width:100%;" />
+      </fieldset>
+    <% }); %>
+  </div>
+
+  <div class="card">
+    <h3>Segment (boş = herkes)</h3>
+    <% const seg = message && message.segment ? message.segment : {}; %>
+
+    <label>Cinsiyet</label>
+    <select name="segment_gender" style="width:100%;margin-bottom:12px;">
+      <option value="">—</option>
+      <option value="MAN" <%= seg.gender === 'MAN' ? 'selected' : '' %>>MAN</option>
+      <option value="WOMAN" <%= seg.gender === 'WOMAN' ? 'selected' : '' %>>WOMAN</option>
+    </select>
+
+    <label>Yaş min</label>
+    <input type="number" name="segment_age_min" value="<%= seg.age_min || '' %>" style="width:100%;margin-bottom:12px;" />
+
+    <label>Yaş max</label>
+    <input type="number" name="segment_age_max" value="<%= seg.age_max || '' %>" style="width:100%;margin-bottom:12px;" />
+
+    <label>Şehirler (virgülle ayrılmış)</label>
+    <input name="segment_cities" value="<%= seg.cities ? seg.cities.join(', ') : '' %>" style="width:100%;margin-bottom:12px;" />
+
+    <label>Premium?</label>
+    <select name="segment_is_premium" style="width:100%;margin-bottom:12px;">
+      <option value="">—</option>
+      <option value="true" <%= seg.is_premium === true ? 'selected' : '' %>>Evet</option>
+      <option value="false" <%= seg.is_premium === false ? 'selected' : '' %>>Hayır</option>
+    </select>
+
+    <label>Maks. soru sayısı (0 = hiç soru yok)</label>
+    <input type="number" name="segment_question_count_max" value="<%= seg.question_count_max !== undefined && seg.question_count_max !== null ? seg.question_count_max : '' %>" style="width:100%;margin-bottom:12px;" />
+
+    <button type="button" id="previewBtn" class="btn">Segment önizle</button>
+    <span id="previewCount" style="margin-left:8px;font-weight:600;"></span>
+  </div>
+
+  <button type="submit" class="btn btn-primary" style="margin-top:8px;"><%= message ? 'Güncelle' : 'Oluştur' %></button>
+</form>
+
+<script>
+  var CSRF_TOKEN = '<%= csrfToken %>';
+  document.getElementById('previewBtn').addEventListener('click', async function () {
+    var fd = new FormData(document.querySelector('form'));
+    var body = { _csrf: CSRF_TOKEN };
+    for (var pair of fd.entries()) {
+      if (pair[0].startsWith('segment_')) body[pair[0]] = pair[1];
+    }
+    try {
+      var r = await fetch('/admin/page-messages/preview-segment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      var j = await r.json();
+      document.getElementById('previewCount').textContent = '→ ' + j.count + ' kişi';
+    } catch (e) {
+      document.getElementById('previewCount').textContent = 'Hata';
+    }
+  });
+</script>
+<%- include('_footer') %>
