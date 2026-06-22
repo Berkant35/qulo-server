@@ -2,6 +2,7 @@ import { Router } from "express";
 import { adminController } from "./admin.controller.js";
 import { questionBankController } from "./question-bank.controller.js";
 import { analyticsController } from "./analytics.controller.js";
+import { pageMessageAdminController } from "./page-message.admin.controller.js";
 import { adminAuth, superAdminOnly, ipWhitelist, csrfGenerate, csrfValidate } from "./admin.middleware.js";
 import adminCronRoutes from "./cron.routes.js";
 import rateLimit from "express-rate-limit";
@@ -74,6 +75,16 @@ router.get("/campaigns/:id", (req, res) => adminController.campaignDetail(req, r
 router.post("/campaigns/:id/send", csrfValidate, (req, res) => adminController.campaignSend(req, res));
 router.post("/campaigns/:id/cancel", csrfValidate, (req, res) => adminController.campaignCancel(req, res));
 router.post("/campaigns/preview-count", csrfValidate, (req, res) => adminController.campaignPreviewCount(req, res));
+
+// Page Messages (sayfa-içi mesajlar)
+router.get("/page-messages", (req, res) => pageMessageAdminController.list(req, res));
+router.get("/page-messages/new", (req, res) => pageMessageAdminController.newForm(req, res));
+router.post("/page-messages", csrfValidate, (req, res) => pageMessageAdminController.create(req, res));
+router.post("/page-messages/preview-segment", csrfValidate, (req, res) => pageMessageAdminController.previewSegment(req, res));
+router.get("/page-messages/:id", (req, res) => pageMessageAdminController.editForm(req, res));
+router.post("/page-messages/:id", csrfValidate, (req, res) => pageMessageAdminController.update(req, res));
+router.post("/page-messages/:id/toggle", csrfValidate, (req, res) => pageMessageAdminController.toggle(req, res));
+router.delete("/page-messages/:id", csrfValidate, (req, res) => pageMessageAdminController.remove(req, res));
 
 router.get("/tickets", (req, res) => adminController.tickets(req, res));
 router.get("/tickets/:id", (req, res) => adminController.ticketDetail(req, res));

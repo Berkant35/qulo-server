@@ -1,0 +1,38 @@
+<%- include('_header') %>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+  <h2>Sayfa Mesajları (<%= total %>)</h2>
+  <a href="/admin/page-messages/new" class="btn btn-primary">+ Yeni Mesaj</a>
+</div>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Başlık</th>
+      <th>Sayfa</th>
+      <th>Format</th>
+      <th>Frekans</th>
+      <th>Öncelik</th>
+      <th>Durum</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% messages.forEach((m) => { %>
+      <tr>
+        <td><%= m.title %></td>
+        <td><%= m.page %></td>
+        <td><%= m.display_type %></td>
+        <td><%= m.frequency %></td>
+        <td><%= m.priority %></td>
+        <td><%= m.is_active ? '✅ Aktif' : '⛔ Pasif' %></td>
+        <td>
+          <a href="/admin/page-messages/<%= m.id %>" class="btn">Düzenle</a>
+          <form method="post" action="/admin/page-messages/<%= m.id %>/toggle" style="display:inline;">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <button class="btn"><%= m.is_active ? 'Pasifleştir' : 'Aktifleştir' %></button>
+          </form>
+        </td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+<%- include('_footer') %>
