@@ -13,8 +13,8 @@
   <div class="card">
     <h3>Genel</h3>
 
-    <label>Admin başlığı (iç)</label>
-    <input name="title" value="<%= message ? message.title : '' %>" required style="width:100%;margin-bottom:12px;" />
+    <label>Admin başlığı (opsiyonel — sadece listede görünür, boş bırakırsan içerik başlığından alınır)</label>
+    <input name="title" value="<%= message ? message.title : '' %>" placeholder="opsiyonel" style="width:100%;margin-bottom:12px;" />
 
     <label>Sayfa</label>
     <select name="page" style="width:100%;margin-bottom:12px;">
@@ -43,8 +43,8 @@
     <label>Görsel URL (https)</label>
     <input name="image_url" value="<%= message ? (message.image_url || '') : '' %>" style="width:100%;margin-bottom:12px;" />
 
-    <label>Yönlendirme (action_url — /discover veya https://quloapp.com/...)</label>
-    <input name="action_url" value="<%= message ? (message.action_url || '') : '' %>" style="width:100%;margin-bottom:12px;" />
+    <label>Yönlendirme (opsiyonel — boş bırakabilirsin; örn. <code>discover</code> veya <code>/profile</code>)</label>
+    <input name="action_url" value="<%= message ? (message.action_url || '') : '' %>" placeholder="boş = yönlendirme yok" style="width:100%;margin-bottom:12px;" />
 
     <label>
       <input type="checkbox" name="is_active" <%= !message || message.is_active ? 'checked' : '' %> />
@@ -59,7 +59,7 @@
       <fieldset style="border:1px solid #ddd;margin:8px 0;padding:12px;border-radius:6px;">
         <legend style="font-weight:600;padding:0 6px;"><%= localeNames[l] %> (<%= l %>)</legend>
         <input name="title_<%= l %>" placeholder="Başlık" value="<%= c(l, 'title') %>" style="width:100%;margin-bottom:8px;" />
-        <textarea name="body_<%= l %>" placeholder="Metin" style="width:100%;margin-bottom:8px;"><%= c(l, 'body') %></textarea>
+        <textarea name="body_<%= l %>" placeholder="Metin (opsiyonel)" style="width:100%;margin-bottom:8px;"><%= c(l, 'body') %></textarea>
         <input name="cta_<%= l %>" placeholder="Buton metni (opsiyonel)" value="<%= c(l, 'cta_label') %>" style="width:100%;" />
       </fieldset>
     <% }); %>
