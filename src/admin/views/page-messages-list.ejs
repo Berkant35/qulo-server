@@ -30,9 +30,32 @@
             <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
             <button class="btn"><%= m.is_active ? 'Pasifleştir' : 'Aktifleştir' %></button>
           </form>
+          <button class="btn btn-danger" onclick="deleteMessage('<%= m.id %>')">Sil</button>
         </td>
       </tr>
     <% }); %>
   </tbody>
 </table>
+
+<script>
+  const CSRF_TOKEN = '<%= csrfToken %>';
+  async function deleteMessage(id) {
+    if (!confirm('Bu mesajı silmek istediğine emin misin? Bu işlem geri alınamaz.')) return;
+    try {
+      const res = await fetch('/admin/page-messages/' + encodeURIComponent(id), {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ _csrf: CSRF_TOKEN }),
+      });
+      if (res.ok) {
+        location.reload();
+      } else {
+        const err = await res.json().catch(function () { return {}; });
+        alert('Hata: ' + (err.error || 'silinemedi'));
+      }
+    } catch (e) {
+      alert('Hata: ağ sorunu');
+    }
+  }
+</script>
 <%- include('_footer') %>

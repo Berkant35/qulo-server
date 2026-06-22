@@ -11,7 +11,6 @@ function parseSegment(b: Record<string, string>) {
   if (b.segment_age_min) s.age_min = parseInt(b.segment_age_min);
   if (b.segment_age_max) s.age_max = parseInt(b.segment_age_max);
   if (b.segment_cities) s.cities = b.segment_cities.split(",").map((c) => c.trim()).filter(Boolean);
-  if (b.segment_subscription) s.subscription_plan = b.segment_subscription;
   if (b.segment_is_premium) s.is_premium = b.segment_is_premium === "true";
   if (b.segment_question_count_max) s.question_count_max = parseInt(b.segment_question_count_max);
   return s;
@@ -27,16 +26,21 @@ function parseContent(b: Record<string, string>) {
 
 class PageMessageAdminController {
   async list(req: Request, res: Response) {
-    const page = Math.max(1, parseInt(req.query.page as string) || 1);
-    const { messages, total } = await pageMessageService.list(page);
-    res.render("page-messages-list", {
-      messages,
-      page,
-      totalPages: Math.ceil(total / 20),
-      total,
-      session: req.session,
-      csrfToken: req.session.csrfToken,
-    });
+    try {
+      const page = Math.max(1, parseInt(req.query.page as string) || 1);
+      const { messages, total } = await pageMessageService.list(page);
+      res.render("page-messages-list", {
+        messages,
+        page,
+        totalPages: Math.ceil(total / 20),
+        total,
+        session: req.session,
+        csrfToken: req.session.csrfToken,
+      });
+    } catch (err: any) {
+      console.error("[Admin] page-messages list failed:", err.message);
+      res.status(500).render("error", { message: "Mesajlar yüklenemedi.", session: req.session });
+    }
   }
 
   async newForm(req: Request, res: Response) {
@@ -54,69 +58,103 @@ class PageMessageAdminController {
   }
 
   async editForm(req: Request, res: Response) {
-    const id = req.params.id as string;
-    const message = await pageMessageService.getById(id);
-    const error = req.session.pageMessageError;
-    delete req.session.pageMessageError;
-    res.render("page-messages-edit", {
-      message,
-      locales: SUPPORTED_LOCALES,
-      localeNames: LOCALE_NAMES,
-      pages: PAGE_KEYS,
-      session: req.session,
-      csrfToken: req.session.csrfToken,
-      error: error ?? null,
-    });
+    try {
+      const id = req.params.id as string;
+      const message = await pageMessageService.getById(id);
+      if (!message) {
+        return res.redirect("/admin/page-messages");
+      }
+      const error = req.session.pageMessageError;
+      delete req.session.pageMessageError;
+      res.render("page-messages-edit", {
+        message,
+        locales: SUPPORTED_LOCALES,
+        localeNames: LOCALE_NAMES,
+        pages: PAGE_KEYS,
+        session: req.session,
+        csrfToken: req.session.csrfToken,
+        error: error ?? null,
+      });
+    } catch (err: any) {
+      console.error("[Admin] page-messages editForm failed:", err.message);
+      res.redirect("/admin/page-messages");
+    }
   }
 
   async create(req: Request, res: Response) {
-    const input = {
-      ...req.body,
-      content: parseContent(req.body),
-      segment: parseSegment(req.body),
-      priority: parseInt(req.body.priority) || 0,
-      is_active: req.body.is_active === "on",
-    };
-    const parsed = createPageMessageSchema.safeParse(input);
-    if (!parsed.success) {
-      req.session.pageMessageError = JSON.stringify(parsed.error.flatten().fieldErrors);
-      return res.redirect("/admin/page-messages/new");
+    try {
+      const input = {
+        ...req.body,
+        content: parseContent(req.body),
+        segment: parseSegment(req.body),
+        priority: parseInt(req.body.priority) || 0,
+        is_active: req.body.is_active === "on",
+      };
+      const parsed = createPageMessageSchema.safeParse(input);
+      if (!parsed.success) {
+        req.session.pageMessageError = JSON.stringify(parsed.error.flatten().fieldErrors);
+        return res.redirect("/admin/page-messages/new");
+      }
+      await pageMessageService.create(parsed.data, req.session.adminId!);
+      res.redirect("/admin/page-messages");
+    } catch (err: any) {
+      console.error("[Admin] page-messages create failed:", err.message);
+      req.session.pageMessageError = err.message;
+      res.redirect("/admin/page-messages/new");
     }
-    await pageMessageService.create(parsed.data, req.session.adminId!);
-    res.redirect("/admin/page-messages");
   }
 
   async update(req: Request, res: Response) {
     const id = req.params.id as string;
-    const input = {
-      ...req.body,
-      content: parseContent(req.body),
-      segment: parseSegment(req.body),
-      priority: parseInt(req.body.priority) || 0,
-      is_active: req.body.is_active === "on",
-    };
-    const parsed = createPageMessageSchema.safeParse(input);
-    if (!parsed.success) {
-      req.session.pageMessageError = JSON.stringify(parsed.error.flatten().fieldErrors);
-      return res.redirect(`/admin/page-messages/${id}`);
+    try {
+      const input = {
+        ...req.body,
+        content: parseContent(req.body),
+        segment: parseSegment(req.body),
+        priority: parseInt(req.body.priority) || 0,
+        is_active: req.body.is_active === "on",
+      };
+      const parsed = createPageMessageSchema.safeParse(input);
+      if (!parsed.success) {
+        req.session.pageMessageError = JSON.stringify(parsed.error.flatten().fieldErrors);
+        return res.redirect(`/admin/page-messages/${id}`);
+      }
+      await pageMessageService.update(id, parsed.data);
+      res.redirect("/admin/page-messages");
+    } catch (err: any) {
+      console.error("[Admin] page-messages update failed:", err.message);
+      req.session.pageMessageError = err.message;
+      res.redirect(`/admin/page-messages/${id}`);
     }
-    await pageMessageService.update(id, parsed.data);
-    res.redirect("/admin/page-messages");
   }
 
   async toggle(req: Request, res: Response) {
-    await pageMessageService.toggleActive(req.params.id as string);
+    try {
+      await pageMessageService.toggleActive(req.params.id as string);
+    } catch (err: any) {
+      console.error("[Admin] page-messages toggle failed:", err.message);
+    }
     res.redirect("/admin/page-messages");
   }
 
   async remove(req: Request, res: Response) {
-    await pageMessageService.remove(req.params.id as string);
-    res.json({ ok: true });
+    try {
+      await pageMessageService.remove(req.params.id as string);
+      res.json({ ok: true });
+    } catch (err: any) {
+      console.error("[Admin] page-messages remove failed:", err.message);
+      res.status(500).json({ error: err.message || "silinemedi" });
+    }
   }
 
   async previewSegment(req: Request, res: Response) {
-    const count = await segmentService.previewSegmentCount(parseSegment(req.body));
-    res.json({ count });
+    try {
+      const count = await segmentService.previewSegmentCount(parseSegment(req.body));
+      res.json({ count });
+    } catch (err: any) {
+      console.error("[Admin] page-messages previewSegment failed:", err.message);
+      res.status(500).json({ error: err.message || "segment sayısı alınamadı" });
+    }
   }
 }
 
