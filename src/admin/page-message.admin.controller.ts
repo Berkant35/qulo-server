@@ -21,8 +21,8 @@ function parseContent(b: Record<string, string>) {
   for (const l of SUPPORTED_LOCALES) {
     const title = (b[`title_${l}`] ?? "").trim();
     const body = (b[`body_${l}`] ?? "").trim();
-    // Sadece HEM title HEM body dolu olan dilleri al; boş/yarım diller atlanır (mobile fallback'e düşer).
-    if (title && body) {
+    // Başlık dolu olan dilleri al; metin opsiyonel. Hiç başlık yoksa o dil atlanır (mobile fallback'e düşer).
+    if (title) {
       c[l] = { title, body, cta_label: (b[`cta_${l}`] ?? "").trim() };
     }
   }
@@ -88,9 +88,19 @@ class PageMessageAdminController {
 
   async create(req: Request, res: Response) {
     try {
+      const content = parseContent(req.body);
+      const firstTitle = Object.values(content)[0]?.title;
+      // action_url toleransı: boş bırakılabilir; "discover" gibi yazılırsa başına "/" eklenir.
+      let actionUrl = (req.body.action_url || "").trim();
+      if (actionUrl && !actionUrl.startsWith("/") && !/^https?:/i.test(actionUrl)) {
+        actionUrl = "/" + actionUrl;
+      }
       const input = {
         ...req.body,
-        content: parseContent(req.body),
+        // Admin iç başlığı opsiyonel: boşsa içeriğin ilk başlığından (yoksa sayfa adından) türet.
+        title: (req.body.title || "").trim() || firstTitle || (req.body.page || "Mesaj"),
+        content,
+        action_url: actionUrl || undefined,
         segment: parseSegment(req.body),
         priority: parseInt(req.body.priority) || 0,
         is_active: req.body.is_active === "on",
@@ -112,9 +122,19 @@ class PageMessageAdminController {
   async update(req: Request, res: Response) {
     const id = req.params.id as string;
     try {
+      const content = parseContent(req.body);
+      const firstTitle = Object.values(content)[0]?.title;
+      // action_url toleransı: boş bırakılabilir; "discover" gibi yazılırsa başına "/" eklenir.
+      let actionUrl = (req.body.action_url || "").trim();
+      if (actionUrl && !actionUrl.startsWith("/") && !/^https?:/i.test(actionUrl)) {
+        actionUrl = "/" + actionUrl;
+      }
       const input = {
         ...req.body,
-        content: parseContent(req.body),
+        // Admin iç başlığı opsiyonel: boşsa içeriğin ilk başlığından (yoksa sayfa adından) türet.
+        title: (req.body.title || "").trim() || firstTitle || (req.body.page || "Mesaj"),
+        content,
+        action_url: actionUrl || undefined,
         segment: parseSegment(req.body),
         priority: parseInt(req.body.priority) || 0,
         is_active: req.body.is_active === "on",

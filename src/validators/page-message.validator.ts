@@ -4,7 +4,7 @@ import { PAGE_KEYS } from "../constants/page-keys.js";
 
 const localeContentSchema = z.object({
   title: z.string().min(1).max(120),
-  body: z.string().min(1).max(500),
+  body: z.string().max(500).optional().default(""), // metin opsiyonel — sadece başlık yeterli
   cta_label: z.string().max(40).optional().default(""),
 });
 
@@ -39,7 +39,7 @@ const imageUrlSchema = z
   .optional();
 
 export const createPageMessageSchema = z.object({
-  title: z.string().min(1).max(200),
+  title: z.string().max(200).optional().default(""),
   page: z.enum(PAGE_KEYS as unknown as [string, ...string[]]),
   display_type: z.enum(["banner", "bottom_sheet", "modal", "inline_card"]),
   content: contentSchema,
