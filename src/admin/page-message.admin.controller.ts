@@ -19,7 +19,12 @@ function parseSegment(b: Record<string, string>) {
 function parseContent(b: Record<string, string>) {
   const c: Record<string, { title: string; body: string; cta_label: string }> = {};
   for (const l of SUPPORTED_LOCALES) {
-    c[l] = { title: b[`title_${l}`] ?? "", body: b[`body_${l}`] ?? "", cta_label: b[`cta_${l}`] ?? "" };
+    const title = (b[`title_${l}`] ?? "").trim();
+    const body = (b[`body_${l}`] ?? "").trim();
+    // Sadece HEM title HEM body dolu olan dilleri al; boş/yarım diller atlanır (mobile fallback'e düşer).
+    if (title && body) {
+      c[l] = { title, body, cta_label: (b[`cta_${l}`] ?? "").trim() };
+    }
   }
   return c;
 }
@@ -92,7 +97,7 @@ class PageMessageAdminController {
       };
       const parsed = createPageMessageSchema.safeParse(input);
       if (!parsed.success) {
-        req.session.pageMessageError = JSON.stringify(parsed.error.flatten().fieldErrors);
+        req.session.pageMessageError = parsed.error.errors.map((e) => e.message).join(" · ");
         return res.redirect("/admin/page-messages/new");
       }
       await pageMessageService.create(parsed.data, req.session.adminId!);
@@ -116,7 +121,7 @@ class PageMessageAdminController {
       };
       const parsed = createPageMessageSchema.safeParse(input);
       if (!parsed.success) {
-        req.session.pageMessageError = JSON.stringify(parsed.error.flatten().fieldErrors);
+        req.session.pageMessageError = parsed.error.errors.map((e) => e.message).join(" · ");
         return res.redirect(`/admin/page-messages/${id}`);
       }
       await pageMessageService.update(id, parsed.data);

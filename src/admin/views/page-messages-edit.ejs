@@ -53,12 +53,13 @@
   </div>
 
   <div class="card">
-    <h3>İçerik (16 dil — hepsi zorunlu)</h3>
+    <h3>İçerik — en az bir dil yeterli</h3>
+    <p style="color:#6b7280;font-size:13px;margin:0 0 12px;">Boş bıraktığın diller mobilde otomatik olarak dolu bir dile düşer (öncelik: kullanıcının dili → İngilizce → ilk dolu dil). Bir dili kullanacaksan <b>hem başlık hem metnini</b> doldur.</p>
     <% locales.forEach((l) => { %>
       <fieldset style="border:1px solid #ddd;margin:8px 0;padding:12px;border-radius:6px;">
         <legend style="font-weight:600;padding:0 6px;"><%= localeNames[l] %> (<%= l %>)</legend>
-        <input name="title_<%= l %>" placeholder="Başlık" value="<%= c(l, 'title') %>" required style="width:100%;margin-bottom:8px;" />
-        <textarea name="body_<%= l %>" placeholder="Metin" required style="width:100%;margin-bottom:8px;"><%= c(l, 'body') %></textarea>
+        <input name="title_<%= l %>" placeholder="Başlık" value="<%= c(l, 'title') %>" style="width:100%;margin-bottom:8px;" />
+        <textarea name="body_<%= l %>" placeholder="Metin" style="width:100%;margin-bottom:8px;"><%= c(l, 'body') %></textarea>
         <input name="cta_<%= l %>" placeholder="Buton metni (opsiyonel)" value="<%= c(l, 'cta_label') %>" style="width:100%;" />
       </fieldset>
     <% }); %>

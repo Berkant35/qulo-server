@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { segmentSchema } from "./segment.validator.js";
-import { SUPPORTED_LOCALES } from "../constants/locales.js";
 import { PAGE_KEYS } from "../constants/page-keys.js";
 
 const localeContentSchema = z.object({
@@ -9,12 +8,13 @@ const localeContentSchema = z.object({
   cta_label: z.string().max(40).optional().default(""),
 });
 
-// 16 dilin HEPSİ dolu olmalı
+// En az bir dil dolu olmalı; boş bırakılan diller mobile'da localized() ile fallback'e düşer.
+// (Yarım dil — title var body yok — controller parseContent'te zaten map'e alınmaz.)
 const contentSchema = z
   .record(z.string(), localeContentSchema)
   .refine(
-    (c) => SUPPORTED_LOCALES.every((l) => c[l] && c[l].title && c[l].body),
-    { message: "Tüm 16 dil (title+body) dolu olmalı" },
+    (c) => Object.keys(c).length >= 1,
+    { message: "En az bir dilde başlık ve metin dolu olmalı" },
   );
 
 // action_url: internal path (/...) veya quloapp.com host'lu URL; başka her şey reddedilir
