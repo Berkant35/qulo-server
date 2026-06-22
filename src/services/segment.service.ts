@@ -17,6 +17,7 @@ const PREMIUM_PLANS = new Set(["plus", "premium"]);
 
 class SegmentService {
   // ── SQL yön: segment → eşleşen user listesi (campaign push + admin preview) ──
+  /** @internal — yalnızca campaign.service ve segment.service içinden çağrılmalı. */
   buildSegmentQuery(segment: SegmentInput) {
     let query = supabase
       .from("users")
@@ -63,8 +64,14 @@ class SegmentService {
       const since = Date.now() - segment.last_active_days * 86_400_000;
       if (!user.last_seen_at || Date.parse(user.last_seen_at) < since) return false;
     }
-    if (segment.profile_completion_min !== undefined && (user.profile_completion ?? 0) < segment.profile_completion_min) return false;
-    if (segment.profile_completion_max !== undefined && (user.profile_completion ?? 100) > segment.profile_completion_max) return false;
+    if (segment.profile_completion_min !== undefined) {
+      if (user.profile_completion == null) return false;
+      if (user.profile_completion < segment.profile_completion_min) return false;
+    }
+    if (segment.profile_completion_max !== undefined) {
+      if (user.profile_completion == null) return false;
+      if (user.profile_completion > segment.profile_completion_max) return false;
+    }
     if (segment.registered_after && (!user.created_at || Date.parse(user.created_at) < Date.parse(segment.registered_after))) return false;
     if (segment.question_count_max !== undefined && (user.question_count ?? 0) > segment.question_count_max) return false;
     if (segment.question_count_min !== undefined && (user.question_count ?? 0) < segment.question_count_min) return false;

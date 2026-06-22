@@ -21,6 +21,9 @@ export const segmentSchema = z.object({
   is_premium: z.boolean().optional(),
   // NOT (pre-flight): photo_count (photos JSONB array, kolon değil) ve has_match
   // (matches JOIN gerektirir) Faz 2'ye ertelendi — users tablosunda kolon yok.
-});
+}).refine(
+  (data) => !(data.subscription_plan !== undefined && data.is_premium !== undefined),
+  { message: "subscription_plan ve is_premium birlikte kullanılamaz" },
+);
 
 export type SegmentInput = z.infer<typeof segmentSchema>;

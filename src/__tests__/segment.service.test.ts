@@ -27,4 +27,23 @@ describe("matchesSegment", () => {
   it("age aralığı dışında false", () => {
     expect(segmentService.matchesSegment(baseUser, { age_min: 30 })).toBe(false);
   });
+  it("green_diamonds_max: bakiyesi limitin altındaki kullanıcı geçer, üstündeki geçmez", () => {
+    // baseUser.green_diamonds = 10
+    expect(segmentService.matchesSegment(baseUser, { green_diamonds_max: 10 })).toBe(true);
+    expect(segmentService.matchesSegment(baseUser, { green_diamonds_max: 9 })).toBe(false);
+    expect(segmentService.matchesSegment({ ...baseUser, green_diamonds: 0 }, { green_diamonds_max: 5 })).toBe(true);
+  });
+  it("is_premium=false: free kullanıcı geçer, premium/plus geçmez", () => {
+    // baseUser.subscription_plan = "free"
+    expect(segmentService.matchesSegment(baseUser, { is_premium: false })).toBe(true);
+    expect(segmentService.matchesSegment({ ...baseUser, subscription_plan: "premium" }, { is_premium: false })).toBe(false);
+    expect(segmentService.matchesSegment({ ...baseUser, subscription_plan: "plus" }, { is_premium: false })).toBe(false);
+  });
+  it("profile_completion null + profile_completion_min filtresi → segment dışı (false)", () => {
+    const nullUser: SegmentUser = { ...baseUser, profile_completion: null };
+    expect(segmentService.matchesSegment(nullUser, { profile_completion_min: 0 })).toBe(false);
+    expect(segmentService.matchesSegment(nullUser, { profile_completion_max: 100 })).toBe(false);
+    // profile_completion filtresi yoksa null user geçer
+    expect(segmentService.matchesSegment(nullUser, {})).toBe(true);
+  });
 });
