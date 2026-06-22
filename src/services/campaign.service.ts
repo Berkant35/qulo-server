@@ -1,6 +1,7 @@
 import { supabase } from "../config/supabase.js";
 import { isFcmAvailable } from "../config/firebase.js";
 import { NotificationService } from "./notification.service.js";
+import { segmentService } from "./segment.service.js";
 import type {
   SegmentInput,
   CreateCampaignInput,
@@ -9,51 +10,9 @@ import type {
 const BATCH_SIZE = 500;
 
 class CampaignService {
-  // ── Segment query builder ──────────────────────────────────────────
-  private buildSegmentQuery(segment: SegmentInput) {
-    let query = supabase
-      .from("users")
-      .select("id, push_token", { count: "exact" })
-      .eq("is_deleted", false);
-
-    if (segment.gender) {
-      query = query.eq("gender", segment.gender);
-    }
-    if (segment.age_min !== undefined) {
-      query = query.gte("age", segment.age_min);
-    }
-    if (segment.age_max !== undefined) {
-      query = query.lte("age", segment.age_max);
-    }
-    if (segment.cities?.length) {
-      query = query.in("city", segment.cities);
-    }
-    if (segment.subscription_plan) {
-      query = query.eq("subscription_plan", segment.subscription_plan);
-    }
-    if (segment.last_active_days !== undefined) {
-      const sinceDate = new Date();
-      sinceDate.setDate(sinceDate.getDate() - segment.last_active_days);
-      query = query.gte("last_seen_at", sinceDate.toISOString());
-    }
-    if (segment.profile_completion_min !== undefined) {
-      query = query.gte("profile_completion", segment.profile_completion_min);
-    }
-    if (segment.profile_completion_max !== undefined) {
-      query = query.lte("profile_completion", segment.profile_completion_max);
-    }
-    if (segment.registered_after) {
-      query = query.gte("created_at", segment.registered_after);
-    }
-
-    return query;
-  }
-
-  // ── Preview segment count ──────────────────────────────────────────
+  // ── Preview segment count (delegated to segmentService) ───────────
   async previewSegmentCount(segment: SegmentInput): Promise<number> {
-    const { count, error } = await this.buildSegmentQuery(segment);
-    if (error) throw error;
-    return count ?? 0;
+    return segmentService.previewSegmentCount(segment);
   }
 
   // ── Create campaign ────────────────────────────────────────────────
@@ -116,7 +75,7 @@ class CampaignService {
 
     try {
       // 3. Build segment query and get all matching users
-      const { data: users, count, error: segErr } = await this.buildSegmentQuery(
+      const { data: users, count, error: segErr } = await segmentService.buildSegmentQuery(
         campaign.segment as SegmentInput,
       );
       if (segErr) throw segErr;
