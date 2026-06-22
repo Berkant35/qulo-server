@@ -34,7 +34,7 @@ class PageMessageService {
     // 1. Aktif + tarih aralığındaki mesajlar
     const { data: messages, error } = await supabase
       .from("page_messages")
-      .select("*")
+      .select("id, page, display_type, content, image_url, action_url, frequency, priority, is_active, start_at, end_at, segment")
       .eq("is_active", true)
       .order("priority", { ascending: false });
     if (error) throw error;
