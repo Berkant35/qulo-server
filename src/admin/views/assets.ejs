@@ -1,0 +1,81 @@
+<%- include('_header') %>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+  <h2>Varlıklar (<%= assets.length %>)</h2>
+</div>
+
+<% if (error) { %>
+  <div style="background:#3b1d1d;border:1px solid #a33;color:#ffb4b4;padding:10px 14px;border-radius:8px;margin-bottom:16px;">
+    <%= error %>
+  </div>
+<% } %>
+
+<form method="post" action="/admin/assets" enctype="multipart/form-data"
+      style="background:#1c1c24;border:1px solid #333;border-radius:10px;padding:16px;margin-bottom:24px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+  <input type="file" name="file" accept="image/png,image/jpeg,image/webp,image/gif" required
+         style="color:#ccc;" />
+  <button type="submit" class="btn btn-primary">Yükle</button>
+  <span style="color:#888;font-size:13px;">PNG / JPG / WEBP / GIF · max 10 MB</span>
+</form>
+
+<% if (assets.length === 0) { %>
+  <p style="color:#888;">Henüz varlık yok. Yukarıdan ilk görseli yükle.</p>
+<% } else { %>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;">
+    <% assets.forEach((a) => { %>
+      <div style="background:#1c1c24;border:1px solid #333;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;">
+        <div style="background:#0d0d12;height:150px;display:flex;align-items:center;justify-content:center;">
+          <img src="<%= a.url %>" alt="<%= a.name %>"
+               style="max-width:100%;max-height:150px;object-fit:contain;" />
+        </div>
+        <div style="padding:10px;display:flex;flex-direction:column;gap:8px;">
+          <div style="font-size:12px;color:#ccc;word-break:break-all;" title="<%= a.name %>"><%= a.name %></div>
+          <div style="font-size:11px;color:#777;">
+            <%= a.size ? (a.size / 1024).toFixed(0) + ' KB' : '' %>
+          </div>
+          <input type="text" readonly value="<%= a.url %>"
+                 style="width:100%;font-size:11px;background:#0d0d12;border:1px solid #333;color:#9ab;border-radius:6px;padding:6px;" />
+          <div style="display:flex;gap:6px;">
+            <button class="btn" style="flex:1;" onclick="copyUrl(this, '<%= a.url %>')">URL Kopyala</button>
+            <a class="btn" href="<%= a.url %>" target="_blank" rel="noopener">Aç</a>
+            <button class="btn btn-danger" onclick="deleteAsset('<%= a.name %>')">Sil</button>
+          </div>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+<% } %>
+
+<script>
+  const CSRF_TOKEN = '<%= csrfToken %>';
+
+  function copyUrl(btn, url) {
+    navigator.clipboard.writeText(url).then(function () {
+      const old = btn.textContent;
+      btn.textContent = 'Kopyalandı ✓';
+      setTimeout(function () { btn.textContent = old; }, 1200);
+    });
+  }
+
+  async function deleteAsset(name) {
+    if (!confirm('"' + name + '" silinsin mi? Bu işlem geri alınamaz.')) return;
+    try {
+      const res = await fetch('/admin/assets/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ _csrf: CSRF_TOKEN, name: name }),
+      });
+      if (res.ok) {
+        location.reload();
+      } else {
+        const err = await res.json().catch(function () { return {}; });
+        alert('Hata: ' + (err.error || 'silinemedi'));
+      }
+    } catch (e) {
+      alert('Hata: ağ sorunu');
+    }
+  }
+</script>
+
+<%- include('_footer') %>

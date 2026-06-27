@@ -10,6 +10,7 @@ declare module "express-session" {
     csrfToken?: string;
     campaignError?: string;
     pageMessageError?: string;
+    assetError?: string;
   }
 }
 

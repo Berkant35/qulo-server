@@ -4,10 +4,17 @@ import { questionBankController } from "./question-bank.controller.js";
 import { analyticsController } from "./analytics.controller.js";
 import { pageMessageAdminController } from "./page-message.admin.controller.js";
 import { adminAuth, superAdminOnly, ipWhitelist, csrfGenerate, csrfValidate } from "./admin.middleware.js";
+import { assetAdminController } from "./asset.admin.controller.js";
 import adminCronRoutes from "./cron.routes.js";
 import rateLimit from "express-rate-limit";
+import multer from "multer";
 
 const router = Router();
+
+const assetUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 },
+});
 
 router.use(ipWhitelist);
 
@@ -85,6 +92,11 @@ router.get("/page-messages/:id", (req, res) => pageMessageAdminController.editFo
 router.post("/page-messages/:id", csrfValidate, (req, res) => pageMessageAdminController.update(req, res));
 router.post("/page-messages/:id/toggle", csrfValidate, (req, res) => pageMessageAdminController.toggle(req, res));
 router.delete("/page-messages/:id", csrfValidate, (req, res) => pageMessageAdminController.remove(req, res));
+
+// Assets (statik varlık yönetimi — mascot, banner vb.)
+router.get("/assets", (req, res) => assetAdminController.page(req, res));
+router.post("/assets", assetUpload.single("file"), csrfValidate, (req, res) => assetAdminController.upload(req, res));
+router.post("/assets/delete", csrfValidate, (req, res) => assetAdminController.remove(req, res));
 
 router.get("/tickets", (req, res) => adminController.tickets(req, res));
 router.get("/tickets/:id", (req, res) => adminController.ticketDetail(req, res));

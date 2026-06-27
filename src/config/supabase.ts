@@ -21,6 +21,15 @@ export async function ensureStorageBuckets() {
         allowedMimeTypes: ["image/jpeg", "image/png", "image/webp", "audio/mp4", "audio/m4a", "audio/mpeg", "audio/aac"],
       },
     },
+    {
+      // Backoffice üzerinden yönetilen statik varlıklar (mascot, banner, kampanya görselleri vb.)
+      id: "assets",
+      options: {
+        public: true,
+        fileSizeLimit: 10 * 1024 * 1024,
+        allowedMimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
+      },
+    },
   ];
 
   for (const bucket of buckets) {
