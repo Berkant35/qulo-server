@@ -1,0 +1,36 @@
+<%- include('_header') %>
+<h2><%= channel ? 'Kanal Düzenle' : 'Yeni Kanal' %></h2>
+<form method="POST" action="<%= channel ? '/admin/acquisition/' + channel.id : '/admin/acquisition' %>">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+  <div class="card">
+    <label>Key (slug, küçük harf) *</label>
+    <input name="key" value="<%= channel ? channel.key : '' %>" placeholder="tiktok" style="width:100%;margin-bottom:12px;" <%= channel ? 'readonly' : '' %> />
+
+    <label>Emoji</label>
+    <input name="emoji" value="<%= channel ? (channel.emoji || '') : '' %>" placeholder="🎵" style="width:100%;margin-bottom:12px;" />
+
+    <label>Sıra</label>
+    <input name="sort_order" type="number" value="<%= channel ? channel.sort_order : 0 %>" style="width:100%;margin-bottom:12px;" />
+
+    <label style="display:block;margin-bottom:8px;">
+      <input type="checkbox" name="is_active" <%= !channel || channel.is_active ? 'checked' : '' %> /> Aktif
+    </label>
+    <label style="display:block;margin-bottom:8px;">
+      <input type="checkbox" name="is_freeform" <%= channel && channel.is_freeform ? 'checked' : '' %> /> Serbest metin alanı aç (ör. "Diğer")
+    </label>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0;">Etiketler (16 dil)</h3>
+    <p style="color:#666;font-size:12px;">Marka adları her dile aynı yazılır. En az EN + TR önerilir.</p>
+    <% locales.forEach((l) => { %>
+      <fieldset style="border:1px solid #ddd;margin:8px 0;padding:12px;border-radius:6px;">
+        <legend style="font-weight:600;padding:0 6px;"><%= localeNames[l] %> (<%= l %>)</legend>
+        <input name="label_<%= l %>" placeholder="Etiket" value="<%= channel && channel.label && channel.label[l] ? channel.label[l] : '' %>" style="width:100%;" />
+      </fieldset>
+    <% }) %>
+  </div>
+
+  <button type="submit" class="btn btn-primary"><%= channel ? 'Güncelle' : 'Oluştur' %></button>
+</form>
+<%- include('_footer') %>

@@ -1,0 +1,58 @@
+<%- include('_header') %>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+  <h2>Kaynak & Reklam</h2>
+  <a href="/admin/acquisition/new" class="btn btn-primary">+ Yeni Kanal</a>
+</div>
+
+<div class="card" style="margin-bottom:20px;">
+  <h3 style="margin-top:0;">Dönüşüm Raporu</h3>
+  <form method="GET" action="/admin/acquisition" style="margin-bottom:12px;">
+    <label>Başlangıç <input type="date" name="from" value="<%= from %>" /></label>
+    <label style="margin-left:8px;">Bitiş <input type="date" name="to" value="<%= to %>" /></label>
+    <button type="submit" class="btn" style="margin-left:8px;">Filtrele</button>
+  </form>
+  <p>Toplam cevap: <strong><%= report.total %></strong> · Cevaplayan: <strong><%= report.answered %></strong> · Atlayan: <strong><%= report.skipped %></strong></p>
+  <table>
+    <thead><tr><th>Kanal</th><th>Sayı</th><th>%</th></tr></thead>
+    <tbody>
+      <% report.byChannel.forEach((r) => { %>
+      <tr>
+        <td><%= r.emoji || '' %> <%= (r.label && (r.label.tr || r.label.en)) || r.key %></td>
+        <td><%= r.count %></td>
+        <td><%= r.pct %>%</td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h3 style="margin-top:0;">Kanallar</h3>
+  <table>
+    <thead><tr><th>Sıra</th><th>Emoji</th><th>Key</th><th>TR / EN</th><th>Serbest</th><th>Durum</th><th></th></tr></thead>
+    <tbody>
+      <% channels.forEach((c) => { %>
+      <tr>
+        <td><%= c.sort_order %></td>
+        <td style="font-size:18px;"><%= c.emoji || '' %></td>
+        <td><a href="/admin/acquisition/<%= c.id %>" style="color:#a855f7;"><%= c.key %></a></td>
+        <td><%= (c.label && c.label.tr) || '-' %> / <%= (c.label && c.label.en) || '-' %></td>
+        <td><%= c.is_freeform ? '✏️' : '' %></td>
+        <td>
+          <span class="badge" style="background: <%= c.is_active ? '#d1fae5' : '#f3f4f6' %>; color: <%= c.is_active ? '#065f46' : '#6b7280' %>;">
+            <%= c.is_active ? 'Aktif' : 'Pasif' %>
+          </span>
+        </td>
+        <td style="white-space:nowrap;">
+          <a href="/admin/acquisition/<%= c.id %>" class="btn btn-sm">Düzenle</a>
+          <form method="POST" action="/admin/acquisition/<%= c.id %>/toggle" style="display:inline;">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <button type="submit" class="btn btn-sm"><%= c.is_active ? 'Pasifleştir' : 'Aktifleştir' %></button>
+          </form>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<%- include('_footer') %>
