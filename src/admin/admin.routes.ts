@@ -3,6 +3,7 @@ import { adminController } from "./admin.controller.js";
 import { questionBankController } from "./question-bank.controller.js";
 import { analyticsController } from "./analytics.controller.js";
 import { pageMessageAdminController } from "./page-message.admin.controller.js";
+import { acquisitionAdminController } from "./acquisition.admin.controller.js";
 import { adminAuth, superAdminOnly, ipWhitelist, csrfGenerate, csrfValidate } from "./admin.middleware.js";
 import { assetAdminController } from "./asset.admin.controller.js";
 import adminCronRoutes from "./cron.routes.js";
@@ -92,6 +93,15 @@ router.get("/page-messages/:id", (req, res) => pageMessageAdminController.editFo
 router.post("/page-messages/:id", csrfValidate, (req, res) => pageMessageAdminController.update(req, res));
 router.post("/page-messages/:id/toggle", csrfValidate, (req, res) => pageMessageAdminController.toggle(req, res));
 router.delete("/page-messages/:id", csrfValidate, (req, res) => pageMessageAdminController.remove(req, res));
+
+// Acquisition Channels (nereden duydun kanalları)
+router.get("/acquisition", (req, res) => acquisitionAdminController.list(req, res));
+router.get("/acquisition/new", (req, res) => acquisitionAdminController.newForm(req, res));
+router.post("/acquisition", csrfValidate, (req, res) => acquisitionAdminController.create(req, res));
+router.get("/acquisition/:id", (req, res) => acquisitionAdminController.editForm(req, res));
+router.post("/acquisition/:id", csrfValidate, (req, res) => acquisitionAdminController.update(req, res));
+router.post("/acquisition/:id/toggle", csrfValidate, (req, res) => acquisitionAdminController.toggle(req, res));
+router.post("/acquisition/:id/delete", csrfValidate, (req, res) => acquisitionAdminController.remove(req, res));
 
 // Assets (statik varlık yönetimi — mascot, banner vb.)
 router.get("/assets", (req, res) => assetAdminController.page(req, res));
