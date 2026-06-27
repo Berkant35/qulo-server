@@ -49,13 +49,14 @@ export class AcquisitionService {
       freeform_text: isFreeform ? (input.freeformText ?? null) : null,
       skipped: input.skipped ?? false,
     });
-    // UNIQUE(user_id) yarışında ikinci insert hata verir → idempotent kabul
-    if (insertErr && !insertErr.message.includes("duplicate")) throw insertErr;
+    // UNIQUE(user_id) yarışında ikinci insert hata verir → idempotent kabul (23505: unique_violation)
+    if (insertErr && insertErr.code !== "23505") throw insertErr;
 
-    await supabase
+    const { error: flagErr } = await supabase
       .from("users")
       .update({ acquisition_answered: true })
       .eq("id", userId);
+    if (flagErr) console.error("[acquisition] acquisition_answered flag update failed:", flagErr.message);
 
     return { answered: true };
   }
