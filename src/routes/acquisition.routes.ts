@@ -11,10 +11,10 @@ router.use(generalLimiter);
 
 router.get("/channels", async (req, res, next) => {
   try {
-    const locale = (req.user as { locale?: string } | undefined)?.locale
-      ?? (req.query.locale as string | undefined)
-      ?? "en";
-    const channels = await acquisitionService.getChannels(locale);
+    const channels = await acquisitionService.getChannels(
+      req.user!.userId,
+      req.query.locale as string | undefined,
+    );
     res.json({ channels });
   } catch (err) {
     next(err);

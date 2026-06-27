@@ -2,7 +2,17 @@ import { supabase } from "../config/supabase.js";
 import { pickLabel } from "../utils/locales.js";
 
 export class AcquisitionService {
-  async getChannels(locale: string) {
+  async getChannels(userId: string, overrideLocale?: string) {
+    let resolvedLocale = overrideLocale;
+    if (!resolvedLocale) {
+      const { data: userRow } = await supabase
+        .from("users")
+        .select("locale")
+        .eq("id", userId)
+        .maybeSingle();
+      resolvedLocale = (userRow?.locale as string | null | undefined) ?? "en";
+    }
+
     const { data, error } = await supabase
       .from("acquisition_channels")
       .select("id, key, label, emoji, is_freeform")
@@ -12,7 +22,7 @@ export class AcquisitionService {
     return (data ?? []).map((c) => ({
       id: c.id,
       key: c.key,
-      label: pickLabel(c.label as Record<string, string>, locale),
+      label: pickLabel(c.label as Record<string, string>, resolvedLocale!),
       emoji: c.emoji,
       is_freeform: c.is_freeform,
     }));

@@ -74,15 +74,20 @@ class AcquisitionAdminController {
   }
 
   async editForm(req: Request, res: Response) {
-    const channel = await acquisitionChannelService.getById(req.params.id as string);
-    if (!channel) return res.redirect("/admin/acquisition");
-    res.render("acquisition-edit", {
-      channel,
-      locales: SUPPORTED_LOCALES,
-      localeNames: LOCALE_NAMES,
-      session: req.session,
-      csrfToken: req.session.csrfToken,
-    });
+    try {
+      const channel = await acquisitionChannelService.getById(req.params.id as string);
+      if (!channel) return res.redirect("/admin/acquisition");
+      res.render("acquisition-edit", {
+        channel,
+        locales: SUPPORTED_LOCALES,
+        localeNames: LOCALE_NAMES,
+        session: req.session,
+        csrfToken: req.session.csrfToken,
+      });
+    } catch (err) {
+      console.error("[Admin] acquisition editForm failed:", (err as Error).message);
+      res.redirect("/admin/acquisition");
+    }
   }
 
   async update(req: Request, res: Response) {
