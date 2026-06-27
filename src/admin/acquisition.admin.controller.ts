@@ -17,6 +17,7 @@ function buildInput(b: Record<string, string>) {
     key: (b.key ?? "").trim().toLowerCase(),
     label: parseLabel(b),
     emoji: (b.emoji ?? "").trim() || undefined,
+    icon_url: (b.icon_url ?? "").trim() || undefined,
     sort_order: parseInt(b.sort_order) || 0,
     is_active: b.is_active === "on",
     is_freeform: b.is_freeform === "on",

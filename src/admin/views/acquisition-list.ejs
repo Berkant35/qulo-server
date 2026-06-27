@@ -34,7 +34,7 @@
       <% channels.forEach((c) => { %>
       <tr>
         <td><%= c.sort_order %></td>
-        <td style="font-size:18px;"><%= c.emoji || '' %></td>
+        <td style="font-size:18px;"><% if (c.icon_url) { %><img src="<%= c.icon_url %>" alt="" style="width:22px;height:22px;vertical-align:middle;" /><% } else { %><%= c.emoji || '' %><% } %></td>
         <td><a href="/admin/acquisition/<%= c.id %>" style="color:#a855f7;"><%= c.key %></a></td>
         <td><%= (c.label && c.label.tr) || '-' %> / <%= (c.label && c.label.en) || '-' %></td>
         <td><%= c.is_freeform ? '✏️' : '' %></td>

@@ -15,7 +15,7 @@ export class AcquisitionService {
 
     const { data, error } = await supabase
       .from("acquisition_channels")
-      .select("id, key, label, emoji, is_freeform")
+      .select("id, key, label, emoji, icon_url, is_freeform")
       .eq("is_active", true)
       .order("sort_order", { ascending: true });
     if (error) throw error;
@@ -24,6 +24,7 @@ export class AcquisitionService {
       key: c.key,
       label: pickLabel(c.label as Record<string, string>, resolvedLocale!),
       emoji: c.emoji,
+      icon_url: c.icon_url,
       is_freeform: c.is_freeform,
     }));
   }
