@@ -463,7 +463,7 @@ class AdminService {
     // IAP revenue (purple diamond purchases via RevenueCat)
     const { data: iapData } = await supabase
       .from("iap_transactions")
-      .select("product_id, amount, currency, created_at")
+      .select("product_id, amount_usd, purple_credited, created_at")
       .order("created_at", { ascending: false })
       .limit(50);
 

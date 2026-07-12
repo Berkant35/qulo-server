@@ -33,6 +33,14 @@ export async function ensureStorageBuckets() {
   ];
 
   for (const bucket of buckets) {
+    // Önce varlık kontrolü: koşulsuz createBucket, Postgres loglarına
+    // her restart'ta "duplicate key ... buckets_pkey" (23505) hatası düşürüyor.
+    const { data: existing } = await supabase.storage.getBucket(bucket.id);
+    if (existing) {
+      console.log(`[storage] '${bucket.id}' bucket exists`);
+      continue;
+    }
+
     const { error } = await supabase.storage.createBucket(bucket.id, bucket.options);
     if (error) {
       if (error.message && error.message.includes("already exists")) {

@@ -138,13 +138,13 @@
 <div class="card">
   <h3 style="margin-bottom: 12px;">💰 Recent IAP Transactions (Last 50)</h3>
   <table>
-    <thead><tr><th>Product</th><th>Amount</th><th>Currency</th><th>Date</th></tr></thead>
+    <thead><tr><th>Product</th><th>Amount (USD)</th><th>Purple 💎</th><th>Date</th></tr></thead>
     <tbody>
       <% stats.iapTransactions.forEach(function(t) { %>
       <tr>
         <td><%= t.product_id %></td>
-        <td style="font-weight:600;"><%= t.amount %></td>
-        <td><%= t.currency %></td>
+        <td style="font-weight:600;"><%= t.amount_usd ?? '-' %></td>
+        <td><%= t.purple_credited ?? '-' %></td>
         <td><%= new Date(t.created_at).toLocaleString() %></td>
       </tr>
       <% }); %>
