@@ -1,0 +1,122 @@
+<%- include('_header') %>
+<h2 style="margin-bottom: 20px;">Deletion Feedback <small style="color:#888; font-weight:normal;">— why users delete the app</small></h2>
+
+<% if (tableMissing) { %>
+<div class="alert" style="background: #fef3c7; color: #92400e; border: 1px solid #fde68a;">
+  <strong>Setup required:</strong> <code>account_deletion_feedback</code> table does not exist yet.
+  Run migration <code>migrations/035_account_deletion_feedback.sql</code> on Supabase to start collecting data.
+</div>
+<% } %>
+
+<!-- Time filter -->
+<div style="margin-bottom: 20px; display:flex; gap:8px;">
+  <% [[7, 'Last 7 days'], [30, 'Last 30 days'], [90, 'Last 90 days'], [0, 'All time']].forEach(function(opt) { %>
+  <a href="/admin/deletion-feedback?days=<%= opt[0] %>"
+     class="btn <%= days === opt[0] ? 'btn-primary' : '' %>"
+     style="padding:6px 14px; font-size:13px; <%= days === opt[0] ? '' : 'background:#fff; color:#555; border:1px solid #ddd;' %> border-radius:6px; text-decoration:none;">
+    <%= opt[1] %>
+  </a>
+  <% }); %>
+</div>
+
+<!-- Summary cards -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="value"><%= report.total %></div>
+    <div class="label">Total Feedback</div>
+  </div>
+  <div class="stat-card">
+    <div class="value" style="color: #22c55e;"><%= byType.positive %></div>
+    <div class="label">Positive Churn (found someone)</div>
+  </div>
+  <div class="stat-card">
+    <div class="value" style="color: #ef4444;"><%= byType.negative %></div>
+    <div class="label">Negative Churn</div>
+  </div>
+  <div class="stat-card">
+    <div class="value" style="color: #6b7280;"><%= byType.neutral %></div>
+    <div class="label">Neutral / Other / Skipped</div>
+  </div>
+</div>
+
+<!-- Reason distribution -->
+<div class="card">
+  <h3 style="margin-bottom: 16px;">Reason Distribution</h3>
+  <table>
+    <thead><tr><th>Reason</th><th style="width:90px;">Count</th><th style="width:70px;">%</th><th style="width:40%;">&nbsp;</th></tr></thead>
+    <tbody>
+      <% report.counts.forEach(function(c) { %>
+      <% var meta = reasonMeta[c.reason_code] || { label: c.reason_code, type: 'neutral' }; %>
+      <% var pct = report.total > 0 ? Math.round((c.count / report.total) * 100) : 0; %>
+      <% var barColor = meta.type === 'positive' ? '#22c55e' : meta.type === 'negative' ? '#ef4444' : '#9ca3af'; %>
+      <tr>
+        <td>
+          <%= meta.label %>
+          <br><small style="color:#888;"><code><%= c.reason_code %></code></small>
+        </td>
+        <td><%= c.count %></td>
+        <td><%= pct %>%</td>
+        <td>
+          <div style="background:#f3f4f6; border-radius:4px; height:14px; overflow:hidden;">
+            <div style="width:<%= pct %>%; min-width:<%= c.count > 0 ? '2px' : '0' %>; height:100%; background:<%= barColor %>;"></div>
+          </div>
+        </td>
+      </tr>
+      <% }); %>
+      <% if (report.total === 0 && !tableMissing) { %>
+      <tr><td colspan="4" style="text-align:center; color:#888; padding:20px;">No feedback collected yet</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<!-- Recent feedback -->
+<div class="card">
+  <h3 style="margin-bottom: 16px;">Recent Feedback (<%= total %>)</h3>
+  <table>
+    <thead><tr><th>Date</th><th>Reason</th><th>Note</th><th>Platform</th><th>Version</th><th>Locale</th><th>User</th></tr></thead>
+    <tbody>
+      <% rows.forEach(function(r) { %>
+      <% var meta = reasonMeta[r.reason_code] || { label: r.reason_code, type: 'neutral' }; %>
+      <% var badgeStyle = meta.type === 'positive' ? 'background:#d1fae5; color:#065f46;' : meta.type === 'negative' ? 'background:#fee2e2; color:#991b1b;' : 'background:#f3f4f6; color:#6b7280;'; %>
+      <tr>
+        <td style="white-space:nowrap;"><%= new Date(r.created_at).toLocaleString() %></td>
+        <td><span class="badge" style="<%= badgeStyle %>"><%= meta.label %></span></td>
+        <td style="max-width:280px;"><%= r.reason_text || '—' %></td>
+        <td><%= r.platform || '—' %></td>
+        <td><%= r.app_version || '—' %></td>
+        <td><%= r.locale || '—' %></td>
+        <td>
+          <% if (r.user_id) { %>
+          <a href="/admin/users/<%= r.user_id %>" style="color:#a855f7;"><%= r.user_id.substring(0,8) %>...</a>
+          <% } else { %>
+          <span style="color:#888;">purged</span>
+          <% } %>
+        </td>
+      </tr>
+      <% }); %>
+      <% if (rows.length === 0) { %>
+      <tr><td colspan="7" style="text-align:center; color:#888; padding:20px;">No feedback found</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<% if (totalPages > 1) { %>
+<div class="pagination">
+  <% var winStart = Math.max(1, page - 5); %>
+  <% var winEnd = Math.min(totalPages, page + 5); %>
+  <% if (winStart > 1) { %>
+  <a href="/admin/deletion-feedback?days=<%= days %>&page=1">1</a>
+  <% if (winStart > 2) { %><span style="color:#888;">…</span><% } %>
+  <% } %>
+  <% for (var i = winStart; i <= winEnd; i++) { %>
+  <a href="/admin/deletion-feedback?days=<%= days %>&page=<%= i %>" class="<%= i === page ? 'active' : '' %>"><%= i %></a>
+  <% } %>
+  <% if (winEnd < totalPages) { %>
+  <% if (winEnd < totalPages - 1) { %><span style="color:#888;">…</span><% } %>
+  <a href="/admin/deletion-feedback?days=<%= days %>&page=<%= totalPages %>"><%= totalPages %></a>
+  <% } %>
+</div>
+<% } %>
+<%- include('_footer') %>

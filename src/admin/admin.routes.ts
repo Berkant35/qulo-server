@@ -4,6 +4,7 @@ import { questionBankController } from "./question-bank.controller.js";
 import { analyticsController } from "./analytics.controller.js";
 import { pageMessageAdminController } from "./page-message.admin.controller.js";
 import { acquisitionAdminController } from "./acquisition.admin.controller.js";
+import { deletionFeedbackAdminController } from "./deletion-feedback.admin.controller.js";
 import { adminAuth, superAdminOnly, ipWhitelist, csrfGenerate, csrfValidate } from "./admin.middleware.js";
 import { assetAdminController } from "./asset.admin.controller.js";
 import adminCronRoutes from "./cron.routes.js";
@@ -42,6 +43,8 @@ router.post("/users/:id/action", csrfValidate, (req, res) => adminController.use
 router.post("/users/:id/gender-pref", csrfValidate, (req, res) => adminController.updateUserGenderPref(req, res));
 router.post("/users/:id/send-notification", csrfValidate, (req, res) => adminController.sendNotification(req, res));
 router.post("/users/:id/test-push", csrfValidate, (req, res) => adminController.testPush(req, res));
+
+router.get("/deletion-feedback", (req, res) => deletionFeedbackAdminController.page(req, res));
 
 router.get("/reports", (req, res) => adminController.reports(req, res));
 router.get("/reports/:id", (req, res) => adminController.reportDetail(req, res));
