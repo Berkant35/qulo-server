@@ -51,11 +51,21 @@ class AppConfigService {
   }
 
   async updateConfig(updates: Partial<Omit<AppConfigRow, "id" | "updated_at">>) {
+    const { data: existing, error: fetchError } = await supabase
+      .from("app_config")
+      .select("id")
+      .limit(1)
+      .single();
+
+    if (fetchError || !existing) {
+      throw new Error(fetchError?.message ?? "app_config row not found");
+    }
+
     const { data, error } = await supabase
       .from("app_config")
       .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq("id", existing.id)
       .select("*")
-      .limit(1)
       .single();
 
     if (error) throw error;

@@ -4,6 +4,9 @@
 <% if (success) { %>
 <div class="alert" style="background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0;">Configuration updated successfully.</div>
 <% } %>
+<% if (error) { %>
+<div class="alert" style="background: #fee2e2; color: #991b1b; border: 1px solid #fecaca;">Update failed: <%= error %></div>
+<% } %>
 
 <form method="POST" action="/admin/app-config">
   <input type="hidden" name="_csrf" value="<%= csrfToken %>">

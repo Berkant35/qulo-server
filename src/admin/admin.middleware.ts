@@ -44,6 +44,7 @@ export function ipWhitelist(req: Request, res: Response, next: NextFunction): vo
   const allowed = allowedIps.split(",").map((ip) => ip.trim());
   const clientIp = req.ip || req.socket.remoteAddress || "";
   if (!allowed.includes(clientIp)) {
+    console.warn(`[Admin] ipWhitelist denied: ${clientIp}`);
     res.status(403).send("Forbidden");
     return;
   }

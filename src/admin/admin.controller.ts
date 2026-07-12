@@ -267,8 +267,13 @@ class AdminController {
 
   // ── App Config management ───────────────────────────────────────
   async appConfig(req: Request, res: Response) {
-    const { data } = await supabase.from("app_config").select("*").limit(1).single();
-    res.render("app-config", { config: data, success: req.query.success, session: req.session, csrfToken: req.session.csrfToken });
+    try {
+      const { data } = await supabase.from("app_config").select("*").limit(1).single();
+      res.render("app-config", { config: data, success: req.query.success, error: req.query.error, session: req.session, csrfToken: req.session.csrfToken });
+    } catch (err: any) {
+      console.error("[Admin] app-config load failed:", err?.message ?? err);
+      res.status(500).render("error", { message: "Failed to load app config", session: req.session });
+    }
   }
 
   async updateAppConfig(req: Request, res: Response) {
@@ -280,20 +285,32 @@ class AdminController {
       is_force_update_enabled,
     } = req.body;
 
-    await appConfigService.updateConfig({
-      min_version_ios,
-      min_version_android,
-      latest_version_ios,
-      latest_version_android,
-      store_url_ios,
-      store_url_android,
-      is_maintenance: is_maintenance === "on",
-      maintenance_message_tr: maintenance_message_tr || null,
-      maintenance_message_en: maintenance_message_en || null,
-      is_force_update_enabled: is_force_update_enabled === "on",
-    });
+    const versionFields: Record<string, string> = { min_version_ios, min_version_android, latest_version_ios, latest_version_android };
+    for (const [field, value] of Object.entries(versionFields)) {
+      if (!/^\d+\.\d+\.\d+$/.test((value ?? "").trim())) {
+        return res.redirect("/admin/app-config?error=" + encodeURIComponent(`Invalid version for ${field}: use x.y.z format`));
+      }
+    }
 
-    res.redirect("/admin/app-config?success=1");
+    try {
+      await appConfigService.updateConfig({
+        min_version_ios,
+        min_version_android,
+        latest_version_ios,
+        latest_version_android,
+        store_url_ios,
+        store_url_android,
+        is_maintenance: is_maintenance === "on",
+        maintenance_message_tr: maintenance_message_tr || null,
+        maintenance_message_en: maintenance_message_en || null,
+        is_force_update_enabled: is_force_update_enabled === "on",
+      });
+
+      res.redirect("/admin/app-config?success=1");
+    } catch (err: any) {
+      console.error("[Admin] app-config update failed:", err?.message ?? err);
+      res.redirect("/admin/app-config?error=" + encodeURIComponent(err?.message || "Update failed"));
+    }
   }
 
   async diamondEconomy(req: Request, res: Response) {
