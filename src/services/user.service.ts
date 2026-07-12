@@ -5,6 +5,7 @@ import { economyConfigService } from "./economy-config.service.js";
 import { userLanguageService } from "./user-language.service.js";
 import { Errors } from "../utils/errors.js";
 import { haversineDistance } from "../utils/math.js";
+import { isKnownReasonCode } from "../constants/deletion-reasons.js";
 import type { UpdateProfileInput, UpdateDetailsInput } from "../validators/user.validator.js";
 
 export class UserService {
@@ -183,7 +184,43 @@ export class UserService {
     }
   }
 
-  async deleteAccount(userId: string) {
+  async deleteAccount(
+    userId: string,
+    feedback?: {
+      reason_code?: string;
+      reason_text?: string;
+      app_version?: string;
+      platform?: string;
+      locale?: string;
+    },
+  ) {
+    // Best-effort churn feedback — silmeyi ASLA bloklamamalı (kullanıcı silinmek istiyor).
+    if (feedback?.reason_code) {
+      const normalized = isKnownReasonCode(feedback.reason_code)
+        ? feedback.reason_code
+        : "other";
+      if (normalized !== feedback.reason_code) {
+        console.warn(`[user.service] unknown reason_code normalized to other: ${feedback.reason_code}`);
+      }
+      try {
+        const { error: fbError } = await supabase
+          .from("account_deletion_feedback")
+          .insert({
+            user_id: userId,
+            reason_code: normalized,
+            reason_text: feedback.reason_text ?? null,
+            app_version: feedback.app_version ?? null,
+            platform: feedback.platform ?? null,
+            locale: feedback.locale ?? null,
+          });
+        if (fbError) {
+          console.error("[user.service] deletion feedback insert failed (ignored):", fbError);
+        }
+      } catch (e) {
+        console.error("[user.service] deletion feedback insert threw (ignored):", e);
+      }
+    }
+
     const { error } = await supabase
       .from("users")
       .update({ is_deleted: true, is_online: false })

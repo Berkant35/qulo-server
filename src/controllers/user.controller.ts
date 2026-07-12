@@ -11,6 +11,7 @@ import type {
   UpdatePushTokenInput,
   NotificationPreferencesInput,
   SetInterestsInput,
+  DeleteAccountInput,
 } from "../validators/user.validator.js";
 import { AppError, Errors } from "../utils/errors.js";
 
@@ -134,7 +135,14 @@ export async function getPublicProfileHandler(req: Request, res: Response, next:
 
 export async function deleteAccountHandler(req: Request, res: Response, next: NextFunction) {
   try {
-    await userService.deleteAccount(req.user!.userId);
+    const body = req.body as DeleteAccountInput;
+    await userService.deleteAccount(req.user!.userId, {
+      reason_code: body?.reason_code,
+      reason_text: body?.reason_text,
+      app_version: body?.app_version,
+      platform: body?.platform,
+      locale: body?.locale,
+    });
     res.json({ message: "Account deleted" });
   } catch (err) {
     next(err);

@@ -111,6 +111,9 @@ export const Errors = {
   PASSPORT_ALREADY_ACTIVE: () =>
     new AppError("PASSPORT_ALREADY_ACTIVE", 409, "Passport is already active"),
 
+  RETENTION_NOT_ELIGIBLE: () =>
+    new AppError("RETENTION_NOT_ELIGIBLE", 409, "Not eligible for retention offer"),
+
   INVALID_REFERRAL_CODE: () =>
     new AppError("INVALID_REFERRAL_CODE", 404, "Referral code not found"),
 

@@ -11,7 +11,13 @@ import {
   notificationPreferencesSchema,
   completeProfileSchema,
   setInterestsSchema,
+  deleteAccountSchema,
+  retentionReasonSchema,
 } from "../validators/user.validator.js";
+import {
+  getRetentionEligibilityHandler,
+  claimRetentionHandler,
+} from "../controllers/retention.controller.js";
 import { setUserLanguagesSchema } from "../validators/user-language.validator.js";
 import {
   getMeHandler,
@@ -79,6 +85,18 @@ router.put("/me/languages", validate(setUserLanguagesSchema), setUserLanguagesHa
 
 router.get("/:id/profile", getPublicProfileHandler);
 
-router.delete("/me", deleteAccountHandler);
+// Retention (win-back) — hesap silme öncesi 15 mor elmas teklifi
+router.get(
+  "/me/retention/eligibility",
+  validate(retentionReasonSchema, "query"),
+  getRetentionEligibilityHandler,
+);
+router.post(
+  "/me/retention/claim",
+  validate(retentionReasonSchema),
+  claimRetentionHandler,
+);
+
+router.delete("/me", validate(deleteAccountSchema), deleteAccountHandler);
 
 export default router;

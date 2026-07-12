@@ -90,6 +90,15 @@ const powerCostsSchema = z.object({
   POWER_UNBLOCK: powerCostSchema,
 });
 
+// Hesap silme retention teklifi (win-back). Mevcut config'lerde alan yoksa
+// default değerler uygulanır — eski config versiyonlarıyla geriye uyumlu.
+const retentionSchema = z
+  .object({
+    deletionDiamondAmount: z.number().int().min(0).max(100).default(15),
+    minAccountAgeDays: z.number().int().min(0).max(365).default(7),
+  })
+  .default({ deletionDiamondAmount: 15, minAccountAgeDays: 7 });
+
 // ── Main schema ──
 export const economyConfigSchema = z.object({
   core: coreSchema,
@@ -97,6 +106,7 @@ export const economyConfigSchema = z.object({
   rewards: rewardsSchema,
   timing: timingSchema,
   powerCosts: powerCostsSchema,
+  retention: retentionSchema,
 });
 
 // ── TypeScript types (inferred from Zod) ──
@@ -107,6 +117,7 @@ export type SubscriptionLimitsConfig = z.infer<typeof subscriptionLimitsSchema>;
 export type RewardsConfig = z.infer<typeof rewardsSchema>;
 export type TimingConfig = z.infer<typeof timingSchema>;
 export type PowerCostsConfig = z.infer<typeof powerCostsSchema>;
+export type RetentionConfig = z.infer<typeof retentionSchema>;
 
 export interface EconomyConfigVersion {
   id: string;

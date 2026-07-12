@@ -38,6 +38,25 @@ export const updateDetailsSchema = z.object({
 
 export type UpdateDetailsInput = z.infer<typeof updateDetailsSchema>;
 
+// Hesap silme — opsiyonel churn feedback body'si (geriye uyumlu: tüm alanlar optional).
+// Bilinmeyen reason_code reddedilmez; service "other"a normalize eder (Açık Soru 2).
+export const deleteAccountSchema = z.object({
+  reason_code: z.string().trim().max(40).optional(),
+  reason_text: z.string().trim().max(280).optional(),
+  app_version: z.string().trim().max(20).optional(),
+  platform: z.enum(["ios", "android"]).optional(),
+  locale: z.string().trim().max(10).optional(),
+});
+
+export type DeleteAccountInput = z.infer<typeof deleteAccountSchema>;
+
+// Retention teklifi — reason_code zorunlu (uygunluk server'da belirlenir).
+export const retentionReasonSchema = z.object({
+  reason_code: z.string().trim().min(1).max(40),
+});
+
+export type RetentionReasonInput = z.infer<typeof retentionReasonSchema>;
+
 export const updateLocationSchema = z.object({
   lat: z.number().min(-90).max(90),
   lng: z.number().min(-180).max(180),
