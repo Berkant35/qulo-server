@@ -1,4 +1,5 @@
 import { supabase } from "../config/supabase.js";
+import { env } from "../config/env.js";
 import { hashPassword, comparePassword, normalizeEmail } from "../utils/hash.js";
 import { sanitizeIlike } from "../utils/validation.js";
 import { Errors } from "../utils/errors.js";
@@ -299,6 +300,76 @@ class AdminService {
     }
 
     return { matches: data ?? [], total: count ?? 0 };
+  }
+
+  async getMatchDetail(matchId: string, page: number, limit: number) {
+    const { data: match, error } = await supabase
+      .from("matches")
+      .select("*")
+      .eq("id", matchId)
+      .single();
+
+    if (error || !match) return null;
+
+    const { data: users, error: usersError } = await supabase
+      .from("users")
+      .select("id, name, surname, email")
+      .in("id", [match.user1_id, match.user2_id]);
+    if (usersError) console.error("[Admin] getMatchDetail users error:", usersError.message);
+
+    const userMap = new Map((users ?? []).map((u: any) => [u.id, u]));
+
+    const { data: messages, count, error: messagesError } = await supabase
+      .from("messages")
+      .select("*, reactions:message_reactions(emoji, user_id)", { count: "exact" })
+      .eq("match_id", matchId)
+      .order("created_at", { ascending: false })
+      .range((page - 1) * limit, page * limit - 1);
+    if (messagesError) console.error("[Admin] getMatchDetail messages error:", messagesError.message);
+
+    // __QUESTION__:<id> marker'lı mesajlar için soru detaylarını çek
+    // (content kullanıcı girdisi — UUID olmayan id'ler .in() sorgusunu bozmasın)
+    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const questionIds = (messages ?? [])
+      .filter((m: any) => typeof m.content === "string" && m.content.startsWith("__QUESTION__:"))
+      .map((m: any) => m.content.split(":")[1])
+      .filter((id: string) => id && uuidPattern.test(id));
+
+    let questionMap = new Map<string, any>();
+    if (questionIds.length > 0) {
+      const { data: questions, error: questionsError } = await supabase
+        .from("chat_questions")
+        .select("id, question_text, option_a, option_b, correct_option, answered_option, is_correct")
+        .in("id", questionIds);
+      if (questionsError) console.error("[Admin] getMatchDetail questions error:", questionsError.message);
+      questionMap = new Map((questions ?? []).map((q: any) => [q.id, q]));
+    }
+
+    // Medya URL'leri kullanıcı girdisinden gelir — sadece kendi storage'ımızı render et
+    const mediaPrefix = `${env.SUPABASE_URL}/storage/v1/object/public/chat-media/`;
+    const enriched = (messages ?? []).map((m: any) => ({
+      ...m,
+      sender: userMap.get(m.sender_id),
+      question: typeof m.content === "string" && m.content.startsWith("__QUESTION__:")
+        ? questionMap.get(m.content.split(":")[1])
+        : undefined,
+      image_url: m.is_image && typeof m.content === "string" && m.content.startsWith(mediaPrefix)
+        ? m.content
+        : null,
+      safe_audio_url: typeof m.audio_url === "string" && m.audio_url.startsWith(mediaPrefix)
+        ? m.audio_url
+        : null,
+    }));
+
+    return {
+      match: {
+        ...match,
+        user1: userMap.get(match.user1_id),
+        user2: userMap.get(match.user2_id),
+      },
+      messages: enriched,
+      total: count ?? 0,
+    };
   }
 
   async getTransactions(page: number, limit: number, type?: string, userId?: string) {

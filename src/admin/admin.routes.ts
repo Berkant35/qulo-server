@@ -51,6 +51,7 @@ router.get("/reports/:id", (req, res) => adminController.reportDetail(req, res))
 router.post("/reports/:id/action", csrfValidate, (req, res) => adminController.reportAction(req, res));
 
 router.get("/matches", (req, res) => adminController.matches(req, res));
+router.get("/matches/:id", (req, res) => adminController.matchDetail(req, res));
 router.post("/matches/remove-all", csrfValidate, (req, res) => adminController.removeAllMatches(req, res));
 
 router.get("/transactions", (req, res) => adminController.transactions(req, res));

@@ -138,12 +138,13 @@ export class ChatService {
       }
     }
 
-    // Audio URL domain validation — only allow our Supabase storage
-    if (audioUrl) {
-      const expectedPrefix = `${env.SUPABASE_URL}/storage/v1/object/public/chat-media/`;
-      if (!audioUrl.startsWith(expectedPrefix)) {
-        throw Errors.VALIDATION_ERROR({ audio_url: "must reference chat-media storage" });
-      }
+    // Media URL domain validation — only allow our Supabase storage
+    const expectedPrefix = `${env.SUPABASE_URL}/storage/v1/object/public/chat-media/`;
+    if (audioUrl && !audioUrl.startsWith(expectedPrefix)) {
+      throw Errors.VALIDATION_ERROR({ audio_url: "must reference chat-media storage" });
+    }
+    if (isImage && !content.startsWith(expectedPrefix)) {
+      throw Errors.VALIDATION_ERROR({ content: "image content must reference chat-media storage" });
     }
 
     // Chat lock check — if there's an unanswered question with chat lock, block messages

@@ -121,6 +121,15 @@ class AdminController {
     res.render("matches", { matches, page, totalPages, total, active: active || "all", session: req.session, csrfToken: req.session.csrfToken });
   }
 
+  async matchDetail(req: Request, res: Response) {
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
+    const limit = 50;
+    const result = await adminService.getMatchDetail(req.params.id as string, page, limit);
+    if (!result) return res.status(404).render("error", { message: "Match not found", session: req.session });
+    const totalPages = Math.ceil(result.total / limit);
+    res.render("match-detail", { ...result, page, totalPages, session: req.session, csrfToken: req.session.csrfToken });
+  }
+
   async removeAllMatches(req: Request, res: Response) {
     try {
       const count = await adminService.removeAllMatches();

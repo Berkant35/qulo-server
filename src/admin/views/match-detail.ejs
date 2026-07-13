@@ -1,0 +1,108 @@
+<%- include('_header') %>
+<a href="/admin/matches" style="color:#a855f7; text-decoration:none; font-size:14px;">&larr; Back to Matches</a>
+<div style="display:flex; justify-content:space-between; align-items:center; margin:12px 0 20px;">
+  <h2 style="margin:0;">Match Chat</h2>
+  <span class="badge <%= match.is_active ? 'badge-online' : 'badge-offline' %>"><%= match.is_active ? 'Active' : 'Inactive' %></span>
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+  <div class="card">
+    <h3 style="margin-bottom:12px;">User 1</h3>
+    <% if (match.user1) { %>
+    <dl class="detail-grid">
+      <dt>Name</dt><dd><%= match.user1.name %> <%= match.user1.surname %></dd>
+      <dt>Email</dt><dd><%= match.user1.email %></dd>
+    </dl>
+    <a href="/admin/users/<%= match.user1_id %>" class="btn btn-primary btn-sm" style="margin-top:8px;">View Profile</a>
+    <% } else { %>
+    <p>User not found (<%= match.user1_id.substring(0,8) %>...)</p>
+    <% } %>
+  </div>
+  <div class="card">
+    <h3 style="margin-bottom:12px;">User 2</h3>
+    <% if (match.user2) { %>
+    <dl class="detail-grid">
+      <dt>Name</dt><dd><%= match.user2.name %> <%= match.user2.surname %></dd>
+      <dt>Email</dt><dd><%= match.user2.email %></dd>
+    </dl>
+    <a href="/admin/users/<%= match.user2_id %>" class="btn btn-primary btn-sm" style="margin-top:8px;">View Profile</a>
+    <% } else { %>
+    <p>User not found (<%= match.user2_id.substring(0,8) %>...)</p>
+    <% } %>
+  </div>
+</div>
+
+<div class="card">
+  <h3 style="margin-bottom:4px;">Messages (<%= total %>)</h3>
+  <p style="font-size:12px; color:#888; margin-bottom:16px;">Matched at <%= new Date(match.matched_at).toLocaleString() %> &middot; User 1 left / User 2 right &middot; newest page first</p>
+
+  <% if (messages.length === 0) { %>
+  <p style="color:#888;">No messages in this match yet.</p>
+  <% } %>
+
+  <div style="display:flex; flex-direction:column; gap:10px;">
+    <% messages.slice().reverse().forEach(function(msg) { %>
+    <% var isUser1 = msg.sender_id === match.user1_id; %>
+    <div style="display:flex; justify-content:<%= isUser1 ? 'flex-start' : 'flex-end' %>;">
+      <div style="max-width:70%; padding:10px 14px; border-radius:12px; background:<%= isUser1 ? '#f3f4f6' : '#f3e8ff' %>; <%= msg.deleted_at ? 'opacity:0.55;' : '' %>">
+        <div style="font-size:11px; color:#888; margin-bottom:4px;">
+          <strong style="color:<%= isUser1 ? '#374151' : '#7e22ce' %>;"><%= msg.sender ? (msg.sender.name + ' ' + msg.sender.surname) : msg.sender_id.substring(0,8) %></strong>
+          &middot; <%= new Date(msg.created_at).toLocaleString() %>
+          <% if (msg.read_at) { %>&middot; <span title="Read at <%= new Date(msg.read_at).toLocaleString() %>">read</span><% } %>
+          <% if (msg.deleted_at) { %>&middot; <span style="color:#ef4444;">deleted</span><% } %>
+        </div>
+
+        <% if (msg.question) { %>
+        <div style="border-left:3px solid #a855f7; padding-left:8px;">
+          <div style="font-size:11px; color:#a855f7; font-weight:600; margin-bottom:2px;">QUESTION</div>
+          <div style="font-size:14px;"><%= msg.question.question_text %></div>
+          <div style="font-size:12px; color:#666; margin-top:4px;">
+            A) <%= msg.question.option_a %> &middot; B) <%= msg.question.option_b %>
+            &middot; correct: <strong><%= msg.question.correct_option %></strong>
+            <% if (msg.question.answered_option) { %>
+            &middot; answered: <strong><%= msg.question.answered_option %></strong>
+            (<span style="color:<%= msg.question.is_correct ? '#22c55e' : '#ef4444' %>;"><%= msg.question.is_correct ? 'correct' : 'wrong' %></span>)
+            <% } else { %>
+            &middot; <span style="color:#888;">unanswered</span>
+            <% } %>
+          </div>
+        </div>
+        <% } else if (msg.is_image) { %>
+        <% if (msg.image_url) { %>
+        <a href="<%= msg.image_url %>" target="_blank" rel="noopener">
+          <img src="<%= msg.image_url %>" alt="image message" style="max-width:240px; max-height:240px; border-radius:8px; display:block;">
+        </a>
+        <% } else { %>
+        <div style="font-size:12px; color:#ef4444;">image with unverified URL (not rendered):</div>
+        <div style="font-size:12px; color:#888; word-break:break-all;"><%= msg.content %></div>
+        <% } %>
+        <% } else if (msg.audio_url) { %>
+        <% if (msg.safe_audio_url) { %>
+        <audio controls src="<%= msg.safe_audio_url %>" style="max-width:240px;"></audio>
+        <div style="font-size:11px; color:#888;"><%= msg.audio_duration_seconds || 0 %>s audio</div>
+        <% } else { %>
+        <div style="font-size:12px; color:#ef4444;">audio with unverified URL (not rendered)</div>
+        <% } %>
+        <% } else { %>
+        <div style="font-size:14px; white-space:pre-wrap; word-break:break-word;"><%= msg.content %></div>
+        <% } %>
+
+        <% if (msg.reactions && msg.reactions.length > 0) { %>
+        <div style="margin-top:4px; font-size:13px;">
+          <% msg.reactions.forEach(function(r) { %><span style="margin-right:4px;"><%= r.emoji %></span><% }); %>
+        </div>
+        <% } %>
+      </div>
+    </div>
+    <% }); %>
+  </div>
+</div>
+
+<% if (totalPages > 1) { %>
+<div class="pagination">
+  <% for (var i = 1; i <= totalPages; i++) { %>
+  <a href="/admin/matches/<%= match.id %>?page=<%= i %>" class="<%= i === page ? 'active' : '' %>"><%= i %></a>
+  <% } %>
+</div>
+<% } %>
+<%- include('_footer') %>
