@@ -3,3 +3,6 @@ dist
 .env
 *.log
 flows/
+
+# DB seed/backup dump'ları — credential-türü alanlar (password_hash, token'lar) içerir, repo'ya girmesin
+seed_backup_*.json
