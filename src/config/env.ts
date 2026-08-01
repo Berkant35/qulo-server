@@ -35,9 +35,6 @@ const envSchema = z.object({
   // Gemini AI
   GEMINI_API_KEY: z.string().default(''),
 
-  // Deep Links
-  ANDROID_SHA256_FINGERPRINT: z.string().default(''),
-
   // Social Auth — Google
   GOOGLE_CLIENT_ID_WEB: z.string().default(''),
   GOOGLE_CLIENT_ID_IOS: z.string().default(''),

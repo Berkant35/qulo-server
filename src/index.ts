@@ -109,35 +109,13 @@ app.get("/ping", (_req, res) => {
   });
 });
 
-// Apple Universal Links
-app.get("/.well-known/apple-app-site-association", (_req, res) => {
-  res.setHeader("Content-Type", "application/json");
-  res.json({
-    applinks: {
-      apps: [],
-      details: [
-        {
-          appID: "5W2U3NK284.com.wordpress.calikusuberkant.qulorelease",
-          paths: ["/invite/*"],
-        },
-      ],
-    },
-  });
-});
-
-// Android App Links
-app.get("/.well-known/assetlinks.json", (_req, res) => {
-  res.json([
-    {
-      relation: ["delegate_permission/common.handle_all_urls"],
-      target: {
-        namespace: "android_app",
-        package_name: "com.wordpress.calikusuberkant.qulo",
-        sha256_cert_fingerprints: [env.ANDROID_SHA256_FINGERPRINT || "F4:49:81:0F:8E:DA:35:37:EC:7A:2A:EA:D2:AB:18:AC:D6:EF:4D:BD:96:58:53:FC:D7:E3:EC:53:72:55:EF:AC"],
-      },
-    },
-  ]);
-});
+// NOT: /.well-known/apple-app-site-association ve /.well-known/assetlinks.json
+// route'lari BILEREK burada DEGIL. Uygulama linkleri quloapp.com uzerinden
+// dogrulaniyor ve o alan adini SADECE Netlify servis ediyor
+// (curl -sI https://quloapp.com -> server: Netlify). Tek kaynak:
+// qulo_web repo `public/.well-known/`. Buraya kopya koymak, hicbir
+// entitlement/manifest'te olmayan Railway alan adinda yasayan ve zamanla
+// gercekten yayindakinden ayrisan sahte bir kaynak uretir — nitekim uretmisti.
 
 // Admin backoffice
 app.use("/admin", adminRoutes);
