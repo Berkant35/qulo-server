@@ -149,12 +149,23 @@ export class ChatQuestionService {
     if (!data || data.length === 0) throw Errors.POWER_ALREADY_USED(powerName);
   }
 
-  /** Ucretlendirme basarisiz oldu — isareti geri al ki kullanici tekrar deneyebilsin. */
+  /**
+   * Ucretlendirme basarisiz oldu — isareti geri al ki kullanici tekrar deneyebilsin.
+   *
+   * Istek basindaki snapshot'la DEGIL, taze okumayla yazar: aradan gecen es zamanli
+   * bir istek baska bir gucu isaretlemis olabilir, snapshot'la yazmak onu silerdi.
+   */
   private async unmarkPowerUsed(question: { id: string; powers_used?: string[] | null }, powerName: string) {
-    const remaining = (question.powers_used ?? []).filter((p) => p !== powerName);
+    const { data: fresh } = await supabase
+      .from("chat_questions")
+      .select("powers_used")
+      .eq("id", question.id)
+      .maybeSingle();
+
+    const current = (fresh?.powers_used as string[] | null) ?? question.powers_used ?? [];
     const { error } = await supabase
       .from("chat_questions")
-      .update({ powers_used: remaining })
+      .update({ powers_used: current.filter((p) => p !== powerName) })
       .eq("id", question.id);
 
     if (error) {

@@ -109,12 +109,23 @@ export class QuizService {
     if (!data || data.length === 0) throw Errors.POWER_ALREADY_USED(powerUsed);
   }
 
-  /** Ucretlendirme basarisiz oldu — isareti geri al ki kullanici tekrar deneyebilsin. */
+  /**
+   * Ucretlendirme basarisiz oldu — isareti geri al ki kullanici tekrar deneyebilsin.
+   *
+   * Istek basindaki snapshot'la DEGIL, taze okumayla yazar: aradan gecen es zamanli
+   * bir istek baska bir gucu isaretlemis olabilir, snapshot'la yazmak onu silerdi.
+   */
   private async unmarkPowerUsed(session: SessionRow, powerUsed: string) {
-    const remaining = (session.current_q_powers ?? []).filter((p) => p !== powerUsed);
+    const { data: fresh } = await supabase
+      .from("quiz_sessions")
+      .select("current_q_powers")
+      .eq("id", session.id)
+      .maybeSingle();
+
+    const current = (fresh?.current_q_powers as string[] | null) ?? session.current_q_powers ?? [];
     const { error } = await supabase
       .from("quiz_sessions")
-      .update({ current_q_powers: remaining })
+      .update({ current_q_powers: current.filter((p) => p !== powerUsed) })
       .eq("id", session.id);
 
     if (error) {
