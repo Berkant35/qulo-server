@@ -42,6 +42,11 @@ export const Errors = {
   ALREADY_ANSWERED: () =>
     new AppError("ALREADY_ANSWERED", 409, "Already answered"),
 
+  POWER_ALREADY_USED: (power: string) =>
+    new AppError("POWER_ALREADY_USED", 409, "Power already used on this question", {
+      power,
+    }),
+
   SESSION_NOT_FOUND: () =>
     new AppError("SESSION_NOT_FOUND", 404, "Session not found"),
 

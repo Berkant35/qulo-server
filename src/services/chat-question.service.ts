@@ -126,6 +126,42 @@ export class ChatQuestionService {
   }
 
   /* ── Helper: fetchPowerFromDB ──────────────────────────────────── */
+  /**
+   * Gucu soruya ATOMIK olarak isaretle — ucretlendirmeden ONCE cagrilir.
+   *
+   * `.not(..., "cs", ...)` (contains) kosulu ayni gucun ikinci kez eklenmesini
+   * veritabani seviyesinde imkansiz kilar; guncellenen satir donmezse yarisi
+   * kaybettik demektir → POWER_ALREADY_USED. Envanter kapisi kaldirildigi icin
+   * bu koruma sart: aksi halde ayni guce tekrar basmak tekrar ucret alirdi.
+   */
+  private async markPowerUsed(question: { id: string; powers_used?: string[] | null }, powerName: string) {
+    const { data, error } = await supabase
+      .from("chat_questions")
+      .update({ powers_used: [...(question.powers_used ?? []), powerName] })
+      .eq("id", question.id)
+      .not("powers_used", "cs", `{${powerName}}`)
+      .select("id");
+
+    if (error) {
+      console.error("[chat-question] markPowerUsed error:", error);
+      throw Errors.SERVER_ERROR();
+    }
+    if (!data || data.length === 0) throw Errors.POWER_ALREADY_USED(powerName);
+  }
+
+  /** Ucretlendirme basarisiz oldu — isareti geri al ki kullanici tekrar deneyebilsin. */
+  private async unmarkPowerUsed(question: { id: string; powers_used?: string[] | null }, powerName: string) {
+    const remaining = (question.powers_used ?? []).filter((p) => p !== powerName);
+    const { error } = await supabase
+      .from("chat_questions")
+      .update({ powers_used: remaining })
+      .eq("id", question.id);
+
+    if (error) {
+      console.error("[chat-question] unmarkPowerUsed failed:", error, { questionId: question.id, powerName });
+    }
+  }
+
   private async fetchPower(powerName: string) {
     const { data: power, error } = await supabase
       .from("powers")
@@ -574,8 +610,10 @@ export class ChatQuestionService {
       throw Errors.VALIDATION_ERROR({ sender: "Only the answerer can use powers" });
     }
 
-    // Already answered
-    if (question.answered_option != null) {
+    // Already answered — terk edilmis soru da kapali sayilir (rescueQuestion ile simetri).
+    // Terk akisi `answered_option` set etmiyor, sadece `is_abandoned` isaretliyordu;
+    // envanter kapisi kalkinca bu acik gercek para yakabilirdi.
+    if (question.answered_option != null || question.is_abandoned) {
       throw Errors.ALREADY_ANSWERED();
     }
 
@@ -645,12 +683,22 @@ export class ChatQuestionService {
       });
     }
 
-    // ── Normal power handling (ORACLE, HALF, HINT, TIME_EXTEND) ──
+      // ── Normal power handling (ORACLE, HALF, HINT, TIME_EXTEND) ──
     const ecConfig3 = await economyConfigService.getConfig();
     const powerCostEntry = ecConfig3.powerCosts[powerName as keyof typeof ecConfig3.powerCosts];
     const cost = calculatePowerCost(powerCostEntry.purpleCost, 1, ecConfig3.core.questionCountMultipliers);
     const power = await this.fetchPower(powerName); // KEEP — needed for ORACLE accuracy_rate
-    await this.tryUseOrSpend(userId, powerName, cost, `chat_question_power_${powerName.toLowerCase()}`, questionId);
+
+    // ATOMIK isaretleme — ucretlendirmeden ONCE (quiz ile ayni desen). Once-oku-
+    // sonra-yaz yetmez: iki es zamanli istek ikisi de ucret alabilirdi.
+    await this.markPowerUsed(question, powerName);
+    try {
+      await this.tryUseOrSpend(userId, powerName, cost, `chat_question_power_${powerName.toLowerCase()}`, questionId);
+    } catch (err) {
+      // Odeme basarisiz — isareti geri al ki elmas alindiktan sonra tekrar denenebilsin.
+      await this.unmarkPowerUsed(question, powerName);
+      throw err;
+    }
 
     // Calculate green reward for sender
     const greenReward = calculateGreenReward(cost, ecConfig3.core.greenDiamondRewardRatio);
@@ -731,18 +779,7 @@ export class ChatQuestionService {
       }
     }
 
-    // Update powers_used array
-    const { error: updateErr } = await supabase
-      .from("chat_questions")
-      .update({
-        powers_used: [...(question.powers_used ?? []), powerName],
-      })
-      .eq("id", questionId);
-
-    if (updateErr) {
-      console.error("[chat-question] Power used update error:", updateErr);
-      throw Errors.SERVER_ERROR();
-    }
+    // powers_used artik ucretlendirmeden once atomik olarak yaziliyor (markPowerUsed).
 
     return { power_name: powerName, cost, green_reward: greenReward, ...powerResult };
   }

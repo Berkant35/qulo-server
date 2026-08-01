@@ -20,9 +20,13 @@ export const discoverLimiter = rateLimit({
   message: rateLimitResponse,
 });
 
+// Guc kullanimi artik her tap'te bir API cagrisi (envanter kapisi kalkti) — IP bazli
+// sayim NAT/CGNAT arkasindaki kullanicilari birbirine 429'latiyordu. Kimlikli istekte
+// kullanici bazina sayilir, anonim istekte IP'ye duser.
 export const chatLimiter = rateLimit({
   windowMs: 60 * 1000,
-  limit: 30,
+  limit: 60,
+  keyGenerator: (req) => (req as { user?: { userId?: string } }).user?.userId ?? req.ip ?? "unknown",
   standardHeaders: true,
   legacyHeaders: false,
   message: rateLimitResponse,

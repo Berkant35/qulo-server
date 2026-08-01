@@ -19,6 +19,13 @@ interface SessionRow {
   expires_at: string;
   completed_at: string | null;
   question_ids: string[] | null;
+  current_q_powers: string[] | null;
+}
+
+/** Oturuma ozel efektif guc fiyatlari — soru sayisi carpani uygulanmis hali. */
+export interface SessionPowerCost {
+  purple: number;
+  green: number;
 }
 
 interface QuestionRow {
@@ -52,6 +59,67 @@ export class QuizService {
   private filterByLanguagePreference(questions: any[], solverLanguages: string[]): any[] {
     if (!solverLanguages.length) return questions;
     return questions.filter((q: any) => solverLanguages.includes(q.locale || 'tr'));
+  }
+
+  /**
+   * Oturumun efektif guc fiyatlari — TEK DOGRU KAYNAK.
+   *
+   * Hem ucretlendirme (answerQuestion, rescueWithSkip) hem de client'a gonderilen
+   * fiyat listesi buradan uretilir. Daha once client carpani hic uygulamiyordu
+   * (2 soruluk quizde 2x yuksek gosteriyordu) ve rescue `powers.base_cost`, normal
+   * kullanim `config.powerCosts` okuyordu — iki ayri drift kaynagi kapatildi.
+   */
+  private async sessionPowerCosts(totalQuestions: number): Promise<Record<string, SessionPowerCost>> {
+    const config = await economyConfigService.getConfig();
+    const multipliers = config.core.questionCountMultipliers;
+    const ratio = config.core.greenDiamondRewardRatio;
+
+    const costs: Record<string, SessionPowerCost> = {};
+    for (const [name, entry] of Object.entries(config.powerCosts)) {
+      const purple = calculatePowerCost(entry.purpleCost, totalQuestions, multipliers);
+      costs[name] = { purple, green: calculateGreenReward(purple, ratio) };
+    }
+    return costs;
+  }
+
+  /**
+   * Gucu su anki soruya ATOMIK olarak isaretle — ucretlendirmeden ONCE.
+   *
+   * Envanter kapisi kalkinca (guc butonlari artik dogrudan elmastan dusuyor) ayni
+   * guce tekrar basmak tekrar ucret aliyordu; hicbir katmanda kayit yoktu.
+   *
+   * Once-oku-sonra-yaz YETMEZ: iki es zamanli istek ikisi de bos gorup ikisi de
+   * ucret alabilir. `.not(..., "cs", ...)` (contains) kosulu ayni gucun ikinci kez
+   * eklenmesini veritabani seviyesinde imkansiz kilar — guncellenen satir donmezse
+   * yarisi kaybettik demektir.
+   *
+   * Isaretleme ucretten ONCE yapilir; ucret basarisiz olursa `unmarkPowerUsed` ile
+   * geri alinir. Boylece en kotu senaryo "ucret alindi ama isaretlenmedi" degil,
+   * "isaretlendi ama ucret alinmadi" olur — kullanici parasini kaybetmez.
+   */
+  private async markPowerUsed(session: SessionRow, powerUsed: string) {
+    const { data, error } = await supabase
+      .from("quiz_sessions")
+      .update({ current_q_powers: [...(session.current_q_powers ?? []), powerUsed] })
+      .eq("id", session.id)
+      .not("current_q_powers", "cs", `{${powerUsed}}`)
+      .select("id");
+
+    if (error) throw Errors.SERVER_ERROR();
+    if (!data || data.length === 0) throw Errors.POWER_ALREADY_USED(powerUsed);
+  }
+
+  /** Ucretlendirme basarisiz oldu — isareti geri al ki kullanici tekrar deneyebilsin. */
+  private async unmarkPowerUsed(session: SessionRow, powerUsed: string) {
+    const remaining = (session.current_q_powers ?? []).filter((p) => p !== powerUsed);
+    const { error } = await supabase
+      .from("quiz_sessions")
+      .update({ current_q_powers: remaining })
+      .eq("id", session.id);
+
+    if (error) {
+      console.error("[quiz] unmarkPowerUsed failed:", error, { sessionId: session.id, powerUsed });
+    }
   }
 
   /**
@@ -131,7 +199,11 @@ export class QuizService {
           .eq("id", existing.id);
         // Fall through to create new session
       } else {
-        return { session_id: existing.id as string, total_questions: totalQuestions };
+        return {
+          session_id: existing.id as string,
+          total_questions: totalQuestions,
+          power_costs: await this.sessionPowerCosts(totalQuestions),
+        };
       }
     }
 
@@ -160,7 +232,11 @@ export class QuizService {
 
     if (createErr || !session) throw Errors.SERVER_ERROR();
 
-    return { session_id: session.id as string, total_questions: totalQuestions };
+    return {
+      session_id: session.id as string,
+      total_questions: totalQuestions,
+      power_costs: await this.sessionPowerCosts(totalQuestions),
+    };
   }
 
   // ─── Get Current Question ──────────────────────────────────────
@@ -210,6 +286,8 @@ export class QuizService {
       answers: shuffledAnswers,
       has_hint: q.hint_text != null && (q.hint_text as string).length > 0,
       time_limit_seconds: (q as any).time_limit ?? 30,
+      // Uygulama yeniden baslatilsa da kullanilmis gucler dogru gorunsun.
+      used_powers: session.current_q_powers ?? [],
     };
   }
 
@@ -272,33 +350,42 @@ export class QuizService {
 
       const powerData = power as unknown as PowerRow;
 
-      // Envanter kontrolü — hak varsa envanterden düş, yoksa anlık ödeme
-      const usedFromInventory = await exchangeService.tryUseInventory(solverId, powerUsed);
+      // ATOMIK isaretleme — ucretlendirmeden ONCE. Ikinci kez basilirsa burada
+      // POWER_ALREADY_USED firlar ve hicbir elmas harcanmaz.
+      await this.markPowerUsed(session, powerUsed);
 
-      if (!usedFromInventory) {
-        const config = await economyConfigService.getConfig();
-        const powerCostEntry = config.powerCosts[powerUsed as keyof typeof config.powerCosts];
-        const cost = calculatePowerCost(powerCostEntry.purpleCost, session.total_questions, config.core.questionCountMultipliers);
-        const greenReward = calculateGreenReward(cost, config.core.greenDiamondRewardRatio);
+      try {
+        // Envanter kontrolü — hak varsa envanterden düş, yoksa anlık ödeme
+        const usedFromInventory = await exchangeService.tryUseInventory(solverId, powerUsed);
 
-        // Spend purple diamonds from solver
-        await diamondService.spendPurple(solverId, cost, `POWER_USED:${powerUsed}`, sessionId);
-        // Earn green diamonds for target
-        await diamondService.earnGreen(session.target_id, greenReward, `POWER_REWARD:${powerUsed}`, sessionId);
+        if (!usedFromInventory) {
+          const { purple: cost, green: greenReward } =
+            (await this.sessionPowerCosts(session.total_questions))[powerUsed];
 
-        // Track green earned on the question
-        const { data: currentQData } = await supabase
-          .from('questions')
-          .select('stats_green_earned')
-          .eq('id', currentQuestion.id)
-          .single();
+          // Spend purple diamonds from solver
+          await diamondService.spendPurple(solverId, cost, `POWER_USED:${powerUsed}`, sessionId);
+          // Earn green diamonds for target
+          await diamondService.earnGreen(session.target_id, greenReward, `POWER_REWARD:${powerUsed}`, sessionId);
 
-        if (currentQData) {
-          await supabase
+          // Track green earned on the question
+          const { data: currentQData } = await supabase
             .from('questions')
-            .update({ stats_green_earned: currentQData.stats_green_earned + greenReward })
-            .eq('id', currentQuestion.id);
+            .select('stats_green_earned')
+            .eq('id', currentQuestion.id)
+            .single();
+
+          if (currentQData) {
+            await supabase
+              .from('questions')
+              .update({ stats_green_earned: currentQData.stats_green_earned + greenReward })
+              .eq('id', currentQuestion.id);
+          }
         }
+      } catch (err) {
+        // Odeme basarisiz (ornegin INSUFFICIENT_DIAMONDS) — isareti geri al ki
+        // kullanici elmas aldiktan sonra ayni gucu tekrar deneyebilsin.
+        await this.unmarkPowerUsed(session, powerUsed);
+        throw err;
       }
 
       // ─── Power effects ───
@@ -497,7 +584,7 @@ export class QuizService {
   private async getActiveSession(sessionId: string, solverId: string): Promise<SessionRow> {
     const { data: session, error } = await supabase
       .from("quiz_sessions")
-      .select("id, solver_id, target_id, status, current_q, total_questions, expires_at, completed_at, question_ids")
+      .select("id, solver_id, target_id, status, current_q, total_questions, expires_at, completed_at, question_ids, current_q_powers")
       .eq("id", sessionId)
       .eq("solver_id", solverId)
       .maybeSingle();
@@ -670,7 +757,9 @@ export class QuizService {
 
     if (powerUsed) {
       const powerStatMap: Record<string, string> = {
-        COPY: 'stats_copy_used',
+        // Kolon adi legacy (guc "COPY" iken adlandirilmis, sonra ORACLE olmus).
+        // Anahtar yanlis oldugu icin Kahin kullanimi bugune kadar hic sayilmadi.
+        ORACLE: 'stats_copy_used',
         HALF: 'stats_half_used',
         HINT: 'stats_hint_used',
         TIME_EXTEND: 'stats_time_extend_used',
@@ -714,10 +803,14 @@ export class QuizService {
     }).eq('id', sessionId);
   }
 
+  /**
+   * Sonraki soruya gec. Guc idempotency kaydini da sifirlar — bu, hem cevap hem
+   * rescue yolunun gectigi TEK ilerletme noktasi.
+   */
   private async incrementCurrentQ(sessionId: string, currentQ: number) {
     const { error } = await supabase
       .from("quiz_sessions")
-      .update({ current_q: currentQ + 1 })
+      .update({ current_q: currentQ + 1, current_q_powers: [] })
       .eq("id", sessionId);
 
     if (error) throw Errors.SERVER_ERROR();
@@ -752,9 +845,10 @@ export class QuizService {
     const usedFromInventory = await exchangeService.tryUseInventory(solverId, powerType);
 
     if (!usedFromInventory) {
-      const config = await economyConfigService.getConfig();
-      const cost = calculatePowerCost(power.base_cost, session.total_questions, config.core.questionCountMultipliers);
-      const greenReward = calculateGreenReward(cost, config.core.greenDiamondRewardRatio);
+      // TEK DOGRU KAYNAK — eskiden burasi `powers.base_cost`, normal guc kullanimi ise
+      // `config.powerCosts` okuyordu (bkz. sessionPowerCosts).
+      const { purple: cost, green: greenReward } =
+        (await this.sessionPowerCosts(session.total_questions))[powerType];
 
       await diamondService.spendPurple(solverId, cost, `POWER_USED:${powerType}_RESCUE`, sessionId);
       await diamondService.earnGreen(session.target_id, greenReward, `POWER_REWARD:${powerType}_RESCUE`, sessionId);

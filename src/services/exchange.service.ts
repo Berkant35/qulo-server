@@ -95,44 +95,7 @@ class ExchangeService {
       );
     }
 
-    // Upsert user_power_inventory
-    const { data: existing, error: invErr } = await supabase
-      .from("user_power_inventory")
-      .select("id, count")
-      .eq("user_id", userId)
-      .eq("power_name", powerName)
-      .maybeSingle();
-
-    if (invErr) {
-      throw Errors.SERVER_ERROR();
-    }
-
-    let newCount: number;
-
-    if (existing) {
-      newCount = existing.count + quantity;
-      const { error: updateErr } = await supabase
-        .from("user_power_inventory")
-        .update({ count: newCount, updated_at: new Date().toISOString() })
-        .eq("id", existing.id);
-
-      if (updateErr) {
-        throw Errors.SERVER_ERROR();
-      }
-    } else {
-      newCount = quantity;
-      const { error: insertErr } = await supabase
-        .from("user_power_inventory")
-        .insert({
-          user_id: userId,
-          power_name: powerName,
-          count: newCount,
-        });
-
-      if (insertErr) {
-        throw Errors.SERVER_ERROR();
-      }
-    }
+    const newCount = await this.grantPower(userId, powerName, quantity);
 
     // Log purchase transaction
     const { error: txErr } = await supabase
@@ -155,6 +118,52 @@ class ExchangeService {
       new_count: newCount,
       new_balance: { green: balance.green, purple: balance.purple },
     };
+  }
+
+  /**
+   * Envantere guc ekle — ucretsiz. `buyPower` odeme sonrasi bunu cagirir; starter
+   * paket (yeni kullaniciya 2x ORACLE) ise dogrudan. Yeni sayiyi doner.
+   *
+   * Envanter gucu fungible DEGIL: baska bir seye harcanamaz, kullanilinca yok olur.
+   * Bu yuzden mor elmas ekonomisini etkilemez.
+   */
+  async grantPower(userId: string, powerName: string, quantity: number): Promise<number> {
+    const { data: existing, error: invErr } = await supabase
+      .from("user_power_inventory")
+      .select("id, count")
+      .eq("user_id", userId)
+      .eq("power_name", powerName)
+      .maybeSingle();
+
+    if (invErr) {
+      throw Errors.SERVER_ERROR();
+    }
+
+    if (existing) {
+      const newCount = existing.count + quantity;
+      const { error: updateErr } = await supabase
+        .from("user_power_inventory")
+        .update({ count: newCount, updated_at: new Date().toISOString() })
+        .eq("id", existing.id);
+
+      if (updateErr) {
+        throw Errors.SERVER_ERROR();
+      }
+      return newCount;
+    }
+
+    const { error: insertErr } = await supabase
+      .from("user_power_inventory")
+      .insert({
+        user_id: userId,
+        power_name: powerName,
+        count: quantity,
+      });
+
+    if (insertErr) {
+      throw Errors.SERVER_ERROR();
+    }
+    return quantity;
   }
 
   // ── Get user's power inventory ────────────────────────────────

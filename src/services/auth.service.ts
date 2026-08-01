@@ -7,10 +7,34 @@ import type { RegisterInput, LoginInput } from "../validators/auth.validator.js"
 import { userLanguageService } from "./user-language.service.js";
 import { referralService } from "./referral.service.js";
 import { consentService } from "./consent.service.js";
+import { exchangeService } from "./exchange.service.js";
 import { assertUuid } from "../utils/validation.js";
 import { verifyGoogleToken, verifyAppleToken, type SocialAuthPayload } from "../utils/social-auth.js";
 
+/**
+ * Yeni kullaniciya verilen baslangic gucleri.
+ *
+ * Neden ORACLE: sadece sansi yukseltir (%70 isabet), eslesmeyi SATIN ALMAZ — SKIP/SKIP_ALL
+ * 2 soruluk quizin yarisini/tamamini cozerdi. TIME_EXTEND anlamsiz (prod'da timeout
+ * kaynakli fail yok), HINT kosullu (hint_text girilmemis sorularda calismiyor).
+ * Neden 2: soru sayisi simetrisi — 2 soruluk quizde gecme sansi %12 → ~%49 (0.7²).
+ * Neden envanter, neden elmas degil: envanter gucu fungible degil, mor ekonomisini
+ * hic degistirmiyor; ayrica butondaki sayi rozeti gucu KESFETTIRIYOR.
+ */
+const STARTER_POWERS: ReadonlyArray<{ name: string; quantity: number }> = [
+  { name: "ORACLE", quantity: 2 },
+];
+
 export class AuthService {
+  /** Yeni kayitta starter gucleri ver. Bloklamaz — hediye basarisiz olursa kayit yine tamamlanir. */
+  private grantStarterPowers(userId: string) {
+    for (const { name, quantity } of STARTER_POWERS) {
+      exchangeService.grantPower(userId, name, quantity).catch((err) => {
+        console.error(`[auth] Starter power grant failed (${name}):`, err);
+      });
+    }
+  }
+
   async register(data: RegisterInput) {
     const email = normalizeEmail(data.email);
 
@@ -68,6 +92,8 @@ export class AuthService {
     consentService.recordRegistrationConsents(user.id).catch((err) => {
       console.error("[auth] Failed to record consents:", err);
     });
+
+    this.grantStarterPowers(user.id);
 
     // Apply referral code if provided (don't block registration on failure)
     if (data.referral_code) {
@@ -474,6 +500,10 @@ export class AuthService {
     consentService.recordRegistrationConsents(newUser.id).catch((err) => {
       console.error("[social-login] Failed to record consents:", err);
     });
+
+    // Sadece Case C (gercek yeni kullanici). Soft-delete kurtarma yukaridaki
+    // existingByEmail dalindan donduyor → tekrar hediye vermez.
+    this.grantStarterPowers(newUser.id);
     userLanguageService.addLanguage(newUser.id, "tr" as any).catch((err) => {
       console.error("[social-login] Failed to add language:", err);
     });
