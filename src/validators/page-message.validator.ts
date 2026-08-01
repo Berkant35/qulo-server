@@ -30,12 +30,14 @@ const actionUrlSchema = z
       return false;
     }
   }, { message: "action_url internal path veya quloapp.com https URL olmalı" })
+  .nullable() // boşaltılınca null → PATCH'te kolonu NULL'a çeker (undefined düşerdi)
   .optional();
 
 const imageUrlSchema = z
   .string()
   .max(300)
   .refine((v) => v.startsWith("https://"), { message: "image_url https olmalı" })
+  .nullable() // görsel kaldırılınca null → kolonu temizler
   .optional();
 
 export const createPageMessageSchema = z.object({

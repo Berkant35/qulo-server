@@ -100,7 +100,10 @@ class PageMessageAdminController {
         // Admin iç başlığı opsiyonel: boşsa içeriğin ilk başlığından (yoksa sayfa adından) türet.
         title: (req.body.title || "").trim() || firstTitle || (req.body.page || "Mesaj"),
         content,
-        action_url: actionUrl || undefined,
+        // Boş bırakılan opsiyonel alanlar null olmalı: undefined supabase PATCH'inden düşer,
+        // eski değer (ör. /discover) DB'de kalır. null ise kolon gerçekten temizlenir.
+        image_url: (req.body.image_url || "").trim() || null,
+        action_url: actionUrl || null,
         segment: parseSegment(req.body),
         priority: parseInt(req.body.priority) || 0,
         is_active: req.body.is_active === "on",
@@ -134,7 +137,10 @@ class PageMessageAdminController {
         // Admin iç başlığı opsiyonel: boşsa içeriğin ilk başlığından (yoksa sayfa adından) türet.
         title: (req.body.title || "").trim() || firstTitle || (req.body.page || "Mesaj"),
         content,
-        action_url: actionUrl || undefined,
+        // Boş bırakılan opsiyonel alanlar null olmalı: undefined supabase PATCH'inden düşer,
+        // eski değer (ör. /discover) DB'de kalır. null ise kolon gerçekten temizlenir.
+        image_url: (req.body.image_url || "").trim() || null,
+        action_url: actionUrl || null,
         segment: parseSegment(req.body),
         priority: parseInt(req.body.priority) || 0,
         is_active: req.body.is_active === "on",

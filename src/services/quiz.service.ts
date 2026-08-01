@@ -98,15 +98,16 @@ export class QuizService {
    * "isaretlendi ama ucret alinmadi" olur — kullanici parasini kaybetmez.
    */
   private async markPowerUsed(session: SessionRow, powerUsed: string) {
-    const { data, error } = await supabase
-      .from("quiz_sessions")
-      .update({ current_q_powers: [...(session.current_q_powers ?? []), powerUsed] })
-      .eq("id", session.id)
-      .not("current_q_powers", "cs", `{${powerUsed}}`)
-      .select("id");
+    const { data, error } = await supabase.rpc("quiz_session_mark_power", {
+      p_session_id: session.id,
+      p_power: powerUsed,
+    });
 
-    if (error) throw Errors.SERVER_ERROR();
-    if (!data || data.length === 0) throw Errors.POWER_ALREADY_USED(powerUsed);
+    if (error) {
+      console.error("[quiz] markPowerUsed error:", error);
+      throw Errors.SERVER_ERROR();
+    }
+    if (data !== true) throw Errors.POWER_ALREADY_USED(powerUsed);
   }
 
   /**
@@ -116,17 +117,10 @@ export class QuizService {
    * bir istek baska bir gucu isaretlemis olabilir, snapshot'la yazmak onu silerdi.
    */
   private async unmarkPowerUsed(session: SessionRow, powerUsed: string) {
-    const { data: fresh } = await supabase
-      .from("quiz_sessions")
-      .select("current_q_powers")
-      .eq("id", session.id)
-      .maybeSingle();
-
-    const current = (fresh?.current_q_powers as string[] | null) ?? session.current_q_powers ?? [];
-    const { error } = await supabase
-      .from("quiz_sessions")
-      .update({ current_q_powers: current.filter((p) => p !== powerUsed) })
-      .eq("id", session.id);
+    const { error } = await supabase.rpc("quiz_session_unmark_power", {
+      p_session_id: session.id,
+      p_power: powerUsed,
+    });
 
     if (error) {
       console.error("[quiz] unmarkPowerUsed failed:", error, { sessionId: session.id, powerUsed });

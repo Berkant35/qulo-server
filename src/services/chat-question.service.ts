@@ -134,19 +134,17 @@ export class ChatQuestionService {
    * kaybettik demektir → POWER_ALREADY_USED. Envanter kapisi kaldirildigi icin
    * bu koruma sart: aksi halde ayni guce tekrar basmak tekrar ucret alirdi.
    */
-  private async markPowerUsed(question: { id: string; powers_used?: string[] | null }, powerName: string) {
-    const { data, error } = await supabase
-      .from("chat_questions")
-      .update({ powers_used: [...(question.powers_used ?? []), powerName] })
-      .eq("id", question.id)
-      .not("powers_used", "cs", `{${powerName}}`)
-      .select("id");
+  private async markPowerUsed(question: { id: string }, powerName: string) {
+    const { data, error } = await supabase.rpc("chat_question_mark_power", {
+      p_question_id: question.id,
+      p_power: powerName,
+    });
 
     if (error) {
       console.error("[chat-question] markPowerUsed error:", error);
       throw Errors.SERVER_ERROR();
     }
-    if (!data || data.length === 0) throw Errors.POWER_ALREADY_USED(powerName);
+    if (data !== true) throw Errors.POWER_ALREADY_USED(powerName);
   }
 
   /**
@@ -155,18 +153,11 @@ export class ChatQuestionService {
    * Istek basindaki snapshot'la DEGIL, taze okumayla yazar: aradan gecen es zamanli
    * bir istek baska bir gucu isaretlemis olabilir, snapshot'la yazmak onu silerdi.
    */
-  private async unmarkPowerUsed(question: { id: string; powers_used?: string[] | null }, powerName: string) {
-    const { data: fresh } = await supabase
-      .from("chat_questions")
-      .select("powers_used")
-      .eq("id", question.id)
-      .maybeSingle();
-
-    const current = (fresh?.powers_used as string[] | null) ?? question.powers_used ?? [];
-    const { error } = await supabase
-      .from("chat_questions")
-      .update({ powers_used: current.filter((p) => p !== powerName) })
-      .eq("id", question.id);
+  private async unmarkPowerUsed(question: { id: string }, powerName: string) {
+    const { error } = await supabase.rpc("chat_question_unmark_power", {
+      p_question_id: question.id,
+      p_power: powerName,
+    });
 
     if (error) {
       console.error("[chat-question] unmarkPowerUsed failed:", error, { questionId: question.id, powerName });
@@ -339,8 +330,10 @@ export class ChatQuestionService {
       throw Errors.VALIDATION_ERROR({ sender: "Cannot answer your own question" });
     }
 
-    // Already answered
-    if (question.answered_option != null) {
+    // Already answered — terk edilmis soru da kapali sayilir. Terk akisi
+    // `answered_option` set etmiyor, sadece `is_abandoned` isaretliyor; bu guard
+    // olmadan terk edilmis soruya `power_used: "SKIP"` ile ucret kesilebiliyordu.
+    if (question.answered_option != null || question.is_abandoned) {
       throw Errors.ALREADY_ANSWERED();
     }
 
@@ -774,7 +767,9 @@ export class ChatQuestionService {
             answered_option: question.correct_option,
             is_correct: true,
             answered_at: new Date().toISOString(),
-            powers_used: [...(question.powers_used ?? []), "SKIP"],
+            // powers_used'a DOKUNMA — markPowerUsed zaten atomik olarak yazdi.
+            // Stale dizi ile ikinci kez yazmak hem "SKIP"i cift kaydediyordu hem de
+            // es zamanli isaretlenmis baska gucleri siliyordu.
           })
           .eq("id", questionId)
           .select("*")
