@@ -24,6 +24,7 @@ export interface SupabaseError {
 /** Hangi tablo+operasyonun hata döneceği — hata dallarını test etmek için. */
 export interface FailureSpec {
   table: string;
+  /** `upsert` da `insert` olarak hedeflenir. */
   op: 'select' | 'update' | 'insert' | 'delete';
   error?: SupabaseError;
   /**
@@ -82,6 +83,8 @@ function matches(row: Row, filters: Filter[]): boolean {
 
 class QueryBuilder implements PromiseLike<Result<any>> {
   private readonly filters: Filter[] = [];
+  /** Her grup kendi içinde OR; gruplar birbiriyle ve `filters` ile AND. */
+  private readonly orGroups: Filter[][] = [];
   private orderBy: { column: string; ascending: boolean } | null = null;
   private rangeBounds: { from: number; to: number } | null = null;
   private limitCount: number | null = null;
@@ -90,10 +93,11 @@ class QueryBuilder implements PromiseLike<Result<any>> {
   constructor(
     private readonly store: Tables,
     private readonly table: string,
-    private readonly mode: 'select' | 'update' | 'insert' | 'delete',
+    private readonly mode: 'select' | 'update' | 'insert' | 'upsert' | 'delete',
     private readonly payload: Row | Row[] | null,
     private readonly wantCount: boolean,
     private readonly failure: SupabaseError | null,
+    private readonly onConflict?: string,
   ) {
     // select zaten satır döndürür; update/delete için .select() çağrılması gerekir.
     this.returnRows = mode === 'select';
@@ -111,6 +115,19 @@ class QueryBuilder implements PromiseLike<Result<any>> {
   gt(column: string, value: any) { return this.addFilter('gt', column, value); }
   lt(column: string, value: any) { return this.addFilter('lt', column, value); }
   in(column: string, values: any[]) { return this.addFilter('in', column, values); }
+
+  /**
+   * PostgREST OR sözdizimi: `user1_id.eq.abc,user2_id.eq.abc`.
+   * Sadece kod tabanının kullandığı `col.op.value` biçimi destekleniyor.
+   */
+  or(expression: string) {
+    const group = expression.split(',').map((part) => {
+      const [column, op, ...rest] = part.split('.');
+      return { op: op as FilterOp, column, value: rest.join('.') };
+    });
+    this.orGroups.push(group);
+    return this;
+  }
 
   order(column: string, opts?: { ascending?: boolean }) {
     this.orderBy = { column, ascending: opts?.ascending ?? true };
@@ -140,7 +157,11 @@ class QueryBuilder implements PromiseLike<Result<any>> {
   /** Filtre + sıralama + sayfalama uygulanmış satırlar; mutasyon için referans döner. */
   private resolveRows(): { affected: Row[]; total: number } {
     const all = this.rows();
-    let selected = all.filter((r) => matches(r, this.filters));
+    let selected = all.filter(
+      (r) =>
+        matches(r, this.filters) &&
+        this.orGroups.every((group) => group.some((f) => matches(r, [f]))),
+    );
     const total = selected.length;
 
     if (this.orderBy) {
@@ -165,11 +186,30 @@ class QueryBuilder implements PromiseLike<Result<any>> {
   private run(): Result<Row[]> {
     if (this.failure) return { data: [], error: this.failure, count: 0 };
 
-    if (this.mode === 'insert') {
+    if (this.mode === 'insert' || this.mode === 'upsert') {
       const incoming = Array.isArray(this.payload) ? this.payload : [this.payload as Row];
-      const inserted = incoming.map((r) => ({ ...r }));
-      this.rows().push(...inserted);
-      return { data: this.returnRows ? inserted : [], error: null, count: inserted.length };
+      const written: Row[] = [];
+
+      for (const row of incoming) {
+        const key = this.onConflict;
+        // Postgres'te NULL/undefined benzersizlik kısıtına takılmaz — her zaman yeni satır.
+        const conflictValue = key ? row[key] : undefined;
+        const existing =
+          this.mode === 'upsert' && key && conflictValue !== undefined && conflictValue !== null
+            ? this.rows().find((r) => r[key] === conflictValue)
+            : undefined;
+
+        if (existing) {
+          Object.assign(existing, row);
+          written.push(existing);
+        } else {
+          const created = { ...row };
+          this.rows().push(created);
+          written.push(created);
+        }
+      }
+
+      return { data: this.returnRows ? written : [], error: null, count: written.length };
     }
 
     const { affected, total } = this.resolveRows();
@@ -256,6 +296,11 @@ export function createFakeSupabase(
           new QueryBuilder(store, table, 'update', patch, false, failureFor(table, 'update')),
         insert: (payload: Row | Row[]) =>
           new QueryBuilder(store, table, 'insert', payload, false, failureFor(table, 'insert')),
+        upsert: (payload: Row | Row[], opts?: { onConflict?: string }) =>
+          new QueryBuilder(
+            store, table, 'upsert', payload, false,
+            failureFor(table, 'insert'), opts?.onConflict,
+          ),
         delete: () =>
           new QueryBuilder(store, table, 'delete', null, false, failureFor(table, 'delete')),
       };
