@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { SUPPORTED_LOCALES } from "../constants/locales.js";
 
 export const registerSchema = z.object({
   email: z.string().email(),
@@ -8,7 +9,10 @@ export const registerSchema = z.object({
   age: z.number().int().min(18).max(99),
   gender: z.enum(["MAN", "WOMAN", "OTHER"]),
   gender_pref: z.enum(["MAN", "WOMAN", "BOTH"]).optional(),
-  locale: z.enum(["tr", "en"]).default("tr"),
+  // Mobil, cihazin dilini gonderiyor (Localizations.localeOf) — uygulama 16 dil
+  // destekliyor. Burasi tr/en'de kalmisti, yani Almanca/Fransizca vb. cihazlardan
+  // gelen kayit istekleri 400 aliyordu. Diger validator'larla ayni kaynagi kullan.
+  locale: z.enum(SUPPORTED_LOCALES as unknown as [string, ...string[]]).default("tr"),
   lat: z.number().min(-90).max(90).optional(),
   lng: z.number().min(-180).max(180).optional(),
   referral_code: z.string().min(1).max(10).optional(),

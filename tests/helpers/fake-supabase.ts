@@ -39,6 +39,8 @@ export interface FakeSupabaseOptions {
   failOn?: FailureSpec[];
   /** rpc(name, args) çağrılarına verilecek cevaplar. */
   rpc?: Record<string, { data?: unknown; error?: SupabaseError }>;
+  /** Başlangıçtaki depolama dosyaları: `{ photos: ['user-id/a.jpg'] }`. */
+  storage?: Record<string, string[]>;
 }
 
 type FilterOp = 'eq' | 'neq' | 'gte' | 'lte' | 'gt' | 'lt' | 'in';
@@ -58,6 +60,9 @@ const NOT_ONE_ROW: SupabaseError = {
   message: 'JSON object requested, multiple (or no) rows returned',
   code: 'PGRST116',
 };
+
+/** Otomatik birincil anahtar sayacı (bkz. run()). */
+let autoId = 0;
 
 function matches(row: Row, filters: Filter[]): boolean {
   return filters.every((f) => {
@@ -203,7 +208,11 @@ class QueryBuilder implements PromiseLike<Result<any>> {
           Object.assign(existing, row);
           written.push(existing);
         } else {
+          // Postgres birincil anahtarı kendi üretir. Fake de üretmeli: aksi halde
+          // `id` undefined kalır ve `.eq('id', undefined)` tüm satırlara çarpar.
+          // Deterministik sayaç — testlerin tekrarlanabilirliği için rastgelelik yok.
           const created = { ...row };
+          if (created.id === undefined) created.id = `fake-${++autoId}`;
           this.rows().push(created);
           written.push(created);
         }
@@ -260,6 +269,8 @@ export interface FakeSupabase {
   table(name: string): Row[];
   /** Yapılan rpc çağrıları, sırayla. */
   rpcCalls: Array<{ name: string; args: unknown }>;
+  /** Bir bucket'ta kalan dosya yolları — assert için. */
+  storageFiles(bucket: string): string[];
 }
 
 export function createFakeSupabase(
@@ -271,6 +282,9 @@ export function createFakeSupabase(
     Object.entries(seed).map(([t, rows]) => [t, rows.map((r) => ({ ...r }))]),
   );
   const rpcCalls: Array<{ name: string; args: unknown }> = [];
+  const storageFiles: Record<string, string[]> = Object.fromEntries(
+    Object.entries(options.storage ?? {}).map(([bucket, paths]) => [bucket, [...paths]]),
+  );
 
   // failAfter'ı sayabilmek için (tablo, op) başına çağrı sayacı.
   const opCounts = new Map<string, number>();
@@ -305,6 +319,28 @@ export function createFakeSupabase(
           new QueryBuilder(store, table, 'delete', null, false, failureFor(table, 'delete')),
       };
     },
+    /**
+     * Depolama — sadece kod tabanının kullandığı `list` ve `remove`.
+     * Dosyalar `bucket → path` haritasında tutulur; `list(prefix)` o önekin
+     * altındaki dosya adlarını döner (Supabase `{ name }` listesi gibi).
+     */
+    storage: {
+      from(bucket: string) {
+        const files = (storageFiles[bucket] ??= []);
+        return {
+          async list(prefix: string) {
+            const data = files
+              .filter((path) => path.startsWith(`${prefix}/`))
+              .map((path) => ({ name: path.slice(prefix.length + 1) }));
+            return { data, error: null };
+          },
+          async remove(paths: string[]) {
+            storageFiles[bucket] = files.filter((path) => !paths.includes(path));
+            return { data: null, error: null };
+          },
+        };
+      },
+    },
     async rpc(name: string, args?: unknown) {
       rpcCalls.push({ name, args });
       const configured = options.rpc?.[name];
@@ -316,5 +352,6 @@ export function createFakeSupabase(
     client,
     table: (name: string) => (store[name] ??= []),
     rpcCalls,
+    storageFiles: (bucket: string) => (storageFiles[bucket] ??= []),
   };
 }
