@@ -1,0 +1,11 @@
+// Sadece tip kontrolü için. Build tsconfig.json kullanır ve `tests/` klasörünü
+// derlemez (rootDir: src) — bu yüzden test kodundaki tip hataları CI'da görünmezdi.
+// vitest de esbuild ile transpile ettiği için tip kontrolü yapmaz.
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": "."
+  },
+  "include": ["src/**/*", "tests/**/*"]
+}

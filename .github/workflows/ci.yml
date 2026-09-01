@@ -20,8 +20,10 @@ jobs:
       - name: Install
         run: npm ci --include=dev
 
+      # tsconfig.json build içindir ve tests/ klasörünü kapsamaz; testlerin tipini de
+      # kontrol etmek için ayrı config kullanıyoruz.
       - name: Typecheck
-        run: npx tsc --noEmit
+        run: npx tsc -p tsconfig.test.json
 
       - name: Test
         run: npx vitest run
