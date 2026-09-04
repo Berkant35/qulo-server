@@ -4,6 +4,7 @@ import { hashPassword, comparePassword, hashToken, generateToken, normalizeEmail
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../utils/jwt.js";
 import { sendVerificationEmail, sendPasswordResetEmail } from "../utils/email.js";
 import type { RegisterInput, LoginInput } from "../validators/auth.validator.js";
+import { resolveLocale } from "../utils/locales.js";
 import { userLanguageService } from "./user-language.service.js";
 import { referralService } from "./referral.service.js";
 import { consentService } from "./consent.service.js";
@@ -105,7 +106,7 @@ export class AuthService {
     }
 
     // Auto-add user's locale to user_languages
-    await userLanguageService.addLanguage(user.id, (data.locale || 'tr') as import('../constants/locales.js').SupportedLocale);
+    await userLanguageService.addLanguage(user.id, resolveLocale(data.locale));
 
     sendVerificationEmail(email, verifyToken, data.locale).catch((err) => {
       console.error('[auth] Failed to send verification email:', err instanceof Error ? err.message : err);
@@ -401,6 +402,7 @@ export class AuthService {
     name?: string;
     surname?: string;
     nonce?: string;
+    locale?: string;
   }) {
     // 1. Token verify
     let socialPayload: SocialAuthPayload;
@@ -487,7 +489,7 @@ export class AuthService {
         provider_id: providerId,
         email_verified: true,
         referral_code: referralCode,
-        locale: "tr",
+        locale: resolveLocale(data.locale),
       })
       .select("id, email, age")
       .single();
@@ -504,7 +506,7 @@ export class AuthService {
     // Sadece Case C (gercek yeni kullanici). Soft-delete kurtarma yukaridaki
     // existingByEmail dalindan donduyor → tekrar hediye vermez.
     this.grantStarterPowers(newUser.id);
-    userLanguageService.addLanguage(newUser.id, "tr" as any).catch((err) => {
+    userLanguageService.addLanguage(newUser.id, resolveLocale(data.locale)).catch((err) => {
       console.error("[social-login] Failed to add language:", err);
     });
 

@@ -712,4 +712,22 @@ describe('socialLogin', () => {
     expect(fake.table('refresh_tokens')[0].token_hash).toBe(hashToken(result.refreshToken));
     expect(fake.table('users')[0].is_online).toBe(true);
   });
+
+  it('Case C — locale payload\'dan gelir', async () => {
+    const { fake, authService } = await setup({ users: [] });
+    await authService.socialLogin({ ...provider, locale: 'de' });
+    expect(fake.table('users')[0].locale).toBe('de');
+  });
+
+  it('Case C — locale yoksa en (tr degil)', async () => {
+    const { fake, authService } = await setup({ users: [] });
+    await authService.socialLogin(provider);
+    expect(fake.table('users')[0].locale).toBe('en');
+  });
+
+  it('Case C — desteklenmeyen locale en\'e duser', async () => {
+    const { fake, authService } = await setup({ users: [] });
+    await authService.socialLogin({ ...provider, locale: 'xx' });
+    expect(fake.table('users')[0].locale).toBe('en');
+  });
 });

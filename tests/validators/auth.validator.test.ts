@@ -37,10 +37,10 @@ describe('registerSchema — locale', () => {
     expect(parse({ locale: 'tr-TR' }).success).toBe(false);
   });
 
-  it('locale verilmezse tr varsayılır', () => {
+  it('locale verilmezse en varsayılır', () => {
     const { locale, ...withoutLocale } = validRegister;
     const result = registerSchema.safeParse(withoutLocale);
-    expect(result.success && result.data.locale).toBe('tr');
+    expect(result.success && result.data.locale).toBe('en');
   });
 });
 

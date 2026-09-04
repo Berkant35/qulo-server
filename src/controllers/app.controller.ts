@@ -5,7 +5,7 @@ import { economyConfigService } from "../services/economy-config.service.js";
 export async function getAppConfigHandler(req: Request, res: Response, next: NextFunction) {
   try {
     const platform = (req.headers["x-app-platform"] as string) || "android";
-    const locale = (req.headers["accept-language"] as string) || "tr";
+    const locale = (req.headers["accept-language"] as string) || "en";
     const validPlatform = platform === "ios" ? "ios" : "android";
     const config = await appConfigService.getConfig(validPlatform, locale);
     res.json(config);

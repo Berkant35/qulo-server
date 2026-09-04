@@ -12,7 +12,7 @@ export const registerSchema = z.object({
   // Mobil, cihazin dilini gonderiyor (Localizations.localeOf) — uygulama 16 dil
   // destekliyor. Burasi tr/en'de kalmisti, yani Almanca/Fransizca vb. cihazlardan
   // gelen kayit istekleri 400 aliyordu. Diger validator'larla ayni kaynagi kullan.
-  locale: z.enum(SUPPORTED_LOCALES as unknown as [string, ...string[]]).default("tr"),
+  locale: z.enum(SUPPORTED_LOCALES as unknown as [string, ...string[]]).default("en"),
   lat: z.number().min(-90).max(90).optional(),
   lng: z.number().min(-180).max(180).optional(),
   referral_code: z.string().min(1).max(10).optional(),
@@ -56,6 +56,7 @@ export const socialLoginSchema = z.object({
   name: z.string().optional(),
   surname: z.string().optional(),
   nonce: z.string().optional(),
+  locale: z.enum(SUPPORTED_LOCALES as unknown as [string, ...string[]]).optional(),
 });
 
 export type SocialLoginInput = z.infer<typeof socialLoginSchema>;

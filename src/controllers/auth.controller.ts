@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { authService } from "../services/auth.service.js";
 import { env } from "../config/env.js";
+import { resolveLocale } from "../utils/locales.js";
 import type { RegisterInput, LoginInput, RefreshInput, ForgotPasswordInput, ResetPasswordInput } from "../validators/auth.validator.js";
 
 export async function registerHandler(req: Request, res: Response, next: NextFunction) {
@@ -88,16 +89,17 @@ export async function resetPasswordHandler(req: Request, res: Response, next: Ne
 export async function socialLoginHandler(req: Request, res: Response, next: NextFunction) {
   try {
     const data = req.body as import("../validators/auth.validator.js").SocialLoginInput;
-    const result = await authService.socialLogin(data);
+    const result = await authService.socialLogin({ ...data, locale: data.locale ?? detectLocale(req) });
     res.json(result);
   } catch (err) {
     next(err);
   }
 }
 
+/** Accept-Language'in ilk dil kodu (tr-TR → tr); desteklenmiyorsa en. 16 dil. */
 function detectLocale(req: Request): string {
-  const acceptLang = req.headers["accept-language"] || "";
-  return acceptLang.includes("tr") ? "tr" : "en";
+  const first = String(req.headers["accept-language"] ?? "").split(",")[0]?.trim().split("-")[0]?.toLowerCase();
+  return resolveLocale(first || null);
 }
 
 function isTokenExpiredError(err: unknown): boolean {
