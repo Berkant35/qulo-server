@@ -1,7 +1,8 @@
 import type { Request, Response, NextFunction } from "express";
 import { authService } from "../services/auth.service.js";
 import { env } from "../config/env.js";
-import { localeFromAcceptLanguage } from "../utils/locales.js";
+import { localeFromRequestHeaders } from "../utils/locales.js";
+import type { SupportedLocale } from "../utils/locales.js";
 import type { RegisterInput, LoginInput, RefreshInput, ForgotPasswordInput, ResetPasswordInput } from "../validators/auth.validator.js";
 
 export async function registerHandler(req: Request, res: Response, next: NextFunction) {
@@ -96,8 +97,8 @@ export async function socialLoginHandler(req: Request, res: Response, next: Next
   }
 }
 
-function detectLocale(req: Request): string {
-  return localeFromAcceptLanguage(req.headers["accept-language"] as string | undefined);
+function detectLocale(req: Request): SupportedLocale {
+  return localeFromRequestHeaders(req.headers);
 }
 
 function isTokenExpiredError(err: unknown): boolean {
