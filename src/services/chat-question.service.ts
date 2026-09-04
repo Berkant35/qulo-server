@@ -5,7 +5,7 @@ import { diamondService } from "./diamond.service.js";
 import { exchangeService } from "./exchange.service.js";
 import { matchingService } from "./matching.service.js";
 import { NotificationService } from "./notification.service.js";
-import { calculatePowerCost, calculateGreenReward } from "../utils/math.js";
+import { calculatePowerCost, calculateGreenReward, shuffleArray, pickOracleSuggestion } from "../utils/math.js";
 import {
   CHAT_QUESTION_POWERS_2,
   CHAT_QUESTION_POWERS_4,
@@ -190,6 +190,23 @@ export class ChatQuestionService {
     const used = await exchangeService.tryUseInventory(userId, powerName);
     if (!used) {
       await diamondService.spendPurple(userId, purpleCost, reason, referenceId);
+    }
+  }
+
+  /**
+   * Guc sonucunu (HALF elenenleri / ORACLE onerisi) satira yazar — ucretten SONRA.
+   * Kabul edilen risk: nadir yazma hatasinda kullanici odedi, guc isaretli (tekrar
+   * alamaz), reload'da sonuc kaybolur ve sonraki guc eski havuza duser. Istek yine
+   * doner: istemci sonucu bu yanittan aliyor.
+   */
+  private async persistPowerOutcome(
+    questionId: string,
+    userId: string,
+    patch: Partial<Pick<ChatQuestionBase, "eliminated_options" | "oracle_suggested_option">>,
+  ): Promise<void> {
+    const { error } = await supabase.from("chat_questions").update(patch).eq("id", questionId);
+    if (error) {
+      console.error("[chat-question] power outcome persist failed:", error, { questionId, userId, patch });
     }
   }
 
@@ -721,31 +738,36 @@ export class ChatQuestionService {
 
     // ── Apply power effect ──
     let powerResult: Omit<UsePowerResult, 'power_name' | 'power_result'> = {};
+    const allOptions = optionCount === 4 ? ["A", "B", "C", "D"] : ["A", "B"];
 
     switch (powerName) {
       case "ORACLE": {
-        // 70% chance to suggest the correct option
+        // accuracy_rate (varsayilan %70) olasilikla dogru sik; yanlis dali HALF'in
+        // eledigi siklari DISLAR (pickOracleSuggestion).
         const accuracyRate = power.accuracy_rate ?? 0.7;
         const isAccurate = Math.random() < accuracyRate;
-        const correctOption = question.correct_option;
-        const allOptions = optionCount === 4 ? ["A", "B", "C", "D"] : ["A", "B"];
-        const wrongOptions = allOptions.filter((o) => o !== correctOption);
-
-        const suggestedOption = isAccurate
-          ? correctOption
-          : wrongOptions[Math.floor(Math.random() * wrongOptions.length)];
-
-        powerResult = { suggested_option: suggestedOption };
+        const suggested = pickOracleSuggestion(
+          allOptions,
+          question.correct_option,
+          question.eliminated_options ?? [],
+          isAccurate,
+        );
+        // Kalici yaz: sonraki HALF bu sikki elemesin (ters sira sizintisi), ekran
+        // yeniden acilinca oneri geri gelsin.
+        await this.persistPowerOutcome(questionId, userId, { oracle_suggested_option: suggested });
+        powerResult = { suggested_option: suggested };
         break;
       }
 
       case "HALF": {
-        // Remove 2 wrong options (only for 4-option questions)
-        const correct = question.correct_option;
-        const wrong = ["A", "B", "C", "D"].filter((o) => o !== correct);
-        // Shuffle wrong options and pick 2 to eliminate
-        const shuffled = wrong.sort(() => Math.random() - 0.5);
-        const eliminated = shuffled.slice(0, 2);
+        // 3 yanlistan 2'sini ele (yalniz 4 sikli — allowlist ucretten once engeller).
+        // ORACLE daha once bir sik onerdiyse o sik hayatta kalir; elenmesi
+        // "ORACLE yanlisti" bilgisini bedavaya verirdi.
+        const wrong = allOptions.filter(
+          (o) => o !== question.correct_option && o !== question.oracle_suggested_option,
+        );
+        const eliminated = shuffleArray(wrong).slice(0, 2);
+        await this.persistPowerOutcome(questionId, userId, { eliminated_options: eliminated });
         powerResult = { eliminated_options: eliminated };
         break;
       }

@@ -55,3 +55,22 @@ export function haversineDistance(
 
   return R * c;
 }
+
+/**
+ * ORACLE onerisi. Havuz "tum siklar − HALF'in eledikleri": yanlis dali elenmis bir
+ * sikki ASLA onermez (aksi halde kullanici ORACLE'in yanlis oldugunu bedavaya ogrenirdi).
+ * Elenenler tum yanlislari kapsiyorsa (bozuk veri) eleme yok sayilir — yanlis dal yine
+ * yanlis kalir; ORACLE hicbir kosulda %100 garantiye yukselmez.
+ */
+export function pickOracleSuggestion<T>(
+  all: readonly T[],
+  correct: T,
+  eliminated: readonly T[],
+  isAccurate: boolean,
+): T {
+  if (isAccurate) return correct;
+  const wrong = all.filter((o) => o !== correct);
+  const pool = wrong.filter((o) => !eliminated.includes(o));
+  const candidates = pool.length > 0 ? pool : wrong;
+  return candidates[Math.floor(Math.random() * candidates.length)];
+}

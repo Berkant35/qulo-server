@@ -1,6 +1,6 @@
 import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
-import { calculatePowerCost, calculateGreenReward, shuffleArray } from "../utils/math.js";
+import { calculatePowerCost, calculateGreenReward, shuffleArray, pickOracleSuggestion } from "../utils/math.js";
 import { diamondService } from "./diamond.service.js";
 import { exchangeService } from "./exchange.service.js";
 import { economyConfigService } from "./economy-config.service.js";
@@ -8,6 +8,9 @@ import { NotificationService } from "./notification.service.js";
 import { matchEmailService } from "./match-email.service.js";
 import { userLanguageService } from "./user-language.service.js";
 import type { PowerName } from "../types/index.js";
+
+/** questions.answer_1..answer_4 — cevap indeksleri 1 tabanli. */
+const QUIZ_ANSWER_INDICES: readonly number[] = [1, 2, 3, 4];
 
 interface SessionRow {
   id: string;
@@ -20,6 +23,10 @@ interface SessionRow {
   completed_at: string | null;
   question_ids: string[] | null;
   current_q_powers: string[] | null;
+  /** Su anki soruda HALF'in eledigi indeksler; `current_q_powers` ile birlikte sifirlanir. */
+  current_q_eliminated: number[] | null;
+  /** Su anki soruda ORACLE'in onerdigi indeks; HALF bunu elemez. Soru gecisinde sifirlanir. */
+  current_q_oracle: number | null;
 }
 
 /** Oturuma ozel efektif guc fiyatlari — soru sayisi carpani uygulanmis hali. */
@@ -472,14 +479,15 @@ export class QuizService {
         case "ORACLE": {
           const accuracyRate = (powerData as unknown as { accuracy_rate?: number }).accuracy_rate ?? 0.7;
           const isAccurate = Math.random() < accuracyRate;
-
-          let suggestedIndex: number;
-          if (isAccurate) {
-            suggestedIndex = currentQuestion.correct_answer;
-          } else {
-            const wrongIndices = [1, 2, 3, 4].filter((i) => i !== currentQuestion.correct_answer);
-            suggestedIndex = wrongIndices[Math.floor(Math.random() * wrongIndices.length)];
-          }
+          // Yanlis dali HALF'in eledigi indeksleri DISLAR (pickOracleSuggestion).
+          const suggestedIndex = pickOracleSuggestion(
+            QUIZ_ANSWER_INDICES,
+            currentQuestion.correct_answer,
+            session.current_q_eliminated ?? [],
+            isAccurate,
+          );
+          // Kalici yaz: sonraki HALF bu indeksi elemesin (ters sira sizintisi).
+          await this.persistPowerOutcome(session, { current_q_oracle: suggestedIndex });
 
           return {
             power_result: { suggested_answer_index: suggestedIndex, is_guaranteed: false },
@@ -488,10 +496,13 @@ export class QuizService {
         }
 
         case "HALF": {
-          // Pick 2 wrong answers randomly
-          const wrongIndices = [1, 2, 3, 4].filter((i) => i !== currentQuestion.correct_answer);
-          const shuffledWrong = shuffleArray(wrongIndices);
-          const removedIndices = shuffledWrong.slice(0, 2);
+          // 3 yanlistan 2'sini ele; ORACLE'in onerdigi indeks hayatta kalir (elenmesi
+          // "ORACLE yanlisti" bilgisini bedavaya verirdi).
+          const wrongIndices = QUIZ_ANSWER_INDICES.filter(
+            (i) => i !== currentQuestion.correct_answer && i !== session.current_q_oracle,
+          );
+          const removedIndices = shuffleArray(wrongIndices).slice(0, 2);
+          await this.persistPowerOutcome(session, { current_q_eliminated: removedIndices });
 
           return {
             power_result: { removed_indices: removedIndices },
@@ -589,7 +600,7 @@ export class QuizService {
   private async getActiveSession(sessionId: string, solverId: string): Promise<SessionRow> {
     const { data: session, error } = await supabase
       .from("quiz_sessions")
-      .select("id, solver_id, target_id, status, current_q, total_questions, expires_at, completed_at, question_ids, current_q_powers")
+      .select("id, solver_id, target_id, status, current_q, total_questions, expires_at, completed_at, question_ids, current_q_powers, current_q_eliminated, current_q_oracle")
       .eq("id", sessionId)
       .eq("solver_id", solverId)
       .maybeSingle();
@@ -812,10 +823,32 @@ export class QuizService {
    * Sonraki soruya gec. Guc idempotency kaydini da sifirlar — bu, hem cevap hem
    * rescue yolunun gectigi TEK ilerletme noktasi.
    */
+  /**
+   * Guc sonucunu (HALF elenenleri / ORACLE onerisi) oturuma yazar — ucretten SONRA.
+   * `current_q` kosulu: es zamanli bir cevap `incrementCurrentQ` ile soruyu ilerlettiyse
+   * bayat sonuc sonraki soruya tasinmasin. Kabul edilen risk: nadir yazma hatasinda
+   * kullanici odedi, guc isaretli (tekrar alamaz), reload'da sonuc kaybolur; istek yine doner.
+   */
+  private async persistPowerOutcome(
+    session: SessionRow,
+    patch: Partial<Pick<SessionRow, "current_q_eliminated" | "current_q_oracle">>,
+  ): Promise<void> {
+    const { error } = await supabase
+      .from("quiz_sessions")
+      .update(patch)
+      .eq("id", session.id)
+      .eq("current_q", session.current_q);
+    if (error) {
+      console.error("[quiz] power outcome persist failed:", error, {
+        sessionId: session.id, solverId: session.solver_id, patch,
+      });
+    }
+  }
+
   private async incrementCurrentQ(sessionId: string, currentQ: number) {
     const { error } = await supabase
       .from("quiz_sessions")
-      .update({ current_q: currentQ + 1, current_q_powers: [] })
+      .update({ current_q: currentQ + 1, current_q_powers: [], current_q_eliminated: [], current_q_oracle: null })
       .eq("id", sessionId);
 
     if (error) throw Errors.SERVER_ERROR();

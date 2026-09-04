@@ -78,6 +78,10 @@ export interface ChatQuestionBase {
   answered_at: string | null;
   time_spent: number | null;
   powers_used: string[];
+  /** HALF'in eledigi siklar (kalici). ORACLE bunlari onermez; istemci reload'da hidre eder. */
+  eliminated_options: string[] | null;
+  /** ORACLE'in onerdigi sik (kalici). HALF bunu elemez; istemci reload'da hidre eder. */
+  oracle_suggested_option: string | null;
   created_at: string;
   reward_locked: boolean;
   is_abandoned: boolean;
