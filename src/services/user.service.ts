@@ -4,6 +4,7 @@ import { referralService } from "./referral.service.js";
 import { economyConfigService } from "./economy-config.service.js";
 import { userLanguageService } from "./user-language.service.js";
 import { Errors } from "../utils/errors.js";
+import { assertUuid } from "../utils/validation.js";
 import { haversineDistance } from "../utils/math.js";
 import { isKnownReasonCode } from "../constants/deletion-reasons.js";
 import type { UpdateProfileInput, UpdateDetailsInput } from "../validators/user.validator.js";
@@ -354,6 +355,7 @@ export class UserService {
   }
 
   async getPublicProfile(requesterId: string, targetId: string) {
+    assertUuid(targetId, "targetId"); // PostgREST .or() filtresine ham string girmesin
     // Block check
     const { blockService } = await import("./block.service.js");
     const blocked = await blockService.isBlocked(requesterId, targetId);
@@ -397,12 +399,16 @@ export class UserService {
       .eq("id", requesterId)
       .single();
 
-    let distanceKm = 0;
-    if (requester && user.lat && user.lng) {
-      const reqLat = requester.passport_lat ?? requester.lat;
-      const reqLng = requester.passport_lng ?? requester.lng;
-      distanceKm = haversineDistance(reqLat, reqLng, user.lat, user.lng);
-    }
+    // Iki tarafin da koordinati yoksa NULL — 0 degil: istemci 0'i "yakinda" diye
+    // gosteriyordu, null koordinat ise haversine'de 0,0'a dusup sacma bir km uretiyordu.
+    // Pasaport tek birimdir: biri NULL ise (yarim veri) gercek konuma dus — melez nokta olmasin.
+    const usePassport = requester?.passport_lat != null && requester?.passport_lng != null;
+    const reqLat = usePassport ? requester?.passport_lat : requester?.lat;
+    const reqLng = usePassport ? requester?.passport_lng : requester?.lng;
+    const distanceKm =
+      reqLat != null && reqLng != null && user.lat != null && user.lng != null
+        ? Math.round(haversineDistance(reqLat, reqLng, user.lat, user.lng) * 10) / 10
+        : null;
 
     // Question info
     interface QuestionStats {
@@ -448,7 +454,7 @@ export class UserService {
       city: user.city,
       country: user.country,
       photos: user.photos ?? [],
-      distance_km: Math.round(distanceKm * 10) / 10,
+      distance_km: distanceKm,
       relationship_goal: user.relationship_goal,
       is_online: isMatched ? user.is_online : null,
       last_seen: isMatched ? user.last_seen_at : null,
