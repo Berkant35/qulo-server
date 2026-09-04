@@ -16,6 +16,12 @@ export function resolveLocale(input?: string | null): SupportedLocale {
 export { SUPPORTED_LOCALES };
 export type { SupportedLocale };
 
+/** Accept-Language basligindaki ilk dil etiketini (q-agirligi ve bolge soyulmus) destekli locale'e cozer; yoksa en. */
+export function localeFromAcceptLanguage(header?: string | null): SupportedLocale {
+  const first = (header ?? "").split(",")[0]?.split(";")[0]?.trim().split("-")[0]?.toLowerCase();
+  return resolveLocale(first || null);
+}
+
 /**
  * 16-dil JSONB label'dan kullanıcının diline en uygun değeri seçer.
  * Fallback: istenen locale → en → ilk dolu değer → "".
