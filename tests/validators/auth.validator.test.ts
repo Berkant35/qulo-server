@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   registerSchema,
   loginSchema,
+  socialLoginSchema,
 } from '../../src/validators/auth.validator.js';
 import { SUPPORTED_LOCALES } from '../../src/constants/locales.js';
 
@@ -152,5 +153,32 @@ describe('loginSchema', () => {
   it('8 karakterden kısa şifre girişte de reddedilir', () => {
     expect(loginSchema.safeParse({ email: 'a@qulo.test', password: 'x' }).success).toBe(false);
     expect(loginSchema.safeParse({ email: 'a@qulo.test', password: '12345678' }).success).toBe(true);
+  });
+});
+
+describe('socialLoginSchema — locale', () => {
+  /** Şemayı geçen taban girdi — locale kozmetik ve opsiyonel. */
+  const validSocial = { provider: 'google' as const, id_token: 'tok' };
+
+  /**
+   * locale burada kozmetik bir alan — auth.service.ts tarafi localeFromTag ile
+   * zaten tolere ediyor (bkz. auth.service.test.ts). Şema sıkı enum olursa
+   * localeProvider'ın `Locale.toString()` çıktısı (`tr_TR` gibi bölgeli
+   * biçimler) sosyal girişi 400'e düşürebilir — kozmetik bir alan oturum açan
+   * uç noktayı asla bloklamamalı.
+   */
+  it('bölgeli/desteklenmeyen locale 400 atmadan kabul edilir', () => {
+    expect(socialLoginSchema.safeParse({ ...validSocial, locale: 'tr_TR' }).success).toBe(true);
+    expect(socialLoginSchema.safeParse({ ...validSocial, locale: 'en-US' }).success).toBe(true);
+    expect(socialLoginSchema.safeParse({ ...validSocial, locale: 'xx' }).success).toBe(true);
+  });
+
+  it('locale opsiyonel, verilmezse hata olmaz', () => {
+    expect(socialLoginSchema.safeParse(validSocial).success).toBe(true);
+  });
+
+  it('aşırı uzun locale reddedilir (35 karakter sınırı)', () => {
+    expect(socialLoginSchema.safeParse({ ...validSocial, locale: 'x'.repeat(36) }).success).toBe(false);
+    expect(socialLoginSchema.safeParse({ ...validSocial, locale: 'x'.repeat(35) }).success).toBe(true);
   });
 });

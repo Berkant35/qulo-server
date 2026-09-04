@@ -4,7 +4,7 @@ import { hashPassword, comparePassword, hashToken, generateToken, normalizeEmail
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../utils/jwt.js";
 import { sendVerificationEmail, sendPasswordResetEmail } from "../utils/email.js";
 import type { RegisterInput, LoginInput } from "../validators/auth.validator.js";
-import { resolveLocale } from "../utils/locales.js";
+import { resolveLocale, localeFromTag } from "../utils/locales.js";
 import { userLanguageService } from "./user-language.service.js";
 import { referralService } from "./referral.service.js";
 import { consentService } from "./consent.service.js";
@@ -489,7 +489,10 @@ export class AuthService {
         provider_id: providerId,
         email_verified: true,
         referral_code: referralCode,
-        locale: resolveLocale(data.locale),
+        // Sosyal giriste locale kozmetik ve serbest string (validator artik enum degil) —
+        // localeProvider'in Locale.toString() ciktisi bolgeli olabilir (tr_TR gibi),
+        // localeFromTag alt etiketi soyup dogru dile cozer.
+        locale: localeFromTag(data.locale),
       })
       .select("id, email, age")
       .single();
@@ -506,7 +509,7 @@ export class AuthService {
     // Sadece Case C (gercek yeni kullanici). Soft-delete kurtarma yukaridaki
     // existingByEmail dalindan donduyor → tekrar hediye vermez.
     this.grantStarterPowers(newUser.id);
-    userLanguageService.addLanguage(newUser.id, resolveLocale(data.locale)).catch((err) => {
+    userLanguageService.addLanguage(newUser.id, localeFromTag(data.locale)).catch((err) => {
       console.error("[social-login] Failed to add language:", err);
     });
 

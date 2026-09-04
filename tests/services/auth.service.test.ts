@@ -730,4 +730,28 @@ describe('socialLogin', () => {
     await authService.socialLogin({ ...provider, locale: 'xx' });
     expect(fake.table('users')[0].locale).toBe('en');
   });
+
+  /**
+   * localeProvider'in Locale.toString() ciktisi bolgeli olabilir (en-US gibi).
+   * Validator artik bunu 400'lemiyor (bkz. auth.validator.test.ts) — servis
+   * tarafi da localeFromTag ile tolere edip normalize etmeli.
+   */
+  it('Case C — bolgeli locale (en-US) tolere edilip normalize edilir', async () => {
+    const { fake, authService } = await setup({ users: [] });
+    await authService.socialLogin({ ...provider, locale: 'en-US' });
+    expect(fake.table('users')[0].locale).toBe('en');
+  });
+
+  /**
+   * Asil risk senaryosu (review named-risk 4): Turk kullanicinin cihaz locale'i
+   * `Locale.toString()` ile `tr_TR` olarak gelebilir. Eski resolveLocale bunu
+   * tam eslesme aramadigi icin 'en'e dusururdu — tam da Critical 1'in anlattigi
+   * bosaltilmis discover feed riskini payload uzerinden tekrar tetiklerdi.
+   * localeFromTag alt cizgiden sonrasini soyup 'tr'yi dogru cozer.
+   */
+  it('Case C — bolgeli locale (tr_TR) dogru sekilde tr\'ye cozulur', async () => {
+    const { fake, authService } = await setup({ users: [] });
+    await authService.socialLogin({ ...provider, locale: 'tr_TR' });
+    expect(fake.table('users')[0].locale).toBe('tr');
+  });
 });

@@ -56,7 +56,10 @@ export const socialLoginSchema = z.object({
   name: z.string().optional(),
   surname: z.string().optional(),
   nonce: z.string().optional(),
-  locale: z.enum(SUPPORTED_LOCALES as unknown as [string, ...string[]]).optional(),
+  // Kozmetik alan — auth oturum acan uc nokta, bunun yuzunden asla 400 atmamali.
+  // localeProvider'in Locale.toString() ciktisi bolgeli olabilir (tr_TR gibi);
+  // sifat/gecersiz deger service katmaninda localeFromTag ile en'e duser.
+  locale: z.string().trim().max(35).optional(),
 });
 
 export type SocialLoginInput = z.infer<typeof socialLoginSchema>;
