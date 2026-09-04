@@ -58,7 +58,7 @@ export const socialLoginSchema = z.object({
   nonce: z.string().optional(),
   // Kozmetik alan — auth oturum acan uc nokta, bunun yuzunden asla 400 atmamali.
   // localeProvider'in Locale.toString() ciktisi bolgeli olabilir (tr_TR gibi);
-  // sifat/gecersiz deger service katmaninda localeFromTag ile en'e duser.
+  // desteklenmeyen/gecersiz deger service katmaninda localeFromTag ile en'e duser.
   locale: z.string().trim().max(35).optional(),
 });
 
