@@ -14,7 +14,8 @@ export const updateProfileSchema = z.object({
   country: z.string().max(100).optional(),
   locale: z.enum(SUPPORTED_LOCALES as unknown as [string, ...string[]]).optional(),
   relationship_goal: z.enum(["SERIOUS", "FRIENDSHIP", "NOT_SURE"]).optional(),
-  preferred_languages: z.array(z.enum(["tr", "en", "de", "fr", "ar", "ru", "es"])).min(1).max(7).optional(),
+  // Mobil 16 uygulama dilini sunuyor (AppConstants.supportedQuestionLocales); hepsi kabul.
+  preferred_languages: z.array(z.enum(SUPPORTED_LOCALES as unknown as [string, ...string[]])).min(1).max(SUPPORTED_LOCALES.length).optional(),
   strict_language_mode: z.boolean().optional(),
 }).refine(
   (data) => !data.age_pref_min || !data.age_pref_max || data.age_pref_min <= data.age_pref_max,

@@ -1,4 +1,5 @@
 import { supabase } from "../config/supabase.js";
+import type { SupportedLocale } from "../constants/locales.js";
 import { diamondService } from "./diamond.service.js";
 import { referralService } from "./referral.service.js";
 import { economyConfigService } from "./economy-config.service.js";
@@ -71,7 +72,8 @@ export class UserService {
     // Sync user_languages table if preferred_languages was updated
     if (data.preferred_languages && Array.isArray(data.preferred_languages)) {
       try {
-        await userLanguageService.setUserLanguages(userId, data.preferred_languages);
+        // Zod enum'u dogruladi; tip daraltma guvenli.
+        await userLanguageService.setUserLanguages(userId, data.preferred_languages as SupportedLocale[]);
       } catch (err) {
         console.error("[updateProfile] sync user_languages error:", err);
       }
