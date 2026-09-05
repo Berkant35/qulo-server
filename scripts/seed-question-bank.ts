@@ -1,7 +1,12 @@
 /**
  * AI Question Bank seed scripti
  * Kullanım: npx tsx scripts/seed-question-bank.ts
+ * Tek dil:  npx tsx scripts/seed-question-bank.ts --locales=ko,nl,pl
  * Silme:    npx tsx scripts/seed-question-bank.ts --delete
+ *
+ * --locales olmadan repodaki tüm seed dosyaları yüklenir. Prod'da bir dil
+ * eksik kaldığında (013 seed'i 16 dilin 10'unu yüklemişti) sadece o dilleri
+ * yüklemek için filtreyi kullan — mevcut dillere hiç dokunulmamış olur.
  *
  * src/data/seed/questions_<locale>.json dosyalarını okur ve ai_question_bank tablosuna yazar.
  * UNIQUE(locale, question_text) constraint sayesinde upsert ile çalışır.
@@ -38,9 +43,9 @@ interface SeedQuestion {
   tone?: "flirty" | "fun" | "deep";
 }
 
-async function seed() {
+async function seed(onlyLocales?: string[]) {
   const seedDir = join(__dirname, "..", "src", "data", "seed");
-  const files = readdirSync(seedDir).filter(
+  let files = readdirSync(seedDir).filter(
     (f) => f.startsWith("questions_") && f.endsWith(".json")
   );
 
@@ -48,6 +53,22 @@ async function seed() {
     console.error("No seed files found in src/data/seed/");
     console.error("Expected files like: questions_tr.json, questions_en.json");
     process.exit(1);
+  }
+
+  if (onlyLocales?.length) {
+    const wanted = new Set(onlyLocales);
+    const available = new Set(
+      files.map((f) => f.replace("questions_", "").replace(".json", ""))
+    );
+    const missing = onlyLocales.filter((l) => !available.has(l));
+    if (missing.length) {
+      console.error(`No seed file for: ${missing.join(", ")}`);
+      process.exit(1);
+    }
+    files = files.filter((f) =>
+      wanted.has(f.replace("questions_", "").replace(".json", ""))
+    );
+    console.log(`Seeding only: ${onlyLocales.join(", ")}`);
   }
 
   let totalInserted = 0;
@@ -112,8 +133,17 @@ async function deleteAll() {
 }
 
 const args = process.argv.slice(2);
+const localeArg = args.find((a) => a.startsWith("--locales="));
+const onlyLocales = localeArg
+  ? localeArg
+      .slice("--locales=".length)
+      .split(",")
+      .map((l) => l.trim())
+      .filter(Boolean)
+  : undefined;
+
 if (args.includes("--delete")) {
   deleteAll();
 } else {
-  seed();
+  seed(onlyLocales);
 }
