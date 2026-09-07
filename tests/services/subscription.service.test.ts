@@ -115,11 +115,73 @@ describe('activateSubscription', () => {
     expect(fake.table('users')[0].purple_diamonds).toBe(200);
   });
 
-  it('farklı transaction ayrı bonus sayılır', async () => {
+  /**
+   * 2026-09-05 canlı olayının birebir kopyası. Tek satın alma sunucuya iki
+   * yoldan geldi: uygulamanın /subscriptions/activate çağrısı ISO tarihi
+   * transaction id olarak yolladı, RevenueCat webhook'u ise mağazanın gerçek
+   * işlem numarasını. Anahtarlar tutmayınca kullanıcıya 500 yerine 1000 mor
+   * elmas yattı ve user_subscriptions'a çift satır düştü.
+   */
+  it('aynı dönem iki farklı transaction id ile bildirilse bile bonus TEK yatar', async () => {
+    const { fake, subscriptionService } = await setup({ users: [user()] });
+
+    // istemci yolu — transaction_id yerine ISO tarih gönderiyor
+    await subscriptionService.activateSubscription('u1', 'plus', 'client_u1', '2026-09-05T22:15:58Z', FUTURE);
+    // webhook yolu — mağazanın gerçek işlem numarası
+    await subscriptionService.activateSubscription('u1', 'plus', 'u1', '520002987164397', FUTURE);
+
+    expect(fake.table('users')[0].purple_diamonds).toBe(200);
+    expect(
+      fake.table('diamond_transactions').filter((t) => t.reason === 'SUBSCRIPTION_BONUS'),
+    ).toHaveLength(1);
+  });
+
+  it('aynı dönem iki kez bildirilse bile abonelik satırı tek kalır', async () => {
+    const { fake, subscriptionService } = await setup({ users: [user()] });
+
+    await subscriptionService.activateSubscription('u1', 'plus', 'client_u1', '2026-09-05T22:15:58Z', FUTURE);
+    await subscriptionService.activateSubscription('u1', 'plus', 'u1', '520002987164397', FUTURE);
+
+    const rows = fake.table('user_subscriptions');
+    expect(rows).toHaveLength(1);
+    // Son bildirim kazanır: webhook'un gerçek işlem numarası kayıtta durmalı
+    expect(rows[0].store_transaction_id).toBe('520002987164397');
+    expect(rows[0].status).toBe('active');
+  });
+
+  /**
+   * Asıl tuzak: iki yol aynı ANI farklı ISO gösterimiyle bildiriyor.
+   * İstemci yolu RevenueCat'in ham string'ini geçiyor (`...:58Z`), webhook ise
+   * `new Date(expiration_at_ms).toISOString()` (`...:58.000Z`). Canlı
+   * diamond_transactions kayıtları her iki biçimi de içeriyor. Anahtar
+   * normalize edilmezse dedup ıskalar ve bonus yine iki kez yatar.
+   */
+  it('aynı an farklı ISO gösterimiyle gelse bile bonus TEK yatar', async () => {
+    const { fake, subscriptionService } = await setup({ users: [user()] });
+
+    await subscriptionService.activateSubscription('u1', 'plus', 'client_u1', 'tx-iso', '2026-10-01T12:00:00Z');
+    await subscriptionService.activateSubscription('u1', 'plus', 'u1', 'tx-ms', '2026-10-01T12:00:00.000Z');
+
+    expect(fake.table('users')[0].purple_diamonds).toBe(200);
+    expect(
+      fake.table('diamond_transactions').filter((t) => t.reason === 'SUBSCRIPTION_BONUS'),
+    ).toHaveLength(1);
+  });
+
+  it('geçersiz tarih anahtarı çökertmez, ham değere düşer', async () => {
+    const { fake, subscriptionService } = await setup({ users: [user()] });
+
+    await expect(
+      subscriptionService.activateSubscription('u1', 'plus', 'rc-1', 'tx-1', 'not-a-date'),
+    ).resolves.toBeUndefined();
+    expect(fake.table('users')[0].purple_diamonds).toBe(200);
+  });
+
+  it('farklı DÖNEM ayrı bonus sayılır (yenileme gerçek bonus hak eder)', async () => {
     const { fake, subscriptionService } = await setup({ users: [user()] });
 
     await subscriptionService.activateSubscription('u1', 'plus', 'rc-1', 'tx-1', FUTURE);
-    await subscriptionService.activateSubscription('u1', 'plus', 'rc-1', 'tx-2', FUTURE);
+    await subscriptionService.activateSubscription('u1', 'plus', 'rc-1', 'tx-2', '2026-11-01T12:00:00Z');
 
     expect(fake.table('users')[0].purple_diamonds).toBe(400);
   });

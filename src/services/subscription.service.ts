@@ -7,6 +7,27 @@ import type {
   SubscriptionInfo,
 } from '../types/index.js';
 
+/**
+ * Aylık bonusun tekilleştirme anahtarı.
+ *
+ * Bir satın alma sunucuya İKİ ayrı yoldan gelir: uygulamanın
+ * `POST /subscriptions/activate` çağrısı ve RevenueCat webhook'u. İkisi farklı
+ * `store_transaction_id` gönderiyor (istemci ISO tarih ya da product_id,
+ * webhook mağazanın işlem numarası), bu yüzden işlem numarasına dayalı koruma
+ * tutmuyordu ve bonus iki kez yatıyordu (2026-09-05 canlı olayı: 500 yerine
+ * 1000 mor elmas). Dönem anahtarı iki yolda da aynı: plan + bitiş tarihi.
+ *
+ * Tarih NORMALIZE edilmek zorunda: iki yol aynı anı farklı ISO gösterimiyle
+ * yolluyor — istemci yolu RevenueCat'in ham string'ini (`...:58Z`), webhook ise
+ * `new Date(expiration_at_ms).toISOString()` (`...:58.000Z`). Ham hâlde
+ * birleştirilirse anahtarlar tutmaz ve bonus yine iki kez yatar.
+ */
+function subscriptionPeriodRef(plan: SubscriptionPlan, expiresAt: string): string {
+  const ms = Date.parse(expiresAt);
+  const normalized = Number.isNaN(ms) ? expiresAt : new Date(ms).toISOString();
+  return `sub_${plan}_${normalized}`;
+}
+
 class SubscriptionService {
   async getStatus(userId: string): Promise<SubscriptionInfo> {
     const { data: user, error } = await supabase
@@ -42,15 +63,49 @@ class SubscriptionService {
     storeTransactionId: string,
     expiresAt: string
   ): Promise<void> {
-    await supabase.from('user_subscriptions').insert({
-      user_id: userId,
-      plan,
-      status: 'active',
-      rc_customer_id: rcCustomerId,
-      store_transaction_id: storeTransactionId,
-      started_at: new Date().toISOString(),
-      expires_at: expiresAt,
-    });
+    // Aynı dönem için zaten aktif bir kayıt varsa yeni satır AÇMA — iki giriş
+    // yolu (istemci + webhook) aynı satın almayı saniyeler arayla bildiriyor.
+    // Sadece hâlâ aktif olanlara bakılır; changeSubscription önce eskiyi
+    // expired yaptığı için plan değişimi bundan etkilenmez.
+    // limit(1): geçmişte mükerrer satır oluştuysa maybeSingle çok-satır hatası
+    // verip null döndürür ve kod mükerrerliği çoğaltarak insert'e düşerdi.
+    const { data: existingRows, error: lookupError } = await supabase
+      .from('user_subscriptions')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('expires_at', expiresAt)
+      .eq('status', 'active')
+      .limit(1);
+
+    if (lookupError) {
+      // Bilinçli olarak fırlatmıyoruz: kullanıcı ödemesini yaptı, isteği
+      // patlatmak kötü olur. Mükerrer satır riski kalır ama paranın koruması
+      // bağımsız: bonus dönem anahtarıyla tekilleşiyor (addPurple guard).
+      console.error('[subscription] active period lookup failed:', lookupError.message);
+    }
+    const existing = existingRows?.[0];
+
+    if (existing) {
+      await supabase
+        .from('user_subscriptions')
+        .update({
+          plan,
+          rc_customer_id: rcCustomerId,
+          store_transaction_id: storeTransactionId,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', existing.id);
+    } else {
+      await supabase.from('user_subscriptions').insert({
+        user_id: userId,
+        plan,
+        status: 'active',
+        rc_customer_id: rcCustomerId,
+        store_transaction_id: storeTransactionId,
+        started_at: new Date().toISOString(),
+        expires_at: expiresAt,
+      });
+    }
 
     await supabase
       .from('users')
@@ -68,7 +123,7 @@ class SubscriptionService {
         userId,
         bonus,
         'SUBSCRIPTION_BONUS',
-        storeTransactionId
+        subscriptionPeriodRef(plan, expiresAt)
       );
     }
   }
@@ -109,7 +164,7 @@ class SubscriptionService {
         userId,
         bonus,
         'SUBSCRIPTION_BONUS',
-        storeTransactionId
+        subscriptionPeriodRef(plan, expiresAt)
       );
     }
   }
