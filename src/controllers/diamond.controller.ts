@@ -44,11 +44,16 @@ export async function purchaseHandler(req: Request, res: Response, next: NextFun
       return;
     }
 
+    // Tekilleştirme anahtarı SUNUCUDAN gelir, istemciden değil. Eskiden
+    // `transaction_id ?? product_id` kullanılıyordu ve alan opsiyonel olduğu
+    // için istemci onu boş göndererek anahtarı değiştirip aynı satın almayı
+    // ikinci kez kredilendirebiliyordu. RevenueCat doğrulaması zaten yetkili
+    // numarayı biliyor; onu kullanıyoruz.
     const result = await diamondService.addPurple(
       userId,
       purpleAmount,
       "IAP_PURCHASE",
-      transaction_id ?? product_id,
+      verification.transactionId ?? transaction_id ?? product_id,
     );
 
     res.json({

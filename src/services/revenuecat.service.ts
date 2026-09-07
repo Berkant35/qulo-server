@@ -32,7 +32,7 @@ class RevenueCatService {
     userId: string,
     productId: string,
     transactionId?: string,
-  ): Promise<{ valid: boolean; error?: string }> {
+  ): Promise<{ valid: boolean; transactionId?: string; isSandbox?: boolean; error?: string }> {
     if (env.IAP_SKIP_VALIDATION === 'true') return { valid: true };
     if (!env.REVENUECAT_API_KEY) {
       return { valid: false, error: 'IAP validation not configured' };
@@ -52,9 +52,18 @@ class RevenueCatService {
       if (transactionId) {
         const match = purchases.find((p) => p.id === transactionId);
         if (!match) return { valid: false, error: 'Transaction ID not found' };
+        return { valid: true, transactionId: match.id, isSandbox: match.is_sandbox };
       }
 
-      return { valid: true };
+      // İstemci işlem numarası göndermediyse (RevenueCat listesi henüz senkron
+      // olmamış olabilir — mobilde `lastOrNull` null dönebiliyor) YETKİLİ
+      // numarayı buradan türetiyoruz. Tekilleştirme anahtarı istemciye
+      // bırakılamaz: alanı boş göndermek anahtarı değiştirip aynı satın almanın
+      // ikinci kez kredilendirilmesine izin veriyordu.
+      const latest = purchases.reduce((a, b) =>
+        Date.parse(b.purchase_date) >= Date.parse(a.purchase_date) ? b : a,
+      );
+      return { valid: true, transactionId: latest.id, isSandbox: latest.is_sandbox };
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : String(err);
       console.error('[RevenueCat] Verification error:', errorMsg);

@@ -86,12 +86,37 @@ describe('verifyPurchase', () => {
     });
   });
 
-  it('satın alma varsa kabul eder', async () => {
+  /**
+   * İstemci işlem numarası göndermese bile YETKİLİ numara dönmeli: çift kredi
+   * korumasının anahtarı bu. Eskiden istemci alanı boş göndererek anahtarı
+   * değiştirip aynı satın almayı ikinci kez kredilendirebiliyordu.
+   */
+  it('satın alma varsa kabul eder ve yetkili transaction id döner', async () => {
     mockFetch({
       body: subscriberBody({ non_subscriptions: { qulopurple50: [{ id: 'tx-1' }] } }),
     });
     const service = await setup();
-    await expect(service.verifyPurchase('u1', 'qulopurple50')).resolves.toEqual({ valid: true });
+    await expect(service.verifyPurchase('u1', 'qulopurple50')).resolves.toMatchObject({
+      valid: true, transactionId: 'tx-1',
+    });
+  });
+
+  /** Birden fazla satın alma varsa EN YENİSİ anahtar olur. */
+  it('transaction id verilmezse en son satın almanın numarası döner', async () => {
+    mockFetch({
+      body: subscriberBody({
+        non_subscriptions: {
+          qulopurple50: [
+            { id: 'tx-eski', purchase_date: '2026-09-01T10:00:00Z' },
+            { id: 'tx-yeni', purchase_date: '2026-09-05T10:00:00Z' },
+          ],
+        },
+      }),
+    });
+    const service = await setup();
+    await expect(service.verifyPurchase('u1', 'qulopurple50')).resolves.toMatchObject({
+      valid: true, transactionId: 'tx-yeni',
+    });
   });
 
   /** Sahte transaction id ile elmas talep etmenin önündeki tek engel. */
@@ -112,8 +137,8 @@ describe('verifyPurchase', () => {
       }),
     });
     const service = await setup();
-    await expect(service.verifyPurchase('u1', 'qulopurple50', 'tx-2')).resolves.toEqual({
-      valid: true,
+    await expect(service.verifyPurchase('u1', 'qulopurple50', 'tx-2')).resolves.toMatchObject({
+      valid: true, transactionId: 'tx-2',
     });
   });
 
