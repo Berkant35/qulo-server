@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { AppError } from "../utils/errors.js";
+import { AppError, Errors } from "../utils/errors.js";
 
 export function errorHandler(
   err: Error,
@@ -7,6 +7,12 @@ export function errorHandler(
   res: Response,
   _next: NextFunction,
 ): void {
+  // body-parser hataları (bozuk JSON, limit aşımı) istemci hatasıdır; herkese açık
+  // uçlarda 500 + stack log gürültüsü yerine 400/413.
+  const bodyErr = err as Error & { type?: string };
+  if (bodyErr.type === "entity.parse.failed") err = Errors.INVALID_JSON();
+  else if (bodyErr.type === "entity.too.large") err = Errors.PAYLOAD_TOO_LARGE();
+
   // Check both instanceof and duck-typing for AppError
   if (err instanceof AppError) {
     res.status(err.statusCode).json({

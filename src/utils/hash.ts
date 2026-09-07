@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import { env } from "../config/env.js";
 
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 12);
@@ -28,4 +29,14 @@ export const REFRESH_TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 export function getRefreshTokenExpiry(): string {
   return new Date(Date.now() + REFRESH_TOKEN_TTL_MS).toISOString();
+}
+
+/**
+ * Kötüye kullanım incelemesi için IP takma-adı. Sabit salt ile SHA-256 IPv4 uzayında
+ * (2^32) dakikalar içinde geri çevrilir; HMAC gizli anahtarla korelasyon korunur,
+ * geri çevirme kapanır. Anahtar env'den; ayrı değişken yoksa refresh secret'ı kullanır.
+ */
+export function hashIp(ip: string): string {
+  const key = env.IP_HASH_SECRET || env.JWT_REFRESH_SECRET;
+  return crypto.createHmac("sha256", key).update(ip).digest("hex").slice(0, 32);
 }

@@ -87,3 +87,45 @@ export const quickAssignLimiter = rateLimit({
   legacyHeaders: false,
   message: rateLimitResponse,
 });
+
+/**
+ * IPv6'da istemci /64 prefix altında adres değiştirebilir; ham req.ip anahtarı bu
+ * yüzden IPv6'da limiti boşa çıkarır. /64'e maskeleyerek anahtar üretir, IPv4 aynen.
+ */
+export function clientKey(req: { ip?: string }): string {
+  const ip = req.ip ?? "unknown";
+  if (!ip.includes(":")) return ip;
+  const mapped = ip.replace(/^::ffff:/, "");
+  if (!mapped.includes(":")) return mapped; // IPv4-mapped IPv6
+  return ip.split(":").slice(0, 4).join(":") + "::/64";
+}
+
+// Herkese açık web testi ("beni çözebilir misin?") — kimlik yok, IP bazlı.
+// Okuma ucuz ama viral link CGNAT arkasından gelir (kod tabanının chatLimiter dersi),
+// bu yüzden geniş; oluşturma satır yazar, saatlik tavanı var; oynama quiz başına.
+export const webQuizLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 120,
+  keyGenerator: clientKey,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitResponse,
+});
+
+export const webQuizCreateLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 10,
+  keyGenerator: clientKey,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitResponse,
+});
+
+export const webQuizAttemptLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 10,
+  keyGenerator: (req) => `${clientKey(req)}:${String(req.params?.slug ?? "").toUpperCase()}`,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitResponse,
+});

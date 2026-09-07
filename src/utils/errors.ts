@@ -202,4 +202,16 @@ export const Errors = {
 
   QUICK_ASSIGN_NO_BANK_MATCH: () =>
     new AppError("QUICK_ASSIGN_NO_BANK_MATCH", 404, "No matching questions in bank"),
+
+  WEB_QUIZ_NOT_FOUND: () =>
+    new AppError("WEB_QUIZ_NOT_FOUND", 404, "Web quiz not found or expired"),
+
+  WEB_QUIZ_BAD_QUESTIONS: () =>
+    new AppError("WEB_QUIZ_BAD_QUESTIONS", 400, "Questions must be active bank questions in the quiz locale"),
+
+  INVALID_JSON: () =>
+    new AppError("INVALID_JSON", 400, "Request body is not valid JSON"),
+
+  PAYLOAD_TOO_LARGE: () =>
+    new AppError("PAYLOAD_TOO_LARGE", 413, "Request body too large"),
 } as const;

@@ -22,6 +22,7 @@ import notificationRoutes from "./routes/notification.routes.js";
 import exchangeRoutes from "./routes/exchange.routes.js";
 import referralRoutes from "./routes/referral.routes.js";
 import acquisitionRoutes from "./routes/acquisition.routes.js";
+import webQuizRoutes from "./routes/web-quiz.routes.js";
 import appRoutes from "./routes/app.routes.js";
 import presenceRoutes from "./routes/presence.routes.js";
 import supportTicketRoutes from "./routes/support-ticket.routes.js";
@@ -70,6 +71,9 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'Idempotency-Key'],
   credentials: false,
 }));
+// Herkese açık web testi: global 10mb parser'dan ÖNCE, küçük gövde limitiyle.
+// Auth'suz uçta büyük gövde = bedava CPU/RAM amplifikasyonu (limiter parse'tan sonra çalışır).
+app.use("/api/v1/web-quiz", express.json({ limit: "8kb" }), webQuizRoutes);
 app.use(express.json({ limit: "10mb" }));
 app.use(idempotencyMiddleware);
 

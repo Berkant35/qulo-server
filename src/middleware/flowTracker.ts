@@ -235,6 +235,11 @@ export function flowTracker(req: Request, res: Response, next: NextFunction): vo
     return next();
   }
 
+  // Anonim web trafiği (quloapp.com/q) kullanıcı akışı değil; flow_events'i şişirmesin.
+  if (req.path.startsWith("/api/v1/web-quiz")) {
+    return next();
+  }
+
   const startTime = Date.now();
 
   // Hook into response finish

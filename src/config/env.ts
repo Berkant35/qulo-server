@@ -15,6 +15,7 @@ const envSchema = z.object({
   // JWT
   JWT_ACCESS_SECRET: z.string().min(1),
   JWT_REFRESH_SECRET: z.string().min(1),
+  IP_HASH_SECRET: z.string().default(''), // web-quiz IP takma-adı; boşsa refresh secret
 
   // Firebase
   FIREBASE_SERVICE_ACCOUNT: z.string().default("{}"),

@@ -2,6 +2,7 @@ import { presenceCron } from "./presence.cron.js";
 import { analyticsAggregateCron, analyticsCleanupCron } from "./analytics.cron.js";
 import { notificationEngineCron } from "./notification-engine.cron.js";
 import { campaignDispatchCron } from "./campaign-dispatch.cron.js";
+import { webQuizPurgeCron } from "./web-quiz.cron.js";
 
 export interface CronJob {
   name: string;
@@ -12,7 +13,7 @@ export interface CronJob {
   stop(): void;
 }
 
-const jobs: CronJob[] = [presenceCron, analyticsAggregateCron, analyticsCleanupCron, campaignDispatchCron, notificationEngineCron];
+const jobs: CronJob[] = [presenceCron, analyticsAggregateCron, analyticsCleanupCron, campaignDispatchCron, notificationEngineCron, webQuizPurgeCron];
 
 export function initCrons() {
   for (const job of jobs) {
