@@ -73,4 +73,14 @@ describe('DB constraint ↔ SUPPORTED_LOCALES paritesi', () => {
     const dbCodes = [...checkBlock!.matchAll(/'([a-z]{2})'/g)].map((m) => m[1]).sort();
     expect(dbCodes).toEqual([...SUPPORTED_LOCALES].sort());
   });
+
+  it('migration 044 users.locale CHECK listesi de sunucunun desteklediği dillerle birebir aynı', () => {
+    // 043'ün ikizi: push dili users.locale'den okunur; DB 15 dilde kalırsa `hi` kullanıcı 500 alır.
+    const sql = readFileSync(new URL('../../migrations/044_users_locale_hi.sql', import.meta.url), 'utf8');
+    const checkBlock = sql.match(/ADD CONSTRAINT users_locale_check[\s\S]*?\]\)\);/)?.[0];
+    expect(checkBlock, 'CHECK bloğu bulunamadı').toBeDefined();
+
+    const dbCodes = [...checkBlock!.matchAll(/'([a-z]{2})'/g)].map((m) => m[1]).sort();
+    expect(dbCodes).toEqual([...SUPPORTED_LOCALES].sort());
+  });
 });
