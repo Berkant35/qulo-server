@@ -168,6 +168,51 @@ describe('activateSubscription', () => {
     ).toHaveLength(1);
   });
 
+  /**
+   * Veri sızıntısı guard'ı: dedup araması kullanıcıya bağlı olmazsa, aynı anda
+   * abone olan iki kişiden birinin aktivasyonu ÖTEKİNİN abonelik satırını
+   * günceller. (Mutasyon testi bu filtrenin testsiz olduğunu gösterdi.)
+   */
+  it('başka kullanıcının aynı dönemli aktif kaydını güncellemez', async () => {
+    const { fake, subscriptionService } = await setup({
+      users: [user(), user({ id: 'u2' })],
+      user_subscriptions: [{
+        id: 's-other', user_id: 'u2', plan: 'premium', status: 'active',
+        expires_at: FUTURE, store_transaction_id: 'tx-u2',
+      }],
+    });
+
+    await subscriptionService.activateSubscription('u1', 'plus', 'rc-1', 'tx-u1', FUTURE);
+
+    const other = fake.table('user_subscriptions').find((r) => r.user_id === 'u2');
+    expect(other).toMatchObject({ plan: 'premium', store_transaction_id: 'tx-u2' });
+    expect(fake.table('user_subscriptions').filter((r) => r.user_id === 'u1')).toHaveLength(1);
+  });
+
+  /**
+   * İptal/bitmiş kayıt yeniden kullanılmamalı: kullanıcı aynı dönem içinde
+   * iptal edip tekrar abone olursa yeni satır açılmalı, eski satırın durum
+   * geçmişi ezilmemeli. (Bu filtre de mutasyon testinde testsiz çıktı.)
+   */
+  it('aynı dönemli ama iptal edilmiş kaydı diriltmez, yeni satır açar', async () => {
+    const { fake, subscriptionService } = await setup({
+      users: [user()],
+      user_subscriptions: [{
+        id: 's-old', user_id: 'u1', plan: 'plus', status: 'cancelled',
+        expires_at: FUTURE, store_transaction_id: 'tx-old',
+      }],
+    });
+
+    await subscriptionService.activateSubscription('u1', 'plus', 'rc-1', 'tx-new', FUTURE);
+
+    const rows = fake.table('user_subscriptions');
+    expect(rows).toHaveLength(2);
+    expect(rows.find((r) => r.id === 's-old')).toMatchObject({
+      status: 'cancelled', store_transaction_id: 'tx-old',
+    });
+    expect(rows.find((r) => r.store_transaction_id === 'tx-new')).toMatchObject({ status: 'active' });
+  });
+
   it('geçersiz tarih anahtarı çökertmez, ham değere düşer', async () => {
     const { fake, subscriptionService } = await setup({ users: [user()] });
 
