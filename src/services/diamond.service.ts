@@ -124,6 +124,34 @@ export class DiamondService {
       }
     }
 
+    // ÖNCE KAYIT, SONRA BAKİYE — sıra kasıtlı.
+    //
+    // Yukarıdaki guard "önce oku sonra yaz" olduğu için yarışa açık: 2026-09-05'te
+    // iki istek 0,5 sn arayla geldi ve guard'ı aştı (500 yerine 1000 mor elmas).
+    // Son savunma `uniq_diamond_money_reference` kısmi benzersiz indeksi
+    // (migration 047, SUBSCRIPTION_BONUS + IAP_PURCHASE kapsıyor). O indeks
+    // ancak bu insert'te devreye girer; bakiyeyi önce artırsaydık kısıt
+    // reddettiğinde bakiye şişmiş ama log yazılmamış olurdu — para yoktan var
+    // olurdu. Bu yüzden insert bir "hak talebi" gibi önce yazılır.
+    const { error: txErr } = await supabase
+      .from("diamond_transactions")
+      .insert({
+        user_id: userId,
+        type: "PURPLE",
+        amount: +amount,
+        reason,
+        reference_id: referenceId ?? null,
+      });
+
+    if (txErr) {
+      // 23505 = unique_violation → yarışı kaybettik, ödül zaten verilmiş.
+      if (txErr.code === "23505") {
+        console.log(`[Diamond] Duplicate reward blocked by DB: ${referenceId} for user ${userId}`);
+        return { purple: 0 };
+      }
+      throw Errors.SERVER_ERROR();
+    }
+
     // Read current balance
     const { data: user, error: readErr } = await supabase
       .from("users")
@@ -144,21 +172,6 @@ export class DiamondService {
       .single();
 
     if (updateErr || !updated) {
-      throw Errors.SERVER_ERROR();
-    }
-
-    // Insert transaction log
-    const { error: txErr } = await supabase
-      .from("diamond_transactions")
-      .insert({
-        user_id: userId,
-        type: "PURPLE",
-        amount: +amount,
-        reason,
-        reference_id: referenceId ?? null,
-      });
-
-    if (txErr) {
       throw Errors.SERVER_ERROR();
     }
 

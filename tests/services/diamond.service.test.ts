@@ -242,6 +242,54 @@ describe('DiamondService.getHistory', () => {
   });
 });
 
+describe('DiamondService.addPurple — DB tekillik kısıtı (migration 047)', () => {
+  /**
+   * Uygulama guard'ı "önce oku sonra yaz" olduğu için yarışa açık: 2026-09-05'te
+   * iki istek 0,5 sn arayla geldi ve guard'ı aştı (500 yerine 1000 mor elmas).
+   * Son savunma `uniq_diamond_money_reference` kısmi benzersiz indeksi. Bu test
+   * yarışı kaybetme anını simüle ediyor: guard boş görür, insert 23505 ile döner.
+   */
+  it('23505 (unique_violation) gelirse bakiye ŞİŞMEZ, sessizce geçer', async () => {
+    const { fake, diamondService } = await setup(
+      { users: [user({ purple_diamonds: 50 })] },
+      {
+        failOn: [{
+          table: 'diamond_transactions',
+          op: 'insert',
+          error: { code: '23505', message: 'duplicate key value violates unique constraint' },
+        }],
+      },
+    );
+
+    await expect(
+      diamondService.addPurple('u1', 500, 'SUBSCRIPTION_BONUS', 'sub_plus_2026-10-01T12:00:00.000Z'),
+    ).resolves.toEqual({ purple: 0 });
+
+    expect(fake.table('users')[0].purple_diamonds).toBe(50);
+    expect(fake.table('diamond_transactions')).toHaveLength(0);
+  });
+
+  /** 23505 dışındaki hatalar yutulmamalı — sessiz veri kaybı olmasın. */
+  it('başka bir insert hatası hâlâ SERVER_ERROR atar ve bakiyeye dokunmaz', async () => {
+    const { fake, diamondService } = await setup(
+      { users: [user({ purple_diamonds: 50 })] },
+      {
+        failOn: [{
+          table: 'diamond_transactions',
+          op: 'insert',
+          error: { code: '08006', message: 'connection failure' },
+        }],
+      },
+    );
+
+    await expect(
+      diamondService.addPurple('u1', 500, 'SUBSCRIPTION_BONUS', 'ref-x'),
+    ).rejects.toMatchObject({ code: 'SERVER_ERROR' });
+
+    expect(fake.table('users')[0].purple_diamonds).toBe(50);
+  });
+});
+
 describe('DiamondService — atomiklik sınırı', () => {
   /**
    * Bilinen davranış, test onu dondurmak için var: bakiye düşümü ile işlem kaydı
