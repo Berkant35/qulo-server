@@ -2,6 +2,8 @@ import { createRequire } from 'node:module';
 import { getFcm, isFcmAvailable } from '../config/firebase.js';
 import { supabase } from '../config/supabase.js';
 import { resolveLocale } from '../utils/locales.js';
+import { LIFECYCLE_RULE_KEYS, LIFECYCLE_RULES } from './notification-engine/rules.js';
+import type { LifecycleRuleKey } from './notification-engine/rules.js';
 
 const require = createRequire(import.meta.url);
 
@@ -33,6 +35,8 @@ export const PUSH_TYPES = [
   'new_match_solver',
   'new_match_badge',
   'chat_question_answered',
+  // Lifecycle (bildirim motoru) tipleri — rules.ts tek kaynak; admin panelinde dil dil duzenlenir/susturulur
+  ...LIFECYCLE_RULE_KEYS,
 ] as const;
 
 export type PushType = typeof PUSH_TYPES[number];
@@ -90,7 +94,28 @@ const NOTIFICATION_CONFIG: Record<AnyPushType, NotificationTypeConfig> = {
   new_match_badge:        { actionUrl: '/matches', category: 'matches' },
   chat_question_answered: { category: 'matches' },
   campaign:               { category: 'campaigns' },
+  // Lifecycle — kategori rules.ts'ten (tek kaynak); action_url motor tarafindan karar basina verilir
+  ...(Object.fromEntries(LIFECYCLE_RULES.map((r) => [r.key, { category: r.category }])) as Record<LifecycleRuleKey, NotificationTypeConfig>),
 };
+
+/** sendPushDetailed'in gonderMEme sebebi — push_log'a yazilir, backoffice'te gorunur. */
+export type PushSkipReason =
+  | 'user_not_found'
+  | 'template_missing'
+  | 'pref_disabled'
+  | 'no_token'
+  | 'fcm_unavailable'
+  | 'fcm_error';
+
+export interface PushSendResult {
+  /** FCM'e gercekten gitti mi. */
+  sent: boolean;
+  reason: PushSkipReason | null;
+  /** notifications (inbox) satiri — tercih kapali olsa da yazilir (mevcut davranis). */
+  notificationId: string | null;
+  title: string | null;
+  body: string | null;
+}
 
 // 16 dilde "Birisi" karşılığı — push body'lerde {name} placeholder'ı boş kalırsa kullanılır
 const NAME_FALLBACK: Record<SupportedLocale, string> = {
@@ -187,6 +212,30 @@ export class NotificationService {
   }
 
   /**
+   * (type, locale, params) icin baslik+metni cozer ve doldurur. Gondermez, DB'ye yazmaz.
+   * Bildirim motoru dry-run/onizlemede, sendPushDetailed gercek gonderimde kullanir.
+   */
+  static async renderPush(
+    type: AnyPushType,
+    locale: SupportedLocale,
+    params: Record<string, string> = {},
+  ): Promise<{ title: string; body: string } | null> {
+    const filled = { ...params };
+    // Provide locale-aware fallback for {name} if empty
+    if ('name' in filled && !filled.name) {
+      filled.name = NAME_FALLBACK[locale];
+    }
+
+    // Use badge-specific template if badge param is present
+    const config = NOTIFICATION_CONFIG[type];
+    const templateKey = (filled.badge && config.badgeTemplateKey) ? config.badgeTemplateKey : (config.templateKey ?? type);
+
+    const resolved = await NotificationService.getTemplate(templateKey as AnyPushType, locale);
+    if (!resolved) return null;
+    return { title: interpolate(resolved.title, filled), body: interpolate(resolved.body, filled) };
+  }
+
+  /**
    * Returns true if FCM push was actually sent, false otherwise.
    * Notification is always persisted to DB regardless of FCM status.
    */
@@ -203,6 +252,34 @@ export class NotificationService {
       campaignId?: string;
     },
   ): Promise<boolean> {
+    const result = await NotificationService.sendPushDetailed(userId, type, params, data, options);
+    return result.sent;
+  }
+
+  /**
+   * sendPush'un sebep doneni: neden gitmedigini ve inbox satirinin id'sini de verir.
+   * Davranis sendPush ile birebir ayni (inbox satiri her durumda yazilir, tercih kapaliysa FCM atlanir).
+   */
+  static async sendPushDetailed(
+    userId: string,
+    type: AnyPushType,
+    params: Record<string, string> = {},
+    data?: Record<string, string>,
+    options?: {
+      title?: string;
+      imageUrl?: string;
+      actionUrl?: string;
+      actionLabel?: string;
+      campaignId?: string;
+    },
+  ): Promise<PushSendResult> {
+    const skipped = (reason: PushSkipReason, notificationId: string | null = null, title: string | null = null, body: string | null = null): PushSendResult =>
+      ({ sent: false, reason, notificationId, title, body });
+    // try disinda: FCM hatasinda da inbox satiri cogu zaman yazilmis olur, catch bunu geri vermeli
+    let notificationId: string | null = null;
+    let title = '';
+    let body = '';
+
     try {
       // 1. Get user's push_token and locale
       const { data: user, error } = await supabase
@@ -213,12 +290,10 @@ export class NotificationService {
 
       if (error || !user) {
         console.warn(`[NotificationService] User not found: ${userId}`);
-        return false;
+        return skipped('user_not_found');
       }
 
       // 2. Resolve title and body
-      let title: string;
-      let body: string;
       let skipFcm = false;
 
       if (type === 'campaign' && options?.title) {
@@ -228,25 +303,15 @@ export class NotificationService {
       } else {
         // Import edilen resolveLocale ile single source of truth — 16 dil
         const safeLocale: SupportedLocale = resolveLocale(user.locale);
-
-        // Provide locale-aware fallback for {name} if empty
-        if ('name' in params && !params.name) {
-          params.name = NAME_FALLBACK[safeLocale];
-        }
-
-        // Use badge-specific template if badge param is present
-        const config = NOTIFICATION_CONFIG[type];
-        const templateKey = (params.badge && config.badgeTemplateKey) ? config.badgeTemplateKey : (config.templateKey ?? type);
-
-        const resolved = await NotificationService.getTemplate(templateKey as AnyPushType, safeLocale);
-        if (!resolved) {
-          console.warn(`[NotificationService] No push template for type=${templateKey}, locale=${safeLocale} — DB persisted, FCM skipped`);
+        const rendered = await NotificationService.renderPush(type, safeLocale, params);
+        if (!rendered) {
+          console.warn(`[NotificationService] No push template for type=${type}, locale=${safeLocale} — DB persisted, FCM skipped`);
           body = `[${type}]`;
           title = options?.title ?? 'Qulo';
           skipFcm = true;
         } else {
-          body = interpolate(resolved.body, params);
-          title = options?.title ?? interpolate(resolved.title, params);
+          body = rendered.body;
+          title = options?.title ?? rendered.title;
         }
       }
 
@@ -267,6 +332,7 @@ export class NotificationService {
         })
         .select('id')
         .single();
+      notificationId = notification?.id ?? null;
 
       // Check notification preferences — if category disabled, skip push but keep DB record
       const category = NOTIFICATION_CONFIG[type].category;
@@ -275,26 +341,26 @@ export class NotificationService {
         const enabled = prefs?.[category] ?? true; // NULL = all enabled
         if (!enabled) {
           console.log(`[NotificationService] Push suppressed: user=${userId} disabled category=${category} (type=${type})`);
-          return false;
+          return skipped('pref_disabled', notificationId, title, body);
         }
       }
       // System notifications (no category mapping) always send push
 
       // If template resolution failed, DB has been persisted but skip FCM
       if (skipFcm) {
-        return false;
+        return skipped('template_missing', notificationId, title, body);
       }
 
       // 5. Send via FCM
       if (!user.push_token) {
         console.warn(`[NotificationService] User ${userId} has no push_token — DB saved, FCM skipped`);
-        return false;
+        return skipped('no_token', notificationId, title, body);
       }
 
       const fcm = getFcm();
       if (!fcm) {
         console.warn(`[NotificationService] FCM not available — DB saved, push skipped for user=${userId}`);
-        return false;
+        return skipped('fcm_unavailable', notificationId, title, body);
       }
 
       await fcm.send({
@@ -302,13 +368,13 @@ export class NotificationService {
         notification: { title, body },
         data: {
           type,
-          ...(notification?.id ? { notification_id: notification.id } : {}),
+          ...(notificationId ? { notification_id: notificationId } : {}),
           ...(actionUrl ? { action_url: actionUrl } : {}),
           ...data,
         },
       });
 
-      return true;
+      return { sent: true, reason: null, notificationId, title, body };
     } catch (err: any) {
       const errorCode = err?.errorInfo?.code ?? err?.code ?? '';
       console.error(`[NotificationService] Failed to send push (type=${type}, user=${userId}, code=${errorCode}):`, err?.message ?? err);
@@ -327,7 +393,7 @@ export class NotificationService {
           .eq('id', userId);
       }
 
-      return false;
+      return skipped('fcm_error', notificationId, title || null, body || null);
     }
   }
 }

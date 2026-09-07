@@ -5,6 +5,34 @@
     "new_match": "Nieuwe match! Iemand heeft al je vragen goed beantwoord",
     "new_match_solver": "Gefeliciteerd! Je hebt alle vragen goed beantwoord, je hebt een nieuwe match!",
     "new_match_badge": "Iemand heeft je quiz opgelost met de {badge}-badge! Je hebt een nieuwe match!",
-    "chat_question_answered": "Je chatvraag is beantwoord ({result})"
+    "chat_question_answered": "Je chatvraag is beantwoord ({result})",
+    "lifecycle_unread_message": {
+      "title": "Je hebt een ongelezen bericht",
+      "body": "{name} heeft je geschreven en wacht op je antwoord."
+    },
+    "lifecycle_match_waiting": {
+      "title": "Je match wacht op je",
+      "body": "Je hebt een match met {name}, maar jullie hebben nog niet gepraat. Stuur het eerste bericht!"
+    },
+    "lifecycle_likes_waiting": {
+      "title": "Mensen vinden je leuk 👀",
+      "body": "{count} mensen hebben je geliket terwijl je weg was. Kom kijken!"
+    },
+    "lifecycle_quiz_unfinished": {
+      "title": "Je hebt een quiz niet afgemaakt",
+      "body": "Je hebt de vragen van {name} niet afgemaakt. Probeer het nog eens!"
+    },
+    "lifecycle_profile_incomplete": {
+      "title": "Je profiel is nog niet zichtbaar",
+      "body": "Voeg minstens 2 vragen en 1 foto toe om in Ontdekken te verschijnen."
+    },
+    "lifecycle_new_people": {
+      "title": "Nieuwe gezichten",
+      "body": "Deze week zijn er {count} nieuwe mensen bijgekomen. Kijk eens bij Ontdekken!"
+    },
+    "lifecycle_winback": {
+      "title": "We missen je",
+      "body": "Vragen, matches en nieuwe mensen wachten op je."
+    }
   }
 }

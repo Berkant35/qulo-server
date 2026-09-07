@@ -5,6 +5,34 @@
     "new_match": "Nowe dopasowanie! Ktoś poprawnie odpowiedział na wszystkie Twoje pytania",
     "new_match_solver": "Gratulacje! Odpowiedział(a)eś poprawnie na wszystkie pytania, masz nowe dopasowanie!",
     "new_match_badge": "Ktoś rozwiązał Twój quiz z odznaką {badge}! Masz nowe dopasowanie!",
-    "chat_question_answered": "Twoje pytanie na czacie otrzymało odpowiedź ({result})"
+    "chat_question_answered": "Twoje pytanie na czacie otrzymało odpowiedź ({result})",
+    "lifecycle_unread_message": {
+      "title": "Masz nieprzeczytaną wiadomość",
+      "body": "{name} napisał(a) do Ciebie i czeka na odpowiedź."
+    },
+    "lifecycle_match_waiting": {
+      "title": "Twoje dopasowanie czeka",
+      "body": "Masz dopasowanie z {name}, ale jeszcze nie rozmawialiście. Napisz jako pierwszy(-a)!"
+    },
+    "lifecycle_likes_waiting": {
+      "title": "Ktoś Cię polubił 👀",
+      "body": "{count} osób polubiło Cię, gdy Cię nie było. Wpadnij zobaczyć!"
+    },
+    "lifecycle_quiz_unfinished": {
+      "title": "Masz niedokończony quiz",
+      "body": "Nie skończyłeś(-aś) pytań użytkownika {name}. Spróbuj jeszcze raz!"
+    },
+    "lifecycle_profile_incomplete": {
+      "title": "Twój profil nie jest jeszcze widoczny",
+      "body": "Dodaj co najmniej 2 pytania i 1 zdjęcie, aby pojawić się w Odkrywaj."
+    },
+    "lifecycle_new_people": {
+      "title": "Nowe twarze",
+      "body": "W tym tygodniu dołączyło {count} nowych osób. Zajrzyj do Odkrywaj!"
+    },
+    "lifecycle_winback": {
+      "title": "Tęsknimy za Tobą",
+      "body": "Pytania, dopasowania i nowi ludzie czekają na Ciebie."
+    }
   }
 }

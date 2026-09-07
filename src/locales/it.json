@@ -5,6 +5,34 @@
     "new_match": "Nuova corrispondenza! Qualcuno ha risposto correttamente a tutte le tue domande",
     "new_match_solver": "Congratulazioni! Hai risposto correttamente a tutte le domande, hai una nuova corrispondenza!",
     "new_match_badge": "Qualcuno ha risolto il tuo quiz con il distintivo {badge}! Hai una nuova corrispondenza!",
-    "chat_question_answered": "La tua domanda in chat ha ricevuto una risposta ({result})"
+    "chat_question_answered": "La tua domanda in chat ha ricevuto una risposta ({result})",
+    "lifecycle_unread_message": {
+      "title": "Hai un messaggio non letto",
+      "body": "{name} ti ha scritto e aspetta una risposta."
+    },
+    "lifecycle_match_waiting": {
+      "title": "Il tuo match ti aspetta",
+      "body": "Hai fatto match con {name} ma non avete ancora parlato. Manda il primo messaggio!"
+    },
+    "lifecycle_likes_waiting": {
+      "title": "Qualcuno ti ha messo like 👀",
+      "body": "{count} persone ti hanno messo like mentre eri via. Vieni a vedere!"
+    },
+    "lifecycle_quiz_unfinished": {
+      "title": "Hai lasciato un quiz a metà",
+      "body": "Non hai finito le domande di {name}. Riprova!"
+    },
+    "lifecycle_profile_incomplete": {
+      "title": "Il tuo profilo non è ancora visibile",
+      "body": "Aggiungi almeno 2 domande e 1 foto per comparire in Scopri."
+    },
+    "lifecycle_new_people": {
+      "title": "Volti nuovi",
+      "body": "Questa settimana si sono uniti {count} nuovi utenti. Dai un'occhiata a Scopri!"
+    },
+    "lifecycle_winback": {
+      "title": "Ci manchi",
+      "body": "Domande, match e persone nuove ti aspettano."
+    }
   }
 }

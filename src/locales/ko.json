@@ -5,6 +5,34 @@
     "new_match": "새로운 매치! 누군가 당신의 모든 질문에 정답을 맞췄습니다",
     "new_match_solver": "축하합니다! 모든 질문에 정답을 맞췄어요. 새로운 매치가 있습니다!",
     "new_match_badge": "누군가가 {badge} 배지로 당신의 퀴즈를 풀었어요! 새로운 매치가 있습니다!",
-    "chat_question_answered": "채팅 질문에 답변이 달렸어요 ({result})"
+    "chat_question_answered": "채팅 질문에 답변이 달렸어요 ({result})",
+    "lifecycle_unread_message": {
+      "title": "읽지 않은 메시지가 있어요",
+      "body": "{name}님이 메시지를 보냈고 답장을 기다리고 있어요."
+    },
+    "lifecycle_match_waiting": {
+      "title": "매칭 상대가 기다리고 있어요",
+      "body": "{name}님과 매칭됐지만 아직 대화하지 않았어요. 먼저 메시지를 보내 보세요!"
+    },
+    "lifecycle_likes_waiting": {
+      "title": "당신을 좋아한 사람이 있어요 👀",
+      "body": "자리를 비운 사이 {count}명이 좋아요를 눌렀어요. 와서 확인해 보세요!"
+    },
+    "lifecycle_quiz_unfinished": {
+      "title": "끝내지 않은 퀴즈가 있어요",
+      "body": "{name}님의 질문을 끝내지 않았어요. 다시 도전해 보세요!"
+    },
+    "lifecycle_profile_incomplete": {
+      "title": "프로필이 아직 보이지 않아요",
+      "body": "질문 2개와 사진 1장 이상을 추가하면 탐색에 표시돼요."
+    },
+    "lifecycle_new_people": {
+      "title": "새로운 얼굴들",
+      "body": "이번 주에 {count}명이 새로 가입했어요. 탐색을 둘러보세요!"
+    },
+    "lifecycle_winback": {
+      "title": "보고 싶었어요",
+      "body": "질문, 매칭, 새로운 사람들이 기다리고 있어요."
+    }
   }
 }

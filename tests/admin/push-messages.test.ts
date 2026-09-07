@@ -55,7 +55,7 @@ describe('pushTemplateAdminService.list (shape)', () => {
     });
   });
 
-  it('returns exactly 6 admin-editable types (no campaign, no quiz_started, no passport_expired)', async () => {
+  it('returns the 6 event types + 7 lifecycle types (no campaign, no quiz_started, no passport_expired)', async () => {
     vi.resetModules();
     vi.doMock('../../src/config/supabase.js', () => ({
       supabase: {
@@ -67,8 +67,9 @@ describe('pushTemplateAdminService.list (shape)', () => {
       },
     }));
     const { pushTemplateAdminService: svc } = await import('../../src/admin/admin.service.js');
+    const { LIFECYCLE_RULE_KEYS } = await import('../../src/services/notification-engine/rules.js');
     const rows = await svc.list('tr');
-    expect(rows.length).toBe(6);
+    expect(rows.length).toBe(6 + LIFECYCLE_RULE_KEYS.length);
     const types = rows.map((r) => r.type).sort();
     expect(types).toEqual([
       'chat_question_answered',
@@ -77,7 +78,8 @@ describe('pushTemplateAdminService.list (shape)', () => {
       'new_match_solver',
       'new_message',
       'new_message_image',
-    ]);
+      ...LIFECYCLE_RULE_KEYS,
+    ].sort());
     expect(types).not.toContain('campaign');
     expect(types).not.toContain('quiz_started');
     expect(types).not.toContain('passport_expired');

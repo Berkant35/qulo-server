@@ -5,6 +5,34 @@
     "new_match": "新しいマッチ！あなたの質問にすべて正解した人がいます",
     "new_match_solver": "おめでとうございます！すべての質問に正解しました。新しいマッチがあります！",
     "new_match_badge": "{badge}バッジで誰かがあなたのクイズを解きました！新しいマッチがあります！",
-    "chat_question_answered": "チャットの質問に回答がありました ({result})"
+    "chat_question_answered": "チャットの質問に回答がありました ({result})",
+    "lifecycle_unread_message": {
+      "title": "未読メッセージがあります",
+      "body": "{name}さんからメッセージが届いています。返事を待っていますよ。"
+    },
+    "lifecycle_match_waiting": {
+      "title": "マッチした相手が待っています",
+      "body": "{name}さんとマッチしましたが、まだ話していません。最初のメッセージを送ってみましょう！"
+    },
+    "lifecycle_likes_waiting": {
+      "title": "あなたにいいねがつきました 👀",
+      "body": "いない間に{count}人があなたにいいねしました。見に来てください！"
+    },
+    "lifecycle_quiz_unfinished": {
+      "title": "途中のクイズがあります",
+      "body": "{name}さんの質問がまだ終わっていません。もう一度挑戦してみましょう！"
+    },
+    "lifecycle_profile_incomplete": {
+      "title": "プロフィールはまだ表示されていません",
+      "body": "質問を2つ以上、写真を1枚以上追加すると発見に表示されます。"
+    },
+    "lifecycle_new_people": {
+      "title": "新しい顔ぶれ",
+      "body": "今週は{count}人が新しく参加しました。発見をのぞいてみましょう！"
+    },
+    "lifecycle_winback": {
+      "title": "会いたかったです",
+      "body": "質問、マッチ、新しい出会いがあなたを待っています。"
+    }
   }
 }

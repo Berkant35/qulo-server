@@ -5,6 +5,34 @@
     "new_match": "Nouveau match ! Quelqu'un a répondu correctement à toutes tes questions",
     "new_match_solver": "Félicitations ! Tu as répondu correctement à toutes les questions, tu as un nouveau match !",
     "new_match_badge": "Quelqu'un a résolu ton quiz avec le badge {badge} ! Tu as un nouveau match !",
-    "chat_question_answered": "Ta question de chat a reçu une réponse ({result})"
+    "chat_question_answered": "Ta question de chat a reçu une réponse ({result})",
+    "lifecycle_unread_message": {
+      "title": "Tu as un message non lu",
+      "body": "{name} t'a écrit et attend ta réponse."
+    },
+    "lifecycle_match_waiting": {
+      "title": "Ton match t'attend",
+      "body": "Tu as matché avec {name} mais vous n'avez pas encore parlé. Envoie le premier message !"
+    },
+    "lifecycle_likes_waiting": {
+      "title": "Des gens t'ont liké 👀",
+      "body": "{count} personnes t'ont liké pendant ton absence. Viens voir !"
+    },
+    "lifecycle_quiz_unfinished": {
+      "title": "Tu as laissé un quiz inachevé",
+      "body": "Tu n'as pas terminé les questions de {name}. Réessaie !"
+    },
+    "lifecycle_profile_incomplete": {
+      "title": "Ton profil n'est pas encore visible",
+      "body": "Ajoute au moins 2 questions et 1 photo pour apparaître dans Découvrir."
+    },
+    "lifecycle_new_people": {
+      "title": "De nouveaux visages",
+      "body": "{count} nouvelles personnes ont rejoint cette semaine. Jette un œil à Découvrir !"
+    },
+    "lifecycle_winback": {
+      "title": "Tu nous manques",
+      "body": "Des questions, des matchs et de nouvelles personnes t'attendent."
+    }
   }
 }

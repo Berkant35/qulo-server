@@ -11,7 +11,7 @@ export const pushTemplateQuerySchema = z.object({
 
 // Reject unknown placeholders. Only allow letters, digits, underscore inside {…}.
 const PLACEHOLDER_RE = /\{([a-zA-Z0-9_]+)\}/g;
-const ALLOWED_PLACEHOLDERS = new Set(['name', 'badge', 'result']);
+const ALLOWED_PLACEHOLDERS = new Set(['name', 'badge', 'result', 'count']);
 
 function validatePlaceholders(text: string | null | undefined): boolean {
   if (!text) return true;

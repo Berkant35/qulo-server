@@ -56,7 +56,7 @@ export const analyticsAggregateCron = {
  */
 export const analyticsCleanupCron = {
   name: "analytics-cleanup",
-  description: "Remove flow_events older than 90 days (aggregated stats preserved)",
+  description: "Remove flow_events and push_log rows older than 90 days (aggregated stats preserved)",
   schedule: "15 3 * * *", // 03:15 daily
   running: false,
 
@@ -77,6 +77,15 @@ export const analyticsCleanupCron = {
           console.error("[AnalyticsCleanup] Error:", error.message);
         } else {
           console.log(`[AnalyticsCleanup] Cleaned up events older than 90 days`);
+        }
+
+        // Bildirim motoru karar kaydi da ayni pencerede budanir (istatistik 7 gunluk, 90 gun fazlasiyla yeter)
+        const { error: pushLogError } = await supabase
+          .from("push_log")
+          .delete()
+          .lt("created_at", cutoffStr);
+        if (pushLogError) {
+          console.error("[AnalyticsCleanup] push_log error:", pushLogError.message);
         }
       } catch (err) {
         console.error("[AnalyticsCleanup] Error:", err instanceof Error ? err.message : err);

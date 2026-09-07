@@ -1,0 +1,203 @@
+<%- include('_header') %>
+<%
+  const decisionBadge = (d) => ({
+    sent: ['#d1fae5', '#065f46', 'Gönderildi'],
+    dry_run: ['#dbeafe', '#1e40af', 'Gönderilirdi (dry-run)'],
+    suppressed: ['#f3f4f6', '#374151', 'Bastırıldı'],
+    holdout: ['#fef3c7', '#92400e', 'Holdout'],
+    failed: ['#fee2e2', '#991b1b', 'Başarısız'],
+  })[d] || ['#f3f4f6', '#374151', d];
+  const fmt = (iso) => iso ? new Date(iso).toLocaleString('tr-TR') : '-';
+%>
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+  <h2>Bildirim Motoru</h2>
+  <div>
+    <% if (loaded.tableMissing) { %>
+      <span class="badge" style="background:#fee2e2; color:#991b1b;">🔴 Tablo yok (migration 045)</span>
+    <% } else if (!config.enabled) { %>
+      <span class="badge" style="background:#fef2f2; color:#991b1b;">🔴 Kapalı</span>
+    <% } else if (config.dry_run) { %>
+      <span class="badge" style="background:#dbeafe; color:#1e40af;">🔵 Açık · dry-run (göndermez, kaydeder)</span>
+    <% } else { %>
+      <span class="badge" style="background:#d1fae5; color:#065f46;">🟢 Açık · canlı</span>
+    <% } %>
+  </div>
+</div>
+
+<% if (success) { %><div class="alert" style="background:#d1fae5; color:#065f46; border:1px solid #a7f3d0;"><%= success %></div><% } %>
+<% if (error) { %><div class="alert" style="background:#fee2e2; color:#991b1b; border:1px solid #fecaca;"><%= error %></div><% } %>
+<% if (loaded.tableMissing) { %>
+<div class="alert" style="background:#fef3c7; color:#92400e; border:1px solid #fde68a;">
+  <code>notification_engine_config</code> / <code>push_log</code> tabloları yok. <code>qulo-server/migrations/045_notification_engine.sql</code> dosyasını Supabase'e uygula; motor o zamana kadar kapalı sayılır.
+</div>
+<% } %>
+<% if (loaded.loadError && !loaded.tableMissing) { %>
+<div class="alert" style="background:#fee2e2; color:#991b1b; border:1px solid #fecaca;">Ayar okunamadı (geçici hata, motor bu turda kapalı sayılır): <%= loaded.loadError %></div>
+<% } %>
+<% if (loaded.usedDefaults && !loaded.tableMissing && !loaded.loadError) { %>
+<div class="alert" style="background:#fef3c7; color:#92400e; border:1px solid #fde68a;">DB'deki ayar geçersizdi, varsayılanlar gösteriliyor. Kaydet ile üzerine yaz.</div>
+<% } %>
+
+<p style="font-size:13px; color:#666; margin-bottom:16px;">
+  Her 15 dakikada bir çalışır. Kullanıcının <strong>yerel saati</strong> gönderim saatine eşitse, o gün için tek karar üretir:
+  öncelik sırasında ilk uyan kural → günlük/haftalık tavan → holdout → tercih → gönder. Metinler 16 dilde
+  <a href="/admin/push-messages">Push Mesajları</a>'ndan düzenlenir/susturulur (tip = kural anahtarı).
+  <% if (loaded.updatedAt) { %><br><small>Son kayıt: <%= fmt(loaded.updatedAt) %><% if (loaded.updatedBy) { %> (<%= loaded.updatedBy %>)<% } %></small><% } %>
+</p>
+
+<form method="POST" action="/admin/notification-engine">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <div class="card">
+    <h3 style="margin-bottom:16px;">Genel</h3>
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px; align-items:end;">
+      <label style="display:flex; align-items:center; gap:8px; font-size:14px; cursor:pointer;">
+        <input type="checkbox" name="enabled" <%= config.enabled ? 'checked' : '' %>> <span>Motor açık</span>
+      </label>
+      <label style="display:flex; align-items:center; gap:8px; font-size:14px; cursor:pointer;">
+        <input type="checkbox" name="dry_run" <%= config.dry_run ? 'checked' : '' %>> <span>Dry-run (kaydet, gönderme)</span>
+      </label>
+      <div>
+        <label style="display:block; font-size:13px; font-weight:600; color:#555; margin-bottom:4px;">Gönderim saati (yerel, 0-23)</label>
+        <input type="number" name="send_hour_local" min="0" max="23" value="<%= config.send_hour_local %>" style="width:100%;">
+      </div>
+      <div>
+        <label style="display:block; font-size:13px; font-weight:600; color:#555; margin-bottom:4px;">Günlük tavan (kişi başı)</label>
+        <input type="number" name="daily_cap" min="1" max="5" value="<%= config.daily_cap %>" style="width:100%;">
+      </div>
+      <div>
+        <label style="display:block; font-size:13px; font-weight:600; color:#555; margin-bottom:4px;">Haftalık tavan (kişi başı)</label>
+        <input type="number" name="weekly_cap" min="1" max="20" value="<%= config.weekly_cap %>" style="width:100%;">
+      </div>
+      <div>
+        <label style="display:block; font-size:13px; font-weight:600; color:#555; margin-bottom:4px;">Holdout % (hiç almayan kontrol grubu)</label>
+        <input type="number" name="holdout_pct" min="0" max="50" value="<%= config.holdout_pct %>" style="width:100%;">
+      </div>
+      <div>
+        <label style="display:block; font-size:13px; font-weight:600; color:#555; margin-bottom:4px;">Tur başına en fazla gönderim</label>
+        <input type="number" name="max_per_run" min="1" max="1000" value="<%= config.max_per_run %>" style="width:100%;">
+      </div>
+    </div>
+    <p style="font-size:12px; color:#999; margin-top:8px;">Tavanlara admin kampanyaları da dahildir. Saat dilimi: locale=tr → UTC+3, yoksa boylamdan tahmin, yoksa UTC.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom:16px;">Kurallar (öncelik sırası)</h3>
+    <table>
+      <thead><tr><th>#</th><th>Kural</th><th>Koşul</th><th>Kategori</th><th>Açık</th><th>Cooldown (gün)</th></tr></thead>
+      <tbody>
+        <% rules.forEach(function(rule, i) { const rc = config.rules[rule.key]; %>
+        <tr>
+          <td><%= i + 1 %></td>
+          <td><code style="font-size:12px; background:#f3f4f6; padding:2px 6px; border-radius:4px;"><%= rule.key %></code></td>
+          <td style="font-size:13px; color:#555;"><%= rule.description %></td>
+          <td><span class="badge"><%= rule.category %></span></td>
+          <td><input type="checkbox" name="rule_<%= rule.key %>_enabled" <%= rc.enabled ? 'checked' : '' %>></td>
+          <td><input type="number" name="rule_<%= rule.key %>_cooldown" min="1" max="90" value="<%= rc.cooldown_days %>" style="width:80px;"></td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+    <div style="margin-top:16px; display:flex; gap:12px;">
+      <button type="submit" class="btn btn-primary" <%= loaded.tableMissing ? 'disabled' : '' %>>Kaydet</button>
+    </div>
+  </div>
+</form>
+
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+    <div>
+      <h3 style="margin-bottom:4px;">Önizleme — şu an kime ne giderdi?</h3>
+      <p style="font-size:12px; color:#999; margin:0;">Simülasyon: saat penceresi ve "bugün karar verildi" kontrolü yok sayılır; tavan/cooldown/holdout/tercih uygulanır. Göndermez, kaydetmez.</p>
+    </div>
+    <form method="POST" action="/admin/notification-engine/preview" style="margin:0;">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button type="submit" class="btn btn-primary" <%= loaded.tableMissing ? 'disabled' : '' %>>Önizlemeyi çalıştır</button>
+    </form>
+  </div>
+  <% if (preview) { %>
+    <p style="font-size:13px; color:#555; margin-top:12px;">
+      Değerlendirilen: <strong><%= preview.evaluated %></strong> · kural uymayan: <%= preview.noRule %> ·
+      gönderilirdi: <strong><%= previewCounts.dry_run %></strong> · bastırılan: <%= previewCounts.suppressed %> · holdout: <%= previewCounts.holdout %>
+    </p>
+    <div style="overflow-x:auto;">
+    <table>
+      <thead><tr><th>Kullanıcı</th><th>Kural</th><th>Karar</th><th>Sebep</th><th>Dil</th><th>Başlık</th><th>Metin</th><th>Hedef</th></tr></thead>
+      <tbody>
+        <% if (preview.decisions.length === 0) { %><tr><td colspan="8" style="text-align:center; color:#999; padding:24px;">Şu an hiçbir kullanıcı hiçbir kurala uymuyor</td></tr><% } %>
+        <% preview.decisions.forEach(function(d) { const b = decisionBadge(d.decision); %>
+        <tr>
+          <td><a href="/admin/users/<%= d.userId %>"><%= d.userName || d.userId.slice(0, 8) %></a></td>
+          <td><code style="font-size:11px;"><%= d.ruleKey %></code></td>
+          <td><span class="badge" style="background:<%= b[0] %>; color:<%= b[1] %>;"><%= b[2] %></span></td>
+          <td style="font-size:12px; color:#666;"><%= d.reason || '-' %></td>
+          <td><%= d.locale %></td>
+          <td style="font-size:13px;"><%= d.title || '-' %></td>
+          <td style="font-size:13px;"><%= d.body || '-' %></td>
+          <td><code style="font-size:11px;"><%= d.actionUrl %></code></td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+    </div>
+  <% } %>
+</div>
+
+<div class="card">
+  <h3 style="margin-bottom:12px;">Kural istatistiği — son 7 gün</h3>
+  <table>
+    <thead><tr><th>Kural</th><th>Gönderildi</th><th>Açıldı</th><th>Dry-run</th><th>Bastırıldı</th><th>Holdout</th><th>Başarısız</th></tr></thead>
+    <tbody>
+      <% stats.byRule.forEach(function(s) { %>
+      <tr>
+        <td><code style="font-size:11px;"><%= s.ruleKey %></code></td>
+        <td><%= s.sent %></td>
+        <td><%= s.opened %><% if (s.sent) { %> <small style="color:#999;">(%<%= Math.round(100 * s.opened / s.sent) %>)</small><% } %></td>
+        <td><%= s.dry_run %></td><td><%= s.suppressed %></td><td><%= s.holdout %></td><td><%= s.failed %></td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+  <p style="font-size:12px; color:#999; margin-top:8px;">"Açıldı" = bildirime dokunuldu veya gelen kutusunda okundu (Faz 1 vekili).</p>
+</div>
+
+<div class="card">
+  <h3 style="margin-bottom:12px;">Son koşumlar</h3>
+  <table>
+    <thead><tr><th>Zaman</th><th>Mod</th><th>Gönderildi</th><th>Dry-run</th><th>Bastırıldı</th><th>Holdout</th><th>Başarısız</th></tr></thead>
+    <tbody>
+      <% if (stats.runs.length === 0) { %><tr><td colspan="7" style="text-align:center; color:#999; padding:24px;">Henüz karar üretilmiş koşum yok (pencere dışı turlar kayıt bırakmaz)</td></tr><% } %>
+      <% stats.runs.forEach(function(r) { %>
+      <tr>
+        <td style="font-size:12px;"><%= fmt(r.startedAt) %></td>
+        <td><%= r.mode %></td>
+        <td><%= r.counts.sent %></td><td><%= r.counts.dry_run %></td><td><%= r.counts.suppressed %></td><td><%= r.counts.holdout %></td><td><%= r.counts.failed %></td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h3 style="margin-bottom:12px;">Son kayıtlar (<%= stats.recent.length %>)</h3>
+  <div style="overflow-x:auto;">
+  <table>
+    <thead><tr><th>Zaman</th><th>Kullanıcı</th><th>Kural</th><th>Karar</th><th>Sebep</th><th>Dil</th><th>Metin</th><th>Açıldı</th></tr></thead>
+    <tbody>
+      <% if (stats.recent.length === 0) { %><tr><td colspan="8" style="text-align:center; color:#999; padding:24px;">Kayıt yok</td></tr><% } %>
+      <% stats.recent.forEach(function(r) { const b = decisionBadge(r.decision); %>
+      <tr>
+        <td style="font-size:12px;"><%= fmt(r.createdAt) %></td>
+        <td><a href="/admin/users/<%= r.userId %>"><%= r.userName || r.userId.slice(0, 8) %></a></td>
+        <td><code style="font-size:11px;"><%= r.ruleKey %></code></td>
+        <td><span class="badge" style="background:<%= b[0] %>; color:<%= b[1] %>;"><%= b[2] %></span></td>
+        <td style="font-size:12px; color:#666;"><%= r.reason || '-' %></td>
+        <td><%= r.locale || '-' %></td>
+        <td style="font-size:12px;"><% if (r.title) { %><strong><%= r.title %></strong><br><% } %><%= r.body || '' %></td>
+        <td><%= r.opened === null ? '-' : (r.opened ? '✅' : '—') %></td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+  </div>
+</div>
+<%- include('_footer') %>

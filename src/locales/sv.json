@@ -5,6 +5,34 @@
     "new_match": "Ny matchning! Någon svarade rätt på alla dina frågor",
     "new_match_solver": "Grattis! Du svarade rätt på alla frågor, du har en ny matchning!",
     "new_match_badge": "Någon löste din quiz med {badge}-märket! Du har en ny matchning!",
-    "chat_question_answered": "Din chattfråga har besvarats ({result})"
+    "chat_question_answered": "Din chattfråga har besvarats ({result})",
+    "lifecycle_unread_message": {
+      "title": "Du har ett oläst meddelande",
+      "body": "{name} har skrivit till dig och väntar på svar."
+    },
+    "lifecycle_match_waiting": {
+      "title": "Din matchning väntar",
+      "body": "Du matchade med {name} men ni har inte pratat än. Skicka första meddelandet!"
+    },
+    "lifecycle_likes_waiting": {
+      "title": "Någon gillar dig 👀",
+      "body": "{count} personer gillade dig medan du var borta. Kom och kika!"
+    },
+    "lifecycle_quiz_unfinished": {
+      "title": "Du har ett oavslutat quiz",
+      "body": "Du blev inte klar med {name}s frågor. Försök igen!"
+    },
+    "lifecycle_profile_incomplete": {
+      "title": "Din profil syns inte än",
+      "body": "Lägg till minst 2 frågor och 1 foto för att synas i Upptäck."
+    },
+    "lifecycle_new_people": {
+      "title": "Nya ansikten",
+      "body": "{count} nya personer gick med den här veckan. Ta en titt i Upptäck!"
+    },
+    "lifecycle_winback": {
+      "title": "Vi saknar dig",
+      "body": "Frågor, matchningar och nya människor väntar på dig."
+    }
   }
 }

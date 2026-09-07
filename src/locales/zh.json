@@ -5,6 +5,34 @@
     "new_match": "新匹配！有人答对了你的所有问题",
     "new_match_solver": "恭喜！你答对了所有问题，你有一个新匹配！",
     "new_match_badge": "有人以 {badge} 徽章解开了你的问题！你有一个新匹配！",
-    "chat_question_answered": "你的聊天问题已被回答 ({result})"
+    "chat_question_answered": "你的聊天问题已被回答 ({result})",
+    "lifecycle_unread_message": {
+      "title": "你有一条未读消息",
+      "body": "{name}给你发了消息，正在等你回复。"
+    },
+    "lifecycle_match_waiting": {
+      "title": "你的匹配在等你",
+      "body": "你和{name}匹配成功了，但还没聊过。发出第一条消息吧！"
+    },
+    "lifecycle_likes_waiting": {
+      "title": "有人喜欢了你 👀",
+      "body": "你不在的时候有{count}个人喜欢了你。快来看看！"
+    },
+    "lifecycle_quiz_unfinished": {
+      "title": "你有一个没做完的问答",
+      "body": "你没有做完{name}的问题。再试一次吧！"
+    },
+    "lifecycle_profile_incomplete": {
+      "title": "你的资料还没有展示",
+      "body": "至少添加2个问题和1张照片，就能出现在发现页。"
+    },
+    "lifecycle_new_people": {
+      "title": "新面孔",
+      "body": "本周有{count}位新用户加入。去发现页看看吧！"
+    },
+    "lifecycle_winback": {
+      "title": "我们想你了",
+      "body": "问题、匹配和新朋友都在等你。"
+    }
   }
 }

@@ -169,6 +169,36 @@ class CampaignService {
     }
   }
 
+  // ── Vadesi gelen planli kampanyalar (notification-engine cron'undan) ──
+  async dispatchDueCampaigns(now: Date = new Date()): Promise<{ dispatched: string[]; failed: string[] }> {
+    // FCM yapilandirilmamissa sendCampaign her kampanya icin firlatirdi; kampanyalar 'scheduled' kalir,
+    // yapilandirma duzelince kendiliginden gider.
+    if (!isFcmAvailable()) {
+      console.warn("[CampaignService] FCM not configured — scheduled campaigns stay queued");
+      return { dispatched: [], failed: [] };
+    }
+    const { data, error } = await supabase
+      .from("campaigns")
+      .select("id")
+      .eq("status", "scheduled")
+      .lte("scheduled_at", now.toISOString());
+    if (error) throw error;
+
+    const dispatched: string[] = [];
+    const failed: string[] = [];
+    for (const row of (data ?? []) as Array<{ id: string }>) {
+      try {
+        await this.sendCampaign(row.id);
+        dispatched.push(row.id);
+      } catch (err) {
+        // Gonderim sirasinda hata: sendCampaign kampanyayi draft'a ceker (tekrar yok, admin panelde gorunur).
+        console.error(`[CampaignService] Scheduled campaign ${row.id} failed:`, err instanceof Error ? err.message : err);
+        failed.push(row.id);
+      }
+    }
+    return { dispatched, failed };
+  }
+
   // ── Cancel campaign ────────────────────────────────────────────────
   async cancelCampaign(campaignId: string) {
     const { data: campaign, error: getErr } = await supabase

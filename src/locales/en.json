@@ -5,6 +5,34 @@
     "new_match": "New match! Someone answered all your questions correctly",
     "new_match_solver": "Congratulations! You answered all questions correctly, you have a new match!",
     "new_match_badge": "Someone solved your quiz with {badge} badge! You have a new match!",
-    "chat_question_answered": "Your chat question was answered ({result})"
+    "chat_question_answered": "Your chat question was answered ({result})",
+    "lifecycle_unread_message": {
+      "title": "You have an unread message",
+      "body": "{name} wrote to you and is waiting for a reply."
+    },
+    "lifecycle_match_waiting": {
+      "title": "Your match is waiting",
+      "body": "You matched with {name} but haven't talked yet. Send the first message!"
+    },
+    "lifecycle_likes_waiting": {
+      "title": "People liked you 👀",
+      "body": "{count} people liked you while you were away. Come take a look!"
+    },
+    "lifecycle_quiz_unfinished": {
+      "title": "You left a quiz unfinished",
+      "body": "You didn't finish {name}'s questions. Give it another try!"
+    },
+    "lifecycle_profile_incomplete": {
+      "title": "Your profile isn't visible yet",
+      "body": "Add at least 2 questions and 1 photo to show up in Discover."
+    },
+    "lifecycle_new_people": {
+      "title": "New faces around",
+      "body": "{count} new people joined this week. Take a look at Discover!"
+    },
+    "lifecycle_winback": {
+      "title": "We miss you",
+      "body": "Questions, matches and new people are waiting for you."
+    }
   }
 }

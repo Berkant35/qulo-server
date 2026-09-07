@@ -5,6 +5,7 @@ import { analyticsController } from "./analytics.controller.js";
 import { pageMessageAdminController } from "./page-message.admin.controller.js";
 import { acquisitionAdminController } from "./acquisition.admin.controller.js";
 import { deletionFeedbackAdminController } from "./deletion-feedback.admin.controller.js";
+import { notificationEngineAdminController } from "./notification-engine.admin.controller.js";
 import { adminAuth, superAdminOnly, ipWhitelist, csrfGenerate, csrfValidate } from "./admin.middleware.js";
 import { assetAdminController } from "./asset.admin.controller.js";
 import adminCronRoutes from "./cron.routes.js";
@@ -128,6 +129,11 @@ router.get("/push-messages/:type", (req, res) => adminController.pushMessageEdit
 router.get("/api/push-messages/:type", (req, res) => adminController.pushMessageApiGet(req, res));
 router.put("/api/push-messages/:type", csrfValidate, (req, res) => adminController.pushMessageApiUpsert(req, res));
 router.delete("/api/push-messages/:type", csrfValidate, (req, res) => adminController.pushMessageApiRemove(req, res));
+
+// Bildirim motoru (lifecycle push karar motoru — ayar, onizleme, kayit)
+router.get("/notification-engine", (req, res) => notificationEngineAdminController.page(req, res));
+router.post("/notification-engine", csrfValidate, (req, res) => notificationEngineAdminController.save(req, res));
+router.post("/notification-engine/preview", csrfValidate, (req, res) => notificationEngineAdminController.preview(req, res));
 
 router.get("/admins", superAdminOnly, (req, res) => adminController.admins(req, res));
 router.post("/admins", superAdminOnly, csrfValidate, (req, res) => adminController.createAdmin(req, res));

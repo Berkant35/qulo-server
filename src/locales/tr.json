@@ -5,6 +5,34 @@
     "new_match": "Yeni bir eslesme! Birisi tum sorularinizi dogru cozdu",
     "new_match_solver": "Tebrikler! Tum sorulari dogru cozdun, yeni bir eslesmen var!",
     "new_match_badge": "Birisi sorularini {badge} badge ile cozdu! Yeni eslesmen var!",
-    "chat_question_answered": "Sohbet sorunuz cevaplandi ({result})"
+    "chat_question_answered": "Sohbet sorunuz cevaplandi ({result})",
+    "lifecycle_unread_message": {
+      "title": "Okunmamış mesajın var",
+      "body": "{name} sana yazdı, cevabını bekliyor."
+    },
+    "lifecycle_match_waiting": {
+      "title": "Eşleşmen seni bekliyor",
+      "body": "{name} ile eşleştin ama henüz konuşmadınız. İlk mesajı sen at!"
+    },
+    "lifecycle_likes_waiting": {
+      "title": "Seni beğenenler var 👀",
+      "body": "Sen yokken {count} kişi seni beğendi. Gel bir bak!"
+    },
+    "lifecycle_quiz_unfinished": {
+      "title": "Yarım kalan bir quiz'in var",
+      "body": "{name} adlı kişinin sorularını bitirmedin. Bir daha dene!"
+    },
+    "lifecycle_profile_incomplete": {
+      "title": "Profilin henüz görünmüyor",
+      "body": "Keşfet'te görünmek için en az 2 soru ve 1 fotoğraf ekle."
+    },
+    "lifecycle_new_people": {
+      "title": "Yeni yüzler var",
+      "body": "Bu hafta {count} yeni kişi katıldı. Keşfet'e bir göz at!"
+    },
+    "lifecycle_winback": {
+      "title": "Seni özledik",
+      "body": "Sorular, eşleşmeler ve yeni insanlar seni bekliyor."
+    }
   }
 }

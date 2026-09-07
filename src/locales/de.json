@@ -5,6 +5,34 @@
     "new_match": "Neue Übereinstimmung! Jemand hat alle deine Fragen richtig beantwortet",
     "new_match_solver": "Glückwunsch! Du hast alle Fragen richtig beantwortet, du hast eine neue Übereinstimmung!",
     "new_match_badge": "Jemand hat deine Fragen mit dem {badge}-Abzeichen gelöst! Du hast eine neue Übereinstimmung!",
-    "chat_question_answered": "Deine Chat-Frage wurde beantwortet ({result})"
+    "chat_question_answered": "Deine Chat-Frage wurde beantwortet ({result})",
+    "lifecycle_unread_message": {
+      "title": "Du hast eine ungelesene Nachricht",
+      "body": "{name} hat dir geschrieben und wartet auf deine Antwort."
+    },
+    "lifecycle_match_waiting": {
+      "title": "Dein Match wartet",
+      "body": "Du hast ein Match mit {name}, aber ihr habt noch nicht geschrieben. Mach den ersten Schritt!"
+    },
+    "lifecycle_likes_waiting": {
+      "title": "Jemand mag dich 👀",
+      "body": "{count} Personen haben dich geliked, während du weg warst. Schau mal rein!"
+    },
+    "lifecycle_quiz_unfinished": {
+      "title": "Du hast ein Quiz nicht beendet",
+      "body": "Du hast die Fragen von {name} nicht zu Ende gelöst. Versuch es noch mal!"
+    },
+    "lifecycle_profile_incomplete": {
+      "title": "Dein Profil ist noch nicht sichtbar",
+      "body": "Füge mindestens 2 Fragen und 1 Foto hinzu, um in Entdecken zu erscheinen."
+    },
+    "lifecycle_new_people": {
+      "title": "Neue Gesichter",
+      "body": "Diese Woche sind {count} neue Leute dazugekommen. Schau bei Entdecken vorbei!"
+    },
+    "lifecycle_winback": {
+      "title": "Wir vermissen dich",
+      "body": "Fragen, Matches und neue Leute warten auf dich."
+    }
   }
 }
