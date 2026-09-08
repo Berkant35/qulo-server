@@ -1,4 +1,5 @@
 import { supabase } from "../config/supabase.js";
+import { questionLocale } from "../constants/locales.js";
 import { Errors } from "../utils/errors.js";
 import { haversineDistance } from "../utils/math.js";
 import { assertUuid } from "../utils/validation.js";
@@ -186,7 +187,7 @@ export class MatchingService {
         const uid = row.user_id as string;
         questionCountMap.set(uid, (questionCountMap.get(uid) ?? 0) + 1);
         const locales = questionLocalesByUser.get(uid) ?? [];
-        locales.push((row.locale as string) || 'tr');
+        locales.push(questionLocale(row.locale));
         questionLocalesByUser.set(uid, locales);
       }
 
@@ -206,7 +207,7 @@ export class MatchingService {
         }
 
         const categories = [...new Set(userQuestions.map((q: any) => q.category).filter(Boolean))] as string[];
-        const languages = [...new Set(userQuestions.map((q: any) => q.locale || 'tr'))] as string[];
+        const languages = [...new Set(userQuestions.map((q: any) => questionLocale(q.locale)))];
 
         questionInfoMap.set(cId, {
           count: userQuestions.length,
@@ -406,7 +407,7 @@ export class MatchingService {
     }
 
     const categories = [...new Set(userQuestions.map((q: any) => q.category).filter(Boolean))] as string[];
-    const languages = [...new Set(userQuestions.map((q: any) => q.locale || "tr"))] as string[];
+    const languages = [...new Set(userQuestions.map((q: any) => questionLocale(q.locale)))];
 
     // Calculate distance
     const { data: me } = await supabase

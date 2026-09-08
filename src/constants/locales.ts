@@ -24,3 +24,17 @@ export const LOCALE_NAMES: Record<SupportedLocale, string> = {
   sv: 'Svenska',
   hi: 'हिन्दी',
 };
+
+/**
+ * Bir sorunun dili. `locale` alani bos ya da NULL gelen eski satirlar 'tr' sayilir.
+ *
+ * NEDEN TEK YERDE: bu normalizasyon alti ayri yerde kopyalanmisti — kesif aday
+ * filtresi (matching 5.6), kesif kart bilgisi, public profil, quiz soru secimi
+ * ve getMe. Hepsi ayni davranisa BAGLI: biri `?? 'en'` yapsa hicbir test
+ * kirilmaz, ama istemci "gorunuyorsun" derken kesif tersini uygular, ya da
+ * kullaniciya cozemeyecegi bir soru gosterilir. Invaryant temenni degil,
+ * tek fonksiyon olmali.
+ */
+export function questionLocale(locale: unknown): string {
+  return typeof locale === "string" && locale ? locale : "tr";
+}

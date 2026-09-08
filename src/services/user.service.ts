@@ -1,5 +1,6 @@
 import { supabase } from "../config/supabase.js";
 import type { SupportedLocale } from "../constants/locales.js";
+import { questionLocale } from "../constants/locales.js";
 import { diamondService } from "./diamond.service.js";
 import { referralService } from "./referral.service.js";
 import { economyConfigService } from "./economy-config.service.js";
@@ -25,17 +26,46 @@ export class UserService {
       throw Errors.USER_NOT_FOUND();
     }
 
-    // Fetch user_details
-    const { data: details } = await supabase
-      .from("user_details")
-      .select("height, weight, zodiac, job, school, smoking, alcohol, pets, music_type, personality")
-      .eq("user_id", userId)
-      .maybeSingle();
+    // user_details + soru dilleri paralel — ikisi de yalnizca userId'ye bagli,
+    // seri beklemenin sebebi yok.
+    const [detailsResult, questionLocaleResult] = await Promise.all([
+      supabase
+        .from("user_details")
+        .select("height, weight, zodiac, job, school, smoking, alcohol, pets, music_type, personality")
+        .eq("user_id", userId)
+        .maybeSingle(),
+      // Tavan economy config'te (migration 020; zod ust siniri 20), yani 100'e
+      // asla yaklasilmaz — limit ve order, tavan degisirse belirsizlige karsi.
+      supabase.from("questions").select("locale").eq("user_id", userId).order("order_num").limit(100),
+    ]);
+    const details = detailsResult.data;
+
+    // Sorularin dil dagilimi: { tr: 3, en: 1 }. BILGI, teshis DEGIL.
+    //
+    // Bundan "kimseye gorunmuyorsun" cikarilamaz: kesif dil basina degil TOPLAM
+    // sayiyor (matching.service.ts:242), yani izleyici tr+en okuyorsa {tr:1,en:1}
+    // filtreyi gecer. Kesin gorunmezlik kosulu yalnizca `question_count < 2`.
+    //
+    // Sorgu patlarsa alan hic donmez (undefined), bos nesne degil — bos nesne
+    // "hicbir dilde soru yok" demek ve bir DB hatasini kullaniciya profili
+    // hakkinda yanlis bir teshis olarak gosterirdi. getMe'yi dusurmek de dogru
+    // degil: yan bilgi, ekranin geri kalani calismali.
+    let questionLocales: Record<string, number> | undefined;
+    if (questionLocaleResult.error) {
+      console.error("[getMe] question locales failed:", questionLocaleResult.error.message);
+    } else {
+      questionLocales = {};
+      for (const row of questionLocaleResult.data ?? []) {
+        const locale = questionLocale(row.locale);
+        questionLocales[locale] = (questionLocales[locale] ?? 0) + 1;
+      }
+    }
 
     return {
       ...user,
       // question_count is kept in sync by trigger trg_sync_user_question_count (migration 028)
       question_count: user.question_count ?? 0,
+      question_locales: questionLocales,
       subscriptionPlan: user.subscription_plan || null,
       subscriptionExpiresAt: user.subscription_expires_at || null,
       dailySwipesUsed: user.daily_swipes_used || 0,
@@ -444,7 +474,7 @@ export class UserService {
         count: questions.length,
         categories: [...new Set(questions.map((q: QuestionStats) => q.category).filter(Boolean))],
         avg_difficulty: difficulty,
-        languages: [...new Set(questions.map((q: QuestionStats) => q.locale || "tr"))],
+        languages: [...new Set(questions.map((q: QuestionStats) => questionLocale(q.locale)))],
       };
     }
 

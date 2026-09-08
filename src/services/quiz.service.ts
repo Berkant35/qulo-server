@@ -1,4 +1,5 @@
 import { supabase } from "../config/supabase.js";
+import { questionLocale } from "../constants/locales.js";
 import { Errors } from "../utils/errors.js";
 import { calculatePowerCost, calculateGreenReward, shuffleArray, pickOracleSuggestion } from "../utils/math.js";
 import { diamondService } from "./diamond.service.js";
@@ -65,7 +66,7 @@ export class QuizService {
    */
   private filterByLanguagePreference(questions: any[], solverLanguages: string[]): any[] {
     if (!solverLanguages.length) return questions;
-    return questions.filter((q: any) => solverLanguages.includes(q.locale || 'tr'));
+    return questions.filter((q: any) => solverLanguages.includes(questionLocale(q.locale)));
   }
 
   /**
