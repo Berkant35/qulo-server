@@ -25,7 +25,7 @@ class ExchangeService {
     );
 
     // Credit purple diamonds
-    const result = await diamondService.addPurple(
+    await diamondService.addPurple(
       userId,
       purpleAmount,
       "exchange_green_to_purple",

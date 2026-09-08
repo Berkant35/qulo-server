@@ -56,9 +56,26 @@ export async function purchaseHandler(req: Request, res: Response, next: NextFun
       verification.transactionId ?? transaction_id ?? product_id,
     );
 
+    // credited === 0 => kayit zaten vardi, yani BU istek hicbir sey yatirmadi.
+    // En olasi sebep bayat bir RevenueCat referansi: istemci transaction_id
+    // gondermediginde revenuecat.service o urunun RC'deki EN SON satin almasini
+    // yetkili sayiyor; RC henuz senkron degilse bu bir ONCEKI islemdir ve
+    // dedup'a takilir. Sonuc: kullaniciya "basarili" denir, elmas gelmez —
+    // 2026-09-05 cift kredi olayinin ters yonu. Sessiz kalmamali.
+    if (result.credited === 0) {
+      console.error("[diamond] IAP credited 0 — muhtemel bayat RC referansi", {
+        userId,
+        product_id,
+        referenceId: verification.transactionId ?? transaction_id ?? product_id,
+      });
+    }
+
+    // purple_credited artik BEKLENEN degil GERCEKLESEN miktar. Mevcut mobil
+    // istemci bu govdeyi OKUMUYOR (`Future<void> purchase`), yani bu sahada
+    // gorunen bir bug duzeltmesi DEGIL — sozlesme yalan soylemesin diye.
     res.json({
       message: "Purchase successful",
-      purple_credited: purpleAmount,
+      purple_credited: result.credited,
       new_balance: result.purple,
     });
   } catch (err) {

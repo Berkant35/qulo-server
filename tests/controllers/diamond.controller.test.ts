@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { AddPurpleResult } from "../../src/services/diamond.service.js";
 
 /**
  * Kontrolör dikişi: elmas paketi satın almasında TEKİLLEŞTİRME ANAHTARININ
@@ -22,9 +23,15 @@ function makeRes() {
   return { res, json };
 }
 
-async function loadHandler(verification: Record<string, unknown>) {
+async function loadHandler(
+  verification: Record<string, unknown>,
+  // Mock TIPLI: alan adi degisirse tsc yakalasin. Eskiden `vi.fn()` `any`
+  // donuyordu ve `credited` eksikligi sessizce `purple_credited: undefined`
+  // uretiyordu — JSON.stringify anahtari tamamen dusuruyor, test de gormuyordu.
+  addPurpleResult: AddPurpleResult = { purple: 999, credited: 50 },
+) {
   const verifyPurchase = vi.fn().mockResolvedValue(verification);
-  const addPurple = vi.fn().mockResolvedValue({ purple: 999 });
+  const addPurple = vi.fn().mockResolvedValue(addPurpleResult);
 
   vi.doMock("../../src/services/revenuecat.service.js", () => ({
     revenueCatService: { verifyPurchase },
@@ -86,5 +93,80 @@ describe("purchaseHandler — tekilleştirme anahtarı", () => {
 
     expect(addPurple).not.toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(403);
+  });
+});
+
+describe("purchaseHandler — yanit govdesi", () => {
+  // resetModules ZORUNLU: `loadHandler` doMock + dinamik import kullaniyor,
+  // sifirlanmazsa bir onceki testin mock'u (orn. `{valid:false}`) miras kaliyor
+  // ve handler dogrulamada erken donuyor.
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
+  it("purple_credited GERCEKLESEN miktari doner, beklenen degil", async () => {
+    // Bu satirin (purple_credited: result.credited) sifir kapsamasi vardi:
+    // mock `credited` dondurmedigi icin JSON.stringify anahtari tamamen
+    // dusuruyordu ve hicbir test govdeyi okumuyordu.
+    const { purchaseHandler } = await loadHandler(
+      { valid: true, transactionId: "rc-1" },
+      { purple: 1200, credited: 400 },
+    );
+    const { res, json } = makeRes();
+
+    await purchaseHandler(req({ product_id: "qulopurple400" }), res, vi.fn());
+
+    expect(json).toHaveBeenCalledWith(
+      expect.objectContaining({ purple_credited: 400, new_balance: 1200 }),
+    );
+  });
+
+  it("duplicate durumunda purple_credited 0, new_balance GERCEK bakiye", async () => {
+    // Para yolunda dogru olmasi gereken ayrim: hicbir sey yatmadi (0) ama
+    // kullanicinin bakiyesi 730 ve yanit bunu dogru soylemeli.
+    const { purchaseHandler } = await loadHandler(
+      { valid: true, transactionId: "rc-tekrar" },
+      { purple: 730, credited: 0 },
+    );
+    const { res, json } = makeRes();
+
+    await purchaseHandler(req({ product_id: "qulopurple400" }), res, vi.fn());
+
+    expect(json).toHaveBeenCalledWith(
+      expect.objectContaining({ purple_credited: 0, new_balance: 730 }),
+    );
+  });
+
+  it("credited 0 ise anomali loglanir — sessiz para kaybi olmasin", async () => {
+    // Bayat RC referansi senaryosu: kullaniciya "basarili" denir ama elmas
+    // gelmez. Tek erken uyari bu log.
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const { purchaseHandler } = await loadHandler(
+      { valid: true, transactionId: "rc-bayat" },
+      { purple: 730, credited: 0 },
+    );
+    const { res } = makeRes();
+
+    await purchaseHandler(req({ product_id: "qulopurple400" }), res, vi.fn());
+
+    expect(spy).toHaveBeenCalledWith(
+      expect.stringContaining("credited 0"),
+      expect.objectContaining({ product_id: "qulopurple400" }),
+    );
+    spy.mockRestore();
+  });
+
+  it("normal durumda anomali logu YAZILMAZ — gurultu yapmasin", async () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const { purchaseHandler } = await loadHandler(
+      { valid: true, transactionId: "rc-2" },
+      { purple: 1200, credited: 400 },
+    );
+    const { res } = makeRes();
+
+    await purchaseHandler(req({ product_id: "qulopurple400" }), res, vi.fn());
+
+    expect(spy).not.toHaveBeenCalled();
+    spy.mockRestore();
   });
 });

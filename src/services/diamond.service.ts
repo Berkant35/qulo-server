@@ -1,6 +1,13 @@
 import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
 
+export interface AddPurpleResult {
+  /** Islemden sonraki toplam mor bakiye. */
+  purple: number;
+  /** Bu cagrinin gercekten yatirdigi miktar; duplicate dallarinda 0. */
+  credited: number;
+}
+
 export class DiamondService {
   // 24h social-signup cooldown devre dışı.
   // Anti-fraud değeri minimaldi (kullanıcı yine de hesap aç + bekle ile bypass edebilir)
@@ -103,12 +110,19 @@ export class DiamondService {
     return { purple: updated.purple_diamonds };
   }
 
+  /**
+   * `addPurple` sonucu.
+   * - `purple`  : islemden SONRAKI toplam mor bakiye
+   * - `credited`: BU cagrinin gercekten yatirdigi miktar (duplicate'te 0)
+   *
+   * Ikisi ayri: duplicate dallarinda bakiye degismez ama dogru bakiye donmeli.
+   */
   async addPurple(
     userId: string,
     amount: number,
     reason: string,
     referenceId?: string,
-  ) {
+  ): Promise<AddPurpleResult> {
     // Duplicate guard — prevent same reward being given twice
     if (referenceId) {
       const { data: existing } = await supabase
@@ -120,10 +134,18 @@ export class DiamondService {
 
       if (existing) {
         console.log(`[Diamond] Duplicate reward skipped: ${referenceId} for user ${userId}`);
-        return { purple: 0 };
+        return { purple: (await this.getBalance(userId)).purple, credited: 0 };
       }
     }
 
+    // NOT (2026-09-08): duplicate dalları artık `{ purple: <gerçek bakiye>,
+    // credited: 0 }` dönüyor, eskiden `{ purple: 0 }` dönüyordu. Gerekçe API
+    // SÖZLEŞMESİ DOĞRULUĞU: normal dalda bu alan "yeni toplam bakiye" demek, o
+    // yüzden duplicate'te 0 dönmek sözleşmeye göre "bakiyen sıfır" iddiasıydı.
+    // Bugünkü mobil istemci bu gövdeyi OKUMUYOR (`Future<void> purchase`), yani
+    // sahada görünen bir semptom değildi — ama sözleşmenin yalan söylememesi
+    // gerekiyor ve `credited` sayesinde "yatmadı" durumu artık ayırt edilebilir.
+    //
     // ÖNCE KAYIT, SONRA BAKİYE — sıra kasıtlı.
     //
     // Yukarıdaki guard "önce oku sonra yaz" olduğu için yarışa açık: 2026-09-05'te
@@ -147,7 +169,7 @@ export class DiamondService {
       // 23505 = unique_violation → yarışı kaybettik, ödül zaten verilmiş.
       if (txErr.code === "23505") {
         console.log(`[Diamond] Duplicate reward blocked by DB: ${referenceId} for user ${userId}`);
-        return { purple: 0 };
+        return { purple: (await this.getBalance(userId)).purple, credited: 0 };
       }
       throw Errors.SERVER_ERROR();
     }
@@ -175,7 +197,7 @@ export class DiamondService {
       throw Errors.SERVER_ERROR();
     }
 
-    return { purple: updated.purple_diamonds };
+    return { purple: updated.purple_diamonds, credited: amount };
   }
 
   async earnGreen(

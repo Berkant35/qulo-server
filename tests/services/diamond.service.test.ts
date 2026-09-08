@@ -129,8 +129,10 @@ describe('DiamondService.addPurple', () => {
   it('bakiyeyi artırır ve pozitif kayıt yazar', async () => {
     const { fake, diamondService } = await setup({ users: [user({ purple_diamonds: 5 })] });
 
+    // `credited` = gercekten yatan miktar. Duplicate dallarindan ayirt etmek
+    // icin var; controller bunu `purple_credited` olarak istemciye donuyor.
     await expect(diamondService.addPurple('u1', 10, 'exchange_green_to_purple'))
-      .resolves.toEqual({ purple: 15 });
+      .resolves.toEqual({ purple: 15, credited: 10 });
 
     expect(fake.table('users')[0].purple_diamonds).toBe(15);
     expect(fake.table('diamond_transactions')[0]).toMatchObject({ type: 'PURPLE', amount: 10 });
@@ -141,8 +143,13 @@ describe('DiamondService.addPurple', () => {
     const { fake, diamondService } = await setup({ users: [user({ purple_diamonds: 0 })] });
 
     await diamondService.addPurple('u1', 10, 'referral_reward', 'ref-1');
+    // ESKIDEN `{ purple: 0 }` donuyordu ve bu "yeni bakiye sifir" demekti —
+    // istemci "400 elmas yatirildi, yeni bakiye 0" gosteriyordu, iki kere yanlis.
+    // Artik bakiye DEGISMEDIGI icin gercek bakiye, kredilendirme ise 0 doner.
+    // Testin asil iddiasi ayni kaliyor: odul ikinci kez VERILMIYOR (asagidaki
+    // iki satir onu dogruluyor).
     await expect(diamondService.addPurple('u1', 10, 'referral_reward', 'ref-1'))
-      .resolves.toEqual({ purple: 0 });
+      .resolves.toEqual({ purple: 10, credited: 0 });
 
     expect(fake.table('users')[0].purple_diamonds).toBe(10);
     expect(fake.table('diamond_transactions')).toHaveLength(1);
@@ -249,6 +256,26 @@ describe('DiamondService.addPurple — DB tekillik kısıtı (migration 047)', (
    * Son savunma `uniq_diamond_money_reference` kısmi benzersiz indeksi. Bu test
    * yarışı kaybetme anını simüle ediyor: guard boş görür, insert 23505 ile döner.
    */
+  it('duplicate dalinda bakiye okunamazsa PATLAR — sessizce 0 donmez', async () => {
+    // Bu, duzeltilen bugun tekrar etmeyecegini garanti eden test. Duplicate
+    // dalinda artik `getBalance` cagriliyor; o da patlarsa dogru davranis
+    // hata firlatmak. `?? 0` ile yutulsaydi, kaldirdigimiz yalanin aynisi
+    // (bakiye sifir gorunumu) hata yolundan geri gelirdi.
+    const { diamondService } = await setup(
+      {
+        users: [user({ purple_diamonds: 730 })],
+        diamond_transactions: [
+          { user_id: 'u1', type: 'PURPLE', amount: 400, reason: 'IAP_PURCHASE', reference_id: 'tx-abc' },
+        ],
+      },
+      { failOn: [{ table: 'users', op: 'select' }] },
+    );
+
+    await expect(
+      diamondService.addPurple('u1', 400, 'IAP_PURCHASE', 'tx-abc'),
+    ).rejects.toThrow();
+  });
+
   it('23505 (unique_violation) gelirse bakiye ŞİŞMEZ, sessizce geçer', async () => {
     const { fake, diamondService } = await setup(
       { users: [user({ purple_diamonds: 50 })] },
@@ -261,9 +288,13 @@ describe('DiamondService.addPurple — DB tekillik kısıtı (migration 047)', (
       },
     );
 
+    // Bu satir duzeltmenin degerini tam olarak gosteriyor: kullanicinin gercek
+    // bakiyesi 50 ve artik 50 donuyor. Eskiden `{ purple: 0 }` doner, istemci
+    // "yeni bakiye 0" gosterirdi — hem yarisi kaybeden istek hem de kullanici
+    // yanlis bilgilendirilirdi. Testin asil iddiasi degismedi: bakiye SISMEZ.
     await expect(
       diamondService.addPurple('u1', 500, 'SUBSCRIPTION_BONUS', 'sub_plus_2026-10-01T12:00:00.000Z'),
-    ).resolves.toEqual({ purple: 0 });
+    ).resolves.toEqual({ purple: 50, credited: 0 });
 
     expect(fake.table('users')[0].purple_diamonds).toBe(50);
     expect(fake.table('diamond_transactions')).toHaveLength(0);
