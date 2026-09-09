@@ -123,3 +123,133 @@ describe("discover — aday sorgusu", () => {
     expect(res.cards).toHaveLength(2);
   });
 });
+
+describe("discover — kademeli mesafe", () => {
+  it("radius disindaki aday artik elenmez, tier ile isaretlenir", async () => {
+    const service = await loadService({
+      users: [viewerRow(), candidateRow("uzak", 300)],
+      swipes: [],
+      matches: [],
+      questions: questionsFor(["uzak"]),
+    });
+
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards).toHaveLength(1);
+    expect(res.cards[0].user_id).toBe("uzak");
+    expect(res.cards[0].distance_tier).toBe(2);
+  });
+
+  it("yakin aday, ham skoru daha yuksek olan uzak adaydan once gelir", async () => {
+    // "uzak" adayin profili kusursuz + cok begenilmis; skoru yakin adaydan yuksek.
+    // Tier birincil anahtar oldugu icin yine de arkada kalmali.
+    const service = await loadService({
+      users: [
+        viewerRow(),
+        candidateRow("yakin", 10, { profile_completion: 40, photos: ["p1.jpg"], bio: null }),
+        candidateRow("uzak", 300, {
+          profile_completion: 100,
+          photos: ["a.jpg", "b.jpg", "c.jpg"],
+          like_received_count: 90,
+          times_shown_count: 100,
+          green_diamonds: 500,
+        }),
+      ],
+      swipes: [],
+      matches: [],
+      questions: questionsFor(["yakin", "uzak"]),
+    });
+
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual(["yakin", "uzak"]);
+  });
+
+  it("ayni tier icinde yakin olan once gelir", async () => {
+    const service = await loadService({
+      users: [viewerRow(), candidateRow("orta", 900), candidateRow("daha-yakin", 200)],
+      swipes: [],
+      matches: [],
+      questions: questionsFor(["orta", "daha-yakin"]),
+    });
+
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.distance_tier)).toEqual([2, 2]);
+    expect(res.cards.map((c) => c.user_id)).toEqual(["daha-yakin", "orta"]);
+  });
+
+  it("boost tier'i asamaz — boostlu uzak aday, boostsuz yakin adayin onune gecmez", async () => {
+    const future = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+    const service = await loadService({
+      users: [
+        viewerRow(),
+        candidateRow("yakin", 10),
+        candidateRow("uzak-boostlu", 3000, { boost_until: future }),
+      ],
+      swipes: [],
+      matches: [],
+      questions: questionsFor(["yakin", "uzak-boostlu"]),
+    });
+
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual(["yakin", "uzak-boostlu"]);
+    expect(res.cards[1].is_boosted).toBe(true);
+  });
+
+  it("dil filtresi mesafe sinirsiz olsa da gevsemez", async () => {
+    // Adayin sorulari sadece Almanca; izleyicinin dili tr. Mesafe artik
+    // elemiyor ama dil kapisi elemeli — yoksa cozulemeyen kart uretiriz
+    // (quiz.service.startSession dil filtresi sonrasi 2'nin altinda NO_QUESTIONS atar).
+    const service = await loadService({
+      users: [viewerRow(), candidateRow("almanca", 3000)],
+      swipes: [],
+      matches: [],
+      questions: questionsFor(["almanca"], "de"),
+    });
+
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards).toHaveLength(0);
+  });
+
+  it("soru sayisi 2'nin altindaki aday hala elenir", async () => {
+    const service = await loadService({
+      users: [viewerRow(), candidateRow("tek-soru", 10)],
+      swipes: [],
+      matches: [],
+      questions: [
+        { user_id: "tek-soru", category: "life", stats_correct: 0, stats_wrong: 0, locale: "tr" },
+      ],
+    });
+
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards).toHaveLength(0);
+  });
+
+  it("fotografsiz aday hala elenir", async () => {
+    const service = await loadService({
+      users: [viewerRow(), candidateRow("fotosuz", 10, { photos: [] })],
+      swipes: [],
+      matches: [],
+      questions: questionsFor(["fotosuz"]),
+    });
+
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards).toHaveLength(0);
+  });
+});
+
+describe("undoSwipe — tier tutarliligi", () => {
+  // undoSwipe targetId'yi assertUuid'den geciriyor, bu yuzden gercek UUID sart.
+  const UZAK_ID = "00000000-0000-4000-8000-0000000000ff";
+
+  it("undo edilen kart, discover ile ayni distance_tier'i tasir", async () => {
+    const service = await loadService({
+      users: [viewerRow(), candidateRow(UZAK_ID, 300)],
+      swipes: [{ swiper_id: VIEWER_ID, target_id: UZAK_ID, action: "REJECT" }],
+      matches: [],
+      questions: questionsFor([UZAK_ID]),
+    });
+
+    const card = await service.undoSwipe(VIEWER_ID, UZAK_ID);
+    // Ayni mesafe discover'da tier 2 donuyor (bkz. yukaridaki test).
+    expect(card.distance_tier).toBe(2);
+  });
+});

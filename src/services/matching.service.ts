@@ -1,6 +1,7 @@
 import { supabase } from "../config/supabase.js";
 import { questionLocale } from "../constants/locales.js";
 import { Errors } from "../utils/errors.js";
+import { resolveDistanceTier } from "../utils/distance-tier.js";
 import { haversineDistance } from "../utils/math.js";
 import { assertUuid } from "../utils/validation.js";
 import { blockService } from "./block.service.js";
@@ -48,6 +49,8 @@ interface ProfileCard {
   bio: string | null;
   photos: string[] | null;
   distance_km: number;
+  /** 0 = kullanicinin radius'u icinde, 3 = en uzak. Siralamada birincil anahtar. */
+  distance_tier: number;
   question_count: number;
   profile_completion: number;
   is_boosted: boolean;
@@ -173,15 +176,27 @@ export class MatchingService {
       return { cards: [], page, has_more: false };
     }
 
-    // 4. Filter out excluded + distance
-    const filtered: (CandidateRow & { distance_km: number })[] = [];
+    // 4. Sert mesafe filtresi YOK — aday tier ile isaretlenir ve siralamada
+    // yakin olan garanti once tuketilir (bkz. adim 7). Prod olcumunde mesafe
+    // adaylarin %72'sini siliyor ve izleyicilerin %31'ini tek basina sifira
+    // dusuruyordu.
+    const filtered: (CandidateRow & {
+      distance_km: number;
+      distance_tier: number;
+      distance_boundary_km: number;
+    })[] = [];
     for (const c of candidates as CandidateRow[]) {
       if (excludedIds.has(c.id)) continue;
 
       const dist = haversineDistance(myLat, myLng, c.lat, c.lng);
-      if (dist > maxRadius) continue;
+      const { tier, boundaryKm } = resolveDistanceTier(dist, maxRadius);
 
-      filtered.push({ ...c, distance_km: Math.round(dist * 10) / 10 });
+      filtered.push({
+        ...c,
+        distance_km: Math.round(dist * 10) / 10,
+        distance_tier: tier,
+        distance_boundary_km: boundaryKm,
+      });
     }
 
     // 5. Batch fetch question stats for candidates (single query — count derived in-memory)
@@ -285,7 +300,9 @@ export class MatchingService {
       const desirability = scoringService.desirabilityScore(c.like_received_count, c.times_shown_count);
       const engagement = scoringService.engagementScore(c.green_diamonds, 0); // quizCompletionRate not available yet
       const recency = scoringService.recencyScore(c.last_seen_at);
-      const distance = scoringService.distanceScore(c.distance_km, maxRadius);
+      // Denominator tier'in ust siniri — boylece "yakin olan daha iyi" her tier'in
+      // ICINDE de calisir. maxRadius kullanilsaydi tier 1-3'un hepsi 0 alirdi.
+      const distance = scoringService.distanceScore(c.distance_km, c.distance_boundary_km);
       const profile = scoringService.profileScore(c.profile_completion, photoCount, !!c.bio);
 
       const score = scoringService.totalScore({
@@ -297,11 +314,14 @@ export class MatchingService {
         boostActive: isBoostActive(c.boost_until),
       });
 
-      return { candidate: c, score, questionCount: qCount };
+      return { candidate: c, score, questionCount: qCount, tier: c.distance_tier };
     });
 
-    // 7. Sort by score descending
-    scored.sort((a, b) => b.score - a.score);
+    // 7. Once tier artan, sonra tier icinde skor azalan.
+    // Boost (+50) tier'i asamaz: boostlu uzak aday yakinlarin onune gecmez,
+    // kendi tier'inin icinde yukselir. Bilincli — boost gorunurluk satar,
+    // mesafe algisini bozmaz.
+    scored.sort((a, b) => a.tier - b.tier || b.score - a.score);
 
     // 8. Paginate
     const start = (page - 1) * PAGE_SIZE;
@@ -323,6 +343,7 @@ export class MatchingService {
       bio: s.candidate.bio,
       photos: s.candidate.photos,
       distance_km: s.candidate.distance_km,
+      distance_tier: s.candidate.distance_tier,
       question_count: s.questionCount,
       profile_completion: s.candidate.profile_completion,
       is_boosted: isBoostActive(s.candidate.boost_until),
@@ -438,13 +459,19 @@ export class MatchingService {
     // Calculate distance
     const { data: me } = await supabase
       .from("users")
-      .select("lat, lng, passport_lat, passport_lng")
+      .select("lat, lng, passport_lat, passport_lng, match_radius_km")
       .eq("id", userId)
       .single();
 
     const myLat = (me?.passport_lat as number | null) ?? me?.lat;
     const myLng = (me?.passport_lng as number | null) ?? me?.lng;
     const dist = myLat && myLng ? haversineDistance(myLat, myLng, user.lat, user.lng) : 0;
+    // discover ile ayni fonksiyon — undo edilen kart listenin basina eklendigi
+    // icin tier'i digerleriyle tutarli olmali.
+    const { tier: distanceTier } = resolveDistanceTier(
+      dist,
+      (me?.match_radius_km as number | null) ?? 100,
+    );
 
     const now = new Date();
     const isBoostActive = user.boost_until != null && new Date(user.boost_until) > now;
@@ -457,6 +484,7 @@ export class MatchingService {
       bio: user.bio,
       photos: user.photos,
       distance_km: Math.round(dist * 10) / 10,
+      distance_tier: distanceTier,
       question_count: userQuestions.length,
       profile_completion: user.profile_completion,
       is_boosted: isBoostActive,
