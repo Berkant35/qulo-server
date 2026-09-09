@@ -75,6 +75,31 @@ function parsePostgrestInList(value: string): string[] {
   return inner.split(',').map((v) => v.trim().replace(/^"(.*)"$/, '$1'));
 }
 
+/** `a.eq.1,and(b.eq.2,c.eq.3)` -> ['a.eq.1', 'and(b.eq.2,c.eq.3)'] (parantez icini bolmez). */
+function splitTopLevel(expression: string): string[] {
+  const parts: string[] = [];
+  let depth = 0;
+  let current = '';
+  for (const ch of expression) {
+    if (ch === '(') depth++;
+    if (ch === ')') depth--;
+    if (ch === ',' && depth === 0) {
+      parts.push(current);
+      current = '';
+      continue;
+    }
+    current += ch;
+  }
+  if (current) parts.push(current);
+  return parts;
+}
+
+/** `column.op.value` -> Filter. Deger nokta icerebilir (UUID, tarih). */
+function parseFilterExpression(part: string): Filter {
+  const [column, op, ...rest] = part.split('.');
+  return { op: op as FilterOp, column, value: rest.join('.') };
+}
+
 function matches(row: Row, filters: Filter[]): boolean {
   return filters.every((f) => {
     const actual = row[f.column];
@@ -105,7 +130,12 @@ function matches(row: Row, filters: Filter[]): boolean {
 class QueryBuilder implements PromiseLike<Result<any>> {
   private readonly filters: Filter[] = [];
   /** Her grup kendi içinde OR; gruplar birbiriyle ve `filters` ile AND. */
-  private readonly orGroups: Filter[][] = [];
+  /**
+   * `.or()` gruplari. Yapi: grup -> alternatifler -> AND'li filtreler.
+   * Ucuncu seviye, PostgREST'in `and(a.eq.1,b.eq.2)` sozdizimi icin: o
+   * alternatifin TUM filtreleri eslesmeli.
+   */
+  private readonly orGroups: Filter[][][] = [];
   private orderBy: { column: string; ascending: boolean } | null = null;
   private rangeBounds: { from: number; to: number } | null = null;
   private limitCount: number | null = null;
@@ -163,9 +193,18 @@ class QueryBuilder implements PromiseLike<Result<any>> {
    * Sadece kod tabanının kullandığı `col.op.value` biçimi destekleniyor.
    */
   or(expression: string) {
-    const group = expression.split(',').map((part) => {
-      const [column, op, ...rest] = part.split('.');
-      return { op: op as FilterOp, column, value: rest.join('.') };
+    // PostgREST `.or()` iki bicim aliyor:
+    //   "a.eq.1,b.eq.2"                        -> iki alternatif, her biri tek filtre
+    //   "and(a.eq.1,b.eq.2),and(a.eq.2,b.eq.1)" -> iki alternatif, her biri IKI filtre
+    // Ikincisi cift yonlu iliski sorgularinda kullaniliyor (block/quiz/user
+    // servislerinde dort yerde) ve eskiden bu helper onu yanlis ayristiriyordu:
+    // `and(a` bir kolon adi saniliyordu, yani sorgu sessizce hicbir satiri
+    // eslemiyordu ve testler gercegi yansitmiyordu.
+    const group = splitTopLevel(expression).map((part) => {
+      const inner = part.startsWith('and(') && part.endsWith(')')
+        ? splitTopLevel(part.slice(4, -1))
+        : [part];
+      return inner.map(parseFilterExpression);
     });
     this.orGroups.push(group);
     return this;
@@ -202,7 +241,7 @@ class QueryBuilder implements PromiseLike<Result<any>> {
     let selected = all.filter(
       (r) =>
         matches(r, this.filters) &&
-        this.orGroups.every((group) => group.some((f) => matches(r, [f]))),
+        this.orGroups.every((group) => group.some((alternative) => matches(r, alternative))),
     );
     const total = selected.length;
 
