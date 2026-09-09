@@ -86,6 +86,10 @@ export class MatchingService {
         .from("swipes")
         .select("target_id")
         .eq("swiper_id", userId)
+        // Siralamasiz kesme, duzeltilen aday sorgusu bug'inin ayni sinifi:
+        // tavan asilirsa rastgele bir alt kume gelir ve swipe edilmis
+        // profiller discover'a geri doner. En yeniden basla.
+        .order("created_at", { ascending: false })
         .limit(5000),
       supabase
         .from("matches")
@@ -153,7 +157,11 @@ export class MatchingService {
       .eq("email_verified", true)
       .not("lat", "is", null)
       .not("lng", "is", null)
+      // `id` ikincil anahtar: `last_seen_at` esitliginde tiebreak yoksa kesme
+      // noktasi yine belirsizlesir ve havuz 500'u astiginda ayni bug'in kucuk
+      // bir versiyonu geri gelir.
       .order("last_seen_at", { ascending: false })
+      .order("id", { ascending: true })
       .limit(CANDIDATE_FETCH_LIMIT);
 
     if (excludeList.length > 0) {
