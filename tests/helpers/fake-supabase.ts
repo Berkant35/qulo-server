@@ -43,7 +43,7 @@ export interface FakeSupabaseOptions {
   storage?: Record<string, string[]>;
 }
 
-type FilterOp = 'eq' | 'neq' | 'gte' | 'lte' | 'gt' | 'lt' | 'in';
+type FilterOp = 'eq' | 'neq' | 'gte' | 'lte' | 'gt' | 'lt' | 'in' | 'notIs' | 'notIn';
 interface Filter {
   op: FilterOp;
   column: string;
@@ -82,6 +82,11 @@ function matches(row: Row, filters: Filter[]): boolean {
         return actual < f.value;
       case 'in':
         return Array.isArray(f.value) && f.value.includes(actual);
+      case 'notIs':
+        // PostgREST .not(col, 'is', null) → NULL olmayan satirlar.
+        return f.value === null ? actual !== null && actual !== undefined : actual !== f.value;
+      case 'notIn':
+        return !(Array.isArray(f.value) && f.value.includes(actual));
     }
   });
 }
@@ -120,6 +125,13 @@ class QueryBuilder implements PromiseLike<Result<any>> {
   gt(column: string, value: any) { return this.addFilter('gt', column, value); }
   lt(column: string, value: any) { return this.addFilter('lt', column, value); }
   in(column: string, values: any[]) { return this.addFilter('in', column, values); }
+
+  /** PostgREST `.not(col, op, value)` — filtreyi tersleyerek uygular. */
+  not(column: string, op: 'is' | 'in' | 'eq', value: any) {
+    if (op === 'in') return this.addFilter('notIn', column, value);
+    if (op === 'eq') return this.addFilter('neq', column, value);
+    return this.addFilter('notIs', column, value);
+  }
 
   /**
    * PostgREST OR sözdizimi: `user1_id.eq.abc,user2_id.eq.abc`.
