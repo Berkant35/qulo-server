@@ -253,3 +253,56 @@ describe("undoSwipe — tier tutarliligi", () => {
     expect(card.distance_tier).toBe(2);
   });
 });
+
+describe("discover — empty_reason", () => {
+  it("sadece dil filtresi eledigi zaman 'language' doner", async () => {
+    const service = await loadService({
+      users: [viewerRow(), candidateRow("almanca", 30)],
+      swipes: [],
+      matches: [],
+      questions: questionsFor(["almanca"], "de"),
+    });
+
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards).toHaveLength(0);
+    expect(res.empty_reason).toBe("language");
+  });
+
+  it("hic aday yokken 'no_candidates' doner", async () => {
+    const service = await loadService({
+      users: [viewerRow()],
+      swipes: [],
+      matches: [],
+      questions: [],
+    });
+
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards).toHaveLength(0);
+    expect(res.empty_reason).toBe("no_candidates");
+  });
+
+  it("soru/foto kapisi eledigi zaman 'no_candidates' doner (dil degil)", async () => {
+    const service = await loadService({
+      users: [viewerRow(), candidateRow("fotosuz", 10, { photos: [] })],
+      swipes: [],
+      matches: [],
+      questions: questionsFor(["fotosuz"]),
+    });
+
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.empty_reason).toBe("no_candidates");
+  });
+
+  it("kart varken empty_reason hic gonderilmez", async () => {
+    const service = await loadService({
+      users: [viewerRow(), candidateRow("yakin", 10)],
+      swipes: [],
+      matches: [],
+      questions: questionsFor(["yakin"]),
+    });
+
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards).toHaveLength(1);
+    expect(res.empty_reason).toBeUndefined();
+  });
+});

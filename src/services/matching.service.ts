@@ -62,7 +62,15 @@ export class MatchingService {
   /**
    * Discover candidates for a user.
    */
-  async discover(userId: string, page = 1): Promise<{ cards: ProfileCard[]; page: number; has_more: boolean }> {
+  async discover(
+    userId: string,
+    page = 1,
+  ): Promise<{
+    cards: ProfileCard[];
+    page: number;
+    has_more: boolean;
+    empty_reason?: 'language' | 'no_candidates';
+  }> {
     assertUuid(userId, "userId");
     // 1. Get current user + already-swiped IDs in parallel
     const [userResult, swipedResult, matchResult] = await Promise.all([
@@ -173,7 +181,7 @@ export class MatchingService {
     }
 
     if (!candidates || candidates.length === 0) {
-      return { cards: [], page, has_more: false };
+      return { cards: [], page, has_more: false, empty_reason: 'no_candidates' };
     }
 
     // 4. Sert mesafe filtresi YOK — aday tier ile isaretlenir ve siralamada
@@ -277,6 +285,10 @@ export class MatchingService {
       ? (user.preferred_languages as string[])
       : userLanguages;
 
+    // Dil kapisi tek eleyen mi, yoksa zaten aday mi yoktu? Bos ekranda dogru
+    // metni gosterebilmek icin dil oncesi sayiyi tut.
+    const beforeLanguageCount = discoverableFiltered.length;
+
     if (langPrefs.length > 0) {
       // Reuse locale data from step 5 (no extra DB query needed)
       // Language-based filtering: candidate MUST have 2+ questions in user's languages
@@ -350,6 +362,17 @@ export class MatchingService {
       question_info: questionInfoMap.get(s.candidate.id) ?? { count: 0, categories: [], avg_difficulty: 'unranked', languages: [] },
       relationship_goal: s.candidate.relationship_goal,
     }));
+
+    if (cards.length === 0) {
+      // Sayfa numarasina bakilmaz: istemci her zaman page=1 cagiriyor
+      // (match_provider _maybePrefetch), kuyruk tukendiginde sebep gelmeli.
+      return {
+        cards,
+        page,
+        has_more: hasMore,
+        empty_reason: beforeLanguageCount > 0 ? 'language' : 'no_candidates',
+      };
+    }
 
     return { cards, page, has_more: hasMore };
   }
