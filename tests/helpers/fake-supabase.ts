@@ -398,8 +398,13 @@ export function createFakeSupabase(
             store, table, 'upsert', payload, false,
             failureFor(table, 'insert'), opts?.onConflict,
           ),
-        delete: () =>
-          new QueryBuilder(store, table, 'delete', null, false, failureFor(table, 'delete')),
+        // `count` secenegi ONEMLI: PostgREST `.delete({ count: 'exact' })` ile
+        // silinen satir sayisini donuyor ve servisler "hicbir sey silinmedi"yi
+        // (baskasinin kaydini silmeye calismak) bundan anliyor. Eskiden bu
+        // secenek yok sayiliyordu, yani fake her zaman `count: undefined`
+        // donuyordu ve o kontrol testlerde hic tetiklenmiyordu.
+        delete: (opts?: { count?: 'exact' }) =>
+          new QueryBuilder(store, table, 'delete', null, opts?.count === 'exact', failureFor(table, 'delete')),
       };
     },
     /**

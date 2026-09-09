@@ -274,7 +274,14 @@ export class QuestionService {
     const existingIds = new Set(existing.map((q) => q.id));
     const inputIds = new Set(orderedIds);
 
-    if (existingIds.size !== inputIds.size || !orderedIds.every((id) => existingIds.has(id))) {
+    // `orderedIds.length` kontrolu de sart: Set'e cevirmek tekrarlari eziyor,
+    // yani ['q1','q2','q3','q3'] uc benzersiz id verir ve boyut kontrolunu
+    // gecerdi. O liste RPC'ye dort eleman olarak gider ve siralama bozulurdu.
+    if (
+      orderedIds.length !== existingIds.size ||
+      existingIds.size !== inputIds.size ||
+      !orderedIds.every((id) => existingIds.has(id))
+    ) {
       throw new AppError("INVALID_REORDER", 400, "Order must contain exactly all question IDs");
     }
 
