@@ -9,6 +9,10 @@ import { subscriptionService } from "./subscription.service.js";
 import { userLanguageService } from "./user-language.service.js";
 
 const PAGE_SIZE = 10;
+/** Tek seferde cekilen aday tavani. Havuz ~72; 500 rahat bir ust sinir. */
+const CANDIDATE_FETCH_LIMIT = 500;
+/** URL uzunlugu icin dislama listesi tavani; asilirsa kalani bellekte elenir. */
+const MAX_EXCLUDE_IDS = 1000;
 
 interface CandidateRow {
   id: string;
@@ -119,6 +123,11 @@ export class MatchingService {
     }
 
     // 3. Query candidates
+    // Dislama sorguya tasindi: eskiden 50 satir SIRALAMASIZ cekilip dislama
+    // sonrasinda bellekte yapiliyordu, yani havuzun bir kismi hicbir izleyiciye
+    // gorunmuyordu (prod: 72 adayin 22'si).
+    const excludeList = [...excludedIds].slice(0, MAX_EXCLUDE_IDS);
+
     let query = supabase
       .from("users")
       .select(
@@ -128,7 +137,12 @@ export class MatchingService {
       .eq("email_verified", true)
       .not("lat", "is", null)
       .not("lng", "is", null)
-      .limit(50);
+      .order("last_seen_at", { ascending: false })
+      .limit(CANDIDATE_FETCH_LIMIT);
+
+    if (excludeList.length > 0) {
+      query = query.not("id", "in", excludeList);
+    }
 
     // Hide test accounts unless viewer is a test admin (TikTok seed users etc.)
     if (!user.is_test_admin) {
@@ -182,20 +196,32 @@ export class MatchingService {
         .select('user_id, category, stats_correct, stats_wrong, locale')
         .in('user_id', candidateIds);
 
-      // Build count map + raw locale list in-memory from the single query result
+      // Tek gecisde indeksle. Onceki kod her aday icin questionStats'i bastan
+      // filtreliyordu (O(aday x soru)); limit 50 -> 500 ile bu yuk kabul edilemez.
+      const rowsByUser = new Map<string, any[]>();
       for (const row of questionStats ?? []) {
         const uid = row.user_id as string;
-        questionCountMap.set(uid, (questionCountMap.get(uid) ?? 0) + 1);
-        const locales = questionLocalesByUser.get(uid) ?? [];
-        locales.push(questionLocale(row.locale));
-        questionLocalesByUser.set(uid, locales);
+        const rows = rowsByUser.get(uid);
+        if (rows) rows.push(row);
+        else rowsByUser.set(uid, [row]);
       }
 
       // 5.2 — Enrich candidates with question info (category + difficulty)
       for (const cId of candidateIds) {
-        const userQuestions = (questionStats ?? []).filter((q: any) => q.user_id === cId);
-        const totalAttempts = userQuestions.reduce((s: number, q: any) => s + q.stats_correct + q.stats_wrong, 0);
-        const totalCorrect = userQuestions.reduce((s: number, q: any) => s + q.stats_correct, 0);
+        const userQuestions = rowsByUser.get(cId) ?? [];
+
+        questionCountMap.set(cId, userQuestions.length);
+        questionLocalesByUser.set(
+          cId,
+          userQuestions.map((q: any) => questionLocale(q.locale)),
+        );
+
+        let totalAttempts = 0;
+        let totalCorrect = 0;
+        for (const q of userQuestions) {
+          totalAttempts += q.stats_correct + q.stats_wrong;
+          totalCorrect += q.stats_correct;
+        }
         const successRate = totalAttempts > 0 ? (totalCorrect / totalAttempts) * 100 : 50;
 
         let difficulty = 'unranked';
