@@ -328,3 +328,30 @@ describe('ExchangeService — atomiklik sınırı', () => {
     expect(row.purple_diamonds).toBe(0);  // gelmedi
   });
 });
+
+describe('ExchangeService.getRates — teklif ile tahsilat ayni kaynaktan', () => {
+  it('config disi bir guc icin getRates ile buyPower AYNI fiyati kullanir', async () => {
+    // Dokuzuncu bir guc, config'e girmeden `powers` tablosuna seed edilirse
+    // ikisi de DB kolonlarina duser. Eskiden getRates `base_cost * 3` / `base_cost`
+    // hesapliyordu, buyPower ise kolonlari okuyordu — kullaniciya gosterilen
+    // fiyatla tahsil edilen ayrisirdi.
+    const { fake, exchangeService } = await setup({
+      users: [user({ green_diamonds: 100, purple_diamonds: 100 })],
+      powers: [{
+        id: 'p-new', name: 'NEW_POWER', is_active: true, accuracy_rate: 0.5,
+        base_cost: 7, green_cost: 40, purple_cost: 9, special_green_reward: 0,
+      }],
+    });
+
+    const rates = await exchangeService.getRates();
+    const quoted = rates.powers.find((p) => p.name === 'NEW_POWER')!;
+
+    // Teklif DB kolonlarindan geliyor, `base_cost * 3` (21) DEGIL.
+    expect(quoted.green_cost).toBe(40);
+    expect(quoted.purple_cost).toBe(9);
+
+    // Tahsilat da ayni kolonu kullaniyor: 100 - 9 = 91.
+    await exchangeService.buyPower('u1', 'NEW_POWER', 'PURPLE', 1);
+    expect(fake.table('users')[0].purple_diamonds).toBe(91);
+  });
+});

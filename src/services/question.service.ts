@@ -3,6 +3,7 @@ import { AppError, Errors } from "../utils/errors.js";
 import type { CreateQuestionInput, UpdateQuestionInput } from "../validators/question.validator.js";
 import { aiSuggestService } from './ai-suggest.service.js';
 import { subscriptionService } from './subscription.service.js';
+import { economyConfigService } from "./economy-config.service.js";
 import type { SubscriptionPlan } from '../types/index.js';
 
 // Minimum number of questions a user must have to be discoverable + to leave
@@ -44,6 +45,25 @@ export class QuestionService {
     return data;
   }
 
+  /**
+   * Soru suresi, config'teki secenek listesinden biri olmali.
+   *
+   * NEDEN BURADA: liste (`timing.timePresets`) backoffice'ten degistirilebiliyor
+   * ve mobil onu okuyup kullaniciya gosteriyor. Validator'da sabit bir liste
+   * dogrulamak, admin listeyi degistirdiginde kullanicinin gordugu secenegi 400
+   * ile reddetmek olurdu. Ayni desen: `exchange.service.ts` donusum orani.
+   */
+  private async assertTimeLimitAllowed(timeLimit: number | undefined) {
+    if (timeLimit === undefined) return;
+    const config = await economyConfigService.getConfig();
+    const presets = config.timing.timePresets;
+    if (!presets.includes(timeLimit)) {
+      throw Errors.VALIDATION_ERROR({
+        time_limit: `Must be one of: ${presets.join(", ")}`,
+      });
+    }
+  }
+
   async createQuestion(userId: string, input: CreateQuestionInput) {
     // Check count against subscription tier limit
     const [{ count, error: countError }, sub] = await Promise.all([
@@ -54,6 +74,8 @@ export class QuestionService {
     if (countError) {
       throw Errors.SERVER_ERROR();
     }
+
+    await this.assertTimeLimitAllowed(input.time_limit);
 
     const limits = await subscriptionService.getLimits(sub.plan);
     if ((count ?? 0) >= limits.maxQuestions) {
@@ -172,6 +194,10 @@ export class QuestionService {
   }
 
   async updateQuestion(userId: string, orderNum: number, input: UpdateQuestionInput) {
+    // Guncelleme yolu da ayni kurala bagli: validator artik yalnizca araligi
+    // (5-300) kontrol ediyor, secenek uyeligi config'ten.
+    await this.assertTimeLimitAllowed(input.time_limit);
+
     const updateData: Record<string, unknown> = { ...input };
     // Only include category/time_limit/locale if explicitly provided
     if (input.category !== undefined) updateData.category = input.category;

@@ -189,9 +189,17 @@ class ExchangeService {
   async getRates() {
     const config = await economyConfigService.getConfig();
 
+    // green_cost/purple_cost de okunuyor: FIYAT TEKLIFI ILE TAHSILAT AYNI
+    // KAYNAKTAN gelsin diye. Eskiden burasi config yoksa `base_cost * 3` /
+    // `base_cost` hesapliyordu, `buyPower` ise (satir 71) DB kolonlarina
+    // dusuyordu — iki farkli kaynak, yani kullaniciya gosterilen fiyatla
+    // tahsil edilen fiyat ayrisabilirdi. Bugun olusmuyor cunku sekiz gucun
+    // hepsi config'te; ama config'e girmemis dokuzuncu bir guc seed edildigi
+    // anda kendini kurardi. Ayrica o `* 3` aslinda greenToPurpleRatio'ydu ve
+    // oran degistirilebiliyor (migration 021 bu bagi birebir yaziyor).
     const { data, error } = await supabase
       .from("powers")
-      .select("name, base_cost, accuracy_rate")
+      .select("name, base_cost, green_cost, purple_cost, accuracy_rate")
       .eq("is_active", true);
 
     if (error) {
@@ -205,8 +213,8 @@ class ExchangeService {
       powers: (data ?? []).map((p) => ({
         name: p.name,
         base_cost: p.base_cost,
-        green_cost: powerCosts[p.name as keyof typeof powerCosts]?.greenCost ?? p.base_cost * 3,
-        purple_cost: powerCosts[p.name as keyof typeof powerCosts]?.purpleCost ?? p.base_cost,
+        green_cost: powerCosts[p.name as keyof typeof powerCosts]?.greenCost ?? p.green_cost,
+        purple_cost: powerCosts[p.name as keyof typeof powerCosts]?.purpleCost ?? p.purple_cost,
         accuracy_rate: p.accuracy_rate,
       })),
     };
