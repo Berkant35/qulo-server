@@ -43,7 +43,7 @@ export interface FakeSupabaseOptions {
   storage?: Record<string, string[]>;
 }
 
-type FilterOp = 'eq' | 'neq' | 'gte' | 'lte' | 'gt' | 'lt' | 'in' | 'notIs' | 'notIn';
+type FilterOp = 'eq' | 'neq' | 'gte' | 'lte' | 'gt' | 'lt' | 'in' | 'is' | 'notIs' | 'notIn';
 interface Filter {
   op: FilterOp;
   column: string;
@@ -118,6 +118,12 @@ function matches(row: Row, filters: Filter[]): boolean {
         return actual < f.value;
       case 'in':
         return Array.isArray(f.value) && f.value.includes(actual);
+      case 'is':
+        // PostgREST `.is(col, null)` → yalnizca NULL satirlar. Soft-delete
+        // sorgularinda kullaniliyor (`deleted_at is null`), yani "silinmemis"
+        // demek. `undefined` da NULL sayilir: fake store'da alan hic yazilmamis
+        // olabilir ve gercek DB'de o kolon NULL olurdu.
+        return f.value === null ? actual === null || actual === undefined : actual === f.value;
       case 'notIs':
         // PostgREST .not(col, 'is', null) → NULL olmayan satirlar.
         return f.value === null ? actual !== null && actual !== undefined : actual !== f.value;
@@ -161,6 +167,7 @@ class QueryBuilder implements PromiseLike<Result<any>> {
 
   eq(column: string, value: any) { return this.addFilter('eq', column, value); }
   neq(column: string, value: any) { return this.addFilter('neq', column, value); }
+  is(column: string, value: any) { return this.addFilter('is', column, value); }
   gte(column: string, value: any) { return this.addFilter('gte', column, value); }
   lte(column: string, value: any) { return this.addFilter('lte', column, value); }
   gt(column: string, value: any) { return this.addFilter('gt', column, value); }
