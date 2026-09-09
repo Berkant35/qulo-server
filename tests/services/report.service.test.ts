@@ -7,6 +7,12 @@ type InsertPayload = {
   category: string;
 };
 
+/**
+ * `reason` artik opsiyonel (2026-09-09) ama `reports.reason` kolonu NOT NULL
+ * ve default'suz, o yuzden servis sebep yoksa KATEGORIYI yaziyor. Migration
+ * yerine bu secildi: kategori zaten zorunlu ve sikayetin ozunu tasiyor.
+ */
+
 function mockSupabase(opts: { data?: unknown; error?: unknown; onInsert?: (p: InsertPayload) => void }) {
   vi.doMock("../../src/config/supabase.js", () => ({
     supabase: {
@@ -37,6 +43,58 @@ function mockSupabase(opts: { data?: unknown; error?: unknown; onInsert?: (p: In
 describe("reportService.create", () => {
   beforeEach(() => {
     vi.resetModules();
+  });
+
+  it("kendini sikayet reddedilir — moderasyon kuyrugu kirlenmesin", async () => {
+    // DB'de bunu engelleyen kisit yok (yalnizca pkey + iki FK).
+    let inserted = false;
+    mockSupabase({ data: { id: "r-x" }, onInsert: () => { inserted = true; } });
+
+    const { reportService } = await import("../../src/services/report.service.js");
+
+    await expect(reportService.create("u-a", "u-a", "kendim", "OTHER")).rejects.toMatchObject({
+      code: "VALIDATION_ERROR",
+    });
+    expect(inserted).toBe(false);
+  });
+
+  it("sebep verilmezse KATEGORIYI yazar — kolon NOT NULL, bos birakilamaz", async () => {
+    // Istemci sebep yazilmadiginda alani hic gondermiyor
+    // (chat_moderation_mixin.dart:130). Eskiden sema bunu 400 ile reddediyordu;
+    // artik kabul ediliyor ve kolona kategori yaziliyor.
+    let captured: InsertPayload | null = null;
+    mockSupabase({
+      data: { id: "r-2" },
+      onInsert: (p) => {
+        captured = p;
+      },
+    });
+
+    const { reportService } = await import("../../src/services/report.service.js");
+    await reportService.create("u-a", "u-b", undefined, "HARASSMENT");
+
+    expect(captured).toEqual({
+      reporter_id: "u-a",
+      reported_id: "u-b",
+      reason: "HARASSMENT",
+      category: "HARASSMENT",
+    });
+  });
+
+  it("sebep verilirse kategori DEGIL sebep yazilir", async () => {
+    let captured: InsertPayload | null = null;
+    mockSupabase({
+      data: { id: "r-3" },
+      onInsert: (p) => {
+        captured = p;
+      },
+    });
+
+    const { reportService } = await import("../../src/services/report.service.js");
+    await reportService.create("u-a", "u-b", "Surekli reklam atiyor", "SPAM");
+
+    expect(captured!.reason).toBe("Surekli reklam atiyor");
+    expect(captured!.category).toBe("SPAM");
   });
 
   it("inserts a report with the given fields and returns the row", async () => {

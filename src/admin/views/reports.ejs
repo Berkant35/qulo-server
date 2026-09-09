@@ -11,13 +11,14 @@
 </form>
 <div class="card">
   <table>
-    <thead><tr><th>Reporter</th><th>Reported</th><th>Reason</th><th>Status</th><th>Date</th><th></th></tr></thead>
+    <thead><tr><th>Reporter</th><th>Reported</th><th>Category</th><th>Reason</th><th>Status</th><th>Date</th><th></th></tr></thead>
     <tbody>
       <% reports.forEach(function(r) { %>
       <tr>
         <td><a href="/admin/users/<%= r.reporter_id %>" style="color:#a855f7;"><%= r.reporter_id.substring(0,8) %>...</a></td>
         <td><a href="/admin/users/<%= r.reported_id %>" style="color:#a855f7;"><%= r.reported_id.substring(0,8) %>...</a></td>
-        <td><%= r.reason.substring(0, 50) %></td>
+        <td><%= r.category || '-' %></td>
+        <td><%= (r.reason || '').substring(0, 50) %></td>
         <td><span class="badge badge-<%= r.status.toLowerCase() %>"><%= r.status %></span></td>
         <td><%= new Date(r.created_at).toLocaleDateString() %></td>
         <td><a href="/admin/reports/<%= r.id %>" class="btn btn-primary btn-sm">Detail</a></td>

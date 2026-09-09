@@ -35,6 +35,7 @@
   <h3 style="margin-bottom: 12px;">Report Info</h3>
   <dl class="detail-grid">
     <dt>Status</dt><dd><span class="badge badge-<%= report.status.toLowerCase() %>"><%= report.status %></span></dd>
+    <dt>Category</dt><dd><%= report.category || '-' %></dd>
     <dt>Reason</dt><dd><%= report.reason %></dd>
     <dt>Date</dt><dd><%= new Date(report.created_at).toLocaleString() %></dd>
   </dl>
