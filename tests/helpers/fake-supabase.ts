@@ -64,6 +64,17 @@ const NOT_ONE_ROW: SupabaseError = {
 /** Otomatik birincil anahtar sayacı (bkz. run()). */
 let autoId = 0;
 
+/** PostgREST `in` degeri: `(a,b,c)` — bos liste `()`. */
+function isPostgrestInList(value: unknown): value is string {
+  return typeof value === 'string' && value.startsWith('(') && value.endsWith(')');
+}
+
+function parsePostgrestInList(value: string): string[] {
+  const inner = value.slice(1, -1).trim();
+  if (inner === '') return [];
+  return inner.split(',').map((v) => v.trim().replace(/^"(.*)"$/, '$1'));
+}
+
 function matches(row: Row, filters: Filter[]): boolean {
   return filters.every((f) => {
     const actual = row[f.column];
@@ -126,9 +137,23 @@ class QueryBuilder implements PromiseLike<Result<any>> {
   lt(column: string, value: any) { return this.addFilter('lt', column, value); }
   in(column: string, values: any[]) { return this.addFilter('in', column, values); }
 
-  /** PostgREST `.not(col, op, value)` — filtreyi tersleyerek uygular. */
+  /**
+   * PostgREST `.not(col, op, value)` — filtreyi tersleyerek uygular.
+   *
+   * postgrest-js `.not()` degeri HAM sozdizimi olarak URL'e gomer; `in` icin
+   * cagiran taraf parantezi kendisi kurmak zorunda (`'(a,b)'`). Dizi gecilirse
+   * gercek PostgREST parse hatasi doner — bu yuzden fake de diziyi REDDEDER,
+   * aksi halde test uretimde patlayan bir sorguyu yesil gosterir.
+   */
   not(column: string, op: 'is' | 'in' | 'eq', value: any) {
-    if (op === 'in') return this.addFilter('notIn', column, value);
+    if (op === 'in') {
+      if (!isPostgrestInList(value)) {
+        throw new Error(
+          `not(${column}, 'in', ...) icin PostgREST parantezli liste bekler, alinan: ${JSON.stringify(value)}`,
+        );
+      }
+      return this.addFilter('notIn', column, parsePostgrestInList(value));
+    }
     if (op === 'eq') return this.addFilter('neq', column, value);
     return this.addFilter('notIs', column, value);
   }

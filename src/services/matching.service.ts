@@ -3,7 +3,7 @@ import { questionLocale } from "../constants/locales.js";
 import { Errors } from "../utils/errors.js";
 import { resolveDistanceTier } from "../utils/distance-tier.js";
 import { haversineDistance } from "../utils/math.js";
-import { assertUuid } from "../utils/validation.js";
+import { assertUuid, isUuid } from "../utils/validation.js";
 import { blockService } from "./block.service.js";
 import { scoringService } from "./scoring.service.js";
 import { subscriptionService } from "./subscription.service.js";
@@ -137,7 +137,12 @@ export class MatchingService {
     // Dislama sorguya tasindi: eskiden 50 satir SIRALAMASIZ cekilip dislama
     // sonrasinda bellekte yapiliyordu, yani havuzun bir kismi hicbir izleyiciye
     // gorunmuyordu (prod: 72 adayin 22'si).
-    const excludeList = [...excludedIds].slice(0, MAX_EXCLUDE_IDS);
+    // `.not()` degeri HAM PostgREST sozdizimi olarak gecirir (postgrest-js
+    // sanitize etmez, parantez eklemez): dizi verilirse URL `id=not.in.a,b`
+    // olur ve PostgREST parse hatasi doner. Parantezi biz kuruyoruz, degerleri
+    // de UUID suzgecinden geciriyoruz — bicim disi bir id filtreyi bozamaz.
+    const excludeList = [...excludedIds].filter(isUuid).slice(0, MAX_EXCLUDE_IDS);
+    const excludeFilter = `(${excludeList.join(",")})`;
 
     let query = supabase
       .from("users")
@@ -152,7 +157,7 @@ export class MatchingService {
       .limit(CANDIDATE_FETCH_LIMIT);
 
     if (excludeList.length > 0) {
-      query = query.not("id", "in", excludeList);
+      query = query.not("id", "in", excludeFilter);
     }
 
     // Hide test accounts unless viewer is a test admin (TikTok seed users etc.)
@@ -363,9 +368,11 @@ export class MatchingService {
       relationship_goal: s.candidate.relationship_goal,
     }));
 
-    if (cards.length === 0) {
-      // Sayfa numarasina bakilmaz: istemci her zaman page=1 cagiriyor
-      // (match_provider _maybePrefetch), kuyruk tukendiginde sebep gelmeli.
+    // empty_reason HAVUZUN neden bos oldugunu anlatir; sayfa sonuna gelmek
+    // havuz sebebi degildir (has_more=false zaten onu soyluyor). Bu yuzden
+    // `scored` doluyken sebep gonderilmez — aksi halde page=3 istegi, dil
+    // filtresi hic elemedigi halde 'language' metnini gosterirdi.
+    if (scored.length === 0) {
       return {
         cards,
         page,

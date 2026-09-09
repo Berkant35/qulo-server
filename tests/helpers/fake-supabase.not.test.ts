@@ -13,17 +13,24 @@ describe("fake-supabase .not()", () => {
     expect((data as any[]).map((r) => r.id)).toEqual(["a"]);
   });
 
-  it("not(col, 'in', [...]) listedeki satirlari eler", async () => {
+  it("not(col, 'in', '(...)') listedeki satirlari eler", async () => {
     const fake = createFakeSupabase({
       users: [{ id: "a" }, { id: "b" }, { id: "c" }],
     });
-    const { data } = await fake.client.from("users").select("id").not("id", "in", ["b", "c"]);
+    const { data } = await fake.client.from("users").select("id").not("id", "in", "(b,c)");
     expect((data as any[]).map((r) => r.id)).toEqual(["a"]);
   });
 
   it("bos dislama listesi hicbir satiri elemez", async () => {
     const fake = createFakeSupabase({ users: [{ id: "a" }, { id: "b" }] });
-    const { data } = await fake.client.from("users").select("id").not("id", "in", []);
+    const { data } = await fake.client.from("users").select("id").not("id", "in", "()");
     expect((data as any[]).map((r) => r.id)).toEqual(["a", "b"]);
+  });
+
+  it("dizi gecilirse patlar — gercek PostgREST de parse edemez", () => {
+    const fake = createFakeSupabase({ users: [{ id: "a" }] });
+    expect(() => fake.client.from("users").select("id").not("id", "in", ["a"])).toThrow(
+      /parantezli liste/,
+    );
   });
 });

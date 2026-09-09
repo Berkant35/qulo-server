@@ -3,6 +3,11 @@ import { createFakeSupabase, type Tables } from "../helpers/fake-supabase.js";
 
 const VIEWER_ID = "00000000-0000-4000-8000-000000000001";
 
+/** Deterministik test UUID'si. */
+function uid(n: number): string {
+  return `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
+}
+
 /** Istanbul merkezli izleyici; radius 50 km, herkesi gormek istiyor. */
 function viewerRow(overrides: Record<string, unknown> = {}) {
   return {
@@ -110,17 +115,34 @@ describe("discover — aday sorgusu", () => {
   });
 
   it("swipe edilmis aday hicbir sayfada donmez", async () => {
-    const ids = ["cand-a", "cand-b", "cand-c"];
+    // Gercek UUID'ler: dislama SORGUDA yapiliyor ve PostgREST `in` sozdizimi
+    // ancak boylece test ediliyor (fake, parantezsiz/dizi degeri reddediyor).
+    const ids = [uid(10), uid(11), uid(12)];
     const service = await loadService({
       users: [viewerRow(), ...ids.map((id, i) => candidateRow(id, 5 + i))],
-      swipes: [{ swiper_id: VIEWER_ID, target_id: "cand-b", action: "LIKE" }],
+      swipes: [{ swiper_id: VIEWER_ID, target_id: ids[1], action: "LIKE" }],
       matches: [],
       questions: questionsFor(ids),
     });
 
     const res = await service.discover(VIEWER_ID, 1);
-    expect(res.cards.map((c) => c.user_id)).not.toContain("cand-b");
+    expect(res.cards.map((c) => c.user_id)).not.toContain(ids[1]);
     expect(res.cards).toHaveLength(2);
+  });
+
+  it("sayfa sonuna gelmek empty_reason uretmez", async () => {
+    // Havuz dolu ama istenen sayfa bos: bu bir HAVUZ sebebi degil.
+    const ids = [uid(20), uid(21)];
+    const service = await loadService({
+      users: [viewerRow(), ...ids.map((id, i) => candidateRow(id, 5 + i))],
+      swipes: [],
+      matches: [],
+      questions: questionsFor(ids),
+    });
+
+    const res = await service.discover(VIEWER_ID, 3);
+    expect(res.cards).toHaveLength(0);
+    expect(res.empty_reason).toBeUndefined();
   });
 });
 
