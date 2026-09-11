@@ -1,4 +1,5 @@
 import { supabase } from "../config/supabase.js";
+import type { ClientMeta, ClientPlatform } from "../utils/client-meta.js";
 
 type ConsentType = "terms_of_service" | "privacy_policy" | "kvkk_explicit";
 
@@ -6,9 +7,8 @@ interface RecordConsentInput {
   userId: string;
   consentType: ConsentType;
   version?: string;
-  ipAddress?: string;
   appVersion?: string;
-  platform?: string;
+  platform?: ClientPlatform;
 }
 
 class ConsentService {
@@ -18,7 +18,6 @@ class ConsentService {
         user_id: input.userId,
         consent_type: input.consentType,
         version: input.version ?? "1.0",
-        ip_address: input.ipAddress,
         app_version: input.appVersion,
         platform: input.platform,
         accepted_at: new Date().toISOString(),
@@ -32,32 +31,25 @@ class ConsentService {
     }
   }
 
-  async recordRegistrationConsents(
-    userId: string,
-    ipAddress?: string,
-    appVersion?: string,
-    platform?: string,
-  ) {
+  /**
+   * Kayit anindaki uc zorunlu riza (KVKK denetim izi). Platform + surum istemci
+   * basliklarindan gelir; eski istemcide bos kalir, riza yine de kaydedilir.
+   *
+   * IP bilincli olarak YAZILMAZ: gizlilik politikasi IP toplamayi aciklamiyor.
+   * Politika guncellenirse `ClientMeta`'ya eklenip buradan gecirilir.
+   */
+  async recordRegistrationConsents(userId: string, client: ClientMeta = {}) {
     const types: ConsentType[] = ["terms_of_service", "privacy_policy", "kvkk_explicit"];
     await Promise.all(
       types.map((consentType) =>
-        this.recordConsent({ userId, consentType, ipAddress, appVersion, platform }),
+        this.recordConsent({
+          userId,
+          consentType,
+          appVersion: client.appVersion,
+          platform: client.platform,
+        }),
       ),
     );
-  }
-
-  async getUserConsents(userId: string) {
-    const { data, error } = await supabase
-      .from("user_consents")
-      .select("consent_type, version, accepted_at")
-      .eq("user_id", userId)
-      .order("accepted_at", { ascending: false });
-
-    if (error) {
-      console.error("[consent] Failed to get consents:", error.message);
-      return [];
-    }
-    return data ?? [];
   }
 }
 

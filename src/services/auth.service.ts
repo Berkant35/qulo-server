@@ -5,6 +5,7 @@ import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../utils/
 import { sendVerificationEmail, sendPasswordResetEmail } from "../utils/email.js";
 import type { RegisterInput, LoginInput } from "../validators/auth.validator.js";
 import { resolveLocale, localeFromTag } from "../utils/locales.js";
+import type { ClientMeta } from "../utils/client-meta.js";
 import { userLanguageService } from "./user-language.service.js";
 import { referralService } from "./referral.service.js";
 import { consentService } from "./consent.service.js";
@@ -36,7 +37,7 @@ export class AuthService {
     }
   }
 
-  async register(data: RegisterInput) {
+  async register(data: RegisterInput, client: ClientMeta = {}) {
     const email = normalizeEmail(data.email);
 
     // Check if email already exists
@@ -90,7 +91,7 @@ export class AuthService {
     }
 
     // Record ToS + Privacy Policy consent (non-blocking)
-    consentService.recordRegistrationConsents(user.id).catch((err) => {
+    consentService.recordRegistrationConsents(user.id, client).catch((err) => {
       console.error("[auth] Failed to record consents:", err);
     });
 
@@ -403,7 +404,7 @@ export class AuthService {
     surname?: string;
     nonce?: string;
     locale?: string;
-  }) {
+  }, client: ClientMeta = {}) {
     // 1. Token verify
     let socialPayload: SocialAuthPayload;
     try {
@@ -502,7 +503,7 @@ export class AuthService {
       throw Errors.SERVER_ERROR();
     }
 
-    consentService.recordRegistrationConsents(newUser.id).catch((err) => {
+    consentService.recordRegistrationConsents(newUser.id, client).catch((err) => {
       console.error("[social-login] Failed to record consents:", err);
     });
 

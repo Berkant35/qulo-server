@@ -39,7 +39,7 @@ describe("socialLoginHandler — locale dikisi", () => {
 
     await socialLoginHandler(req, res, next);
 
-    expect(socialLoginMock).toHaveBeenCalledWith(expect.objectContaining({ locale: "de" }));
+    expect(socialLoginMock).toHaveBeenCalledWith(expect.objectContaining({ locale: "de" }), expect.anything());
     expect(next).not.toHaveBeenCalled();
   });
 
@@ -54,7 +54,7 @@ describe("socialLoginHandler — locale dikisi", () => {
 
     await socialLoginHandler(req, res, next);
 
-    expect(socialLoginMock).toHaveBeenCalledWith(expect.objectContaining({ locale: "fr" }));
+    expect(socialLoginMock).toHaveBeenCalledWith(expect.objectContaining({ locale: "fr" }), expect.anything());
   });
 
   /**
@@ -73,6 +73,62 @@ describe("socialLoginHandler — locale dikisi", () => {
 
     await socialLoginHandler(req, res, next);
 
-    expect(socialLoginMock).toHaveBeenCalledWith(expect.objectContaining({ locale: "tr" }));
+    expect(socialLoginMock).toHaveBeenCalledWith(expect.objectContaining({ locale: "tr" }), expect.anything());
+  });
+});
+
+/**
+ * Riza denetim izi dikisi: istemci basliklari (platform + surum) servise ulasiyor mu?
+ * IP BILINCLI OLARAK gecmez — gizlilik politikasi IP toplamayi aciklamiyor.
+ *
+ * `toHaveBeenCalledWith` degeri undefined olan anahtarlari yok sayar; bu yuzden meta'nin
+ * anahtar kumesi ayrica iddia ediliyor. IP hangi kaynaktan okunursa okunsun (req.ip,
+ * x-forwarded-for) meta'ya eklenen her anahtar bu testleri kirmiziya dondurur.
+ */
+describe("kayit rizasi — istemci meta dikisi", () => {
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
+  const headers = {
+    "x-app-platform": "ios", "x-app-version": "2.0.10+73", "x-forwarded-for": "203.0.113.7",
+  };
+  const expectedMeta = { platform: "ios", appVersion: "2.0.10+73" };
+  const metaKeys = (mock: ReturnType<typeof vi.fn>) => Object.keys(mock.mock.calls[0][1]).sort();
+
+  async function loadHandlers() {
+    const registerMock = vi.fn().mockResolvedValue({ userId: "u1" });
+    const socialLoginMock = vi.fn().mockResolvedValue({
+      accessToken: "a", refreshToken: "r", userId: "u1", profileIncomplete: false,
+    });
+    vi.doMock("../../src/services/auth.service.js", () => ({
+      authService: { register: registerMock, socialLogin: socialLoginMock },
+    }));
+    const handlers = await import("../../src/controllers/auth.controller.js");
+    return { ...handlers, registerMock, socialLoginMock };
+  }
+
+  it("registerHandler basliklardaki platform + surumu servise gecirir, IP'yi gecirmez", async () => {
+    const { registerHandler, registerMock } = await loadHandlers();
+    const res: any = { status: vi.fn().mockReturnThis(), json: vi.fn() };
+    const req: any = { body: { email: "a@qulo.test" }, headers, ip: "203.0.113.7" };
+
+    await registerHandler(req, res, vi.fn());
+
+    expect(registerMock).toHaveBeenCalledWith(req.body, expectedMeta);
+    expect(metaKeys(registerMock)).toEqual(["appVersion", "platform"]);
+  });
+
+  it("socialLoginHandler basliklardaki platform + surumu servise gecirir, IP'yi gecirmez", async () => {
+    const { socialLoginHandler, socialLoginMock } = await loadHandlers();
+    const { res } = makeRes();
+    const req: any = {
+      body: { provider: "google", id_token: "tok", locale: "de" }, headers, ip: "203.0.113.7",
+    };
+
+    await socialLoginHandler(req, res, vi.fn());
+
+    expect(socialLoginMock).toHaveBeenCalledWith(expect.objectContaining({ locale: "de" }), expectedMeta);
+    expect(metaKeys(socialLoginMock)).toEqual(["appVersion", "platform"]);
   });
 });

@@ -56,6 +56,17 @@ interface Result<T> {
   count?: number;
 }
 
+/**
+ * PostgREST gövdeyi `JSON.stringify` ile gönderir: değeri `undefined` olan alan
+ * isteğe hiç girmez, satırdaki mevcut değer korunur. `Object.assign` ise onu
+ * undefined ile ezer — fake prod'da olmayan bir veri kaybı gösterirdi.
+ */
+function assignDefined(target: Row, patch: Row): void {
+  for (const [key, value] of Object.entries(patch)) {
+    if (value !== undefined) target[key] = value;
+  }
+}
+
 const NOT_ONE_ROW: SupabaseError = {
   message: 'JSON object requested, multiple (or no) rows returned',
   code: 'PGRST116',
@@ -278,17 +289,20 @@ class QueryBuilder implements PromiseLike<Result<any>> {
       const incoming = Array.isArray(this.payload) ? this.payload : [this.payload as Row];
       const written: Row[] = [];
 
+      // Bileşik anahtar da olabilir ("user_id,consent_type,version"): çakışma için
+      // HEPSİ eşleşmeli. Eskiden virgüllü anahtar tek kolon adı sanılıyordu —
+      // `row['a,b']` hep undefined → upsert her seferinde yeni satır ekliyordu.
+      const keys = this.onConflict?.split(',').map((k) => k.trim()) ?? [];
       for (const row of incoming) {
-        const key = this.onConflict;
         // Postgres'te NULL/undefined benzersizlik kısıtına takılmaz — her zaman yeni satır.
-        const conflictValue = key ? row[key] : undefined;
+        const hasKey = keys.length > 0 && keys.every((k) => row[k] !== undefined && row[k] !== null);
         const existing =
-          this.mode === 'upsert' && key && conflictValue !== undefined && conflictValue !== null
-            ? this.rows().find((r) => r[key] === conflictValue)
+          this.mode === 'upsert' && hasKey
+            ? this.rows().find((r) => keys.every((k) => r[k] === row[k]))
             : undefined;
 
         if (existing) {
-          Object.assign(existing, row);
+          assignDefined(existing, row);
           written.push(existing);
         } else {
           // Postgres birincil anahtarı kendi üretir. Fake de üretmeli: aksi halde
@@ -309,7 +323,7 @@ class QueryBuilder implements PromiseLike<Result<any>> {
     if (this.mode === 'update') {
       // Postgres semantiği: filtreler GÜNCEL değerlere göre değerlendirilir.
       // `.gte()` guard'ı bu yüzden compare-and-swap gibi davranır.
-      for (const row of affected) Object.assign(row, this.payload);
+      for (const row of affected) assignDefined(row, this.payload as Row);
     } else if (this.mode === 'delete') {
       const remaining = this.rows().filter((r) => !affected.includes(r));
       this.store[this.table] = remaining;

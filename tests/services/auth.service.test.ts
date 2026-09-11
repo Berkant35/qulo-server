@@ -212,6 +212,27 @@ describe('register', () => {
     await authService.register(registerInput({ locale: 'de' }));
     expect(fake.table('user_languages')[0]).toMatchObject({ language_code: 'de' });
   });
+
+  /** KVKK denetim izi: prod'daki 561 rıza satırının hiçbirinde platform/sürüm yoktu. */
+  it('rızalar istemci platformu ve sürümüyle kaydedilir', async () => {
+    const { fake, authService } = await setup({ users: [] });
+
+    await authService.register(registerInput(), { platform: 'ios', appVersion: '2.0.10+73' });
+    await vi.waitFor(() => expect(fake.table('user_consents')).toHaveLength(3));
+
+    const userId = fake.table('users')[0].id;
+    for (const row of fake.table('user_consents')) {
+      expect(row).toMatchObject({ user_id: userId, platform: 'ios', app_version: '2.0.10+73' });
+    }
+  });
+
+  it('istemci meta\'sı yoksa (eski sürüm) rızalar yine de kaydedilir', async () => {
+    const { fake, authService } = await setup({ users: [] });
+
+    await authService.register(registerInput());
+
+    await vi.waitFor(() => expect(fake.table('user_consents')).toHaveLength(3));
+  });
 });
 
 describe('verifyEmail', () => {
@@ -552,6 +573,17 @@ describe('socialLogin', () => {
     const { fake, authService } = await setup({ users: [] });
     await authService.socialLogin(provider);
     await vi.waitFor(() => expect(fake.table('user_power_inventory')).toHaveLength(1));
+  });
+
+  it('Case C — yeni sosyal kullanıcının rızaları istemci meta\'sıyla kaydedilir', async () => {
+    const { fake, authService } = await setup({ users: [] });
+
+    await authService.socialLogin(provider, { platform: 'android', appVersion: '2.0.10+73' });
+    await vi.waitFor(() => expect(fake.table('user_consents')).toHaveLength(3));
+
+    for (const row of fake.table('user_consents')) {
+      expect(row).toMatchObject({ platform: 'android', app_version: '2.0.10+73' });
+    }
   });
 
   it('Case A — provider_id eşleşince mevcut hesaba girer', async () => {

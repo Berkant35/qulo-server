@@ -1,14 +1,21 @@
 import type { Request, Response, NextFunction } from "express";
 import { authService } from "../services/auth.service.js";
 import { env } from "../config/env.js";
-import { localeFromRequestHeaders } from "../utils/locales.js";
-import type { SupportedLocale } from "../utils/locales.js";
-import type { RegisterInput, LoginInput, RefreshInput, ForgotPasswordInput, ResetPasswordInput } from "../validators/auth.validator.js";
+import { localeFromRequestHeaders, type SupportedLocale } from "../utils/locales.js";
+import { clientMetaFromHeaders } from "../utils/client-meta.js";
+import type {
+  RegisterInput,
+  LoginInput,
+  RefreshInput,
+  ForgotPasswordInput,
+  ResetPasswordInput,
+  SocialLoginInput,
+} from "../validators/auth.validator.js";
 
 export async function registerHandler(req: Request, res: Response, next: NextFunction) {
   try {
     const data = req.body as RegisterInput;
-    const result = await authService.register(data);
+    const result = await authService.register(data, clientMetaFromHeaders(req.headers));
     res.status(201).json(result);
   } catch (err) {
     next(err);
@@ -89,8 +96,11 @@ export async function resetPasswordHandler(req: Request, res: Response, next: Ne
 
 export async function socialLoginHandler(req: Request, res: Response, next: NextFunction) {
   try {
-    const data = req.body as import("../validators/auth.validator.js").SocialLoginInput;
-    const result = await authService.socialLogin({ ...data, locale: data.locale ?? detectLocale(req) });
+    const data = req.body as SocialLoginInput;
+    const result = await authService.socialLogin(
+      { ...data, locale: data.locale ?? detectLocale(req) },
+      clientMetaFromHeaders(req.headers),
+    );
     res.json(result);
   } catch (err) {
     next(err);
