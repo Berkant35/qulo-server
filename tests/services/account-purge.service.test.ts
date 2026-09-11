@@ -120,6 +120,93 @@ describe('accountPurgeService.hardDeleteUser', () => {
     expect(fake.storageFiles('photos')).toEqual([`${OTHER}/c.jpg`]);
   });
 
+  /**
+   * Sohbet medyasi `chat-media/${matchId}/` altinda. Eslesme silinince mesajlari da
+   * CASCADE ile gidiyor (prod semasi dogrulandi); klasor temizlenmezse dosyalar
+   * herkese acik bucket'ta sahipsiz kalir — gizlilik politikasi mesajlarin kalici
+   * silindigini vaat ediyor.
+   */
+  it('kullanicinin eslesmelerinin sohbet medyasi silinir, baska eslesmelerinki kalir', async () => {
+    const { fake, accountPurgeService } = await setup({
+      matches: [
+        { id: 'm-a', user1_id: UID, user2_id: OTHER },
+        { id: 'm-b', user1_id: THIRD, user2_id: UID },
+        { id: 'm-c', user1_id: OTHER, user2_id: THIRD },
+      ],
+    }, {
+      storage: { 'chat-media': ['m-a/1.jpg', 'm-a/2.m4a', 'm-b/3.jpg', 'm-c/4.jpg'] },
+    });
+
+    await accountPurgeService.hardDeleteUser(UID);
+
+    expect(fake.storageFiles('chat-media')).toEqual(['m-c/4.jpg']);
+  });
+
+  it('kalabalik sohbet klasoru sayfa sayfa tamamen bosaltilir (Storage list sayfali)', async () => {
+    // Gercek Storage `list` varsayilan 100, en fazla sayfa boyu kadar dosya doner;
+    // tek seferlik liste buyuk sohbetin medyasinin bir kismini geride birakirdi.
+    const many = Array.from({ length: 1001 }, (_, i) => `m-a/${i}.jpg`);
+    const { fake, accountPurgeService } = await setup({
+      matches: [{ id: 'm-a', user1_id: UID, user2_id: OTHER }],
+    }, { storage: { 'chat-media': [...many, 'm-z/keep.jpg'] } });
+
+    await accountPurgeService.hardDeleteUser(UID);
+
+    expect(fake.storageFiles('chat-media')).toEqual(['m-z/keep.jpg']);
+  });
+
+  it.each(['list', 'remove'] as const)(
+    'bir sohbet klasorunde %s hatasi digerlerini durdurmaz',
+    async (op) => {
+      // Hata aninda `break` yerine `return` yazilirsa sonraki eslesmelerin medyasi kalir.
+      const { fake, accountPurgeService } = await setup({
+        matches: [
+          { id: 'm-a', user1_id: UID, user2_id: OTHER },
+          { id: 'm-b', user1_id: THIRD, user2_id: UID },
+        ],
+      }, {
+        storage: { 'chat-media': ['m-a/1.jpg', 'm-b/2.jpg'] },
+        storageFailOn: [{ bucket: 'chat-media', op, times: 1 }],
+      });
+
+      await accountPurgeService.hardDeleteUser(UID);
+
+      expect(fake.storageFiles('chat-media')).toEqual(['m-a/1.jpg']);
+    },
+  );
+
+  it('eslesmeler okunamazsa hicbir sey silinmeden durur — medya sahipsiz kalmasin', async () => {
+    const { fake, accountPurgeService } = await setup({
+      matches: [{ id: 'm-a', user1_id: UID, user2_id: OTHER }],
+      questions: [{ id: 'q1', user_id: UID }],
+    }, {
+      failOn: [{ table: 'matches', op: 'select' }],
+      storage: { 'chat-media': ['m-a/1.jpg'] },
+    });
+
+    await expect(accountPurgeService.hardDeleteUser(UID)).rejects.toMatchObject({ code: 'SERVER_ERROR' });
+
+    expect(fake.table('users')).toHaveLength(2);
+    expect(fake.table('questions')).toHaveLength(1);
+    expect(fake.table('matches')).toHaveLength(1);
+    expect(fake.storageFiles('chat-media')).toEqual(['m-a/1.jpg']);
+  });
+
+  it('kullanici satiri silinemezse sohbet medyasina dokunulmaz — sohbet hala duruyor olabilir', async () => {
+    // Medya ancak kullanici satiri silindikten sonra temizlenir: CASCADE o noktada
+    // eslesmenin ve mesajlarin gittigini garanti eder.
+    const { fake, accountPurgeService } = await setup({
+      matches: [{ id: 'm-a', user1_id: UID, user2_id: OTHER }],
+    }, {
+      failOn: [{ table: 'users', op: 'delete' }],
+      storage: { 'chat-media': ['m-a/1.jpg'] },
+    });
+
+    await expect(accountPurgeService.hardDeleteUser(UID)).rejects.toMatchObject({ code: 'SERVER_ERROR' });
+
+    expect(fake.storageFiles('chat-media')).toEqual(['m-a/1.jpg']);
+  });
+
   it('bir cocuk tablo silinemezse akis durmaz — sonraki tablolar ve kullanici yine silinir', async () => {
     // notifications listede ikinci, refresh_tokens son: hata `break`'e donerse
     // aradaki 22 tablo atlanir. Son tabloyu dogrulamak bunu yakalar.

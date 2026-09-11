@@ -2,6 +2,11 @@ import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
 import { assertUuid } from "../utils/validation.js";
 
+/** Storage `list` varsayilani 100 dosya; sohbet klasorleri sayfa sayfa bosaltilir. */
+const CHAT_MEDIA_PAGE_SIZE = 1000;
+/** Silme sessizce tutmazsa (hep ayni sayfa donerse) sonsuz donguye girmesin. */
+const CHAT_MEDIA_MAX_PAGES = 50;
+
 /**
  * Soft-delete edilmis bir hesabi ve tum iliskili verisini kalici olarak siler —
  * e-posta ya da sosyal kimlik yeniden kayit icin serbest kalsin.
@@ -26,6 +31,19 @@ class AccountPurgeService {
       console.error("[hardDelete] Refused: user is not soft-deleted", { userId });
       throw Errors.SERVER_ERROR();
     }
+
+    // Eslesme id'leri silmeden ONCE alinir: sohbet medyasi `chat-media/${matchId}/` altinda.
+    // Okunamazsa hicbir sey silinmeden durulur — devam edilse id'ler kaybolur ve medya
+    // herkese acik bucket'ta kalici sahipsiz kalirdi. Bedeli: o kayit denemesi hata verir.
+    const { data: userMatches, error: matchError } = await supabase
+      .from("matches")
+      .select("id")
+      .or(`user1_id.eq.${userId},user2_id.eq.${userId}`);
+    if (matchError) {
+      console.error("[hardDelete] Failed to read matches for chat-media cleanup:", matchError.message);
+      throw Errors.SERVER_ERROR();
+    }
+    const matchIds = (userMatches ?? []).map((m: { id: string }) => m.id);
 
     // Delete from child tables first (order matters for FK constraints)
     // Quiz answers are deleted explicitly before their sessions (no FK cascade assumed)
@@ -96,7 +114,42 @@ class AccountPurgeService {
       throw Errors.SERVER_ERROR();
     }
 
+    // Sohbet medyasi ancak kullanici satiri silindikten SONRA: FK CASCADE eslesmelerin ve
+    // mesajlarin gercekten gittigini garanti ediyor. Once silinseydi, eslesme silmesi
+    // patladiginda karsi taraf hala duran sohbette kirik medya gorurdu.
+    await this.removeChatMedia(matchIds);
+
     console.log(`[hardDelete] User ${userId} fully purged`);
+  }
+
+  /**
+   * Kullanicinin eslesmelerinin sohbet medyasini siler. Eslesme silinince mesajlari da
+   * CASCADE ile gider (messages.match_id); dosyalar herkese acik bucket'ta sahipsiz
+   * kalirdi. Karsi tarafin o sohbette gonderdigi medya da silinir — sohbetin kendisi yok.
+   * Bir klasordeki hata digerlerini durdurmaz.
+   */
+  private async removeChatMedia(matchIds: string[]) {
+    for (const matchId of matchIds) {
+      for (let page = 0; page < CHAT_MEDIA_MAX_PAGES; page++) {
+        const { data: media, error } = await supabase.storage
+          .from("chat-media")
+          .list(matchId, { limit: CHAT_MEDIA_PAGE_SIZE });
+        if (error) {
+          console.warn(`[hardDelete] Failed to list chat-media/${matchId}:`, error.message);
+          break;
+        }
+        if (!media || media.length === 0) break;
+
+        const { error: removeError } = await supabase.storage
+          .from("chat-media")
+          .remove(media.map((f) => `${matchId}/${f.name}`));
+        if (removeError) {
+          console.warn(`[hardDelete] Failed to clean chat-media/${matchId}:`, removeError.message);
+          break;
+        }
+        if (media.length < CHAT_MEDIA_PAGE_SIZE) break;
+      }
+    }
   }
 }
 

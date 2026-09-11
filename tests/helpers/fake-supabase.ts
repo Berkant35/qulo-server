@@ -35,12 +35,25 @@ export interface FailureSpec {
   failAfter?: number;
 }
 
+/** Depolama hata enjeksiyonu — `FailureSpec`'in storage karşılığı. */
+export interface StorageFailureSpec {
+  bucket: string;
+  op: 'list' | 'remove';
+  error?: SupabaseError;
+  /** Kaç başarılı çağrıdan SONRA patlasın (varsayılan 0 = hemen). */
+  failAfter?: number;
+  /** Kaç çağrı patlasın (varsayılan: sonrakilerin hepsi) — tek bir klasörün hatasını hedeflemek için. */
+  times?: number;
+}
+
 export interface FakeSupabaseOptions {
   failOn?: FailureSpec[];
   /** rpc(name, args) çağrılarına verilecek cevaplar. */
   rpc?: Record<string, { data?: unknown; error?: SupabaseError }>;
   /** Başlangıçtaki depolama dosyaları: `{ photos: ['user-id/a.jpg'] }`. */
   storage?: Record<string, string[]>;
+  /** Depolama hata enjeksiyonu (bkz. `StorageFailureSpec`). */
+  storageFailOn?: StorageFailureSpec[];
 }
 
 type FilterOp = 'eq' | 'neq' | 'gte' | 'lte' | 'gt' | 'lt' | 'in' | 'is' | 'notIs' | 'notIn';
@@ -398,6 +411,23 @@ export function createFakeSupabase(
     return spec.error ?? { message: `fake failure: ${op} on ${table}` };
   };
 
+  // Depolama hata enjeksiyonu için (bucket, op) başına çağrı sayacı.
+  const storageOpCounts = new Map<string, number>();
+
+  const storageFailureFor = (bucket: string, op: StorageFailureSpec['op']): SupabaseError | null => {
+    const spec = options.storageFailOn?.find((f) => f.bucket === bucket && f.op === op);
+    if (!spec) return null;
+
+    const key = `${bucket}:${op}`;
+    const seen = storageOpCounts.get(key) ?? 0;
+    storageOpCounts.set(key, seen + 1);
+    const start = spec.failAfter ?? 0;
+    if (seen < start) return null;
+    if (spec.times !== undefined && seen >= start + spec.times) return null;
+
+    return spec.error ?? { message: `fake storage failure: ${op} on ${bucket}` };
+  };
+
   const client = {
     from(table: string) {
       return {
@@ -425,19 +455,29 @@ export function createFakeSupabase(
      * Depolama — sadece kod tabanının kullandığı `list` ve `remove`.
      * Dosyalar `bucket → path` haritasında tutulur; `list(prefix)` o önekin
      * altındaki dosya adlarını döner (Supabase `{ name }` listesi gibi).
+     * Gerçek Storage'a sadık iki kural:
+     * - Sayfalı: `limit` verilmezse 100 dosya — sayfalamayı unutan kod testte de dosya bırakır.
+     * - Tek seviyeli: alt klasördeki dosyalar dönmez (klasör girdileri modellenmez).
      */
     storage: {
       from(bucket: string) {
-        const files = (storageFiles[bucket] ??= []);
+        // Dizi her çağrıda yeniden okunur: `remove` yeni dizi yazıyor; `from()` anında
+        // yakalanan kopya bayat kalır, aynı nesneyle ikinci çağrı silineni geri getirirdi.
+        const files = () => (storageFiles[bucket] ??= []);
         return {
-          async list(prefix: string) {
-            const data = files
-              .filter((path) => path.startsWith(`${prefix}/`))
+          async list(prefix: string, opts?: { limit?: number }) {
+            const failure = storageFailureFor(bucket, 'list');
+            if (failure) return { data: null, error: failure };
+            const data = files()
+              .filter((path) => path.startsWith(`${prefix}/`) && !path.slice(prefix.length + 1).includes('/'))
+              .slice(0, opts?.limit ?? 100)
               .map((path) => ({ name: path.slice(prefix.length + 1) }));
             return { data, error: null };
           },
           async remove(paths: string[]) {
-            storageFiles[bucket] = files.filter((path) => !paths.includes(path));
+            const failure = storageFailureFor(bucket, 'remove');
+            if (failure) return { data: null, error: failure };
+            storageFiles[bucket] = files().filter((path) => !paths.includes(path));
             return { data: null, error: null };
           },
         };
