@@ -78,6 +78,76 @@ describe('userService.getPublicProfile — distance_km', () => {
 });
 
 /**
+ * Cevrimici durum ve son gorulme yalnizca AKTIF eslesmeye acik. Eslesmedigin
+ * birinin ne zaman cevrimici oldugunu gorebilmek takip araci olur — bu sinir
+ * veri sizintisi sinifinda, kod dogru; testler onu donduruyor.
+ */
+describe('userService.getPublicProfile — cevrimici durum gizliligi', () => {
+  const OTHER = '33333333-3333-4333-8333-333333333333';
+  const SEEN = '2026-09-10T10:00:00.000Z';
+  const onlineHer = () => user(HER, { is_online: true, last_seen_at: SEEN });
+  const match = (user1_id: string, user2_id: string, is_active = true) => ({
+    id: `m-${user1_id.slice(0, 4)}-${user2_id.slice(0, 4)}`, user1_id, user2_id, is_active,
+  });
+
+  it('eslesme yoksa is_online ve last_seen null — hedef cevrimici olsa bile', async () => {
+    const { userService } = await setup({ users: [user(ME), onlineHer()] });
+
+    const profile = await userService.getPublicProfile(ME, HER);
+
+    expect(profile.is_online).toBeNull();
+    expect(profile.last_seen).toBeNull();
+  });
+
+  it('aktif eslesmede gercek degerler doner', async () => {
+    const { userService } = await setup({
+      users: [user(ME), onlineHer()], matches: [match(ME, HER)],
+    });
+
+    const profile = await userService.getPublicProfile(ME, HER);
+
+    expect(profile.is_online).toBe(true);
+    expect(profile.last_seen).toBe(SEEN);
+  });
+
+  it('eslesme ters yonde kayitliysa da (user1 = hedef) gorunur', async () => {
+    const { userService } = await setup({
+      users: [user(ME), onlineHer()], matches: [match(HER, ME)],
+    });
+
+    const profile = await userService.getPublicProfile(ME, HER);
+
+    expect(profile.is_online).toBe(true);
+    expect(profile.last_seen).toBe(SEEN);
+  });
+
+  it('bitmis (pasif) eslesme durumu acmaz', async () => {
+    const { userService } = await setup({
+      users: [user(ME), onlineHer()], matches: [match(ME, HER, false)],
+    });
+
+    const profile = await userService.getPublicProfile(ME, HER);
+
+    expect(profile.is_online).toBeNull();
+    expect(profile.last_seen).toBeNull();
+  });
+
+  it('iki tarafin BASKALARIYLA eslesmesi durumu acmaz', async () => {
+    // Filtre "iki taraf birlikte" yerine "taraflardan biri" diye yazilirsa
+    // hedefin ya da izleyicinin herhangi bir eslesmesi kapiyi acar.
+    const { userService } = await setup({
+      users: [user(ME), onlineHer(), user(OTHER)],
+      matches: [match(OTHER, HER), match(ME, OTHER)],
+    });
+
+    const profile = await userService.getPublicProfile(ME, HER);
+
+    expect(profile.is_online).toBeNull();
+    expect(profile.last_seen).toBeNull();
+  });
+});
+
+/**
  * getMe.question_locales — kullanicinin sorularinin dil dagilimi.
  *
  * Kesif, bir profili yalnizca izleyicinin okudugu dillerde en az iki sorusu
