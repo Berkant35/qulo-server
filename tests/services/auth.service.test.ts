@@ -146,6 +146,23 @@ describe('register', () => {
     expect(fake.storageFiles('photos')).toHaveLength(0);
   });
 
+  /**
+   * Ban kaçırma yolu (2026-09-11, /server-review): şikayet edilen kullanıcı hesabını
+   * siler, admin silinmiş hesabı banlar, kullanıcı aynı e-postayla yeniden kaydolur.
+   * Eskiden purge ban kaydını ve şikayetleri silip temiz bir hesap açıyordu.
+   */
+  it('silinmiş ama banlı hesabın e-postasıyla yeniden kayıt reddedilir — ban ve şikayet korunur', async () => {
+    const { fake, authService } = await setup({
+      users: [{ id: UID, email: 'yeni@qulo.test', is_deleted: true, is_banned: true }],
+      reports: [{ id: 'rp1', reporter_id: UID2, reported_id: UID }],
+    });
+
+    await expect(authService.register(registerInput())).rejects.toMatchObject({ code: 'ACCOUNT_BANNED' });
+
+    expect(fake.table('users')).toEqual([expect.objectContaining({ id: UID, is_banned: true })]);
+    expect(fake.table('reports')).toHaveLength(1);
+  });
+
   it('doğrulama e-postası token ile gönderilir ve token hash\'li saklanır', async () => {
     const { fake, authService } = await setup({ users: [] });
     await authService.register(registerInput());
@@ -698,6 +715,35 @@ describe('socialLogin', () => {
 
     expect(result.userId).not.toBe(UID);
     expect(fake.table('users')).toHaveLength(1);
+  });
+
+  /** Ban kaçırma yolu: sosyal girişte de silinmiş + banlı hesap purge edilmemeli. */
+  it('Case A — silinmiş ama banlı hesap temizlenmez, giriş reddedilir', async () => {
+    const { fake, authService } = await setup({
+      users: [{
+        id: UID, email: 'social@qulo.test', provider_id: 'google-123',
+        is_deleted: true, is_banned: true, age: 30,
+      }],
+      reports: [{ id: 'rp1', reporter_id: UID2, reported_id: UID }],
+    });
+
+    await expect(authService.socialLogin(provider)).rejects.toMatchObject({ code: 'ACCOUNT_BANNED' });
+
+    expect(fake.table('users').map((u) => u.id)).toEqual([UID]);
+    expect(fake.table('reports')).toHaveLength(1);
+  });
+
+  it('Case B — silinmiş ama banlı hesap temizlenmez, giriş reddedilir', async () => {
+    const { fake, authService } = await setup({
+      users: [{
+        id: UID, email: 'social@qulo.test', provider_id: null,
+        is_deleted: true, is_banned: true, age: 30,
+      }],
+    });
+
+    await expect(authService.socialLogin(provider)).rejects.toMatchObject({ code: 'ACCOUNT_BANNED' });
+
+    expect(fake.table('users').map((u) => u.id)).toEqual([UID]);
   });
 
   it('silinmiş hesabın verileri de temizlenir', async () => {
