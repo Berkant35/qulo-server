@@ -1,4 +1,5 @@
 import { supabase } from "../config/supabase.js";
+import { resolveLocale } from "../utils/locales.js";
 import { questionLocale } from "../constants/locales.js";
 import { Errors } from "../utils/errors.js";
 import { resolveDistanceTier } from "../utils/distance-tier.js";
@@ -77,7 +78,7 @@ export class MatchingService {
       supabase
         .from("users")
         .select(
-          "id, gender_pref, age_pref_min, age_pref_max, match_radius_km, lat, lng, passport_lat, passport_lng, preferred_languages, is_test_admin",
+          "id, gender_pref, age_pref_min, age_pref_max, match_radius_km, lat, lng, passport_lat, passport_lng, preferred_languages, locale, is_test_admin",
         )
         .eq("id", userId)
         .eq("is_deleted", false)
@@ -292,26 +293,29 @@ export class MatchingService {
       return photoCount >= 1;
     });
 
-    // 5.6 — Language filter: candidate must have 2+ questions in user's languages
-    // Use preferred_languages if set, otherwise fall back to userLanguages
-    const langPrefs = user.preferred_languages && (user.preferred_languages as string[]).length > 0
-      ? (user.preferred_languages as string[])
-      : userLanguages;
+    // 5.6 — Language filter: candidate must have 2+ questions in user's languages.
+    // Kaynak users.preferred_languages (054 sonrasi tek kaynak). Eski satirlar icin
+    // user_languages'a, o da bossa uygulama diline duser — hicbir yol "filtresiz"e dusmez
+    // (bos liste = kullanici okuyamadigi dilde profiller gorur).
+    const prefColumn = (user.preferred_languages as string[] | null) ?? [];
+    const langPrefs = prefColumn.length > 0
+      ? prefColumn
+      : userLanguages.length > 0
+        ? userLanguages
+        : [resolveLocale(user.locale as string | null)];
 
     // Dil kapisi tek eleyen mi, yoksa zaten aday mi yoktu? Bos ekranda dogru
     // metni gosterebilmek icin dil oncesi sayiyi tut.
     const beforeLanguageCount = discoverableFiltered.length;
 
-    if (langPrefs.length > 0) {
-      // Reuse locale data from step 5 (no extra DB query needed)
-      // Language-based filtering: candidate MUST have 2+ questions in user's languages
-      // Always strict — no fallback candidates
-      discoverableFiltered = discoverableFiltered.filter((c) => {
-        const qLocales = questionLocalesByUser.get(c.id) || [];
-        const matchingCount = qLocales.filter((l: string) => langPrefs.includes(l)).length;
-        return matchingCount >= 2;
-      });
-    }
+    // Reuse locale data from step 5 (no extra DB query needed)
+    // Language-based filtering: candidate MUST have 2+ questions in user's languages
+    // Always strict — no fallback candidates
+    discoverableFiltered = discoverableFiltered.filter((c) => {
+      const qLocales = questionLocalesByUser.get(c.id) || [];
+      const matchingCount = qLocales.filter((l: string) => langPrefs.includes(l)).length;
+      return matchingCount >= 2;
+    });
 
     // 6. Score each candidate
     const now = new Date();

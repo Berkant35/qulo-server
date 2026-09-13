@@ -67,7 +67,7 @@ function questionsFor(userIds: string[], locale = "tr") {
   ]);
 }
 
-async function loadService(tables: Tables) {
+async function loadService(tables: Tables, opts: { userLanguages?: string[] } = {}) {
   vi.resetModules();
   const fake = createFakeSupabase(tables, {
     rpc: { increment_times_shown: { data: null }, increment_like_received: { data: null } },
@@ -77,7 +77,7 @@ async function loadService(tables: Tables) {
     blockService: { getBlockedIds: async () => [], getBlockerIds: async () => [] },
   }));
   vi.doMock("../../src/services/user-language.service.js", () => ({
-    userLanguageService: { getUserLanguages: async () => ["tr"] },
+    userLanguageService: { getUserLanguages: async () => opts.userLanguages ?? ["tr"] },
   }));
   vi.doMock("../../src/services/subscription.service.js", () => ({
     subscriptionService: {
@@ -273,6 +273,27 @@ describe("undoSwipe — tier tutarliligi", () => {
     const card = await service.undoSwipe(VIEWER_ID, UZAK_ID);
     // Ayni mesafe discover'da tier 2 donuyor (bkz. yukaridaki test).
     expect(card.distance_tier).toBe(2);
+  });
+});
+
+describe("discover — dil tercihi bossa uygulama dili son care", () => {
+  // 054 sonrasi DB varsayilani '{}'; sutun VE tablo bos kalirsa filtre tamamen
+  // devre disi kaliyordu (kullanici okuyamadigi dilde profiller goruyordu).
+  it("sutun ve tablo bosken izleyicinin uygulama diliyle filtreler, filtresiz dusmez", async () => {
+    const service = await loadService({
+      users: [
+        viewerRow({ preferred_languages: [], locale: "de" }),
+        candidateRow("turkce", 10),
+        candidateRow("almanca", 20),
+      ],
+      user_languages: [],
+      swipes: [],
+      matches: [],
+      questions: [...questionsFor(["turkce"], "tr"), ...questionsFor(["almanca"], "de")],
+    }, { userLanguages: [] });
+
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id), `empty_reason=${res.empty_reason}`).toEqual(["almanca"]);
   });
 });
 

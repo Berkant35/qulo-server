@@ -1,4 +1,5 @@
 import { supabase } from "../config/supabase.js";
+import { resolveLocale } from '../utils/locales.js';
 import { questionLocale } from "../constants/locales.js";
 import { Errors } from "../utils/errors.js";
 import { calculatePowerCost, calculateGreenReward, shuffleArray, pickOracleSuggestion } from "../utils/math.js";
@@ -136,20 +137,22 @@ export class QuizService {
   }
 
   /**
-   * Resolve solver's preferred languages — first check users.preferred_languages,
-   * then fall back to user_languages table.
+   * Cozucunun dil listesi: users.preferred_languages (054 sonrasi tek kaynak); eski
+   * satirlar icin user_languages, o da bossa uygulama dili (matching 5.6 ile ayni kural —
+   * bos liste filtreyi kapatip okunamayan sorular gosterirdi).
    */
   private async resolveSolverLanguages(solverId: string): Promise<string[]> {
     const { data: userData } = await supabase
       .from('users')
-      .select('preferred_languages')
+      .select('preferred_languages, locale')
       .eq('id', solverId)
       .single();
 
     const prefLangs = userData?.preferred_languages as string[] | null;
     if (prefLangs && prefLangs.length > 0) return prefLangs;
 
-    return userLanguageService.getUserLanguages(solverId);
+    const fromTable = await userLanguageService.getUserLanguages(solverId);
+    return fromTable.length > 0 ? fromTable : [resolveLocale(userData?.locale as string | null)];
   }
 
   // ─── Start Session ─────────────────────────────────────────────

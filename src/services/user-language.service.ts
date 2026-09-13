@@ -18,11 +18,13 @@ class UserLanguageService {
   }
 
   /**
-   * Listeyi tek transaction'da degistirir (migration 043 `set_user_languages`).
+   * Listeyi tek transaction'da degistirir (`set_user_languages`, migration 043 + 054):
+   * user_languages tablosu VE users.preferred_languages sutunu birlikte yazilir.
+   * Dil listesine yazan TEK yol budur — tabloya/sutuna dogrudan yazma.
    * Eski delete+insert deseninde insert patlayinca kullanicinin dilleri silinmis kaliyordu.
    */
   async setUserLanguages(userId: string, languages: SupportedLocale[]): Promise<string[]> {
-    const { error } = await supabase.rpc('set_user_languages', {
+    const { data, error } = await supabase.rpc('set_user_languages', {
       p_user_id: userId,
       p_languages: languages,
     });
@@ -32,13 +34,26 @@ class UserLanguageService {
       throw Errors.SERVER_ERROR();
     }
 
-    return languages;
+    // 054 sonrasi RPC nihai listeyi doner (uygulama dili eklenmis, tekillesmis).
+    return Array.isArray(data) ? (data as string[]) : languages;
   }
 
-  async addLanguage(userId: string, language: SupportedLocale): Promise<void> {
-    await supabase
-      .from('user_languages')
-      .upsert({ user_id: userId, language_code: language }, { onConflict: 'user_id,language_code' });
+  /**
+   * PATCH /me sonrasi senkronlanacak liste; senkron gerekmiyorsa null.
+   * Kural (DB fonksiyonuyla ayni): uygulama dili her zaman listede, tekrarlar
+   * sira korunarak duser. Burada da uygulanir ki gereksiz RPC olmasin ve yanit
+   * senkron sonucunu tasisin.
+   */
+  languagesToSync(
+    data: { preferred_languages?: readonly string[]; locale?: string },
+    current: readonly string[] | null,
+  ): SupportedLocale[] | null {
+    const hasLocale = data.locale !== undefined;
+    const base = data.preferred_languages ?? (hasLocale ? (current ?? []) : null);
+    if (!base) return null;
+    const merged = [...new Set(hasLocale ? [...base, data.locale as string] : base)];
+    if (!data.preferred_languages && merged.length === (current ?? []).length) return null;
+    return merged as SupportedLocale[];
   }
 }
 

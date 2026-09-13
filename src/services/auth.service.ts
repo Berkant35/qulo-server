@@ -66,6 +66,8 @@ export class AuthService {
     const verifyToken = generateToken();
     const verifyTokenHash = hashToken(verifyToken);
     const referralCode = await referralService.generateUniqueCode();
+    // Uygulama dili = eslesme tercihinin ana degeri; iki alan ayni kaynaktan turer.
+    const locale = resolveLocale(data.locale);
 
     const tokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24 hours
 
@@ -78,7 +80,9 @@ export class AuthService {
         surname: data.surname,
         age: data.age,
         gender: data.gender,
-        locale: data.locale,
+        locale,
+        // Sutun satir dogarken dolu: RPC patlasa bile kullanici dilsiz kalmaz (054 DEFAULT '{}').
+        preferred_languages: [locale],
         verify_token: verifyTokenHash,
         token_expires_at: tokenExpiresAt,
         email_verified: false,
@@ -112,8 +116,14 @@ export class AuthService {
       }
     }
 
-    // Auto-add user's locale to user_languages
-    await userLanguageService.addLanguage(user.id, resolveLocale(data.locale));
+    // Tek RPC user_languages'i tamamlar (sutun zaten INSERT'te; migration 054). Fail-open:
+    // consent/starter/referral ile ayni politika — aksi halde users satiri olusmus,
+    // dogrulama e-postasi gitmemis, tekrar kayit 409 -> hesap kilitli kalirdi.
+    try {
+      await userLanguageService.setUserLanguages(user.id, [locale]);
+    } catch (err) {
+      console.error("[auth] Failed to sync languages:", err);
+    }
 
     sendVerificationEmail(email, verifyToken, data.locale).catch((err) => {
       console.error('[auth] Failed to send verification email:', err instanceof Error ? err.message : err);
@@ -410,6 +420,10 @@ export class AuthService {
 
     // 4. Case C: New user
     const referralCode = await referralService.generateUniqueCode();
+    // Sosyal giriste locale serbest string (validator enum degil) — localeProvider'in
+    // Locale.toString() ciktisi bolgeli olabilir (tr_TR gibi), localeFromTag alt etiketi
+    // soyup dogru dile cozer; bilinmeyen -> en. Uygulama dili = eslesme tercihinin ana degeri.
+    const locale = localeFromTag(data.locale);
     const { data: newUser, error: insertError } = await supabase
       .from("users")
       .insert({
@@ -420,10 +434,8 @@ export class AuthService {
         provider_id: providerId,
         email_verified: true,
         referral_code: referralCode,
-        // Sosyal giriste locale kozmetik ve serbest string (validator artik enum degil) —
-        // localeProvider'in Locale.toString() ciktisi bolgeli olabilir (tr_TR gibi),
-        // localeFromTag alt etiketi soyup dogru dile cozer.
-        locale: localeFromTag(data.locale),
+        locale,
+        preferred_languages: [locale],
       })
       .select("id, email, age")
       .single();
@@ -440,9 +452,12 @@ export class AuthService {
     // Sadece Case C (gercek yeni kullanici). Soft-delete kurtarma yukaridaki
     // existingByEmail dalindan donduyor → tekrar hediye vermez.
     this.grantStarterPowers(newUser.id);
-    userLanguageService.addLanguage(newUser.id, localeFromTag(data.locale)).catch((err) => {
-      console.error("[social-login] Failed to add language:", err);
-    });
+    // Kayit ile ayni politika: sutun INSERT'te dolu, RPC turev tabloyu tamamlar, fail-open.
+    try {
+      await userLanguageService.setUserLanguages(newUser.id, [locale]);
+    } catch (err) {
+      console.error("[social-login] Failed to sync languages:", err);
+    }
 
     return this.createSocialSession(newUser.id, newUser.email, newUser.age);
   }

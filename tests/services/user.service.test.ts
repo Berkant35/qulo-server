@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { createFakeSupabase, type Tables } from '../helpers/fake-supabase.js';
+import { createFakeSupabase, type Tables, type FakeSupabaseOptions } from '../helpers/fake-supabase.js';
 
 /**
  * Profil detayindaki mesafe: iki tarafin da koordinati varsa km (1 ondalik),
@@ -17,10 +17,10 @@ const user = (id: string, over: Record<string, unknown> = {}) => ({
   is_deleted: false, ...over,
 });
 
-async function setup(seed: Tables) {
+async function setup(seed: Tables, options?: FakeSupabaseOptions) {
   const fake = createFakeSupabase({
     users: [], blocks: [], user_details: [], matches: [], questions: [], ...seed,
-  });
+  }, options);
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
   const { userService } = await import('../../src/services/user.service.js');
   return { fake, userService };
@@ -261,5 +261,88 @@ describe('userService.getMe — question_locales hata dali', () => {
     // getMe'nin geri kalani calismaya devam etmeli — yan bilgi, profili dusurmez.
     expect(me.id).toBe(ME);
     expect(me.question_count).toBe(2);
+  });
+});
+
+/**
+ * 2026-09-13: uygulama dili (users.locale) ile eşleşme dili (preferred_languages)
+ * ayrı kavramlar ama kural şu: uygulama dili HER ZAMAN tercihlerde bulunur.
+ * Kullanıcı dili değiştirince yeni dil listeye eklenir (öncekiler silinmez) ve
+ * sütun + user_languages tablosu tek RPC ile senkronlanır (migration 054).
+ */
+describe('userService.updateProfile — uygulama dili tercihlere dahil', () => {
+  it('locale değişince yeni dil preferred_languages\'a eklenir ve RPC ile iki yer senkronlanır', async () => {
+    const { fake, userService } = await setup({
+      users: [user(ME, { locale: 'tr', preferred_languages: ['tr'] })],
+    });
+
+    const result = await userService.updateProfile(ME, { locale: 'fr' });
+
+    expect(fake.rpcCalls).toContainEqual({
+      name: 'set_user_languages',
+      args: { p_user_id: ME, p_languages: ['tr', 'fr'] },
+    });
+    // Yanıt bayat listeyi değil senkronlanan listeyi döner.
+    expect(result.preferred_languages).toEqual(['tr', 'fr']);
+  });
+
+  it('locale zaten tercihlerdeyse RPC çağrılmaz ama locale güncellenir', async () => {
+    const { fake, userService } = await setup({
+      users: [user(ME, { locale: 'tr', preferred_languages: ['tr', 'fr'] })],
+    });
+
+    await userService.updateProfile(ME, { locale: 'fr' });
+
+    expect(fake.rpcCalls.filter((c) => c.name === 'set_user_languages')).toHaveLength(0);
+    expect(fake.table('users')[0]).toMatchObject({ locale: 'fr', preferred_languages: ['tr', 'fr'] });
+  });
+
+  it('preferred_languages ve locale birlikte gelirse gönderilen listeye locale eklenir, tek RPC', async () => {
+    const { fake, userService } = await setup({
+      users: [user(ME, { locale: 'tr', preferred_languages: ['tr'] })],
+    });
+
+    await userService.updateProfile(ME, { locale: 'de', preferred_languages: ['tr'] });
+
+    const calls = fake.rpcCalls.filter((c) => c.name === 'set_user_languages');
+    expect(calls).toEqual([{ name: 'set_user_languages', args: { p_user_id: ME, p_languages: ['tr', 'de'] } }]);
+  });
+
+  it('yalnız preferred_languages gelirse liste olduğu gibi yazılır (mevcut davranış)', async () => {
+    const { fake, userService } = await setup({
+      users: [user(ME, { locale: 'tr', preferred_languages: ['tr'] })],
+    });
+
+    await userService.updateProfile(ME, { preferred_languages: ['en', 'de'] });
+
+    expect(fake.rpcCalls).toContainEqual({
+      name: 'set_user_languages',
+      args: { p_user_id: ME, p_languages: ['en', 'de'] },
+    });
+  });
+
+  it('sütuna doğrudan yazılmaz: RPC patlarsa hata döner ve sütun eski listede kalır', async () => {
+    // Eskiden sütun .update() ile yazılıp RPC hatası yutuluyordu → sütun yeni, tablo eski, 200.
+    const { fake, userService } = await setup(
+      { users: [user(ME, { locale: 'tr', preferred_languages: ['tr'] })] },
+      { rpc: { set_user_languages: { error: { message: 'rpc down' } } } },
+    );
+
+    await expect(userService.updateProfile(ME, { preferred_languages: ['en'] }))
+      .rejects.toMatchObject({ code: 'SERVER_ERROR' });
+    expect(fake.table('users')[0].preferred_languages).toEqual(['tr']);
+  });
+
+  it('tekrarlı dil kodları tekilleştirilir, sıra korunur', async () => {
+    const { fake, userService } = await setup({
+      users: [user(ME, { locale: 'tr', preferred_languages: ['tr'] })],
+    });
+
+    await userService.updateProfile(ME, { preferred_languages: ['en', 'tr', 'en'] });
+
+    expect(fake.rpcCalls).toContainEqual({
+      name: 'set_user_languages',
+      args: { p_user_id: ME, p_languages: ['en', 'tr'] },
+    });
   });
 });

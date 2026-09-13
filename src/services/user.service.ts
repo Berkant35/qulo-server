@@ -76,7 +76,9 @@ export class UserService {
 
   async updateProfile(userId: string, data: UpdateProfileInput) {
     // gender_pref geldiyse set_at'i server-side stamp et (client'tan manipüle edilemez)
-    const updates: Record<string, unknown> = { ...data };
+    // Dil listesi sutuna dogrudan YAZILMAZ — tek yol set_user_languages RPC'si (migration 054).
+    const { preferred_languages, ...profileData } = data;
+    const updates: Record<string, unknown> = { ...profileData };
     if (data.gender_pref !== undefined) {
       updates.gender_pref_set_at = new Date().toISOString();
     }
@@ -99,15 +101,13 @@ export class UserService {
       throw Errors.USER_NOT_FOUND();
     }
 
-    // Sync user_languages table if preferred_languages was updated
-    if (data.preferred_languages && Array.isArray(data.preferred_languages)) {
-      try {
-        // Zod enum'u dogruladi; tip daraltma guvenli.
-        await userLanguageService.setUserLanguages(userId, data.preferred_languages as SupportedLocale[]);
-      } catch (err) {
-        console.error("[updateProfile] sync user_languages error:", err);
-      }
-    }
+    // Dil tercihi tek kaynak (migration 054): sutun + user_languages tek RPC'de yazilir;
+    // uygulama dili (locale) her zaman listede. Hata yutulmaz — istemci "kaydedildi" sanmasin.
+    const languages = userLanguageService.languagesToSync(
+      { preferred_languages, locale: data.locale },
+      user.preferred_languages as string[] | null,
+    );
+    const syncedLanguages = languages ? await userLanguageService.setUserLanguages(userId, languages) : null;
 
     try {
       await this.recalculateProfileCompletion(userId);
@@ -122,7 +122,10 @@ export class UserService {
       .eq("id", userId)
       .single();
 
-    return { ...user, profile_completion: updated?.profile_completion ?? user.profile_completion };
+    return {
+      ...user,
+      ...(syncedLanguages ? { preferred_languages: syncedLanguages } : {}),
+      profile_completion: updated?.profile_completion ?? user.profile_completion };
   }
 
   async updateDetails(userId: string, data: UpdateDetailsInput) {
@@ -496,6 +499,7 @@ export class UserService {
       question_info: questionInfo,
     };
   }
+
 
   private async recalculateProfileCompletion(userId: string) {
     const { data: user } = await supabase
