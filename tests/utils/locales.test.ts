@@ -118,10 +118,15 @@ describe('webLocale', () => {
     expect(webLocale('de')).toBe('de');
   });
 
-  it('web sitesinde olmayan uygulama dili en olur (th/id: 404 yerine Ingilizce sayfa)', async () => {
+  it('th/id artik web sitesinde var (2026-09-14) — aynen kalir', async () => {
     const { webLocale } = await import('../../src/utils/locales.js');
-    expect(webLocale('th')).toBe('en');
-    expect(webLocale('id')).toBe('en');
+    expect(webLocale('th')).toBe('th');
+    expect(webLocale('id')).toBe('id');
+  });
+
+  it('web sitesinde olmayan/bos dil en olur (404 yerine Ingilizce sayfa)', async () => {
+    const { webLocale } = await import('../../src/utils/locales.js');
+    expect(webLocale('vi')).toBe('en');
     expect(webLocale(undefined)).toBe('en');
   });
 

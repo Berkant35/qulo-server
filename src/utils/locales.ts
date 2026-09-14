@@ -80,13 +80,15 @@ export function pickLabel(
 }
 
 /**
- * quloapp.com'un sundugu diller (web/src/lib/i18n/config.ts). Uygulama 18 dil, web 16:
- * sunucunun urettigi web linkleri (sifre sifirlama, e-posta dogrulama yonlendirmesi)
- * web'de olmayan dilde 404 verir. Web th/id'yi alinca (C1) buraya da ekle.
+ * quloapp.com'un arayuz/yasal sayfa dilleri (web/src/lib/i18n/config.ts `locales`).
+ * Sunucunun urettigi web linkleri (sifre sifirlama, e-posta dogrulama yonlendirmesi)
+ * yalniz bu listedeki dile gider; web'de olmayan dil `en`'e kirpilir. Web ile birlikte
+ * guncelle (2026-09-14: th/id web'e eklendi, 18 = 18).
  */
 export const WEB_LOCALES = [
   'tr', 'en', 'de', 'fr', 'es', 'ar', 'ru',
   'pt', 'it', 'ja', 'ko', 'zh', 'nl', 'pl', 'sv', 'hi',
+  'th', 'id',
 ] as const;
 
 export function webLocale(locale?: string | null): string {
