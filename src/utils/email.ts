@@ -29,7 +29,12 @@ function getEmailLocale(locale?: string): Record<string, string> {
     localeCache.set(loc, data);
     return data;
   } catch {
-    if (loc !== "en") return getEmailLocale("en");
+    if (loc !== "en") {
+      // Dosya yoksa her cagrida tekrar readFileSync + exception olmasin: en verisini bu dil icin de cache'le.
+      const fallback = getEmailLocale("en");
+      localeCache.set(loc, fallback);
+      return fallback;
+    }
     throw new Error("English email locale file not found");
   }
 }
@@ -76,8 +81,10 @@ export async function sendPasswordResetEmail(
   token: string,
   locale?: string,
 ): Promise<void> {
-  const strings = getEmailLocale(locale);
-  const url = `${env.WEB_URL}/${webLocale(locale)}/reset-password?token=${token}`;
+  // Ayni girdi bir kez cozulur: e-posta metni ile link dili ayrisamaz.
+  const loc = resolveLocale(locale);
+  const strings = getEmailLocale(loc);
+  const url = `${env.WEB_URL}/${webLocale(loc)}/reset-password?token=${encodeURIComponent(token)}`;
   const html = renderTemplate(strings, url, "reset");
 
   const maskedTo = maskEmail(to);

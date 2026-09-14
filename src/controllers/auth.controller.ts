@@ -1,8 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
-import { webLocale } from "../utils/locales.js";
 import { authService } from "../services/auth.service.js";
 import { env } from "../config/env.js";
-import { localeFromRequestHeaders, type SupportedLocale } from "../utils/locales.js";
+import { localeFromRequestHeaders, type SupportedLocale, webLocale } from "../utils/locales.js";
 import { clientMetaFromHeaders } from "../utils/client-meta.js";
 import type {
   RegisterInput,
@@ -28,7 +27,7 @@ export async function verifyEmailHandler(req: Request, res: Response, next: Next
     const { token } = req.query as { token: string };
     await authService.verifyEmail(token);
 
-    // Web 16 dil: uygulama dili web'de yoksa Ingilizce sayfaya yonlendir (404 yerine).
+    // Web'de olmayan dil Ingilizce sayfaya (404 yerine); bugun 18 = 18, liste constants/locales.ts.
     const locale = webLocale(detectLocale(req));
     res.redirect(302, `${env.WEB_URL}/${locale}/email-verified?status=success`);
   } catch (err: unknown) {

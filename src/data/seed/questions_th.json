@@ -430,7 +430,8 @@
     ],
     "tone": "deep",
     "target_gender": "male",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -443,7 +444,8 @@
     ],
     "tone": "flirty",
     "target_gender": "male",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -456,7 +458,8 @@
     ],
     "tone": "deep",
     "target_gender": "male",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -469,7 +472,8 @@
     ],
     "tone": "deep",
     "target_gender": "male",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -482,7 +486,8 @@
     ],
     "tone": "flirty",
     "target_gender": "male",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -495,7 +500,8 @@
     ],
     "tone": "flirty",
     "target_gender": "male",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -508,7 +514,8 @@
     ],
     "tone": "deep",
     "target_gender": "male",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -521,7 +528,8 @@
     ],
     "tone": "flirty",
     "target_gender": "male",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -534,7 +542,8 @@
     ],
     "tone": "flirty",
     "target_gender": "male",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -547,7 +556,8 @@
     ],
     "tone": "deep",
     "target_gender": "male",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -560,7 +570,8 @@
     ],
     "tone": "flirty",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -587,7 +598,8 @@
     ],
     "tone": "flirty",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -600,7 +612,8 @@
     ],
     "tone": "flirty",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -613,7 +626,8 @@
     ],
     "tone": "deep",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -626,7 +640,8 @@
     ],
     "tone": "deep",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -639,7 +654,8 @@
     ],
     "tone": "flirty",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -652,7 +668,8 @@
     ],
     "tone": "deep",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -679,7 +696,8 @@
     ],
     "tone": "flirty",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -692,7 +710,8 @@
     ],
     "tone": "flirty",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -705,7 +724,8 @@
     ],
     "tone": "flirty",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -718,7 +738,8 @@
     ],
     "tone": "flirty",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -731,7 +752,8 @@
     ],
     "tone": "deep",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -744,7 +766,8 @@
     ],
     "tone": "flirty",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -757,7 +780,8 @@
     ],
     "tone": "deep",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -784,7 +808,8 @@
     ],
     "tone": "deep",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -797,7 +822,8 @@
     ],
     "tone": "flirty",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -810,7 +836,8 @@
     ],
     "tone": "deep",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -823,7 +850,8 @@
     ],
     "tone": "flirty",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -836,7 +864,8 @@
     ],
     "tone": "flirty",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -849,7 +878,8 @@
     ],
     "tone": "deep",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -862,7 +892,8 @@
     ],
     "tone": "flirty",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -875,7 +906,8 @@
     ],
     "tone": "flirty",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -888,7 +920,8 @@
     ],
     "tone": "flirty",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -901,7 +934,8 @@
     ],
     "tone": "flirty",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -914,7 +948,8 @@
     ],
     "tone": "flirty",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -927,7 +962,8 @@
     ],
     "tone": "deep",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -940,7 +976,8 @@
     ],
     "tone": "flirty",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -952,7 +989,9 @@
       "สิ่งที่เขากลัวที่สุด"
     ],
     "tone": "deep",
-    "target_gender": "female"
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -978,7 +1017,9 @@
       "กูเกิลเช็กอีกรอบ"
     ],
     "tone": "flirty",
-    "target_gender": "female"
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -990,7 +1031,9 @@
       "เฉพาะงานแฟนซีเท่านั้น"
     ],
     "tone": "flirty",
-    "target_gender": "female"
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -1002,7 +1045,9 @@
       "ข้างในอ่อนไหวกว่าภายนอก"
     ],
     "tone": "deep",
-    "target_gender": "female"
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -1014,7 +1059,9 @@
       "กิจกรรมกลางแจ้งสุดมันส์"
     ],
     "tone": "flirty",
-    "target_gender": "female"
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -1041,7 +1088,8 @@
     ],
     "tone": "deep",
     "target_gender": "female",
-    "target_age_min": 25
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1053,7 +1101,9 @@
       "เชียงใหม่"
     ],
     "tone": "flirty",
-    "target_gender": "female"
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1065,7 +1115,9 @@
       "ที่ไหนก็ได้ที่ Wi-Fi ดี"
     ],
     "tone": "flirty",
-    "target_gender": "female"
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1077,7 +1129,9 @@
       "ไปตายเอาดาบหน้า"
     ],
     "tone": "flirty",
-    "target_gender": "female"
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1089,7 +1143,9 @@
       "ทัวร์วัฒนธรรมญี่ปุ่น"
     ],
     "tone": "flirty",
-    "target_gender": "female"
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1100,7 +1156,10 @@
       "ไล่เที่ยวพิพิธภัณฑ์และแกลเลอรี",
       "หาที่เที่ยวกลางคืนที่ดีที่สุด"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1111,7 +1170,10 @@
       "โฮสเทลเพื่อสังคม",
       "กางเต็นท์ใต้แสงดาว"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1122,7 +1184,10 @@
       "บ้านริมทะเลที่หัวหิน",
       "ไร่ไวน์ที่เขาใหญ่"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1133,7 +1198,10 @@
       "นั่งรถไฟชมชนบท",
       "แล้วแต่ว่าไปกับใคร"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1144,7 +1212,10 @@
       "หนังสือดีๆ สักเล่ม",
       "ชุดนำโชคของฉัน"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1155,7 +1226,10 @@
       "แอฟริกา",
       "ออสเตรเลีย"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1166,7 +1240,10 @@
       "เกาะก่อน เมืองทีหลัง",
       "ที่ไหนก็ได้ที่อาหารอร่อยกว่า"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1177,7 +1254,10 @@
       "ช้อปที่ดิวตี้ฟรี",
       "นั่งเลานจ์จิบเครื่องดื่ม"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1188,7 +1268,10 @@
       "ค้นพบอาหารสุดอร่อย",
       "ช่วงเวลาโรแมนติกยามพระอาทิตย์ตก"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1199,7 +1282,10 @@
       "เคยไปครั้งหนึ่ง อยากไปอีก",
       "ฟังดูเหงาสำหรับฉัน"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1210,7 +1296,10 @@
       "ดูซากุระที่ญี่ปุ่น",
       "คาร์นิวัลที่ริโอ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1221,7 +1310,10 @@
       "สปาและเวลเนส",
       "ใช้แค่นอนอย่างเดียว"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1232,7 +1324,10 @@
       "เช่ามอเตอร์ไซค์เที่ยวรอบเกาะ",
       "ล่องเรือชมพระอาทิตย์ตก"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1243,7 +1338,10 @@
       "แค่ไว้หาร้านอาหาร",
       "แผนที่กระดาษดีกว่าเยอะ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1254,7 +1352,10 @@
       "เสน่ห์ของโรม",
       "พลังของลอนดอน"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1266,6 +1367,7 @@
       "ทำอยู่แล้วที่เชียงใหม่"
     ],
     "tone": "flirty",
+    "target_gender": null,
     "target_age_min": 18,
     "target_age_max": 25
   },
@@ -1278,7 +1380,10 @@
       "Wi-Fi โรงแรมห่วย",
       "แพลนละเอียดทุกนาที"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1289,7 +1394,10 @@
       "หาดที่เกาะพีพี",
       "ดาดฟ้าที่นิวยอร์ก"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1300,7 +1408,10 @@
       "ล่องแก่งที่แม่แตง",
       "ขอดูจากคาเฟ่ดีกว่า"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1311,7 +1422,10 @@
       "รูปถ่ายก็พอแล้ว",
       "ขนมและเครื่องเทศท้องถิ่น"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1322,7 +1436,10 @@
       "สองสามครั้งต่อเดือน",
       "ตอนอยากหนีไปไกลๆ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1333,7 +1450,10 @@
       "คนที่วางแผนทุกอย่าง",
       "พร้อมลุยทุกอย่างทุกเวลา"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1345,7 +1465,9 @@
       "อยากให้เขาย้ายมาหาฉันมากกว่า"
     ],
     "tone": "deep",
-    "target_age_min": 25
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1356,7 +1478,10 @@
       "ทาโก้ที่เม็กซิโก",
       "ซูชิที่ญี่ปุ่น"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1367,7 +1492,10 @@
       "ตรงกลางถ้าได้นั่งกับคุณ",
       "ชั้นเฟิร์สคลาส ไม่ต้องเลือก"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1378,7 +1506,10 @@
       "แพลนชุดแบบมินิมอล",
       "ยัดๆ ลงไปนาทีสุดท้าย"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1389,7 +1520,10 @@
       "ลงสตอรี่ IG",
       "แค่ใช้ชีวิตกับปัจจุบัน"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1400,7 +1534,10 @@
       "อีก 100 ปีข้างหน้า",
       "อยู่ตรงนี้แหละดีแล้ว"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1411,7 +1548,10 @@
       "ญี่ปุ่น เพื่อวัฒนธรรม",
       "อิตาลี เพื่ออาหาร"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1422,7 +1562,10 @@
       "หน้าหนาวไปเล่นสกี",
       "หน้าสงกรานต์ไปเล่นน้ำ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1433,7 +1576,10 @@
       "ถ้าฉันแพลนแน่นเกินไป",
       "ไม่มีเลย ฉันง่ายๆ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1444,7 +1590,10 @@
       "เมลาโทนินคือเพื่อนแท้",
       "เจ็ตแล็กอะไร ง่วงอยู่แล้วตลอด"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1455,7 +1604,10 @@
       "ผสมกันทั้งสอง",
       "ไม่เอาทั้งคู่ รีสอร์ทแบบครบวงจร"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1466,7 +1618,10 @@
       "เวียดนาม",
       "ลาว"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1477,7 +1632,10 @@
       "เตียงนุ่มๆ",
       "อาหารที่คุ้นเคย"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1488,7 +1646,10 @@
       "อย่างน้อยสองสัปดาห์",
       "จนกว่าเงินจะหมด"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1499,7 +1660,10 @@
       "อาหารฝีมือแม่",
       "กิจวัตรประจำวัน"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1510,7 +1674,10 @@
       "ทั้งสองอย่างเท่ากัน",
       "ไม่ทั้งคู่ ขอธรรมชาติ"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1521,7 +1688,10 @@
       "ตลาดก่อน ร้านหรูไว้ฉลอง",
       "สตรีทฟู้ดคือของจริง"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -1532,7 +1702,10 @@
       "กล้าแต่มีขีดจำกัด",
       "ยิ่งแปลกยิ่งดี"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1543,7 +1716,10 @@
       "ความหลงใหล",
       "ความสงบ"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1554,7 +1730,10 @@
       "กดเลื่อนปลุก 5 รอบ",
       "ไถมือถือบนเตียง"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1565,7 +1744,10 @@
       "ลอฟต์ผนังอิฐเปลือย",
       "บ้านหลังเล็ก อิสระใหญ่"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1576,7 +1758,10 @@
       "เดินก็นับใช่ไหม?",
       "ฟิตเนส? ไม่รู้จัก"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1588,7 +1773,9 @@
       "ทำงบอย่างระวัง"
     ],
     "tone": "deep",
-    "target_age_min": 25
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1600,7 +1787,9 @@
       "มีแล้ว"
     ],
     "tone": "deep",
-    "target_age_min": 25
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1611,7 +1800,10 @@
       "ยิ่งเยอะยิ่งดี",
       "ชอบบ้านที่ไม่มีสัตว์เลี้ยง"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1623,7 +1815,9 @@
       "สมดุลคือทุกอย่าง"
     ],
     "tone": "deep",
-    "target_age_min": 25
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1634,7 +1828,10 @@
       "แล้วแต่สัปดาห์ที่ผ่านมา",
       "เริ่มที่บ้าน จบข้างนอก"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1645,7 +1842,10 @@
       "สะอาดตอนแขกมา",
       "มีระบบที่คุณไม่เข้าใจ"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1656,7 +1856,10 @@
       "เย็นทุกอย่าง",
       "ฉันเป็นสายชา"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1667,7 +1870,10 @@
       "ไม่ทำอะไรเลย",
       "ผจญภัยกลางแจ้ง"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1678,7 +1884,10 @@
       "ไฮบริดสมบูรณ์แบบ",
       "ทำงานจากคาเฟ่"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1689,7 +1898,10 @@
       "มีลุคประจำตัว",
       "ใส่อะไรก็ได้ที่สะอาด"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1700,7 +1912,10 @@
       "วิ่งเช้าแล้วกินบรันช์",
       "ทำอาหารเช้าช้าๆ"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1712,7 +1927,9 @@
       "แยกกันไว้"
     ],
     "tone": "deep",
-    "target_age_min": 25
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1723,7 +1940,10 @@
       "แช่น้ำนานๆ กับเทียนหอม",
       "กิจวัตรคืออะไร?"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1735,7 +1955,9 @@
       "อยากได้แค่งานปาร์ตี้"
     ],
     "tone": "deep",
-    "target_age_min": 25
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1746,7 +1968,10 @@
       "แอปสั่งอาหาร",
       "เยอะเกินจะนับ"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1757,7 +1982,10 @@
       "นั่งสมาธิหรือยืดเส้น",
       "ดูซีรีส์"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1769,7 +1997,9 @@
       "อะไรก็ได้ที่พาไปถึง"
     ],
     "tone": "deep",
-    "target_gender": "male"
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1781,7 +2011,9 @@
       "ใช้แค่น้ำจริงๆ"
     ],
     "tone": "deep",
-    "target_gender": "female"
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1792,7 +2024,10 @@
       "สั่งเดลิเวอรี่คือภาษารักของฉัน",
       "อยู่ได้ด้วยขนม"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1803,7 +2038,10 @@
       "ผ้าซักสะอาด",
       "ขนมอบในเตา"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1814,7 +2052,10 @@
       "มินิมอลแต่เสื้อผ้าเต็มตู้",
       "พยายามแต่ล้มเหลว"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1825,7 +2066,10 @@
       "ความสัมพันธ์ที่แน่นแฟ้น",
       "สร้างความเปลี่ยนแปลง"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1836,7 +2080,10 @@
       "อบขนมอุ่นๆ",
       "ออกไปข้างนอกอยู่ดี"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1847,7 +2094,10 @@
       "แทบไม่ดื่ม",
       "ไม่ดื่มเลย"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1858,7 +2108,10 @@
       "แค่ทุนให้ความหลงใหลจริงๆ",
       "ยังหาคำตอบอยู่"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1869,7 +2122,10 @@
       "กินอะไรก็ได้ที่มีความสุข",
       "เป็นช่วงๆ"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1880,7 +2136,10 @@
       "ความสงบของชนบท",
       "เมืองตอนนี้ ชนบททีหลัง"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1891,7 +2150,10 @@
       "กิจวัตรฆ่าจิตวิญญาณ",
       "มีโครงคร่าวๆ"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1902,7 +2164,10 @@
       "คุยกับเพื่อน",
       "ขับรถเปิดเพลงดังๆ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1913,7 +2178,10 @@
       "ตอนมีคนลากไป",
       "ชอบอะไรก็ชอบแบบนั้น"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1924,7 +2192,10 @@
       "ใกล้ธรรมชาติและสวน",
       "ที่ไหนก็ได้ที่ชุมชนแน่นแฟ้น"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1935,7 +2206,10 @@
       "ไม่ใช่สำหรับฉัน",
       "สนใจแต่ยังไม่เคยลอง"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1946,7 +2220,10 @@
       "อาบน้ำอุ่นนานๆ",
       "โทรหาเพื่อนสนิท"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1957,7 +2234,10 @@
       "ถึงบ้านก่อนสองทุ่ม",
       "โซฟาคือเพื่อนแท้"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1968,7 +2248,10 @@
       "หวานและกลิ่นดอกไม้",
       "ไม่ใส่น้ำหอม"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1979,7 +2262,10 @@
       "ไม่เชื่อเรื่องนี้",
       "ตั้งความตั้งใจแทน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -1991,7 +2277,9 @@
       "ทั้งคู่ อย่าให้เลือก"
     ],
     "tone": "fun",
-    "target_gender": "male"
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -2002,7 +2290,10 @@
       "ลุยเลยแล้วค่อยหาทาง",
       "อ่านหนังสือเกี่ยวกับมัน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -2013,7 +2304,10 @@
       "เมื่อเจอเรื่องที่ใช่",
       "สนับสนุนในแบบอื่น"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -2024,7 +2318,10 @@
       "น้ำมะนาวอุ่น",
       "อะไรก็ได้ที่มีในตู้กด"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2035,7 +2332,10 @@
       "ล่องหน",
       "บินได้"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2046,7 +2346,10 @@
       "ลงทุนทั้งหมด",
       "จัดปาร์ตี้ใหญ่ที่สุดในชีวิต"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2057,7 +2360,10 @@
       "ผัดกะเพราทุกวัน",
       "พาสต้า ไม่เสียใจ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2068,7 +2374,10 @@
       "ตัวละครในนิยาย",
       "ตัวเองในอนาคต"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2079,7 +2388,10 @@
       "การทดลองทำอาหาร",
       "ความซวยตอนไปเที่ยว"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2090,7 +2402,10 @@
       "ทำอาหารระดับเชฟ",
       "เต้นเหมือนมืออาชีพ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2101,7 +2416,10 @@
       "ครีมกันแดดไม่จำกัด",
       "โทรศัพท์ดาวเทียม"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2112,7 +2430,10 @@
       "โลไฟชิลๆ",
       "ซาวด์แทร็กหนังฟอร์มยักษ์"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2123,7 +2444,10 @@
       "สมาชิกราชวงศ์",
       "นักสำรวจใต้ทะเลลึก"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2134,7 +2458,10 @@
       "พล็อตทวิสต์",
       "ยังหาคำตอบอยู่"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2145,7 +2472,10 @@
       "ยุคร็อก 80",
       "อนาคตอันไกล"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2156,7 +2486,10 @@
       "คนชิลที่ทุกคนรัก",
       "คนที่มีเรื่องเล่าบ้าๆ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2167,7 +2500,10 @@
       "ร็อก",
       "อิเล็กทรอนิกส์"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2178,7 +2514,10 @@
       "The Office",
       "Stranger Things (ไม่เอาสัตว์ประหลาด)"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2190,6 +2529,7 @@
       "ไวรัลใน TikTok"
     ],
     "tone": "fun",
+    "target_gender": null,
     "target_age_min": 18,
     "target_age_max": 25
   },
@@ -2202,7 +2542,10 @@
       "อีกา (มันรู้อะไรเยอะ)",
       "แมวจรข้างถนน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2213,7 +2556,10 @@
       "เปิดเพลงให้ฟัง",
       "วิ่งหนีจริงๆ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2225,6 +2571,7 @@
       "Google Maps"
     ],
     "tone": "fun",
+    "target_gender": null,
     "target_age_min": 18,
     "target_age_max": 25
   },
@@ -2237,7 +2584,10 @@
       "มันจะงง",
       "มันจะเขียนบันทึกความทรงจำ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2248,7 +2598,10 @@
       "จักรวาล Marvel",
       "หนัง Studio Ghibli"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2259,7 +2612,10 @@
       "ปุ่มอ่านแล้ว",
       "แคลอรี่"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2270,7 +2626,10 @@
       "เดาเวลาได้แม่น",
       "รับของกินด้วยปาก"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2281,7 +2640,10 @@
       "ฉันจะเป็นคนซ่อน",
       "ฉันจะเจรจากับซอมบี้"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2292,7 +2654,10 @@
       "Risk (ฉันมีกลยุทธ์)",
       "บันไดงู (ฉันชิล)"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2303,7 +2668,10 @@
       "พบบุคคลในประวัติศาสตร์",
       "ดูว่าอีก 50 ปีเป็นยังไง"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2314,7 +2682,10 @@
       "ฮอทดอกคือแซนด์วิช",
       "น้ำเปล่ามีรสชาติ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2326,6 +2697,7 @@
       "หัวกะโหลก (ขำจนตาย)"
     ],
     "tone": "fun",
+    "target_gender": null,
     "target_age_min": 18,
     "target_age_max": 25
   },
@@ -2338,7 +2710,10 @@
       "แอบฟังคนคุยกัน",
       "ปล้นร้านขนม"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2349,7 +2724,10 @@
       "ดราม่าอินดี้",
       "ม็อคคิวเมนทารี"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2360,7 +2738,10 @@
       "Dexter (อัจฉริยะบ้าๆ)",
       "Scooby-Doo (หิวตลอด)"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2371,7 +2752,10 @@
       "ศุกร์ → คืนก่อนอิสรภาพ",
       "อาทิตย์ → คืนก่อนหดหู่"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2382,7 +2766,10 @@
       "มัลติเวิร์สมีจริง",
       "แมวคือสายลับเอเลี่ยน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2393,7 +2780,10 @@
       "ร่างสุดท้าย",
       "จิบไปเถอะ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2404,7 +2794,10 @@
       "ยักษ์จินนี่เพื่อคำอธิษฐาน",
       "James Bond เพื่อสไตล์"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2415,7 +2808,10 @@
       "ทักคนแปลกหน้าที่ชอบ",
       "ลาออกแบบไม่มีแผน"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2426,7 +2822,10 @@
       "วิตามินทะเล",
       "เรือมันเป็นแบบนี้แหละ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2437,7 +2836,10 @@
       "มีแนวโน้มคิดมาก",
       "อาจพูดเรื่องอาหารไม่หยุด"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2448,7 +2850,10 @@
       "I Will Survive",
       "เพลงของ Palmy"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2459,7 +2864,10 @@
       "ตู้ขนมไม่จำกัด",
       "ตู้เกมวินเทจ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2470,7 +2878,10 @@
       "พริกจาลาปิโญ (เผ็ด)",
       "สับปะรด (ดราม่า)"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2481,7 +2892,10 @@
       "กินร้านมิชลินให้ครบ",
       "เรียนฟันดาบ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2492,7 +2906,10 @@
       "น้ำเงิน เข้ากับทุกอย่าง",
       "แดง ชอบเป็นจุดสนใจ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -2503,7 +2920,10 @@
       "นักบัญชี",
       "นักโป๊กเกอร์อาชีพ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2514,7 +2934,10 @@
       "เม็กซิกัน",
       "อีสาน"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2525,7 +2948,10 @@
       "กาแฟอย่างเดียว ไม่กิน",
       "แชมป์พิซซ่าเหลือจากเมื่อคืน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2536,7 +2962,10 @@
       "ได้นิดหน่อย",
       "แค่คิดปากก็ร้อนแล้ว"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2547,7 +2976,10 @@
       "เซียนไมโครเวฟ",
       "ต้มน้ำยังไหม้"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2558,7 +2990,10 @@
       "ตระเวนสตรีทฟู้ด",
       "ทำกินเองใต้แสงเทียน"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2569,7 +3004,10 @@
       "ทั้งสองพร้อมกัน",
       "แล้วแต่อารมณ์"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2580,7 +3018,10 @@
       "พิซซ่า",
       "ข้าวต้มร้อนๆ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2591,7 +3032,10 @@
       "ขนมปังปิ้งเนยน้ำตาล",
       "อะไรก็ได้ที่มีในตู้เย็น"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2602,7 +3046,10 @@
       "สลับกัน",
       "สั่งมากินไม่ต้องทำ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2613,7 +3060,10 @@
       "ขนมปังกับเนย",
       "ผลไม้"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2624,7 +3074,10 @@
       "เบียร์ ง่ายๆ จริงใจ",
       "น้ำเปล่า ต้องขับรถ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2635,7 +3088,10 @@
       "ลองทุกอย่างสักครั้ง",
       "คำถามนี้ตัดสินความสัมพันธ์"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2646,7 +3102,10 @@
       "อาซาอิโบวล์กับน้ำผลไม้",
       "บลัดดี้แมรี่กับอะไรก็ได้"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2657,7 +3116,10 @@
       "รถเข็นหมูปิ้งอาณาจักร",
       "ร้านราเมน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2668,7 +3130,10 @@
       "กินแต่ที่คุ้นเคย",
       "ต้องดูเมนูล่วงหน้า"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2679,7 +3144,10 @@
       "ถ้าเขาแบ่งกลับด้วย",
       "สั่งเผื่อจะได้ไม่ต้องแย่ง"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2690,7 +3158,10 @@
       "ซินนามอนโรล",
       "หมูปิ้งตอนเช้า"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2701,7 +3172,10 @@
       "โคลด์บรูตลอดปี",
       "แค่ต้องการคาเฟอีน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2712,7 +3186,10 @@
       "อาหารบ้านเกิดของฉัน",
       "เซอร์ไพรส์เลย ฉันเชื่อคุณ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2723,7 +3200,10 @@
       "หมูปิ้งข้างทางตอนดึก",
       "เบอร์เกอร์ยักษ์"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2734,7 +3214,10 @@
       "เดินจนเจอที่น่ากิน",
       "มีร้านประจำ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2745,7 +3228,10 @@
       "เครมบรูเล่ (ซับซ้อน)",
       "ข้าวเหนียวมะม่วง (สนุก)"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2756,7 +3242,10 @@
       "ซูชิโรลกับถั่วแระ",
       "ผลไม้ ฮัมมัส และแครกเกอร์"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2767,7 +3256,10 @@
       "แยกส่วนกิน ฉันเป็นคนแบบนั้น",
       "ใช้มีดกับส้อม"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2778,7 +3270,10 @@
       "ทาโก้ใส่ท็อปปิ้งครบ",
       "ชีสฟองดูว์ แน่นอน"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2789,7 +3284,10 @@
       "เบอร์รี่ระเบิด",
       "เนยถั่วกล้วยโปรตีน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2800,7 +3298,10 @@
       "เดี๋ยวหาทางออกกัน",
       "ต้องการคนที่กินได้ทุกอย่าง"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2811,7 +3312,10 @@
       "โรม",
       "นิวยอร์ก"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2822,7 +3326,10 @@
       "เตรียมอาหารไว้ทั้งสัปดาห์",
       "ควรไปซื้อของได้แล้ว"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2833,7 +3340,10 @@
       "นั่นไม่ใช่มื้อเย็น",
       "ซีเรียลกินได้ 24 ชั่วโมง"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2844,7 +3354,10 @@
       "สเต็กพร้อมเครื่องเคียง",
       "ของหวานฝรั่งเศสหรูๆ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2855,7 +3368,10 @@
       "ทำกินเองได้ทุกที่",
       "ขอแค่มีเดลิเวอรี่"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2866,7 +3382,10 @@
       "ต้มซุปหม้อใหญ่",
       "บรันช์จัดเต็ม"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2877,7 +3396,10 @@
       "เชดดาร์ ราชาที่ไว้ใจได้",
       "บลูชีส มาสู้กัน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2888,7 +3410,10 @@
       "ปฏิวัติหม้อทอดไร้น้ำมัน",
       "ไม่สนเทรนด์ คลาสสิกชนะ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2899,7 +3424,10 @@
       "ซอร์เบต์ ชอบเบาๆ",
       "กะทิใส่ถ้วย"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -2910,7 +3438,10 @@
       "สม่ำเสมอทั้งสองเวลา",
       "ไม่ทำ แค่ประกอบ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -2921,7 +3452,10 @@
       "บีตฮิปฮอป",
       "อินดี้เศร้าๆ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -2932,7 +3466,10 @@
       "โซน VIP ถ้าเป็นไปได้",
       "ชอบเวทีเล็กๆ ใกล้ชิด"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -2943,7 +3480,10 @@
       "ฮิปฮอปเพิ่มความมั่นใจ",
       "อะไรก็ได้ที่ Spotify แนะนำ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -2954,7 +3494,10 @@
       "ขอแค่เขาเปิดใจ",
       "รสนิยมดนตรีต่อรองไม่ได้"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -2965,7 +3508,10 @@
       "ป๊อปยุคทองปี 2000",
       "เพลงยุคนี้ให้ฟีลต่างออกไป"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -2976,7 +3522,10 @@
       "เพลงร็อกคลาสสิก",
       "ฉันเป็นแรปเปอร์ในห้องน้ำ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -2987,7 +3536,10 @@
       "พลังสูงตลอดทาง",
       "ผสมทุกอย่าง"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -2998,7 +3550,10 @@
       "บีตและการโปรดิวซ์",
       "ไวบ์โดยรวม"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3009,7 +3564,10 @@
       "กลอง เพื่อพลัง",
       "แซ็กโซโฟน นุ่มนวล"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3020,7 +3578,10 @@
       "ขุดจากเพลย์ลิสต์",
       "วิทยุหรือเจอโดยบังเอิญ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3031,7 +3592,10 @@
       "เพลงดังเพลงเดียวของศิลปิน",
       "อะไรที่ไม่มีวันยอมรับ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3042,7 +3606,10 @@
       "อิเล็กทรอนิกส์ / เรฟ",
       "แจ๊สหรืออินดี้"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3053,7 +3620,10 @@
       "อะไรที่คาดไม่ถึงและสนุก",
       "อะไรก็ได้ที่ใช่ในตอนนั้น"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3064,7 +3634,10 @@
       "แล้วแต่เพลง",
       "ยอมรับได้แค่ที่ชายหาด"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3076,6 +3649,7 @@
       "Arctic Monkeys"
     ],
     "tone": "fun",
+    "target_gender": null,
     "target_age_min": 18,
     "target_age_max": 25
   },
@@ -3088,7 +3662,10 @@
       "ทั้งสองมีที่ของมัน",
       "อะไรก็ได้ที่คุณภาพดีที่สุด"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3099,7 +3676,10 @@
       "อะไรที่กำลังฮิต",
       "ความเงียบ อย่าคุยกับฉัน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3110,7 +3690,10 @@
       "ไม่อยากแข่งกับกีตาร์ของเขา",
       "ขอแค่ไม่ร้องเพลงถึงแฟนเก่า"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3121,7 +3704,10 @@
       "สอนกันและกันได้",
       "สนใจเรื่องอื่นมากกว่า"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3132,7 +3718,10 @@
       "เพลย์ลิสต์ร่วมกัน",
       "ไม่มีกฎ เปิดอะไรก็ได้"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3143,7 +3732,10 @@
       "รอคืนนี้ โดย JLo",
       "Here Comes the Sun โดย The Beatles"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3154,7 +3746,10 @@
       "แล้วแต่อารมณ์",
       "ไม่ค่อยฟังเพลงที่บ้าน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3165,7 +3760,10 @@
       "โลไฟฮิปฮอป",
       "ร็อกคลาสสิก"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3176,7 +3774,10 @@
       "เฉพาะศิลปินโปรด",
       "ชอบฟังที่บ้านมากกว่า"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3187,7 +3788,10 @@
       "ร็อกและเมทัล",
       "ขอพอดแคสต์แทน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3198,7 +3802,10 @@
       "อะคูสติกสิงเกอร์-ซองไรเตอร์",
       "คลาสสิก โรแมนติกไร้กาลเวลา"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3209,7 +3816,10 @@
       "สุ่มทุกอย่าง",
       "แล้วแต่ศิลปิน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3221,6 +3831,7 @@
       "เสียงธรรมชาติอย่างเสียงฝน"
     ],
     "tone": "fun",
+    "target_gender": null,
     "target_age_min": 18,
     "target_age_max": 25
   },
@@ -3233,7 +3844,10 @@
       "ไม่ค่อย",
       "แค่เพลงเศร้าเท่านั้นที่โดน"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3244,7 +3858,10 @@
       "ลูกทุ่งยุคใหม่พอได้",
       "เคารพจากระยะไกล"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3255,7 +3872,10 @@
       "ทำเพลย์ลิสต์ให้แทน",
       "จ้างคนแต่งให้"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3267,7 +3887,9 @@
       "สายใหม่ยุคนี้"
     ],
     "tone": "fun",
-    "target_gender": "male"
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3279,7 +3901,9 @@
       "Lisa BLACKPINK"
     ],
     "tone": "fun",
-    "target_gender": "female"
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3291,7 +3915,9 @@
       "โซลและโมทาวน์"
     ],
     "tone": "fun",
-    "target_age_min": 25
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -3302,7 +3928,10 @@
       "อัลบั้มฮิปฮอป",
       "จำไม่ได้จริงๆ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3313,7 +3942,10 @@
       "ไซไฟ/แฟนตาซี",
       "ดราม่า/อินดี้"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3324,7 +3956,10 @@
       "แล็ปท็อปบนเตียง",
       "ไดรฟ์อินเธียเตอร์"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3335,7 +3970,10 @@
       "ตัวตลกน่ารัก",
       "ผู้สังเกตการณ์เงียบๆ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3346,7 +3984,10 @@
       "วิจารณ์ตลอดเรื่อง",
       "หลับกลางเรื่อง"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3357,7 +3998,10 @@
       "ไม่เอาเด็ดขาด",
       "ตลกมากกว่าน่ากลัว"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3368,7 +4012,10 @@
       "ลูกอม ยิ่งใหญ่ยิ่งดี",
       "แอบเอาของกินเข้าไปเอง"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3379,7 +4026,10 @@
       "Disney+ เพื่อความอบอุ่น",
       "สลับใช้ทุกอัน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3390,7 +4040,10 @@
       "ไม่เคย อารมณ์มั่นคง",
       "ซ่อนได้เนียน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3401,7 +4054,10 @@
       "Notting Hill",
       "รถไฟฟ้ามาหานะเธอ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3412,7 +4068,10 @@
       "สองสามตอนต่อครั้ง",
       "ลืมไปเป็นเดือน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3423,7 +4082,10 @@
       "กาแล็กซี Star Wars",
       "มิดเดิลเอิร์ธ Lord of the Rings"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3434,7 +4096,10 @@
       "อะไรที่กำลังฮิต",
       "ให้คนอื่นเลือกให้"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3445,7 +4110,10 @@
       "สารคดีชวนคิด",
       "ระทึกขวัญลุ้นตลอด"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3456,7 +4124,10 @@
       "ถ้าเขาถามเท่านั้น",
       "ให้คำใบ้แล้วให้เขาเดา"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3467,7 +4138,10 @@
       "ประเด็นสังคม",
       "ดนตรีและวัฒนธรรม"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3478,7 +4152,10 @@
       "ระทึกขวัญจิตวิทยา",
       "หนังอินดี้แปลกๆ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3489,7 +4166,10 @@
       "Baby กับ Johnny",
       "Wall-E กับ Eve"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3500,7 +4180,10 @@
       "เฉพาะหนังต่างประเทศ",
       "เปิดแต่ไม่เคยอ่านจริงๆ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3511,7 +4194,10 @@
       "ละครหลังข่าว",
       "ซิทคอมเก่าฉายซ้ำ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3522,7 +4208,10 @@
       "คนไม่ดังแต่เหมาะเป๊ะ",
       "ฉันเล่นเอง"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3533,7 +4222,10 @@
       "แล้วแต่การดัดแปลง",
       "ไม่อ่านหนังสือก่อน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3544,7 +4236,10 @@
       "Breaking Bad",
       "Game of Thrones (แต่ไม่เอาตอนจบ)"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3555,7 +4250,10 @@
       "Disney ยุคฟื้นฟู",
       "Into the Spider-Verse"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3566,7 +4264,10 @@
       "แล้วแต่หนัง",
       "ทั้งคู่ แต่คนละอารมณ์"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3577,7 +4278,10 @@
       "ถ้าตอนจบมีความหวังเท่านั้น",
       "ร้องไห้ด้วยกันคือการผูกพัน"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3589,7 +4293,9 @@
       "หนังอินดี้สมัยใหม่"
     ],
     "tone": "deep",
-    "target_age_min": 25
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3600,7 +4306,10 @@
       "ดูซีรีส์เรื่องโปรดซ้ำ",
       "ยังตัดสินใจไม่ได้เลย"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3611,7 +4320,10 @@
       "Wes Anderson",
       "อภิชาติพงศ์ วีระเศรษฐกุล"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3622,7 +4334,10 @@
       "อะไรที่ถกเถียงกันได้หลังดู",
       "ไม่ดูหนัง แค่คุยกัน"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3633,7 +4348,10 @@
       "ชอบหนังภาษาตัวเองมากกว่า",
       "หนังดีๆ หลายเรื่องเป็นหนังต่างประเทศ"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3644,7 +4362,10 @@
       "The Matrix",
       "Arrival"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3655,7 +4376,10 @@
       "ทะเยอทะยานเกินไป",
       "รักมากเกินไป"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3666,7 +4390,10 @@
       "เผลอตลอดเลย",
       "ไม่ค่อย ฉันมีความคิดของตัวเอง"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -3677,7 +4404,10 @@
       "Titanic",
       "Avengers: Endgame"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3688,7 +4418,10 @@
       "มวยไทย",
       "ไม่ตามกีฬาเลย"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3699,7 +4432,10 @@
       "โยคะและยืดเส้น",
       "คลาสฟิตเนสกลุ่ม"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3710,7 +4446,10 @@
       "เล่นเพื่อความสนุก",
       "ยอมให้คนอื่นชนะ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3721,7 +4460,10 @@
       "มวยไทยที่ราชดำเนิน",
       "ไม่มี กีฬาไม่โรแมนติก"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3732,7 +4474,10 @@
       "มวยไทย",
       "สกี/สโนว์บอร์ด"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3743,7 +4488,10 @@
       "พลังคลาสกลุ่ม",
       "ไม่เข้ายิม"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3755,7 +4503,9 @@
       "ไม่มีวันเข้าใจ"
     ],
     "tone": "flirty",
-    "target_gender": "female"
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3766,7 +4516,10 @@
       "ล่องแก่ง",
       "รักชีวิตเกินกว่าจะลอง"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3777,7 +4530,10 @@
       "ออกกำลังตอนพักเที่ยง",
       "โซฟาคือยิมของฉัน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3788,7 +4544,10 @@
       "แบดมินตันคู่ผสม",
       "เดินป่าชมวิว"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3799,7 +4558,10 @@
       "ดูทั้งคู่แบบไม่พลาด",
       "ดูแค่พิธีเปิด"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3810,7 +4572,10 @@
       "ความแข็งแรงและสมรรถภาพ",
       "ทำเพราะควรทำ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3822,7 +4587,9 @@
       "ขอนับคะแนนข้างสนาม"
     ],
     "tone": "fun",
-    "target_gender": "male"
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3833,7 +4600,10 @@
       "ขอแค่สุขภาพดี",
       "ไม่สนใจเลย"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3844,7 +4614,10 @@
       "เจ็ตสกี",
       "พายซัพบอร์ด"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3855,7 +4628,10 @@
       "สปอร์ตบาร์คือจุดที่ลงตัว",
       "อยากเล่นมากกว่าดู"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3867,7 +4643,9 @@
       "เดินเงียบๆ ลึกลับ"
     ],
     "tone": "fun",
-    "target_gender": "male"
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3878,7 +4656,10 @@
       "แค่ตอนปวดเมื่อย",
       "ยืดเส้นคืออะไร?"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3889,7 +4670,10 @@
       "Bend It Like Beckham",
       "Moneyball"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3900,7 +4684,10 @@
       "ทบทวนว่าพลาดตรงไหน",
       "ขอแก้มือ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3911,7 +4698,10 @@
       "ฮาล์ฟมาราธอน อาจจะ",
       "ถ้ามีคนไล่เท่านั้น"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3922,7 +4712,10 @@
       "หาข้อมูลก่อน ค่อยลอง",
       "เทรนด์จางหาย คลาสสิกอยู่"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3934,7 +4727,9 @@
       "นักแข่ง Formula 1"
     ],
     "tone": "fun",
-    "target_gender": "male"
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3945,7 +4740,10 @@
       "ไอซ์สเก็ตในห้าง",
       "วอลเลย์บอลชายหาด"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3956,7 +4754,10 @@
       "ขอเส้นทางง่ายๆ",
       "เดินไปร้านอาหารก็นับ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3967,7 +4768,10 @@
       "เดินเบาๆ กับมื้อดีๆ",
       "พักอะไร พรุ่งนี้ลุยต่อ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3979,7 +4783,9 @@
       "ไม่ทั้งคู่ ขอยกน้ำหนัก"
     ],
     "tone": "fun",
-    "target_gender": "female"
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -3990,7 +4796,10 @@
       "มินิกอล์ฟ",
       "ตะกร้อในสวน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -4001,7 +4810,10 @@
       "Wimbledon",
       "พิธีเปิดโอลิมปิก"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -4012,7 +4824,10 @@
       "จ็อกเบาๆ ก่อน",
       "ไม่วอร์ม ชอบเสี่ยง"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -4023,7 +4838,10 @@
       "แค่ครั้งแรกเท่านั้น",
       "ชนะคือทุกอย่าง"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -4035,7 +4853,9 @@
       "ไม่ทำทั้งคู่"
     ],
     "tone": "fun",
-    "target_gender": "female"
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -4046,7 +4866,10 @@
       "สมูทตี้ผักเขียว",
       "อะไรก็ได้ที่อยากกิน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4057,7 +4880,10 @@
       "เพลงจากโฆษณา",
       "ไม่อายเพลงไหนเลย"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4068,7 +4894,10 @@
       "เธอเป็นใบสั่งหรือเปล่า ปรับหนักเลย",
       "ไม่มี ทำตัวปกติเถอะ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4080,6 +4909,7 @@
       "ตัวตลกแต่งหน้า"
     ],
     "tone": "fun",
+    "target_gender": null,
     "target_age_min": 18,
     "target_age_max": 25
   },
@@ -4092,7 +4922,10 @@
       "PowerPoint เกี่ยวกับตัวเอง",
       "ลิสต์ธงแดงที่ต้องหลีกเลี่ยง"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4103,7 +4936,10 @@
       "ดราม่าเกินไป",
       "ดูซีรีส์ไม่เคยจบ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4114,7 +4950,10 @@
       "น้ำลึก แม้แต่ในสระ",
       "ที่โล่ง ต้องมีกำแพง"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4125,7 +4964,10 @@
       "น้ำจิ้มซีฟู้ด (เข้าได้ทุกอย่าง)",
       "ศรีราชา (ฮิตและเผ็ด)"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4136,7 +4978,10 @@
       "กระรอกติดกาแฟ",
       "แมวหงุดหงิด"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4147,7 +4992,10 @@
       "ถ่ายรูป มันคือคอนเทนต์",
       "กลับบ้านเปลี่ยนชุดทันที"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4158,7 +5006,10 @@
       "จูบกันซะที! (รอมคอม)",
       "ไม่เคยตะโกน ฉันเป็นผู้ใหญ่"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4170,6 +5021,7 @@
       "อันนี้แอบบ้าอยู่นะ"
     ],
     "tone": "fun",
+    "target_gender": null,
     "target_age_min": 18,
     "target_age_max": 25
   },
@@ -4182,7 +5034,10 @@
       "วิธีแกล้งยุ่งในที่ทำงาน",
       "ทำไมรสนิยมเพลงฉันดีที่สุด"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4193,7 +5048,10 @@
       "ถุงเท้าอีกแล้ว",
       "รูปตัวเองใส่กรอบ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4204,7 +5062,10 @@
       "บล็อกทุกช่องทาง",
       "ไม่ทำอะไร ฉันโอเค (ไม่โอเค)"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4215,7 +5076,10 @@
       "หัวใจฉันเปิดอยู่",
       "ขอเครื่องดื่มก่อนได้ไหม?"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4226,7 +5090,10 @@
       "แบบทดสอบฉันเป็นคนท็อกซิกไหม",
       "วิธีดูยุ่งในที่ประชุม"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4237,7 +5104,10 @@
       "นักปรัชญา",
       "คนที่สั่งอาหารเพิ่ม"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4248,7 +5118,10 @@
       "เสียงดังในที่สาธารณะ",
       "ข้ามถนนผิดที่ ชอบเสี่ยง"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4259,7 +5132,10 @@
       "ยอมรับความอับอาย",
       "ไม่โบกก่อนอีกเลย"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4270,7 +5146,10 @@
       "ตลกเฉพาะจากพ่อจริงๆ",
       "ฉันคือมุกพ่อ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4282,7 +5161,9 @@
       "1 ดาว ขอคุยกับผู้จัดการ"
     ],
     "tone": "flirty",
-    "target_age_min": 25
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4293,7 +5174,10 @@
       "เพิ่งนึกได้ว่ามีนัด",
       "ไม่หนี ทนเงียบๆ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4305,6 +5189,7 @@
       "บ่นเรื่องเพลงสมัยนี้"
     ],
     "tone": "fun",
+    "target_gender": null,
     "target_age_min": 18,
     "target_age_max": 25
   },
@@ -4317,7 +5202,10 @@
       "เลี้ยงแมวกี่ตัวถึงเยอะเกิน",
       "แบบทดสอบฉันเป็นคนตื่นเช้าไหม"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4328,7 +5216,10 @@
       "ได้นอนพอสักที",
       "ลาพักร้อนถาวร"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4339,7 +5230,10 @@
       "เอนเบาะเครื่องบินไม่ผิด",
       "ซอสมะเขือเทศกับไข่โอเค"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4350,7 +5244,10 @@
       "พีคตอน 11 โมง จากนั้นดิ่ง",
       "ปัดขวาแล้วฉันจะคิดมากเป็นวัน"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4361,7 +5258,10 @@
       "ตั้งปลุก 15 รอบ",
       "กูเกิลอาการแล้วคิดว่าตายแน่"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4372,7 +5272,10 @@
       "ถั่วรวม — มีทุกอย่างนิดหน่อย",
       "ชีส — บ่มนานและมีระดับ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4383,7 +5286,10 @@
       "ขอบคุณแล้วเอาไปให้ต่อ",
       "ขอใบเสร็จอย่างสุภาพ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4394,7 +5300,10 @@
       "หิวแต่ไม่อยากกินอะไรเลย",
       "ตั้งเป้าแล้วเริ่มพรุ่งนี้"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4405,7 +5314,10 @@
       "ตอนพยายามจีบ",
       "กับการตัดสินใจในชีวิตทั่วไป"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -4416,7 +5328,10 @@
       "คืนปีใหม่ (ผิดหวังเสมอ)",
       "การมีประสิทธิภาพ (พักก็ได้)"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4427,7 +5342,10 @@
       "ดำน้ำสกูบา",
       "ถ่ายภาพ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4438,7 +5356,10 @@
       "ถ่ายรูป",
       "จัดห้องใหม่"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4449,7 +5370,10 @@
       "หนังสือเสียงก็นับใช่ไหม?",
       "ค้างบทที่ 3 มาหลายเดือน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4460,7 +5384,10 @@
       "แฟนตาซีและไซไฟ",
       "โรแมนซ์และนิยาย"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4471,7 +5398,10 @@
       "ปั้นดินและเซรามิก",
       "ออกแบบท่าเต้น"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4482,7 +5412,10 @@
       "ทำเพลงหรือเพลย์ลิสต์",
       "งาน DIY และงานฝีมือ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4493,7 +5426,10 @@
       "บอร์ดเกมและการ์ดเกม",
       "ไม่ค่อยเล่นเกม"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4504,7 +5440,10 @@
       "เลี้ยงรอดหนึ่งต้นและภูมิใจ",
       "ต้นไม้ปลอมก็นับใช่ไหม?"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4515,7 +5454,10 @@
       "กีฬาและฟิตเนส",
       "ท่องเที่ยวและวัฒนธรรม"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4526,7 +5468,10 @@
       "ธุรกิจและพัฒนาตัวเอง",
       "วิทยาศาสตร์และความอยากรู้"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4537,7 +5482,10 @@
       "ทั้งสองเท่ากัน",
       "สร้างแต่ไม่เคยแชร์"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4548,7 +5496,10 @@
       "พายเรือคายัคหรือซัพบอร์ด",
       "ทำสวนและปลูกต้นไม้"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4559,7 +5510,10 @@
       "งานไม้หรืองานฝีมือ",
       "ดาราศาสตร์"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4570,7 +5524,10 @@
       "ทำสวนด้วยกัน",
       "เรียนเต้น"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4581,7 +5538,10 @@
       "จะลองถ้ามีคนช่วย",
       "นั่นคืองานของมืออาชีพ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4592,7 +5552,10 @@
       "แม่เหล็กจากทริปต่างๆ",
       "ไม่สะสม ฉันทิ้ง"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4603,7 +5566,10 @@
       "สารคดีสุ่มๆ",
       "ไลฟ์แฮ็กและวิธีทำ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4614,7 +5580,10 @@
       "เขียนไดอารี่",
       "เล่นวิดีโอเกม"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4625,7 +5594,10 @@
       "ศูนย์วิทยาศาสตร์และเทคโนโลยี",
       "ประวัติศาสตร์และวัฒนธรรมท้องถิ่น"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4636,7 +5608,10 @@
       "อาหารและแฟลตเลย์",
       "พอร์ตเทรตผู้คน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4647,7 +5622,10 @@
       "Escape Room เข้าทางกว่า",
       "ปริศนาทดสอบความอดทน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4658,7 +5636,10 @@
       "ร้องคู่เพื่อให้กำลังใจเท่านั้น",
       "ขอดูอย่างเดียว"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4669,7 +5650,10 @@
       "คนที่เขียนได้สวยงาม",
       "คนที่เต้นได้"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4680,7 +5664,10 @@
       "ต้องมีของกินเท่านั้น",
       "ฉันพลิกกระดานตลอด"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4691,7 +5678,10 @@
       "ท่าเต้น TikTok",
       "วิธีซ่อมของในบ้าน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4702,7 +5692,10 @@
       "กาแฟหรือชาหลากชนิด",
       "อุปกรณ์ศิลปะ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4713,7 +5706,10 @@
       "มาราธอนวิดีโอเกม",
       "จัดห้องและทำความสะอาดใหญ่"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4724,7 +5720,10 @@
       "อัจฉริยะวิศวกรรมของ Tony Stark",
       "ทักษะต่อสู้ของ Black Widow"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4735,7 +5734,10 @@
       "โน้ตดิจิทัลก็นับ",
       "ไม่ใช่ทางฉัน"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4746,7 +5748,10 @@
       "เล่นเครื่องดนตรี",
       "ทำสวนหรือปั้นดิน"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4757,7 +5762,10 @@
       "งานหนัง",
       "คัดลายมือ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4768,7 +5776,10 @@
       "ทำอาหาร — ใส่ใจและสร้างสรรค์",
       "เกม — มีกลยุทธ์และชอบแข่ง"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -4780,6 +5791,7 @@
       "เบื่อจนแทบบ้า"
     ],
     "tone": "fun",
+    "target_gender": null,
     "target_age_min": 18,
     "target_age_max": 25
   },
@@ -4792,7 +5804,10 @@
       "สลับใช้ทั้งคู่",
       "อะไรก็ได้ที่ใช้งานได้"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -4803,7 +5818,10 @@
       "หลงใหลแต่ระวัง",
       "ใช้ทุกวันอยู่แล้ว"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -4814,7 +5832,10 @@
       "มากกว่าที่อยากยอมรับ",
       "ฉันเป็นมินิมอลดิจิทัล"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -4825,7 +5846,10 @@
       "สมาร์ทวอทช์",
       "แล็ปท็อป"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -4836,7 +5860,10 @@
       "ไม่ไว้ใจว่ามันแอบฟัง",
       "สวิตช์ไฟธรรมดามีอะไรผิด?"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -4848,6 +5875,7 @@
       "เครื่องจักรแชร์มีม"
     ],
     "tone": "fun",
+    "target_gender": null,
     "target_age_min": 18,
     "target_age_max": 25
   },
@@ -4860,7 +5888,10 @@
       "ฉันก็คงติดเหมือนกัน",
       "มื้ออาหารห้ามมือถือคือกฎ"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -4871,7 +5902,10 @@
       "LINE และอีเมล",
       "Spotify หรือเพลง"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -4882,7 +5916,10 @@
       "ฟังดูดิสโทเปีย",
       "ขออยู่กับชีวิตจริง"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -4894,7 +5931,9 @@
       "เล่นเกมบนมือถือ"
     ],
     "tone": "fun",
-    "target_gender": "male"
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -4905,7 +5944,10 @@
       "กูเกิลหาคำตอบได้",
       "ต้องให้คนช่วยตั้ง Wi-Fi"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -4916,7 +5958,10 @@
       "ฟังดูเครียดจริงๆ",
       "มือถือคือผ้าห่มปลอบใจ"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -4927,7 +5972,10 @@
       "ชอบเสียงเครื่องยนต์มากกว่า",
       "ไม่ขับรถอยู่แล้ว"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -4938,7 +5986,10 @@
       "แอปสั่งอาหาร",
       "สกู๊ตเตอร์ไฟฟ้า"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -4949,7 +6000,10 @@
       "สดชื่นและน่าดึงดูด",
       "จะช่วยเขาสมัคร"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -4960,7 +6014,10 @@
       "กิจวัตรตอนเช้า",
       "การเดินทางไปทำงาน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -4971,7 +6028,10 @@
       "50+ อย่าตัดสิน",
       "ไม่เคยปิดแท็บเลย"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -4982,7 +6042,10 @@
       "รีเซ็ตทุกครั้งที่ล็อกอิน",
       "โพสต์อิทบนโต๊ะ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -4993,7 +6056,10 @@
       "ดูหนังไซไฟมาเยอะเกิน",
       "ขอแค่ไม่แย่งงานฉัน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -5004,7 +6070,10 @@
       "คงเสียสติ",
       "ทำความสะอาดห้องสักที"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -5015,7 +6084,10 @@
       "เมื่อทุกคนมีแล้ว",
       "ถ้าไม่พังก็ไม่ต้องเปลี่ยน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -5026,7 +6098,10 @@
       "ห้ามรบกวน 24/7",
       "เช็กเองตอนอยากเช็ก"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -5037,7 +6112,10 @@
       "ขอแค่ตอบในที่สุด",
       "จะคิดว่าเขาไม่สนใจ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -5048,7 +6126,10 @@
       "ลบแบบไม่ปรานี",
       "มีรูปปี 2015 ที่ยังไม่จัด"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -5060,7 +6141,9 @@
       "ไม่เข้าใจเลย"
     ],
     "tone": "fun",
-    "target_gender": "male"
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -5071,7 +6154,10 @@
       "สตรีมเพลง",
       "สั่งอาหาร"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -5082,7 +6168,10 @@
       "แค่เป็นคำแนะนำ",
       "นั่นคือสิ่งที่แอปนี้ทำอยู่แล้ว"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -5093,7 +6182,10 @@
       "เครื่องเสกอาหาร",
       "รีโมตหยุดเวลา"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -5104,7 +6196,10 @@
       "ใช้ช่องค้นหาทุกอย่าง",
       "ค่าเริ่มต้น ไม่เคยเปลี่ยน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "technology",
@@ -5115,7 +6210,10 @@
       "ชอบนาฬิกาธรรมดา",
       "ข้อมูลร่างกายเยอะเกินไป"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -5127,7 +6225,9 @@
       "เชื่อว่าคนเปลี่ยนได้"
     ],
     "tone": "deep",
-    "target_age_min": 25
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "personality",
@@ -5138,7 +6238,10 @@
       "หลับเหมือนคนปกติ",
       "จมอยู่กับโปรเจกต์สร้างสรรค์ดึกๆ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -5149,7 +6252,10 @@
       "เดินเล่นไปเรื่อย",
       "ลองสตรีทฟู้ดท้องถิ่น"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -5161,6 +6267,7 @@
       "พักหนึ่งเดือนแทน"
     ],
     "tone": "deep",
+    "target_gender": null,
     "target_age_min": 18,
     "target_age_max": 25
   },
@@ -5173,7 +6280,10 @@
       "ไม่มีที่เที่ยวกลางคืน",
       "Wi-Fi ไม่เสถียร"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -5184,7 +6294,10 @@
       "บ้านต้นไม้ที่เกาะช้าง",
       "จดทะเบียนที่เขตแล้วโร้ดทริป"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -5196,7 +6309,9 @@
       "ใครรู้สึกแรงกว่าชนะ"
     ],
     "tone": "deep",
-    "target_age_min": 25
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -5207,7 +6322,10 @@
       "อาหารอร่อยเด็ด",
       "ที่เที่ยวกลางคืนคึกคัก"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -5218,7 +6336,10 @@
       "ผสมกันในทริปต่างๆ",
       "ไปตามไวบ์พาไป"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -5229,7 +6350,10 @@
       "ล่องเรือนาทีสุดท้าย",
       "ตอบตกลงตามคนแปลกหน้าแนะนำ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -5240,7 +6364,10 @@
       "นักผจญภัยตอบตกลงทุกอย่าง",
       "ช่างภาพเก็บความทรงจำ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -5251,7 +6378,10 @@
       "ทั้งคู่ในทริปเดียว",
       "ไม่ทั้งคู่ ขออยู่ในเมือง"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "travel",
@@ -5262,7 +6392,10 @@
       "คนละจังหวัด ประเทศเดียวกัน",
       "เขาต้องคุ้มค่าจริงๆ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -5273,7 +6406,10 @@
       "ขอบคุณและตั้งเจตนา",
       "กาแฟก่อน แล้วค่อยบวก"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -5285,6 +6421,7 @@
       "ซื้อของแบบหุนหันพลันแล่น"
     ],
     "tone": "deep",
+    "target_gender": null,
     "target_age_min": 18,
     "target_age_max": 25
   },
@@ -5298,7 +6435,9 @@
       "ยังทำโปรเจกต์ที่หลงใหล"
     ],
     "tone": "deep",
-    "target_age_min": 25
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -5310,7 +6449,9 @@
       "วางแผนทั้งวันเพื่อเขา"
     ],
     "tone": "flirty",
-    "target_gender": "male"
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -5321,7 +6462,10 @@
       "ประสบการณ์อย่างทริปหรืออีเวนต์",
       "แบ่งปันกับคนที่รัก"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -5332,7 +6476,10 @@
       "ซับซ้อนแต่กำลังแก้ไข",
       "ครอบครัวที่เลือกเองสำคัญกว่า"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -5344,7 +6491,9 @@
       "แค่ได้รับการดูแลทางใจ"
     ],
     "tone": "flirty",
-    "target_gender": "female"
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -5355,7 +6504,10 @@
       "เจอเพลงใหม่ที่ชอบ",
       "คำชมจริงใจจากคนแปลกหน้า"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -5367,7 +6519,9 @@
       "เล็บและรองเท้าสะอาด"
     ],
     "tone": "fun",
-    "target_gender": "male"
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -5378,7 +6532,10 @@
       "ประสบการณ์มากกว่าสิ่งของ",
       "สิ่งเล็กๆ ที่สม่ำเสมอ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "lifestyle",
@@ -5389,7 +6546,10 @@
       "ความรู้สึกสงบและปลอดภัย",
       "ที่ที่ได้เป็นตัวเองเต็มที่"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -5400,7 +6560,10 @@
       "ยุค 60 เพื่อการปฏิวัติ",
       "อนาคตไกลเพื่อเทคโนโลยี"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -5411,7 +6574,10 @@
       "ยูนิคอร์น",
       "ครุฑ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -5422,7 +6588,10 @@
       "ปีใหม่เพื่อเริ่มต้นใหม่",
       "วันเกิดฉัน แน่นอน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -5433,7 +6602,10 @@
       "นักแสดงตลกเดี่ยว",
       "นักสำรวจอวกาศ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -5444,7 +6616,10 @@
       "เครื่องชงกาแฟ แล็ปท็อป ผ้าห่ม",
       "สายจูงหมา แว่นกันแดด กระเป๋าตังค์"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -5455,7 +6630,10 @@
       "อ่างน้ำร้อนบนดาดฟ้า",
       "โรงหนังในบ้านพร้อมเครื่องป๊อปคอร์น"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "fun",
@@ -5467,6 +6645,7 @@
       "Moana — นักสำรวจผู้กล้า"
     ],
     "tone": "fun",
+    "target_gender": null,
     "target_age_min": 18,
     "target_age_max": 25
   },
@@ -5479,7 +6658,10 @@
       "ซอสเผ็ดกับทุกอย่าง",
       "ข้าวเหนียวกับทุเรียน"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -5490,7 +6672,10 @@
       "แค่ตอนขี้เกียจ",
       "ทำอย่างน้อยสัปดาห์ละครั้ง"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -5501,7 +6686,10 @@
       "เชียงใหม่เพื่อข้าวซอย",
       "นิวออร์ลีนส์เพื่อโซลฟู้ด"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -5513,6 +6701,7 @@
       "ต้มยำเผ็ดๆ"
     ],
     "tone": "fun",
+    "target_gender": null,
     "target_age_min": 18,
     "target_age_max": 25
   },
@@ -5525,7 +6714,10 @@
       "ทำให้รู้สึกด้อยค่า",
       "เรียนจาก TikTok ได้มากกว่า"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -5536,7 +6728,10 @@
       "เอสเพรสโซมาร์ตินี — พลังมีสไตล์",
       "ขอแค่เบียร์หรือไวน์"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -5547,7 +6742,10 @@
       "ทั้งคู่เท่ากัน",
       "ขอแค่คนที่ไปด้วยดี"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "food",
@@ -5558,7 +6756,10 @@
       "น้ำผึ้งท้องถิ่น",
       "ชีสทำมือ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -5569,7 +6770,10 @@
       "อะไรที่ชวนคิดถึง",
       "อะไรที่ร้องตามได้ดังๆ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -5581,7 +6785,9 @@
       "แสดงด้านอารมณ์ของเขา"
     ],
     "tone": "flirty",
-    "target_gender": "female"
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -5592,7 +6798,10 @@
       "อะไรก็ได้ที่ทำให้เขายิ้ม",
       "แต่งเองเลย"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -5603,7 +6812,10 @@
       "เทศกาลอิเล็กทรอนิกส์ยักษ์",
       "การแสดงในแจ๊สคลับ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "music",
@@ -5614,7 +6826,10 @@
       "บรรเลงและแอมเบียนต์",
       "อะไรก็ได้ที่ผูกพันในตอนนั้น"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -5625,7 +6840,10 @@
       "แอนิเมชันโปรดวัยเด็ก",
       "หนังครอบครัวที่ดูด้วยกัน"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -5636,7 +6854,10 @@
       "ทนเงียบๆ",
       "ไม่ ชีวิตสั้นเกินสำหรับหนังห่วย"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -5647,7 +6868,10 @@
       "งานภาพสวยตะลึง",
       "เปลี่ยนมุมมองบางอย่างของฉัน"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -5658,7 +6882,10 @@
       "ไซโคพาธน่ากลัว",
       "ตัวร้ายตลกไร้ความสามารถ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -5669,7 +6896,10 @@
       "แฟนตาซีมหากาพย์",
       "อะไรก็ได้ที่อินตอนวัยรุ่น"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "film",
@@ -5680,7 +6910,10 @@
       "หันหลังเดินสู่การผจญภัย",
       "ช่วงเวลาตลกแบบไม่ตั้งใจ"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -5692,7 +6925,9 @@
       "เต้น ถ้านับเป็นกีฬา"
     ],
     "tone": "flirty",
-    "target_gender": "female"
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "sports",
@@ -5703,7 +6938,10 @@
       "ให้กำลังใจตัวเองหน้ากระจก",
       "แค่ไปแล้วหวังว่าจะรอด"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -5714,7 +6952,10 @@
       "อ้าปากค้างทุกพล็อตทวิสต์",
       "ประกาศว่าจะตายเมื่อหิวนิดหน่อย"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "humor",
@@ -5725,7 +6966,10 @@
       "จดหมายรักและโน้ตเขียนมือ",
       "ของคู่รัก"
     ],
-    "tone": "flirty"
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -5736,7 +6980,10 @@
       "แฟชั่นและดีไซน์วินเทจ",
       "เทคนิคชงกาแฟ"
     ],
-    "tone": "fun"
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   },
   {
     "category": "hobby",
@@ -5747,6 +6994,9 @@
       "วาดรูปหรือระบายสี",
       "ขยับร่างกายด้วยการเต้นหรือออกกำลัง"
     ],
-    "tone": "deep"
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
   }
 ]

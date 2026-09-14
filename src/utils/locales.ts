@@ -1,5 +1,5 @@
 import type { IncomingHttpHeaders } from "node:http";
-import { SUPPORTED_LOCALES } from '../constants/locales.js';
+import { SUPPORTED_LOCALES, WEB_LOCALES, type WebLocale } from '../constants/locales.js';
 import type { SupportedLocale } from '../constants/locales.js';
 
 /**
@@ -14,8 +14,8 @@ export function resolveLocale(input?: string | null): SupportedLocale {
   return 'en';
 }
 
-export { SUPPORTED_LOCALES };
-export type { SupportedLocale };
+export { SUPPORTED_LOCALES, WEB_LOCALES };
+export type { SupportedLocale, WebLocale };
 
 /**
  * Store'daki eski mobil surumler Accept-Language header'i gondermez; onlarda
@@ -80,17 +80,10 @@ export function pickLabel(
 }
 
 /**
- * quloapp.com'un arayuz/yasal sayfa dilleri (web/src/lib/i18n/config.ts `locales`).
  * Sunucunun urettigi web linkleri (sifre sifirlama, e-posta dogrulama yonlendirmesi)
- * yalniz bu listedeki dile gider; web'de olmayan dil `en`'e kirpilir. Web ile birlikte
- * guncelle (2026-09-14: th/id web'e eklendi, 18 = 18).
+ * yalniz quloapp.com'un sundugu dile gider; web'de olmayan dil `en`'e kirpilir.
+ * Liste `constants/locales.ts` WEB_LOCALES; web repo ile paritesi test edilir.
  */
-export const WEB_LOCALES = [
-  'tr', 'en', 'de', 'fr', 'es', 'ar', 'ru',
-  'pt', 'it', 'ja', 'ko', 'zh', 'nl', 'pl', 'sv', 'hi',
-  'th', 'id',
-] as const;
-
-export function webLocale(locale?: string | null): string {
-  return locale && (WEB_LOCALES as readonly string[]).includes(locale) ? locale : 'en';
+export function webLocale(locale?: string | null): WebLocale {
+  return locale && (WEB_LOCALES as readonly string[]).includes(locale) ? (locale as WebLocale) : 'en';
 }

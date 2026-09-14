@@ -44,11 +44,25 @@ describe('questionLocale', () => {
 describe('SUPPORTED_LOCALES ↔ AI soru bankasi tohumu paritesi', () => {
   // Dil DB'de gecerli ama bankasi yoksa oneri ekrani ve profil kurulum kapisi sessizce bos kalir
   // (ai-suggest.service `.eq('locale', ...)` → []). Yeni dil = yeni questions_<dil>.json.
-  it('her desteklenen dil icin src/data/seed/questions_<dil>.json var', async () => {
-    const { existsSync } = await import('node:fs');
+  it('her desteklenen dil icin src/data/seed/questions_<dil>.json var ve dolu', async () => {
+    const { existsSync, readFileSync } = await import('node:fs');
     const missing = SUPPORTED_LOCALES.filter(
       (l) => !existsSync(new URL(`../../src/data/seed/questions_${l}.json`, import.meta.url)),
     );
     expect(missing).toEqual([]);
+    // Bos dosya da ayni sessiz bosluk (ai-suggest .eq('locale') -> []): alt sinir mevcut en kucuk banka (369).
+    for (const l of SUPPORTED_LOCALES) {
+      const rows = JSON.parse(readFileSync(new URL(`../../src/data/seed/questions_${l}.json`, import.meta.url), 'utf8')) as unknown[];
+      expect(rows.length, `${l} bankasi cok kucuk`).toBeGreaterThanOrEqual(300);
+    }
+  });
+
+  it('seed metinlerinde HTML karakteri yok (mobil ham JSON alir, admin escHtml client-side)', async () => {
+    const { readFileSync } = await import('node:fs');
+    for (const l of SUPPORTED_LOCALES) {
+      const rows = JSON.parse(readFileSync(new URL(`../../src/data/seed/questions_${l}.json`, import.meta.url), 'utf8')) as Array<{ question_text: string; answers: string[]; hint?: string }>;
+      const bad = rows.filter((r) => /[<>]/.test([r.question_text, ...r.answers, r.hint ?? ''].join(' ')));
+      expect(bad.map((r) => r.question_text), `${l}`).toEqual([]);
+    }
   });
 });

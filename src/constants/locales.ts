@@ -41,3 +41,15 @@ export const LOCALE_NAMES: Record<SupportedLocale, string> = {
 export function questionLocale(locale: unknown): string {
   return typeof locale === "string" && locale ? locale : "tr";
 }
+
+/**
+ * quloapp.com'un arayuz/yasal sayfa dilleri (web/src/lib/i18n/config.ts `locales`).
+ * Web ve sunucu ayri deploy edilir; web bir dili geride birakirsa sunucunun urettigi
+ * linkler `webLocale()` ile `en`'e kirpilir. Parite testi web repo'sunu okur.
+ */
+export const WEB_LOCALES = [
+  'tr', 'en', 'de', 'fr', 'es', 'ar', 'ru',
+  'pt', 'it', 'ja', 'ko', 'zh', 'nl', 'pl', 'sv', 'hi',
+  'th', 'id',
+] as const;
+export type WebLocale = typeof WEB_LOCALES[number];

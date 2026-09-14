@@ -12,24 +12,9 @@
   </select>
   <select id="filterCategory">
     <option value="">All Categories</option>
-    <option value="personality">Personality</option>
-    <option value="music">Music</option>
-    <option value="film">Film</option>
-    <option value="sports">Sports</option>
-    <option value="travel">Travel</option>
-    <option value="food">Food</option>
-    <option value="technology">Technology</option>
+    <% categories.forEach(function(c) { %><option value="<%= c %>"><%= c.charAt(0).toUpperCase() + c.slice(1) %></option><% }); %>
     <option value="general">General</option>
-    <option value="other">Other</option>
-    <option value="fun">Fun</option>
-    <option value="entertainment">Entertainment</option>
-    <option value="lifestyle">Lifestyle</option>
-    <option value="humor">Humor</option>
-    <option value="hobby">Hobby</option>
-    <option value="science">Science</option>
-    <option value="history">History</option>
-    <option value="art">Art</option>
-    <option value="nature">Nature</option>
+    <% categories.forEach(function(c) { %><option value="<%= c %>"><%= c.charAt(0).toUpperCase() + c.slice(1) %></option><% }); %>
   </select>
   <select id="filterTone">
     <option value="">All Tones</option>
@@ -104,24 +89,9 @@
         <div>
           <label style="font-size:13px; font-weight:600;">Category *</label>
           <select id="fCategory" style="width:100%;">
-            <option value="personality">Personality</option>
-            <option value="music">Music</option>
-            <option value="film">Film</option>
-            <option value="sports">Sports</option>
-            <option value="travel">Travel</option>
-            <option value="food">Food</option>
-            <option value="technology">Technology</option>
+            <% categories.forEach(function(c) { %><option value="<%= c %>"><%= c.charAt(0).toUpperCase() + c.slice(1) %></option><% }); %>
             <option value="general">General</option>
-            <option value="other">Other</option>
-            <option value="fun">Fun</option>
-            <option value="entertainment">Entertainment</option>
-            <option value="lifestyle">Lifestyle</option>
-            <option value="humor">Humor</option>
-            <option value="hobby">Hobby</option>
-            <option value="science">Science</option>
-            <option value="history">History</option>
-            <option value="art">Art</option>
-            <option value="nature">Nature</option>
+            <% categories.forEach(function(c) { %><option value="<%= c %>"><%= c.charAt(0).toUpperCase() + c.slice(1) %></option><% }); %>
           </select>
         </div>
         <div>

@@ -130,8 +130,26 @@ describe('webLocale', () => {
     expect(webLocale(undefined)).toBe('en');
   });
 
+  it('null ve bos string de en olur', async () => {
+    const { webLocale } = await import('../../src/utils/locales.js');
+    expect(webLocale(null)).toBe('en');
+    expect(webLocale('')).toBe('en');
+  });
+
   it('WEB_LOCALES sunucunun destekledigi dillerin alt kumesi', async () => {
     const { WEB_LOCALES, SUPPORTED_LOCALES } = await import('../../src/utils/locales.js');
     for (const l of WEB_LOCALES) expect(SUPPORTED_LOCALES).toContain(l);
+  });
+
+  it('WEB_LOCALES == web repo config.ts locales (iki repo ayri deploy; ayrisirsa linkler 404)', async () => {
+    const { existsSync, readFileSync } = await import('node:fs');
+    const { WEB_LOCALES } = await import('../../src/constants/locales.js');
+    const cfg = new URL('../../../web/src/lib/i18n/config.ts', import.meta.url);
+    if (!existsSync(cfg)) return; // monorepo disinda (CI) web yoksa atla
+    const src = readFileSync(cfg, 'utf8');
+    const arr = src.match(/export const locales = \[([\s\S]*?)\] as const;/)?.[1];
+    expect(arr, 'web config.ts locales bulunamadi').toBeDefined();
+    const webLocales = [...arr!.matchAll(/"([a-z]{2})"/g)].map((m) => m[1]).sort();
+    expect(webLocales).toEqual([...WEB_LOCALES].sort());
   });
 });
