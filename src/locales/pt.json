@@ -34,5 +34,9 @@
       "title": "Sentimos sua falta",
       "body": "Perguntas, matches e pessoas novas estão esperando por você."
     }
+  },
+  "chat_preview": {
+    "voice": "Mensagem de voz",
+    "photo": "Foto"
   }
 }

@@ -34,5 +34,9 @@
       "title": "Tu nous manques",
       "body": "Des questions, des matchs et de nouvelles personnes t'attendent."
     }
+  },
+  "chat_preview": {
+    "voice": "Message vocal",
+    "photo": "Photo"
   }
 }

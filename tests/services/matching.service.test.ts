@@ -92,6 +92,69 @@ async function loadService(tables: Tables, opts: { userLanguages?: string[] } = 
 beforeEach(() => vi.resetModules());
 afterEach(() => vi.restoreAllMocks());
 
+describe("getMatches — son mesaj onizlemesi dili", () => {
+  // Eskiden ses/foto onizlemesi her dilde sabit Turkceydi ("🎤 Sesli mesaj");
+  // mobil eslesme listesi metni oldugu gibi gosteriyor.
+  const OTHER = uid(2);
+  const MATCH = "match-1";
+
+  function tablesWithLastMessage(message: Record<string, unknown>): Tables {
+    return {
+      users: [viewerRow(), candidateRow(OTHER, 1, { is_online: false })],
+      matches: [
+        { id: MATCH, user1_id: VIEWER_ID, user2_id: OTHER, matched_at: "2026-09-14T08:00:00Z", is_active: true },
+      ],
+      messages: [
+        {
+          match_id: MATCH,
+          sender_id: OTHER,
+          content: "icerik",
+          is_image: false,
+          audio_url: null,
+          read_at: null,
+          deleted_at: null,
+          created_at: "2026-09-14T09:00:00Z",
+          ...message,
+        },
+      ],
+    };
+  }
+
+  it("sesli mesaj istenen dilde", async () => {
+    const service = await loadService(tablesWithLastMessage({ audio_url: "https://cdn.example/a.m4a", content: "Sesli mesaj" }));
+
+    const [en] = await service.getMatches(VIEWER_ID, "en");
+    const [de] = await service.getMatches(VIEWER_ID, "de");
+
+    expect(en.last_message).toBe("🎤 Voice message");
+    expect(de.last_message).toBe("🎤 Sprachnachricht");
+  });
+
+  it("foto istenen dilde", async () => {
+    const service = await loadService(tablesWithLastMessage({ is_image: true, content: "https://cdn.example/p.jpg" }));
+
+    const [ja] = await service.getMatches(VIEWER_ID, "ja");
+
+    expect(ja.last_message).toBe("📷 写真");
+  });
+
+  it("header gondermeyen eski istemci (tr) eskisiyle ayni metni gorur", async () => {
+    const service = await loadService(tablesWithLastMessage({ audio_url: "https://cdn.example/a.m4a" }));
+
+    const [tr] = await service.getMatches(VIEWER_ID, "tr");
+
+    expect(tr.last_message).toBe("🎤 Sesli mesaj");
+  });
+
+  it("metin mesaji cevrilmez, oldugu gibi doner", async () => {
+    const service = await loadService(tablesWithLastMessage({ content: "selam nasilsin" }));
+
+    const [en] = await service.getMatches(VIEWER_ID, "en");
+
+    expect(en.last_message).toBe("selam nasilsin");
+  });
+});
+
 describe("discover — aday sorgusu", () => {
   it("50'den fazla uygun aday varken 50. siradan sonrakiler de gorunur", async () => {
     // 60 aday: hepsi radius icinde, hepsi uygun. Eski kod sorguyu 50'de

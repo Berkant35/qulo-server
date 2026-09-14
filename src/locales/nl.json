@@ -34,5 +34,9 @@
       "title": "We missen je",
       "body": "Vragen, matches en nieuwe mensen wachten op je."
     }
+  },
+  "chat_preview": {
+    "voice": "Spraakbericht",
+    "photo": "Foto"
   }
 }

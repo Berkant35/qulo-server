@@ -34,5 +34,9 @@
       "title": "Ci manchi",
       "body": "Domande, match e persone nuove ti aspettano."
     }
+  },
+  "chat_preview": {
+    "voice": "Messaggio vocale",
+    "photo": "Foto"
   }
 }

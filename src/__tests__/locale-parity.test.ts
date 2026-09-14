@@ -33,9 +33,10 @@ function leafValues(obj: unknown, prefix = ''): Array<[string, string]> {
   );
 }
 
-// Push bildirimleri ve e-postalar iki ayrı sözlük — ikisini de aynı kurallarla denetliyoruz.
+// Sunucu metinleri (push + eşleşme listesi önizlemesi `chat_preview`) ve e-postalar iki ayrı
+// sözlük — ikisini de aynı kurallarla denetliyoruz.
 const BUNDLES: Array<{ label: string; dir: string }> = [
-  { label: 'push (src/locales)', dir: LOCALES_DIR },
+  { label: 'server (src/locales)', dir: LOCALES_DIR },
   { label: 'email (src/locales/emails)', dir: EMAILS_DIR },
 ];
 

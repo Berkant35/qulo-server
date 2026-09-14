@@ -34,5 +34,9 @@
       "title": "We miss you",
       "body": "Questions, matches and new people are waiting for you."
     }
+  },
+  "chat_preview": {
+    "voice": "Voice message",
+    "photo": "Photo"
   }
 }

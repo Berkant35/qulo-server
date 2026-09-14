@@ -34,5 +34,9 @@
       "title": "Seni özledik",
       "body": "Sorular, eşleşmeler ve yeni insanlar seni bekliyor."
     }
+  },
+  "chat_preview": {
+    "voice": "Sesli mesaj",
+    "photo": "Fotoğraf"
   }
 }

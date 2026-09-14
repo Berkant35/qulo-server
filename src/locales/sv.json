@@ -34,5 +34,9 @@
       "title": "Vi saknar dig",
       "body": "Frågor, matchningar och nya människor väntar på dig."
     }
+  },
+  "chat_preview": {
+    "voice": "Röstmeddelande",
+    "photo": "Foto"
   }
 }

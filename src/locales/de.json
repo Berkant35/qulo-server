@@ -34,5 +34,9 @@
       "title": "Wir vermissen dich",
       "body": "Fragen, Matches und neue Leute warten auf dich."
     }
+  },
+  "chat_preview": {
+    "voice": "Sprachnachricht",
+    "photo": "Foto"
   }
 }

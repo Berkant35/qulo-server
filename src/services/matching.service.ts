@@ -1,6 +1,8 @@
 import { supabase } from "../config/supabase.js";
 import { resolveLocale } from "../utils/locales.js";
+import { localeText } from "../utils/server-locales.js";
 import { questionLocale } from "../constants/locales.js";
+import type { SupportedLocale } from "../constants/locales.js";
 import { Errors } from "../utils/errors.js";
 import { resolveDistanceTier } from "../utils/distance-tier.js";
 import { haversineDistance } from "../utils/math.js";
@@ -537,8 +539,11 @@ export class MatchingService {
 
   /**
    * Get all active matches for a user.
+   *
+   * `locale`: ses/foto son mesaj onizlemesinin dili. Eskiden her dilde sabit
+   * Turkce ("🎤 Sesli mesaj") donuyordu; istemci metni oldugu gibi gosteriyor.
    */
-  async getMatches(userId: string) {
+  async getMatches(userId: string, locale: SupportedLocale) {
     assertUuid(userId, "userId");
 
     const { data: matches, error } = await supabase
@@ -596,7 +601,13 @@ export class MatchingService {
       for (const msg of lastMessagesResult.data) {
         const mid = msg.match_id as string;
         if (!lastMsgMap.has(mid)) {
-          lastMsgMap.set(mid, msg as any);
+          lastMsgMap.set(mid, {
+            content: msg.content as string,
+            sender_id: msg.sender_id as string,
+            is_image: msg.is_image === true,
+            audio_url: (msg.audio_url as string | null) ?? null,
+            created_at: msg.created_at as string,
+          });
         }
       }
     }
@@ -618,8 +629,8 @@ export class MatchingService {
 
       let lastMessagePreview: string | null = null;
       if (lastMsg) {
-        if (lastMsg.audio_url) lastMessagePreview = "🎤 Sesli mesaj";
-        else if (lastMsg.is_image) lastMessagePreview = "📷 Fotoğraf";
+        if (lastMsg.audio_url) lastMessagePreview = `🎤 ${localeText(locale, "chat_preview", "voice")}`;
+        else if (lastMsg.is_image) lastMessagePreview = `📷 ${localeText(locale, "chat_preview", "photo")}`;
         else lastMessagePreview = lastMsg.content;
       }
 

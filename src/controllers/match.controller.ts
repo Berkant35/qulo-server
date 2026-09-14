@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { matchingService } from "../services/matching.service.js";
+import { localeFromRequestHeaders } from "../utils/locales.js";
 import type { SwipeInput, DiscoverQuery } from "../validators/match.validator.js";
 
 export async function discoverHandler(req: Request, res: Response, next: NextFunction) {
@@ -27,7 +28,8 @@ export async function swipeHandler(req: Request, res: Response, next: NextFuncti
 export async function getMatchesHandler(req: Request, res: Response, next: NextFunction) {
   try {
     const userId = req.user!.userId;
-    const data = await matchingService.getMatches(userId);
+    // Header'siz eski mobil surum → LEGACY_CLIENT_LOCALE (tr): onizleme eskisi gibi kalir.
+    const data = await matchingService.getMatches(userId, localeFromRequestHeaders(req.headers));
     res.json(data);
   } catch (err) {
     next(err);

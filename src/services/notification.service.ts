@@ -1,30 +1,9 @@
-import { createRequire } from 'node:module';
 import { getFcm, isFcmAvailable } from '../config/firebase.js';
 import { supabase } from '../config/supabase.js';
 import { resolveLocale } from '../utils/locales.js';
+import { serverLocales as locales } from '../utils/server-locales.js';
 import { LIFECYCLE_RULE_KEYS, LIFECYCLE_RULES } from './notification-engine/rules.js';
 import type { LifecycleRuleKey } from './notification-engine/rules.js';
-
-const require = createRequire(import.meta.url);
-
-const locales: Record<string, Record<string, Record<string, string>>> = {
-  tr: require('../locales/tr.json'),
-  en: require('../locales/en.json'),
-  de: require('../locales/de.json'),
-  fr: require('../locales/fr.json'),
-  es: require('../locales/es.json'),
-  ar: require('../locales/ar.json'),
-  ru: require('../locales/ru.json'),
-  pt: require('../locales/pt.json'),
-  it: require('../locales/it.json'),
-  ja: require('../locales/ja.json'),
-  ko: require('../locales/ko.json'),
-  zh: require('../locales/zh.json'),
-  nl: require('../locales/nl.json'),
-  pl: require('../locales/pl.json'),
-  sv: require('../locales/sv.json'),
-  hi: require('../locales/hi.json'),
-};
 
 // Admin-editable push template types (shown in /admin/push-messages panel).
 // Validator (pushTemplateParamsSchema) accepts only these.
@@ -67,7 +46,8 @@ export function loadDefaultTemplate(
   type: AnyPushType,
   locale: SupportedLocale,
 ): { title: string; body: string } {
-  const safeLocale = locales[locale] ? locale : 'en';
+  // Nesne dogrulugu gercek bir koruma degildi ('constructor' gecerdi); liste kontrolu.
+  const safeLocale = resolveLocale(locale);
   const raw = locales[safeLocale]?.push?.[type] as unknown;
   if (typeof raw === 'string') return { title: DEFAULT_PUSH_TITLE, body: raw };
   if (raw && typeof raw === 'object') {
@@ -182,7 +162,7 @@ export class NotificationService {
     type: AnyPushType,
     locale: SupportedLocale,
   ): Promise<ResolvedTemplate> {
-    const safeLocale: SupportedLocale = locales[locale] ? locale : 'en';
+    const safeLocale: SupportedLocale = resolveLocale(locale);
     const def = loadDefaultTemplate(type, safeLocale);
     // Empty strings from loadDefaultTemplate (unknown type) → treat as "no default".
     const defaultTitle = def.title || undefined;

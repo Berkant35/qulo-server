@@ -34,5 +34,9 @@
       "title": "Te echamos de menos",
       "body": "Preguntas, matches y gente nueva te están esperando."
     }
+  },
+  "chat_preview": {
+    "voice": "Mensaje de voz",
+    "photo": "Foto"
   }
 }
