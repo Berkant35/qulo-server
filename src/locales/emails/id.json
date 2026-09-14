@@ -1,0 +1,21 @@
+{
+  "tagline": "Kenalan Lewat Pertanyaan, Cocok Sungguhan",
+  "verify_subject": "Verifikasi alamat emailmu",
+  "verify_title": "Selamat datang! 💜",
+  "verify_body": "Terima kasih sudah bergabung di Qulo! Klik tombol di bawah untuk mengaktifkan akunmu.",
+  "verify_button": "Verifikasi Email Saya",
+  "reset_subject": "Permintaan atur ulang kata sandi",
+  "reset_title": "Atur Ulang Kata Sandi 🔑",
+  "reset_body": "Klik tombol di bawah untuk mengatur ulang kata sandimu. Tautan ini berlaku selama 1 jam.",
+  "reset_button": "Atur Ulang Kata Sandi Saya",
+  "link_fallback": "Jika tombol tidak berfungsi:",
+  "footer_ignore": "Jika kamu tidak meminta email ini, abaikan saja.",
+  "match_new": {
+    "subject": "Seseorang menjawab pertanyaanmu 🎉",
+    "preheader": "Kamu punya kecocokan baru",
+    "headline": "Seseorang menjawab semua pertanyaanmu",
+    "body": "Kamu punya kecocokan baru di Qulo. Buka aplikasi untuk melihat siapa dia.",
+    "cta": "Lihat sekarang",
+    "unsubscribe_label": "Matikan notifikasi email"
+  }
+}

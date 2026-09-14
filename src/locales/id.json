@@ -1,0 +1,42 @@
+{
+  "push": {
+    "new_message": "{name} mengirimimu pesan",
+    "new_message_image": "{name} mengirimimu foto",
+    "new_match": "Kecocokan baru! Seseorang menjawab semua pertanyaanmu dengan benar",
+    "new_match_solver": "Selamat! Kamu menjawab semua pertanyaan dengan benar, kamu punya kecocokan baru!",
+    "new_match_badge": "Seseorang menyelesaikan kuismu dengan lencana {badge}! Kamu punya kecocokan baru!",
+    "chat_question_answered": "Pertanyaan chatmu sudah dijawab ({result})",
+    "lifecycle_unread_message": {
+      "title": "Ada pesan yang belum dibaca",
+      "body": "{name} mengirimimu pesan dan sedang menunggu balasan."
+    },
+    "lifecycle_match_waiting": {
+      "title": "Kecocokanmu menunggu",
+      "body": "Kamu cocok dengan {name} tapi belum ngobrol. Kirim pesan pertama!"
+    },
+    "lifecycle_likes_waiting": {
+      "title": "Ada yang menyukaimu 👀",
+      "body": "{count} orang menyukaimu saat kamu pergi. Yuk, lihat!"
+    },
+    "lifecycle_quiz_unfinished": {
+      "title": "Ada kuis yang belum selesai",
+      "body": "Kamu belum menyelesaikan pertanyaan {name}. Coba lagi!"
+    },
+    "lifecycle_profile_incomplete": {
+      "title": "Profilmu belum terlihat",
+      "body": "Tambahkan minimal 2 pertanyaan dan 1 foto agar muncul di Jelajahi."
+    },
+    "lifecycle_new_people": {
+      "title": "Wajah baru di sekitarmu",
+      "body": "{count} orang baru bergabung minggu ini. Lihat di Jelajahi!"
+    },
+    "lifecycle_winback": {
+      "title": "Kami merindukanmu",
+      "body": "Pertanyaan, kecocokan, dan orang-orang baru menunggumu."
+    }
+  },
+  "chat_preview": {
+    "voice": "Pesan suara",
+    "photo": "Foto"
+  }
+}

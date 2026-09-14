@@ -22,6 +22,7 @@ const localeCache = new Map<string, Record<string, string>>();
 const SUPPORTED_LOCALES = [
   "tr", "en", "de", "fr", "es", "ar", "ru",
   "pt", "it", "ja", "ko", "zh", "nl", "pl", "sv", "hi",
+  "th", "id",
 ];
 
 function getEmailLocale(locale?: string): Record<string, string> {

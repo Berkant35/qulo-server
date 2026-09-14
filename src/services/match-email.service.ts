@@ -49,6 +49,8 @@ const emailLocales: Record<string, { match_new: MatchNewTpl }> = {
   pl: require("../locales/emails/pl.json"),
   sv: require("../locales/emails/sv.json"),
   hi: require("../locales/emails/hi.json"),
+  th: require("../locales/emails/th.json"),
+  id: require("../locales/emails/id.json"),
 };
 
 class MatchEmailService {

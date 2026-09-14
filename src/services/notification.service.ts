@@ -115,6 +115,8 @@ const NAME_FALLBACK: Record<SupportedLocale, string> = {
   pl: 'Ktoś',
   sv: 'Någon',
   hi: 'कोई',
+  th: 'ใครบางคน',
+  id: 'Seseorang',
 };
 
 function interpolate(template: string, params: Record<string, string>): string {

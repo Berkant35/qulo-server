@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import { SUPPORTED_LOCALES } from "../constants/locales.js";
 import { adminService, pushTemplateAdminService } from "./admin.service.js";
 import { emailService } from "../services/email.service.js";
 import { campaignService } from "../services/campaign.service.js";
@@ -561,7 +562,7 @@ class AdminController {
     }
     const locale = parsedQuery.data.locale as SupportedLocale;
     const rows = await pushTemplateAdminService.list(locale);
-    res.render("push-messages-list", { rows, locale, session: req.session, csrfToken: req.session.csrfToken });
+    res.render("push-messages-list", { rows, locale, locales: SUPPORTED_LOCALES, session: req.session, csrfToken: req.session.csrfToken });
   }
 
   async pushMessageEdit(req: Request, res: Response) {

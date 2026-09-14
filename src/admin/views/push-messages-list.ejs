@@ -2,7 +2,7 @@
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
   <h2>Push Mesajları <span style="font-size: 14px; color: #666;">(<%= rows.length %> tip)</span></h2>
   <div class="pagination" style="margin: 0;">
-    <% ['tr','en'].forEach(function(l) { %>
+    <% (locales || ['tr','en']).forEach(function(l) { %>
       <a href="?locale=<%= l %>" class="<%= l === locale ? 'active' : '' %>"><%= l.toUpperCase() %></a>
     <% }); %>
   </div>

@@ -25,6 +25,8 @@ export const serverLocales: Record<SupportedLocale, Record<string, Record<string
   pl: require('../locales/pl.json'),
   sv: require('../locales/sv.json'),
   hi: require('../locales/hi.json'),
+  th: require('../locales/th.json'),
+  id: require('../locales/id.json'),
 };
 
 /** Bolum/anahtar metni; dilde yoksa en, o da yoksa bos string. */

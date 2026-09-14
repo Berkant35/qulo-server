@@ -64,24 +64,32 @@ describe('getUserLanguages', () => {
   });
 });
 
-describe('DB constraint ↔ SUPPORTED_LOCALES paritesi', () => {
-  it('migration 043 CHECK listesi sunucunun desteklediği dillerle birebir aynı', () => {
-    const sql = readFileSync(new URL('../../migrations/043_user_languages_hi_atomic.sql', import.meta.url), 'utf8');
-    const checkBlock = sql.match(/ADD CONSTRAINT user_languages_language_code_check[\s\S]*?\]\)\);/)?.[0];
-    expect(checkBlock, 'CHECK bloğu bulunamadı').toBeDefined();
+describe('DB constraint ↔ SUPPORTED_LOCALES paritesi (migration 056, 18 dil)', () => {
+  // 043 (user_languages), 044 (users.locale) ve 055 (questions.locale) 16 dilde kalir;
+  // guncel liste tek dosyada (056). Yeni dil eklerken bu dosyayi 057 ile degistir.
+  const sql = readFileSync(new URL('../../migrations/056_locales_th_id.sql', import.meta.url), 'utf8');
+  const codesOf = (constraint: string) => {
+    const arr = sql.match(new RegExp(`ADD CONSTRAINT ${constraint}[\\s\\S]*?ARRAY\\[([\\s\\S]*?)\\]`))?.[1];
+    expect(arr, `${constraint} bloğu bulunamadı`).toBeDefined();
+    return arr!.split(',').map((x) => x.trim().replace(/'/g, '')).filter(Boolean).sort();
+  };
 
-    const dbCodes = [...checkBlock!.matchAll(/'([a-z]{2})'/g)].map((m) => m[1]).sort();
-    expect(dbCodes).toEqual([...SUPPORTED_LOCALES].sort());
+  it('user_languages.language_code CHECK listesi sunucunun desteklediği dillerle birebir aynı', () => {
+    expect(codesOf('user_languages_language_code_check')).toEqual([...SUPPORTED_LOCALES].sort());
   });
 
-  it('migration 044 users.locale CHECK listesi de sunucunun desteklediği dillerle birebir aynı', () => {
-    // 043'ün ikizi: push dili users.locale'den okunur; DB 15 dilde kalırsa `hi` kullanıcı 500 alır.
-    const sql = readFileSync(new URL('../../migrations/044_users_locale_hi.sql', import.meta.url), 'utf8');
-    const checkBlock = sql.match(/ADD CONSTRAINT users_locale_check[\s\S]*?\]\)\);/)?.[0];
-    expect(checkBlock, 'CHECK bloğu bulunamadı').toBeDefined();
+  it('users.locale CHECK listesi de aynı (push dili bu kolondan okunur)', () => {
+    expect(codesOf('users_locale_check')).toEqual([...SUPPORTED_LOCALES].sort());
+  });
 
-    const dbCodes = [...checkBlock!.matchAll(/'([a-z]{2})'/g)].map((m) => m[1]).sort();
-    expect(dbCodes).toEqual([...SUPPORTED_LOCALES].sort());
+  it('questions.locale CHECK listesi de aynı (soru INSERT 23514 vermesin)', () => {
+    expect(codesOf('questions_locale_check')).toEqual([...SUPPORTED_LOCALES].sort());
+  });
+
+  it('rollback dosyası var ve 16 dile döner', () => {
+    const rb = readFileSync(new URL('../../migrations/056_locales_th_id_rollback.sql', import.meta.url), 'utf8');
+    expect(rb).not.toMatch(/'th'/);
+    expect(rb).toMatch(/users_locale_check/);
   });
 });
 
@@ -154,16 +162,6 @@ describe('migration 054 — dil tercihi tek kaynak', () => {
     expect(rb).toMatch(/SET DEFAULT ARRAY\['tr'\]/);
     expect(rb).toMatch(/DROP FUNCTION IF EXISTS set_user_languages\(uuid, text\[\]\)/);
     expect(rb).not.toMatch(/UPDATE\s+users\s+SET preferred_languages = p_languages/);
-  });
-});
-
-describe('migration 055 — questions.locale CHECK ↔ SUPPORTED_LOCALES paritesi', () => {
-  it('CHECK listesi sunucunun desteklediği dillerle birebir aynı (043/044 üçüzü; repo 011\'de kalmıştı)', () => {
-    const sql = readFileSync(new URL('../../migrations/055_questions_locale_check_hi.sql', import.meta.url), 'utf8');
-    const arr = sql.match(/ADD CONSTRAINT questions_locale_check[\s\S]*?ARRAY\[([\s\S]*?)\]/)?.[1];
-    expect(arr, 'CHECK bloğu bulunamadı').toBeDefined();
-    const dbCodes = arr!.split(',').map((x) => x.trim().replace(/'/g, '')).filter(Boolean).sort();
-    expect(dbCodes).toEqual([...SUPPORTED_LOCALES].sort());
   });
 });
 

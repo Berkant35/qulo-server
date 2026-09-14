@@ -1,0 +1,7002 @@
+[
+  {
+    "category": "personality",
+    "question_text": "Apa yang paling bikin kamu terkesan di kencan pertama?",
+    "answers": [
+      "Kafe tersembunyi",
+      "Jalan-jalan ke toko buku",
+      "Nonton film di rooftop",
+      "Tur museum malam hari"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Gimana caramu mengisi ulang energi setelah minggu yang panjang?",
+    "answers": [
+      "Maraton Netflix sendirian",
+      "Nongkrong bareng teman",
+      "Hiking panjang",
+      "Masak sesuatu yang istimewa"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Gaya chatting kamu kalau lagi pacaran?",
+    "answers": [
+      "Meme sepanjang hari",
+      "Chat selamat pagi",
+      "Voice note daripada ngetik",
+      "Singkat dan manis"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Kalau kita habiskan satu hari bareng, siapa yang bikin rencana?",
+    "answers": [
+      "Aku kasih kejutan",
+      "Kamu yang tentukan",
+      "Kita rencanakan bareng",
+      "Ikut alur aja"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Apa yang paling penting dari seorang pasangan?",
+    "answers": [
+      "Selera humor",
+      "Ambisi",
+      "Kebaikan hati",
+      "Kecerdasan"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Gimana caramu menghadapi konflik dalam hubungan?",
+    "answers": [
+      "Langsung dibicarakan",
+      "Ambil jarak dulu",
+      "Tulis perasaanku dulu",
+      "Humor mencairkan semuanya"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Apa bahasa cintamu?",
+    "answers": [
+      "Kata-kata penegasan",
+      "Waktu berkualitas",
+      "Sentuhan fisik",
+      "Tindakan pelayanan"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Kamu tipe perencana atau spontan?",
+    "answers": [
+      "Semua detail direncanakan",
+      "Kebanyakan spontan",
+      "Rencanakan yang besar aja",
+      "Tergantung mood"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Gimana pendapatmu soal mesra-mesraan di depan umum?",
+    "answers": [
+      "Suka, ayo aja",
+      "Cukup gandengan tangan",
+      "Simpan buat berdua aja",
+      "Tergantung suasana"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Energi seperti apa yang kata orang kamu bawa?",
+    "answers": [
+      "Bintang pesta",
+      "Tenang dan menenangkan",
+      "Si pemikir dalam",
+      "Si kartu liar"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Apa green flag terbesarmu?",
+    "answers": [
+      "Ingat detail kecil",
+      "Setia banget",
+      "Selalu bikin orang ketawa",
+      "Pendengar yang baik"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Seberapa penting waktu sendiri buatmu?",
+    "answers": [
+      "Penting, butuh tiap hari",
+      "Enak tapi nggak wajib",
+      "Cuma kalau lagi stres",
+      "Lebih suka ditemani"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Sabtu pagi idealmu seperti apa?",
+    "answers": [
+      "Tidur sampai siang",
+      "Jalan ke pasar pagi",
+      "Olahraga pagi",
+      "Brunch bareng teman"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Gimana caramu menunjukkan kamu peduli sama seseorang?",
+    "answers": [
+      "Hadiah kejutan",
+      "Masak buat dia",
+      "Merencanakan waktu berdua",
+      "Bilang langsung"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Gaya keterikatanmu dalam hubungan seperti apa?",
+    "answers": [
+      "Langsung total dari hari pertama",
+      "Pelan tapi pasti",
+      "Aku butuh ruang",
+      "Tergantung orangnya"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Apa yang kamu mau pasanganmu tahu pertama kali tentangmu?",
+    "answers": [
+      "Aku setia banget",
+      "Aku butuh obrolan dalam",
+      "Aku sebenarnya konyol",
+      "Aku hargai kemandirianku"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Seberapa cepat kamu jatuh hati?",
+    "answers": [
+      "Cepat banget, bahaya",
+      "Butuh waktu lama",
+      "Di tengah-tengah",
+      "Cuma pas nggak nyangka"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Apa yang kamu lakukan kalau nggak bisa tidur?",
+    "answers": [
+      "Scroll HP tanpa henti",
+      "Baca buku",
+      "Overthinking semuanya",
+      "Pasang podcast"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Kalau temanmu menggambarkanmu dengan satu kata?",
+    "answers": [
+      "Kacau",
+      "Bisa diandalkan",
+      "Pemimpi",
+      "Petualang"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Apa dealbreaker buatmu?",
+    "answers": [
+      "Nggak punya selera humor",
+      "Pikiran tertutup",
+      "Komunikasi buruk",
+      "Nggak punya ambisi"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Gimana pendapatmu soal kenalan sama orang tua di awal hubungan?",
+    "answers": [
+      "Makin cepat makin bagus",
+      "Tunggu minimal 6 bulan",
+      "Kalau sudah terasa pas",
+      "Seram tapi perlu"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Vibe kamu di pesta seperti apa?",
+    "answers": [
+      "Joget di atas meja",
+      "Ngobrol dalam di pojokan",
+      "Kenalan sama semua orang",
+      "Nyari camilan"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Apa bakat rahasiamu?",
+    "answers": [
+      "Langsung bisa membaca orang",
+      "Bikin siapa pun ketawa",
+      "Masak tanpa resep",
+      "Tetap tenang di tengah kekacauan"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Gimana pendapatmu soal hubungan jarak jauh?",
+    "answers": [
+      "Bisa dijalani",
+      "Nggak, makasih",
+      "Cuma sementara aja",
+      "Tergantung koneksinya"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Peran apa yang kamu mainkan di circle pertemananmu?",
+    "answers": [
+      "Si perencana",
+      "Si terapis",
+      "Si penyemangat",
+      "Si biang kekacauan"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Hal paling romantis yang bisa seseorang lakukan buatmu?",
+    "answers": [
+      "Tulis surat buat aku",
+      "Masak makan malam kejutan",
+      "Rencanakan satu hari penuh buatku",
+      "Terbangkan aku ke tempat random"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Kamu orang pagi atau makhluk malam?",
+    "answers": [
+      "Pejuang matahari terbit",
+      "Makhluk malam selamanya",
+      "Tergantung musim",
+      "Nggak keduanya, selalu capek"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Apa yang bikin kamu merasa paling hidup?",
+    "answers": [
+      "Traveling ke tempat baru",
+      "Koneksi dalam sama seseorang",
+      "Aktivitas memacu adrenalin",
+      "Menciptakan sesuatu yang berarti"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Gimana caramu mengatasi rasa cemburu?",
+    "answers": [
+      "Bicarakan terbuka",
+      "Pura-pura baik-baik aja",
+      "Salurkan ke perbaikan diri",
+      "Aku jarang cemburu"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Kejutan seperti apa yang kamu suka?",
+    "answers": [
+      "Petualangan terencana",
+      "Hadiah yang penuh perhatian",
+      "Road trip spontan",
+      "Catatan tulisan tangan"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Gaya komunikasimu seperti apa?",
+    "answers": [
+      "Langsung dan jujur",
+      "Lembut dan diplomatis",
+      "Jenaka dan sarkastis",
+      "Tindakan lebih bicara"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Gimana caramu mengatasi stres?",
+    "answers": [
+      "Olahraga",
+      "Ngobrol sama seseorang",
+      "Menyendiri",
+      "Makanan enak dan nonton"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Ketakutan terbesarmu dalam berkencan?",
+    "answers": [
+      "Buang-buang waktu",
+      "Terlalu terikat",
+      "Disalahpahami",
+      "Melewatkan orang yang tepat"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Kalau bisa mengubah satu hal dari dirimu?",
+    "answers": [
+      "Lebih sedikit overthinking",
+      "Lebih spontan",
+      "Lebih mudah mengungkapkan perasaan",
+      "Nggak ada, aku masih berproses"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Seberapa penting punya hobi yang sama dengan pasangan?",
+    "answers": [
+      "Penting banget",
+      "Bagus tapi nggak wajib",
+      "Perbedaan bikin seru",
+      "Minimal satu hobi sama"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Apa yang bikin kamu swipe kanan?",
+    "answers": [
+      "Senyum yang tulus",
+      "Bio yang cerdas",
+      "Foto petualangan",
+      "Foto sama anjing, jelas"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Kepercayaan itu seperti apa menurutmu?",
+    "answers": [
+      "Nggak perlu cek HP",
+      "Saling terbuka dan rapuh",
+      "Menepati janji",
+      "Saling memberi kebebasan"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hari santai idealmu bareng seseorang?",
+    "answers": [
+      "Rebahan, camilan, dan film",
+      "Masak bareng pelan-pelan",
+      "Baca buku berdampingan",
+      "Main board game seharian"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Gimana sikapmu kalau benar-benar suka seseorang?",
+    "answers": [
+      "Jadi gugup dan canggung",
+      "Gombal tanpa malu",
+      "Tetap cool",
+      "Overthinking tiap chat"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Mana yang lebih penting: gairah atau stabilitas?",
+    "answers": [
+      "Gairah, selalu",
+      "Stabilitas, jelas",
+      "Campuran keduanya",
+      "Gairah dulu, stabilitas nanti"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Kapan kamu merasa paling percaya diri?",
+    "answers": [
+      "Saat berdandan rapi",
+      "Setelah olahraga",
+      "Saat di bidangku",
+      "Saat orang yang aku suka melirik"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Gimana hubunganmu dengan media sosial?",
+    "answers": [
+      "Kecanduan, jujur aja",
+      "Jarang posting, cuma lihat",
+      "Cuma buat meme",
+      "Aku jaga privasi banget"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Mana yang lebih kamu hargai: petualangan atau kenyamanan?",
+    "answers": [
+      "Petualangan, selalu",
+      "Kenyamanan itu underrated",
+      "Petualangan dengan basis nyaman",
+      "Gantian keduanya"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Gimana pendapatmu soal berbagi password?",
+    "answers": [
+      "Boleh, nggak ada yang disembunyikan",
+      "Nggak, itu ruangku",
+      "Cuma setelah lama",
+      "Berbagi Netflix termasuk, kan?"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Masa depan idealmu seperti apa?",
+    "answers": [
+      "Keliling dunia",
+      "Rumah besar, anak, anjing",
+      "Membangun sesuatu yang berarti",
+      "Nggak merencanakan sejauh itu"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Gimana caramu minta maaf?",
+    "answers": [
+      "Kata-kata dulu, lalu tindakan",
+      "Bawa makanan sebagai tanda damai",
+      "Butuh waktu dulu",
+      "Langsung minta maaf"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Pujian terbaik yang bisa kamu terima?",
+    "answers": [
+      "Kamu bikin aku merasa aman",
+      "Kamu orang paling lucu",
+      "Aku kagum kamu gigih",
+      "Energimu paling asyik"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Kamu lebih logis atau emosional?",
+    "answers": [
+      "Logika menguasai otakku",
+      "Hati di atas kepala, selalu",
+      "Logis tapi emosional di dalam",
+      "Tergantung situasi"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Gimana pendapatmu soal status dalam berkencan?",
+    "answers": [
+      "Tentukan secepatnya",
+      "Status nggak penting",
+      "Setelah beberapa bulan",
+      "Biarkan mengalir alami"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Apa guilty pleasure kamu?",
+    "answers": [
+      "Reality show",
+      "Makan cepat saji jam 2 pagi",
+      "Kepoin sosmed mantan",
+      "Nyanyi di kamar mandi"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Pilih aktivitas ideal buat pasangan?",
+    "answers": [
+      "Tantangan escape room",
+      "Kelas racik kopi berdua",
+      "Lihat bintang di rooftop",
+      "Ikut kelas dansa"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Humor seperti apa yang bikin kamu luluh?",
+    "answers": [
+      "Sarkasme kering",
+      "Konyol dan receh",
+      "Humor gelap",
+      "Permainan kata cerdas"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Seberapa penting ketertarikan fisik buatmu?",
+    "answers": [
+      "Penting banget, jujur aja",
+      "Penting tapi bukan segalanya",
+      "Kepribadian lebih penting",
+      "Tumbuh seiring koneksi"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Kamu percaya belahan jiwa?",
+    "answers": [
+      "Percaya banget",
+      "Nggak juga",
+      "Aku percaya jiwa yang cocok",
+      "Aku ingin percaya"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Apa yang mantanmu bilang tentangmu?",
+    "answers": [
+      "Terlalu mandiri",
+      "Terlalu perhatian",
+      "Susah ditebak",
+      "Yang paling disesali dilepas"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Apa yang bikin kamu terjaga di malam hari?",
+    "answers": [
+      "Mimpi dan ide besar",
+      "Obrolan yang terus terulang di kepala",
+      "Khawatir soal masa depan",
+      "Nggak ada, tidurku nyenyak"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Seberapa cepat kamu balas chat orang yang kamu suka?",
+    "answers": [
+      "Langsung, nggak main-main",
+      "Sengaja tunggu 20 menit",
+      "Kalau ada balasan bagus",
+      "Aku selalu lupa balas"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Satu hal yang nggak akan pernah kamu kompromikan?",
+    "answers": [
+      "Nilai-nilaiku",
+      "Tujuan karierku",
+      "Waktu sama teman/keluarga",
+      "Perkembangan diriku"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Gimana caramu merayakan kemenangan kecil?",
+    "answers": [
+      "Traktir diri sendiri",
+      "Kasih tahu semua orang",
+      "Bangga dalam diam",
+      "Joget keliling kamar"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Energi pasangan seperti apa yang kamu butuhkan?",
+    "answers": [
+      "Santai dan easygoing",
+      "Gigih dan ambisius",
+      "Petualang dan spontan",
+      "Hangat dan penyayang"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Gimana caramu mengatasi hening canggung saat kencan?",
+    "answers": [
+      "Langsung lempar candaan",
+      "Tanya pertanyaan dalam random",
+      "Nikmati dengan percaya diri",
+      "Panik dalam hati"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hal kecil yang paling bikin kamu kesal?",
+    "answers": [
+      "Orang yang makan berisik",
+      "Dibaca tapi nggak dibalas",
+      "Selalu telat",
+      "Pamer terselubung"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Seberapa penting ambisi pada pasangan?",
+    "answers": [
+      "Itu segalanya",
+      "Bagus tapi nggak wajib",
+      "Asal dia bersemangat pada sesuatu",
+      "Aku lebih suka yang santai"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Hal pertama yang kamu perhatikan dari seseorang?",
+    "answers": [
+      "Senyumnya",
+      "Matanya",
+      "Energinya",
+      "Cara dia memperlakukan orang"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Kamu tipe yang bergerak duluan?",
+    "answers": [
+      "Selalu, hidup terlalu singkat",
+      "Cuma kalau sinyalnya kuat",
+      "Aku lebih suka dia duluan",
+      "Aku yang bergerak kedua"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Apa yang kamu lakukan dengan satu hari kosong?",
+    "answers": [
+      "Jelajahi daerah baru",
+      "Rebahan tanpa rasa bersalah",
+      "Ajak teman bikin rencana",
+      "Akhirnya beresin to-do list"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Gimana caramu mengekspresikan kegembiraan?",
+    "answers": [
+      "Lompat-lompat kayak anak kecil",
+      "Senyum lebar, bahagia diam-diam",
+      "Kasih tahu semua orang",
+      "Langsung mulai merencanakan"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Cara andalanmu buat menggoda?",
+    "answers": [
+      "Tatapan mata dan senyum",
+      "Obrolan cerdas",
+      "Godaan jahil",
+      "Tertarik dengan tulus"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Kamu lebih suka obrolan dalam atau yang ringan?",
+    "answers": [
+      "Obrolan dalam jam 3 pagi",
+      "Ringan dan seru selalu",
+      "Mulai ringan, dalam alami",
+      "Tergantung orangnya"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Apa sifat toxic kamu?",
+    "answers": [
+      "Terlalu keras kepala",
+      "Menghindari konfrontasi",
+      "Menganalisis semuanya berlebihan",
+      "Cepat bosan"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Kalau bisa tahu satu hal tentang pasangan masa depanmu sekarang?",
+    "answers": [
+      "Mimpi terbesarnya",
+      "Apa yang bikin dia ketawa",
+      "Cara dia hadapi masa sulit",
+      "Apa yang paling dia takuti"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Emoji mana yang paling menggambarkan dirimu?",
+    "answers": [
+      "Wajah ketawa sampai nangis",
+      "Emoji api",
+      "Wajah berpikir",
+      "Mata hati"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Gimana sikapmu kalau ternyata kamu salah?",
+    "answers": [
+      "Mengakui dengan lapang dada",
+      "Berdebat lebih keras dulu",
+      "Menerima dalam diam",
+      "Cek Google buat memastikan"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Pendapatmu soal baju couple?",
+    "answers": [
+      "Gemes, aku mau",
+      "Cukup senada aja",
+      "Nggak sama sekali",
+      "Cuma pas pesta kostum"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Apa yang kamu harap orang pahami tentangmu?",
+    "answers": [
+      "Aku peduli lebih dari yang terlihat",
+      "Diamku bukan marah",
+      "Aku butuh waktu buat terbuka",
+      "Aku sensitif di balik sikap tegar"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Malam kencan seperti apa yang paling terdengar asyik?",
+    "answers": [
+      "Makan malam mewah di kota",
+      "Masakan rumah dan lilin",
+      "Konser atau pertunjukan",
+      "Petualangan outdoor"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Gambarkan vibe kamu dalam tiga huruf?",
+    "answers": [
+      "LOL",
+      "ZEN",
+      "LIT",
+      "AWE"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "personality",
+    "question_text": "Apa yang nggak bisa ditawar dalam hubunganmu?",
+    "answers": [
+      "Kejujuran setiap saat",
+      "Saling menghormati",
+      "Selera humor yang sama",
+      "Ketersediaan emosional"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Kalau bisa tinggal di satu kota selama setahun?",
+    "answers": [
+      "New York",
+      "Barcelona",
+      "Tokyo",
+      "Melbourne"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Liburan pantai atau retret pegunungan?",
+    "answers": [
+      "Pantai, pasti",
+      "Gunung, jelas",
+      "Pantai siang, gunung dekat",
+      "Yang penting Wi-Fi bagus"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Gaya travelingmu seperti apa?",
+    "answers": [
+      "Backpacker sejati",
+      "Mewah sepenuhnya",
+      "Rencanakan tiap detail",
+      "Bebas tanpa rencana"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Destinasi bulan madu impian?",
+    "answers": [
+      "Vila atas laut di Maldives",
+      "Road trip pesisir Italia",
+      "Safari di Afrika",
+      "Tur budaya Jepang"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Gimana caramu menjelajahi kota baru?",
+    "answers": [
+      "Jalan kaki tanpa tujuan",
+      "Ikut rekomendasi kuliner",
+      "Keliling museum dan galeri",
+      "Cari tempat nongkrong paling hidup"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Akomodasi seperti apa yang kamu suka?",
+    "answers": [
+      "Hotel butik",
+      "Vila yang punya karakter",
+      "Hostel biar rame",
+      "Camping di bawah bintang"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Kalau kita liburan akhir pekan, kamu pilih ke mana?",
+    "answers": [
+      "Vila di tengah sawah Ubud",
+      "City break yang rame",
+      "Cottage tepi pantai",
+      "Kebun kopi Kintamani"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Mana yang lebih seru: road trip atau naik pesawat?",
+    "answers": [
+      "Road trip dengan playlist",
+      "Terbang, cepat sampai",
+      "Kereta lewat pedesaan Jawa",
+      "Tergantung sama siapa"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Barang paling penting buat dibawa traveling?",
+    "answers": [
+      "Kamera",
+      "Sunscreen",
+      "Buku yang bagus",
+      "Outfit keberuntunganku"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Benua mana yang belum pernah kamu kunjungi tapi ingin banget?",
+    "answers": [
+      "Amerika Selatan",
+      "Eropa",
+      "Afrika",
+      "Australia"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Pulau tropis atau kota Eropa?",
+    "answers": [
+      "Pulau tropis, nggak perlu tanya",
+      "Pesona Eropa selalu",
+      "Pulau dulu, kota setelahnya",
+      "Yang makanannya lebih enak"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Kepribadianmu di bandara seperti apa?",
+    "answers": [
+      "Datang 3 jam lebih awal",
+      "Lari-lari ke gate",
+      "Belanja di duty-free",
+      "Nongkrong di lounge sambil ngopi"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Apa yang bikin sebuah perjalanan tak terlupakan?",
+    "answers": [
+      "Petualangan tak terduga",
+      "Bertemu warga lokal yang menarik",
+      "Menemukan makanan luar biasa",
+      "Momen sunset yang romantis"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Gimana pendapatmu soal traveling sendirian?",
+    "answers": [
+      "Suka, rasanya bebas",
+      "Lebih suka ada teman",
+      "Pernah sekali, mau lagi",
+      "Kedengarannya sepi"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Kamu dapat tiket gratis ke mana saja. Ke mana?",
+    "answers": [
+      "Aurora di Islandia",
+      "Safari di Kenya",
+      "Sakura di Jepang",
+      "Karnaval di Rio"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Vibe kamu di hotel seperti apa?",
+    "answers": [
+      "Keluar jelajah seharian",
+      "Kolam renang dan santai",
+      "Spa dan wellness",
+      "Cuma buat tidur"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Aktivitas ideal buat liburan berdua?",
+    "answers": [
+      "Diving bareng",
+      "Kelas masak sama warga lokal",
+      "Sewa motor buat keliling",
+      "Sailing pas sunset"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Seberapa bergantung kamu sama Google Maps saat traveling?",
+    "answers": [
+      "Itu penyelamat hidupku",
+      "Aku lebih suka nyasar",
+      "Cuma buat cari tempat makan",
+      "Peta kertas lebih hebat"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Kota Eropa mana yang vibe-nya paling asyik?",
+    "answers": [
+      "Paris, jelas",
+      "Kebebasan Amsterdam",
+      "Pesona Roma",
+      "Energi London"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Mau nggak menjalani gaya hidup digital nomad?",
+    "answers": [
+      "Hidup impian",
+      "Mungkin beberapa bulan",
+      "Aku butuh rumah tetap",
+      "Sudah menjalaninya"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "Hal paling menyebalkan saat traveling?",
+    "answers": [
+      "Pesawat delay",
+      "Turis dengan tongsis",
+      "Wi-Fi hotel jelek",
+      "Terlalu terjadwal tiap menit"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Kalau bisa teleportasi ke suatu tempat sekarang juga?",
+    "answers": [
+      "Pulau di Yunani",
+      "Chalet di Swiss",
+      "Raja Ampat",
+      "Rooftop di New York"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Aktivitas petualangan saat liburan?",
+    "answers": [
+      "Bungee jumping",
+      "Paralayang",
+      "Rafting di Sungai Ayung",
+      "Aku nonton dari kafe aja"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Oleh-oleh seperti apa yang kamu bawa pulang?",
+    "answers": [
+      "Magnet kulkas",
+      "Seni atau kerajinan lokal",
+      "Foto aja cukup",
+      "Camilan dan rempah lokal"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Seberapa sering kamu memikirkan perjalanan berikutnya?",
+    "answers": [
+      "Selalu, tiap saat",
+      "Begitu pulang dari satu",
+      "Beberapa kali sebulan",
+      "Kalau butuh kabur"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Teman traveling impianmu seperti apa?",
+    "answers": [
+      "Spontan dan santai",
+      "Fotografer buat feed IG",
+      "Yang merencanakan semuanya",
+      "Siap apa aja, kapan aja"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Mau pindah ke luar negeri demi cinta?",
+    "answers": [
+      "Tanpa pikir panjang",
+      "Cuma ke negara tertentu",
+      "Butuh banyak pertimbangan",
+      "Aku mau dia yang pindah"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Pengalaman kuliner terbaik saat traveling?",
+    "answers": [
+      "Street food di Bangkok",
+      "Pasta di Italia",
+      "Taco di Meksiko",
+      "Sushi di Jepang"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Kursi jendela atau kursi lorong?",
+    "answers": [
+      "Jendela, aku butuh pemandangan",
+      "Lorong, aku perlu bergerak",
+      "Tengah kalau sama kamu",
+      "Kelas satu, nggak perlu pilih"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Gaya packing kamu seperti apa?",
+    "answers": [
+      "Satu tas kabin buat semuanya",
+      "Selalu bawa kebanyakan",
+      "Capsule wardrobe terencana",
+      "Asal masukin di menit terakhir"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Gimana caramu mendokumentasikan perjalanan?",
+    "answers": [
+      "Foto di HP",
+      "Jurnal dan sketsa",
+      "Instagram story",
+      "Aku nikmati momennya aja"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Lebih mau mengunjungi masa lalu atau masa depan?",
+    "answers": [
+      "Zaman Majapahit",
+      "Paris tahun 1920-an",
+      "100 tahun ke depan",
+      "Aku tetap di sini aja"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Bahasa apa yang ingin kamu pelajari buat traveling?",
+    "answers": [
+      "Prancis, romantis",
+      "Spanyol, dipakai di mana-mana",
+      "Jepang, buat budayanya",
+      "Italia, buat makanannya"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Musim terbaik buat traveling?",
+    "answers": [
+      "Kemarau buat pantai",
+      "Musim gugur buat warna daun",
+      "Musim dingin buat main salju",
+      "Musim semi buat bunga dan festival"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Kalau kita traveling bareng, apa yang paling bikin kamu kesal dariku?",
+    "answers": [
+      "Kalau aku terus main HP",
+      "Kalau aku mau tidur siang terus",
+      "Kalau aku terlalu terjadwal",
+      "Nggak ada, aku santai"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Gimana hubunganmu dengan jet lag?",
+    "answers": [
+      "Aku terjang aja",
+      "Butuh sehari penuh buat pulih",
+      "Melatonin sahabatku",
+      "Jet lag apa? Aku selalu capek"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Kapal pesiar atau backpacking?",
+    "answers": [
+      "Pesiar, aku mau mewah",
+      "Backpacking buat pengalaman nyata",
+      "Campuran keduanya",
+      "Nggak, resort all-inclusive"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Destinasi wisata yang paling underrated?",
+    "answers": [
+      "Portugal",
+      "Vietnam",
+      "Georgia (negaranya)",
+      "Sumba"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Apa yang bikin kamu merasa di rumah saat traveling?",
+    "answers": [
+      "Kedai kopi yang enak",
+      "Warga lokal yang ramah",
+      "Kasur yang nyaman",
+      "Makanan yang familiar"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Berapa lama liburan idealmu?",
+    "answers": [
+      "Long weekend",
+      "Tepat seminggu",
+      "Minimal dua minggu",
+      "Sampai uangnya habis"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Apa yang paling kamu rindukan saat traveling?",
+    "answers": [
+      "Kasur sendiri",
+      "Hewan peliharaanku",
+      "Masakan rumah",
+      "Rutinitasku"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Lebih suka menjelajahi candi kuno atau arsitektur modern?",
+    "answers": [
+      "Candi kuno memukau aku",
+      "Arsitektur modern menginspirasi",
+      "Dua-duanya sama",
+      "Nggak keduanya, alam aja"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Pasar malam atau fine dining di luar negeri?",
+    "answers": [
+      "Pasar malam, selalu",
+      "Fine dining buat pengalaman",
+      "Pasar malam dulu, fine dining buat pesta",
+      "Street food yang paling asli"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Seberapa berani kamu mencoba makanan saat traveling?",
+    "answers": [
+      "Aku coba apa pun sekali",
+      "Pilih yang aku kenal aja",
+      "Berani tapi ada batasnya",
+      "Makin aneh makin bagus"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Apa yang paling kamu hargai dalam hidup?",
+    "answers": [
+      "Kebebasan",
+      "Keamanan",
+      "Gairah",
+      "Kedamaian"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gimana caramu memulai pagi?",
+    "answers": [
+      "Kopi sebelum apa pun",
+      "Olahraga pertama kali",
+      "Snooze alarm 5 kali",
+      "Scroll HP di kasur"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Tempat tinggal idealmu?",
+    "answers": [
+      "Apartemen kota dengan view",
+      "Rumah nyaman dengan taman",
+      "Vila di tengah sawah",
+      "Tiny house, kebebasan besar"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Seberapa penting kebugaran buatmu?",
+    "answers": [
+      "Gym itu terapiku",
+      "Aktif tapi nggak terobsesi",
+      "Aku jalan kaki, itu masuk?",
+      "Kebugaran? Nggak kenal"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gimana hubunganmu dengan uang?",
+    "answers": [
+      "Nabung dan investasi",
+      "Habiskan buat pengalaman",
+      "Hidup di saat ini",
+      "Atur anggaran dengan cermat"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Mau punya anak suatu hari nanti?",
+    "answers": [
+      "Pasti mau",
+      "Mungkin nggak",
+      "Terbuka buat itu",
+      "Sudah punya"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gimana pendapatmu soal hewan peliharaan?",
+    "answers": [
+      "Tim anjing sepenuhnya",
+      "Tim kucing selamanya",
+      "Makin banyak makin bagus",
+      "Lebih suka rumah tanpa hewan"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gimana keseimbangan kerja dan hidupmu?",
+    "answers": [
+      "Kerja keras, main lebih keras",
+      "Jam 9 sampai 5, selesai",
+      "Hustle culture itu vibe-ku",
+      "Keseimbangan itu segalanya"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Malam di rumah atau malam di luar?",
+    "answers": [
+      "Nongkrong di luar, selalu",
+      "Di rumah sama orang spesial",
+      "Tergantung minggunya",
+      "Mulai di rumah, ujungnya keluar"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Seberapa rapi tempatmu?",
+    "answers": [
+      "Selalu bersih tanpa noda",
+      "Kekacauan yang terorganisir",
+      "Bersih kalau ada tamu",
+      "Aku punya sistem yang kamu nggak paham"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Pesanan kopimu apa?",
+    "answers": [
+      "Kopi hitam, tanpa drama",
+      "Latte oat milk",
+      "Es kopi susu gula aren",
+      "Aku tim teh"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gimana caramu menghabiskan hari Minggu?",
+    "answers": [
+      "Meal prep dan reset",
+      "Brunch dan bersosialisasi",
+      "Nggak ngapa-ngapain",
+      "Petualangan outdoor"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Pendapatmu soal kerja dari rumah?",
+    "answers": [
+      "Suka, nggak mau balik",
+      "Aku butuh energi kantor",
+      "Hybrid itu sempurna",
+      "Aku kerja dari kafe"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Seberapa penting fashion buatmu?",
+    "answers": [
+      "Suka padu padan outfit",
+      "Nyaman di atas segalanya",
+      "Aku punya gaya khas",
+      "Pakai apa yang bersih aja"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Pagi akhir pekan idealmu?",
+    "answers": [
+      "Pasar pagi dan kopi",
+      "Tidur sampai siang",
+      "Lari pagi lalu brunch",
+      "Masak sarapan pelan-pelan"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Pendapatmu soal berbagi keuangan dengan pasangan?",
+    "answers": [
+      "Punyaku punyamu juga",
+      "Bagi rata semuanya",
+      "Rekening bersama buat pengeluaran",
+      "Tetap terpisah"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Rutinitas self-care kamu seperti apa?",
+    "answers": [
+      "Skincare itu sakral",
+      "Olahraga itu self-care-ku",
+      "Mandi lama dan lilin aroma",
+      "Rutinitas apaan?"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gimana pendapatmu soal pernikahan?",
+    "answers": [
+      "Komitmen yang indah",
+      "Bukan buat aku",
+      "Terbuka kalau orangnya tepat",
+      "Aku cuma pengin pestanya"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Langganan guilty pleasure kamu?",
+    "answers": [
+      "Netflix",
+      "Spotify Premium",
+      "Layanan antar makanan",
+      "Kebanyakan buat disebut"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gimana caramu bersantai sebelum tidur?",
+    "answers": [
+      "Baca buku",
+      "Scroll TikTok",
+      "Meditasi atau stretching",
+      "Nonton serial"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Mobil impianmu?",
+    "answers": [
+      "Mobil klasik atap terbuka",
+      "Tesla atau mobil listrik",
+      "Nggak peduli mobil",
+      "Yang penting sampai tujuan"
+    ],
+    "tone": "deep",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Filosofi skincare kamu?",
+    "answers": [
+      "Minimal 10 langkah",
+      "Cleanser dan moisturizer",
+      "Sunscreen aja cukup",
+      "Jujur, cuma pakai air"
+    ],
+    "tone": "deep",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Seberapa penting memasak dalam keseharianmu?",
+    "answers": [
+      "Aku masak tiap makan",
+      "Meal prep tiap Minggu",
+      "GoFood itu bahasa cintaku",
+      "Aku bertahan hidup dengan camilan"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Rumah idealmu wanginya seperti apa?",
+    "answers": [
+      "Kopi baru diseduh",
+      "Lilin vanila",
+      "Cucian bersih",
+      "Sesuatu yang lagi dipanggang"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gimana pendapatmu soal minimalisme?",
+    "answers": [
+      "Sedikit itu lebih, selalu",
+      "Aku suka barang-barangku",
+      "Estetika minimalis, lemari maksimalis",
+      "Aku coba tapi gagal"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Kesuksesan itu seperti apa menurutmu?",
+    "answers": [
+      "Kebebasan finansial",
+      "Melakukan yang kusuka tiap hari",
+      "Hubungan yang kuat",
+      "Membuat perbedaan"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gimana caramu menghadapi hari hujan?",
+    "answers": [
+      "Maraton film",
+      "Baca di dekat jendela",
+      "Bikin kue yang hangat",
+      "Tetap keluar"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gimana hubunganmu dengan kopi?",
+    "answers": [
+      "Ngopi kalau nongkrong aja",
+      "Pencinta kopi berat",
+      "Jarang minum kopi",
+      "Nggak minum kopi sama sekali"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Seberapa penting karier bagi identitasmu?",
+    "answers": [
+      "Itu mendefinisikan aku",
+      "Penting tapi bukan segalanya",
+      "Membiayai passion-ku yang asli",
+      "Aku masih mencari tahu"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Pendekatanmu soal makan sehat?",
+    "answers": [
+      "Aturan 80/20",
+      "Ketat dan disiplin",
+      "Makan yang bikin bahagia",
+      "Aku naik turun"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Kota, pinggiran, atau pedesaan?",
+    "answers": [
+      "Energi kota selamanya",
+      "Pinggiran buat keseimbangan",
+      "Kedamaian pedesaan",
+      "Kota dulu, desa nanti"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gimana pendapatmu soal rutinitas?",
+    "answers": [
+      "Aku berkembang dengannya",
+      "Aku butuh sedikit fleksibilitas",
+      "Rutinitas membunuh jiwaku",
+      "Aku punya kerangka longgar"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Pereda stres andalanmu?",
+    "answers": [
+      "Olahraga",
+      "Belanja (retail therapy)",
+      "Ngobrol sama teman",
+      "Naik motor sambil dengar musik"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Seberapa sering kamu mencoba hal baru?",
+    "answers": [
+      "Terus, aku haus hal baru",
+      "Sesekali",
+      "Kalau ada yang narik",
+      "Aku suka yang aku suka"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Lingkungan seperti apa yang kamu mau tinggali?",
+    "answers": [
+      "Trendi penuh kafe dan tempat nongkrong",
+      "Tenang dan residensial",
+      "Dekat alam dan taman",
+      "Yang komunitasnya kuat"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gimana pendapatmu soal terapi?",
+    "answers": [
+      "Semua orang harus coba",
+      "Aku lagi menjalaninya",
+      "Bukan buat aku",
+      "Penasaran tapi belum coba"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Aktivitas penghibur andalanmu?",
+    "answers": [
+      "Nonton ulang serial favorit",
+      "Masak comfort food",
+      "Mandi air hangat lama",
+      "Telepon sahabat"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Seberapa sosial kamu di hari kerja?",
+    "answers": [
+      "Keluar tiap malam",
+      "Maksimal satu dua rencana",
+      "Sudah di rumah jam 8 malam",
+      "Sofaku sahabatku"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gaya wewangianmu seperti apa?",
+    "answers": [
+      "Segar dan bersih",
+      "Hangat dan kayu",
+      "Manis dan floral",
+      "Aku nggak pakai parfum"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gimana pendekatanmu soal resolusi tahun baru?",
+    "answers": [
+      "Bikin dan taklukkan",
+      "Bikin lalu lupa",
+      "Aku nggak percaya resolusi",
+      "Aku bikin niat aja"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Mana yang lebih penting: jam tangan bagus atau sepatu bagus?",
+    "answers": [
+      "Jam tangan, itu pernyataan",
+      "Sepatu bikin outfit jadi",
+      "Nggak dua-duanya, hemat",
+      "Dua-duanya, jangan suruh pilih"
+    ],
+    "tone": "fun",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Cara idealmu belajar hal baru?",
+    "answers": [
+      "Tutorial YouTube",
+      "Ikut kelas",
+      "Langsung terjun dan cari tahu",
+      "Baca buku tentangnya"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gimana pendapatmu soal jadi relawan?",
+    "answers": [
+      "Aku rutin melakukannya",
+      "Aku ingin lebih sering",
+      "Kalau ada tujuan yang pas",
+      "Aku dukung dengan cara lain"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Ritual minuman pagimu?",
+    "answers": [
+      "Espresso, jangan diajak ngomong dulu",
+      "Smoothie biar kuat",
+      "Air hangat dengan lemon",
+      "Apa pun yang ada di warung"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau punya satu kekuatan super, apa?",
+    "answers": [
+      "Membaca pikiran",
+      "Menjelajah waktu",
+      "Jadi tak terlihat",
+      "Terbang"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau besok tiba-tiba dapat rezeki nomplok miliaran?",
+    "answers": [
+      "Keliling dunia dulu",
+      "Langsung beli rumah",
+      "Investasikan semuanya",
+      "Bikin pesta terbesar"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Cuma boleh makan satu makanan selamanya. Apa?",
+    "answers": [
+      "Nasi goreng, jelas",
+      "Sushi selamanya",
+      "Bakso tiap hari",
+      "Pasta, nggak menyesal"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau bisa makan malam sama siapa pun, hidup atau mati?",
+    "answers": [
+      "Tokoh sejarah",
+      "Selebriti idolaku",
+      "Karakter fiksi",
+      "Diriku di masa depan"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Reality show tentang hidupmu bakal soal apa?",
+    "answers": [
+      "Bencana kencanku",
+      "Drama circle pertemananku",
+      "Eksperimen masakku",
+      "Kejadian konyol saat traveling"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau bisa langsung menguasai satu keahlian?",
+    "answers": [
+      "Main piano",
+      "Bicara 5 bahasa",
+      "Masak level profesional",
+      "Menari kayak pro"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kamu terdampar di pulau terpencil. Satu barang?",
+    "answers": [
+      "Pisau",
+      "Hammock",
+      "Sunscreen tanpa batas",
+      "Telepon satelit"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau hidupmu punya lagu tema?",
+    "answers": [
+      "Pop yang ceria",
+      "Anthem rock klasik",
+      "Lo-fi yang santai",
+      "Soundtrack film epik"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau bisa bertukar hidup sama seseorang sehari?",
+    "answers": [
+      "Musisi terkenal",
+      "Astronaut",
+      "Anggota keluarga kerajaan",
+      "Penjelajah laut dalam"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Judul autobiografimu bakal apa?",
+    "answers": [
+      "Masih Proses",
+      "Nggak Nyesel",
+      "Plot Twist",
+      "Masih Cari Tahu"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau bisa menjelajah waktu, era mana?",
+    "answers": [
+      "Era 1920-an",
+      "Zaman Majapahit",
+      "Era rock 80-an",
+      "Masa depan jauh"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau kamu karakter di sitkom?",
+    "answers": [
+      "Sahabat yang sarkastis",
+      "Yang selalu ada drama",
+      "Yang santai dan disayang semua",
+      "Yang punya cerita gila"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Cuma boleh dengar satu genre selamanya?",
+    "answers": [
+      "Pop",
+      "Hip-hop",
+      "Rock",
+      "Elektronik"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau bisa tinggal di dunia serial TV mana pun?",
+    "answers": [
+      "Apartemen Friends di NYC",
+      "Hogwarts",
+      "The Office",
+      "Stranger Things (tanpa monster)"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kamu bakal terkenal karena apa?",
+    "answers": [
+      "Keahlian masakku",
+      "Jadi orang paling lucu sedunia",
+      "Penemuan luar biasa",
+      "Momen viral di TikTok"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau bisa bicara sama hewan, mana yang pertama?",
+    "answers": [
+      "Anjing/kucingku",
+      "Lumba-lumba",
+      "Burung gagak (mereka tahu banyak)",
+      "Kucing di jalanan"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau alien mendarat dan minta kamu mewakili Bumi?",
+    "answers": [
+      "Tunjukkan meme",
+      "Masakin mereka",
+      "Putarkan musik",
+      "Jujur, aku kabur"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Cuma boleh pakai satu aplikasi selama sebulan?",
+    "answers": [
+      "Instagram",
+      "Spotify",
+      "YouTube",
+      "WhatsApp"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau peliharaanmu bisa menilai kehidupan cintamu?",
+    "answers": [
+      "Mereka bakal kecewa",
+      "Mereka bakal terkesan",
+      "Mereka bakal bingung",
+      "Mereka bakal nulis memoar"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Dunia fiksi mana yang mau kamu tinggali?",
+    "answers": [
+      "Middle Earth",
+      "Galaksi Star Wars",
+      "Semesta Marvel",
+      "Film Studio Ghibli"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau bisa membatalkan satu penemuan?",
+    "answers": [
+      "Jam alarm",
+      "Senin pagi",
+      "Centang biru",
+      "Kalori"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bakat paling nggak berguna yang kamu punya?",
+    "answers": [
+      "Menggerakkan telinga",
+      "Hafal lirik lagu",
+      "Menebak jam dengan tepat",
+      "Menangkap makanan pakai mulut"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau harus bertahan dari kiamat zombie?",
+    "answers": [
+      "Aku jadi pemimpin",
+      "Aku jadi pencari persediaan",
+      "Aku yang sembunyi",
+      "Aku negosiasi sama zombie"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Board game apa yang menunjukkan dirimu yang sebenarnya?",
+    "answers": [
+      "Monopoli (aku kompetitif)",
+      "Scrabble (aku kutu kata)",
+      "Catur (aku strategis)",
+      "Uno (aku santai)"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau punya mesin waktu tapi cuma bisa sekali?",
+    "answers": [
+      "Perbaiki momen memalukan",
+      "Nonton konser legendaris",
+      "Bertemu tokoh sejarah",
+      "Lihat 50 tahun ke depan"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Pendapat aneh apa yang bakal kamu bela mati-matian?",
+    "answers": [
+      "Nanas cocok di pizza",
+      "Sereal itu sup",
+      "Bubur ayam harus diaduk",
+      "Air punya rasa"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau kamu sebuah emoji, yang mana?",
+    "answers": [
+      "Wajah senyum miring",
+      "Yang pakai kacamata hitam",
+      "Senyum terbalik",
+      "Tengkorak (mati ketawa)"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "fun",
+    "question_text": "Apa yang kamu lakukan kalau tak terlihat sehari?",
+    "answers": [
+      "Nyelinap ke konser",
+      "Jahilin teman",
+      "Nguping obrolan orang",
+      "Ambil permen gratis di minimarket"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau hidupmu genre film?",
+    "answers": [
+      "Komedi romantis",
+      "Aksi petualangan",
+      "Drama indie",
+      "Mockumentary"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Karakter kartun masa kecil mana yang mirip kamu?",
+    "answers": [
+      "SpongeBob (ceria dan kacau)",
+      "Doraemon (selalu punya solusi)",
+      "Naruto (pantang menyerah)",
+      "Scooby-Doo (selalu lapar)"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau bisa mengganti nama satu hari dalam seminggu?",
+    "answers": [
+      "Senin → Hari Nggak Dulu",
+      "Rabu → Setengah Jalan",
+      "Jumat → Malam Kebebasan",
+      "Minggu → Malam Gelisah"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Teori konspirasi apa yang diam-diam kamu nikmati?",
+    "answers": [
+      "Teori simulasi",
+      "Penjelajah waktu di antara kita",
+      "Multiverse itu nyata",
+      "Kucing itu mata-mata alien"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau buka kafe, namanya apa?",
+    "answers": [
+      "Plot Twist",
+      "Ngopi Dulu",
+      "Draf Terakhir",
+      "Sruput Aja"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Bisa menghidupkan satu karakter fiksi?",
+    "answers": [
+      "Iron Man buat teknologinya",
+      "Gandalf buat kebijaksanaannya",
+      "Jin buat permintaannya",
+      "James Bond buat gayanya"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Hal paling berani yang pernah kamu lakukan?",
+    "answers": [
+      "Skydiving",
+      "Pindah kota sendirian",
+      "Ngajak ngobrol orang asing yang kusuka",
+      "Resign tanpa rencana"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kamu bakal kasih nama apa buat perahumu?",
+    "answers": [
+      "Ombak Santai",
+      "Kapal Nggak Kerja",
+      "Vitamin Sea",
+      "Laut Aja Dulu"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau kamu punya label peringatan, isinya apa?",
+    "answers": [
+      "Bisa bikin ketawa mendadak",
+      "Tangani dengan kopi",
+      "Rawan overthinking",
+      "Bisa ngomongin makanan nonstop"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Lagu andalanmu di karaoke?",
+    "answers": [
+      "Kangen — Dewa 19",
+      "Sempurna — Andra & The Backbone",
+      "Bohemian Rhapsody",
+      "Sephia — Sheila on 7"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kamu menemukan ruang rahasia di rumahmu. Isinya apa?",
+    "answers": [
+      "Perpustakaan buku langka",
+      "Portal ke dimensi lain",
+      "Gudang camilan tanpa batas",
+      "Arcade jadul"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau kamu topping pizza?",
+    "answers": [
+      "Sosis sapi (klasik)",
+      "Minyak truffle (mewah)",
+      "Cabai rawit (pedas)",
+      "Nanas (kontroversial)"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Hal paling aneh yang bakal masuk bucket list-mu?",
+    "answers": [
+      "Berenang sama hiu",
+      "Tidur di kastil",
+      "Makan di semua resto Michelin",
+      "Belajar main pedang"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau cuma boleh pakai satu warna selamanya?",
+    "answers": [
+      "Hitam, abadi",
+      "Putih, estetika bersih",
+      "Biru, cocok sama apa aja",
+      "Merah, aku suka perhatian"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Pekerjaan apa yang kamu bakal payah banget?",
+    "answers": [
+      "Pengatur lalu lintas udara",
+      "Dokter bedah",
+      "Akuntan",
+      "Penyiar berita langsung"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Kalau kita masak bareng, masakan apa yang kita coba?",
+    "answers": [
+      "Italia",
+      "Jepang",
+      "Padang",
+      "Thailand"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Kepribadian sarapanmu seperti apa?",
+    "answers": [
+      "Nasi uduk komplit",
+      "Roti alpukat kekinian",
+      "Cuma kopi, nggak makan",
+      "Juara sisa pizza semalam"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Gimana pendapatmu soal makanan pedas?",
+    "answers": [
+      "Makin pedas makin enak",
+      "Sedang itu batasku",
+      "Aku tahan sedikit",
+      "Mulutku panas cuma bayangin"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Level keahlian masakmu?",
+    "answers": [
+      "Level chef, jujur",
+      "Bisa ikut resep",
+      "Master microwave",
+      "Rebus air aja gosong"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Makan malam kencan idealmu?",
+    "answers": [
+      "Resto Italia yang cozy",
+      "Pengalaman sushi bar",
+      "Kulineran kaki lima",
+      "Masak di rumah dengan lilin"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Manis atau gurih?",
+    "answers": [
+      "Tim manis seumur hidup",
+      "Gurih sepenuhnya",
+      "Dua-duanya sekaligus",
+      "Tergantung mood"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Comfort food kamu?",
+    "answers": [
+      "Indomie",
+      "Bubur ayam",
+      "Nasi goreng",
+      "Soto ayam"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Camilan tengah malam terbaik?",
+    "answers": [
+      "Nasi goreng tek-tek",
+      "Es krim langsung dari wadah",
+      "Roti bakar",
+      "Apa pun yang ada di kulkas"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Lebih suka masak atau dimasakin?",
+    "answers": [
+      "Masak — itu bahasa cintaku",
+      "Dimasakin, jelas",
+      "Gantian",
+      "Pesan antar aja, skip masak"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Makanan apa yang bisa kamu makan setiap hari?",
+    "answers": [
+      "Telur dalam bentuk apa pun",
+      "Nasi sama apa aja",
+      "Roti dan selai",
+      "Semangkuk buah"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Minuman pilihanmu saat kencan?",
+    "answers": [
+      "Es kopi susu, selalu",
+      "Mocktail yang kreatif",
+      "Es teh, apa adanya",
+      "Air putih, aku yang nyetir"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Gimana pendapatmu soal nanas di pizza?",
+    "answers": [
+      "Jelas iya",
+      "Jelas nggak",
+      "Aku coba apa pun sekali",
+      "Ini pertanyaan dealbreaker"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Gaya brunch kamu?",
+    "answers": [
+      "Pancake dan es kopi susu",
+      "Roti bakar telur klasik",
+      "Smoothie bowl dan jus",
+      "Bubur ayam, apa pun yang ada"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Kalau buka restoran, jenis apa?",
+    "answers": [
+      "Kedai brunch yang cozy",
+      "Fine dining tasting menu",
+      "Kerajaan gerobak sate",
+      "Kedai ramen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Seberapa berani kamu soal makanan?",
+    "answers": [
+      "Aku makan apa pun sekali",
+      "Cukup terbuka tapi ada batas",
+      "Pilih yang aku kenal",
+      "Aku butuh menu duluan"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Pendapatmu soal berbagi makanan?",
+    "answers": [
+      "Makananku ya makananku",
+      "Berbagi itu peduli",
+      "Cuma kalau dia balas berbagi",
+      "Pesan lebih biar nggak rebutan"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Aroma dapur terbaik?",
+    "answers": [
+      "Roti baru dipanggang",
+      "Bawang putih ditumis",
+      "Cinnamon roll",
+      "Sambal digoreng pagi-pagi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Kepribadian kopimu seperti apa?",
+    "answers": [
+      "Kopi hitam, tanpa drama",
+      "Latte oat milk dengan latte art",
+      "Cold brew sepanjang tahun",
+      "Yang penting kafein masuk"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Kalau aku masakin makan malam, hidangan apa yang bikin kamu luluh?",
+    "answers": [
+      "Pasta buatan tangan dari nol",
+      "Steak yang sempurna",
+      "Masakan khas daerahku",
+      "Kejutin aja, aku percaya"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Fast food guilty pleasure kamu?",
+    "answers": [
+      "Kentang goreng McD",
+      "Ayam Richeese",
+      "Martabak tengah malam",
+      "Burger jumbo"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Gimana caramu memilih restoran?",
+    "answers": [
+      "Cek Google review obsesif",
+      "Cuma rekomendasi teman",
+      "Jalan sampai nemu yang menarik",
+      "Aku punya tempat langganan"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Dessert apa yang menggambarkan dirimu?",
+    "answers": [
+      "Lava cake cokelat (intens)",
+      "Cheesecake (klasik)",
+      "Klepon (manis kejutan)",
+      "Es krim cookie dough (seru)"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Piknik idealmu isinya apa?",
+    "answers": [
+      "Roti, keju, dan buah segar",
+      "Sandwich dan keripik",
+      "Nasi kuning dan lauk komplit",
+      "Buah, hummus, dan kerupuk"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Gimana caramu makan burger?",
+    "answers": [
+      "Berantakan dan bangga",
+      "Potong dua dulu",
+      "Dibongkar, aku orangnya gitu",
+      "Pakai pisau dan garpu"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Makanan terbaik buat dimasak saat kencan?",
+    "answers": [
+      "Pizza rumahan berdua",
+      "Tumisan, interaktif",
+      "Taco dengan semua topping",
+      "Sate bakar berdua"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Pesanan smoothie kamu?",
+    "answers": [
+      "Tropis dengan mangga",
+      "Hijau bayam detox",
+      "Berry blast",
+      "Pisang selai kacang protein"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Gimana pendapatmu soal pantangan makan pada pasangan?",
+    "answers": [
+      "Nggak masalah, aku menyesuaikan",
+      "Tergantung apa pantangannya",
+      "Kita cari jalan keluarnya",
+      "Aku butuh yang makan apa aja"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Kota dengan kuliner terbaik di dunia?",
+    "answers": [
+      "Tokyo",
+      "Bangkok",
+      "Yogyakarta",
+      "New York"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Kulkasmu sekarang isinya...?",
+    "answers": [
+      "Penuh dan terorganisir",
+      "Cuma bumbu dan sisa makanan",
+      "Meal prep buat seminggu",
+      "Aku harus belanja"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Pendapatmu soal sereal buat makan malam?",
+    "answers": [
+      "Pilihan yang sangat valid",
+      "Cuma kalau kepepet",
+      "Itu bukan makan malam",
+      "Sereal itu makanan 24 jam"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Masakan apa yang mau kamu pelajari buat bikin seseorang terkesan?",
+    "answers": [
+      "Rendang yang benar-benar empuk",
+      "Sushi roll rumahan",
+      "Steak dengan pelengkapnya",
+      "Dessert Prancis yang fancy"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Seberapa penting kuliner saat memilih tempat tinggal?",
+    "answers": [
+      "Prioritas utama",
+      "Bagus kalau ada",
+      "Aku bisa masak di mana aja",
+      "Asal ada GoFood"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Proyek masak ideal di hari Minggu?",
+    "answers": [
+      "Rendang yang dimasak seharian",
+      "Roti dari nol",
+      "Soto sepanci besar",
+      "Brunch besar-besaran"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Keju terbaik?",
+    "answers": [
+      "Mozzarella, kesempurnaan sederhana",
+      "Brie, vibe mewah",
+      "Cheddar, raja yang bisa diandalkan",
+      "Blue cheese, lawan aku"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Tren makanan apa yang kamu suka?",
+    "answers": [
+      "Semua berbasis nabati",
+      "Makanan fermentasi",
+      "Revolusi air fryer",
+      "Aku abaikan tren, klasik menang"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Pesanan es krim idealmu?",
+    "answers": [
+      "Vanila klasik di cone",
+      "Cokelat tiga lapis",
+      "Sorbet, aku suka yang ringan",
+      "Cookie dough di cup"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Vibe masakmu pagi vs malam?",
+    "answers": [
+      "Chef pagi, bencana malam",
+      "Aku cuma masak malam",
+      "Konsisten di keduanya",
+      "Aku nggak masak, aku merakit"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Genre apa yang membentuk jiwamu?",
+    "answers": [
+      "R&B yang smooth",
+      "Energi rock",
+      "Beat hip-hop",
+      "Melankoli indie"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Vibe kamu di konser seperti apa?",
+    "answers": [
+      "Barisan depan, teriak lirik",
+      "Santai di belakang sambil ngemil",
+      "Area VIP kalau bisa",
+      "Aku suka venue yang intim"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Musik apa yang kamu putar saat bersiap kencan?",
+    "answers": [
+      "R&B yang smooth",
+      "Pop yang ceria",
+      "Hip-hop pembangkit pede",
+      "Apa pun yang Spotify sarankan"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Bisa pacaran sama orang yang selera musiknya beda total?",
+    "answers": [
+      "Bisa, saling berbagi hal baru",
+      "Bakal susah",
+      "Asal dia berpikiran terbuka",
+      "Selera musik nggak bisa ditawar"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Dekade mana yang musiknya paling bagus?",
+    "answers": [
+      "80-an, nggak ada tandingan",
+      "90-an, era Dewa 19 dan Sheila on 7",
+      "Era emas pop 2000-an",
+      "Musik sekarang beda rasanya"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Nyanyi di kamar mandi: lagu andalannya apa?",
+    "answers": [
+      "Power ballad",
+      "Lagu yang lagi hits",
+      "Anthem rock klasik",
+      "Aku jadi rapper di kamar mandi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Playlist seperti apa yang kamu bikin buat road trip?",
+    "answers": [
+      "Lagu klasik buat sing along",
+      "Indie yang santai",
+      "Energi tinggi sepanjang jalan",
+      "Campuran semuanya"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Kamu dengar lirik atau melodi dulu?",
+    "answers": [
+      "Lirik, selalu",
+      "Melodi yang menangkapku dulu",
+      "Beat dan produksinya",
+      "Vibe keseluruhan"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Alat musik apa yang ingin kamu pelajari?",
+    "answers": [
+      "Gitar, romantis",
+      "Piano, elegan",
+      "Drum, buat energinya",
+      "Saksofon, smooth"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Gimana caramu menemukan musik baru?",
+    "answers": [
+      "Algoritma Spotify kenal aku",
+      "Rekomendasi teman",
+      "Aku ubek-ubek playlist",
+      "Radio atau nemu random"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Lagu guilty pleasure kamu?",
+    "answers": [
+      "Pop klasik 2000-an",
+      "Balada cinta yang cheesy",
+      "One-hit wonder",
+      "Sesuatu yang nggak akan kuakui"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Festival musik seperti apa yang kamu datangi?",
+    "answers": [
+      "Festival pop besar",
+      "Festival rock",
+      "Festival musik elektronik",
+      "Java Jazz atau festival indie"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Lagu apa yang diputar saat dansa pertama kita?",
+    "answers": [
+      "Yang lambat dan klasik",
+      "Lagu cinta modern",
+      "Yang tak terduga dan seru",
+      "Apa pun yang terasa pas saat itu"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Pendapatmu soal orang yang putar musik keras di tempat umum?",
+    "answers": [
+      "Suka percaya dirinya",
+      "Pakai headphone dong",
+      "Tergantung lagunya",
+      "Cuma boleh di pantai"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Artis mana yang bisa kamu dengar berulang-ulang?",
+    "answers": [
+      "Tulus",
+      "Taylor Swift",
+      "NIKI",
+      "Bernadya"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "Piringan hitam atau digital?",
+    "answers": [
+      "Vinyl buat pengalamannya",
+      "Digital buat kepraktisan",
+      "Keduanya punya tempat",
+      "Yang kualitasnya paling bagus"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Lagu terbaik buat bangun tidur?",
+    "answers": [
+      "Yang lembut dan tenang",
+      "Energi tinggi biar gerak",
+      "Apa pun yang lagi tren",
+      "Hening, jangan ajak bicara"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Mau pacaran sama musisi?",
+    "answers": [
+      "Skenario impian",
+      "Cuma kalau dia jago",
+      "Malas bersaing sama gitarnya",
+      "Asal dia nggak nyanyi soal mantan"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Seberapa penting kecocokan selera musik?",
+    "answers": [
+      "Penting, itu vibe check",
+      "Bagus tapi nggak krusial",
+      "Kita bisa saling mengajari",
+      "Aku lebih peduli hal lain"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Aturan musik di perjalananmu?",
+    "answers": [
+      "Yang nyetir yang pilih",
+      "Penumpang juga dapat giliran",
+      "Playlist kolaboratif",
+      "Nggak ada aturan, putar apa aja"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Lagu apa yang menggambarkan kehidupan cintamu sekarang?",
+    "answers": [
+      "Cari Pacar Lagi — ST12",
+      "Single Ladies — Beyoncé",
+      "Hati-Hati di Jalan — Tulus",
+      "Here Comes the Sun — The Beatles"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Headphone atau speaker di rumah?",
+    "answers": [
+      "Speaker, penuhi ruangan",
+      "Headphone biar tenggelam",
+      "Tergantung mood",
+      "Jarang dengar musik di rumah"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Musik terbaik buat menemani masak?",
+    "answers": [
+      "Jazz dan soul",
+      "Pop yang ceria",
+      "Lo-fi hip-hop",
+      "Rock klasik"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Seberapa sering kamu nonton konser?",
+    "answers": [
+      "Sesering mungkin",
+      "Beberapa kali setahun",
+      "Cuma buat favoritku",
+      "Lebih suka dengar di rumah"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Musik apa yang menemani olahragamu?",
+    "answers": [
+      "Elektronik dengan bass berat",
+      "Hip-hop dan rap",
+      "Rock dan metal",
+      "Aku butuh podcast"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Genre paling romantis?",
+    "answers": [
+      "R&B, nggak ada lawan",
+      "Jazz, kelas murni",
+      "Akustik singer-songwriter",
+      "Klasik, romansa abadi"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Pendengar album atau orang single?",
+    "answers": [
+      "Album penuh dari awal sampai akhir",
+      "Cuma yang hits",
+      "Aku shuffle semuanya",
+      "Tergantung artisnya"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Musik belajar/fokusmu apa?",
+    "answers": [
+      "Lo-fi beats",
+      "Musik klasik",
+      "Hening total",
+      "Suara ambien kayak hujan"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "music",
+    "question_text": "Bisakah sebuah lagu mengubah seluruh mood-mu?",
+    "answers": [
+      "Bisa, musik itu terapi",
+      "Kadang, kalau pas",
+      "Nggak juga",
+      "Cuma lagu sedih yang kena"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Gimana hubunganmu dengan dangdut?",
+    "answers": [
+      "Suka banget, nggak malu",
+      "Bukan buat aku",
+      "Dangdut koplo modern oke",
+      "Aku hormati dari jauh"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Mau nulis lagu buat orang yang kamu cintai?",
+    "answers": [
+      "Pasti, walau jelek",
+      "Aku coba sebisanya",
+      "Aku bikin playlist aja",
+      "Aku sewa orang buat nulis"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Era hip-hop terbaik?",
+    "answers": [
+      "Era emas 90-an",
+      "Era bling 2000-an",
+      "Gelombang trap 2010-an",
+      "Generasi baru sekarang"
+    ],
+    "tone": "fun",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Diva pop mana yang jadi spirit animal-mu?",
+    "answers": [
+      "Beyoncé",
+      "Raisa",
+      "Rihanna",
+      "Agnez Mo"
+    ],
+    "tone": "fun",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Musik latar terbaik buat makan malam bareng teman?",
+    "answers": [
+      "Jazz standar",
+      "Bossa nova",
+      "Elektronik yang santai",
+      "Akustik Indonesia"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Album pertama yang kamu beli (kaset atau CD)?",
+    "answers": [
+      "Album pop",
+      "Album rock",
+      "Album hip-hop",
+      "Jujur nggak ingat"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Genre film andalanmu?",
+    "answers": [
+      "Aksi/thriller",
+      "Komedi romantis",
+      "Fiksi ilmiah/fantasi",
+      "Drama/indie"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Setup malam nonton yang sempurna?",
+    "answers": [
+      "Proyektor, selimut, popcorn",
+      "Bioskop dengan layar besar",
+      "Laptop di kasur",
+      "Vibe bioskop drive-in"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Karakter film mana yang paling mirip kamu?",
+    "answers": [
+      "Sidekick yang jenaka",
+      "Protagonis yang disalahpahami",
+      "Si konyol yang disayang",
+      "Pengamat yang pendiam"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Gimana caramu nonton film?",
+    "answers": [
+      "Fokus penuh, HP disimpan",
+      "Scroll sambil nonton",
+      "Komentar sepanjang film",
+      "Ketiduran di tengah"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Pendapatmu soal film horor?",
+    "answers": [
+      "Suka, ayo takut bareng",
+      "Cuma kalau ada yang dipeluk",
+      "Nggak, makasih",
+      "Lebih lucu daripada seram"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Camilan nonton terbaik?",
+    "answers": [
+      "Popcorn mentega klasik",
+      "Nachos dan keju",
+      "Permen, makin besar makin bagus",
+      "Aku selundupkan makanan sendiri"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Platform streaming mana yang menang?",
+    "answers": [
+      "Netflix selamanya",
+      "Disney+ Hotstar buat nyaman",
+      "Viu buat drakor",
+      "Aku gonta-ganti semuanya"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Kamu nangis pas nonton film?",
+    "answers": [
+      "Tiap kali, aku berantakan",
+      "Cuma yang benar-benar sedih",
+      "Nggak pernah, aku stabil",
+      "Aku sembunyikan dengan baik"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Komedi romantis terbaik sepanjang masa?",
+    "answers": [
+      "Ada Apa Dengan Cinta?",
+      "Dilan 1990",
+      "Crazy Rich Asians",
+      "Notting Hill"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Maraton serial atau satu episode sehari?",
+    "answers": [
+      "Satu season sekali duduk",
+      "Satu sehari, dinikmati",
+      "Dua atau tiga sekaligus",
+      "Aku lupa berbulan-bulan"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Semesta film mana yang mau kamu tinggali?",
+    "answers": [
+      "Semesta sinematik Marvel",
+      "Dunia sihir Harry Potter",
+      "Galaksi Star Wars",
+      "Middle Earth Lord of the Rings"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Gimana caramu memilih tontonan?",
+    "answers": [
+      "Scroll 30 menit lalu menyerah",
+      "Watchlist-ku sudah siap",
+      "Apa pun yang lagi tren",
+      "Orang lain yang tentukan"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Film terbaik buat hari hujan?",
+    "answers": [
+      "Komedi romantis yang hangat",
+      "Petualangan fantasi epik",
+      "Dokumenter yang bikin mikir",
+      "Thriller yang bikin tegang"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Kamu suka spoiler film ke orang?",
+    "answers": [
+      "Nggak pernah, aku brankas",
+      "Nggak sengaja, sering",
+      "Cuma kalau ditanya",
+      "Aku kasih petunjuk aja"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Dokumenter seperti apa yang kamu suka?",
+    "answers": [
+      "Terobsesi true crime",
+      "Alam dan satwa liar",
+      "Isu sosial",
+      "Musik dan budaya"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Kalau ada film tentangmu, genrenya apa?",
+    "answers": [
+      "Komedi coming-of-age",
+      "Kisah underdog olahraga",
+      "Thriller psikologis",
+      "Film indie yang nyeleneh"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Pasangan film terbaik?",
+    "answers": [
+      "Rangga dan Cinta",
+      "Dilan dan Milea",
+      "Jack dan Rose",
+      "Jim dan Pam (serial juga)"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Subtitle nyala atau mati?",
+    "answers": [
+      "Selalu nyala, aku pembaca",
+      "Mati, mengganggu",
+      "Cuma buat film asing",
+      "Nyala tapi nggak pernah dibaca"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Serial guilty pleasure kamu?",
+    "answers": [
+      "Reality show kencan",
+      "Drama remaja",
+      "Sinetron",
+      "Sitkom lama"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Siapa yang memerankan kamu di film?",
+    "answers": [
+      "Yang tampan/cantik banget",
+      "Aktor komedi",
+      "Orang baru tapi pas",
+      "Aku main sendiri"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Mana yang lebih bagus: bukunya atau filmnya?",
+    "answers": [
+      "Bukunya, selalu",
+      "Filmnya, aku visual",
+      "Tergantung adaptasinya",
+      "Aku nggak baca bukunya dulu"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Serial TV apa yang bisa kamu tonton ulang selamanya?",
+    "answers": [
+      "The Office",
+      "Friends",
+      "Breaking Bad",
+      "Game of Thrones (kecuali endingnya)"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Film animasi pilihanmu?",
+    "answers": [
+      "Pixar klasik",
+      "Mahakarya Studio Ghibli",
+      "Film Disney era renaisans",
+      "Into the Spider-Verse"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Kencan ke bioskop atau nonton di rumah?",
+    "answers": [
+      "Bioskop buat pengalamannya",
+      "Nonton di rumah, lebih santai",
+      "Tergantung filmnya",
+      "Keduanya, beda mood"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Pendapatmu soal nonton film sedih berdua?",
+    "answers": [
+      "Ayo nangis bareng",
+      "Lebih suka ketawa bareng",
+      "Cuma kalau endingnya penuh harapan",
+      "Nangis bareng itu bonding"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Era film mana yang paling kamu hargai?",
+    "answers": [
+      "Hollywood era emas",
+      "Klasik 70-an dan 80-an",
+      "Nostalgia 90-an",
+      "Sinema indie modern"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Serial apa yang lagi kamu tonton sekarang?",
+    "answers": [
+      "Serial true crime",
+      "Drama terbaru yang lagi ramai",
+      "Nonton ulang serial favorit",
+      "Nggak bisa komit ke apa pun"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Sutradara yang kamu percaya buat film apa pun?",
+    "answers": [
+      "Christopher Nolan",
+      "Joko Anwar",
+      "Wes Anderson",
+      "Greta Gerwig"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Film terbaik buat kencan pertama?",
+    "answers": [
+      "Yang lucu dan ringan",
+      "Klasik yang semua suka",
+      "Yang bisa kita debatkan",
+      "Nggak nonton, ngobrol aja"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Gimana pendapatmu soal film asing?",
+    "answers": [
+      "Suka, subtitle sekalipun",
+      "Kalau ada yang rekomendasikan",
+      "Lebih suka film bahasaku",
+      "Film terbaik banyak yang asing"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Film fiksi ilmiah terbaik?",
+    "answers": [
+      "Interstellar",
+      "Blade Runner",
+      "The Matrix",
+      "Arrival"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Kelemahan fatal karaktermu kalau di film?",
+    "answers": [
+      "Terlalu percaya",
+      "Terlalu keras kepala",
+      "Terlalu ambisius",
+      "Terlalu cinta"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Kamu suka mengutip film dalam keseharian?",
+    "answers": [
+      "Terus, tanpa malu",
+      "Cuma klasik yang semua paham",
+      "Nggak sengaja, sering",
+      "Nggak juga, aku orisinal"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Kalau bisa nonton satu film lagi seperti pertama kali?",
+    "answers": [
+      "Laskar Pelangi",
+      "Inception",
+      "Titanic",
+      "Avengers: Endgame"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Olahraga apa yang paling kamu ikuti?",
+    "answers": [
+      "Sepak bola",
+      "Bulu tangkis",
+      "Basket",
+      "Nggak ngikutin olahraga"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Olahraga idealmu?",
+    "answers": [
+      "Angkat beban berat",
+      "Lari di luar ruangan",
+      "Yoga dan stretching",
+      "Kelas fitness bersama"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Seberapa kompetitif kamu?",
+    "answers": [
+      "Aku hancurkan kamu di game apa pun",
+      "Kompetitif tapi sportif",
+      "Aku main buat seru aja",
+      "Aku biarkan orang lain menang"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Olahraga terbaik buat ditonton saat kencan?",
+    "answers": [
+      "Nonton bola langsung di stadion",
+      "Final bulu tangkis",
+      "MotoGP di Mandalika",
+      "Nggak ada, olahraga nggak romantis"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Olahraga apa yang ingin kamu coba?",
+    "answers": [
+      "Surfing",
+      "Panjat tebing",
+      "Tinju",
+      "Diving"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Teman gym atau olahraga sendiri?",
+    "answers": [
+      "Teman gym buat motivasi",
+      "Sendiri, itu me-time",
+      "Energi kelas bersama",
+      "Aku nggak ke gym"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Pendapatmu kalau pasanganmu fans berat olahraga?",
+    "answers": [
+      "Suka, ayo nonton bareng",
+      "Aku bisa toleransi hari tanding",
+      "Asal ada waktu buat aku juga",
+      "Aku nggak akan pernah paham"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Olahraga ekstrem apa yang mau kamu coba?",
+    "answers": [
+      "Skydiving",
+      "Bungee jumping",
+      "Arung jeram",
+      "Aku masih sayang nyawa"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Lari pagi atau gym sore?",
+    "answers": [
+      "Pelari matahari terbit",
+      "Anak gym sore",
+      "Olahraga jam makan siang",
+      "Sofa itu gym-ku"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Olahraga berdua terbaik?",
+    "answers": [
+      "Yoga berpasangan",
+      "Lari bareng",
+      "Badminton ganda campuran",
+      "Hiking dengan pemandangan"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Olimpiade: musim panas atau musim dingin?",
+    "answers": [
+      "Musim panas buat atletiknya",
+      "Musim dingin buat ski dan skating",
+      "Aku nonton keduanya",
+      "Cuma nonton upacara pembukaan"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Motivasi olahragamu?",
+    "answers": [
+      "Biar tampil bagus",
+      "Kesehatan mental",
+      "Kekuatan dan performa",
+      "Karena memang harus"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Main basket atau futsal dadakan?",
+    "answers": [
+      "Basket, ayo",
+      "Futsal, semua bisa",
+      "Yang paling banyak orangnya",
+      "Aku jadi wasit aja"
+    ],
+    "tone": "fun",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Seberapa penting pasanganmu aktif berolahraga?",
+    "answers": [
+      "Penting, ayo aktif bareng",
+      "Membantu tapi nggak wajib",
+      "Asal dia sehat",
+      "Aku nggak peduli sama sekali"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Olahraga air apa yang mau kamu coba?",
+    "answers": [
+      "Snorkeling atau diving",
+      "Surfing di Canggu",
+      "Jet ski",
+      "Paddleboard"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Nonton olahraga di rumah atau di stadion?",
+    "answers": [
+      "Atmosfer stadion tak tertandingi",
+      "Sofa dan camilan lebih unggul",
+      "Nobar di warung kopi paling pas",
+      "Lebih suka main daripada nonton"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Lagu masukmu kalau bertanding tinju?",
+    "answers": [
+      "Eye of the Tiger",
+      "Lose Yourself — Eminem",
+      "Bass berat yang bikin gentar",
+      "Masuk tanpa musik, misterius"
+    ],
+    "tone": "fun",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Rutinitas stretching-mu seperti apa?",
+    "answers": [
+      "Lengkap, tiap kali",
+      "Aku skip, kebiasaan buruk",
+      "Cuma kalau pegal",
+      "Stretching itu apa?"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Film olahraga terbaik?",
+    "answers": [
+      "Garuda di Dadaku",
+      "Rocky",
+      "Bend It Like Beckham",
+      "Moneyball"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Gimana sikapmu saat kalah?",
+    "answers": [
+      "Legowo, cuma permainan",
+      "Ngamuk kompetitif 5 menit",
+      "Aku ulang apa yang salah",
+      "Aku minta tanding ulang"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Mau ikut maraton?",
+    "answers": [
+      "Sudah pernah",
+      "Ada di bucket list",
+      "Half marathon, mungkin",
+      "Cuma kalau dikejar orang"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Pendekatanmu terhadap tren fitness baru?",
+    "answers": [
+      "Aku coba semuanya sekali",
+      "Aku pakai yang terbukti",
+      "Riset dulu, coba nanti",
+      "Tren lewat, klasik bertahan"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Kalau jadi atlet profesional, kamu jadi apa?",
+    "answers": [
+      "Pemain sepak bola",
+      "Pebulu tangkis",
+      "Petarung MMA",
+      "Pembalap MotoGP"
+    ],
+    "tone": "fun",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Ide kencan aktif terbaik?",
+    "answers": [
+      "Balapan go-kart",
+      "Malam bowling",
+      "Sepedaan keliling sawah",
+      "Voli pantai"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Gimana pendapatmu soal hiking?",
+    "answers": [
+      "Aktivitas weekend favoritku",
+      "Buat pemandangan dan foto",
+      "Jalur gampang aja ya",
+      "Aku hiking ke warung"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Hari pemulihanmu setelah olahraga berat seperti apa?",
+    "answers": [
+      "Foam rolling dan stretching",
+      "Istirahat total dan junk food",
+      "Jalan santai dan makan enak",
+      "Pemulihan apa? Besok lanjut"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Yoga atau Pilates?",
+    "answers": [
+      "Yoga buat ketenangannya",
+      "Pilates buat bakar core",
+      "Keduanya saling melengkapi",
+      "Nggak keduanya, kasih beban"
+    ],
+    "tone": "fun",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Olahraga paling seru buat main santai?",
+    "answers": [
+      "Voli pantai",
+      "Tenis meja",
+      "Badminton di depan rumah",
+      "Frisbee di taman"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Acara olahraga mana yang ingin kamu datangi?",
+    "answers": [
+      "Final Piala Dunia",
+      "Final Indonesia Open",
+      "MotoGP Mandalika",
+      "Pembukaan Olimpiade"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Rutinitas pemanasanmu?",
+    "answers": [
+      "Peregangan dinamis sesuai buku",
+      "Langsung terjun",
+      "Jogging ringan dulu",
+      "Nggak pemanasan, hidup berbahaya"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Mau ngalah biar pasanganmu menang di game?",
+    "answers": [
+      "Nggak pernah, harus diraih",
+      "Mungkin, kalau dia gemes",
+      "Cuma pertama kali",
+      "Menang itu segalanya"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Dance fitness atau gym biasa?",
+    "answers": [
+      "Dance fitness, lebih seru",
+      "Gym biasa, hasil serius",
+      "Keduanya tergantung mood",
+      "Aku nggak keduanya"
+    ],
+    "tone": "fun",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Makanan terbaik setelah olahraga?",
+    "answers": [
+      "Protein shake",
+      "Semangkuk nasi ayam besar",
+      "Smoothie penuh sayuran",
+      "Apa pun yang aku pengin"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Lagu paling memalukan di playlist-mu?",
+    "answers": [
+      "Soundtrack Disney",
+      "Boyband klasik",
+      "Lagu dari iklan",
+      "Aku nggak malu sama satu pun"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Gombalan terburuk yang sebenarnya mempan ke kamu?",
+    "answers": [
+      "Bapak kamu tukang parkir ya?",
+      "Punya peta? Aku nyasar di matamu",
+      "Kamu Wi-Fi ya? Aku merasa terkoneksi",
+      "Nggak ada, biasa aja tolong"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Kalau kehidupan cintamu sebuah meme, yang mana?",
+    "answers": [
+      "This is fine (semua terbakar)",
+      "Ekspektasi vs realita",
+      "Pikachu kaget",
+      "Pasang makeup badut"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "Hal paling lucu yang kamu bawa ke kencan pertama?",
+    "answers": [
+      "Kecemasanku",
+      "Sahabat yang sembunyi di dekat",
+      "PowerPoint tentang diriku",
+      "Daftar red flag yang dihindari"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Temanmu bakal meledek kamu soal apa?",
+    "answers": [
+      "Selalu telat",
+      "Selera kencan yang payah",
+      "Terlalu dramatis",
+      "Nggak pernah tamatin serial"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Ketakutan paling konyol yang kamu punya?",
+    "answers": [
+      "Burung, mereka mengawasi",
+      "Kupu-kupu, jangan menghakimi",
+      "Air dalam, kolam sekalipun",
+      "Ruang terbuka, aku butuh dinding"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Kalau kamu bumbu pelengkap, kamu jadi apa?",
+    "answers": [
+      "Sambal (pedas)",
+      "Kecap manis (klasik)",
+      "Mayones (cocok sama apa aja)",
+      "Saus keju (kekinian)"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Spirit animal-mu di Senin pagi?",
+    "answers": [
+      "Kungkang",
+      "Anjing yang bingung",
+      "Tupai kebanyakan kopi",
+      "Kucing ngambek"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Kalau kencanmu datang pakai outfit yang sama?",
+    "answers": [
+      "Terima aja, kita kembaran",
+      "Pura-pura nggak sadar",
+      "Foto, ini konten",
+      "Pulang dan ganti baju"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Apa yang kamu teriakkan ke TV?",
+    "answers": [
+      "JANGAN MASUK SITU (horor)",
+      "ITU OFFSIDE (bola)",
+      "JADIAN AJA UDAH (rom-com)",
+      "Aku nggak teriak, aku dewasa"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Frasa yang paling sering kamu pakai?",
+    "answers": [
+      "Ya gitu deh",
+      "Nggak bohong sih",
+      "Jujurly ya",
+      "Agak laen sih"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "Kalau harus kasih TED talk, temanya apa?",
+    "answers": [
+      "Kenapa tidur siang harus wajib",
+      "Seni nggak ngapa-ngapain",
+      "Cara pura-pura sibuk di kantor",
+      "Kenapa selera musikku terbaik"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Hadiah terburuk yang bisa kamu terima?",
+    "answers": [
+      "Buku self-help",
+      "Sindiran member gym",
+      "Kaus kaki lagi",
+      "Foto diriku yang dibingkai"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Hal paling dramatis yang kamu lakukan setelah putus?",
+    "answers": [
+      "Potong rambut",
+      "Rombak seluruh kamar",
+      "Blokir dia di mana-mana",
+      "Nggak ada, aku baik (bohong)"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Kalau punya kalimat andalan di acara kencan?",
+    "answers": [
+      "Aku nggak di sini buat cari teman",
+      "Aku nggak datang buat drama",
+      "Hatiku terbuka",
+      "Boleh minta es teh dulu?"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Hal paling absurd yang pernah kamu Google?",
+    "answers": [
+      "Tinggi asli [selebriti] berapa",
+      "Bisa hidup cuma makan keju?",
+      "Kuis: aku yang toxic?",
+      "Cara terlihat sibuk di rapat"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Kamu tipe yang mana kalau kebanyakan kopi?",
+    "answers": [
+      "Yang joget-joget",
+      "Yang jadi sayang semua orang",
+      "Yang tiba-tiba filosofis",
+      "Yang pesan makanan lagi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Kalau kamu ditangkap, gara-gara apa?",
+    "answers": [
+      "Nyolong camilan",
+      "Nolak keluar dari toko buku",
+      "Terlalu berisik di tempat umum",
+      "Nyebrang sembarangan, hidup di tepi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Apa yang kamu lakukan kalau melambai tapi orangnya nggak lihat?",
+    "answers": [
+      "Pura-pura lagi stretching",
+      "Melambai lebih keras",
+      "Terima penghinaan publik",
+      "Nggak akan melambai duluan lagi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Pendapatmu soal jokes bapak-bapak?",
+    "answers": [
+      "Puncak komedi",
+      "Bikin geleng tapi lucu",
+      "Cuma lucu dari bapak asli",
+      "Aku adalah jokes bapak-bapak"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Kalau kamu nulis Google review buat hubungan terakhirmu?",
+    "answers": [
+      "2 bintang, awal oke, akhir parah",
+      "3 bintang, nggak direkomendasikan",
+      "5 bintang tapi tutup permanen",
+      "1 bintang, minta bicara sama manajer"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Alasan apa yang kamu pakai buat kabur dari kencan buruk?",
+    "answers": [
+      "Teman lagi darurat",
+      "Harus ngajak ikan jalan-jalan",
+      "Baru ingat ada janji",
+      "Nggak kabur, aku diam menderita"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Hal paling boomer yang kamu lakukan?",
+    "answers": [
+      "Cek aplikasi cuaca obsesif",
+      "Semangat lihat toko perkakas",
+      "Tidur jam 9 malam",
+      "Ngeluh musik zaman sekarang"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "humor",
+    "question_text": "Kalau pencarian Google terakhirmu jadi bio kencan?",
+    "answers": [
+      "Normal nggak ngobrol sama tanaman",
+      "Tiket termurah ke mana aja",
+      "Berapa kucing yang kebanyakan",
+      "Kuis: aku orang pagi?"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Batu nisanmu bakal bertuliskan apa?",
+    "answers": [
+      "Setidaknya aku sudah coba",
+      "Masih balas chat dari kubur",
+      "Akhirnya cukup tidur",
+      "Out of office permanen"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Pendapat apa yang bakal kamu bela sampai mati?",
+    "answers": [
+      "Tisu toilet dari atas, bukan bawah",
+      "GIF dibaca dengan G keras",
+      "Rebahin kursi pesawat itu wajar",
+      "Kecap di telur itu wajar"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Bio kencanmu kalau jujur brutal?",
+    "answers": [
+      "Siap secara emosional, kadang",
+      "Cari teman berbagi camilan",
+      "Puncakku jam 11 pagi, lalu turun",
+      "Swipe kanan, kupikirkan berhari-hari"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Kebiasaan paling nggak masuk akal yang kamu punya?",
+    "answers": [
+      "Cek pintu terkunci 5 kali",
+      "Latihan obrolan di kepala",
+      "Pasang 15 alarm",
+      "Google gejala, langsung parno"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Camilan yang mewakili jiwamu?",
+    "answers": [
+      "Keripik — asin dan bikin nagih",
+      "Cokelat — manis dan kompleks",
+      "Kacang campur — sedikit dari semua",
+      "Keju — matang dan berkelas"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Gimana sikapmu saat menerima hadiah yang jelek?",
+    "answers": [
+      "Akting kelas Oscar",
+      "Nggak bisa pura-pura, mukaku jujur",
+      "Terima lalu kasih ke orang lain",
+      "Minta struknya dengan sopan"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Perjuangan paling relate?",
+    "answers": [
+      "Mau keluar tapi juga mau di rumah",
+      "Nulis chat, hapus, tulis lagi",
+      "Lapar tapi nggak ada yang menarik",
+      "Bikin target, mulai besok"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Kalau hidupmu punya laugh track, kapan paling sering bunyi?",
+    "answers": [
+      "Saat tersandung tanpa sebab",
+      "Saat percobaan masakku",
+      "Saat aku coba menggoda",
+      "Di pilihan hidupku secara umum"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Hal paling overrated yang semua orang suka?",
+    "answers": [
+      "Brunch (cuma sarapan telat)",
+      "Jadi dewasa (siapa yang minta?)",
+      "Malam tahun baru (selalu kecewa)",
+      "Produktif (istirahat juga valid)"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Hobi apa yang selalu ingin kamu coba?",
+    "answers": [
+      "Bikin keramik",
+      "Belajar alat musik",
+      "Diving",
+      "Fotografi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Gimana caramu menghabiskan sore yang kreatif?",
+    "answers": [
+      "Menggambar atau melukis",
+      "Menulis sesuatu",
+      "Memotret",
+      "Menata ulang ruanganku"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Gimana hubunganmu dengan membaca?",
+    "answers": [
+      "Aku lahap buku",
+      "Baca kalau nemu yang pas",
+      "Audiobook termasuk, kan?",
+      "Bab 3 sejak berbulan-bulan lalu"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Buku seperti apa yang kamu suka?",
+    "answers": [
+      "Thriller dan misteri",
+      "Pengembangan diri",
+      "Fantasi dan fiksi ilmiah",
+      "Romansa dan fiksi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Kalau bisa belajar satu bentuk seni?",
+    "answers": [
+      "Melukis di kanvas",
+      "Main piano",
+      "Keramik dan tembikar",
+      "Koreografi tari"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Cara favoritmu buat jadi kreatif?",
+    "answers": [
+      "Masak resep baru",
+      "Menulis cerita atau puisi",
+      "Bikin musik atau playlist",
+      "Proyek DIY dan kerajinan"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Vibe gaming kamu?",
+    "answers": [
+      "Gamer konsol",
+      "Cuma game HP",
+      "Board game dan kartu",
+      "Aku jarang main game"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Kamu jago merawat tanaman?",
+    "answers": [
+      "Rumahku hutan",
+      "Aku coba tapi tanaman takut aku",
+      "Satu hidup dan aku bangga",
+      "Tanaman palsu termasuk, kan?"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Hobi apa yang bisa kamu bahas berjam-jam?",
+    "answers": [
+      "Fotografi dan kamera",
+      "Musik dan konser",
+      "Olahraga dan fitness",
+      "Traveling dan budaya"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Genre podcast-mu?",
+    "answers": [
+      "True crime",
+      "Komedi dan obrolan",
+      "Bisnis dan pengembangan diri",
+      "Sains dan rasa ingin tahu"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Lebih suka bikin atau menikmati konten?",
+    "answers": [
+      "Bikin, aku suka mencipta",
+      "Menikmati karya orang lain",
+      "Keduanya seimbang",
+      "Bikin tapi nggak pernah dibagi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Hobi outdoor apa yang memanggilmu?",
+    "answers": [
+      "Hiking dan jalan di alam",
+      "Bersepeda keliling kota",
+      "Kayak atau paddleboard",
+      "Berkebun dan menanam"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Kalau punya waktu tak terbatas, kamu belajar apa?",
+    "answers": [
+      "Bahasa baru",
+      "Alat musik",
+      "Kerajinan kayu",
+      "Astronomi"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Hobi berdua apa yang mau kamu mulai?",
+    "answers": [
+      "Ikut kelas masak",
+      "Hiking tiap akhir pekan",
+      "Berkebun bareng",
+      "Belajar menari"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Gimana pendapatmu soal proyek DIY?",
+    "answers": [
+      "Aku suka bikin sesuatu",
+      "Impian Pinterest, realita mimpi buruk",
+      "Aku coba kalau ada yang bantu",
+      "Itu kerjaan profesional"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Kebiasaan koleksimu apa?",
+    "answers": [
+      "Piringan hitam",
+      "Buku yang suatu saat kubaca",
+      "Magnet random dari perjalanan",
+      "Aku nggak koleksi, aku merapikan"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Lubang kelinci YouTube seperti apa yang kamu masuki?",
+    "answers": [
+      "Video masak dan makanan",
+      "Misteri true crime",
+      "Dokumenter random",
+      "Video life hack dan tutorial"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Hobi yang kamu tinggalkan tapi kamu rindukan?",
+    "answers": [
+      "Main olahraga",
+      "Menggambar atau melukis",
+      "Menulis jurnal",
+      "Main video game"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Museum idealmu?",
+    "answers": [
+      "Galeri seni kontemporer",
+      "Museum sejarah alam",
+      "Pusat sains dan teknologi",
+      "Sejarah dan budaya lokal"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Gaya fotografimu?",
+    "answers": [
+      "Lanskap dan alam",
+      "Fotografi jalanan",
+      "Makanan dan flat lay",
+      "Potret orang"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Gimana pendapatmu soal puzzle?",
+    "answers": [
+      "Suka puzzle 1000 keping",
+      "TTS itu duniaku",
+      "Escape room lebih cocok buatku",
+      "Puzzle menguji kesabaranku"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Level percaya dirimu di karaoke?",
+    "answers": [
+      "Energi tokoh utama",
+      "Setelah dipaksa dua kali, oke",
+      "Duet aja buat dukungan moral",
+      "Aku nonton aja"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Keahlian kreatif apa yang diam-diam kamu kagumi?",
+    "answers": [
+      "Orang yang bisa menggambar",
+      "Orang yang main alat musik",
+      "Orang yang menulis dengan indah",
+      "Orang yang bisa menari"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Gimana pendapatmu soal malam board game?",
+    "answers": [
+      "Aku yang jadi tuan rumah minggu ini",
+      "Seru sama orang yang tepat",
+      "Cuma kalau ada makanan",
+      "Aku selalu balikin papannya"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Apa yang kamu pelajari di hari Selasa yang random?",
+    "answers": [
+      "Resep baru",
+      "Fakta sejarah random",
+      "Dance TikTok",
+      "Cara benerin sesuatu di rumah"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Kotak langganan idealmu?",
+    "answers": [
+      "Buku dan bacaan",
+      "Camilan dari seluruh dunia",
+      "Aneka kopi atau teh",
+      "Perlengkapan seni"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Aktivitas indoor terbaik saat hari hujan?",
+    "answers": [
+      "Bikin kue kering",
+      "Puzzle dan cokelat panas",
+      "Maraton video game",
+      "Beres-beres dan bersih total"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Keahlian dari film mana yang kamu harap punya?",
+    "answers": [
+      "Kemampuan bertahan Jason Bourne",
+      "Sihir beres-beres Mary Poppins",
+      "Kejeniusan teknik Tony Stark",
+      "Kemampuan bertarung Black Widow"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Gimana pendapatmu soal menulis jurnal?",
+    "answers": [
+      "Jurnal tiap hari, sakral",
+      "Mulai banyak, nggak ada yang selesai",
+      "Catatan digital termasuk",
+      "Bukan buat aku"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Cara favoritmu buat lepas dari gadget?",
+    "answers": [
+      "Melukis atau menggambar",
+      "Berada di alam",
+      "Main alat musik",
+      "Berkebun atau keramik"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Kerajinan apa yang mau kamu coba di workshop?",
+    "answers": [
+      "Bikin lilin",
+      "Keramik di roda putar",
+      "Membatik",
+      "Kaligrafi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Hobi apa yang mendefinisikan kepribadianmu?",
+    "answers": [
+      "Membaca — penasaran dan bijak",
+      "Fitness — disiplin dan gigih",
+      "Masak — penyayang dan kreatif",
+      "Gaming — strategis dan kompetitif"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Apa yang kamu lakukan saat detoks media sosial?",
+    "answers": [
+      "Baca semua buku",
+      "Coba olahraga baru",
+      "Jadi jago masak",
+      "Agak gila karena bosan"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "iPhone atau Android?",
+    "answers": [
+      "iPhone, nggak perlu tanya",
+      "Kebebasan Android",
+      "Aku gonta-ganti keduanya",
+      "Yang penting jalan, nggak peduli"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Gimana pendapatmu soal AI?",
+    "answers": [
+      "Antusias, itu masa depan",
+      "Agak gugup jujurnya",
+      "Terpesona tapi hati-hati",
+      "Aku sudah pakai tiap hari"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Screen time kamu gimana?",
+    "answers": [
+      "Jangan tanya, memalukan",
+      "Aku coba batasi",
+      "Lebih tinggi dari yang kuakui",
+      "Aku minimalis digital"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Gadget apa yang nggak bisa kamu tinggalkan?",
+    "answers": [
+      "HP, jelas",
+      "Earbuds nirkabel",
+      "Smartwatch-ku",
+      "Laptopku"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Pendapatmu soal perangkat smart home?",
+    "answers": [
+      "Rumahku otomatis penuh",
+      "Beberapa esensial kayak lampu",
+      "Aku nggak percaya mereka nguping",
+      "Sakelar lampu kenapa memangnya?"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Kepribadian media sosialmu?",
+    "answers": [
+      "Aku posting semuanya",
+      "Silent reader, nggak pernah posting",
+      "Cuma estetika terkurasi",
+      "Mesin pembagi meme"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "technology",
+    "question_text": "Pendapatmu soal pasangan yang selalu main HP?",
+    "answers": [
+      "Bakal sangat menggangguku",
+      "Aku bakal bicarakan",
+      "Aku mungkin juga main HP",
+      "Makan tanpa HP itu aturanku"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Aplikasi apa yang kamu buka pertama kali di pagi hari?",
+    "answers": [
+      "Instagram atau TikTok",
+      "Berita atau cuaca",
+      "WhatsApp dan email",
+      "Spotify atau musik"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Pendapatmu soal VR dan metaverse?",
+    "answers": [
+      "Itu masa depan",
+      "Seru buat gaming",
+      "Kedengarannya distopia",
+      "Aku pilih dunia nyata"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Platform gaming pilihanmu?",
+    "answers": [
+      "PlayStation",
+      "PC master race",
+      "Nintendo Switch",
+      "Main di HP (Mobile Legends)"
+    ],
+    "tone": "fun",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Seberapa melek teknologi kamu?",
+    "answers": [
+      "Aku rakit komputer sendiri",
+      "Aku cukup paham",
+      "Aku bisa Google jawabannya",
+      "Aku butuh bantuan pasang Wi-Fi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Pendapatmu soal detoks digital?",
+    "answers": [
+      "Penting, aku rutin",
+      "Harusnya, tapi nggak",
+      "Kedengarannya bikin stres",
+      "HP itu selimut nyamanku"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Pendapatmu soal kendaraan listrik?",
+    "answers": [
+      "Masa depan berkendara",
+      "Keren tapi belum praktis",
+      "Aku suka suara mesin",
+      "Aku naik ojek online aja"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Penemuan terbaik dekade terakhir?",
+    "answers": [
+      "Layanan streaming",
+      "Earbuds nirkabel",
+      "Aplikasi antar makanan",
+      "Skuter listrik"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Reaksimu kalau pasanganmu nggak punya media sosial?",
+    "answers": [
+      "Hormati sepenuhnya",
+      "Agak curiga jujurnya",
+      "Menyegarkan dan menarik",
+      "Aku bantu bikinin"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Apa yang bakal kamu otomatisasi dalam hidup kalau bisa?",
+    "answers": [
+      "Masak dan makan",
+      "Bersih-bersih rumah",
+      "Rutinitas pagiku",
+      "Perjalanan ke kantor"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Berapa tab yang kamu buka sekarang?",
+    "answers": [
+      "Kurang dari 5, aku rapi",
+      "10-20, nggak apa-apa",
+      "50+, jangan menghakimi",
+      "Aku nggak pernah tutup tab"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Strategi password kamu?",
+    "answers": [
+      "Password manager, bertanggung jawab",
+      "Sama di mana-mana (jangan bilang)",
+      "Reset tiap kali login",
+      "Sticky note di meja"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Pendapatmu soal robot dalam keseharian?",
+    "answers": [
+      "Ayo robot pelayan",
+      "Berguna tapi dibatasi",
+      "Aku kebanyakan nonton sci-fi",
+      "Asal nggak ambil pekerjaanku"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Apa yang kamu lakukan tanpa internet seminggu?",
+    "answers": [
+      "Berkembang, jujur",
+      "Baca banyak buku",
+      "Mungkin jadi gila",
+      "Akhirnya beresin rumah"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Seberapa cepat kamu mengadopsi teknologi baru?",
+    "answers": [
+      "Beli di hari pertama",
+      "Tunggu review dulu",
+      "Kalau semua orang sudah punya",
+      "Kalau nggak rusak, jangan diganti"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Strategi notifikasimu?",
+    "answers": [
+      "Semua nyala, aku harus tahu",
+      "Cuma yang penting, tanpa berisik",
+      "Jangan Ganggu 24/7",
+      "Aku cek manual kalau mau"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Mau pacaran sama orang yang balas chat-nya lama?",
+    "answers": [
+      "Mau, orang punya kehidupan",
+      "Bakal bikin aku gila",
+      "Asal akhirnya dibalas",
+      "Aku anggap dia nggak tertarik"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Situasi penyimpanan fotomu?",
+    "answers": [
+      "Backup cloud, rapi per tahun",
+      "HP penuh, mode panik",
+      "Aku hapus tanpa ampun",
+      "Foto 2015 belum kupilah"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Pendapatmu soal kripto dan blockchain?",
+    "answers": [
+      "Sudah invest, optimis",
+      "Tertarik tapi hati-hati",
+      "Kayak penipuan",
+      "Nggak paham sama sekali"
+    ],
+    "tone": "fun",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Aplikasi paling berguna di HP-mu?",
+    "answers": [
+      "Maps dan navigasi",
+      "Kalender dan perencanaan",
+      "Streaming musik",
+      "Gojek"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Mau membiarkan AI memilih kencanmu?",
+    "answers": [
+      "Kenapa nggak, algoritma kenal aku",
+      "Aku percaya penilaianku sendiri",
+      "Cuma sebagai saran",
+      "Itu kan yang aplikasi ini lakukan"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Penemuan teknologi impianmu?",
+    "answers": [
+      "Alat teleportasi",
+      "Earpiece penerjemah universal",
+      "Replikator makanan",
+      "Remote penghenti waktu"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Gimana caramu menata aplikasi di HP?",
+    "answers": [
+      "Folder per kategori, warna rapi",
+      "Satu layar berantakan",
+      "Aku pakai search bar buat semuanya",
+      "Tata letak bawaan, nggak diubah"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "technology",
+    "question_text": "Pendapatmu soal teknologi wearable?",
+    "answers": [
+      "Suka smartwatch-ku",
+      "Fitness tracker cukup",
+      "Aku pilih jam biasa",
+      "Kebanyakan data soal tubuhku"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Pendapatmu soal kesempatan kedua dalam cinta?",
+    "answers": [
+      "Semua orang pantas dapat",
+      "Tergantung apa yang terjadi",
+      "Jarang berhasil",
+      "Aku percaya orang bisa berubah"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "personality",
+    "question_text": "Kalau aku chat kamu tengah malam, lagi ngapain?",
+    "answers": [
+      "Nonton dokumenter",
+      "Scroll meme di kasur",
+      "Beneran tidur kayak orang normal",
+      "Tenggelam dalam proyek kreatif"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Hal pertama yang kamu lakukan saat tiba di negara baru?",
+    "answers": [
+      "Cari kafe terdekat",
+      "Langsung ke hotel",
+      "Keliling tanpa tujuan",
+      "Coba street food lokal"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Mau ambil gap year buat traveling?",
+    "answers": [
+      "Sudah pernah",
+      "Ada di daftar impianku",
+      "Terlalu berisiko buat karier",
+      "Aku ambil gap month aja"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "travel",
+    "question_text": "Deal-breaker traveling-mu?",
+    "answers": [
+      "Nggak ada AC",
+      "Makanannya nggak enak",
+      "Nggak ada tempat nongkrong malam",
+      "Wi-Fi nggak stabil"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Kalau kita kawin lari, ke mana?",
+    "answers": [
+      "Santorini saat sunset",
+      "Pantai tersembunyi di Lombok",
+      "Rumah pohon tropis di Ubud",
+      "Catatan sipil lalu road trip"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Gimana caramu mengatasi beda pendapat traveling sama pasangan?",
+    "answers": [
+      "Kompromi dan gantian",
+      "Aku biarkan dia putuskan",
+      "Rencana terpisah lalu digabung",
+      "Yang paling ngotot menang"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Apa yang wajib ada di destinasi wisata?",
+    "answers": [
+      "Pantai yang indah",
+      "Sejarah dan budaya kaya",
+      "Kuliner yang luar biasa",
+      "Pasar malam dan hiburan"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Lebih suka menjelajahi satu tempat mendalam atau banyak tempat cepat?",
+    "answers": [
+      "Mendalami satu tempat",
+      "Sebanyak mungkin",
+      "Campuran di perjalanan berbeda",
+      "Ke mana pun vibe-nya membawa"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Perjalanan paling spontan yang bakal kamu ambil?",
+    "answers": [
+      "Terbang weekend ke kota random",
+      "Road trip tanpa tujuan",
+      "Kapal pesiar dadakan",
+      "Ikut rekomendasi orang asing"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Kepribadian teman traveling idealmu?",
+    "answers": [
+      "Perencana yang urus logistik",
+      "Foodie yang nemu semua tempat",
+      "Petualang yang bilang iya ke semua",
+      "Fotografer yang abadikan kenangan"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Safari gurun atau trekking hutan?",
+    "answers": [
+      "Gurun di bawah bintang",
+      "Hutan penuh satwa liar",
+      "Keduanya di satu perjalanan",
+      "Nggak keduanya, kota aja"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "travel",
+    "question_text": "Sejauh apa kamu mau pergi demi cinta?",
+    "answers": [
+      "Ke ujung dunia kalau perlu",
+      "Maksimal beberapa jam",
+      "Beda kota, negara sama",
+      "Dia harus sepadan"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Mantra pagimu?",
+    "answers": [
+      "Hari ini bakal hebat",
+      "Bertahan aja hari ini",
+      "Syukur dan niat baik",
+      "Kopi dulu, positif nanti"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gimana caramu menghadapi krisis seperempat abad?",
+    "answers": [
+      "Traveling dan cari jati diri",
+      "Beralih ke perubahan karier",
+      "Ngobrol sama mentor dan teman",
+      "Beli sesuatu impulsif"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Masa pensiun impianmu seperti apa?",
+    "answers": [
+      "Rumah pantai tanpa rencana",
+      "Keliling dunia pelan-pelan",
+      "Dikelilingi cucu",
+      "Masih kerjakan proyek passion"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": 25,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gimana caramu memanjakan pasangan?",
+    "answers": [
+      "Kejutan liburan akhir pekan",
+      "Masak makanan favoritnya",
+      "Hadiah personal yang penuh makna",
+      "Satu hari penuh buat dia"
+    ],
+    "tone": "flirty",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Cara idealmu menghabiskan bonus gaji?",
+    "answers": [
+      "Tabung atau investasikan",
+      "Traktir diri sendiri",
+      "Pengalaman kayak trip atau acara",
+      "Bagi sama orang tersayang"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gimana hubunganmu dengan keluarga?",
+    "answers": [
+      "Dekat banget, ngobrol tiap hari",
+      "Dekat tapi mandiri",
+      "Rumit tapi diusahakan",
+      "Keluarga pilihan lebih berarti"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gimana kamu suka dimanjakan?",
+    "answers": [
+      "Hari spa, nggak perlu tanya",
+      "Sarapan di kasur",
+      "Ada yang urus semua urusanku",
+      "Dijaga secara emosional"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Kesenangan sederhana yang bikin harimu?",
+    "answers": [
+      "Secangkir teh yang pas",
+      "Sinar matahari lewat jendela",
+      "Nemu lagu baru yang kusuka",
+      "Pujian tulus dari orang asing"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Grooming yang nggak bisa ditawar buatmu?",
+    "answers": [
+      "Potong rambut rutin",
+      "Skincare tiap hari",
+      "Selalu wangi",
+      "Kuku dan sepatu bersih"
+    ],
+    "tone": "fun",
+    "target_gender": "male",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Pendekatanmu soal memberi hadiah dalam hubungan?",
+    "answers": [
+      "Gestur besar dan kejutan",
+      "Penuh perhatian dan personal",
+      "Pengalaman daripada barang",
+      "Tindakan cinta kecil yang konsisten"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "lifestyle",
+    "question_text": "Gimana kamu mendefinisikan rumah?",
+    "answers": [
+      "Di mana pun orang-orangku ada",
+      "Ruang fisik milikku",
+      "Rasa damai dan aman",
+      "Di mana aku bisa jadi diriku"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau harus hidup di abad lain, yang mana?",
+    "answers": [
+      "Era Renaisans buat seninya",
+      "Era Victoria buat fashionnya",
+      "1960-an buat revolusinya",
+      "Masa depan buat teknologinya"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Makhluk mitos apa yang mau jadi peliharaanmu?",
+    "answers": [
+      "Bayi naga",
+      "Phoenix",
+      "Unicorn",
+      "Griffin"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau cuma bisa merayakan satu hari libur selamanya?",
+    "answers": [
+      "Tahun Baru buat awal baru",
+      "17 Agustus buat lombanya",
+      "Libur panjang buat santainya",
+      "Ulang tahunku, jelas"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Karier apa yang kamu punya di semesta paralel?",
+    "answers": [
+      "Fotografer perjalanan",
+      "Ahli biologi laut",
+      "Komedian stand-up",
+      "Penjelajah luar angkasa"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau cuma boleh simpan tiga barang?",
+    "answers": [
+      "HP, paspor, headphone",
+      "Jurnal, gitar, kamera",
+      "Mesin kopi, laptop, selimut",
+      "Tali anjing, kacamata hitam, dompet"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Rumah impianmu punya apa yang nggak biasa?",
+    "answers": [
+      "Ruang rahasia di balik rak buku",
+      "Perosotan antar lantai",
+      "Jacuzzi di rooftop",
+      "Bioskop rumah dengan mesin popcorn"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "fun",
+    "question_text": "Kalau kamu pangeran atau putri Disney, siapa?",
+    "answers": [
+      "Mulan — berani dan mandiri",
+      "Rapunzel — pemimpi petualang",
+      "Aladdin — cerdik jalanan",
+      "Moana — penjelajah berani"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "Kombinasi makanan paling aneh yang kamu suka?",
+    "answers": [
+      "Kentang goreng dicelup es krim",
+      "Keripik sama cokelat",
+      "Sambal di semua makanan",
+      "Indomie ditambah keju"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Pendapatmu soal sarapan buat makan malam?",
+    "answers": [
+      "Genius, bubur ayam kapan aja",
+      "Makan malam ya makan malam",
+      "Cuma kalau lagi malas",
+      "Aku lakukan minimal seminggu sekali"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Kalau aku ajak kamu tur kuliner, kota mana?",
+    "answers": [
+      "Istanbul buat kebabnya",
+      "Paris buat pastry-nya",
+      "Bangkok buat street food-nya",
+      "Yogyakarta buat gudegnya"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Makanan terbaik pas badan lagi nggak enak?",
+    "answers": [
+      "Bubur ayam hangat",
+      "Soto kuah panas",
+      "Indomie kuah pakai telur",
+      "Nasi goreng pedas"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": 18,
+    "target_age_max": 25
+  },
+  {
+    "category": "food",
+    "question_text": "Gimana pendapatmu soal acara masak?",
+    "answers": [
+      "Aku nonton buat inspirasi",
+      "Gordon Ramsay itu hiburan",
+      "Bikin aku merasa nggak becus",
+      "Aku lebih belajar dari resep TikTok"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Kalau kamu minuman kafe, kamu yang mana?",
+    "answers": [
+      "Es kopi susu — bintang pesta",
+      "Kopi tubruk — klasik dan berkelas",
+      "Matcha latte — tenang tapi kekinian",
+      "Es teh manis — semua orang suka"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Mana yang lebih penting di restoran: makanan atau suasana?",
+    "answers": [
+      "Makanan, nggak peduli tempatnya",
+      "Suasana bisa mengangkat semuanya",
+      "Keduanya sama",
+      "Asal temannya asyik"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "food",
+    "question_text": "Barang wajib beli di pasar pagi?",
+    "answers": [
+      "Jajanan pasar",
+      "Buah musiman",
+      "Madu lokal",
+      "Kopi biji lokal"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Kalau aku putar lagu buatmu sekarang, mood-nya harus apa?",
+    "answers": [
+      "Sesuatu buat joget",
+      "Sesuatu yang moody dan intim",
+      "Sesuatu yang nostalgia",
+      "Sesuatu buat nyanyi keras-keras"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Hal paling menarik dari orang yang bermain musik?",
+    "answers": [
+      "Gairah di matanya",
+      "Dia bisa nyanyiin aku",
+      "Disiplin yang dibutuhkan",
+      "Menunjukkan sisi emosionalnya"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Lagu apa yang kamu dedikasikan buat pasangan masa depanmu?",
+    "answers": [
+      "Yang romantis dan abadi",
+      "Lagu inside joke kita nanti",
+      "Apa pun yang bikin dia senyum",
+      "Aku tulis sendiri yang orisinal"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Konser terbaik yang pernah kamu datangi atau ingin lihat?",
+    "answers": [
+      "Konser rock di stadion",
+      "Set akustik yang intim",
+      "Festival elektronik besar",
+      "Pertunjukan di klub jazz"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "music",
+    "question_text": "Musik apa yang membantumu memproses emosi?",
+    "answers": [
+      "Lagu sedih sesuai mood",
+      "Musik ceria buat ubah mood",
+      "Instrumental dan ambien",
+      "Apa pun yang nyambung saat itu"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Film apa yang membentukmu saat tumbuh dewasa?",
+    "answers": [
+      "Klasik coming-of-age",
+      "Kisah asal superhero",
+      "Animasi favorit masa kecil",
+      "Film keluarga yang kami tonton bareng"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Mau nonton film jelek cuma karena kencanmu yang pilih?",
+    "answers": [
+      "Pasti, yang penting temannya",
+      "Aku sarankan alternatif dulu",
+      "Aku menderita dalam diam",
+      "Nggak, hidup terlalu singkat"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Apa yang bikin kamu merekomendasikan film ke orang?",
+    "answers": [
+      "Bikin aku merasakan sesuatu yang dalam",
+      "Seru banget sampai nggak bisa berhenti",
+      "Sinematografinya memukau",
+      "Mengubah cara pikirku"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Tipe penjahat film seperti apa yang kamu suka?",
+    "answers": [
+      "Dalang yang menawan",
+      "Anti-hero yang disalahpahami",
+      "Psikopat yang menakutkan",
+      "Yang lucu dan nggak becus"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Serial penghibur yang kamu tonton ulang?",
+    "answers": [
+      "Sitkom kayak The Office atau Friends",
+      "Acara masak atau traveling",
+      "Epik fantasi",
+      "Apa pun yang kusuka waktu remaja"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "film",
+    "question_text": "Kalau kisah cinta kita jadi film, posternya seperti apa?",
+    "answers": [
+      "Kita tertawa dengan latar sunset",
+      "Adegan hujan yang dramatis",
+      "Membelakangi kamera menuju petualangan",
+      "Momen candid yang lucu"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Olahraga apa yang paling menarik dilihat saat seseorang memainkannya?",
+    "answers": [
+      "Bulu tangkis buat intensitasnya",
+      "Basket buat atletisnya",
+      "Renang buat gerakannya yang anggun",
+      "Menari, kalau termasuk"
+    ],
+    "tone": "flirty",
+    "target_gender": "female",
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "sports",
+    "question_text": "Ritual sebelum olahragamu?",
+    "answers": [
+      "Playlist motivasi nyala",
+      "Kopi dan pisang",
+      "Pep talk di depan cermin",
+      "Datang aja dan berharap yang terbaik"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Hal paling lebay yang rutin kamu lakukan?",
+    "answers": [
+      "Narasikan hidup kayak film",
+      "Mendesah keras kalau sedikit terganggu",
+      "Kaget tiap plot twist di serial",
+      "Bilang kelaparan padahal cuma lapar"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "humor",
+    "question_text": "Hal paling cheesy yang diam-diam kamu suka?",
+    "answers": [
+      "Pasangan yang saling melengkapi kalimat",
+      "Lamaran ala film romantis",
+      "Surat cinta dan catatan tulisan tangan",
+      "Barang couple yang senada"
+    ],
+    "tone": "flirty",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Minat niche apa yang bikin kamu geek out?",
+    "answers": [
+      "Luar angkasa dan astronomi",
+      "Investigasi true crime",
+      "Fashion dan desain vintage",
+      "Teknik menyeduh kopi"
+    ],
+    "tone": "fun",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  },
+  {
+    "category": "hobby",
+    "question_text": "Saluran kreatif apa yang membantumu memproses emosi?",
+    "answers": [
+      "Menulis pikiranku",
+      "Main atau dengar musik",
+      "Melukis atau menggambar",
+      "Gerak lewat tari atau olahraga"
+    ],
+    "tone": "deep",
+    "target_gender": null,
+    "target_age_min": null,
+    "target_age_max": null
+  }
+]

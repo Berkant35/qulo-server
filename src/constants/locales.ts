@@ -1,6 +1,7 @@
 export const SUPPORTED_LOCALES = [
   'tr', 'en', 'de', 'fr', 'es', 'ar', 'ru',
   'pt', 'it', 'ja', 'ko', 'zh', 'nl', 'pl', 'sv', 'hi',
+  'th', 'id',
 ] as const;
 
 export type SupportedLocale = typeof SUPPORTED_LOCALES[number];
@@ -23,6 +24,8 @@ export const LOCALE_NAMES: Record<SupportedLocale, string> = {
   pl: 'Polski',
   sv: 'Svenska',
   hi: 'हिन्दी',
+  th: 'ไทย',
+  id: 'Bahasa Indonesia',
 };
 
 /**
