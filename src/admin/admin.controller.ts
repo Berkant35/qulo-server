@@ -1,10 +1,10 @@
 import type { Request, Response } from "express";
-import { SUPPORTED_LOCALES } from "../constants/locales.js";
+import { SUPPORTED_LOCALES, type SupportedLocale } from "../constants/locales.js";
 import { adminService, pushTemplateAdminService } from "./admin.service.js";
 import { emailService } from "../services/email.service.js";
 import { campaignService } from "../services/campaign.service.js";
 import { appConfigService } from "../services/app-config.service.js";
-import { NotificationService, type PushType, type SupportedLocale } from "../services/notification.service.js";
+import { NotificationService, type PushType } from "../services/notification.service.js";
 import { economyConfigService } from "../services/economy-config.service.js";
 import { economyConfigSchema, ECONOMY_BOUNDARIES } from "../types/economy-config.schema.js";
 import { supabase } from "../config/supabase.js";

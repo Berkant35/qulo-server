@@ -7,8 +7,8 @@ import {
   PUSH_TYPES,
   loadDefaultTemplate,
   type PushType,
-  type SupportedLocale,
 } from "../services/notification.service.js";
+import type { SupportedLocale } from "../constants/locales.js";
 
 class AdminService {
   async findByEmail(email: string) {

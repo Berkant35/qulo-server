@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { QUESTION_CATEGORIES } from './question.validator.js';
+import { QUESTION_CATEGORIES } from '../constants/question-categories.js';
 import { SUPPORTED_LOCALES } from '../constants/locales.js';
 
 export const aiSuggestSchema = z.object({

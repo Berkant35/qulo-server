@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { QUESTION_CATEGORIES, TIME_PRESETS } from './question.validator.js';
+import { TIME_PRESETS } from './question.validator.js';
+import { QUESTION_CATEGORIES } from '../constants/question-categories.js';
 
 export const queueChangeSchema = z.object({
   change_type: z.enum(['UPDATE', 'DELETE']),

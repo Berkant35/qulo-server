@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { SUPPORTED_LOCALES } from '../constants/locales.js';
+import { SUPPORTED_LOCALES } from '../src/constants/locales.js';
 
-const LOCALES_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'locales');
+const LOCALES_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'locales');
 const EMAILS_DIR = join(LOCALES_DIR, 'emails');
 const REFERENCE = 'en';
 
@@ -108,12 +108,12 @@ for (const { label, dir } of BUNDLES) {
 // email-base.html yer tutuculari escape'siz doldurulur; ceviri JSON'una giren '<' dogrudan
 // e-posta govdesine yazilir. Kaynak repo ici olsa da derinlemesine savunma.
 describe('e-posta cevirilerinde HTML karakteri yok', () => {
-  const dir = new URL('../locales/emails/', import.meta.url);
+  const dir = EMAILS_DIR;
   const leafStrings = (v: unknown): string[] =>
     typeof v === 'string' ? [v] : v && typeof v === 'object' ? Object.values(v as object).flatMap(leafStrings) : [];
   for (const file of readdirSync(dir).filter((f) => f.endsWith('.json'))) {
     it(`${file} icinde < veya > yok`, () => {
-      const json = JSON.parse(readFileSync(new URL(file, dir), 'utf8')) as unknown;
+      const json = JSON.parse(readFileSync(join(dir, file), 'utf8')) as unknown;
       const bad = leafStrings(json).filter((t) => /[<>]/.test(t));
       expect(bad).toEqual([]);
     });

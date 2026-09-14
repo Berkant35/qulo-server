@@ -1,8 +1,6 @@
 import { z } from "zod";
-import { SUPPORTED_LOCALES } from '../constants/locales.js';
-
 import { QUESTION_CATEGORIES } from '../constants/question-categories.js';
-export { QUESTION_CATEGORIES };
+import { SUPPORTED_LOCALES } from '../constants/locales.js';
 
 // NOT (2026-09-09): Bu liste artik DOGRULAMA KAPISI DEGIL.
 //

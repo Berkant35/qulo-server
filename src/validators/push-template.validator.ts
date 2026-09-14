@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { PUSH_TYPES, SUPPORTED_LOCALES } from '../services/notification.service.js';
+import { PUSH_TYPES } from '../services/notification.service.js';
+import { SUPPORTED_LOCALES } from '../constants/locales.js';
 
 export const pushTemplateParamsSchema = z.object({
   type: z.enum(PUSH_TYPES as unknown as [string, ...string[]]),

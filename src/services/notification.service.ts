@@ -28,10 +28,7 @@ export type InternalPushType = typeof INTERNAL_PUSH_TYPES[number];
 // Union accepted by sendPush, getTemplate, and NOTIFICATION_CONFIG.
 export type AnyPushType = PushType | InternalPushType;
 
-import { SUPPORTED_LOCALES } from '../constants/locales.js';
 import type { SupportedLocale } from '../constants/locales.js';
-export { SUPPORTED_LOCALES };
-export type { SupportedLocale };
 
 export type ResolvedTemplate = { title: string; body: string } | null;
 
