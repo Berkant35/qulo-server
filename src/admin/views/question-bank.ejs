@@ -13,8 +13,6 @@
   <select id="filterCategory">
     <option value="">All Categories</option>
     <% categories.forEach(function(c) { %><option value="<%= c %>"><%= c.charAt(0).toUpperCase() + c.slice(1) %></option><% }); %>
-    <option value="general">General</option>
-    <% categories.forEach(function(c) { %><option value="<%= c %>"><%= c.charAt(0).toUpperCase() + c.slice(1) %></option><% }); %>
   </select>
   <select id="filterTone">
     <option value="">All Tones</option>
@@ -89,8 +87,6 @@
         <div>
           <label style="font-size:13px; font-weight:600;">Category *</label>
           <select id="fCategory" style="width:100%;">
-            <% categories.forEach(function(c) { %><option value="<%= c %>"><%= c.charAt(0).toUpperCase() + c.slice(1) %></option><% }); %>
-            <option value="general">General</option>
             <% categories.forEach(function(c) { %><option value="<%= c %>"><%= c.charAt(0).toUpperCase() + c.slice(1) %></option><% }); %>
           </select>
         </div>

@@ -61,8 +61,9 @@ export async function sendVerificationEmail(
   token: string,
   locale?: string,
 ): Promise<void> {
-  const strings = getEmailLocale(locale);
-  const url = `${env.APP_URL}/api/v1/auth/verify-email?token=${token}`;
+  const loc = resolveLocale(locale);
+  const strings = getEmailLocale(loc);
+  const url = `${env.APP_URL}/api/v1/auth/verify-email?token=${encodeURIComponent(token)}`;
   const html = renderTemplate(strings, url, "verify");
 
   const maskedTo = maskEmail(to);

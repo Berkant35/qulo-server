@@ -50,7 +50,7 @@ describe('SUPPORTED_LOCALES ↔ AI soru bankasi tohumu paritesi', () => {
       (l) => !existsSync(new URL(`../../src/data/seed/questions_${l}.json`, import.meta.url)),
     );
     expect(missing).toEqual([]);
-    // Bos dosya da ayni sessiz bosluk (ai-suggest .eq('locale') -> []): alt sinir mevcut en kucuk banka (369).
+    // Bos dosya da ayni sessiz bosluk (ai-suggest .eq('locale') -> []): alt sinir mevcut en kucuk banka (370).
     for (const l of SUPPORTED_LOCALES) {
       const rows = JSON.parse(readFileSync(new URL(`../../src/data/seed/questions_${l}.json`, import.meta.url), 'utf8')) as unknown[];
       expect(rows.length, `${l} bankasi cok kucuk`).toBeGreaterThanOrEqual(300);

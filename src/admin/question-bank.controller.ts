@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { SUPPORTED_LOCALES } from '../constants/locales.js';
-import { QUESTION_CATEGORIES } from '../validators/question.validator.js';
+import { QUESTION_CATEGORIES } from '../constants/question-categories.js';
 import { supabase } from '../config/supabase.js';
 import {
   createQuestionBankSchema,

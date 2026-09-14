@@ -1,12 +1,8 @@
 import { z } from "zod";
 import { SUPPORTED_LOCALES } from '../constants/locales.js';
 
-export const QUESTION_CATEGORIES = [
-  'personality', 'music', 'film', 'sports', 'travel',
-  'food', 'technology', 'general', 'other',
-  'fun', 'entertainment', 'lifestyle', 'humor',
-  'hobby', 'science', 'history', 'art', 'nature',
-] as const;
+import { QUESTION_CATEGORIES } from '../constants/question-categories.js';
+export { QUESTION_CATEGORIES };
 
 // NOT (2026-09-09): Bu liste artik DOGRULAMA KAPISI DEGIL.
 //

@@ -14,8 +14,6 @@ export function resolveLocale(input?: string | null): SupportedLocale {
   return 'en';
 }
 
-export { SUPPORTED_LOCALES, WEB_LOCALES };
-export type { SupportedLocale, WebLocale };
 
 /**
  * Store'daki eski mobil surumler Accept-Language header'i gondermez; onlarda
