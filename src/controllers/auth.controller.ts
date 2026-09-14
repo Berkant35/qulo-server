@@ -1,7 +1,8 @@
 import type { Request, Response, NextFunction } from "express";
 import { authService } from "../services/auth.service.js";
 import { env } from "../config/env.js";
-import { localeFromRequestHeaders, type SupportedLocale, webLocale } from "../utils/locales.js";
+import { localeFromRequestHeaders, webLocale } from "../utils/locales.js";
+import type { SupportedLocale } from "../constants/locales.js";
 import { clientMetaFromHeaders } from "../utils/client-meta.js";
 import type {
   RegisterInput,
