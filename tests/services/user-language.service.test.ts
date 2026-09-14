@@ -88,8 +88,10 @@ describe('DB constraint ↔ SUPPORTED_LOCALES paritesi (migration 056, 18 dil)',
 
   it('rollback dosyası var ve 16 dile döner', () => {
     const rb = readFileSync(new URL('../../migrations/056_locales_th_id_rollback.sql', import.meta.url), 'utf8');
-    expect(rb).not.toMatch(/'th'/);
-    expect(rb).toMatch(/users_locale_check/);
+    // Yorumlar teshis sorgusu olarak 'th' icerebilir; CHECK listelerinin kendisi icermemeli.
+    const lists = [...rb.matchAll(/ADD CONSTRAINT \w+[\s\S]*?ARRAY\[([\s\S]*?)\]/g)].map((m) => m[1]);
+    expect(lists).toHaveLength(3);
+    for (const l of lists) expect(l).not.toMatch(/'th'|'id'/);
   });
 });
 

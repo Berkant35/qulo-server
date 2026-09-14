@@ -1,4 +1,5 @@
 import path from "node:path";
+import type { SupportedLocale } from "../constants/locales.js";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
 import ejs from "ejs";
@@ -32,7 +33,7 @@ interface MatchNewTpl {
   unsubscribe_label: string;
 }
 
-const emailLocales: Record<string, { match_new: MatchNewTpl }> = {
+const emailLocales: Record<SupportedLocale, { match_new: MatchNewTpl }> = {
   tr: require("../locales/emails/tr.json"),
   en: require("../locales/emails/en.json"),
   de: require("../locales/emails/de.json"),

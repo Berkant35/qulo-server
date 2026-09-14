@@ -78,3 +78,17 @@ export function pickLabel(
   const first = Object.values(label).find((v) => v?.trim());
   return first ?? "";
 }
+
+/**
+ * quloapp.com'un sundugu diller (web/src/lib/i18n/config.ts). Uygulama 18 dil, web 16:
+ * sunucunun urettigi web linkleri (sifre sifirlama, e-posta dogrulama yonlendirmesi)
+ * web'de olmayan dilde 404 verir. Web th/id'yi alinca (C1) buraya da ekle.
+ */
+export const WEB_LOCALES = [
+  'tr', 'en', 'de', 'fr', 'es', 'ar', 'ru',
+  'pt', 'it', 'ja', 'ko', 'zh', 'nl', 'pl', 'sv', 'hi',
+] as const;
+
+export function webLocale(locale?: string | null): string {
+  return locale && (WEB_LOCALES as readonly string[]).includes(locale) ? locale : 'en';
+}

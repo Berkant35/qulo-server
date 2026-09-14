@@ -105,3 +105,28 @@ describe('localeFromRequestHeaders', () => {
     expect(localeFromRequestHeaders({ 'accept-language': 'xx' })).toBe('en');
   });
 });
+
+/**
+ * 2026-09-14: uygulama 18 dil, web sitesi 16 dil. Sunucunun urettigi web linkleri
+ * (sifre sifirlama, e-posta dogrulama yonlendirmesi) web'de olmayan dilde 404 veriyordu.
+ * Web th/id'yi alana kadar (C1) link dili web listesine kirpilir.
+ */
+describe('webLocale', () => {
+  it('web sitesinde olan dil aynen kalir', async () => {
+    const { webLocale } = await import('../../src/utils/locales.js');
+    expect(webLocale('tr')).toBe('tr');
+    expect(webLocale('de')).toBe('de');
+  });
+
+  it('web sitesinde olmayan uygulama dili en olur (th/id: 404 yerine Ingilizce sayfa)', async () => {
+    const { webLocale } = await import('../../src/utils/locales.js');
+    expect(webLocale('th')).toBe('en');
+    expect(webLocale('id')).toBe('en');
+    expect(webLocale(undefined)).toBe('en');
+  });
+
+  it('WEB_LOCALES sunucunun destekledigi dillerin alt kumesi', async () => {
+    const { WEB_LOCALES, SUPPORTED_LOCALES } = await import('../../src/utils/locales.js');
+    for (const l of WEB_LOCALES) expect(SUPPORTED_LOCALES).toContain(l);
+  });
+});

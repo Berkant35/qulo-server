@@ -8,24 +8,7 @@
 <div class="filters">
   <select id="filterLocale">
     <option value="">All Locales</option>
-    <option value="tr">TR</option>
-    <option value="en">EN</option>
-    <option value="de">DE</option>
-    <option value="fr">FR</option>
-    <option value="es">ES</option>
-    <option value="ar">AR</option>
-    <option value="ru">RU</option>
-    <option value="pt">PT</option>
-    <option value="it">IT</option>
-    <option value="ja">JA</option>
-    <option value="ko">KO</option>
-    <option value="zh">ZH</option>
-    <option value="nl">NL</option>
-    <option value="pl">PL</option>
-    <option value="sv">SV</option>
-    <option value="hi">HI</option>
-    <option value="th">TH</option>
-    <option value="id">ID</option>
+    <% locales.forEach(function(l) { %><option value="<%= l %>"><%= l.toUpperCase() %></option><% }); %>
   </select>
   <select id="filterCategory">
     <option value="">All Categories</option>
@@ -115,24 +98,7 @@
         <div>
           <label style="font-size:13px; font-weight:600;">Locale *</label>
           <select id="fLocale" style="width:100%;">
-            <option value="tr">TR</option>
-            <option value="en">EN</option>
-            <option value="de">DE</option>
-            <option value="fr">FR</option>
-            <option value="es">ES</option>
-            <option value="ar">AR</option>
-            <option value="ru">RU</option>
-            <option value="pt">PT</option>
-            <option value="it">IT</option>
-            <option value="ja">JA</option>
-            <option value="ko">KO</option>
-            <option value="zh">ZH</option>
-            <option value="nl">NL</option>
-            <option value="pl">PL</option>
-            <option value="sv">SV</option>
-            <option value="hi">HI</option>
-            <option value="th">TH</option>
-            <option value="id">ID</option>
+            <% locales.forEach(function(l) { %><option value="<%= l %>"><%= l.toUpperCase() %></option><% }); %>
           </select>
         </div>
         <div>

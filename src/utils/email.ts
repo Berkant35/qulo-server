@@ -1,4 +1,5 @@
 import { readFileSync } from "fs";
+import { resolveLocale, webLocale } from "./locales.js";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { env } from "../config/env.js";
@@ -19,14 +20,8 @@ function getTemplate(): string {
 
 const localeCache = new Map<string, Record<string, string>>();
 
-const SUPPORTED_LOCALES = [
-  "tr", "en", "de", "fr", "es", "ar", "ru",
-  "pt", "it", "ja", "ko", "zh", "nl", "pl", "sv", "hi",
-  "th", "id",
-];
-
 function getEmailLocale(locale?: string): Record<string, string> {
-  const loc = SUPPORTED_LOCALES.includes(locale ?? "") ? locale! : "en";
+  const loc = resolveLocale(locale);
   if (localeCache.has(loc)) return localeCache.get(loc)!;
   try {
     const filePath = join(__dirname, "..", "locales", "emails", `${loc}.json`);
@@ -82,8 +77,7 @@ export async function sendPasswordResetEmail(
   locale?: string,
 ): Promise<void> {
   const strings = getEmailLocale(locale);
-  const webLocale = SUPPORTED_LOCALES.includes(locale ?? "") ? locale! : "en";
-  const url = `${env.WEB_URL}/${webLocale}/reset-password?token=${token}`;
+  const url = `${env.WEB_URL}/${webLocale(locale)}/reset-password?token=${token}`;
   const html = renderTemplate(strings, url, "reset");
 
   const maskedTo = maskEmail(to);

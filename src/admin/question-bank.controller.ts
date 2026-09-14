@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+import { SUPPORTED_LOCALES } from '../constants/locales.js';
 import { supabase } from '../config/supabase.js';
 import {
   createQuestionBankSchema,
@@ -9,7 +10,7 @@ import {
 
 class QuestionBankController {
   async page(req: Request, res: Response) {
-    res.render('question-bank', { session: req.session });
+    res.render('question-bank', { session: req.session, locales: SUPPORTED_LOCALES });
   }
 
   async list(req: Request, res: Response) {

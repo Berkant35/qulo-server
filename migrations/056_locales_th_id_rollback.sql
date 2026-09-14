@@ -1,4 +1,8 @@
 -- 056_locales_th_id_rollback.sql — 16 dile doner. th/id satiri varsa ADD CONSTRAINT patlar; raporla.
+-- Teshis (ADD CONSTRAINT patlarsa once bunlari calistir, satirlari tasi/temizle, sonra tekrar dene):
+--   SELECT count(*) FROM users          WHERE locale IN ('th','id');
+--   SELECT count(*) FROM user_languages WHERE language_code IN ('th','id');
+--   SELECT count(*) FROM questions      WHERE locale IN ('th','id');
 BEGIN;
 
 ALTER TABLE user_languages DROP CONSTRAINT IF EXISTS user_languages_language_code_check;

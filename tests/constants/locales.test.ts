@@ -40,3 +40,15 @@ describe('questionLocale', () => {
     expect(questionLocale('xx')).toBe('xx');
   });
 });
+
+describe('SUPPORTED_LOCALES ↔ AI soru bankasi tohumu paritesi', () => {
+  // Dil DB'de gecerli ama bankasi yoksa oneri ekrani ve profil kurulum kapisi sessizce bos kalir
+  // (ai-suggest.service `.eq('locale', ...)` → []). Yeni dil = yeni questions_<dil>.json.
+  it('her desteklenen dil icin src/data/seed/questions_<dil>.json var', async () => {
+    const { existsSync } = await import('node:fs');
+    const missing = SUPPORTED_LOCALES.filter(
+      (l) => !existsSync(new URL(`../../src/data/seed/questions_${l}.json`, import.meta.url)),
+    );
+    expect(missing).toEqual([]);
+  });
+});
