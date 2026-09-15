@@ -167,7 +167,7 @@ export class AuthService {
 
     const { data: user, error } = await supabase
       .from("users")
-      .select("id, email, password_hash, email_verified, is_deleted")
+      .select("id, email, password_hash, email_verified, is_deleted, is_seed_profile")
       .eq("email", email)
       .maybeSingle();
 
@@ -176,6 +176,12 @@ export class AuthService {
     }
 
     if (user.is_deleted) {
+      throw Errors.INVALID_CREDENTIALS();
+    }
+
+    // Seed (test) profilleri giriş yapamaz: e-postaları öngörülebilir (seed-tr_NNNN@qulo.seed) ve
+    // doğrulanmış; şifre bilinse bile hesap kullanılamamalı. Aynı hata → varlık sızmaz.
+    if (user.is_seed_profile) {
       throw Errors.INVALID_CREDENTIALS();
     }
 

@@ -38,7 +38,7 @@ export interface FailureSpec {
 /** Depolama hata enjeksiyonu — `FailureSpec`'in storage karşılığı. */
 export interface StorageFailureSpec {
   bucket: string;
-  op: 'list' | 'remove';
+  op: 'list' | 'remove' | 'upload';
   error?: SupabaseError;
   /** Kaç başarılı çağrıdan SONRA patlasın (varsayılan 0 = hemen). */
   failAfter?: number;
@@ -56,7 +56,13 @@ export interface FakeSupabaseOptions {
   storageFailOn?: StorageFailureSpec[];
 }
 
-type FilterOp = 'eq' | 'neq' | 'gte' | 'lte' | 'gt' | 'lt' | 'in' | 'is' | 'notIs' | 'notIn';
+type FilterOp = 'eq' | 'neq' | 'gte' | 'lte' | 'gt' | 'lt' | 'in' | 'is' | 'notIs' | 'notIn' | 'like' | 'ilike';
+
+/** PostgREST LIKE deseni → RegExp: `%` = herhangi dizi, `_` = tek karakter, gerisi literal. */
+function likeToRegExp(pattern: string, ignoreCase: boolean): RegExp {
+  const escaped = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/%/g, '.*').replace(/_/g, '.');
+  return new RegExp(`^${escaped}$`, ignoreCase ? 'is' : 's');
+}
 interface Filter {
   op: FilterOp;
   column: string;
@@ -153,6 +159,10 @@ function matches(row: Row, filters: Filter[]): boolean {
         return f.value === null ? actual !== null && actual !== undefined : actual !== f.value;
       case 'notIn':
         return !(Array.isArray(f.value) && f.value.includes(actual));
+      case 'like':
+        return typeof actual === 'string' && likeToRegExp(String(f.value), false).test(actual);
+      case 'ilike':
+        return typeof actual === 'string' && likeToRegExp(String(f.value), true).test(actual);
     }
   });
 }
@@ -197,6 +207,8 @@ class QueryBuilder implements PromiseLike<Result<any>> {
   gt(column: string, value: any) { return this.addFilter('gt', column, value); }
   lt(column: string, value: any) { return this.addFilter('lt', column, value); }
   in(column: string, values: any[]) { return this.addFilter('in', column, values); }
+  like(column: string, pattern: string) { return this.addFilter('like', column, pattern); }
+  ilike(column: string, pattern: string) { return this.addFilter('ilike', column, pattern); }
 
   /**
    * PostgREST `.not(col, op, value)` — filtreyi tersleyerek uygular.
@@ -452,12 +464,13 @@ export function createFakeSupabase(
       };
     },
     /**
-     * Depolama — sadece kod tabanının kullandığı `list` ve `remove`.
+     * Depolama — kod tabanının kullandığı `list`, `remove`, `upload`, `getPublicUrl`.
      * Dosyalar `bucket → path` haritasında tutulur; `list(prefix)` o önekin
      * altındaki dosya adlarını döner (Supabase `{ name }` listesi gibi).
-     * Gerçek Storage'a sadık iki kural:
+     * Gerçek Storage'a sadık üç kural:
      * - Sayfalı: `limit` verilmezse 100 dosya — sayfalamayı unutan kod testte de dosya bırakır.
      * - Tek seviyeli: alt klasördeki dosyalar dönmez (klasör girdileri modellenmez).
+     * - `upload` var olan yola `upsert` verilmeden yazamaz (Storage 409 döner).
      */
     storage: {
       from(bucket: string) {
@@ -465,12 +478,28 @@ export function createFakeSupabase(
         // yakalanan kopya bayat kalır, aynı nesneyle ikinci çağrı silineni geri getirirdi.
         const files = () => (storageFiles[bucket] ??= []);
         return {
-          async list(prefix: string, opts?: { limit?: number }) {
+          async upload(path: string, _body: unknown, opts?: { upsert?: boolean; contentType?: string }) {
+            const failure = storageFailureFor(bucket, 'upload');
+            if (failure) return { data: null, error: failure };
+            if (files().includes(path) && !opts?.upsert) {
+              return { data: null, error: { message: 'The resource already exists', code: '409' } };
+            }
+            if (!files().includes(path)) files().push(path);
+            return { data: { path }, error: null };
+          },
+          // Gerçek istemcide senkron ve hatasızdır; URL biçimi prod ile aynı kalıpta.
+          getPublicUrl(path: string) {
+            return { data: { publicUrl: `https://fake.supabase.co/storage/v1/object/public/${bucket}/${path}` } };
+          },
+          async list(prefix: string, opts?: { limit?: number; offset?: number }) {
             const failure = storageFailureFor(bucket, 'list');
             if (failure) return { data: null, error: failure };
+            // `offset` gerçek API'deki gibi sayfalar: offset'i yok sayan bir fake, sayfalayan
+            // kodu testte sonsuz döngüye sokar (her çağrı ilk sayfayı döner).
+            const start = opts?.offset ?? 0;
             const data = files()
               .filter((path) => path.startsWith(`${prefix}/`) && !path.slice(prefix.length + 1).includes('/'))
-              .slice(0, opts?.limit ?? 100)
+              .slice(start, start + (opts?.limit ?? 100))
               .map((path) => ({ name: path.slice(prefix.length + 1) }));
             return { data, error: null };
           },

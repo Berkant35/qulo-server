@@ -373,6 +373,17 @@ describe('login', () => {
     });
   });
 
+  /** Seed profilleri öngörülebilir e-posta + doğrulanmış hesap; şifre doğru olsa bile kapı kapalı. */
+  it('seed (test) profili doğru şifreyle de giremez — aynı hata, token yok', async () => {
+    const { fake, authService } = await setup({ users: [account({ is_seed_profile: true })] });
+
+    await expect(authService.login('a@qulo.test', PASSWORD)).rejects.toMatchObject({
+      code: 'INVALID_CREDENTIALS', statusCode: 401,
+    });
+    expect(fake.table('refresh_tokens')).toHaveLength(0);
+    expect(fake.table('users')[0].is_online).not.toBe(true);
+  });
+
   it('yanlış şifrede refresh token yaratmaz', async () => {
     const { fake, authService } = await setup({ users: [account()] });
     await expect(authService.login('a@qulo.test', 'YanlisSifre1!')).rejects.toBeTruthy();
