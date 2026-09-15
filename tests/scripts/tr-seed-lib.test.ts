@@ -4,6 +4,7 @@ import {
   buildDetailsRow,
   buildPhotoPrompt,
   buildUserRow,
+  cleanupSeedOrphans,
   deleteSeedProfiles,
   locationSentence,
   parseBank,
@@ -162,7 +163,7 @@ describe("tr-seed-lib — saf builder'lar", () => {
     const clone = buildPhotoPrompt(entry(), meta);
     expect(clone).toEqual({
       prompt: PROMPT, prompt_sha1: sha1(PROMPT), model: meta.model, replicate_id: "pred_1", input: { aspect_ratio: "3:4" },
-      generated_at: meta.generated_at, edit: null, seed_id: "seed_0015", province: "İzmir", district: "Bornova",
+      generated_at: meta.generated_at, edit: null, post: null, seed_id: "seed_0015", province: "İzmir", district: "Bornova",
     });
     expect(buildUserRow(entry(), "u", meta, "h", NOW).photo_prompt).toEqual(clone);
     expect(buildPhotoPrompt(entry(), { ...meta, replicate_id: undefined, input: undefined }).replicate_id).toBeNull();
@@ -176,6 +177,13 @@ describe("tr-seed-lib — saf builder'lar", () => {
     expect(clone.edit).toEqual({ ...edit, reference_path: "seed/tr_0015_pred1.jpg" }); // referans Storage'da kalır
     expect(buildPhotoPrompt(entry(), { ...meta, edit }).edit?.reference_path).toBeNull();
     expect(photoMetaSchema.safeParse({ ...meta, edit: { ...edit, kind: "beauty" } }).success).toBe(false);
+  });
+
+  it("telefon son işlemi klonda: parametreler (seviye, genişlik, gürültü, jpeg…) birebir; bilinmeyen tür reddedilir", () => {
+    const post = { kind: "phone" as const, version: 1, level: "heavy" as const, width: 720, noise: 12.5, jpeg: [66, 58] };
+    expect(buildPhotoPrompt(entry(), { ...meta, post }).post).toEqual(post);
+    expect(photoMetaSchema.safeParse({ ...meta, post: { ...post, kind: "instagram" } }).success).toBe(false);
+    expect(photoMetaSchema.safeParse({ ...meta, post: { ...post, level: "extreme" } }).success).toBe(false);
   });
 
   it("yaş sınırlarında tercih aralığı tutarlı kalır (18 ve 55)", () => {
@@ -651,5 +659,29 @@ describe("seed-tr-test-profiles CLI — parseArgs", () => {
     expect(() => parseArgs(["--dryrun"])).toThrow(/bilinmeyen argüman: --dryrun/);
     expect(() => parseArgs(["--only", "--json"])).toThrow(/--only değer ister/);
     expect(() => parseArgs(["--limit"])).toThrow(/--limit değer ister/);
+  });
+});
+
+describe("tr-seed-lib — cleanupSeedOrphans (fotoğraf değişimi sonrası yetim dosyalar)", () => {
+  const url = (p: string) => `https://fake.supabase.co/storage/v1/object/public/photos/${p}`;
+  const users = () => [
+    { id: "s1", email: "seed-tr_0001@qulo.seed", is_seed_profile: true, photos: [url("seed/tr_0001_new.jpg")], photo_prompt: { edit: null } },
+    { id: "s2", email: "seed-tr_0002@qulo.seed", is_seed_profile: true, photos: [url("seed/tr_0002_ed.jpg")], photo_prompt: { edit: { reference_path: "seed/tr_0002.jpg" } } },
+    { id: "r1", email: "gercek@gmail.com", is_seed_profile: false, photos: [url("3f2a1b0c/1700000000.jpg")], photo_prompt: null },
+  ];
+  const storage = { photos: ["seed/tr_0001.jpg", "seed/tr_0001_new.jpg", "seed/tr_0002.jpg", "seed/tr_0002_ed.jpg", "seed/tr_0003_old.jpg", "seed/notlar.txt", "3f2a1b0c/1700000000.jpg"] };
+
+  it("dry-run: kullanılan foto + düzenleme referansı korunur; yalnız seed desenli ve hiçbir profilin kullanmadığı dosyalar yetim", async () => {
+    const fake = createFakeSupabase({ users: users() }, { storage });
+    const r = await cleanupSeedOrphans(fake.client, { confirm: false });
+    expect(r.orphans.sort()).toEqual(["seed/tr_0001.jpg", "seed/tr_0003_old.jpg"]);
+    expect(fake.storageFiles("photos")).toHaveLength(7);
+  });
+
+  it("confirm: yetimler silinir; gerçek kullanıcı dosyası, notlar.txt ve kullanılanlar kalır", async () => {
+    const fake = createFakeSupabase({ users: users() }, { storage });
+    const r = await cleanupSeedOrphans(fake.client, { confirm: true });
+    expect(r.removed).toBe(2);
+    expect(fake.storageFiles("photos").sort()).toEqual(["3f2a1b0c/1700000000.jpg", "seed/notlar.txt", "seed/tr_0001_new.jpg", "seed/tr_0002.jpg", "seed/tr_0002_ed.jpg"]);
   });
 });

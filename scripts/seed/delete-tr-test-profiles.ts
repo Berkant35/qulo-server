@@ -4,14 +4,23 @@
  *   npx tsx scripts/seed/delete-tr-test-profiles.ts            # dry-run: kaç satır, kaç dosya
  *   npx tsx scripts/seed/delete-tr-test-profiles.ts --confirm  # siler
  *   npx tsx scripts/seed/delete-tr-test-profiles.ts --only seed_0015,seed_0064 --confirm  # yalnız bu profiller (QA reddi)
+ *   npx tsx scripts/seed/delete-tr-test-profiles.ts --orphans [--confirm]  # hiçbir profilin kullanmadığı eski seed dosyaları
  */
 
 import { createSeedClient } from "./cli-env.js";
-import { deleteSeedProfiles } from "./tr-seed-lib.js";
+import { cleanupSeedOrphans, deleteSeedProfiles } from "./tr-seed-lib.js";
 
 async function main() {
   const argv = process.argv.slice(2);
   const confirm = argv.includes("--confirm");
+  if (argv.includes("--orphans")) {
+    const r = await cleanupSeedOrphans(createSeedClient(), { confirm });
+    console.log(`hedef: ${new URL(process.env.SUPABASE_URL ?? "http://?").host} · seed dosyası: ${r.files} · kullanılan: ${r.referenced} · yetim: ${r.orphans.length}`);
+    if (r.dryRun) { console.log(`dry-run — örnek: ${r.orphans.slice(0, 5).join(", ")} · silmek için --confirm`); return; }
+    for (const w of r.warnings) console.error(`⚠️ ${w}`);
+    console.log(`silindi: ${r.removed} yetim dosya`);
+    return;
+  }
   const onlyIdx = argv.indexOf("--only");
   const only = onlyIdx >= 0 ? (argv[onlyIdx + 1] ?? "").split(",").filter(Boolean) : undefined;
   if (onlyIdx >= 0 && !only?.length) throw new Error("--only virgülle seed_id listesi ister");

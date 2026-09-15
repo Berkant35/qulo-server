@@ -139,6 +139,13 @@ export const photoEditSchema = z.object({
 });
 export type PhotoEdit = z.infer<typeof photoEditSchema>;
 
+/** Telefon son işlemi (tools/seed_postprocess.py): parametreler seed_id'den deterministik → klondan yeniden üretilebilir. */
+export const photoPostSchema = z.object({
+  kind: z.literal("phone"),
+  version: z.number().int().positive(),
+  level: z.enum(["medium", "heavy"]),
+}).passthrough();
+
 export const photoMetaSchema = z.object({
   model: z.string().min(1),
   prompt_sha1: z.string().regex(/^[0-9a-f]{40}$/),
@@ -146,6 +153,7 @@ export const photoMetaSchema = z.object({
   replicate_id: z.string().nullable().optional(),
   input: z.record(z.unknown()).nullable().optional(),
   edit: photoEditSchema.nullable().optional(),
+  post: photoPostSchema.nullable().optional(),
 });
 export type PhotoMeta = z.infer<typeof photoMetaSchema>;
 
@@ -241,6 +249,7 @@ export function buildPhotoPrompt(entry: SelectionEntry, meta: PhotoMeta, referen
     input: meta.input ?? null,
     generated_at: meta.generated_at,
     edit: meta.edit ? { ...meta.edit, reference_path: referencePath } : null,
+    post: meta.post ?? null,
     seed_id: entry.seed_id,
     province: entry.province,
     district: entry.district,
@@ -529,6 +538,41 @@ export async function verifySeedProfile(
   add("detay_meslek", !dErr && details?.job === entry.job, dErr ? dErr.message : `job=${details?.job ?? "(yok)"}`);
 
   return { ok: checks.every((c) => c.ok), id: user.id, checks };
+}
+
+// --- akış: yetim dosya temizliği -----------------------------------------------------------
+
+export interface OrphanReport { dryRun: boolean; files: number; referenced: number; orphans: string[]; removed: number; warnings: string[] }
+
+/**
+ * `photos/seed/` altında hiçbir seed profilinin fotoğrafı ya da düzenleme referansı (`photo_prompt.edit.reference_path`)
+ * olmayan tr_NNNN* dosyalarını bulur; `confirm` ile siler. Fotoğraf değişimleri (yerinde değiştirme) sonrası kalan eski
+ * görseller için. Yalnız seed deseni (`SEED_FILE_RE`) listelenir — gerçek kullanıcı dosyası kapsam dışı.
+ */
+export async function cleanupSeedOrphans(client: SeedClient, opts: { confirm: boolean }): Promise<OrphanReport> {
+  const { data: users, error } = await client
+    .from("users").select("photos, photo_prompt").eq("is_seed_profile", true).like("email", `%${SEED_EMAIL_DOMAIN}`);
+  if (error) throw new Error(`users select: ${error.message}`);
+  const referenced = new Set<string>();
+  for (const u of users ?? []) {
+    for (const url of (u.photos as string[] | null) ?? []) {
+      const path = storagePathFromUrl(url);
+      if (path) referenced.add(path);
+    }
+    const ref = (u.photo_prompt as { edit?: { reference_path?: string | null } | null } | null)?.edit?.reference_path;
+    if (ref) referenced.add(ref);
+  }
+  const files = await listSeedFiles(client);
+  const orphans = files.filter((f) => !referenced.has(f));
+  const report: OrphanReport = { dryRun: !opts.confirm, files: files.length, referenced: referenced.size, orphans, removed: 0, warnings: [] };
+  if (!opts.confirm || !orphans.length) return report;
+  for (let i = 0; i < orphans.length; i += STORAGE_PAGE) {
+    const chunk = orphans.slice(i, i + STORAGE_PAGE);
+    const { error: rmError } = await client.storage.from(PHOTO_BUCKET).remove(chunk);
+    if (rmError) report.warnings.push(`storage remove (${chunk[0]}…): ${rmError.message}`);
+    else report.removed += chunk.length;
+  }
+  return report;
 }
 
 // --- akış: silme ----------------------------------------------------------------------
