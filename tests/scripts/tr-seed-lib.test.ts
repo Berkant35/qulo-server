@@ -2,35 +2,60 @@ import { describe, expect, it } from "vitest";
 import { createFakeSupabase } from "../helpers/fake-supabase.js";
 import {
   buildDetailsRow,
+  buildPhotoPrompt,
   buildUserRow,
   deleteSeedProfiles,
+  locationSentence,
   parseBank,
   parseSelection,
+  photoMetaSchema,
   pickQuestions,
   referralCode,
   seedEmail,
   seedProfile,
+  sha1,
   storagePath,
+  verifySeedProfile,
   type BankQuestion,
+  type PhotoMeta,
   type SelectionEntry,
 } from "../../scripts/seed/tr-seed-lib.js";
+import { parseArgs } from "../../scripts/seed/seed-tr-test-profiles.js";
 
-const entry = (over: Partial<SelectionEntry> = {}): SelectionEntry => ({
-  seed_id: "seed_0015",
-  gender: "WOMAN",
-  age: 26,
-  prompt: "Amateur close-up selfie …",
-  relationship_goal: "NOT_SURE",
-  bio: null,
-  interests: [],
-  height: 165,
-  city: "İzmir",
-  lat: 38.3989,
-  lng: 27.1173,
-  selected: true,
-  ...over,
-});
+/** tools/seed_prepare.py'nin ürettiği biçim: konum cümlesi + yaş etiketi + gerçekçilik + sha1. */
+const PROMPT = "Amateur close-up selfie. Location: Bornova, İzmir, Türkiye. A 26-year-old Turkish woman, natural skin texture. Real amateur smartphone photo look.";
 
+const entry = (over: Partial<SelectionEntry> = {}): SelectionEntry => {
+  const base = {
+    seed_id: "seed_0015",
+    gender: "WOMAN" as const,
+    age: 26,
+    prompt: PROMPT,
+    prompt_sha1: sha1(PROMPT),
+    relationship_goal: "NOT_SURE" as const,
+    bio: "Bornova'da yaşıyorum, akşamları Kordon'da yürüyüş yapıyorum.",
+    interests: ["music", "travel", "food"] as SelectionEntry["interests"],
+    height: 165,
+    province: "İzmir",
+    district: "Bornova",
+    lat: 38.3989,
+    lng: 27.1173,
+    job: "Hemşire",
+    personality: "Ambivert" as const,
+    pets: null,
+    music_type: "Türkçe pop",
+    smoking: "NO" as const,
+    alcohol: "SOMETIMES" as const,
+    selected: true as const,
+  };
+  const merged = { ...base, ...over };
+  // prompt override edildiyse sha1'i testin kendisi verir; edilmediyse tutarlı kalsın
+  if (over.prompt !== undefined && over.prompt_sha1 === undefined) merged.prompt_sha1 = sha1(over.prompt);
+  return merged;
+};
+
+const meta: PhotoMeta = { model: "black-forest-labs/flux-2-klein-4b", prompt_sha1: sha1(PROMPT), generated_at: "2026-09-15T10:00:00Z", replicate_id: "pred_1", input: { aspect_ratio: "3:4" } };
+const photo = { bytes: new Uint8Array([0xff, 0xd8, 0xff]), contentType: "image/jpeg", meta };
 const q = (text: string, target: BankQuestion["target_gender"] = null): BankQuestion => ({
   question_text: text,
   answers: ["A", "B", "C", "D"],
@@ -44,22 +69,51 @@ const bank: BankQuestion[] = [
   q("Kadın sorusu 1", "female"), q("Kadın sorusu 2", "female"),
   q("Erkek sorusu 1", "male"), q("Erkek sorusu 2", "male"),
 ];
-
-const photo = { bytes: new Uint8Array([0xff, 0xd8, 0xff]), contentType: "image/jpeg" };
 const NOW = new Date("2026-09-15T10:00:00Z");
+const head200 = async () => 200;
 
 describe("tr-seed-lib — girdi şemaları", () => {
-  it("parseSelection: yalnız selected=true ve şemaya uyanlar; bozuk kayıt seed_id ile raporlanır", () => {
+  it("parseSelection: yalnız selected=true ve şemaya uyanlar; bozuk kayıt seed_id + sebep ile raporlanır", () => {
     const raw = { profiles: [
       entry(),
-      { ...entry({ seed_id: "seed_0002" }), selected: false, city: null },   // yedek: atlanır, hata değil
-      { ...entry({ seed_id: "seed_0003" }), age: null },                    // yaş yok → geçersiz
-      { ...entry({ seed_id: "seed_0004" }), gender: "FEMALE" },             // enum dışı → geçersiz
-      { ...entry({ seed_id: "seed_0005" }), lat: null },                    // konum yok → geçersiz
+      { ...entry({ seed_id: "seed_0002" }), selected: false, district: null },   // yedek: atlanır, hata değil
+      { ...entry({ seed_id: "seed_0003" }), age: null },                        // yaş yok → geçersiz
+      { ...entry({ seed_id: "seed_0004" }), gender: "FEMALE" },                 // enum dışı → geçersiz
+      { ...entry({ seed_id: "seed_0005" }), lat: null },                        // konum yok → geçersiz
+      { ...entry({ seed_id: "seed_0006" }), bio: null, job: null },             // zenginleştirme birleşmemiş → geçersiz
     ] };
     const { entries, invalid } = parseSelection(raw);
     expect(entries.map((e) => e.seed_id)).toEqual(["seed_0015"]);
-    expect(invalid).toEqual(["seed_0003", "seed_0004", "seed_0005"]);
+    expect(invalid.map((x) => x.seed_id)).toEqual(["seed_0003", "seed_0004", "seed_0005", "seed_0006"]);
+    expect(invalid[0].reason).toContain("age");
+  });
+
+  it("kontrol listesi şemada: prompt'taki ilçe/il, yaş etiketi ve sha1 profille eşleşmeli", () => {
+    const parse = (e: SelectionEntry) => parseSelection({ profiles: [e] });
+    expect(parse(entry({ district: "Konak" })).invalid[0].reason).toContain("konum");                       // prompt Bornova diyor
+    expect(parse(entry({ age: 27 })).invalid[0].reason).toContain("yaş");                                   // prompt 26 diyor
+    expect(parse(entry({ prompt_sha1: "0".repeat(40) })).invalid[0].reason).toContain("prompt_sha1");
+    expect(parse(entry({ prompt: PROMPT.replace("Bornova, İzmir", "Konak, İzmir"), district: "Konak" })).entries).toHaveLength(1);
+    expect(locationSentence("Kadıköy", "İstanbul")).toBe("Location: Kadıköy, İstanbul, Türkiye.");
+  });
+
+  it("ilgi alanları uygulamanın 12 anahtarıyla sınırlı; kişilik ve sigara/alkol enum", () => {
+    const parse = (e: object) => parseSelection({ profiles: [e] }).invalid.length;
+    expect(parse({ ...entry(), interests: ["music", "yoga"] })).toBe(1);
+    expect(parse({ ...entry(), personality: "Sakin" })).toBe(1);
+    expect(parse({ ...entry(), alcohol: "RARELY" })).toBe(1);
+    expect(parse({ ...entry(), interests: ["gaming"] })).toBe(1);                      // 3-5 sözleşmesi (seed_prepare ile aynı)
+    expect(parse({ ...entry(), lat: 27.1173, lng: 38.3989 })).toBe(1);                // ters yazım Türkiye kutusu dışında
+    expect(parse({ ...entry(), pets: "" })).toBe(1);                                   // boş string yerine null
+    expect(parse(entry({ interests: ["gaming", "art", "books"] as SelectionEntry["interests"] }))).toBe(0);
+  });
+
+  it("photoMetaSchema: bozuk sha1 / model yok reddedilir, replicate_id ve input opsiyonel", () => {
+    expect(photoMetaSchema.safeParse(meta).success).toBe(true);
+    expect(photoMetaSchema.safeParse({ ...meta, prompt_sha1: "kısa" }).success).toBe(false);
+    expect(photoMetaSchema.safeParse({ ...meta, model: "" }).success).toBe(false);
+    expect(photoMetaSchema.safeParse({ model: "m", prompt_sha1: sha1("x"), generated_at: "t" }).success).toBe(true);
+    expect(photoMetaSchema.safeParse({ error: "HTTP 402", model: "m" }).success).toBe(false); // manifest hata kaydı
   });
 
   it("parseSelection: profiles anahtarı yoksa fırlatır", () => {
@@ -79,15 +133,19 @@ describe("tr-seed-lib — girdi şemaları", () => {
 });
 
 describe("tr-seed-lib — saf builder'lar", () => {
-  it("users satırı: gizli test hesabı, enum'lar geçerli, foto URL'i ve 8 karakterlik referral", () => {
-    const row = buildUserRow(entry(), "https://x/seed/tr_0015.jpg", "hash", NOW);
+  it("users satırı: gizli test hesabı, ilçe city'de, bio/ilgi zenginleştirmeden, foto URL'i ve 8 karakterlik referral", () => {
+    const row = buildUserRow(entry(), "https://x/seed/tr_0015.jpg", meta, "hash", NOW);
     expect(row.email).toBe("seed-tr_0015@qulo.seed");
     expect(row.is_test_account).toBe(true);
     expect(row.is_seed_profile).toBe(true);
     expect(row.email_verified).toBe(true);
     expect(row.gender).toBe("WOMAN");
     expect(row.gender_pref).toBe("MAN");
-    expect(["SERIOUS", "FRIENDSHIP", "NOT_SURE"]).toContain(row.relationship_goal);
+    expect(row.city).toBe("Bornova");
+    expect(row.country).toBe("Türkiye");
+    expect(row.bio).toBe(entry().bio);
+    expect(row.interests).toEqual(["music", "travel", "food"]);
+    expect(row.relationship_goal).toBe("NOT_SURE");
     expect(row.photos).toEqual(["https://x/seed/tr_0015.jpg"]);
     expect(row.referral_code).toMatch(/^S[A-Z0-9]{7}$/);
     expect(row.preferred_languages).toEqual(["tr"]);
@@ -98,26 +156,49 @@ describe("tr-seed-lib — saf builder'lar", () => {
     expect(NOW.getTime() - new Date(row.last_seen_at).getTime()).toBeLessThanOrEqual(72 * 3600 * 1000);
   });
 
+  it("photo_prompt klonu (058): prompt birebir + sha1 + model/replicate/girdi/ilçe/il", () => {
+    const clone = buildPhotoPrompt(entry(), meta);
+    expect(clone).toEqual({
+      prompt: PROMPT, prompt_sha1: sha1(PROMPT), model: meta.model, replicate_id: "pred_1", input: { aspect_ratio: "3:4" },
+      generated_at: meta.generated_at, seed_id: "seed_0015", province: "İzmir", district: "Bornova",
+    });
+    expect(buildUserRow(entry(), "u", meta, "h", NOW).photo_prompt).toEqual(clone);
+    expect(buildPhotoPrompt(entry(), { ...meta, replicate_id: undefined, input: undefined }).replicate_id).toBeNull();
+  });
+
   it("yaş sınırlarında tercih aralığı tutarlı kalır (18 ve 55)", () => {
     for (const age of [18, 55]) {
-      const row = buildUserRow(entry({ age }), "u", "h", NOW);
+      const p = PROMPT.replace("26-year-old", `${age}-year-old`);
+      const row = buildUserRow(entry({ age, prompt: p }), "u", meta, "h", NOW);
       expect(row.age_pref_min).toBeGreaterThanOrEqual(18);
       expect(row.age_pref_min).toBeLessThanOrEqual(age);
       expect(row.age_pref_max).toBeGreaterThan(age);
     }
   });
 
-  it("erkek profilde tercih kadın; korpus bio'su varsa havuzdan seçilmez", () => {
-    const row = buildUserRow(entry({ seed_id: "seed_0897", gender: "MAN", bio: "Balat'ta yaşıyorum." }), "u", "h", NOW);
+  it("erkek profilde tercih kadın", () => {
+    const row = buildUserRow(entry({ seed_id: "seed_0897", gender: "MAN" }), "u", meta, "h", NOW);
     expect(row.gender_pref).toBe("WOMAN");
-    expect(row.bio).toBe("Balat'ta yaşıyorum.");
   });
 
   it("deterministik: aynı seed_id → aynı isim, referral ve detaylar", () => {
-    const a = buildUserRow(entry(), "u", "h", NOW);
-    const b = buildUserRow(entry(), "u", "h", NOW);
+    const a = buildUserRow(entry(), "u", meta, "h", NOW);
+    const b = buildUserRow(entry(), "u", meta, "h", NOW);
     expect([a.name, a.surname, a.referral_code]).toEqual([b.name, b.surname, b.referral_code]);
     expect(buildDetailsRow(entry(), "uid")).toEqual(buildDetailsRow(entry(), "uid"));
+  });
+
+  it("farklı `now` kimliği değiştirmez: isim/soyisim/referral aynı, yalnız last_seen_at kayar", () => {
+    const a = buildUserRow(entry(), "u", meta, "h", NOW);
+    const b = buildUserRow(entry(), "u", meta, "h", new Date("2026-10-01T00:00:00Z"));
+    expect([b.name, b.surname, b.referral_code]).toEqual([a.name, a.surname, a.referral_code]);
+    expect(b.last_seen_at).not.toBe(a.last_seen_at);
+  });
+
+  it("sorular banka sırasından bağımsız: aynı banka ters sırayla gelse de aynı 3 soru", () => {
+    const forward = pickQuestions(bank, entry(), "uid").map((x) => x.question_text);
+    const reversed = pickQuestions([...bank].reverse(), entry(), "uid").map((x) => x.question_text);
+    expect(reversed).toEqual(forward);
   });
 
   it("referral kodları 1000 profilde çakışmaz", () => {
@@ -125,15 +206,14 @@ describe("tr-seed-lib — saf builder'lar", () => {
     expect(codes.size).toBe(1000);
   });
 
-  it("user_details: enum değerleri, İngilizce burç anahtarı, korpus boyu korunur, yoksa aralıktan", () => {
+  it("user_details: meslek/kişilik/evcil/sigara/alkol zenginleştirmeden, İngilizce burç anahtarı, boy prompt'tan yoksa aralıktan", () => {
     const withHeight = buildDetailsRow(entry(), "uid");
-    expect(withHeight.height).toBe(165);
-    expect(["YES", "NO", "SOMETIMES"]).toContain(withHeight.smoking);
-    expect(["YES", "NO", "SOMETIMES"]).toContain(withHeight.alcohol);
+    expect(withHeight).toMatchObject({ height: 165, job: "Hemşire", personality: "Ambivert", pets: null, music_type: "Türkçe pop", smoking: "NO", alcohol: "SOMETIMES" });
     expect(withHeight.zodiac).toMatch(/^[a-z]+$/);
-    const noHeight = buildDetailsRow(entry({ seed_id: "seed_0897", gender: "MAN", height: null }), "uid");
+    const noHeight = buildDetailsRow(entry({ seed_id: "seed_0897", gender: "MAN", height: null, pets: "Köpek" }), "uid");
     expect(noHeight.height).toBeGreaterThanOrEqual(168);
     expect(noHeight.height).toBeLessThanOrEqual(192);
+    expect(noHeight.pets).toBe("Köpek");
   });
 
   it("sorular: cinsiyete uygun 3 farklı soru, doğru cevap 1-4, tr, sıra 1..3", () => {
@@ -171,7 +251,7 @@ describe("tr-seed-lib — saf builder'lar", () => {
 });
 
 describe("tr-seed-lib — seedProfile akışı (fake-supabase)", () => {
-  it("foto yükler, users + user_details + 3 soru yazar, dilleri RPC ile kurar", async () => {
+  it("foto yükler, users (+photo_prompt) + user_details + 3 soru yazar, dilleri RPC ile kurar", async () => {
     const fake = createFakeSupabase({ users: [], user_details: [], questions: [] });
     const res = await seedProfile(fake.client, entry(), photo, bank, { passwordHash: "h", now: NOW });
     expect(res.status).toBe("created");
@@ -181,10 +261,22 @@ describe("tr-seed-lib — seedProfile akışı (fake-supabase)", () => {
     const user = fake.table("users")[0];
     expect(user.is_test_account).toBe(true);
     expect(user.is_seed_profile).toBe(true);
+    expect(user.city).toBe("Bornova");
+    expect(user.photo_prompt.prompt).toBe(PROMPT);
+    expect(user.photo_prompt.prompt_sha1).toBe(sha1(PROMPT));
     expect(user.photos[0]).toContain("/photos/seed/tr_0015.jpg");
-    expect(fake.table("user_details")).toHaveLength(1);
+    expect(fake.table("user_details")[0]).toMatchObject({ job: "Hemşire", personality: "Ambivert" });
     expect(fake.table("questions")).toHaveLength(3);
     expect(fake.rpcCalls).toEqual([{ name: "set_user_languages", args: { p_user_id: res.id, p_languages: ["tr"] } }]);
+  });
+
+  it("fotoğraf başka bir prompt'tan üretilmişse (sha1 farklı) hiçbir şey yazılmaz — klon alanı yalan olmasın", async () => {
+    const fake = createFakeSupabase({ users: [], user_details: [], questions: [] });
+    const stale = { ...photo, meta: { ...meta, prompt_sha1: "a".repeat(40) } };
+    const res = await seedProfile(fake.client, entry(), stale, bank, { passwordHash: "h", now: NOW });
+    expect(res).toMatchObject({ status: "error", step: "photo" });
+    expect(fake.table("users")).toHaveLength(0);
+    expect(fake.storageFiles("photos")).toHaveLength(0);
   });
 
   it("idempotent: aynı profil ikinci kez → skipped, ikinci satır ve ikinci yükleme yok", async () => {
@@ -196,7 +288,7 @@ describe("tr-seed-lib — seedProfile akışı (fake-supabase)", () => {
     expect(fake.storageFiles("photos")).toHaveLength(1);
   });
 
-  it("önceki yarım koşudan kalan dosya (kullanıcısız) engel değil — mevcut dosya kullanılır", async () => {
+  it("önceki yarım koşudan kalan dosya (kullanıcısız) engel değil — dosya üzerine yazılır", async () => {
     const fake = createFakeSupabase({ users: [], user_details: [], questions: [] }, { storage: { photos: ["seed/tr_0015.jpg"] } });
     const res = await seedProfile(fake.client, entry(), photo, bank, { passwordHash: "h", now: NOW });
     expect(res.status).toBe("created");
@@ -218,6 +310,28 @@ describe("tr-seed-lib — seedProfile akışı (fake-supabase)", () => {
     expect(fake.table("users")).toHaveLength(0);
   });
 
+  it("users insert hatası → step users; foto yüklenmiş olsa da RPC/soru/detay hiç çağrılmaz", async () => {
+    const fake = createFakeSupabase({ users: [], user_details: [], questions: [] }, { failOn: [{ table: "users", op: "insert" }] });
+    const res = await seedProfile(fake.client, entry(), photo, bank, { passwordHash: "h", now: NOW });
+    expect(res).toMatchObject({ status: "error", step: "users" });
+    expect(fake.rpcCalls).toEqual([]);
+    expect(fake.table("questions")).toHaveLength(0);
+    expect(fake.table("user_details")).toHaveLength(0);
+  });
+
+  it("set_user_languages RPC ve user_details hataları kullanıcıyı silmez, uyarı olarak döner", async () => {
+    const fake = createFakeSupabase(
+      { users: [], user_details: [], questions: [] },
+      { rpc: { set_user_languages: { error: { message: "rpc patladı" } } }, failOn: [{ table: "user_details", op: "insert" }] },
+    );
+    const res = await seedProfile(fake.client, entry(), photo, bank, { passwordHash: "h", now: NOW });
+    expect(res.status).toBe("created");
+    if (res.status !== "created") return;
+    expect(res.warnings).toEqual(["user_details: rpc patladı".replace("rpc patladı", fake.table("users").length ? res.warnings[0].slice("user_details: ".length) : ""), "set_user_languages: rpc patladı"]);
+    expect(fake.table("users")).toHaveLength(1);
+    expect(fake.table("questions")).toHaveLength(3);
+  });
+
   it("sorular yazılamazsa kullanıcı kalır, hata uyarı olarak döner (atomik değil — belgelenmiş sınır)", async () => {
     const fake = createFakeSupabase(
       { users: [], user_details: [], questions: [] },
@@ -237,6 +351,66 @@ describe("tr-seed-lib — seedProfile akışı (fake-supabase)", () => {
     expect(res.status).toBe("created");
     if (res.status !== "created") return;
     expect(res.warnings).toEqual(["soru bankası yetersiz: 0"]); // insert çağrılsaydı 'questions:' uyarısı da olurdu
+  });
+});
+
+describe("tr-seed-lib — verifySeedProfile (kayıt sonrası kontrol listesi)", () => {
+  const seeded = async () => {
+    const fake = createFakeSupabase({ users: [], user_details: [], questions: [] });
+    const res = await seedProfile(fake.client, entry(), photo, bank, { passwordHash: "h", now: NOW });
+    if (res.status !== "created") throw new Error("fixture");
+    return { fake, id: res.id };
+  };
+
+  it("temiz basımda 10 madde de geçer; foto URL'sine HEAD atılır", async () => {
+    const { fake, id } = await seeded();
+    const urls: string[] = [];
+    const report = await verifySeedProfile(fake.client, entry(), async (u) => { urls.push(u); return 200; });
+    expect(report.ok).toBe(true);
+    expect(report.id).toBe(id);
+    expect(report.checks.map((c) => c.name)).toEqual(["kayit_var", "is_seed", "ilce_il", "yas_cinsiyet", "bio_ilgi", "foto_url_200", "prompt_klonu", "dil_tr", "soru_3", "detay_meslek"]);
+    expect(urls).toEqual([fake.table("users")[0].photos[0]]);
+  });
+
+  it("kayıt yoksa tek maddeyle düşer", async () => {
+    const fake = createFakeSupabase({ users: [] });
+    const report = await verifySeedProfile(fake.client, entry(), head200);
+    expect(report).toMatchObject({ ok: false, id: null });
+    expect(report.checks).toEqual([{ name: "kayit_var", ok: false, detail: "users satırı yok" }]);
+  });
+
+  it("foto servis edilmiyorsa (HEAD 404) düşer; HEAD fırlatırsa hata maddesi olur", async () => {
+    const { fake } = await seeded();
+    const r404 = await verifySeedProfile(fake.client, entry(), async () => 404);
+    expect(r404.ok).toBe(false);
+    expect(r404.checks.find((c) => c.name === "foto_url_200")).toMatchObject({ ok: false });
+    const rThrow = await verifySeedProfile(fake.client, entry(), async () => { throw new Error("timeout"); });
+    expect(rThrow.checks.find((c) => c.name === "foto_head")).toMatchObject({ ok: false, detail: "timeout" });
+  });
+
+  it("bayrak, yaş/cinsiyet, bio/ilgi, dil ve foto yokluğu ayrı ayrı düşer", async () => {
+    const { fake } = await seeded();
+    const user = fake.table("users")[0];
+    user.is_test_account = false;
+    user.age = 27;
+    user.interests = ["gaming"];
+    user.preferred_languages = ["en"];
+    user.photos = [];
+    const report = await verifySeedProfile(fake.client, entry(), head200);
+    expect(report.checks.filter((c) => !c.ok).map((c) => c.name)).toEqual(["is_seed", "yas_cinsiyet", "bio_ilgi", "foto_url_200", "dil_tr"]);
+    expect(report.checks.find((c) => c.name === "foto_url_200")?.detail).toContain("(foto yok)");
+  });
+
+  it("canlı kayıt seçimden saparsa (prompt klonu, ilçe, soru sayısı, meslek) ilgili madde düşer", async () => {
+    const { fake } = await seeded();
+    const user = fake.table("users")[0];
+    user.photo_prompt = { ...user.photo_prompt, prompt: "başka prompt" };
+    user.city = "Konak";
+    fake.table("questions").pop();
+    fake.table("user_details")[0].job = "Avukat";
+    const report = await verifySeedProfile(fake.client, entry(), head200);
+    expect(report.ok).toBe(false);
+    expect(report.checks.filter((c) => !c.ok).map((c) => c.name)).toEqual(["ilce_il", "prompt_klonu", "soru_3", "detay_meslek"]);
   });
 });
 
@@ -276,11 +450,41 @@ describe("tr-seed-lib — deleteSeedProfiles", () => {
     expect(fake.storageFiles("photos")).toHaveLength(0);
   });
 
+  it("users select / delete ve storage list hataları fırlatır (sessiz kısmi silme yok)", async () => {
+    await expect(deleteSeedProfiles(createFakeSupabase({ users: seedUsers() }, { storage, failOn: [{ table: "users", op: "select" }] }).client, { confirm: false }))
+      .rejects.toThrow(/users select/);
+    await expect(deleteSeedProfiles(createFakeSupabase({ users: seedUsers() }, { storage, failOn: [{ table: "users", op: "delete" }] }).client, { confirm: true }))
+      .rejects.toThrow(/users delete/);
+    await expect(deleteSeedProfiles(createFakeSupabase({ users: seedUsers() }, { storage, storageFailOn: [{ bucket: "photos", op: "list" }] }).client, { confirm: false }))
+      .rejects.toThrow(/storage list/);
+  });
+
   it("storage silme hatası kullanıcı silmeyi geri almaz, uyarı olarak döner", async () => {
     const fake = createFakeSupabase({ users: seedUsers() }, { storage, storageFailOn: [{ bucket: "photos", op: "remove" }] });
     const report = await deleteSeedProfiles(fake.client, { confirm: true });
     expect(report.deletedUsers).toBe(2);
     expect(report.removedFiles).toBe(0);
     expect(report.warnings).toHaveLength(1);
+  });
+});
+
+describe("seed-tr-test-profiles CLI — parseArgs", () => {
+  it("varsayılanlar ve bayraklar", () => {
+    expect(parseArgs([])).toEqual({ dryRun: false, verifyOnly: false, json: false, only: new Set(), gender: undefined, limit: 0 });
+    expect(parseArgs(["--only", "seed_0001,seed_0002", "--gender", "MAN", "--limit", "5", "--dry-run", "--json", "--verify-only"]))
+      .toEqual({ dryRun: true, verifyOnly: true, json: true, only: new Set(["seed_0001", "seed_0002"]), gender: "MAN", limit: 5 });
+  });
+
+  it("geçersiz cinsiyet ve limit net mesajla reddedilir; 0 = sınırsız", () => {
+    expect(() => parseArgs(["--gender", "FEMALE"])).toThrow(/WOMAN\|MAN/);
+    expect(() => parseArgs(["--limit", "-1"])).toThrow(/sınırsız/);
+    expect(() => parseArgs(["--limit", "abc"])).toThrow(/sınırsız/);
+    expect(parseArgs(["--limit", "0"]).limit).toBe(0);
+  });
+
+  it("bilinmeyen bayrak ve değersiz bayrak reddedilir (yazım hatası gerçek koşuya dönüşmez)", () => {
+    expect(() => parseArgs(["--dryrun"])).toThrow(/bilinmeyen argüman: --dryrun/);
+    expect(() => parseArgs(["--only", "--json"])).toThrow(/--only değer ister/);
+    expect(() => parseArgs(["--limit"])).toThrow(/--limit değer ister/);
   });
 });
