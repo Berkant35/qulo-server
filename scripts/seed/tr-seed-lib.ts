@@ -39,7 +39,8 @@ const AGE_PREF_CAP = 60;
 const STORAGE_PAGE = 100;
 const HTTP_OK = 200;
 /** Silinecek dosya adı deseni — gerçek kullanıcı yolları `<uuid>/<ts>.jpg`, bu desene asla uymaz. */
-const SEED_FILE_RE = /^tr_\d{4}\.jpg$/;
+const SEED_FILE_RE = /^tr_\d{4}(?:_[a-z0-9]{1,32})?\.jpg$/;
+const PUBLIC_PATH_MARK = `/storage/v1/object/public/${PHOTO_BUCKET}/`;
 
 export const sha1 = (text: string) => createHash("sha1").update(text, "utf8").digest("hex");
 /** tools/seed_prepare.py `location_sentence` ile birebir aynı biçim. */
@@ -125,12 +126,26 @@ export function parseBank(rows: unknown[]): { bank: BankQuestion[]; dropped: num
 }
 
 /** Stage 1 manifest kaydı (seed-profiles/photos-manifest.json) — üretim meta verisi photo_prompt klonuna girer. */
+/** Gerçekçilik düzenlemesi: taban görsel referans verilip aynı kişiyle yeniden üretildi (tools/seed_realism.py). */
+export const photoEditSchema = z.object({
+  kind: z.literal("realism"),
+  version: z.number().int().positive(),
+  prompt: z.string().min(1),
+  reference_replicate_id: z.string().min(1),
+  /** Düzenleme çağrısının seed'i (null = seed'siz, birebir yeniden üretilemez — v3 ilk parti). */
+  seed: z.number().int().nullable().optional(),
+  /** Referans görselin kendi üretim girdisi (seed dahil) — Replicate girdileri 1 saat sonra siler, zincir burada kalır. */
+  reference_input: z.record(z.unknown()).nullable().optional(),
+});
+export type PhotoEdit = z.infer<typeof photoEditSchema>;
+
 export const photoMetaSchema = z.object({
   model: z.string().min(1),
   prompt_sha1: z.string().regex(/^[0-9a-f]{40}$/),
   generated_at: z.string().min(1),
   replicate_id: z.string().nullable().optional(),
   input: z.record(z.unknown()).nullable().optional(),
+  edit: photoEditSchema.nullable().optional(),
 });
 export type PhotoMeta = z.infer<typeof photoMetaSchema>;
 
@@ -138,12 +153,19 @@ export interface SeedPhoto {
   bytes: Uint8Array;
   contentType: string;
   meta: PhotoMeta;
+  /** `meta.edit` varsa ZORUNLU: düzenlemenin referans görseli — Storage'a yüklenir, yolu klona yazılır. */
+  reference?: { bytes: Uint8Array; contentType: string } | null;
 }
 
 export type SeedResult =
   | { status: "skipped"; email: string; id: string }
   | { status: "created"; email: string; id: string; warnings: string[] }
   | { status: "error"; email: string; step: "exists" | "photo" | "upload" | "users"; message: string };
+
+export type ReplaceResult =
+  | { status: "unchanged"; email: string; id: string }
+  | { status: "replaced"; email: string; id: string; photoUrl: string; warnings: string[]; orphans: string[] }
+  | { status: "error"; email: string; step: "photo" | "exists" | "upload" | "update"; message: string };
 
 // --- deterministik RNG (FNV-1a tohum + mulberry32) -------------------------------------
 
@@ -187,8 +209,15 @@ export function seedEmail(seedId: string): string {
   return `seed-tr_${seedNumber(seedId)}${SEED_EMAIL_DOMAIN}`;
 }
 
-export function storagePath(seedId: string): string {
-  return `${SEED_STORAGE_PREFIX}/tr_${seedNumber(seedId)}.jpg`;
+/** `tag` = görsel kimliği (replicate_id'den): aynı profilde yeni görsel yeni yol alır → önbellekte eski görsel kalmaz. */
+export function storagePath(seedId: string, tag?: string): string {
+  return `${SEED_STORAGE_PREFIX}/tr_${seedNumber(seedId)}${tag ? `_${tag}` : ""}.jpg`;
+}
+
+/** replicate_id → yol etiketi (küçük harf alfanümerik, en fazla 12). */
+export function photoTag(replicateId: string | null | undefined): string | undefined {
+  const tag = (replicateId ?? "").toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 12);
+  return tag || undefined;
 }
 
 /** 'S' + 7 base36 karakter, seed_id'den türetilir (8 karakter, kolon sınırı). */
@@ -199,8 +228,11 @@ export function referralCode(seedId: string): string {
   return code;
 }
 
-/** users.photo_prompt (058): prompt'un birebir klonu + üretim meta verisi. */
-export function buildPhotoPrompt(entry: SelectionEntry, meta: PhotoMeta) {
+/**
+ * users.photo_prompt (058): fotoğrafı üreten zincirin birebir klonu. `prompt` taban (kişi) prompt'u;
+ * `edit` varsa fotoğraf, `reference_replicate_id` görseli referans verilerek `edit.prompt` ile yeniden üretildi.
+ */
+export function buildPhotoPrompt(entry: SelectionEntry, meta: PhotoMeta, referencePath: string | null = null) {
   return {
     prompt: entry.prompt,
     prompt_sha1: entry.prompt_sha1,
@@ -208,13 +240,16 @@ export function buildPhotoPrompt(entry: SelectionEntry, meta: PhotoMeta) {
     replicate_id: meta.replicate_id ?? null,
     input: meta.input ?? null,
     generated_at: meta.generated_at,
+    edit: meta.edit ? { ...meta.edit, reference_path: referencePath } : null,
     seed_id: entry.seed_id,
     province: entry.province,
     district: entry.district,
   };
 }
 
-export function buildUserRow(entry: SelectionEntry, photoUrl: string, photoMeta: PhotoMeta, passwordHash: string, now: Date) {
+export function buildUserRow(
+  entry: SelectionEntry, photoUrl: string, photoMeta: PhotoMeta, passwordHash: string, now: Date, referencePath: string | null = null,
+) {
   const rng = makeRng("user:" + entry.seed_id);
   const isWoman = entry.gender === "WOMAN";
   const prefMin = Math.max(18, entry.age - randInt(rng, 3, 6));
@@ -244,7 +279,7 @@ export function buildUserRow(entry: SelectionEntry, photoUrl: string, photoMeta:
     preferred_languages: [LOCALE],
     interests: entry.interests,
     photos: [photoUrl],
-    photo_prompt: buildPhotoPrompt(entry, photoMeta),
+    photo_prompt: buildPhotoPrompt(entry, photoMeta, referencePath),
     referral_code: referralCode(entry.seed_id),
     last_seen_at: new Date(now.getTime() - Math.floor(rng() * HOURS_72_MS)).toISOString(),
     is_test_account: true,
@@ -293,6 +328,18 @@ export function pickQuestions(bank: BankQuestion[], entry: SelectionEntry, userI
 
 // --- akış: basma ----------------------------------------------------------------------
 
+/** Düzenlenmiş görselin referansını etiketli yola yükler; `meta.edit` yoksa null. Referans baytı yoksa hata metni döner. */
+async function uploadReference(
+  bucket: ReturnType<SeedClient["storage"]["from"]>, entry: SelectionEntry, photo: SeedPhoto,
+): Promise<{ path: string | null; error?: string }> {
+  const edit = photo.meta.edit;
+  if (!edit) return { path: null };
+  if (!photo.reference) return { path: null, error: "düzenlenmiş görselin referansı yok (zincir korunamaz)" };
+  const path = storagePath(entry.seed_id, photoTag(edit.reference_replicate_id));
+  const { error } = await bucket.upload(path, photo.reference.bytes, { contentType: photo.reference.contentType, upsert: true });
+  return error ? { path: null, error: `referans yüklenemedi: ${error.message}` } : { path };
+}
+
 /**
  * Tek profili basar. İdempotent: e-posta varsa `skipped`.
  * Sıra: foto/prompt tutarlılığı → Storage upload → users insert → (user_details, diller RPC, sorular).
@@ -311,19 +358,24 @@ export async function seedProfile(
     // Fotoğraf eski prompt'tan üretilmiş: klon alanı fotoğrafı üreten prompt olmaz → basma.
     return { status: "error", email, step: "photo", message: `fotoğraf prompt sha1 ${photo.meta.prompt_sha1.slice(0, 8)} ≠ seçim ${entry.prompt_sha1.slice(0, 8)}` };
   }
+  if (photo.meta.edit && !photo.reference) {
+    return { status: "error", email, step: "photo", message: "düzenlenmiş görselin referansı yok (zincir korunamaz)" };
+  }
   const { data: existing, error: existsError } = await client
     .from("users").select("id").eq("email", email).maybeSingle();
   if (existsError) return { status: "error", email, step: "exists", message: existsError.message };
   if (existing) return { status: "skipped", email, id: existing.id };
 
-  const path = storagePath(entry.seed_id);
+  const path = storagePath(entry.seed_id, photoTag(photo.meta.replicate_id));
   const bucket = client.storage.from(PHOTO_BUCKET);
-  // upsert: aynı yol yeniden basımda (silme → yeniden) ya da yarım koşudan kalan dosyada yeni fotoğrafı taşımalı.
+  // upsert: yarım koşudan kalan aynı görsel (aynı etiket) engel olmasın.
   const { error: uploadError } = await bucket.upload(path, photo.bytes, { contentType: photo.contentType, upsert: true });
   if (uploadError) return { status: "error", email, step: "upload", message: uploadError.message };
   const photoUrl: string = bucket.getPublicUrl(path).data.publicUrl;
+  const ref = await uploadReference(bucket, entry, photo);
+  if (ref.error) return { status: "error", email, step: "upload", message: ref.error };
 
-  const userRow = buildUserRow(entry, photoUrl, photo.meta, opts.passwordHash, opts.now ?? new Date());
+  const userRow = buildUserRow(entry, photoUrl, photo.meta, opts.passwordHash, opts.now ?? new Date(), ref.path);
   const { data: inserted, error: userError } = await client.from("users").insert(userRow).select("id").single();
   if (userError || !inserted) return { status: "error", email, step: "users", message: userError?.message ?? "insert boş döndü" };
 
@@ -345,6 +397,80 @@ export async function seedProfile(
   return { status: "created", email, id: inserted.id, warnings };
 }
 
+// --- akış: fotoğrafı yerinde değiştir ----------------------------------------------------
+
+/** Public URL → bucket içi yol (`seed/tr_0015_x.jpg`); başka bucket/URL ise null. */
+function storagePathFromUrl(url: string | undefined): string | null {
+  if (!url) return null;
+  const i = url.indexOf(PUBLIC_PATH_MARK);
+  if (i < 0) return null;
+  try {
+    return decodeURIComponent(url.slice(i + PUBLIC_PATH_MARK.length));
+  } catch {
+    return null; // bozuk yüzde kodlaması: yol çıkarılamadı → silme adayı değil
+  }
+}
+
+/**
+ * Basılmış seed profilinin fotoğrafını (görsel QA sonrası gerçekçilik düzenlemesi / yeniden üretim) değiştirir.
+ * Kullanıcı satırı SİLİNMEZ: id, eşleşmeler, swipe'lar korunur. Yeni görsel yeni yola yüklenir, `photos` ve
+ * `photo_prompt` klonu birlikte güncellenir, eski seed dosyası kaldırılır. Klondaki replicate_id zaten aynıysa `unchanged`.
+ */
+export async function replaceSeedPhoto(client: SeedClient, entry: SelectionEntry, photo: SeedPhoto): Promise<ReplaceResult> {
+  const email = seedEmail(entry.seed_id);
+  if (photo.meta.prompt_sha1 !== entry.prompt_sha1) {
+    return { status: "error", email, step: "photo", message: `fotoğraf prompt sha1 ${photo.meta.prompt_sha1.slice(0, 8)} ≠ seçim ${entry.prompt_sha1.slice(0, 8)}` };
+  }
+  const { data: user, error } = await client
+    .from("users").select("id, photos, photo_prompt").eq("email", email).eq("is_seed_profile", true).maybeSingle();
+  if (error) return { status: "error", email, step: "exists", message: error.message };
+  if (!user) return { status: "error", email, step: "exists", message: "seed profili yok (önce basılmalı)" };
+  const currentId = (user.photo_prompt as { replicate_id?: string | null } | null)?.replicate_id ?? null;
+  if (currentId && currentId === photo.meta.replicate_id) return { status: "unchanged", email, id: user.id };
+  const bucket = client.storage.from(PHOTO_BUCKET);
+  const oldPath = storagePathFromUrl(user.photos?.[0]);
+  const oldName = oldPath?.startsWith(`${SEED_STORAGE_PREFIX}/`) ? oldPath.slice(SEED_STORAGE_PREFIX.length + 1) : null;
+  const ownFile = !!oldName && SEED_FILE_RE.test(oldName) && oldName.startsWith(`tr_${seedNumber(entry.seed_id)}`);
+  // Düzenleme, DB'deki mevcut görselin (bu profilin kendi seed dosyası) üzerine yapıldıysa: mevcut dosya referanstır →
+  // yerinde kalır, yolu klona girer. Aksi hâlde referans baytları yüklenir.
+  const keepOldAsRef = !!photo.meta.edit && photo.meta.edit.reference_replicate_id === currentId && ownFile;
+  if (photo.meta.edit && !keepOldAsRef && !photo.reference) {
+    return { status: "error", email, step: "photo", message: "düzenlenmiş görselin referansı yok (zincir korunamaz)" };
+  }
+  let referencePath: string | null = null;
+  if (photo.meta.edit) {
+    if (keepOldAsRef) {
+      referencePath = oldPath;
+    } else {
+      const ref = await uploadReference(bucket, entry, photo);
+      if (ref.error) return { status: "error", email, step: "upload", message: ref.error };
+      referencePath = ref.path;
+    }
+  }
+
+  const path = storagePath(entry.seed_id, photoTag(photo.meta.replicate_id));
+  const { error: uploadError } = await bucket.upload(path, photo.bytes, { contentType: photo.contentType, upsert: true });
+  if (uploadError) return { status: "error", email, step: "upload", message: uploadError.message };
+  const photoUrl: string = bucket.getPublicUrl(path).data.publicUrl;
+
+  const { data: updated, error: updateError } = await client
+    .from("users")
+    .update({ photos: [photoUrl], photo_prompt: buildPhotoPrompt(entry, photo.meta, referencePath) })
+    .eq("id", user.id).eq("is_seed_profile", true)
+    .select("id");
+  // Hata: yeni dosya yetim kalabilir (yol deterministik, tekrar koşu aynı yere yazar); canlı fotoğrafı kırmamak için silinmez.
+  if (updateError || !updated?.length) return { status: "error", email, step: "update", message: updateError?.message ?? "güncellenen satır yok" };
+
+  // Eski dosya: yalnız bu profilin seed dosyası, yeni görsel ya da referans değilse silinir. Gerçek kullanıcı dosyası
+  // (`<uuid>/<ts>.jpg`) ve başka seed profilinin dosyası asla hedeflenmez. Silme hatası kayıt sonucunu bozmaz → orphans.
+  const orphans: string[] = [];
+  if (oldPath && ownFile && oldPath !== path && oldPath !== referencePath) {
+    const { error: rmError } = await bucket.remove([oldPath]);
+    if (rmError) orphans.push(`${oldPath}: ${rmError.message}`);
+  }
+  return { status: "replaced", email, id: user.id, photoUrl, warnings: [], orphans };
+}
+
 // --- akış: doğrulama (kayıt sonrası kontrol listesi) ---------------------------------------
 
 export interface VerifyCheck { name: string; ok: boolean; detail?: string }
@@ -358,7 +484,12 @@ const USER_VERIFY_COLUMNS = "id, age, gender, city, photos, photo_prompt, bio, i
  * Canlı kayıt, seçim kaydıyla alan alan karşılaştırılır; her madde spec'teki kontrol listesinin bir satırı.
  * Fotoğraf URL'si gerçekten servis ediliyor mu (HEAD 200), prompt klonu bire bir mi, 3 soru ve detay satırı var mı.
  */
-export async function verifySeedProfile(client: SeedClient, entry: SelectionEntry, head: HeadFn): Promise<VerifyReport> {
+export async function verifySeedProfile(
+  client: SeedClient,
+  entry: SelectionEntry,
+  head: HeadFn,
+  expected?: { replicate_id?: string | null },
+): Promise<VerifyReport> {
   const email = seedEmail(entry.seed_id);
   const checks: VerifyCheck[] = [];
   const add = (name: string, ok: boolean, detail?: string) => checks.push(detail === undefined ? { name, ok } : { name, ok, detail });
@@ -385,6 +516,10 @@ export async function verifySeedProfile(client: SeedClient, entry: SelectionEntr
   const clone = user.photo_prompt as { prompt?: string; prompt_sha1?: string } | null;
   add("prompt_klonu", clone?.prompt === entry.prompt && clone?.prompt_sha1 === entry.prompt_sha1,
     clone ? `sha1 ${clone.prompt_sha1?.slice(0, 8)}` : "photo_prompt boş");
+  if (expected?.replicate_id) { // manifestteki (QA'dan geçmiş) görsel DB'deki görsel mi?
+    const cloneId = (user.photo_prompt as { replicate_id?: string | null } | null)?.replicate_id ?? null;
+    add("foto_kimligi", cloneId === expected.replicate_id, `db=${cloneId ?? "(yok)"} beklenen=${expected.replicate_id}`);
+  }
   add("dil_tr", Array.isArray(user.preferred_languages) && user.preferred_languages.includes(LOCALE));
 
   const { data: qs, error: qErr } = await client.from("questions").select("id").eq("user_id", user.id);
@@ -423,16 +558,21 @@ async function listSeedFiles(client: SeedClient): Promise<string[]> {
  * is_seed_profile=true AND *@qulo.seed kullanıcılarını siler (bağlı tablolar FK CASCADE)
  * ve `photos/seed/tr_NNNN.jpg` dosyalarını kaldırır. `confirm=false` yalnız sayar.
  */
-export async function deleteSeedProfiles(client: SeedClient, opts: { confirm: boolean }): Promise<DeleteReport> {
-  const { data: users, error } = await client
-    .from("users").select("id").eq("is_seed_profile", true).like("email", `%${SEED_EMAIL_DOMAIN}`);
+export async function deleteSeedProfiles(client: SeedClient, opts: { confirm: boolean; only?: string[] }): Promise<DeleteReport> {
+  // `only`: yalnız verilen seed_id'ler (görsel QA reddi → sil + yeniden bas); yoksa tümü.
+  const onlyEmails = opts.only?.map(seedEmail);
+  // etiketli adlar da (tr_0015.jpg, tr_0015_<tag>.jpg) → numaraya göre eşle; map(storagePath) index'i etiket sanıyordu
+  const onlyNums = opts.only ? new Set(opts.only.map(seedNumber)) : null;
+  const seedNumOf = (f: string) => /^seed\/tr_(\d{4})(?:_[a-z0-9]+)?\.jpg$/.exec(f)?.[1];
+  const selectQ = client.from("users").select("id").eq("is_seed_profile", true);
+  const { data: users, error } = await (onlyEmails ? selectQ.in("email", onlyEmails) : selectQ.like("email", `%${SEED_EMAIL_DOMAIN}`));
   if (error) throw new Error(`users select: ${error.message}`);
-  const files = await listSeedFiles(client);
+  const files = (await listSeedFiles(client)).filter((f) => !onlyNums || onlyNums.has(seedNumOf(f) ?? ""));
   const report: DeleteReport = { dryRun: !opts.confirm, users: users?.length ?? 0, files: files.length, deletedUsers: 0, removedFiles: 0, warnings: [] };
   if (!opts.confirm) return report;
 
-  const { count, error: delError } = await client
-    .from("users").delete({ count: "exact" }).eq("is_seed_profile", true).like("email", `%${SEED_EMAIL_DOMAIN}`);
+  const deleteQ = client.from("users").delete({ count: "exact" }).eq("is_seed_profile", true);
+  const { count, error: delError } = await (onlyEmails ? deleteQ.in("email", onlyEmails) : deleteQ.like("email", `%${SEED_EMAIL_DOMAIN}`));
   if (delError) throw new Error(`users delete: ${delError.message}`);
   report.deletedUsers = count ?? 0;
 

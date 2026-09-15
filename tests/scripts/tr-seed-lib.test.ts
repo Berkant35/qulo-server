@@ -9,8 +9,10 @@ import {
   parseBank,
   parseSelection,
   photoMetaSchema,
+  photoTag,
   pickQuestions,
   referralCode,
+  replaceSeedPhoto,
   seedEmail,
   seedProfile,
   sha1,
@@ -160,10 +162,20 @@ describe("tr-seed-lib — saf builder'lar", () => {
     const clone = buildPhotoPrompt(entry(), meta);
     expect(clone).toEqual({
       prompt: PROMPT, prompt_sha1: sha1(PROMPT), model: meta.model, replicate_id: "pred_1", input: { aspect_ratio: "3:4" },
-      generated_at: meta.generated_at, seed_id: "seed_0015", province: "İzmir", district: "Bornova",
+      generated_at: meta.generated_at, edit: null, seed_id: "seed_0015", province: "İzmir", district: "Bornova",
     });
     expect(buildUserRow(entry(), "u", meta, "h", NOW).photo_prompt).toEqual(clone);
     expect(buildPhotoPrompt(entry(), { ...meta, replicate_id: undefined, input: undefined }).replicate_id).toBeNull();
+  });
+
+  it("gerçekçilik düzenlemesi klonda zincir olarak durur: taban prompt + düzenleme prompt'u + referans görsel", () => {
+    const edit = { kind: "realism" as const, version: 3, prompt: "Keep this exact photo…", reference_replicate_id: "pred_1" };
+    const clone = buildPhotoPrompt(entry(), { ...meta, replicate_id: "pred_2", edit }, "seed/tr_0015_pred1.jpg");
+    expect(clone.prompt).toBe(PROMPT);                 // taban (kişi) prompt'u değişmez
+    expect(clone.replicate_id).toBe("pred_2");         // DB'deki görsel = düzenlenmiş görsel
+    expect(clone.edit).toEqual({ ...edit, reference_path: "seed/tr_0015_pred1.jpg" }); // referans Storage'da kalır
+    expect(buildPhotoPrompt(entry(), { ...meta, edit }).edit?.reference_path).toBeNull();
+    expect(photoMetaSchema.safeParse({ ...meta, edit: { ...edit, kind: "beauty" } }).success).toBe(false);
   });
 
   it("yaş sınırlarında tercih aralığı tutarlı kalır (18 ve 55)", () => {
@@ -244,9 +256,13 @@ describe("tr-seed-lib — saf builder'lar", () => {
     expect(qs).toHaveLength(2);
   });
 
-  it("yollar: e-posta ve storage yolu seed_id'den", () => {
+  it("yollar: e-posta ve storage yolu seed_id'den; görsel etiketi replicate_id'den (yeni görsel = yeni yol)", () => {
     expect(seedEmail("seed_0001")).toBe("seed-tr_0001@qulo.seed");
     expect(storagePath("seed_0001")).toBe("seed/tr_0001.jpg");
+    expect(storagePath("seed_0001", "abc123")).toBe("seed/tr_0001_abc123.jpg");
+    expect(photoTag("Dea2P2rkd5-rp40d0mm2sgm16nc")).toBe("dea2p2rkd5rp");
+    expect(photoTag(null)).toBeUndefined();
+    expect(photoTag("---")).toBeUndefined();
   });
 });
 
@@ -257,14 +273,14 @@ describe("tr-seed-lib — seedProfile akışı (fake-supabase)", () => {
     expect(res.status).toBe("created");
     if (res.status !== "created") return;
     expect(res.warnings).toEqual([]);
-    expect(fake.storageFiles("photos")).toEqual(["seed/tr_0015.jpg"]);
+    expect(fake.storageFiles("photos")).toEqual(["seed/tr_0015_pred1.jpg"]);
     const user = fake.table("users")[0];
     expect(user.is_test_account).toBe(true);
     expect(user.is_seed_profile).toBe(true);
     expect(user.city).toBe("Bornova");
     expect(user.photo_prompt.prompt).toBe(PROMPT);
     expect(user.photo_prompt.prompt_sha1).toBe(sha1(PROMPT));
-    expect(user.photos[0]).toContain("/photos/seed/tr_0015.jpg");
+    expect(user.photos[0]).toContain("/photos/seed/tr_0015_pred1.jpg");
     expect(fake.table("user_details")[0]).toMatchObject({ job: "Hemşire", personality: "Ambivert" });
     expect(fake.table("questions")).toHaveLength(3);
     expect(fake.rpcCalls).toEqual([{ name: "set_user_languages", args: { p_user_id: res.id, p_languages: ["tr"] } }]);
@@ -279,6 +295,24 @@ describe("tr-seed-lib — seedProfile akışı (fake-supabase)", () => {
     expect(fake.storageFiles("photos")).toHaveLength(0);
   });
 
+  it("düzenlenmiş görsel: referans da etiketli yola yüklenir, klonda edit.reference_path olur; referanssız düzenleme basılmaz", async () => {
+    const edit = { kind: "realism" as const, version: 3, prompt: "Keep this exact photo…", reference_replicate_id: "pred_1", seed: 42, reference_input: { aspect_ratio: "3:4" } };
+    const edited = { ...photo, meta: { ...meta, replicate_id: "pred_2", edit }, reference: { bytes: new Uint8Array([1]), contentType: "image/jpeg" } };
+    const fake = createFakeSupabase({ users: [], user_details: [], questions: [] });
+    const res = await seedProfile(fake.client, entry(), edited, bank, { passwordHash: "h", now: NOW });
+    expect(res.status).toBe("created");
+    expect(fake.storageFiles("photos").sort()).toEqual(["seed/tr_0015_pred1.jpg", "seed/tr_0015_pred2.jpg"]);
+    const user = fake.table("users")[0];
+    expect(user.photos[0]).toContain("tr_0015_pred2.jpg");
+    expect(user.photo_prompt.edit).toEqual({ ...edit, reference_path: "seed/tr_0015_pred1.jpg" });
+
+    const noRef = createFakeSupabase({ users: [], user_details: [], questions: [] });
+    const bad = await seedProfile(noRef.client, entry(), { ...edited, reference: null }, bank, { passwordHash: "h", now: NOW });
+    expect(bad).toMatchObject({ status: "error", step: "photo" });
+    expect(noRef.table("users")).toHaveLength(0);
+    expect(noRef.storageFiles("photos")).toEqual([]);
+  });
+
   it("idempotent: aynı profil ikinci kez → skipped, ikinci satır ve ikinci yükleme yok", async () => {
     const fake = createFakeSupabase({ users: [], user_details: [], questions: [] });
     await seedProfile(fake.client, entry(), photo, bank, { passwordHash: "h", now: NOW });
@@ -288,11 +322,11 @@ describe("tr-seed-lib — seedProfile akışı (fake-supabase)", () => {
     expect(fake.storageFiles("photos")).toHaveLength(1);
   });
 
-  it("önceki yarım koşudan kalan dosya (kullanıcısız) engel değil — dosya üzerine yazılır", async () => {
-    const fake = createFakeSupabase({ users: [], user_details: [], questions: [] }, { storage: { photos: ["seed/tr_0015.jpg"] } });
+  it("önceki yarım koşudan kalan aynı görsel (kullanıcısız) engel değil — dosya üzerine yazılır", async () => {
+    const fake = createFakeSupabase({ users: [], user_details: [], questions: [] }, { storage: { photos: ["seed/tr_0015_pred1.jpg"] } });
     const res = await seedProfile(fake.client, entry(), photo, bank, { passwordHash: "h", now: NOW });
     expect(res.status).toBe("created");
-    expect(fake.storageFiles("photos")).toEqual(["seed/tr_0015.jpg"]);
+    expect(fake.storageFiles("photos")).toEqual(["seed/tr_0015_pred1.jpg"]);
   });
 
   it("varlık kontrolü hata verirse insert'e geçilmez (unique-violation maskesi yok)", async () => {
@@ -327,7 +361,7 @@ describe("tr-seed-lib — seedProfile akışı (fake-supabase)", () => {
     const res = await seedProfile(fake.client, entry(), photo, bank, { passwordHash: "h", now: NOW });
     expect(res.status).toBe("created");
     if (res.status !== "created") return;
-    expect(res.warnings).toEqual(["user_details: rpc patladı".replace("rpc patladı", fake.table("users").length ? res.warnings[0].slice("user_details: ".length) : ""), "set_user_languages: rpc patladı"]);
+    expect(res.warnings).toEqual([expect.stringMatching(/^user_details: .+/), "set_user_languages: rpc patladı"]);
     expect(fake.table("users")).toHaveLength(1);
     expect(fake.table("questions")).toHaveLength(3);
   });
@@ -354,6 +388,119 @@ describe("tr-seed-lib — seedProfile akışı (fake-supabase)", () => {
   });
 });
 
+describe("tr-seed-lib — replaceSeedPhoto (basılmış profilde fotoğrafı yerinde değiştir)", () => {
+  const edited = {
+    ...photo,
+    meta: { ...meta, replicate_id: "pred_2", edit: { kind: "realism" as const, version: 3, prompt: "Keep this exact photo…", reference_replicate_id: "pred_1" } },
+  };
+  const seeded = async () => {
+    const fake = createFakeSupabase({ users: [], user_details: [], questions: [] });
+    const res = await seedProfile(fake.client, entry(), photo, bank, { passwordHash: "h", now: NOW });
+    if (res.status !== "created") throw new Error("fixture");
+    return { fake, id: res.id };
+  };
+
+  it("düzenleme DB'deki görselin üzerine: yeni görsel yeni yola, eski dosya REFERANS olarak kalır; id ve sorular korunur", async () => {
+    const { fake, id } = await seeded();
+    const res = await replaceSeedPhoto(fake.client, entry(), edited);
+    expect(res).toMatchObject({ status: "replaced", id, warnings: [], orphans: [] });
+    const user = fake.table("users")[0];
+    expect(user.id).toBe(id);
+    expect(user.photos).toEqual([expect.stringContaining("/photos/seed/tr_0015_pred2.jpg")]);
+    expect(user.photo_prompt).toMatchObject({ prompt: PROMPT, replicate_id: "pred_2", edit: { reference_replicate_id: "pred_1", reference_path: "seed/tr_0015_pred1.jpg" } });
+    expect(fake.storageFiles("photos").sort()).toEqual(["seed/tr_0015_pred1.jpg", "seed/tr_0015_pred2.jpg"]); // referans silinmedi
+    expect(fake.table("questions")).toHaveLength(3);
+  });
+
+  it("yeniden üretilmiş (düzenlemesiz) görsel: eski kendi dosyası silinir", async () => {
+    const { fake } = await seeded();
+    const regenerated = { ...photo, meta: { ...meta, replicate_id: "pred_3" } };
+    const res = await replaceSeedPhoto(fake.client, entry(), regenerated);
+    expect(res).toMatchObject({ status: "replaced", orphans: [] });
+    expect(fake.storageFiles("photos")).toEqual(["seed/tr_0015_pred3.jpg"]);
+    expect(fake.table("users")[0].photo_prompt.edit).toBeNull();
+  });
+
+  it("düzenlemenin referansı DB'deki görsel değilse referans baytları yüklenir; yoksa hiçbir şey değişmez", async () => {
+    const { fake } = await seeded(); // DB: pred_1
+    const otherRef = { ...edited, meta: { ...edited.meta, edit: { ...edited.meta.edit, reference_replicate_id: "pred_0" } } };
+    expect(await replaceSeedPhoto(fake.client, entry(), otherRef)).toMatchObject({ status: "error", step: "photo" });
+    expect(fake.table("users")[0].photo_prompt.replicate_id).toBe("pred_1");
+    const withRef = { ...otherRef, reference: { bytes: new Uint8Array([1]), contentType: "image/jpeg" } };
+    expect(await replaceSeedPhoto(fake.client, entry(), withRef)).toMatchObject({ status: "replaced" });
+    expect(fake.storageFiles("photos").sort()).toEqual(["seed/tr_0015_pred0.jpg", "seed/tr_0015_pred2.jpg"]); // pred1 (kendi, referans değil) silindi
+    expect(fake.table("users")[0].photo_prompt.edit.reference_path).toBe("seed/tr_0015_pred0.jpg");
+  });
+
+  it("klondaki görsel zaten aynıysa dokunmaz (unchanged, yükleme yok)", async () => {
+    const { fake } = await seeded();
+    const res = await replaceSeedPhoto(fake.client, entry(), photo);
+    expect(res.status).toBe("unchanged");
+    expect(fake.storageFiles("photos")).toEqual(["seed/tr_0015_pred1.jpg"]);
+  });
+
+  it("profil yoksa ya da sha1 uyuşmuyorsa hiçbir şey değişmez", async () => {
+    const empty = createFakeSupabase({ users: [] });
+    expect(await replaceSeedPhoto(empty.client, entry(), edited)).toMatchObject({ status: "error", step: "exists" });
+    expect(empty.storageFiles("photos")).toEqual([]);
+    const { fake } = await seeded();
+    const stale = { ...edited, meta: { ...edited.meta, prompt_sha1: "b".repeat(40) } };
+    expect(await replaceSeedPhoto(fake.client, entry(), stale)).toMatchObject({ status: "error", step: "photo" });
+    expect(fake.table("users")[0].photo_prompt.replicate_id).toBe("pred_1");
+  });
+
+  it("users update hatasında eski fotoğraf ve dosya yerinde kalır", async () => {
+    const { fake } = await seeded();
+    const failing = createFakeSupabase(
+      { users: fake.table("users"), user_details: [], questions: [] },
+      { storage: { photos: ["seed/tr_0015_pred1.jpg"] }, failOn: [{ table: "users", op: "update" }] },
+    );
+    const res = await replaceSeedPhoto(failing.client, entry(), edited);
+    expect(res).toMatchObject({ status: "error", step: "update" });
+    expect(failing.table("users")[0].photos[0]).toContain("tr_0015_pred1.jpg");
+    expect(failing.storageFiles("photos")).toContain("seed/tr_0015_pred1.jpg");
+    expect(failing.storageFiles("photos")).toContain("seed/tr_0015_pred2.jpg"); // bilinçli: yeni dosya yetim kalır (yol deterministik, tekrar koşu aynı yere yazar)
+  });
+
+  it("upload hatasında DB ve dosyalar değişmez", async () => {
+    const { fake } = await seeded();
+    const failing = createFakeSupabase(
+      { users: fake.table("users"), user_details: [], questions: [] },
+      { storage: { photos: ["seed/tr_0015_pred1.jpg"] }, storageFailOn: [{ bucket: "photos", op: "upload" }] },
+    );
+    expect(await replaceSeedPhoto(failing.client, entry(), { ...photo, meta: { ...meta, replicate_id: "pred_3" } })).toMatchObject({ status: "error", step: "upload" });
+    expect(failing.table("users")[0].photo_prompt.replicate_id).toBe("pred_1");
+    expect(failing.storageFiles("photos")).toEqual(["seed/tr_0015_pred1.jpg"]);
+  });
+
+  it("eski dosya silinemezse kayıt yine 'replaced', temizlik hatası orphans'ta (uyarı değil)", async () => {
+    const { fake } = await seeded();
+    const failing = createFakeSupabase(
+      { users: fake.table("users"), user_details: [], questions: [] },
+      { storage: { photos: ["seed/tr_0015_pred1.jpg"] }, storageFailOn: [{ bucket: "photos", op: "remove" }] },
+    );
+    const res = await replaceSeedPhoto(failing.client, entry(), { ...photo, meta: { ...meta, replicate_id: "pred_3" } });
+    expect(res).toMatchObject({ status: "replaced", warnings: [] });
+    if (res.status !== "replaced") return;
+    expect(res.orphans).toHaveLength(1);
+    expect(failing.table("users")[0].photo_prompt.replicate_id).toBe("pred_3");
+  });
+
+  it("eski fotoğraf gerçek kullanıcı dosyası ya da BAŞKA profilin seed dosyasıysa asla silinmez", async () => {
+    const REAL_FILE = "3f2a1b0c/1700000000.jpg";
+    const OTHER_SEED = "seed/tr_0016_abc.jpg";
+    for (const target of [REAL_FILE, OTHER_SEED]) {
+      const fake = createFakeSupabase({ users: [], user_details: [], questions: [] }, { storage: { photos: [REAL_FILE, OTHER_SEED] } });
+      const res0 = await seedProfile(fake.client, entry(), photo, bank, { passwordHash: "h", now: NOW });
+      if (res0.status !== "created") throw new Error("fixture");
+      fake.table("users")[0].photos = [`https://fake.supabase.co/storage/v1/object/public/photos/${target}`];
+      const res = await replaceSeedPhoto(fake.client, entry(), { ...photo, meta: { ...meta, replicate_id: "pred_3" } });
+      expect(res.status).toBe("replaced");
+      expect(fake.storageFiles("photos")).toContain(target);
+    }
+  });
+});
+
 describe("tr-seed-lib — verifySeedProfile (kayıt sonrası kontrol listesi)", () => {
   const seeded = async () => {
     const fake = createFakeSupabase({ users: [], user_details: [], questions: [] });
@@ -370,6 +517,16 @@ describe("tr-seed-lib — verifySeedProfile (kayıt sonrası kontrol listesi)", 
     expect(report.id).toBe(id);
     expect(report.checks.map((c) => c.name)).toEqual(["kayit_var", "is_seed", "ilce_il", "yas_cinsiyet", "bio_ilgi", "foto_url_200", "prompt_klonu", "dil_tr", "soru_3", "detay_meslek"]);
     expect(urls).toEqual([fake.table("users")[0].photos[0]]);
+  });
+
+  it("beklenen görsel kimliği verilirse DB klonundaki replicate_id ile karşılaştırılır", async () => {
+    const { fake } = await seeded();
+    const same = await verifySeedProfile(fake.client, entry(), head200, { replicate_id: "pred_1" });
+    expect(same.ok).toBe(true);
+    expect(same.checks.find((c) => c.name === "foto_kimligi")).toMatchObject({ ok: true });
+    const other = await verifySeedProfile(fake.client, entry(), head200, { replicate_id: "pred_2" });
+    expect(other.ok).toBe(false);
+    expect(other.checks.filter((c) => !c.ok).map((c) => c.name)).toEqual(["foto_kimligi"]);
   });
 
   it("kayıt yoksa tek maddeyle düşer", async () => {
@@ -423,7 +580,7 @@ describe("tr-seed-lib — deleteSeedProfiles", () => {
     { id: "t1", email: "tester_001@qulo.test", is_seed_profile: false },
     { id: "x1", email: "bayrakli-ama-baska-domain@gmail.com", is_seed_profile: true }, // çift koşul: silinmez
   ];
-  const storage = { photos: ["seed/tr_0001.jpg", "seed/tr_0002.jpg", "seed/notlar.txt", `${REAL}/1700000000.jpg`] };
+  const storage = { photos: ["seed/tr_0001.jpg", "seed/tr_0002_dea2p2rkd5rp.jpg", "seed/notlar.txt", `${REAL}/1700000000.jpg`] };
 
   it("dry-run yalnız sayar", async () => {
     const fake = createFakeSupabase({ users: seedUsers() }, { storage });
@@ -439,6 +596,14 @@ describe("tr-seed-lib — deleteSeedProfiles", () => {
     expect(report).toMatchObject({ dryRun: false, deletedUsers: 2, removedFiles: 2, warnings: [] });
     expect(fake.table("users").map((u) => u.id).sort()).toEqual([REAL, "t1", "x1"]);
     expect(fake.storageFiles("photos").sort()).toEqual([`${REAL}/1700000000.jpg`, "seed/notlar.txt"]);
+  });
+
+  it("--only: yalnız verilen seed_id'ler ve onların dosyaları silinir, diğer seed'ler kalır", async () => {
+    const fake = createFakeSupabase({ users: seedUsers() }, { storage });
+    const report = await deleteSeedProfiles(fake.client, { confirm: true, only: ["seed_0002"] });
+    expect(report).toMatchObject({ users: 1, files: 1, deletedUsers: 1, removedFiles: 1 });
+    expect(fake.table("users").map((u) => u.id).sort()).toEqual([REAL, "s1", "t1", "x1"]);
+    expect(fake.storageFiles("photos").sort()).toEqual([`${REAL}/1700000000.jpg`, "seed/notlar.txt", "seed/tr_0001.jpg"]);
   });
 
   it("100'den fazla dosyada sayfalama tamamını bulur", async () => {
@@ -470,9 +635,9 @@ describe("tr-seed-lib — deleteSeedProfiles", () => {
 
 describe("seed-tr-test-profiles CLI — parseArgs", () => {
   it("varsayılanlar ve bayraklar", () => {
-    expect(parseArgs([])).toEqual({ dryRun: false, verifyOnly: false, json: false, only: new Set(), gender: undefined, limit: 0 });
-    expect(parseArgs(["--only", "seed_0001,seed_0002", "--gender", "MAN", "--limit", "5", "--dry-run", "--json", "--verify-only"]))
-      .toEqual({ dryRun: true, verifyOnly: true, json: true, only: new Set(["seed_0001", "seed_0002"]), gender: "MAN", limit: 5 });
+    expect(parseArgs([])).toEqual({ dryRun: false, verifyOnly: false, json: false, replacePhoto: false, only: new Set(), gender: undefined, limit: 0 });
+    expect(parseArgs(["--only", "seed_0001,seed_0002", "--gender", "MAN", "--limit", "5", "--dry-run", "--json", "--verify-only", "--replace-photo"]))
+      .toEqual({ dryRun: true, verifyOnly: true, json: true, replacePhoto: true, only: new Set(["seed_0001", "seed_0002"]), gender: "MAN", limit: 5 });
   });
 
   it("geçersiz cinsiyet ve limit net mesajla reddedilir; 0 = sınırsız", () => {

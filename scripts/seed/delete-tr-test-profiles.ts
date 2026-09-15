@@ -3,14 +3,20 @@
  *
  *   npx tsx scripts/seed/delete-tr-test-profiles.ts            # dry-run: kaç satır, kaç dosya
  *   npx tsx scripts/seed/delete-tr-test-profiles.ts --confirm  # siler
+ *   npx tsx scripts/seed/delete-tr-test-profiles.ts --only seed_0015,seed_0064 --confirm  # yalnız bu profiller (QA reddi)
  */
 
 import { createSeedClient } from "./cli-env.js";
 import { deleteSeedProfiles } from "./tr-seed-lib.js";
 
 async function main() {
-  const confirm = process.argv.includes("--confirm");
-  const report = await deleteSeedProfiles(createSeedClient(), { confirm });
+  const argv = process.argv.slice(2);
+  const confirm = argv.includes("--confirm");
+  const onlyIdx = argv.indexOf("--only");
+  const only = onlyIdx >= 0 ? (argv[onlyIdx + 1] ?? "").split(",").filter(Boolean) : undefined;
+  if (onlyIdx >= 0 && !only?.length) throw new Error("--only virgülle seed_id listesi ister");
+  const report = await deleteSeedProfiles(createSeedClient(), { confirm, only });
+  console.log(`hedef: ${new URL(process.env.SUPABASE_URL ?? "http://?").host} · kapsam: ${only ? only.join(",") : "tüm seed profiller"}`);
   console.log(`seed profil: ${report.users} · storage dosyası: ${report.files}`);
   if (report.dryRun) { console.log("dry-run — silmek için --confirm"); return; }
   for (const w of report.warnings) console.error(`⚠️ ${w}`);

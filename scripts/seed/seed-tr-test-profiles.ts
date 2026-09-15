@@ -30,9 +30,11 @@ import {
   parseBank,
   parseSelection,
   photoMetaSchema,
+  replaceSeedPhoto,
   seedEmail,
   seedProfile,
   verifySeedProfile,
+  type ReplaceResult,
   type SeedResult,
   type SelectionEntry,
   type VerifyReport,
@@ -48,10 +50,10 @@ const EXIT_VERIFY_FAILED = 2;
 const HEAD_TIMEOUT_MS = 15_000;
 
 interface ManifestEntry { file?: string; error?: string; [k: string]: unknown }
-export interface Args { dryRun: boolean; verifyOnly: boolean; json: boolean; only: Set<string>; gender?: SelectionEntry["gender"]; limit: number }
+export interface Args { dryRun: boolean; verifyOnly: boolean; json: boolean; replacePhoto: boolean; only: Set<string>; gender?: SelectionEntry["gender"]; limit: number }
 
 /** `--limit 0` = sınırsız. Dışa açık: testte doğrudan çağrılır (main import'ta koşmaz). */
-const KNOWN_FLAGS = new Set(["--dry-run", "--verify-only", "--json", "--only", "--gender", "--limit"]);
+const KNOWN_FLAGS = new Set(["--dry-run", "--verify-only", "--json", "--replace-photo", "--only", "--gender", "--limit"]);
 const VALUE_FLAGS = new Set(["--only", "--gender", "--limit"]);
 
 export function parseArgs(argv: string[]): Args {
@@ -76,6 +78,7 @@ export function parseArgs(argv: string[]): Args {
     dryRun: argv.includes("--dry-run"),
     verifyOnly: argv.includes("--verify-only"),
     json: argv.includes("--json"),
+    replacePhoto: argv.includes("--replace-photo"),
     only: new Set((get("--only") ?? "").split(",").filter(Boolean)),
     gender: gender as SelectionEntry["gender"] | undefined,
     limit,
@@ -94,11 +97,14 @@ async function headStatus(url: string): Promise<number> {
   return res.status;
 }
 
-function printResult(args: Args, e: SelectionEntry, res: SeedResult | null, verify: VerifyReport | null, index: string) {
+type RunResult = SeedResult | ReplaceResult;
+
+function printResult(args: Args, e: SelectionEntry, res: RunResult | null, verify: VerifyReport | null, index: string) {
   const record = { seed_id: e.seed_id, district: e.district, province: e.province, result: res, verify };
   if (args.json) { console.log(`RESULT ${JSON.stringify(record)}`); return; }
   const detail = !res ? "" : res.status === "error" ? `${res.step}: ${res.message}`
-    : res.status === "created" && res.warnings.length ? `uyarı: ${res.warnings.join(" | ")}` : "";
+    : (res.status === "created" || res.status === "replaced") && res.warnings.length ? `uyarı: ${res.warnings.join(" | ")}`
+    : res.status === "replaced" && res.orphans.length ? `yetim dosya: ${res.orphans.join(" | ")}` : "";
   const v = verify ? (verify.ok ? "doğrulandı ✓" : `DOĞRULAMA HATASI: ${verify.checks.filter((c) => !c.ok).map((c) => `${c.name}${c.detail ? ` (${c.detail})` : ""}`).join(", ")}`) : "";
   console.log(`[${index}] ${e.seed_id} ${e.district}/${e.province} → ${res?.status ?? "-"} ${res && res.status !== "error" ? res.id : ""} ${detail} ${v}`);
 }
@@ -159,16 +165,22 @@ async function main() {
     passwordHash = await bcrypt.hash(randomBytes(24).toString("base64url"), 12);
   }
 
-  const tally: Record<SeedResult["status"] | "verified" | "verify_failed", number> = { created: 0, skipped: 0, error: 0, verified: 0, verify_failed: 0 };
+  const tally: Record<RunResult["status"] | "verified" | "verify_failed", number> = { created: 0, skipped: 0, replaced: 0, unchanged: 0, error: 0, verified: 0, verify_failed: 0 };
   tally.error += onlyMissing.length;
   for (const [i, e] of entries.entries()) {
-    let res: SeedResult | null = null;
+    let res: RunResult | null = null;
     if (!args.verifyOnly) {
       try {
         const m = manifest[e.seed_id];
         const meta = photoMetaSchema.parse(m);
-        const bytes = readFileSync(cachedPhotoPath(m.file!));
-        res = await seedProfile(client, e, { bytes, contentType: SEED_PHOTO_CONTENT_TYPE, meta }, bank, { passwordHash });
+        const refFile = meta.edit && typeof m.reference_file === "string" ? m.reference_file : null;
+        const photo = {
+          bytes: readFileSync(cachedPhotoPath(m.file!)), contentType: SEED_PHOTO_CONTENT_TYPE, meta,
+          reference: refFile ? { bytes: readFileSync(cachedPhotoPath(refFile)), contentType: SEED_PHOTO_CONTENT_TYPE } : null,
+        };
+        res = await seedProfile(client, e, photo, bank, { passwordHash });
+        // basılmış profil + manifestte farklı (QA'dan geçmiş) görsel → yerinde değiştir
+        if (res.status === "skipped" && args.replacePhoto) res = await replaceSeedPhoto(client, e, photo);
       } catch (err) {
         res = { status: "error", email: seedEmail(e.seed_id), step: "photo", message: err instanceof Error ? err.message : String(err) };
       }
@@ -176,12 +188,13 @@ async function main() {
     }
     let verify: VerifyReport | null = null;
     if (!res || res.status !== "error") {
-      verify = await verifySeedProfile(client, e, headStatus);
+      const expectedId = typeof manifest[e.seed_id]?.replicate_id === "string" ? (manifest[e.seed_id].replicate_id as string) : null;
+      verify = await verifySeedProfile(client, e, headStatus, { replicate_id: expectedId });
       tally[verify.ok ? "verified" : "verify_failed"]++;
     }
     printResult(args, e, res, verify, `${i + 1}/${entries.length}`);
   }
-  if (!args.json) console.log(`\nbitti: ${tally.created} oluşturuldu, ${tally.skipped} zaten vardı, ${tally.error} hata · doğrulama ${tally.verified} ✓ / ${tally.verify_failed} ✗`);
+  if (!args.json) console.log(`\nbitti: ${tally.created} oluşturuldu, ${tally.replaced} fotoğrafı değişti, ${tally.unchanged + tally.skipped} değişmedi, ${tally.error} hata · doğrulama ${tally.verified} ✓ / ${tally.verify_failed} ✗`);
   if (tally.verify_failed || tally.error) process.exitCode = EXIT_VERIFY_FAILED; // exit() stdout'u kesebilir
 }
 
