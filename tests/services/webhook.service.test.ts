@@ -297,3 +297,35 @@ describe('idempotency ve dayanıklılık', () => {
     expect(fake.table('users').find((r) => r.id === 'u2')!.purple_diamonds).toBe(77);
   });
 });
+
+/**
+ * Google Play ürün kimlikleri App Store ile birebir aynı DEĞİL: Play'de Premium
+ * `qulopremiummonthly` (2'siz), ayrıca RevenueCat base-plan'lı Google aboneliklerini
+ * `urun:basePlan` biçiminde gönderebilir. 2026-09-15'e kadar harita yalnız App Store
+ * kimliklerini tanıyordu → Android Premium ödemesi gelse bile plan yazılmayacaktı.
+ */
+describe('Google Play ürün kimlikleri', () => {
+  it("Play'deki premium kimliği 'qulopremiummonthly' premium plan verir", async () => {
+    const { fake, webhookService } = await setup();
+    await webhookService.handleRevenueCatEvent(event({
+      product_id: 'qulopremiummonthly', store: 'PLAY_STORE', transaction_id: 'tx-g1',
+    }));
+    expect(fake.table('users')[0].subscription_plan).toBe('premium');
+  });
+
+  it("base plan ekli 'quloplusmonthly2:quloplus-monthly' plus plan verir", async () => {
+    const { fake, webhookService } = await setup();
+    await webhookService.handleRevenueCatEvent(event({
+      product_id: 'quloplusmonthly2:quloplus-monthly', store: 'PLAY_STORE', transaction_id: 'tx-g2',
+    }));
+    expect(fake.table('users')[0].subscription_plan).toBe('plus');
+  });
+
+  it("satın alma seçeneği ekli 'qulopurple400:qulopurple400-otp' 400 mor yatırır", async () => {
+    const { fake, webhookService } = await setup();
+    await webhookService.handleRevenueCatEvent(event({
+      type: 'NON_RENEWING_PURCHASE', product_id: 'qulopurple400:qulopurple400-otp', store: 'PLAY_STORE', transaction_id: 'tx-g3',
+    }));
+    expect(fake.table('users')[0].purple_diamonds).toBe(400);
+  });
+});

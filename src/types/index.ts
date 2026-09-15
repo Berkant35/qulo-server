@@ -49,11 +49,22 @@ export const IAP_PRODUCT_MAP: Record<string, number> = {
   qulopurple6000: 6000,
 };
 
-// Subscription product IDs
+// Subscription product IDs — magaza kimlikleri (storeProductKey ile normalize edilmis).
+// Premium'un kimligi magazaya gore FARKLI: App Store `qulopremiummonthly2`,
+// Google Play `qulopremiummonthly` (Play API 2026-09-15: base plan qulopremium-monthly).
 export const SUBSCRIPTION_PRODUCT_MAP: Record<string, SubscriptionPlan> = {
   quloplusmonthly2: 'plus',
   qulopremiummonthly2: 'premium',
+  qulopremiummonthly: 'premium',
 };
+
+/**
+ * RevenueCat, Google Play'in base-plan'li aboneliklerini `urun:basePlan`
+ * (orn. `quloplusmonthly2:quloplus-monthly`) ve tek seferlik urunleri
+ * `urun:satinAlmaSecenegi` olarak gonderebilir; haritalar yalin urun kimligiyle
+ * calisir. Hem webhook hem dogrudan dogrulama ucu ayni anahtari kullanir.
+ */
+export const storeProductKey = (productId: string): string => productId.split(':')[0];
 
 /* ── Chat Question Response Types ─────────────────────────────────────── */
 export interface ChatQuestionBase {

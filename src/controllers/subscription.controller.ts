@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { subscriptionService } from '../services/subscription.service.js';
 import { revenueCatService } from '../services/revenuecat.service.js';
-import { SUBSCRIPTION_PRODUCT_MAP } from '../types/index.js';
+import { SUBSCRIPTION_PRODUCT_MAP, storeProductKey } from '../types/index.js';
 
 export const dailyStatsHandler = async (
   req: Request,
@@ -39,7 +39,7 @@ export const activateSubscriptionHandler = async (
     const userId = req.user!.userId;
     const { product_id, transaction_id } = req.body;
 
-    const plan = SUBSCRIPTION_PRODUCT_MAP[product_id];
+    const plan = SUBSCRIPTION_PRODUCT_MAP[storeProductKey(product_id)];
     if (!plan) {
       res.status(400).json({ error: 'UNKNOWN_PRODUCT', message: `Unknown subscription product: ${product_id}` });
       return;

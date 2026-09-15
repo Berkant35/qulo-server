@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { diamondService } from "../services/diamond.service.js";
 import { revenueCatService } from "../services/revenuecat.service.js";
-import { IAP_PRODUCT_MAP } from "../types/index.js";
+import { IAP_PRODUCT_MAP, storeProductKey } from "../types/index.js";
 import type { HistoryQuery, PurchaseInput } from "../validators/diamond.validator.js";
 
 export async function getBalanceHandler(req: Request, res: Response, next: NextFunction) {
@@ -30,7 +30,7 @@ export async function purchaseHandler(req: Request, res: Response, next: NextFun
     const userId = req.user!.userId;
     const { product_id, transaction_id } = req.body as PurchaseInput;
 
-    const purpleAmount = IAP_PRODUCT_MAP[product_id];
+    const purpleAmount = IAP_PRODUCT_MAP[storeProductKey(product_id)];
     if (!purpleAmount) {
       res.status(400).json({ error: "UNKNOWN_PRODUCT", message: "Unknown product identifier" });
       return;

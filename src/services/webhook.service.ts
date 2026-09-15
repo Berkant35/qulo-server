@@ -5,6 +5,7 @@ import {
   IAP_PRODUCT_MAP,
   SUBSCRIPTION_PRODUCT_MAP,
   RCEventType,
+  storeProductKey,
 } from '../types/index.js';
 
 class WebhookService {
@@ -42,7 +43,7 @@ class WebhookService {
     }
 
     // Subscription events
-    const plan = SUBSCRIPTION_PRODUCT_MAP[productId];
+    const plan = SUBSCRIPTION_PRODUCT_MAP[storeProductKey(productId)];
     if (!plan) return;
 
     if (!expiration_at_ms) {
@@ -118,7 +119,7 @@ class WebhookService {
 
     if (existing) return;
 
-    const purpleAmount = IAP_PRODUCT_MAP[productId];
+    const purpleAmount = IAP_PRODUCT_MAP[storeProductKey(productId)];
     if (!purpleAmount) return;
 
     await diamondService.addPurple(userId, purpleAmount, 'IAP_PURCHASE', transactionId);
