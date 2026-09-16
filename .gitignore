@@ -9,3 +9,6 @@ seed_backup_*.json
 
 # TR seed profil fotoğrafları (tools/seed_photos.py çıktısı, ~300 KB × yüzlerce) — Storage'a yüklenir, repo'ya girmesin
 seed-photos-cache/
+
+# superpowers SDD calisma alani (ledger, brief, review paketleri) — repoya girmez
+.superpowers/
