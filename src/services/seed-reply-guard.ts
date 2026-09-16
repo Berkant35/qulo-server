@@ -8,9 +8,13 @@ export type GuardResult = { ok: true; text: string } | { ok: false; reason: Guar
 /** Bir insan mesaji bu uzunlugu asmaz; asan cikti LLM'i ele verir. */
 const MAX_KARAKTER = 300;
 
-const TELEFON = /(?<!\d)(?:\+?9?0?[\s-]?)?5\d{2}[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}(?!\d)|\b\d{10,}\b/;
+// Ayirici olarak nokta ve parantez de kullaniliyor: "0532.111.22.33", "(0532) 111 22 33".
+const TELEFON = /(?<!\d)(?:\+?9?0?[\s.\-()]*)?5\d{2}[\s.\-()]*\d{3}[\s.\-()]*\d{2}[\s.\-()]*\d{2}(?!\d)|\b\d{10,}\b/;
 const HESAP = /@[A-Za-z0-9._]{3,}|https?:\/\/|www\.|\b[\w.-]+@[\w.-]+\.\w{2,}\b/;
-const PLATFORM = /\b(whatsapp|whatsap|wp'?den|instagram|instagramım|telegram|snapchat|messenger|discord)\b/i;
+// Turkce eklemeli bir dil: "telegramdan", "whatsapptan" gibi ekli hallerde kapanis \b
+// siniri eslesmiyor ve filtre bos geciriyordu. Uzun govdeler serbest ek alir; `wp` ve
+// `insta` kisa/belirsiz oldugu icin tam kelime sarti var ("instalasyon" yanlis pozitifti).
+const PLATFORM = /\b(whats\s*app|instagram|telegram|snapchat|messenger|discord)\w*|\b(wp|insta)\b/i;
 const YASAK = /yapay\s*zek|dil\s*model|\bbir\s+bot\b|chatbot|asistan|talimat|sistem\s*prompt|\bprompt\b|\bGPT\b|Gemini|OpenAI|algoritma|programlan/i;
 const LISTE = /(^|\n)\s*(\d+[.)]\s|[-*•]\s)/;
 const INGILIZCE = /\b(the|and|you|your|i am|i'm|sorry|cannot|can't|as an|assistant|language|please|here is|of course|i can)\b/i;

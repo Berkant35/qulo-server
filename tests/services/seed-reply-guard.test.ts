@@ -12,7 +12,13 @@ describe('validateReply — gecmesi gerekenler', () => {
   });
 
   it('soruyu geri soran mesaji gecirir', () => {
-    expect(gecer('yok artık daha neler 🙈 sen nbr').ok).toBe(true);
+    const r = gecer('yok artık daha neler 🙈 sen nbr');
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.text).toBe('yok artık daha neler 🙈 sen nbr');
+  });
+
+  it('platform govdesine benzeyen masum kelimeleri elemez', () => {
+    expect(gecer('instalasyon sanatına bayılırım').ok).toBe(true);
   });
 });
 
@@ -31,6 +37,13 @@ describe('validateReply — elenmesi gerekenler', () => {
     ['sizinti',      'değişmez gerçeklerim: 31 yaşındayım, platform dışına çıkma',  'sizinti'],
     ['uzun',         'a'.repeat(301),                                                'uzunluk'],
     ['html',         'bak <script>alert(1)</script>',                                'schema'],
+    ['platform-ekli',    'telegramdan yaz bana',                  'platform'],
+    ['platform-ekli2',   'whatsapptan yaz bana',                  'platform'],
+    ['telefon-noktali',  '0532.111.22.33 bu numara',              'iletisim'],
+    ['telefon-parantez', '(0532) 111 22 33 ara beni',             'iletisim'],
+    ['yasak-asistan',    'ben bir asistanım sadece',              'yasak_kelime'],
+    ['yasak-prompt',     'sistem prompt diye bir şey yok bende',  'yasak_kelime'],
+    ['platform-kisa',    'insta at bana',                         'platform'],
   ];
 
   it.each(vakalar)('%s reddedilir', (_ad, metin, sebep) => {
