@@ -333,6 +333,17 @@ export async function recoverStale(olderThanMs = 5 * 60_000): Promise<number> {
 // --- processRow: orkestrasyon (Task 7) -------------------------------------
 
 const KRIZ = /(yaşamak istemiyorum|intihar|kendime zarar|canıma kıy|ölmek istiyorum|yaşamaktan bıktım)/i;
+
+/**
+ * Karsi taraf konusmayi kapatiyor mu. Turkce ekler yuzunden kok bitislerinde `\b` YOK
+ * (platform regex'inde ayni tuzaga dusulmustu: "telegramdan" filtreden kaciyordu).
+ * Canli kusur: "uyuyayim ben biraz" -> bot "dinlen uykunu al, gunun nasil gecti peki".
+ */
+const KAPANIS = /\b(iyi geceler|görüşürüz|gorusuruz|hoşça ?kal|hoscakal|kapatıyorum|uyuyay|uyuyorum|uyuycam|uyucam|yatıyorum|yatıyom|yatacağım|yatcam|sonra konuşuruz|sonra yazarım|ben kaçtım|kaçtım ben|çıkmam lazım|gitmem lazım)/i;
+
+export function kapanisSinyali(text: string): boolean {
+  return KAPANIS.test(text);
+}
 const YAS_ALTI = /\b(1[0-7])\s*yaş(ında|ındayım)?\b/i;
 const KRIZ_CEVABI =
   'ya böyle yazınca içim cız etti. ciddiyim, bunu tek başına taşıma — 112\'yi arayabilirsin ya da yakınındaki birine söyle. ben buradayım ama bu konuda gerçekten yardım alman lazım.';
@@ -409,6 +420,7 @@ export async function processRow(row: QueueRow): Promise<'sent' | 'deferred' | '
       musicType: (detay?.music_type as string) ?? null, smoking: (detay?.smoking as string) ?? null,
       alcohol: (detay?.alcohol as string) ?? null, relationshipGoal: (seed.relationship_goal as string) ?? null,
       persona, phase: fazFor(mesajSayisi ?? 0), busyNow: isBusy(persona, new Date()),
+      partnerClosing: kapanisSinyali(sonMetin),
     });
 
     const turns = gecmis.map((m) => ({

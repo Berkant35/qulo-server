@@ -37,4 +37,6 @@ export interface PersonaCardInput {
   /** Sohbet fazi (1-4) ve mesguliyet baglami prompt'a eklenir. */
   phase: 1 | 2 | 3 | 4;
   busyNow: boolean;
+  /** Karsi taraf konusmayi kapatiyor (uyuyacak, isi var, "gorusuruz"): kapanis yaz, soru sorma. */
+  partnerClosing?: boolean;
 }

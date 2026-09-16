@@ -70,6 +70,31 @@ describe('buildPersonaCard', () => {
     expect(buildPersonaCard(input({ phase: 1 }))).not.toContain('ilgin azaldı');
   });
 
+  it('sohbet ritmi kurallarini tasir: zorunlu soru ve kalip tekrari yasagi', () => {
+    // Canli kusur (2026-09-16): iki ayri bot "gunun nasil gecti peki" kalibini birebir
+    // kullandi ve ucu de her mesaji soruyla bitirdi.
+    const card = buildPersonaCard(input());
+    expect(card).toContain('Her mesajı soruyla bitirme');
+    expect(card).toContain('Aynı kalıbı iki kez kullanma');
+    expect(card).toContain('uydurma');
+  });
+
+  it('stile gore soru sikligi verir: kisa_kesen nadiren sorar, soru_soran yarisinda', () => {
+    const kisaKesen = buildPersonaCard(input());
+    expect(kisaKesen).toContain('nadiren soru sorarsın');
+
+    const meraklı = buildPersonaCard(input({
+      persona: { ...persona, style: { ...persona.style, enerji: 'soru_soran' } },
+    }));
+    expect(meraklı).toContain('yaklaşık yarısında soru sorarsın');
+  });
+
+  it('karsi taraf kapatiyorsa soru sormama baglamini ekler', () => {
+    expect(buildPersonaCard(input({ partnerClosing: true }))).toContain('SORU SORMA');
+    expect(buildPersonaCard(input({ partnerClosing: false }))).not.toContain('SORU SORMA');
+    expect(buildPersonaCard(input())).not.toContain('SORU SORMA');
+  });
+
   it('zodiac gibi rastgele alanlari tasimaz', () => {
     expect(buildPersonaCard(input()).toLowerCase()).not.toContain('burc');
   });

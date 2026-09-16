@@ -210,3 +210,33 @@ describe('processRow', () => {
     expect(sendMessage.mock.calls[0]).toHaveLength(3); // (userId, matchId, content) — createdAt yok
   });
 });
+
+describe('kapanisSinyali + kapanis baglami', () => {
+  it('kapanis ifadelerini yakalar, siradan mesaji yakalamaz', async () => {
+    const { svc } = await setup();
+    for (const t of ['uyuyayım ben biraz', 'iyi geceler', 'görüşürüz o zaman', 'ben kaçtım', 'yatıyorum artık', 'sonra konuşuruz']) {
+      expect(svc.kapanisSinyali(t)).toBe(true);
+    }
+    for (const t of ['iyi sen', 'günün nasıl geçti', 'ne yapıyorsun', 'uyku düzenim bozuk']) {
+      expect(svc.kapanisSinyali(t)).toBe(false);
+    }
+  });
+
+  it('karsi taraf konusmayi kapatirken prompta "SORU SORMA" baglami girer', async () => {
+    // Canli kusur: "uyuyayim ben biraz" -> bot "dinlen uykunu al, gunun nasil gecti peki".
+    const { svc, generateSeedReply } = await setup({
+      seed: {
+        messages: [{ id: 'm1', match_id: MATCH, sender_id: INSAN, content: 'uyuyayım ben biraz', deleted_at: null, created_at: '2026-09-16T10:00:00Z' }],
+      },
+      llm: ['tamam iyi uykular'],
+    });
+    expect(await svc.processRow(row() as never)).toBe('sent');
+    expect(generateSeedReply.mock.calls[0]![0]!.system).toContain('SORU SORMA');
+  });
+
+  it('siradan mesajda kapanis baglami girmez', async () => {
+    const { svc, generateSeedReply } = await setup();
+    await svc.processRow(row() as never);
+    expect(generateSeedReply.mock.calls[0]![0]!.system).not.toContain('SORU SORMA');
+  });
+});
