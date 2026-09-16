@@ -5,6 +5,8 @@ import { chatService } from './chat.service.js';
 import { buildPersonaCard } from './seed-persona.js';
 import { validateReply } from './seed-reply-guard.js';
 import { generateSeedReply } from './seed-llm.service.js';
+import { chatQuestionService } from './chat-question.service.js';
+import { createChatQuestionSchema } from '../validators/chat-question.validator.js';
 
 export interface QueueRow {
   id: string;
@@ -91,6 +93,28 @@ export async function scanAndEnqueue(now: Date = new Date()): Promise<number> {
     const user2 = m.user2_id as string;
     const seedId = seedIdSet.has(user1) ? user1 : seedIdSet.has(user2) ? user2 : null;
     if (!seedId) continue;
+
+    // Bota sorulmus, cevaplanmamis soru varsa once onu cevapla (yoksa kilitli soruda sohbet olur).
+    const { data: bekleyen } = await supabase
+      .from('chat_questions')
+      .select('id, sender_id, answered_option, is_abandoned')
+      .eq('match_id', m.id)
+      .is('answered_option', null)
+      .eq('is_abandoned', false)
+      .limit(1);
+    const soru = bekleyen?.[0];
+    if (soru && soru.sender_id !== seedId) {
+      const { error } = await supabase.from('seed_reply_queue').insert({
+        match_id: m.id, seed_user_id: seedId, question_id: soru.id,
+        kind: 'question_answer', status: 'pending',
+        reply_due_at: new Date(now.getTime() + computeReplyDelayMs({
+          persona: personaOf.get(seedId)!, now, fastMode, phase: 1,
+          messageCount: 0, msSinceLastExchange: null, rand: Math.random,
+        })).toISOString(),
+      });
+      if (!error) eklenen += 1;
+      continue;
+    }
 
     // Son SILINMEMIS mesaj: silinmis mesaja cevap yazmak hem urkutucu hem "silinen icerik okundu" sinyali.
     const { data: sonMesajlar } = await supabase
@@ -276,6 +300,112 @@ export async function processRow(row: QueueRow): Promise<'sent' | 'deferred' | '
 
   // "3 gun once goruldu" yazarken canli cevap yazma tutarsizligini kapat.
   await supabase.from('users').update({ last_seen_at: new Date().toISOString() }).eq('id', row.seed_user_id);
+  await markSent(row.id);
+  return 'sent';
+}
+
+// --- askQuestion / answerQuestionRow: soru mekanigi (Task 8) ---------------
+
+const SIKLAR = ['A', 'B', 'C', 'D'] as const;
+/** Riski olmayan soruda botun dogru bilme olasiligi — her zaman bilmek gercekci degil. */
+const DOGRU_OLASILIGI = 0.65;
+
+export async function askQuestion(row: QueueRow): Promise<'sent' | 'cancelled' | 'failed'> {
+  const { data: seed } = await supabase
+    .from('users').select('id, name, age, city, bio, is_seed_profile, seed_persona')
+    .eq('id', row.seed_user_id).maybeSingle();
+  if (!seed?.is_seed_profile) {
+    await markCancelled(row.id, 'alici seed profil degil');
+    return 'cancelled';
+  }
+  const { data: detay } = await supabase
+    .from('user_details').select('job, personality, pets, music_type').eq('user_id', row.seed_user_id).maybeSingle();
+
+  const talimat = [
+    `Sen ${seed.name}'sin. Meslegin: ${detay?.job ?? 'bilinmiyor'}. Profil metnin: "${seed.bio ?? ''}".`,
+    'Eslestigin kisiye KENDIN hakkinda 4 sikli bir tahmin sorusu hazirla. Dogru sik GERCEKTEN dogru olmali.',
+    'Yalniz JSON dondur, baska hicbir sey yazma:',
+    '{"question_text":"...","option_count":4,"option_a":"...","option_b":"...","option_c":"...","option_d":"...","correct_option":"A|B|C|D"}',
+  ].join('\n');
+
+  let ham: string;
+  try {
+    ham = (await generateSeedReply({ system: talimat, turns: [{ role: 'user', text: 'soruyu hazirla' }] })).text;
+  } catch (err) {
+    await markFailed(row.id, `llm: ${hataKodu(err)}`);
+    return 'failed';
+  }
+
+  const json = ham.replace(/^```(?:json)?\s*|\s*```$/g, '').trim();
+  let aday: unknown;
+  try { aday = JSON.parse(json); } catch { aday = null; }
+
+  const parsed = createChatQuestionSchema.safeParse({
+    ...(aday as Record<string, unknown> ?? {}),
+    time_limit_seconds: 30,
+    has_unmatch_risk: false,   // SABIT — yanlis cevap eslesmeyi bitirir
+    has_chat_lock: false,      // SABIT — kilit iki tarafi birden baglar
+    use_power_block: false,    // SABIT — seed profillerin mor elmasi yok
+  });
+  if (!parsed.success) {
+    await markFailed(row.id, `soru semasi gecersiz: ${parsed.error.issues[0]?.message ?? ''}`);
+    return 'failed';
+  }
+
+  try {
+    await chatQuestionService.createQuestion(row.match_id, row.seed_user_id, parsed.data);
+  } catch (err) {
+    const kod = hataKodu(err);
+    // Gunluk limit (ucretsiz kademe: eslesme basina 2) ve kilit normal durumlardir.
+    if (kod.includes('DAILY_LIMIT_EXCEEDED') || kod.includes('CHAT_LOCKED') ||
+        kod.includes('NOT_MATCHED') || kod.includes('MATCH_INACTIVE')) {
+      await markCancelled(row.id, kod);
+      return 'cancelled';
+    }
+    await markFailed(row.id, kod);
+    return 'failed';
+  }
+
+  await supabase.from('users').update({ last_seen_at: new Date().toISOString() }).eq('id', row.seed_user_id);
+  await markSent(row.id);
+  return 'sent';
+}
+
+export async function answerQuestionRow(row: QueueRow): Promise<'sent' | 'cancelled' | 'failed'> {
+  if (!row.question_id) {
+    await markCancelled(row.id, 'question_id yok');
+    return 'cancelled';
+  }
+  const { data: soru } = await supabase
+    .from('chat_questions')
+    .select('id, sender_id, correct_option, answered_option, is_abandoned, has_unmatch_risk, option_count')
+    .eq('id', row.question_id).maybeSingle();
+
+  if (!soru || soru.sender_id === row.seed_user_id || soru.answered_option != null || soru.is_abandoned) {
+    await markCancelled(row.id, 'soru cevaplanabilir durumda degil');
+    return 'cancelled';
+  }
+
+  const dogru = String(soru.correct_option) as typeof SIKLAR[number];
+  // Riskli soruda ASLA yanlis cevaplamayiz: yanlis cevap ve terk, ikisi de unmatch tetikler.
+  const sikSayisi = Number(soru.option_count ?? 4) === 2 ? 2 : 4;
+  const secim = soru.has_unmatch_risk || Math.random() < DOGRU_OLASILIGI
+    ? dogru
+    : SIKLAR.slice(0, sikSayisi).filter((s) => s !== dogru)[Math.floor(Math.random() * (sikSayisi - 1))]!;
+
+  try {
+    // ASLA null gondermeyiz — terk de unmatch tetikler.
+    await chatQuestionService.answerQuestion(row.question_id, row.seed_user_id, secim);
+  } catch (err) {
+    const kod = hataKodu(err);
+    if (kod.includes('ALREADY_ANSWERED') || kod.includes('NOT_MATCHED') || kod.includes('MATCH_INACTIVE')) {
+      await markCancelled(row.id, kod);
+      return 'cancelled';
+    }
+    await markFailed(row.id, kod);
+    return 'failed';
+  }
+
   await markSent(row.id);
   return 'sent';
 }
