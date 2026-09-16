@@ -36,14 +36,26 @@ async function deseniCikar(meslekler: string[]): Promise<Map<string, WorkPattern
       'hafta_sonu_yogun (cumartesi-pazar yogun), serbest (duzensiz), esnek (desen yok).',
       'Yalniz JSON dondur: {"meslek adi":"desen", ...}. Baska hicbir sey yazma.',
     ].join('\n');
-    const { text } = await generateSeedReply({ system: sistem, turns: [{ role: 'user', text: parca.join('\n') }] });
-    try {
-      const json = JSON.parse(text.replace(/^```(?:json)?\s*|\s*```$/g, '').trim()) as Record<string, string>;
-      for (const [meslek, desen] of Object.entries(json)) {
-        harita.set(meslek, DESENLER.includes(desen as WorkPattern) ? (desen as WorkPattern) : 'esnek');
+    // LLM cagrisi try'in ICINDE: bir partinin gecici hatasi (timeout/http) tum betigi
+    // oldurmemeli — 416 satirin hicbiri yazilmadan cikilirdi. Bir kez yeniden denenir,
+    // o da olmazsa bu partinin meslekleri 'esnek'e duser (KALICI: yeniden kosu duzeltmez).
+    let islendi = false;
+    for (let deneme = 1; deneme <= 2 && !islendi; deneme += 1) {
+      try {
+        const { text } = await generateSeedReply({ system: sistem, turns: [{ role: 'user', text: parca.join('\n') }] });
+        const json = JSON.parse(text.replace(/^```(?:json)?\s*|\s*```$/g, '').trim()) as Record<string, string>;
+        for (const [meslek, desen] of Object.entries(json)) {
+          harita.set(meslek, DESENLER.includes(desen as WorkPattern) ? (desen as WorkPattern) : 'esnek');
+        }
+        islendi = true;
+      } catch (err) {
+        const mesaj = (err as Error)?.message ?? String(err);
+        if (deneme === 1) {
+          console.warn(`[derive] parti ${i / PARTI + 1} deneme 1 basarisiz (${mesaj}) — tekrar deneniyor`);
+        } else {
+          console.error(`[derive] parti ${i / PARTI + 1} IKI DENEMEDE DE BASARISIZ (${mesaj}) — bu partideki ${parca.length} meslek 'esnek'e dusuruldu (KALICI)`);
+        }
       }
-    } catch {
-      console.warn(`[derive] parti ${i / PARTI + 1} JSON cozulemedi, esnek'e dusuruldu`);
     }
     console.log(`[derive] ${Math.min(i + PARTI, meslekler.length)}/${meslekler.length} meslek islendi`);
   }
