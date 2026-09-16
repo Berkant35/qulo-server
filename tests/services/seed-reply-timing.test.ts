@@ -57,6 +57,11 @@ describe('isBusy', () => {
   it('esnek: hicbir zaman mesgul degil', () => {
     expect(durum('esnek', utc(8))).toBe(false);
   });
+
+  it('vardiya_gece: gece mesgul, ogle degil (saran pencere)', () => {
+    expect(durum('vardiya_gece', utc(21, 0, 15))).toBe(true);  // 16 Eylul 00:00 TR
+    expect(durum('vardiya_gece', utc(9))).toBe(false);         // 12:00 TR
+  });
 });
 
 describe('computeReplyDelayMs', () => {
@@ -97,5 +102,19 @@ describe('computeReplyDelayMs', () => {
 
   it('ayni girdi + ayni rand ile deterministiktir', () => {
     expect(computeReplyDelayMs(input())).toBe(computeReplyDelayMs(input()));
+  });
+
+  it('bilerek gecikme dali gecikmeyi dortle carpar', () => {
+    // rand() birden fazla kez cagriliyor: 1) taban cekimi 2) %12 olasilik kontrolu.
+    // Sabit rand ikisini ayni degerden okudugu icin bu dali ayirt edemiyor — sira veriyoruz.
+    const sira = (...v: number[]) => { let i = 0; return () => v[Math.min(i++, v.length - 1)]!; };
+    const ortak = {
+      persona: persona({ responder_type: 'normal', work_pattern: 'esnek' }),
+      now: utc(11), fastMode: false, phase: 1 as const,
+      messageCount: 20, msSinceLastExchange: null,
+    };
+    const tetiklenmeyen = computeReplyDelayMs({ ...ortak, rand: sira(0.5, 0.5) });
+    const tetiklenen = computeReplyDelayMs({ ...ortak, rand: sira(0.5, 0.05) });
+    expect(tetiklenen).toBe(tetiklenmeyen * 4);
   });
 });
