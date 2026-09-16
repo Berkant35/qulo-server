@@ -60,6 +60,20 @@ const FAZ4_ESIK = 25;
 const QUESTION_ONEKI = '__QUESTION__';
 
 /**
+ * Yazma kapisi IKI kolonun birden dogru olmasidir. Discover `is_test_account` filtreliyor
+ * (matching.service.ts:176), bot ise `is_seed_profile` hedefliyordu. Bugun ortusuyorlar
+ * ama bunu zorlayan bir kisit yok: bir seed'de `is_test_account=false` yapilirsa profil
+ * gercek kullanicilara acilir VE bot ona cevap yazmaya devam ederdi.
+ */
+function botYazabilir<T extends { is_seed_profile?: unknown; is_test_account?: unknown }>(
+  u: T | null | undefined,
+): u is T {
+  return Boolean(u?.is_seed_profile) && Boolean(u?.is_test_account);
+}
+
+const KAPI_HATASI = 'alici seed profil degil (is_seed_profile + is_test_account)';
+
+/**
  * Spec §5: faz 4'te bir kez nazik kapanis yazilir, sonrasinda yeni satir acilmaz.
  * Kapanis = sohbet FAZ4_ESIK mesaja ulastiktan SONRA yazilmis seed mesaji
  * (0-tabanli indeks >= FAZ4_ESIK, yani 26. mesaj ve sonrasi).
@@ -111,7 +125,8 @@ export async function scanAndEnqueue(now: Date = new Date(), rand: () => number 
   const { data: seedler } = await supabase
     .from('users')
     .select('id, seed_persona')
-    .eq('is_seed_profile', true);
+    .eq('is_seed_profile', true)
+    .eq('is_test_account', true);
   if (!seedler?.length) return 0;
 
   const seedIds = seedler.map((u) => u.id as string);
@@ -285,7 +300,7 @@ export async function withinRateLimits(matchId: string, seedUserId: string, now:
   const saatBasi = new Date(now.getTime() - 60 * 60_000).toISOString();
 
   const { count: gunluk } = await supabase
-    .from('messages').select('id', { count: 'exact' })
+    .from('messages').select('id', { count: 'exact', head: true })
     .eq('match_id', matchId).eq('sender_id', seedUserId).gte('created_at', gunBasi);
   if ((gunluk ?? 0) >= ESLESME_GUNLUK) {
     console.warn(`[SeedReply] eslesme gunluk tavani match=${matchId}`);
@@ -293,7 +308,7 @@ export async function withinRateLimits(matchId: string, seedUserId: string, now:
   }
 
   const { count: saatlik } = await supabase
-    .from('messages').select('id', { count: 'exact' })
+    .from('messages').select('id', { count: 'exact', head: true })
     .eq('sender_id', seedUserId).gte('created_at', saatBasi);
   if ((saatlik ?? 0) >= PROFIL_SAATLIK) {
     console.warn(`[SeedReply] profil saatlik tavani seed=${seedUserId}`);
@@ -333,16 +348,16 @@ function hataKodu(err: unknown): string {
  *
  * Kimlik cift kontrolu — tarama sorgusundaki WHERE tek savunma hatti sayilmaz;
  * bu feature'in en yuksek sonuclu hata modu botun gercek bir kullanici hesabindan
- * yazmasidir, bu yuzden gonderimden ONCE burada tekrar dogrulanir.
+ * yazmasidir, bu yuzden gonderimden ONCE `botYazabilir` ile tekrar dogrulanir.
  */
 export async function processRow(row: QueueRow): Promise<'sent' | 'deferred' | 'cancelled' | 'failed'> {
   const { data: seed } = await supabase
     .from('users')
-    .select('id, name, age, city, bio, interests, relationship_goal, is_seed_profile, seed_persona')
+    .select('id, name, age, city, bio, interests, relationship_goal, is_seed_profile, is_test_account, seed_persona')
     .eq('id', row.seed_user_id)
     .maybeSingle();
-  if (!seed?.is_seed_profile) {
-    await markCancelled(row.id, 'alici seed profil degil');
+  if (!botYazabilir(seed)) {
+    await markCancelled(row.id, KAPI_HATASI);
     return 'cancelled';
   }
 
@@ -452,10 +467,10 @@ const DOGRU_OLASILIGI = 0.65;
 
 export async function askQuestion(row: QueueRow): Promise<'sent' | 'deferred' | 'cancelled' | 'failed'> {
   const { data: seed } = await supabase
-    .from('users').select('id, name, age, city, bio, is_seed_profile, seed_persona')
+    .from('users').select('id, name, age, city, bio, is_seed_profile, is_test_account, seed_persona')
     .eq('id', row.seed_user_id).maybeSingle();
-  if (!seed?.is_seed_profile) {
-    await markCancelled(row.id, 'alici seed profil degil');
+  if (!botYazabilir(seed)) {
+    await markCancelled(row.id, KAPI_HATASI);
     return 'cancelled';
   }
 
@@ -520,9 +535,9 @@ export async function answerQuestionRow(row: QueueRow): Promise<'sent' | 'deferr
   // yoludur (soruyu SORANA yesil elmas kazandirir); bu feature'in en yuksek sonuclu hata
   // modu botun gercek bir kullanici hesabindan yazmasidir, yani her yazma yolu dogrular.
   const { data: seed } = await supabase
-    .from('users').select('id, is_seed_profile').eq('id', row.seed_user_id).maybeSingle();
-  if (!seed?.is_seed_profile) {
-    await markCancelled(row.id, 'alici seed profil degil');
+    .from('users').select('id, is_seed_profile, is_test_account').eq('id', row.seed_user_id).maybeSingle();
+  if (!botYazabilir(seed)) {
+    await markCancelled(row.id, KAPI_HATASI);
     return 'cancelled';
   }
 

@@ -109,6 +109,20 @@ describe('scanAndEnqueue', () => {
     expect(fake.table('seed_reply_queue')).toHaveLength(1);
   });
 
+  // IMPORTANT 6: discover kapisi `is_test_account` filtreliyor, bot `is_seed_profile`
+  // hedefliyordu. Bugun ortusuyorlar ama bunu zorlayan kisit yoktu: bir seed'de
+  // `is_test_account=false` yapilirsa profil gercek kullanicilara acilir VE bot hala yazar.
+  it('is_test_account=false olan seed profile satir ACMAZ', async () => {
+    const { fake, svc } = await setup({
+      users: [
+        { id: SEED, is_seed_profile: true, is_test_account: false, seed_persona: persona, name: 'Elif' },
+        { id: INSAN, is_seed_profile: false, is_test_account: false, is_test_admin: true, name: 'Berkant' },
+      ],
+    });
+    expect(await svc.scanAndEnqueue()).toBe(0);
+    expect(fake.table('seed_reply_queue')).toHaveLength(0);
+  });
+
   // CRITICAL 2: `failed` satir acik-satir filtresine (pending/claimed) girmiyor ve
   // insanin mesaji hala son mesaj oldugu icin tarama her tikte YENI satir aciyordu.
   it('yakin zamanda failed olmus eslesmeye yeni satir ACMAZ', async () => {
@@ -146,7 +160,8 @@ describe('scanAndEnqueue', () => {
 
   it('parca sinirini asan seed sayisinda ikinci parcadaki eslesmeyi de bulur', async () => {
     const cokSeed = Array.from({ length: 120 }, (_, i) => ({
-      id: `seed-${String(i).padStart(3, '0')}`, is_seed_profile: true, seed_persona: persona, name: 'S',
+      id: `seed-${String(i).padStart(3, '0')}`, is_seed_profile: true, is_test_account: true,
+      seed_persona: persona, name: 'S',
     }));
     const gecSeed = cokSeed[110]!.id as string;   // ID_PARCA=100 → ikinci parca
     const { fake, svc } = await setup({

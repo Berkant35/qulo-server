@@ -14,6 +14,18 @@ import {
   pushTemplateBodySchema,
 } from "../validators/push-template.validator.js";
 
+/**
+ * HTML checkbox semantics: present + "on" -> true, present but unchecked -> false.
+ * Absent entirely -> undefined, meaning "leave this column alone".
+ *
+ * Needed for fields the EJS form does not render (the seed AI kill-switches): treating
+ * absence as "off" would silently disable a live cron every time any other app-config
+ * setting is saved. `undefined` never reaches the PostgREST body, so the column is kept.
+ */
+function checkboxValue(raw: unknown): boolean | undefined {
+  return raw === undefined ? undefined : raw === "on";
+}
+
 class AdminController {
   loginPage(req: Request, res: Response) {
     if (req.session.adminId) return res.redirect("/admin");
@@ -293,6 +305,7 @@ class AdminController {
       store_url_ios, store_url_android,
       is_maintenance, maintenance_message_tr, maintenance_message_en,
       is_force_update_enabled,
+      seed_reply_enabled, seed_reply_fast_mode,
     } = req.body;
 
     const versionFields: Record<string, string> = { min_version_ios, min_version_android, latest_version_ios, latest_version_android };
@@ -314,6 +327,10 @@ class AdminController {
         maintenance_message_tr: maintenance_message_tr || null,
         maintenance_message_en: maintenance_message_en || null,
         is_force_update_enabled: is_force_update_enabled === "on",
+        // Seed AI kill-switches (migration 059). Not rendered by the EJS form today, so
+        // they stay untouched unless explicitly posted — see checkboxValue().
+        seed_reply_enabled: checkboxValue(seed_reply_enabled),
+        seed_reply_fast_mode: checkboxValue(seed_reply_fast_mode),
       });
 
       res.redirect("/admin/app-config?success=1");

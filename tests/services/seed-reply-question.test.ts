@@ -19,7 +19,7 @@ const soru = (over: Record<string, unknown> = {}) => ({
 async function setup(opts: { seed?: Tables; llmJson?: string; createThrows?: Error; llmThrows?: Error } = {}) {
   const fake = createFakeSupabase({
     users: [
-      { id: SEED, is_seed_profile: true, name: 'Elif', age: 31, city: 'Fethiye', bio: 'atölye', seed_persona: null },
+      { id: SEED, is_seed_profile: true, is_test_account: true, name: 'Elif', age: 31, city: 'Fethiye', bio: 'atölye', seed_persona: null },
       { id: INSAN, is_seed_profile: false },
     ],
     user_details: [{ user_id: SEED, job: 'Takı tasarımcısı', personality: 'Ambivert' }],
@@ -87,6 +87,19 @@ describe('askQuestion', () => {
     expect(createQuestion).not.toHaveBeenCalled();
   });
 
+  it('is_test_account=false olan seed profil adina SORU SORMAZ', async () => {
+    const { svc, createQuestion } = await setup({
+      seed: {
+        users: [
+          { id: SEED, is_seed_profile: true, is_test_account: false, name: 'Elif', seed_persona: null },
+          { id: INSAN, is_seed_profile: false },
+        ],
+      },
+    });
+    expect(await svc.askQuestion(row() as never)).toBe('cancelled');
+    expect(createQuestion).not.toHaveBeenCalled();
+  });
+
   it('gunluk limit asilirsa iptal eder, hata saymaz', async () => {
     const { svc, fake } = await setup({ createThrows: hata('DAILY_LIMIT_EXCEEDED') });
     expect(await svc.askQuestion(row() as never)).toBe('cancelled');
@@ -128,6 +141,20 @@ describe('answerQuestionRow', () => {
     const { svc, answerQuestion } = await setup({
       seed: {
         users: [{ id: SEED, is_seed_profile: false, name: 'Gercek kullanici' }, { id: INSAN, is_seed_profile: false }],
+        chat_questions: [soru()],
+      },
+    });
+    expect(await svc.answerQuestionRow(row({ kind: 'question_answer', question_id: 'soru-1' }) as never)).toBe('cancelled');
+    expect(answerQuestion).not.toHaveBeenCalled();
+  });
+
+  it('is_test_account=false olan seed profil adina soru CEVAPLAMAZ', async () => {
+    const { svc, answerQuestion } = await setup({
+      seed: {
+        users: [
+          { id: SEED, is_seed_profile: true, is_test_account: false, name: 'Elif' },
+          { id: INSAN, is_seed_profile: false },
+        ],
         chat_questions: [soru()],
       },
     });

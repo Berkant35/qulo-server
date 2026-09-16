@@ -14,7 +14,7 @@ const row = (over: Record<string, unknown> = {}) => ({
 async function setup(opts: { seed?: Tables; llm?: string[]; sendThrows?: Error; llmThrows?: Error } = {}) {
   const fake = createFakeSupabase({
     users: [
-      { id: SEED, is_seed_profile: true, name: 'Elif', age: 31, city: 'Fethiye', bio: 'atölye', seed_persona: null },
+      { id: SEED, is_seed_profile: true, is_test_account: true, name: 'Elif', age: 31, city: 'Fethiye', bio: 'atölye', seed_persona: null },
       { id: INSAN, is_seed_profile: false, name: 'Berkant' },
     ],
     user_details: [{ user_id: SEED, job: 'Takı tasarımcısı', personality: 'Ambivert' }],
@@ -63,6 +63,19 @@ describe('processRow', () => {
   it('ALICI SEED DEGILSE hicbir sey gondermez (kimlik cift kontrolu)', async () => {
     const { svc, sendMessage } = await setup({
       seed: { users: [{ id: SEED, is_seed_profile: false, name: 'Gercek' }, { id: INSAN, is_seed_profile: false }] },
+    });
+    expect(await svc.processRow(row() as never)).toBe('cancelled');
+    expect(sendMessage).not.toHaveBeenCalled();
+  });
+
+  it('is_test_account=false olan seed profil adina cevap YAZMAZ', async () => {
+    const { svc, sendMessage } = await setup({
+      seed: {
+        users: [
+          { id: SEED, is_seed_profile: true, is_test_account: false, name: 'Elif', seed_persona: null },
+          { id: INSAN, is_seed_profile: false, name: 'Berkant' },
+        ],
+      },
     });
     expect(await svc.processRow(row() as never)).toBe('cancelled');
     expect(sendMessage).not.toHaveBeenCalled();

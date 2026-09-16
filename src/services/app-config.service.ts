@@ -12,6 +12,9 @@ interface AppConfigRow {
   maintenance_message_tr: string | null;
   maintenance_message_en: string | null;
   is_force_update_enabled: boolean;
+  /** Seed AI cevap cron kill-switch'leri (migration 059). */
+  seed_reply_enabled: boolean;
+  seed_reply_fast_mode: boolean;
   updated_at: string;
 }
 
