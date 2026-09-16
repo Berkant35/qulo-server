@@ -106,6 +106,25 @@ describe('processRow', () => {
     expect(sendMessage).not.toHaveBeenCalled();
   });
 
+  // Mevcut testler yalniz status'a bakiyordu, GERCEK gecikmeyi hic sinamiyordu — bu yuzden
+  // BACKOFF_MS indeks kaymasi yakalanmamisti. claim_seed_replies claim aninda attempts'i
+  // artirir (migration 059), yani ILK deneme attempts=1'dir.
+  // Tolerans yaklasimi (±2 sn) secildi: deferRow Date.now() okuyor ve akista birden cok
+  // await var; sahte zamanlayici bu zinciri kilitlemeden ayni iddiayi kurmak mumkun degil.
+  it.each([
+    [1, 30_000],
+    [2, 2 * 60_000],
+  ])('attempts=%i basarisizliginda satir ~%i ms sonrasina otelenir (spec §7)', async (attempts, beklenen) => {
+    const { svc, fake } = await setup({ llmThrows: new Error('timeout') });
+    const once = Date.now();
+    expect(await svc.processRow(row({ attempts }) as never)).toBe('deferred');
+
+    const satir = fake.table('seed_reply_queue')[0]!;
+    const delta = new Date(satir.reply_due_at as string).getTime() - once;
+    expect(delta).toBeGreaterThanOrEqual(beklenen - 2_000);
+    expect(delta).toBeLessThanOrEqual(beklenen + 2_000);
+  });
+
   it('attempts>=3 iken LLM hatasi satiri failed yapar', async () => {
     const { svc, fake } = await setup({ llmThrows: new Error('timeout') });
     expect(await svc.processRow(row({ attempts: 3 }) as never)).toBe('failed');

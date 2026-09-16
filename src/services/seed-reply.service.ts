@@ -285,7 +285,8 @@ async function backoffVeyaBitir(row: QueueRow, hata: string): Promise<'deferred'
     await markFailed(row.id, hata);
     return 'failed';
   }
-  await deferRow(row.id, BACKOFF_MS[Math.min(row.attempts, BACKOFF_MS.length - 1)]!);
+  const adim = Math.min(Math.max(row.attempts - 1, 0), BACKOFF_MS.length - 1);
+  await deferRow(row.id, BACKOFF_MS[adim]!);
   return 'deferred';
 }
 
