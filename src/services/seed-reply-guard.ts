@@ -14,7 +14,8 @@ const HESAP = /@[A-Za-z0-9._]{3,}|https?:\/\/|www\.|\b[\w.-]+@[\w.-]+\.\w{2,}\b/
 // Turkce eklemeli bir dil: "telegramdan", "whatsapptan" gibi ekli hallerde kapanis \b
 // siniri eslesmiyor ve filtre bos geciriyordu. Uzun govdeler serbest ek alir; `wp` ve
 // `insta` kisa/belirsiz oldugu icin tam kelime sarti var ("instalasyon" yanlis pozitifti).
-const PLATFORM = /\b(whats\s*app|instagram|telegram|snapchat|messenger|discord)\w*|\b(wp|insta)\b/i;
+// `whatsap` tek p'li yaygin yazim — eski desende vardi, korunuyor.
+const PLATFORM = /\b(whats\s*app|whatsap|instagram|telegram|snapchat|messenger|discord)\w*|\b(wp|insta)\b/i;
 const YASAK = /yapay\s*zek|dil\s*model|\bbir\s+bot\b|chatbot|asistan|talimat|sistem\s*prompt|\bprompt\b|\bGPT\b|Gemini|OpenAI|algoritma|programlan/i;
 const LISTE = /(^|\n)\s*(\d+[.)]\s|[-*•]\s)/;
 const INGILIZCE = /\b(the|and|you|your|i am|i'm|sorry|cannot|can't|as an|assistant|language|please|here is|of course|i can)\b/i;

@@ -44,6 +44,7 @@ describe('validateReply — elenmesi gerekenler', () => {
     ['yasak-asistan',    'ben bir asistanım sadece',              'yasak_kelime'],
     ['yasak-prompt',     'sistem prompt diye bir şey yok bende',  'yasak_kelime'],
     ['platform-kisa',    'insta at bana',                         'platform'],
+    ['platform-whatsap', 'whatsap numaram şu',                    'platform'],
   ];
 
   it.each(vakalar)('%s reddedilir', (_ad, metin, sebep) => {
