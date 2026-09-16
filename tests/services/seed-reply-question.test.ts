@@ -16,7 +16,7 @@ const soru = (over: Record<string, unknown> = {}) => ({
   answered_option: null, is_abandoned: false, has_unmatch_risk: false, has_chat_lock: false, ...over,
 });
 
-async function setup(opts: { seed?: Tables; llmJson?: string; createThrows?: Error } = {}) {
+async function setup(opts: { seed?: Tables; llmJson?: string; createThrows?: Error; llmThrows?: Error } = {}) {
   const fake = createFakeSupabase({
     users: [
       { id: SEED, is_seed_profile: true, name: 'Elif', age: 31, city: 'Fethiye', bio: 'atölye', seed_persona: null },
@@ -36,7 +36,10 @@ async function setup(opts: { seed?: Tables; llmJson?: string; createThrows?: Err
     question_text: 'Atölyede en çok neyle uğraşırım?', option_count: 4,
     option_a: 'Ahşap', option_b: 'Deri', option_c: 'Boncuk', option_d: 'Cam', correct_option: 'C',
   });
-  const generateSeedReply = vi.fn(async () => ({ text: opts.llmJson ?? varsayilan, inputTokens: 80, outputTokens: 40 }));
+  const generateSeedReply = vi.fn(async () => {
+    if (opts.llmThrows) throw opts.llmThrows;
+    return { text: opts.llmJson ?? varsayilan, inputTokens: 80, outputTokens: 40 };
+  });
   vi.doMock('../../src/services/seed-llm.service.js', () => ({
     generateSeedReply, SEED_LLM_MODEL: 'test-model',
     SeedLlmError: class extends Error { constructor(public code: string, m: string) { super(m); } },
@@ -73,7 +76,14 @@ describe('askQuestion', () => {
 
   it('LLM ciktisini createChatQuestionSchema ile dogrular; bozuksa gondermez', async () => {
     const { svc, createQuestion } = await setup({ llmJson: '{"question_text":"x"}' });
-    expect(await svc.askQuestion(row() as never)).toBe('failed');
+    expect(await svc.askQuestion(row({ attempts: 3 }) as never)).toBe('failed');
+    expect(createQuestion).not.toHaveBeenCalled();
+  });
+
+  it('attempts<3 iken LLM hatasi satiri OLDURMEZ: pending\'e doner (backoff)', async () => {
+    const { svc, fake, createQuestion } = await setup({ llmThrows: new Error('timeout') });
+    expect(await svc.askQuestion(row({ attempts: 0 }) as never)).toBe('deferred');
+    expect(fake.table('seed_reply_queue')[0]!.status).toBe('pending');
     expect(createQuestion).not.toHaveBeenCalled();
   });
 
@@ -112,6 +122,30 @@ describe('answerQuestionRow', () => {
     const { svc, answerQuestion } = await setup({ seed: { chat_questions: [soru({ sender_id: SEED })] } });
     expect(await svc.answerQuestionRow(row({ kind: 'question_answer', question_id: 'soru-1' }) as never)).toBe('cancelled');
     expect(answerQuestion).not.toHaveBeenCalled();
+  });
+
+  it('ALICI SEED DEGILSE soruyu CEVAPLAMAZ (kimlik cift kontrolu)', async () => {
+    const { svc, answerQuestion } = await setup({
+      seed: {
+        users: [{ id: SEED, is_seed_profile: false, name: 'Gercek kullanici' }, { id: INSAN, is_seed_profile: false }],
+        chat_questions: [soru()],
+      },
+    });
+    expect(await svc.answerQuestionRow(row({ kind: 'question_answer', question_id: 'soru-1' }) as never)).toBe('cancelled');
+    expect(answerQuestion).not.toHaveBeenCalled();
+  });
+
+  it('hiz siniri doluyken cevabi oteler, soruyu cevaplamaz', async () => {
+    const botMesajlari = Array.from({ length: 12 }, (_, i) => ({
+      id: `bm${i}`, match_id: MATCH, sender_id: SEED, content: 'x', deleted_at: null,
+      created_at: new Date(Date.now() - (i + 1) * 60_000).toISOString(),
+    }));
+    const { svc, answerQuestion, fake } = await setup({
+      seed: { messages: botMesajlari, chat_questions: [soru()] },
+    });
+    expect(await svc.answerQuestionRow(row({ kind: 'question_answer', question_id: 'soru-1' }) as never)).toBe('deferred');
+    expect(answerQuestion).not.toHaveBeenCalled();
+    expect(fake.table('seed_reply_queue')[0]!.status).toBe('pending');
   });
 
   it('zaten cevaplanmis soruyu atlar', async () => {

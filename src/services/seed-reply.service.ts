@@ -44,6 +44,9 @@ export function fazFor(messageCount: number): 1 | 2 | 3 | 4 {
  *  fake-supabase'in destekledigi bicim. */
 const ID_PARCA = 100;
 
+/** Kalici basarisizliktan sonra ayni eslesmeye yeniden satir acmadan once beklenen sure. */
+const SOGUMA_MS = 6 * 60 * 60_000;
+
 async function seedEslesmeleri(seedIds: string[]) {
   const bulunan = new Map<string, { id: string; user1_id: string; user2_id: string }>();
   for (const kolon of ['user1_id', 'user2_id'] as const) {
@@ -84,11 +87,34 @@ export async function scanAndEnqueue(now: Date = new Date()): Promise<number> {
     .in('status', ['pending', 'claimed']);
   const acik = new Set((acikSatirlar ?? []).map((r) => r.match_id as string));
 
+  // `failed`/`cancelled` satir acik-satir filtresine girmez, insanin mesaji ise hala son
+  // mesajdir: soguma olmadan tarama HER tikte yeni satir acar ve her tur denetim dongusu
+  // yuzunden 2 Gemini cagrisi yakar. `withinRateLimits` fren olamaz, cunku GONDERILMIS
+  // mesajlari sayar — basarisiz satir hic mesaj yazmaz.
+  const { data: kapaliSatirlar } = await supabase
+    .from('seed_reply_queue')
+    .select('match_id, trigger_message_id, question_id, status')
+    .in('status', ['failed', 'cancelled'])
+    .gte('updated_at', new Date(now.getTime() - SOGUMA_MS).toISOString());
+
+  const sonHatali = new Set(
+    (kapaliSatirlar ?? []).filter((r) => r.status === 'failed').map((r) => r.match_id as string),
+  );
+  // Iptal, eslesmeyi SUSTURMAZ: gunluk soru limiti gibi tamamen normal iptal sebepleri var.
+  // Yalniz AYNI tetikleyicinin (mesaj ya da soru) tekrar kuyruga girmesi engellenir; 18 yas
+  // alti beyani gibi kalici sebepler boylece sonsuz iptal dongusu kurmaz.
+  const iptalTetikleyici = new Set(
+    (kapaliSatirlar ?? [])
+      .filter((r) => r.status === 'cancelled')
+      .flatMap((r) => [r.trigger_message_id, r.question_id])
+      .filter((v): v is string => typeof v === 'string'),
+  );
+
   const fastMode = await fastModeAcik();
   let eklenen = 0;
 
   for (const m of eslesmeler) {
-    if (acik.has(m.id as string)) continue;
+    if (acik.has(m.id as string) || sonHatali.has(m.id as string)) continue;
     const user1 = m.user1_id as string;
     const user2 = m.user2_id as string;
     const seedId = seedIdSet.has(user1) ? user1 : seedIdSet.has(user2) ? user2 : null;
@@ -104,6 +130,7 @@ export async function scanAndEnqueue(now: Date = new Date()): Promise<number> {
       .limit(1);
     const soru = bekleyen?.[0];
     if (soru && soru.sender_id !== seedId) {
+      if (iptalTetikleyici.has(soru.id as string)) continue;
       const { error } = await supabase.from('seed_reply_queue').insert({
         match_id: m.id, seed_user_id: seedId, question_id: soru.id,
         kind: 'question_answer', status: 'pending',
@@ -127,6 +154,7 @@ export async function scanAndEnqueue(now: Date = new Date()): Promise<number> {
     const son = sonMesajlar?.[0];
     if (!son || son.sender_id === seedId) continue;
     if (typeof son.content === 'string' && son.content.startsWith('__QUESTION__')) continue;
+    if (iptalTetikleyici.has(son.id as string)) continue;
 
     const { count } = await supabase
       .from('messages')
@@ -173,6 +201,23 @@ export const markFailed = (id: string, error: string) => durumYaz(id, { status: 
 export const markCancelled = (id: string, reason: string) => durumYaz(id, { status: 'cancelled', last_error: reason.slice(0, 500) });
 export const deferRow = (id: string, ms: number) =>
   durumYaz(id, { status: 'pending', reply_due_at: new Date(Date.now() + ms).toISOString() });
+
+/** Spec §7: hata/timeout → satir `pending`'e doner, ustel backoff; 3 denemede `failed`. */
+const BACKOFF_MS = [30_000, 2 * 60_000, 8 * 60_000];
+const MAX_DENEME = 3;
+
+/**
+ * LLM hatasi ve cikti-denetimi basarisizligi satiri DOGRUDAN oldurmez.
+ * `claim_seed_replies` claim aninda `attempts`'i artirir, yani ilk deneme `attempts = 1`.
+ */
+async function backoffVeyaBitir(row: QueueRow, hata: string): Promise<'deferred' | 'failed'> {
+  if (row.attempts >= MAX_DENEME) {
+    await markFailed(row.id, hata);
+    return 'failed';
+  }
+  await deferRow(row.id, BACKOFF_MS[Math.min(row.attempts, BACKOFF_MS.length - 1)]!);
+  return 'deferred';
+}
 
 // --- withinRateLimits: servis katmani hiz sinirlari (Task 11) --------------
 
@@ -300,8 +345,7 @@ export async function processRow(row: QueueRow): Promise<'sent' | 'deferred' | '
       try {
         ham = (await generateSeedReply({ system: sistemProbe, turns })).text;
       } catch (err) {
-        await markFailed(row.id, `llm: ${hataKodu(err)}`);
-        return 'failed';
+        return backoffVeyaBitir(row, `llm: ${hataKodu(err)}`);
       }
       const denetim = validateReply(ham, sistem);
       if (denetim.ok) metin = denetim.text;
@@ -310,8 +354,7 @@ export async function processRow(row: QueueRow): Promise<'sent' | 'deferred' | '
 
     if (metin === null) {
       // Sessizlik, hazir kalip cevaptan daha gercekcidir (kalip tekrari en buyuk ele verme kaynagi).
-      await markFailed(row.id, 'cikti denetimi iki denemede de gecilemedi');
-      return 'failed';
+      return backoffVeyaBitir(row, 'cikti denetimi iki denemede de gecilemedi');
     }
   }
 
@@ -371,8 +414,7 @@ export async function askQuestion(row: QueueRow): Promise<'sent' | 'deferred' | 
   try {
     ham = (await generateSeedReply({ system: talimat, turns: [{ role: 'user', text: 'soruyu hazirla' }] })).text;
   } catch (err) {
-    await markFailed(row.id, `llm: ${hataKodu(err)}`);
-    return 'failed';
+    return backoffVeyaBitir(row, `llm: ${hataKodu(err)}`);
   }
 
   const json = ham.replace(/^```(?:json)?\s*|\s*```$/g, '').trim();
@@ -387,8 +429,7 @@ export async function askQuestion(row: QueueRow): Promise<'sent' | 'deferred' | 
     use_power_block: false,    // SABIT — seed profillerin mor elmasi yok
   });
   if (!parsed.success) {
-    await markFailed(row.id, `soru semasi gecersiz: ${parsed.error.issues[0]?.message ?? ''}`);
-    return 'failed';
+    return backoffVeyaBitir(row, `soru semasi gecersiz: ${parsed.error.issues[0]?.message ?? ''}`);
   }
 
   try {
@@ -410,7 +451,22 @@ export async function askQuestion(row: QueueRow): Promise<'sent' | 'deferred' | 
   return 'sent';
 }
 
-export async function answerQuestionRow(row: QueueRow): Promise<'sent' | 'cancelled' | 'failed'> {
+export async function answerQuestionRow(row: QueueRow): Promise<'sent' | 'deferred' | 'cancelled' | 'failed'> {
+  // Kimlik cift kontrolu — processRow/askQuestion ile AYNI kapi. Soru cevabi da bir yazma
+  // yoludur (soruyu SORANA yesil elmas kazandirir); bu feature'in en yuksek sonuclu hata
+  // modu botun gercek bir kullanici hesabindan yazmasidir, yani her yazma yolu dogrular.
+  const { data: seed } = await supabase
+    .from('users').select('id, is_seed_profile').eq('id', row.seed_user_id).maybeSingle();
+  if (!seed?.is_seed_profile) {
+    await markCancelled(row.id, 'alici seed profil degil');
+    return 'cancelled';
+  }
+
+  if (!(await withinRateLimits(row.match_id, row.seed_user_id))) {
+    await deferRow(row.id, 30 * 60_000);
+    return 'deferred';
+  }
+
   if (!row.question_id) {
     await markCancelled(row.id, 'question_id yok');
     return 'cancelled';

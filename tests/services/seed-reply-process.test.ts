@@ -11,7 +11,7 @@ const row = (over: Record<string, unknown> = {}) => ({
   status: 'claimed', attempts: 1, ...over,
 });
 
-async function setup(opts: { seed?: Tables; llm?: string[]; sendThrows?: Error } = {}) {
+async function setup(opts: { seed?: Tables; llm?: string[]; sendThrows?: Error; llmThrows?: Error } = {}) {
   const fake = createFakeSupabase({
     users: [
       { id: SEED, is_seed_profile: true, name: 'Elif', age: 31, city: 'Fethiye', bio: 'atölye', seed_persona: null },
@@ -28,7 +28,10 @@ async function setup(opts: { seed?: Tables; llm?: string[]; sendThrows?: Error }
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
 
   const cevaplar = [...(opts.llm ?? ['valla atölye yoğundu, zeytin yine tezgâhı işgal etti'])];
-  const generateSeedReply = vi.fn(async () => ({ text: cevaplar.shift() ?? 'tamam', inputTokens: 100, outputTokens: 20 }));
+  const generateSeedReply = vi.fn(async () => {
+    if (opts.llmThrows) throw opts.llmThrows;
+    return { text: cevaplar.shift() ?? 'tamam', inputTokens: 100, outputTokens: 20 };
+  });
   vi.doMock('../../src/services/seed-llm.service.js', () => ({
     generateSeedReply, SEED_LLM_MODEL: 'test-model',
     SeedLlmError: class extends Error { constructor(public code: string, m: string) { super(m); } },
@@ -74,8 +77,31 @@ describe('processRow', () => {
 
   it('iki denemede de denetimi gecemezse HICBIR SEY gondermez', async () => {
     const { svc, sendMessage } = await setup({ llm: ['numaram 0532 111 22 33', 'instagramım @elif.taki'] });
-    expect(await svc.processRow(row() as never)).toBe('failed');
+    expect(await svc.processRow(row({ attempts: 3 }) as never)).toBe('failed');
     expect(sendMessage).not.toHaveBeenCalled();
+  });
+
+  // Spec §7: hata/timeout → satir pending'e doner, ustel backoff, 3 denemede failed.
+  // `failed` satir acik-satir filtresine girmedigi icin tarama ayni insan mesajina
+  // her tikte YENI satir aciyordu: tur basina 2 Gemini cagrisi, sinirsiz.
+  it('attempts<3 iken LLM hatasi satiri OLDURMEZ: pending\'e doner (backoff)', async () => {
+    const { svc, fake, sendMessage } = await setup({ llmThrows: new Error('timeout') });
+    expect(await svc.processRow(row({ attempts: 0 }) as never)).toBe('deferred');
+    expect(fake.table('seed_reply_queue')[0]!.status).toBe('pending');
+    expect(sendMessage).not.toHaveBeenCalled();
+  });
+
+  it('attempts>=3 iken LLM hatasi satiri failed yapar', async () => {
+    const { svc, fake } = await setup({ llmThrows: new Error('timeout') });
+    expect(await svc.processRow(row({ attempts: 3 }) as never)).toBe('failed');
+    expect(fake.table('seed_reply_queue')[0]!.status).toBe('failed');
+  });
+
+  it('cikti denetimi gecilemezse de attempts<3 iken satir backoff ile korunur', async () => {
+    const { svc, fake, sendMessage } = await setup({ llm: ['numaram 0532 111 22 33', 'instagramım @elif.taki'] });
+    expect(await svc.processRow(row({ attempts: 1 }) as never)).toBe('deferred');
+    expect(sendMessage).not.toHaveBeenCalled();
+    expect(fake.table('seed_reply_queue')[0]!.status).toBe('pending');
   });
 
   it('CHAT_LOCKED hata degildir: satiri oteler', async () => {

@@ -17,6 +17,12 @@ const mesaj = (id: string, sender: string, over: Record<string, unknown> = {}) =
   deleted_at: null, created_at: '2026-09-16T10:00:00Z', ...over,
 });
 
+const kapaliSatir = (over: Record<string, unknown> = {}) => ({
+  id: 'q0', match_id: MATCH, seed_user_id: SEED, trigger_message_id: null,
+  question_id: null, kind: 'message', reply_due_at: '2026-09-16T10:01:00Z',
+  attempts: 3, updated_at: new Date().toISOString(), ...over,
+});
+
 async function setup(seed: Tables = {}) {
   const fake = createFakeSupabase({
     users: [
@@ -92,6 +98,41 @@ describe('scanAndEnqueue', () => {
     });
     expect(await svc.scanAndEnqueue()).toBe(0);
     expect(fake.table('seed_reply_queue')).toHaveLength(1);
+  });
+
+  // CRITICAL 2: `failed` satir acik-satir filtresine (pending/claimed) girmiyor ve
+  // insanin mesaji hala son mesaj oldugu icin tarama her tikte YENI satir aciyordu.
+  it('yakin zamanda failed olmus eslesmeye yeni satir ACMAZ', async () => {
+    const { fake, svc } = await setup({ seed_reply_queue: [kapaliSatir({ status: 'failed' })] });
+    expect(await svc.scanAndEnqueue()).toBe(0);
+    expect(fake.table('seed_reply_queue')).toHaveLength(1);
+  });
+
+  it('soguma penceresi disinda kalan failed satir yeni cevabi engellemez', async () => {
+    const { svc } = await setup({
+      seed_reply_queue: [kapaliSatir({
+        status: 'failed', updated_at: new Date(Date.now() - 7 * 60 * 60_000).toISOString(),
+      })],
+    });
+    expect(await svc.scanAndEnqueue()).toBe(1);
+  });
+
+  it('18 yas alti yuzunden iptal edilen TETIKLEYICI mesaj yeniden kuyruga girmez', async () => {
+    const { fake, svc } = await setup({
+      seed_reply_queue: [kapaliSatir({
+        status: 'cancelled', trigger_message_id: 'm1', last_error: '18 yas alti beyani',
+      })],
+    });
+    expect(await svc.scanAndEnqueue()).toBe(0);
+    expect(fake.table('seed_reply_queue')).toHaveLength(1);
+  });
+
+  it('iptal edilen satir BASKA bir insan mesajini engellemez (eslesme susturulmaz)', async () => {
+    const { svc } = await setup({
+      messages: [mesaj('m1', INSAN), mesaj('m2', INSAN, { created_at: '2026-09-16T10:05:00Z' })],
+      seed_reply_queue: [kapaliSatir({ status: 'cancelled', trigger_message_id: 'm1' })],
+    });
+    expect(await svc.scanAndEnqueue()).toBe(1);
   });
 
   it('parca sinirini asan seed sayisinda ikinci parcadaki eslesmeyi de bulur', async () => {
