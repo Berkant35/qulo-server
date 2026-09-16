@@ -58,6 +58,15 @@ describe('isBusy', () => {
     expect(durum('esnek', utc(8))).toBe(false);
   });
 
+  // Spec §2.3: `serbest` = "Belirgin pencere yok, gece de aktif". Kodda hafta ici
+  // 10:00-13:00 mesgul sayiliyordu — spec'e aykiri bir pencere uydurulmustu.
+  it('serbest: belirgin mesgul penceresi YOK (spec §2.3)', () => {
+    expect(durum('serbest', utc(7))).toBe(false);   // Car 10:00 TR
+    expect(durum('serbest', utc(9))).toBe(false);   // Car 12:00 TR
+    expect(durum('serbest', utc(20))).toBe(false);  // Car 23:00 TR
+    expect(durum('serbest', utc(11, 0, 19))).toBe(false); // Cmt 14:00 TR
+  });
+
   it('vardiya_gece: gece mesgul, ogle degil (saran pencere)', () => {
     expect(durum('vardiya_gece', utc(21, 0, 15))).toBe(true);  // 16 Eylul 00:00 TR
     expect(durum('vardiya_gece', utc(9))).toBe(false);         // 12:00 TR

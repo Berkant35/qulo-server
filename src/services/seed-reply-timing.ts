@@ -43,7 +43,9 @@ export function isBusy(persona: SeedPersona, now: Date): boolean {
     case 'vardiya_aksam': return pencereIcinde(dk, 18 * 60, 1 * 60);
     case 'vardiya_gece': return pencereIcinde(dk, 23 * 60, 7 * 60);
     case 'hafta_sonu_yogun': return !haftaIci && pencereIcinde(dk, 10 * 60, 22 * 60);
-    case 'serbest': return haftaIci && pencereIcinde(dk, 10 * 60, 13 * 60);
+    // Spec §2.3: `serbest` icin belirgin pencere YOK, gece de aktif. Uydurulmus bir
+    // hafta ici 10:00-13:00 penceresi vardi; spec'e geri donuldu.
+    case 'serbest':
     case 'esnek': return false;
   }
 }

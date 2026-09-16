@@ -45,6 +45,14 @@ describe('validateReply — elenmesi gerekenler', () => {
     ['yasak-prompt',     'sistem prompt diye bir şey yok bende',  'yasak_kelime'],
     ['platform-kisa',    'insta at bana',                         'platform'],
     ['platform-whatsap', 'whatsap numaram şu',                    'platform'],
+    // YASAK regex'inin kalan yedi dali — bu dosyadan daha once iki gercek kacak cikti.
+    ['yasak-chatbot',    'chatbot muyum ben yani',                'yasak_kelime'],
+    ['yasak-talimat',    'talimat almıyorum kimseden',            'yasak_kelime'],
+    ['yasak-gpt',        'GPT falan mı sandın beni',              'yasak_kelime'],
+    ['yasak-gemini',     'gemini ne alaka şimdi',                 'yasak_kelime'],
+    ['yasak-openai',     'openai diye bir şey bilmiyorum',        'yasak_kelime'],
+    ['yasak-algoritma',  'algoritma işte napalım',                'yasak_kelime'],
+    ['yasak-programlan', 'öyle programlandım galiba',             'yasak_kelime'],
   ];
 
   it.each(vakalar)('%s reddedilir', (_ad, metin, sebep) => {
