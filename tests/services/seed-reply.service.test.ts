@@ -23,6 +23,15 @@ const kapaliSatir = (over: Record<string, unknown> = {}) => ({
   attempts: 3, updated_at: new Date().toISOString(), ...over,
 });
 
+
+/** Son mesaj INSAN olacak sekilde n mesajlik sohbet (bot cift, insan tek indekste). */
+const sohbet = (n: number) => Array.from({ length: n }, (_, i) =>
+  mesaj(`m${i}`, i % 2 === 0 ? SEED : INSAN, { created_at: `2026-09-16T10:${String(i).padStart(2, '0')}:00Z` }));
+
+/** Faz 4 kurgusu: bot TEK indekste, boylece 26. mesaj (index 25) botun kapanisi olabilir. */
+const faz4Sohbet = (n: number) => Array.from({ length: n }, (_, i) =>
+  mesaj(`m${i}`, i % 2 === 1 ? SEED : INSAN, { created_at: `2026-09-16T10:${String(i).padStart(2, '0')}:00Z` }));
+
 async function setup(seed: Tables = {}) {
   const fake = createFakeSupabase({
     users: [
@@ -147,6 +156,57 @@ describe('scanAndEnqueue', () => {
     });
     expect(await svc.scanAndEnqueue()).toBe(1);
     expect(fake.table('seed_reply_queue')[0]).toMatchObject({ match_id: MATCH, seed_user_id: gecSeed });
+  });
+});
+
+describe('scanAndEnqueue — soru uretici (spec §6.1)', () => {
+  // `kind: 'question'` uretici hic yoktu: askQuestion, cron dali, LLM soru uretimi ve
+  // testleri vardi ama hicbir yer satir INSERT etmiyordu → uretimde ulasilamaz kod.
+  it('faz 1 son ucte birinde zar tutunca soru satiri acar (metin cevabinin YERINE)', async () => {
+    const { fake, svc } = await setup({ messages: sohbet(8) });
+    expect(await svc.scanAndEnqueue(new Date(), () => 0.1)).toBe(1);
+    const satirlar = fake.table('seed_reply_queue');
+    expect(satirlar).toHaveLength(1);           // ikisi birden DEGIL
+    expect(satirlar[0]!.kind).toBe('question');
+  });
+
+  it('zar tutmazsa metin cevabi satiri acilir', async () => {
+    const { fake, svc } = await setup({ messages: sohbet(8) });
+    expect(await svc.scanAndEnqueue(new Date(), () => 0.9)).toBe(1);
+    expect(fake.table('seed_reply_queue')[0]!.kind).toBe('message');
+  });
+
+  it('faz 1 son ucte biri disinda zar tutsa da soru acilmaz', async () => {
+    const { fake, svc } = await setup({ messages: sohbet(4) });
+    await svc.scanAndEnqueue(new Date(), () => 0.1);
+    expect(fake.table('seed_reply_queue')[0]!.kind).toBe('message');
+  });
+
+  it('o eslesmede bugunku soru kotasi doluysa soru acilmaz', async () => {
+    const bugun = new Date().toISOString();
+    const soruldu = (id: string) => ({
+      id, match_id: MATCH, sender_id: SEED, answered_option: 'A',
+      is_abandoned: false, created_at: bugun,
+    });
+    const { fake, svc } = await setup({
+      messages: sohbet(8),
+      chat_questions: [soruldu('sq1'), soruldu('sq2')],
+    });
+    await svc.scanAndEnqueue(new Date(), () => 0.1);
+    expect(fake.table('seed_reply_queue')[0]!.kind).toBe('message');
+  });
+});
+
+describe('scanAndEnqueue — faz 4 kapanisi (spec §5)', () => {
+  it('faz 4 esigine ulasmis ama kapanis GONDERILMEMIS eslesmeye satir acilir', async () => {
+    const { svc } = await setup({ messages: faz4Sohbet(25) });
+    expect(await svc.scanAndEnqueue(new Date(), () => 0.9)).toBe(1);
+  });
+
+  it('kapanis mesaji bir kez gonderildikten sonra YENI satir acilmaz', async () => {
+    const { fake, svc } = await setup({ messages: faz4Sohbet(27) });
+    expect(await svc.scanAndEnqueue(new Date(), () => 0.9)).toBe(0);
+    expect(fake.table('seed_reply_queue')).toHaveLength(0);
   });
 });
 

@@ -28,10 +28,12 @@ async function setup(opts: { seed?: Tables; llm?: string[]; sendThrows?: Error; 
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
 
   const cevaplar = [...(opts.llm ?? ['valla atölye yoğundu, zeytin yine tezgâhı işgal etti'])];
-  const generateSeedReply = vi.fn(async () => {
-    if (opts.llmThrows) throw opts.llmThrows;
-    return { text: cevaplar.shift() ?? 'tamam', inputTokens: 100, outputTokens: 20 };
-  });
+  const generateSeedReply = vi.fn(
+    async (_istek: { system: string; turns: Array<{ role: 'model' | 'user'; text: string }> }) => {
+      if (opts.llmThrows) throw opts.llmThrows;
+      return { text: cevaplar.shift() ?? 'tamam', inputTokens: 100, outputTokens: 20 };
+    },
+  );
   vi.doMock('../../src/services/seed-llm.service.js', () => ({
     generateSeedReply, SEED_LLM_MODEL: 'test-model',
     SeedLlmError: class extends Error { constructor(public code: string, m: string) { super(m); } },
@@ -137,6 +139,37 @@ describe('processRow', () => {
     const { svc, fake } = await setup();
     await svc.processRow(row() as never);
     expect(fake.table('users').find((u) => u.id === SEED)!.last_seen_at).toBeTruthy();
+  });
+
+  // GECMIS_LIMIT=20 yuzunden faz, kirpilmis gecmisten hesaplaniyordu: fazFor'a en fazla
+  // 20 gidiyordu, yani ASLA 4 donmuyordu ve FAZ_METNI[4] (nazik kapanis) hicbir prompta
+  // girmiyordu. Tarama ise gercek count kullaniyordu — faz iki farkli kaynaktan geliyordu.
+  it('25+ mesajli eslesmede FAZ 4 baglamini kullanir (gecmis kirpmasi fazi bozmaz)', async () => {
+    const mesajlar = Array.from({ length: 25 }, (_, i) => ({
+      id: `m${i}`, match_id: MATCH, sender_id: i % 2 === 0 ? SEED : INSAN,
+      content: 'selam', deleted_at: null,
+      created_at: `2026-09-16T10:${String(i).padStart(2, '0')}:00Z`,
+    }));
+    const { svc, generateSeedReply } = await setup({ seed: { messages: mesajlar } });
+    await svc.processRow(row() as never);
+
+    expect(generateSeedReply.mock.calls[0]![0].system).toContain('Sohbeti nazikçe kapatıyorsun');
+  });
+
+  it('__QUESTION__ isaretlerini LLM gecmisine HAM gecirmez', async () => {
+    const { svc, generateSeedReply } = await setup({
+      seed: {
+        messages: [
+          { id: 'm0', match_id: MATCH, sender_id: SEED, content: '__QUESTION__:7f3a9c21-0000-4000-8000-000000000001', deleted_at: null, created_at: '2026-09-16T09:58:00Z' },
+          { id: 'm1', match_id: MATCH, sender_id: INSAN, content: 'günün nasıl geçti', deleted_at: null, created_at: '2026-09-16T10:00:00Z' },
+        ],
+      },
+    });
+    await svc.processRow(row() as never);
+
+    const turns = generateSeedReply.mock.calls[0]![0].turns;
+    expect(turns.some((t) => t.text.includes('__QUESTION__'))).toBe(false);
+    expect(turns.some((t) => t.text === '(soru kartı)')).toBe(true);
   });
 
   it('created_at ASLA elle yazilmaz', async () => {

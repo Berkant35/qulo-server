@@ -47,6 +47,48 @@ const ID_PARCA = 100;
 /** Kalici basarisizliktan sonra ayni eslesmeye yeniden satir acmadan once beklenen sure. */
 const SOGUMA_MS = 6 * 60 * 60_000;
 
+/** Spec §6.1: faz 1'in son ucte biri (7-10. mesaj), %30 ihtimalle soru. */
+const FAZ1_SON_UCTE_BIR = 7;
+const SORU_OLASILIGI = 0.3;
+/** Ucretsiz kademe: eslesme basina gunde 2 soru (chat-question.service.ts:258). */
+const GUNLUK_SORU_KOTASI = 2;
+
+/** fazFor bu sayidan itibaren 4 doner; kapanis, bu esikten SONRA yazilmis seed mesajidir. */
+const FAZ4_ESIK = 25;
+
+/** `__QUESTION__:<uuid>` bir soru karti isaretidir, mesaj metni degil. */
+const QUESTION_ONEKI = '__QUESTION__';
+
+/**
+ * Spec §5: faz 4'te bir kez nazik kapanis yazilir, sonrasinda yeni satir acilmaz.
+ * Kapanis = sohbet FAZ4_ESIK mesaja ulastiktan SONRA yazilmis seed mesaji
+ * (0-tabanli indeks >= FAZ4_ESIK, yani 26. mesaj ve sonrasi).
+ */
+async function kapanisGonderildi(matchId: string, seedId: string, mesajSayisi: number): Promise<boolean> {
+  if (mesajSayisi <= FAZ4_ESIK) return false;
+  const { data } = await supabase
+    .from('messages')
+    .select('sender_id')
+    .eq('match_id', matchId)
+    .is('deleted_at', null)
+    .order('created_at', { ascending: true })
+    .range(FAZ4_ESIK, mesajSayisi - 1);
+  return (data ?? []).some((m) => m.sender_id === seedId);
+}
+
+/** Soru kotasi onden kontrol edilir: dolu iken satir acmak bos yere LLM cagrisi yakar. */
+async function soruKotasiDolu(matchId: string, seedId: string): Promise<boolean> {
+  const gunBasi = new Date();
+  gunBasi.setHours(0, 0, 0, 0);
+  const { count } = await supabase
+    .from('chat_questions')
+    .select('id', { count: 'exact', head: true })
+    .eq('match_id', matchId)
+    .eq('sender_id', seedId)
+    .gte('created_at', gunBasi.toISOString());
+  return (count ?? 0) >= GUNLUK_SORU_KOTASI;
+}
+
 async function seedEslesmeleri(seedIds: string[]) {
   const bulunan = new Map<string, { id: string; user1_id: string; user2_id: string }>();
   for (const kolon of ['user1_id', 'user2_id'] as const) {
@@ -65,7 +107,7 @@ async function seedEslesmeleri(seedIds: string[]) {
 }
 
 /** Aktif eslesmelerde son silinmemis mesaji insan atmis olanlari kuyruga alir. Eklenen satir sayisini doner. */
-export async function scanAndEnqueue(now: Date = new Date()): Promise<number> {
+export async function scanAndEnqueue(now: Date = new Date(), rand: () => number = Math.random): Promise<number> {
   const { data: seedler } = await supabase
     .from('users')
     .select('id, seed_persona')
@@ -136,7 +178,7 @@ export async function scanAndEnqueue(now: Date = new Date()): Promise<number> {
         kind: 'question_answer', status: 'pending',
         reply_due_at: new Date(now.getTime() + computeReplyDelayMs({
           persona: personaOf.get(seedId)!, now, fastMode, phase: 1,
-          messageCount: 0, msSinceLastExchange: null, rand: Math.random,
+          messageCount: 0, msSinceLastExchange: null, rand,
         })).toISOString(),
       });
       if (!error) eklenen += 1;
@@ -153,24 +195,37 @@ export async function scanAndEnqueue(now: Date = new Date()): Promise<number> {
       .limit(1);
     const son = sonMesajlar?.[0];
     if (!son || son.sender_id === seedId) continue;
-    if (typeof son.content === 'string' && son.content.startsWith('__QUESTION__')) continue;
+    if (typeof son.content === 'string' && son.content.startsWith(QUESTION_ONEKI)) continue;
     if (iptalTetikleyici.has(son.id as string)) continue;
 
     const { count } = await supabase
       .from('messages')
-      .select('id', { count: 'exact' })
+      .select('id', { count: 'exact', head: true })
       .eq('match_id', m.id)
       .is('deleted_at', null);
+    const mesajSayisi = count ?? 0;
+    const faz = fazFor(mesajSayisi);
+
+    if (faz === 4 && (await kapanisGonderildi(m.id as string, seedId, mesajSayisi))) continue;
+
+    // Spec §6.1: soru, metin cevabinin YERINE gecer — ikisi ayni anda gonderilmez.
+    const faz1SonUcteBir = faz === 1 && mesajSayisi >= FAZ1_SON_UCTE_BIR;
+    const soruSirasi = faz1SonUcteBir
+      && rand() < SORU_OLASILIGI
+      && !(await soruKotasiDolu(m.id as string, seedId));
 
     const gecikme = computeReplyDelayMs({
       persona: personaOf.get(seedId)!,
-      now, fastMode, phase: fazFor(count ?? 0),
-      messageCount: count ?? 0, msSinceLastExchange: null, rand: Math.random,
+      now, fastMode, phase: faz,
+      messageCount: mesajSayisi, msSinceLastExchange: null, rand,
     });
 
     const { error } = await supabase.from('seed_reply_queue').insert({
-      match_id: m.id, seed_user_id: seedId, trigger_message_id: son.id,
-      kind: 'message', status: 'pending',
+      match_id: m.id, seed_user_id: seedId,
+      // Soru bir insan mesajinin cevabi DEGIL: trigger_message_id NULL kalir, boylece
+      // iptal edilirse ayni mesajin metin cevabi soguma filtresine takilmaz.
+      trigger_message_id: soruSirasi ? null : son.id,
+      kind: soruSirasi ? 'question' : 'message', status: 'pending',
       reply_due_at: new Date(now.getTime() + gecikme).toISOString(),
     });
     // UNIQUE ihlali (yaris) normaldir: baska instance ayni satiri acmistir.
@@ -321,6 +376,14 @@ export async function processRow(row: QueueRow): Promise<'sent' | 'deferred' | '
       .from('user_details').select('job, personality, pets, music_type, smoking, alcohol')
       .eq('user_id', row.seed_user_id).maybeSingle();
 
+    // Faz TEK kaynaktan: gercek mesaj sayisi. Kirpilmis gecmisten (GECMIS_LIMIT=20)
+    // hesaplanirsa fazFor'a en fazla 20 gider ve faz 4 (nazik kapanis) ASLA olusmaz.
+    const { count: mesajSayisi } = await supabase
+      .from('messages')
+      .select('id', { count: 'exact', head: true })
+      .eq('match_id', row.match_id)
+      .is('deleted_at', null);
+
     const persona = (seed.seed_persona as SeedPersona | null) ?? VARSAYILAN_PERSONA;
     const sistem = buildPersonaCard({
       name: String(seed.name ?? ''), age: Number(seed.age ?? 30),
@@ -329,12 +392,13 @@ export async function processRow(row: QueueRow): Promise<'sent' | 'deferred' | '
       personality: (detay?.personality as string) ?? null, pets: (detay?.pets as string) ?? null,
       musicType: (detay?.music_type as string) ?? null, smoking: (detay?.smoking as string) ?? null,
       alcohol: (detay?.alcohol as string) ?? null, relationshipGoal: (seed.relationship_goal as string) ?? null,
-      persona, phase: fazFor(gecmis.length), busyNow: isBusy(persona, new Date()),
+      persona, phase: fazFor(mesajSayisi ?? 0), busyNow: isBusy(persona, new Date()),
     });
 
     const turns = gecmis.map((m) => ({
       role: (m.sender_id === row.seed_user_id ? 'model' : 'user') as 'model' | 'user',
-      text: String(m.content ?? ''),
+      // Soru karti isareti LLM'e ham gecerse hem anlamsizdir hem icsel bicimi sizdirir.
+      text: String(m.content ?? '').startsWith(QUESTION_ONEKI) ? '(soru kartı)' : String(m.content ?? ''),
     }));
 
     for (let deneme = 0; deneme < 2 && metin === null; deneme += 1) {
