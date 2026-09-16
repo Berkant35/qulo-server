@@ -109,7 +109,6 @@ export function buildPersonaCard(i: PersonaCardInput): string {
     '',
     '# Şu anki durum',
     `- ${FAZ_METNI[i.phase]}`,
-    ...(i.phase >= 3 ? ['- ilgin azaldı; kısa yaz.'] : []),
     ...(i.busyNow ? ['- şu an meşgulsün (iştesin/vardiyadasın); kısa yaz ve bunu hissettir.'] : []),
     '',
     '# Tek istisna',
