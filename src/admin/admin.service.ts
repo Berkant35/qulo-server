@@ -478,16 +478,17 @@ class AdminService {
     // Earnings by reason (all time)
     // Seed profiller (bot) insan guc kullanip dogru cevaplayinca yesil elmas kazanir
     // (chat-question.service.ts) — bu gercek ekonomi degil, panel kirlenmesin.
-    const { data: seedIds } = await supabase.from("users").select("id").eq("is_seed_profile", true);
-    const haricTut = (seedIds ?? []).map((u: any) => u.id as string);
+    // Filtre JS'te: 416 seed id'sini `.not(in)` ile URL'e koymak ~16 KB sorgu dizesi
+    // uretiyor ve yaygin sunucu sinirlarini (nginx ~8 KB) asiyor.
+    const { data: seedIdRows } = await supabase.from("users").select("id").eq("is_seed_profile", true);
+    const seedIdSet = new Set((seedIdRows ?? []).map((u: any) => u.id as string));
 
-    let greenEarningsQuery = supabase
+    const { data: greenEarningsRaw } = await supabase
       .from("diamond_transactions")
-      .select("reason, amount")
+      .select("user_id, reason, amount")
       .eq("type", "GREEN")
       .gt("amount", 0);
-    if (haricTut.length) greenEarningsQuery = greenEarningsQuery.not("user_id", "in", `(${haricTut.join(",")})`);
-    const { data: greenEarnings } = await greenEarningsQuery;
+    const greenEarnings = (greenEarningsRaw ?? []).filter((t: any) => !seedIdSet.has(t.user_id));
 
     const { data: purpleEarnings } = await supabase
       .from("diamond_transactions")
