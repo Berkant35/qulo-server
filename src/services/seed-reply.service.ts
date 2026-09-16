@@ -1,6 +1,10 @@
 import { supabase } from '../config/supabase.js';
-import { computeReplyDelayMs } from './seed-reply-timing.js';
+import { computeReplyDelayMs, isBusy } from './seed-reply-timing.js';
 import type { SeedPersona } from '../types/seed-persona.js';
+import { chatService } from './chat.service.js';
+import { buildPersonaCard } from './seed-persona.js';
+import { validateReply } from './seed-reply-guard.js';
+import { generateSeedReply } from './seed-llm.service.js';
 
 export interface QueueRow {
   id: string;
@@ -156,4 +160,122 @@ export async function recoverStale(olderThanMs = 5 * 60_000): Promise<number> {
     .lt('claimed_at', cutoff)
     .select('id');
   return data?.length ?? 0;
+}
+
+// --- processRow: orkestrasyon (Task 7) -------------------------------------
+
+const KRIZ = /(yaşamak istemiyorum|intihar|kendime zarar|canıma kıy|ölmek istiyorum|yaşamaktan bıktım)/i;
+const YAS_ALTI = /\b(1[0-7])\s*yaş(ında|ındayım)?\b/i;
+const KRIZ_CEVABI =
+  'ya böyle yazınca içim cız etti. ciddiyim, bunu tek başına taşıma — 112\'yi arayabilirsin ya da yakınındaki birine söyle. ben buradayım ama bu konuda gerçekten yardım alman lazım.';
+
+const GECMIS_LIMIT = 20;
+
+function hataKodu(err: unknown): string {
+  return String((err as { code?: string })?.code ?? (err as Error)?.message ?? '');
+}
+
+/**
+ * Kuyruktan alinan bir satiri isler: persona karti kurar, LLM'den cevap uretir,
+ * denetimden gecirir ve mevcut sohbet servisiyle gonderir.
+ *
+ * Kimlik cift kontrolu — tarama sorgusundaki WHERE tek savunma hatti sayilmaz;
+ * bu feature'in en yuksek sonuclu hata modu botun gercek bir kullanici hesabindan
+ * yazmasidir, bu yuzden gonderimden ONCE burada tekrar dogrulanir.
+ */
+export async function processRow(row: QueueRow): Promise<'sent' | 'deferred' | 'cancelled' | 'failed'> {
+  const { data: seed } = await supabase
+    .from('users')
+    .select('id, name, age, city, bio, interests, relationship_goal, is_seed_profile, seed_persona')
+    .eq('id', row.seed_user_id)
+    .maybeSingle();
+  if (!seed?.is_seed_profile) {
+    await markCancelled(row.id, 'alici seed profil degil');
+    return 'cancelled';
+  }
+
+  const { data: son } = await supabase
+    .from('messages')
+    .select('id, sender_id, content, created_at')
+    .eq('match_id', row.match_id)
+    .is('deleted_at', null)
+    .order('created_at', { ascending: false })
+    .limit(GECMIS_LIMIT);
+  const gecmis = (son ?? []).slice().reverse();
+  const sonInsan = [...gecmis].reverse().find((m) => m.sender_id !== row.seed_user_id);
+  const sonMetin = String(sonInsan?.content ?? '');
+
+  if (YAS_ALTI.test(sonMetin)) {
+    await markCancelled(row.id, '18 yas alti beyani');
+    return 'cancelled';
+  }
+
+  let metin: string | null = null;
+
+  if (KRIZ.test(sonMetin)) {
+    metin = KRIZ_CEVABI; // Rolu birak; bu cevap LLM'den GECMEZ.
+  } else {
+    const { data: detay } = await supabase
+      .from('user_details').select('job, personality, pets, music_type, smoking, alcohol')
+      .eq('user_id', row.seed_user_id).maybeSingle();
+
+    const persona = (seed.seed_persona as SeedPersona | null) ?? VARSAYILAN_PERSONA;
+    const sistem = buildPersonaCard({
+      name: String(seed.name ?? ''), age: Number(seed.age ?? 30),
+      district: (seed.city as string) ?? null, province: null,
+      bio: (seed.bio as string) ?? null, job: (detay?.job as string) ?? null,
+      personality: (detay?.personality as string) ?? null, pets: (detay?.pets as string) ?? null,
+      musicType: (detay?.music_type as string) ?? null, smoking: (detay?.smoking as string) ?? null,
+      alcohol: (detay?.alcohol as string) ?? null, relationshipGoal: (seed.relationship_goal as string) ?? null,
+      persona, phase: fazFor(gecmis.length), busyNow: isBusy(persona, new Date()),
+    });
+
+    const turns = gecmis.map((m) => ({
+      role: (m.sender_id === row.seed_user_id ? 'model' : 'user') as 'model' | 'user',
+      text: String(m.content ?? ''),
+    }));
+
+    for (let deneme = 0; deneme < 2 && metin === null; deneme += 1) {
+      const sistemProbe = deneme === 0
+        ? sistem
+        : `${sistem}\n\n# UYARI\nBir onceki cevabin kurallari cignedi. Cok kisa yaz, iletisim bilgisi verme, liste yapma.`;
+      let ham: string;
+      try {
+        ham = (await generateSeedReply({ system: sistemProbe, turns })).text;
+      } catch (err) {
+        await markFailed(row.id, `llm: ${hataKodu(err)}`);
+        return 'failed';
+      }
+      const denetim = validateReply(ham, sistem);
+      if (denetim.ok) metin = denetim.text;
+      else console.warn(`[SeedReply] cikti elendi (${denetim.reason}) match=${row.match_id} deneme=${deneme + 1}`);
+    }
+
+    if (metin === null) {
+      // Sessizlik, hazir kalip cevaptan daha gercekcidir (kalip tekrari en buyuk ele verme kaynagi).
+      await markFailed(row.id, 'cikti denetimi iki denemede de gecilemedi');
+      return 'failed';
+    }
+  }
+
+  try {
+    await chatService.sendMessage(row.seed_user_id, row.match_id, metin);
+  } catch (err) {
+    const kod = hataKodu(err);
+    if (kod.includes('CHAT_LOCKED')) {
+      await deferRow(row.id, 2 * 60_000);
+      return 'deferred';
+    }
+    if (kod.includes('NOT_MATCHED') || kod.includes('MATCH_INACTIVE') || kod.includes('USER_BLOCKED')) {
+      await markCancelled(row.id, kod);
+      return 'cancelled';
+    }
+    await markFailed(row.id, kod);
+    return 'failed';
+  }
+
+  // "3 gun once goruldu" yazarken canli cevap yazma tutarsizligini kapat.
+  await supabase.from('users').update({ last_seen_at: new Date().toISOString() }).eq('id', row.seed_user_id);
+  await markSent(row.id);
+  return 'sent';
 }
