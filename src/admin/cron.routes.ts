@@ -1,31 +1,33 @@
 import { Router, Request, Response } from "express";
 import { getCronJobs, toggleCronJob } from "../cron/index.js";
-import { superAdminOnly } from "./admin.middleware.js";
+import { superAdminOnly, csrfValidate } from "./admin.middleware.js";
 
 const router = Router();
 
 router.use(superAdminOnly);
 
-// GET /admin/crons — list all cron jobs
-router.get("/", (_req: Request, res: Response) => {
-  res.json({ data: getCronJobs() });
+// GET /admin/crons — is listesi + baslat/durdur paneli
+router.get("/", (req: Request, res: Response) => {
+  res.render("crons", {
+    jobs: getCronJobs(),
+    error: req.query.error,
+    session: req.session,
+    csrfToken: req.session.csrfToken,
+  });
 });
 
-// POST /admin/crons/:name/toggle — start or stop a cron
-router.post("/:name/toggle", (req: Request, res: Response) => {
+// POST /admin/crons/:name/toggle — surec ici baslat/durdur (deploy sonrasi sifirlanir)
+router.post("/:name/toggle", csrfValidate, (req: Request, res: Response) => {
   const name = req.params.name as string;
-  const { action } = req.body as { action: "start" | "stop" };
+  const { action } = req.body as { action?: string };
 
-  if (!action || !["start", "stop"].includes(action)) {
-    return res.status(400).json({ error: "action must be 'start' or 'stop'" });
+  if (action !== "start" && action !== "stop") {
+    return res.redirect("/admin/crons?error=" + encodeURIComponent("action 'start' ya da 'stop' olmali"));
   }
-
-  const success = toggleCronJob(name, action);
-  if (!success) {
-    return res.status(404).json({ error: `Cron job '${name}' not found` });
+  if (!toggleCronJob(name, action)) {
+    return res.redirect("/admin/crons?error=" + encodeURIComponent(`Cron isi bulunamadi: ${name}`));
   }
-
-  res.json({ data: getCronJobs() });
+  res.redirect("/admin/crons");
 });
 
 export default router;

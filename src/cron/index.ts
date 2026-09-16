@@ -10,8 +10,6 @@ export interface CronJob {
   description: string;
   schedule: string;
   running: boolean;
-  /** false ise initCrons baslatmaz; is yine de listede kalir (admin toggle bulabilsin). */
-  autoStart?: boolean;
   start(): void;
   stop(): void;
 }
@@ -19,16 +17,10 @@ export interface CronJob {
 const jobs: CronJob[] = [presenceCron, analyticsAggregateCron, analyticsCleanupCron, campaignDispatchCron, notificationEngineCron, webQuizPurgeCron, seedReplyCron];
 
 export function initCrons() {
-  let baslatilan = 0;
-  for (const job of jobs) {
-    if (job.autoStart === false) {
-      console.log(`[Cron] ${job.name} autoStart=false — baslatilmadi`);
-      continue;
-    }
-    job.start();
-    baslatilan += 1;
-  }
-  console.log(`[Cron] Initialized ${baslatilan}/${jobs.length} cron job(s)`);
+  // Hepsi baslar; seed-reply'in kalici anahtari app_config.seed_reply_enabled
+  // (her tikta okunur), surec ici start/stop degil.
+  for (const job of jobs) job.start();
+  console.log(`[Cron] Initialized ${jobs.length} cron job(s)`);
 }
 
 export function getCronJobs(): Array<{ name: string; description: string; schedule: string; running: boolean }> {

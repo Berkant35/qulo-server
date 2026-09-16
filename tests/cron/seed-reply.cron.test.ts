@@ -34,9 +34,10 @@ describe('seedReplyTick', () => {
     expect(claimDue).toHaveBeenCalledWith(expect.any(Number));
   });
 
-  it('cron varsayilan olarak baslamaz (autoStart false)', async () => {
+  it('is tanimi 10 saniyelik zamanlamayi korur', async () => {
+    // Tek kapi app_config.seed_reply_enabled (yukaridaki iki test); cron her deploy'da
+    // baslar, bu yuzden zamanlamanin kaymasi dogrudan LLM cagri hacmini degistirir.
     const { mod } = await setup(true);
-    expect(mod.seedReplyCron.autoStart).toBe(false);
     expect(mod.seedReplyCron.schedule).toBe('*/10 * * * * *');
   });
 });

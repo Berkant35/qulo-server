@@ -139,7 +139,7 @@ router.get("/admins", superAdminOnly, (req, res) => adminController.admins(req, 
 router.post("/admins", superAdminOnly, csrfValidate, (req, res) => adminController.createAdmin(req, res));
 router.post("/admins/:id/delete", superAdminOnly, csrfValidate, (req, res) => adminController.deleteAdminAction(req, res));
 
-// Cron management (JSON API)
+// Cron yonetimi (panel + baslat/durdur)
 router.use("/crons", adminCronRoutes);
 
 export default router;

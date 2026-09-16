@@ -1,18 +1,18 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 /**
- * `initCrons()`'un `autoStart === false` filtresi MEVCUT alti cron'u koruyor:
- * filtre yanlislikla falsy kontrolune donerse (`!job.autoStart`) hicbiri sessizce
- * baslamaz ve bu uretimde ancak "neden hicbir sey calismiyor" diye fark edilir.
+ * initCrons() KAYITLI HER isi baslatir. Seed AI cevaplarinin kapisi surec ici
+ * start/stop degil, app_config.seed_reply_enabled bayragidir (her tikta okunur) —
+ * boylece Railway her deploy'da islerin durumunu sifirlamaz.
  */
-function sahteIs(name: string, over: Record<string, unknown> = {}) {
+function sahteIs(name: string) {
   return {
     name, description: `${name} isi`, schedule: '* * * * *', running: false,
-    start: vi.fn(), stop: vi.fn(), ...over,
+    start: vi.fn(), stop: vi.fn(),
   };
 }
 
-async function setup(seedOver: Record<string, unknown> = {}) {
+async function setup() {
   const isler = {
     presenceCron: sahteIs('presence'),
     analyticsAggregateCron: sahteIs('analytics-aggregate'),
@@ -20,7 +20,7 @@ async function setup(seedOver: Record<string, unknown> = {}) {
     notificationEngineCron: sahteIs('notification-engine'),
     campaignDispatchCron: sahteIs('campaign-dispatch'),
     webQuizPurgeCron: sahteIs('web-quiz-purge'),
-    seedReplyCron: sahteIs('seed-reply', { autoStart: false, ...seedOver }),
+    seedReplyCron: sahteIs('seed-reply'),
   };
 
   vi.doMock('../../src/cron/presence.cron.js', () => ({ presenceCron: isler.presenceCron }));
@@ -37,35 +37,29 @@ async function setup(seedOver: Record<string, unknown> = {}) {
   return { mod, isler };
 }
 
-const digerleri = (isler: Record<string, { start: ReturnType<typeof vi.fn> }>) =>
-  Object.entries(isler).filter(([ad]) => ad !== 'seedReplyCron').map(([, is]) => is);
-
 beforeEach(() => vi.resetModules());
 
 describe('initCrons', () => {
-  it('autoStart=false olan isi BASLATMAZ, diger alti isi baslatir', async () => {
+  it('kayitli yedi isin HEPSINI baslatir', async () => {
     const { mod, isler } = await setup();
     mod.initCrons();
 
-    expect(isler.seedReplyCron.start).not.toHaveBeenCalled();
-    for (const is of digerleri(isler)) expect(is.start).toHaveBeenCalledTimes(1);
+    const hepsi = Object.values(isler);
+    expect(hepsi).toHaveLength(7);
+    for (const is of hepsi) expect(is.start).toHaveBeenCalledTimes(1);
   });
 
-  it('autoStart belirtilmemis is baslatilir — filtre yalnizca === false ile eler', async () => {
-    // Filtre falsy'ye donerse (`!job.autoStart`) bu is de sessizce baslamaz.
-    const { mod, isler } = await setup({ autoStart: undefined });
-    mod.initCrons();
-
-    expect(isler.seedReplyCron.start).toHaveBeenCalledTimes(1);
-    for (const is of digerleri(isler)) expect(is.start).toHaveBeenCalledTimes(1);
-  });
-
-  it('baslatilmayan is listede KALIR: toggleCronJob onu bulup baslatabilir', async () => {
+  it('seed-reply listede gorunur ve toggle ile durdurulabilir', async () => {
     const { mod, isler } = await setup();
     mod.initCrons();
 
     expect(mod.getCronJobs().map((j) => j.name)).toContain('seed-reply');
-    expect(mod.toggleCronJob('seed-reply', 'start')).toBe(true);
-    expect(isler.seedReplyCron.start).toHaveBeenCalledTimes(1);
+    expect(mod.toggleCronJob('seed-reply', 'stop')).toBe(true);
+    expect(isler.seedReplyCron.stop).toHaveBeenCalledTimes(1);
+  });
+
+  it('bilinmeyen is adi icin toggleCronJob false doner', async () => {
+    const { mod } = await setup();
+    expect(mod.toggleCronJob('olmayan-is', 'start')).toBe(false);
   });
 });

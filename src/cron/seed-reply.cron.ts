@@ -44,8 +44,6 @@ export const seedReplyCron = {
   description: "Seed profillerin AI cevaplari (10 sn; app_config.seed_reply_enabled ile acilir)",
   schedule: "*/10 * * * * *",
   running: false,
-  /** Varsayilan KAPALI: admin panelinden baslatilir. */
-  autoStart: false,
 
   start() {
     if (task) return;

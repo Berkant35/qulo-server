@@ -43,12 +43,10 @@ describe('updateAppConfig — seed AI kill-switch alanlari', () => {
     expect(patch()).toMatchObject({ seed_reply_enabled: false, seed_reply_fast_mode: false });
   });
 
-  it('alan istekte HIC yoksa kill-switch\'e DOKUNMAZ', async () => {
-    // EJS view'da bu iki alan yok. "Checkbox yoksa kapali" kabulu, baska bir ayar
-    // kaydedildiginde canli seed cron'unu sessizce kapatirdi — undefined kolonu
-    // PostgREST govdesine hic koymaz, mevcut deger korunur.
+  it('checkbox isaretsizken (alan gelmez) false yazar — panelden KAPATILABILIR', async () => {
+    // app-config.ejs iki checkbox'i da render eder; isaretsiz checkbox govdeye hic
+    // girmez. Bu durumda "dokunma" davranisi paneli tek yonlu yapardi: acilir, kapanmaz.
     const { patch } = await setup({});
-    expect(patch().seed_reply_enabled).toBeUndefined();
-    expect(patch().seed_reply_fast_mode).toBeUndefined();
+    expect(patch()).toMatchObject({ seed_reply_enabled: false, seed_reply_fast_mode: false });
   });
 });

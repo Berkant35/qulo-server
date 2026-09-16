@@ -1,0 +1,35 @@
+<%- include('_header') %>
+<h2 style="margin-bottom: 20px;">Cron İşleri</h2>
+
+<% if (error) { %>
+<div class="alert alert-error"><%= error %></div>
+<% } %>
+
+<div class="card">
+  <p style="font-size:13px; color:#666; margin-bottom:16px;">
+    Süreç içi zamanlayıcılar. Buradaki başlat/durdur yalnızca <strong>şu anki sunucu örneği</strong> için geçerlidir —
+    yeni bir dağıtım (deploy) sonrası tüm işler yeniden otomatik başlar.
+    Seed AI cevaplarının kalıcı anahtarı <a href="/admin/app-config">App Config</a> sayfasındadır.
+  </p>
+  <table>
+    <thead><tr><th>İş</th><th>Açıklama</th><th>Zamanlama</th><th>Durum</th><th></th></tr></thead>
+    <tbody>
+      <% jobs.forEach(function(j) { %>
+      <tr>
+        <td><strong><%= j.name %></strong></td>
+        <td style="font-size:13px; color:#666;"><%= j.description %></td>
+        <td><code style="font-size:12px;"><%= j.schedule %></code></td>
+        <td><span class="badge <%= j.running ? 'badge-resolved' : 'badge-reviewed' %>"><%= j.running ? 'Çalışıyor' : 'Durdu' %></span></td>
+        <td>
+          <form method="POST" action="/admin/crons/<%= j.name %>/toggle" style="display:inline;">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" name="action" value="<%= j.running ? 'stop' : 'start' %>">
+            <button type="submit" class="btn btn-sm <%= j.running ? 'btn-danger' : 'btn-primary' %>"><%= j.running ? 'Durdur' : 'Başlat' %></button>
+          </form>
+        </td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+<%- include('_footer') %>
