@@ -78,6 +78,7 @@ const NOTIFICATION_CONFIG: Record<AnyPushType, NotificationTypeConfig> = {
 /** sendPushDetailed'in gonderMEme sebebi — push_log'a yazilir, backoffice'te gorunur. */
 export type PushSkipReason =
   | 'user_not_found'
+  | 'seed_profile'
   | 'template_missing'
   | 'pref_disabled'
   | 'no_token'
@@ -263,13 +264,18 @@ export class NotificationService {
       // 1. Get user's push_token and locale
       const { data: user, error } = await supabase
         .from('users')
-        .select('push_token, locale, notification_preferences')
+        .select('push_token, locale, notification_preferences, is_seed_profile')
         .eq('id', userId)
         .single();
 
       if (error || !user) {
         console.warn(`[NotificationService] User not found: ${userId}`);
         return skipped('user_not_found');
+      }
+
+      // Seed profillerin push_token'i yok; inbox satiri da yazilmasin (okuyucusuz satir birikimi).
+      if (user.is_seed_profile) {
+        return skipped('seed_profile');
       }
 
       // 2. Resolve title and body
