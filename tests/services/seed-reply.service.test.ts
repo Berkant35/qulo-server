@@ -93,6 +93,20 @@ describe('scanAndEnqueue', () => {
     expect(await svc.scanAndEnqueue()).toBe(0);
     expect(fake.table('seed_reply_queue')).toHaveLength(1);
   });
+
+  it('parca sinirini asan seed sayisinda ikinci parcadaki eslesmeyi de bulur', async () => {
+    const cokSeed = Array.from({ length: 120 }, (_, i) => ({
+      id: `seed-${String(i).padStart(3, '0')}`, is_seed_profile: true, seed_persona: persona, name: 'S',
+    }));
+    const gecSeed = cokSeed[110]!.id as string;   // ID_PARCA=100 → ikinci parca
+    const { fake, svc } = await setup({
+      users: [...cokSeed, { id: INSAN, is_seed_profile: false, is_test_admin: true, name: 'Berkant' }],
+      matches: [{ id: MATCH, user1_id: gecSeed, user2_id: INSAN, is_active: true }],
+      messages: [mesaj('m1', INSAN)],
+    });
+    expect(await svc.scanAndEnqueue()).toBe(1);
+    expect(fake.table('seed_reply_queue')[0]).toMatchObject({ match_id: MATCH, seed_user_id: gecSeed });
+  });
 });
 
 describe('claimDue', () => {

@@ -33,6 +33,28 @@ export function fazFor(messageCount: number): 1 | 2 | 3 | 4 {
   return 4;
 }
 
+/** PostgREST sorgusu URL'de gidiyor: 416 seed icin tek bir .or() ifadesi ~42 KB olurdu
+ *  (yaygin sunucu siniri ~8-16 KB). Parcali .in() hem sinirin altinda kaliyor hem
+ *  fake-supabase'in destekledigi bicim. */
+const ID_PARCA = 100;
+
+async function seedEslesmeleri(seedIds: string[]) {
+  const bulunan = new Map<string, { id: string; user1_id: string; user2_id: string }>();
+  for (const kolon of ['user1_id', 'user2_id'] as const) {
+    for (let i = 0; i < seedIds.length; i += ID_PARCA) {
+      const { data } = await supabase
+        .from('matches')
+        .select('id, user1_id, user2_id')
+        .eq('is_active', true)
+        .in(kolon, seedIds.slice(i, i + ID_PARCA));
+      for (const m of data ?? []) {
+        bulunan.set(m.id as string, m as { id: string; user1_id: string; user2_id: string });
+      }
+    }
+  }
+  return [...bulunan.values()];
+}
+
 /** Aktif eslesmelerde son silinmemis mesaji insan atmis olanlari kuyruga alir. Eklenen satir sayisini doner. */
 export async function scanAndEnqueue(now: Date = new Date()): Promise<number> {
   const { data: seedler } = await supabase
@@ -47,18 +69,8 @@ export async function scanAndEnqueue(now: Date = new Date()): Promise<number> {
     seedler.map((u) => [u.id as string, (u.seed_persona as SeedPersona | null) ?? VARSAYILAN_PERSONA]),
   );
 
-  // fake-supabase'in `.or()` yardimcisi yalnizca `eq` karsilastirmalarini destekliyor
-  // (bkz. tests/helpers/fake-supabase.ts) — prod'daki gercek kod tabaninin her yerdeki
-  // deseniyle ayni (account-purge/chat/matching servisleri de `eq` ile or() kurar).
-  // Eslesme sayisi seed hesaplariyla sinirli (N kucuk) oldugu icin bu N-parca or()
-  // sorgusu buyumez.
-  const orExpression = seedIds.map((id) => `user1_id.eq.${id},user2_id.eq.${id}`).join(',');
-  const { data: eslesmeler } = await supabase
-    .from('matches')
-    .select('id, user1_id, user2_id')
-    .eq('is_active', true)
-    .or(orExpression);
-  if (!eslesmeler?.length) return 0;
+  const eslesmeler = await seedEslesmeleri(seedIds);
+  if (!eslesmeler.length) return 0;
 
   const { data: acikSatirlar } = await supabase
     .from('seed_reply_queue')
