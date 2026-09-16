@@ -476,11 +476,18 @@ class AdminService {
     });
 
     // Earnings by reason (all time)
-    const { data: greenEarnings } = await supabase
+    // Seed profiller (bot) insan guc kullanip dogru cevaplayinca yesil elmas kazanir
+    // (chat-question.service.ts) — bu gercek ekonomi degil, panel kirlenmesin.
+    const { data: seedIds } = await supabase.from("users").select("id").eq("is_seed_profile", true);
+    const haricTut = (seedIds ?? []).map((u: any) => u.id as string);
+
+    let greenEarningsQuery = supabase
       .from("diamond_transactions")
       .select("reason, amount")
       .eq("type", "GREEN")
       .gt("amount", 0);
+    if (haricTut.length) greenEarningsQuery = greenEarningsQuery.not("user_id", "in", `(${haricTut.join(",")})`);
+    const { data: greenEarnings } = await greenEarningsQuery;
 
     const { data: purpleEarnings } = await supabase
       .from("diamond_transactions")

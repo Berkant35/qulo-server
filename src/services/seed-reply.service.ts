@@ -174,6 +174,34 @@ export const markCancelled = (id: string, reason: string) => durumYaz(id, { stat
 export const deferRow = (id: string, ms: number) =>
   durumYaz(id, { status: 'pending', reply_due_at: new Date(Date.now() + ms).toISOString() });
 
+// --- withinRateLimits: servis katmani hiz sinirlari (Task 11) --------------
+
+const ESLESME_GUNLUK = 40;
+const PROFIL_SAATLIK = 12;
+
+/** chatLimiter servis cagrisinda devrede DEGIL (yalnizca HTTP katmaninda); fren burada. */
+export async function withinRateLimits(matchId: string, seedUserId: string, now: Date = new Date()): Promise<boolean> {
+  const gunBasi = new Date(now.getTime() - 24 * 60 * 60_000).toISOString();
+  const saatBasi = new Date(now.getTime() - 60 * 60_000).toISOString();
+
+  const { count: gunluk } = await supabase
+    .from('messages').select('id', { count: 'exact' })
+    .eq('match_id', matchId).eq('sender_id', seedUserId).gte('created_at', gunBasi);
+  if ((gunluk ?? 0) >= ESLESME_GUNLUK) {
+    console.warn(`[SeedReply] eslesme gunluk tavani match=${matchId}`);
+    return false;
+  }
+
+  const { count: saatlik } = await supabase
+    .from('messages').select('id', { count: 'exact' })
+    .eq('sender_id', seedUserId).gte('created_at', saatBasi);
+  if ((saatlik ?? 0) >= PROFIL_SAATLIK) {
+    console.warn(`[SeedReply] profil saatlik tavani seed=${seedUserId}`);
+    return false;
+  }
+  return true;
+}
+
 /** Coken instance'in biraktigi satirlari kurtarir. */
 export async function recoverStale(olderThanMs = 5 * 60_000): Promise<number> {
   const cutoff = new Date(Date.now() - olderThanMs).toISOString();
@@ -216,6 +244,11 @@ export async function processRow(row: QueueRow): Promise<'sent' | 'deferred' | '
   if (!seed?.is_seed_profile) {
     await markCancelled(row.id, 'alici seed profil degil');
     return 'cancelled';
+  }
+
+  if (!(await withinRateLimits(row.match_id, row.seed_user_id))) {
+    await deferRow(row.id, 30 * 60_000);
+    return 'deferred';
   }
 
   const { data: son } = await supabase
@@ -310,7 +343,7 @@ const SIKLAR = ['A', 'B', 'C', 'D'] as const;
 /** Riski olmayan soruda botun dogru bilme olasiligi — her zaman bilmek gercekci degil. */
 const DOGRU_OLASILIGI = 0.65;
 
-export async function askQuestion(row: QueueRow): Promise<'sent' | 'cancelled' | 'failed'> {
+export async function askQuestion(row: QueueRow): Promise<'sent' | 'deferred' | 'cancelled' | 'failed'> {
   const { data: seed } = await supabase
     .from('users').select('id, name, age, city, bio, is_seed_profile, seed_persona')
     .eq('id', row.seed_user_id).maybeSingle();
@@ -318,6 +351,12 @@ export async function askQuestion(row: QueueRow): Promise<'sent' | 'cancelled' |
     await markCancelled(row.id, 'alici seed profil degil');
     return 'cancelled';
   }
+
+  if (!(await withinRateLimits(row.match_id, row.seed_user_id))) {
+    await deferRow(row.id, 30 * 60_000);
+    return 'deferred';
+  }
+
   const { data: detay } = await supabase
     .from('user_details').select('job, personality, pets, music_type').eq('user_id', row.seed_user_id).maybeSingle();
 
