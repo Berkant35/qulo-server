@@ -30,11 +30,18 @@ describe('generateSeedReply', () => {
 
     const [url, init] = fetchMock.mock.calls[0]!;
     expect(url).toContain(SEED_LLM_MODEL);
+    expect(SEED_LLM_MODEL).toBe('gemini-3.5-flash-lite');
     expect((init as RequestInit).headers).toMatchObject({ 'x-goog-api-key': 'test-key' });
     const body = JSON.parse((init as RequestInit).body as string);
     expect(body.generationConfig.thinkingConfig.thinkingLevel).toBe('minimal');
     expect(body.safetySettings).toHaveLength(4);
     expect(body.safetySettings.every((s: { threshold: string }) => s.threshold === 'BLOCK_NONE')).toBe(true);
+    expect(body.safetySettings.map((s: { category: string }) => s.category)).toEqual([
+      'HARM_CATEGORY_HARASSMENT',
+      'HARM_CATEGORY_HATE_SPEECH',
+      'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+      'HARM_CATEGORY_DANGEROUS_CONTENT',
+    ]);
     expect(body.systemInstruction.parts[0].text).toBe('Sen Elif\'sin.');
     expect(body.contents).toEqual([{ role: 'user', parts: [{ text: 'nbr' }] }]);
   });
@@ -65,5 +72,14 @@ describe('generateSeedReply', () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(Object.assign(new Error('aborted'), { name: 'TimeoutError' })));
     const { generateSeedReply } = await yukle();
     await expect(generateSeedReply({ system: 's', turns: [], timeoutMs: 5 })).rejects.toMatchObject({ code: 'timeout' });
+  });
+
+  it('bozuk JSON cevabini empty koduyla reddeder', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => { throw new SyntaxError('bad json'); },
+    }));
+    const { generateSeedReply } = await yukle();
+    await expect(generateSeedReply({ system: 's', turns: [] })).rejects.toMatchObject({ code: 'empty' });
   });
 });

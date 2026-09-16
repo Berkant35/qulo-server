@@ -67,10 +67,15 @@ export async function generateSeedReply(opts: {
     throw new SeedLlmError('http', `Gemini HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
   }
 
-  const json = await res.json() as {
+  let json: {
     candidates?: { content?: { parts?: { text?: string }[] } }[];
     usageMetadata?: { promptTokenCount?: number; candidatesTokenCount?: number };
   };
+  try {
+    json = await res.json() as typeof json;
+  } catch {
+    throw new SeedLlmError('empty', 'Gemini cevabi cozulemedi (gecersiz JSON)');
+  }
 
   const text = (json.candidates?.[0]?.content?.parts ?? []).map((p) => p.text ?? '').join('').trim();
   const inputTokens = json.usageMetadata?.promptTokenCount ?? 0;
