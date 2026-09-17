@@ -138,6 +138,18 @@ class AdminService {
     return { user, details, questions: questions ?? [] };
   }
 
+  /**
+   * Seed (bot) profilleri discover'da YALNIZ bu bayragi tasiyan kullaniciya gorunur
+   * (matching.service.ts:175). Ekiple birlikte test etmenin DOGRU anahtari budur:
+   * seed'lerin `is_test_account` bayragina dokunmak hem 416 botu gercek kullanicilara
+   * acar hem de botun yazma kapisini kapatir (`botYazabilir` iki bayragi birden ister),
+   * yani ozelligi calismaz hale getirir.
+   */
+  async setTestAdmin(userId: string, deger: boolean) {
+    const { error } = await supabase.from("users").update({ is_test_admin: deger }).eq("id", userId);
+    if (error) throw Errors.SERVER_ERROR();
+  }
+
   async banUser(userId: string, reason: string = "Banned by admin") {
     const { error: banError } = await supabase
       .from("users")

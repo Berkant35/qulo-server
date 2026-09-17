@@ -90,6 +90,8 @@ class AdminController {
       await adminService.resetSwipes(id);
     } else if (action === "reset_discovery") {
       await adminService.resetUserDiscovery(id);
+    } else if (action === "test_admin_on" || action === "test_admin_off") {
+      await adminService.setTestAdmin(id, action === "test_admin_on");
     }
 
     res.redirect(`/admin/users/${id}`);

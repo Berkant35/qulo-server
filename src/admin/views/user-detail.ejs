@@ -61,6 +61,14 @@
       <% } %>
       <form method="POST" action="/admin/users/<%= user.id %>/action">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="action" value="<%= user.is_test_admin ? 'test_admin_off' : 'test_admin_on' %>">
+        <button type="submit" class="btn <%= user.is_test_admin ? 'btn-danger' : 'btn-success' %> btn-sm"
+                title="Seed (bot) profilleri discover'da yalnız bu bayrağı taşıyan kullanıcı görür">
+          <%= user.is_test_admin ? 'Test admin: AÇIK (kapat)' : 'Test admin yap' %>
+        </button>
+      </form>
+      <form method="POST" action="/admin/users/<%= user.id %>/action">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <input type="hidden" name="action" value="delete">
         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('PERMANENTLY delete this user? This cannot be undone.')">Delete</button>
       </form>
