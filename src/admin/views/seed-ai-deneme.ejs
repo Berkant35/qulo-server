@@ -1,0 +1,93 @@
+<%- include('_header') %>
+<h2 style="margin-bottom: 8px;">Seed AI Deneme</h2>
+<p style="font-size:13px; color:#666; margin-bottom:20px;">
+  Gerçek persona kartını kurar, gerçek modele sorar, gerçek denetimden geçirir —
+  <strong>hiçbir şey kaydetmez</strong> (mesaj gitmez, kuyruğa satır açılmaz).
+  Her "Cevap üret" bir Gemini çağrısıdır (~$0.0005).
+</p>
+
+<% if (error) { %>
+<div class="alert alert-error"><%= error %></div>
+<% } %>
+
+<div class="card">
+  <form method="POST" action="/admin/seed-ai">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="hidden" name="gecmis" value="<%= JSON.stringify(gecmis) %>">
+
+    <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:12px; margin-bottom:12px;">
+      <div>
+        <label style="display:block; font-size:13px; font-weight:600; color:#555; margin-bottom:4px;">Seed profil</label>
+        <select name="seedUserId" style="width:100%;" required>
+          <option value="">— seç —</option>
+          <% profiller.forEach(function(p) { %>
+          <option value="<%= p.id %>" <%= secili === p.id ? 'selected' : '' %>>
+            <%= p.name %> · <%= p.age %> · <%= p.city %> · <%= p.gender === 'WOMAN' ? 'K' : 'E' %>
+          </option>
+          <% }); %>
+        </select>
+      </div>
+      <div>
+        <label style="display:block; font-size:13px; font-weight:600; color:#555; margin-bottom:4px;">Faz</label>
+        <select name="phase" style="width:100%;">
+          <% [1,2,3,4].forEach(function(f) { %>
+          <option value="<%= f %>" <%= phase === f ? 'selected' : '' %>><%= f %><%= f === 1 ? ' (yeni)' : f === 4 ? ' (kapanış)' : '' %></option>
+          <% }); %>
+        </select>
+      </div>
+      <div style="display:flex; align-items:flex-end; padding-bottom:8px;">
+        <label style="display:flex; align-items:center; gap:8px; font-size:14px; cursor:pointer;">
+          <input type="checkbox" name="busyNow" <%= busyNow ? 'checked' : '' %>>
+          <span>Meşgul</span>
+        </label>
+      </div>
+    </div>
+
+    <% if (gecmis.length) { %>
+    <div style="background:#f8f8f8; border:1px solid #eee; border-radius:6px; padding:12px; margin-bottom:12px; max-height:340px; overflow-y:auto;">
+      <% gecmis.forEach(function(t) { %>
+      <div style="margin-bottom:8px; display:flex; <%= t.kim === 'insan' ? 'justify-content:flex-end;' : '' %>">
+        <span style="display:inline-block; max-width:75%; padding:8px 12px; border-radius:12px; font-size:14px; white-space:pre-wrap;
+                     background:<%= t.kim === 'insan' ? '#2563eb' : '#e5e7eb' %>; color:<%= t.kim === 'insan' ? '#fff' : '#111' %>;"><%= t.text %></span>
+      </div>
+      <% }); %>
+    </div>
+    <% } %>
+
+    <div style="display:flex; gap:8px;">
+      <input type="text" name="yeniMesaj" placeholder="Mesajını yaz (bot olarak DEĞİL, sen olarak)" style="flex:1;" autofocus>
+      <button type="submit" class="btn btn-primary">Cevap üret</button>
+      <a href="/admin/seed-ai" class="btn">Sıfırla</a>
+    </div>
+  </form>
+</div>
+
+<% if (sonuc) { %>
+<div class="card">
+  <h3 style="margin-bottom:12px;">Son çağrı</h3>
+  <table>
+    <tbody>
+      <tr><td style="width:180px;"><strong>Profil</strong></td><td><%= sonuc.profil.name %> · <%= sonuc.profil.age %> · <%= sonuc.profil.city %> · <%= sonuc.profil.job || '—' %></td></tr>
+      <tr><td><strong>Persona</strong></td><td>
+        <%= sonuc.persona.responder_type %> · <%= sonuc.persona.work_pattern %> ·
+        <%= sonuc.persona.style.uzunluk %>/<%= sonuc.persona.style.emoji %>/<%= sonuc.persona.style.yazim %>/<%= sonuc.persona.style.enerji %>
+      </td></tr>
+      <tr><td><strong>Ham çıktı</strong></td><td style="white-space:pre-wrap;"><%= sonuc.ham %></td></tr>
+      <tr><td><strong>Denetim</strong></td><td>
+        <% if (sonuc.elendi) { %>
+        <span class="badge badge-pending">ELENDİ: <%= sonuc.elendi %></span>
+        <span style="font-size:12px; color:#666;"> — canlıda bu çıktı gönderilmez, bir kez yeniden üretilir</span>
+        <% } else { %>
+        <span class="badge badge-resolved">geçti</span>
+        <% } %>
+      </td></tr>
+      <tr><td><strong>Token</strong></td><td><%= sonuc.tokenler.giris %> giriş / <%= sonuc.tokenler.cikis %> çıkış</td></tr>
+    </tbody>
+  </table>
+  <details style="margin-top:12px;">
+    <summary style="cursor:pointer; font-size:13px; font-weight:600; color:#555;">Modele giden persona kartı</summary>
+    <pre style="background:#f8f8f8; padding:12px; border-radius:6px; font-size:12px; overflow-x:auto; white-space:pre-wrap;"><%= sonuc.kart %></pre>
+  </details>
+</div>
+<% } %>
+<%- include('_footer') %>

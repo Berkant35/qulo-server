@@ -20,7 +20,13 @@ export interface SeedPersona {
   model: string;
 }
 
+/** Mesafe ekseni: botun en hizli ele veren ozelligi "her zaman istekli" olmasi. */
+export type Mesafe = 'mesafeli' | 'olculu' | 'sicak';
+
 export interface PersonaCardInput {
+  /** Kova hesabi icin kararli anahtar (users.id). Mesafe ekseni buradan turetilir. */
+  seedKey: string;
+  gender: 'WOMAN' | 'MAN' | null;
   name: string;
   age: number;
   district: string | null;

@@ -2,7 +2,7 @@ import { supabase } from '../config/supabase.js';
 import { computeReplyDelayMs, isBusy } from './seed-reply-timing.js';
 import type { SeedPersona } from '../types/seed-persona.js';
 import { chatService } from './chat.service.js';
-import { buildPersonaCard } from './seed-persona.js';
+import { buildPersonaCard, personaGirdisi } from './seed-persona.js';
 import { validateReply } from './seed-reply-guard.js';
 import { generateSeedReply } from './seed-llm.service.js';
 import { chatQuestionService } from './chat-question.service.js';
@@ -365,7 +365,7 @@ function hataKodu(err: unknown): string {
 export async function processRow(row: QueueRow): Promise<'sent' | 'deferred' | 'cancelled' | 'failed'> {
   const { data: seed } = await supabase
     .from('users')
-    .select('id, name, age, city, bio, interests, relationship_goal, is_seed_profile, is_test_account, seed_persona')
+    .select('id, name, age, city, bio, gender, interests, relationship_goal, is_seed_profile, is_test_account, seed_persona')
     .eq('id', row.seed_user_id)
     .maybeSingle();
   if (!botYazabilir(seed)) {
@@ -412,16 +412,10 @@ export async function processRow(row: QueueRow): Promise<'sent' | 'deferred' | '
       .is('deleted_at', null);
 
     const persona = (seed.seed_persona as SeedPersona | null) ?? VARSAYILAN_PERSONA;
-    const sistem = buildPersonaCard({
-      name: String(seed.name ?? ''), age: Number(seed.age ?? 30),
-      district: (seed.city as string) ?? null, province: null,
-      bio: (seed.bio as string) ?? null, job: (detay?.job as string) ?? null,
-      personality: (detay?.personality as string) ?? null, pets: (detay?.pets as string) ?? null,
-      musicType: (detay?.music_type as string) ?? null, smoking: (detay?.smoking as string) ?? null,
-      alcohol: (detay?.alcohol as string) ?? null, relationshipGoal: (seed.relationship_goal as string) ?? null,
+    const sistem = buildPersonaCard(personaGirdisi(seed, detay ?? null, {
       persona, phase: fazFor(mesajSayisi ?? 0), busyNow: isBusy(persona, new Date()),
       partnerClosing: kapanisSinyali(sonMetin),
-    });
+    }));
 
     const turns = gecmis.map((m) => ({
       role: (m.sender_id === row.seed_user_id ? 'model' : 'user') as 'model' | 'user',
