@@ -14,6 +14,7 @@ import {
   pickQuestions,
   referralCode,
   replaceSeedPhoto,
+  photoPostSchema,
   seedEmail,
   seedProfile,
   sha1,
@@ -396,6 +397,19 @@ describe("tr-seed-lib — seedProfile akışı (fake-supabase)", () => {
   });
 });
 
+describe("tr-seed-lib — photoPostSchema (son işlem sürümleri)", () => {
+  it("v1 kaydı (level) ve v2 kaydı (karakter) birlikte kabul edilir", () => {
+    expect(photoPostSchema.safeParse({ kind: "phone", version: 1, level: "medium" }).success).toBe(true);
+    expect(photoPostSchema.safeParse({ kind: "phone", version: 2, karakter: "dusuk_isik" }).success).toBe(true);
+  });
+
+  it("ikisi de yoksa reddedilir", () => {
+    // Şema v1'de 'level' zorunluydu; v2 manifesti yüklerken üç profil bu yüzden hata verdi.
+    // Gevşetirken tamamen serbest bırakmak, son işlemsiz bir kaydı sessizce geçirirdi.
+    expect(photoPostSchema.safeParse({ kind: "phone", version: 2 }).success).toBe(false);
+  });
+});
+
 describe("tr-seed-lib — replaceSeedPhoto (basılmış profilde fotoğrafı yerinde değiştir)", () => {
   const edited = {
     ...photo,
@@ -418,6 +432,22 @@ describe("tr-seed-lib — replaceSeedPhoto (basılmış profilde fotoğrafı yer
     expect(user.photo_prompt).toMatchObject({ prompt: PROMPT, replicate_id: "pred_2", edit: { reference_replicate_id: "pred_1", reference_path: "seed/tr_0015_pred1.jpg" } });
     expect(fake.storageFiles("photos").sort()).toEqual(["seed/tr_0015_pred1.jpg", "seed/tr_0015_pred2.jpg"]); // referans silinmedi
     expect(fake.table("questions")).toHaveLength(3);
+  });
+
+  it("aynı görsel + YENİ son işlem sürümü: dosya yeniden yüklenir", async () => {
+    // seed_postprocess v2 çekim karakteri havuzunu getirdi; v1'de tüm set tek banda
+    // ('medium') düşmüştü. Görsel aynı kalsa da dosyanın baytları değişir — sürüm farkı
+    // görülmezse panelden çeşitlilik düzeltmesi hiç yüklenemezdi.
+    const { fake, id } = await seeded();
+    const yeniPost = { ...photo, meta: { ...meta, post: { kind: "phone" as const, version: 2, karakter: "dusuk_isik" } } };
+    const res = await replaceSeedPhoto(fake.client, entry(), yeniPost);
+    expect(res).toMatchObject({ status: "replaced", id });
+    expect(fake.table("users")[0].photo_prompt.post).toMatchObject({ version: 2, karakter: "dusuk_isik" });
+  });
+
+  it("aynı görsel + aynı son işlem sürümü: DOKUNULMAZ", async () => {
+    const { fake, id } = await seeded();
+    expect(await replaceSeedPhoto(fake.client, entry(), photo)).toMatchObject({ status: "unchanged", id });
   });
 
   it("yeniden üretilmiş (düzenlemesiz) görsel: eski kendi dosyası silinir", async () => {

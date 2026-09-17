@@ -143,8 +143,13 @@ export type PhotoEdit = z.infer<typeof photoEditSchema>;
 export const photoPostSchema = z.object({
   kind: z.literal("phone"),
   version: z.number().int().positive(),
-  level: z.enum(["medium", "heavy"]),
-}).passthrough();
+  /** v1 ekseni — eski manifest kayıtlarında duruyor, yeni üretimde yazılmaz. */
+  level: z.enum(["medium", "heavy"]).optional(),
+  /** v2 çekim karakteri (temiz/gunluk/eski_telefon/dusuk_isik/flas/ekran_goruntusu/whatsapp). */
+  karakter: z.string().min(1).optional(),
+}).passthrough().refine((p) => p.level !== undefined || p.karakter !== undefined, {
+  message: "post: v1 'level' ya da v2 'karakter' alanlarından biri bulunmalı",
+});
 
 export const photoMetaSchema = z.object({
   model: z.string().min(1),
@@ -434,8 +439,16 @@ export async function replaceSeedPhoto(client: SeedClient, entry: SelectionEntry
     .from("users").select("id, photos, photo_prompt").eq("email", email).eq("is_seed_profile", true).maybeSingle();
   if (error) return { status: "error", email, step: "exists", message: error.message };
   if (!user) return { status: "error", email, step: "exists", message: "seed profili yok (önce basılmalı)" };
-  const currentId = (user.photo_prompt as { replicate_id?: string | null } | null)?.replicate_id ?? null;
-  if (currentId && currentId === photo.meta.replicate_id) return { status: "unchanged", email, id: user.id };
+  const currentPrompt = user.photo_prompt as { replicate_id?: string | null; post?: { version?: number } | null } | null;
+  const currentId = currentPrompt?.replicate_id ?? null;
+  // Aynı görsel + aynı son işlem sürümü ise dokunma. Sürüm farkı YENİDEN YÜKLEME sebebidir:
+  // seed_postprocess v2 çekim karakteri havuzunu getirdi, v1'de tüm set tek banda ('medium')
+  // düşmüştü — görsel aynı kalsa da dosyanın baytları değişir.
+  const currentPostVersion = currentPrompt?.post?.version ?? null;
+  const newPostVersion = photo.meta.post?.version ?? null;
+  if (currentId && currentId === photo.meta.replicate_id && currentPostVersion === newPostVersion) {
+    return { status: "unchanged", email, id: user.id };
+  }
   const bucket = client.storage.from(PHOTO_BUCKET);
   const oldPath = storagePathFromUrl(user.photos?.[0]);
   const oldName = oldPath?.startsWith(`${SEED_STORAGE_PREFIX}/`) ? oldPath.slice(SEED_STORAGE_PREFIX.length + 1) : null;
