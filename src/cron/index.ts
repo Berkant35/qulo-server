@@ -4,6 +4,7 @@ import { notificationEngineCron } from "./notification-engine.cron.js";
 import { campaignDispatchCron } from "./campaign-dispatch.cron.js";
 import { webQuizPurgeCron } from "./web-quiz.cron.js";
 import { seedReplyCron } from "./seed-reply.cron.js";
+import { seedPresenceCron } from "./seed-presence.cron.js";
 
 export interface CronJob {
   name: string;
@@ -14,7 +15,7 @@ export interface CronJob {
   stop(): void;
 }
 
-const jobs: CronJob[] = [presenceCron, analyticsAggregateCron, analyticsCleanupCron, campaignDispatchCron, notificationEngineCron, webQuizPurgeCron, seedReplyCron];
+const jobs: CronJob[] = [presenceCron, analyticsAggregateCron, analyticsCleanupCron, campaignDispatchCron, notificationEngineCron, webQuizPurgeCron, seedReplyCron, seedPresenceCron];
 
 export function initCrons() {
   // Hepsi baslar; seed-reply'in kalici anahtari app_config.seed_reply_enabled

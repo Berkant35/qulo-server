@@ -21,6 +21,7 @@ async function setup() {
     campaignDispatchCron: sahteIs('campaign-dispatch'),
     webQuizPurgeCron: sahteIs('web-quiz-purge'),
     seedReplyCron: sahteIs('seed-reply'),
+    seedPresenceCron: sahteIs('seed-presence'),
   };
 
   vi.doMock('../../src/cron/presence.cron.js', () => ({ presenceCron: isler.presenceCron }));
@@ -32,6 +33,7 @@ async function setup() {
   vi.doMock('../../src/cron/campaign-dispatch.cron.js', () => ({ campaignDispatchCron: isler.campaignDispatchCron }));
   vi.doMock('../../src/cron/web-quiz.cron.js', () => ({ webQuizPurgeCron: isler.webQuizPurgeCron }));
   vi.doMock('../../src/cron/seed-reply.cron.js', () => ({ seedReplyCron: isler.seedReplyCron }));
+  vi.doMock('../../src/cron/seed-presence.cron.js', () => ({ seedPresenceCron: isler.seedPresenceCron }));
 
   const mod = await import('../../src/cron/index.js');
   return { mod, isler };
@@ -40,12 +42,12 @@ async function setup() {
 beforeEach(() => vi.resetModules());
 
 describe('initCrons', () => {
-  it('kayitli yedi isin HEPSINI baslatir', async () => {
+  it('kayitli sekiz isin HEPSINI baslatir', async () => {
     const { mod, isler } = await setup();
     mod.initCrons();
 
     const hepsi = Object.values(isler);
-    expect(hepsi).toHaveLength(7);
+    expect(hepsi).toHaveLength(8);
     for (const is of hepsi) expect(is.start).toHaveBeenCalledTimes(1);
   });
 
