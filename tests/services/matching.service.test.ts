@@ -67,10 +67,14 @@ function questionsFor(userIds: string[], locale = "tr") {
   ]);
 }
 
-async function loadService(tables: Tables, opts: { userLanguages?: string[] } = {}) {
+async function loadService(
+  tables: Tables,
+  opts: { userLanguages?: string[]; failOn?: Array<Record<string, unknown>> } = {},
+) {
   vi.resetModules();
   const fake = createFakeSupabase(tables, {
     rpc: { increment_times_shown: { data: null }, increment_like_received: { data: null } },
+    ...(opts.failOn ? { failOn: opts.failOn as never } : {}),
   });
   vi.doMock("../../src/config/supabase.js", () => ({ supabase: fake.client }));
   vi.doMock("../../src/services/block.service.js", () => ({
@@ -410,5 +414,36 @@ describe("discover — empty_reason", () => {
     const res = await service.discover(VIEWER_ID, 1);
     expect(res.cards).toHaveLength(1);
     expect(res.empty_reason).toBeUndefined();
+  });
+});
+
+describe("discover — buyuk aday havuzu (canli olay 2026-09-17)", () => {
+  const ADAY_SAYISI = 250;
+  const adaylar = Array.from({ length: ADAY_SAYISI }, (_, i) => uid(100 + i));
+
+  const tablolar = (): Tables => ({
+    users: [viewerRow({ match_radius_km: 500 }), ...adaylar.map((id, i) => candidateRow(id, 1 + (i % 40)))],
+    questions: questionsFor(adaylar),
+    swipes: [],
+    matches: [],
+  });
+
+  it("havuz 100 adayi asinca soru sayilari kaybolmaz — kart doner", async () => {
+    // Canli olay: soru istatistigi TUM adaylari tek `.in()` ile cekiyordu. PostgREST
+    // sorgusu URL'de gider; 486 uuid ~18 KB eder ve istek "fetch failed" ile patlar.
+    // Sonuc: her adayin soru sayisi 0 sayiliyor, "2+ soru" kapisi tum havuzu eliyordu.
+    const svc = await loadService(tablolar());
+    const r = await svc.discover(VIEWER_ID, 1);
+
+    expect(r.cards.length).toBeGreaterThan(0);
+    expect(r.empty_reason).toBeUndefined();
+  });
+
+  it("soru istatistigi sorgusu patlarsa SESSIZCE bos donmez", async () => {
+    // Asil hata sessiz yutmaydi: `const { data } = await ...` ile error hic okunmuyordu.
+    // Bos liste "aday yok" gibi gorunur — yanlis sonuc, hatadan beterdir.
+    const svc = await loadService(tablolar(), { failOn: [{ table: "questions", op: "select" }] });
+
+    await expect(svc.discover(VIEWER_ID, 1)).rejects.toThrow();
   });
 });
