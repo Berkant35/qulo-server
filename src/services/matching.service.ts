@@ -230,15 +230,30 @@ export class MatchingService {
     const questionLocalesByUser = new Map<string, string[]>();
 
     if (candidateIds.length > 0) {
-      const { data: questionStats } = await supabase
-        .from('questions')
-        .select('user_id, category, stats_correct, stats_wrong, locale')
-        .in('user_id', candidateIds);
+      // PostgREST sorgusu URL'de gider: 486 aday icin tek `.in()` ~18 KB olur ve istek
+      // "TypeError: fetch failed" ile patlar. Hata YAKALANMADIGI icin questionStats bos
+      // kaliyor, her adayin soru sayisi 0 sayiliyor ve discover TAMAMEN bosaliyordu
+      // (canli olay 2026-09-17: seed profiller acilinca havuz 70 -> 486, tum kullanicilar
+      // icin `no_candidates`). Ayni tuzak seed hattinda uc kez yasanmisti.
+      const ID_PARCA = 100;
+      const questionStats: Array<Record<string, any>> = [];
+      for (let i = 0; i < candidateIds.length; i += ID_PARCA) {
+        const { data: parca, error: parcaError } = await supabase
+          .from('questions')
+          .select('user_id, category, stats_correct, stats_wrong, locale')
+          .in('user_id', candidateIds.slice(i, i + ID_PARCA));
+        if (parcaError) {
+          // Sessizce bos donmek "aday yok" gibi gorunur; bu yanlis sonuc, hatadan beterdir.
+          console.error('[matching] question stats query error:', parcaError.message);
+          throw Errors.SERVER_ERROR();
+        }
+        if (parca) questionStats.push(...parca);
+      }
 
       // Tek gecisde indeksle. Onceki kod her aday icin questionStats'i bastan
       // filtreliyordu (O(aday x soru)); limit 50 -> 500 ile bu yuk kabul edilemez.
       const rowsByUser = new Map<string, any[]>();
-      for (const row of questionStats ?? []) {
+      for (const row of questionStats) {
         const uid = row.user_id as string;
         const rows = rowsByUser.get(uid);
         if (rows) rows.push(row);
