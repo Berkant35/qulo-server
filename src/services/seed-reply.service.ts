@@ -174,14 +174,37 @@ async function satirAc(alanlar: Record<string, unknown>): Promise<boolean> {
   return !error;
 }
 
-/** Aktif eslesmelerde son silinmemis mesaji insan atmis olanlari kuyruga alir. Eklenen satir sayisini doner. */
-export async function scanAndEnqueue(now: Date = new Date(), rand: () => number = Math.random): Promise<number> {
-  const { data: seedler } = await supabase
+/**
+ * Seed kadrosu (id + persona) cache suresi. 416 seed x persona tik basina ~142 KB idi;
+ * 10 sn'lik cron'la gunde ~1,2 GB Supabase egress'i demekti (2026-09-21, ucretsiz kota asildi).
+ * Kadro nadiren degisir ve cache guvenlik kapisi DEGIL: `botYazabilir` her yazmada
+ * kullaniciyi DB'den yeniden okur, yani bayragi kaldirilan seed'e bot yazmaz.
+ */
+const SEED_KADRO_TTL_MS = 10 * 60_000;
+
+type SeedKadro = { id: string; seed_persona: unknown }[];
+let seedKadroCache: { at: number; seedler: SeedKadro } | null = null;
+
+async function seedKadrosu(now: Date): Promise<SeedKadro> {
+  if (seedKadroCache && now.getTime() - seedKadroCache.at < SEED_KADRO_TTL_MS) {
+    return seedKadroCache.seedler;
+  }
+  const { data, error } = await supabase
     .from('users')
     .select('id, seed_persona')
     .eq('is_seed_profile', true)
     .eq('is_test_account', true);
-  if (!seedler?.length) return 0;
+  // Hata ve bos sonuc cache'lenmez: bos sorgu bayt tasimaz, yeni seed ise hemen gorulur.
+  if (error || !data?.length) return [];
+  const seedler = data as SeedKadro;
+  seedKadroCache = { at: now.getTime(), seedler };
+  return seedler;
+}
+
+/** Aktif eslesmelerde son silinmemis mesaji insan atmis olanlari kuyruga alir. Eklenen satir sayisini doner. */
+export async function scanAndEnqueue(now: Date = new Date(), rand: () => number = Math.random): Promise<number> {
+  const seedler = await seedKadrosu(now);
+  if (!seedler.length) return 0;
 
   const seedIds = seedler.map((u) => u.id as string);
   const seedIdSet = new Set(seedIds);

@@ -256,3 +256,34 @@ describe('durum gecisleri', () => {
     expect(new Date(satir.reply_due_at as string).getTime()).toBeGreaterThan(Date.now());
   });
 });
+
+describe('scanAndEnqueue — seed kadrosu cache (egress)', () => {
+  const T0 = new Date('2026-09-21T10:00:00Z');
+  const dk = (n: number) => new Date(T0.getTime() + n * 60_000);
+
+  it('TTL icinde kadroyu DB\'den yeniden cekmez', async () => {
+    const { fake, svc } = await setup();
+    expect(await svc.scanAndEnqueue(T0)).toBe(1);
+    // Kuyruk bosaltilir ve seed bayragi kaldirilir: cache kullanilmiyorsa 0 donerdi.
+    fake.table('seed_reply_queue').length = 0;
+    fake.table('users').find((u) => u.id === SEED)!.is_seed_profile = false;
+    expect(await svc.scanAndEnqueue(dk(9))).toBe(1);
+  });
+
+  it('TTL dolunca kadroyu yeniler', async () => {
+    const { fake, svc } = await setup();
+    expect(await svc.scanAndEnqueue(T0)).toBe(1);
+    fake.table('seed_reply_queue').length = 0;
+    fake.table('users').find((u) => u.id === SEED)!.is_seed_profile = false;
+    expect(await svc.scanAndEnqueue(dk(11))).toBe(0);
+  });
+
+  it('bos kadro cache\'lenmez: yeni eklenen seed bir sonraki tikte gorulur', async () => {
+    const { fake, svc } = await setup();
+    const kullanicilar = [...fake.table('users')];
+    fake.table('users').length = 0;
+    expect(await svc.scanAndEnqueue(T0)).toBe(0);
+    fake.table('users').push(...kullanicilar);
+    expect(await svc.scanAndEnqueue(dk(1))).toBe(1);
+  });
+});
