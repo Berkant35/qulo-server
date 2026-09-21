@@ -13,6 +13,14 @@ import type { SeedPersona } from '../types/seed-persona.js';
  *
  * Ritim persona'dan turetilir: uyku penceresi, calisma deseni, cevaplayici tipi.
  * Deterministik — ayni tik icinde ayni sonuc — ama tikten tike degisir.
+ *
+ * Son gorulme GERI GITMEZ. `presenceFor` her tikte bagimsiz bir "kac dk once" cekiyor;
+ * bu deger dogrudan yazilinca ayni profile art arda bakan kullanici
+ * "2 saat once goruldu" -> "10 dk once goruldu" ziplamasini goruyordu (gercek hayatta
+ * son gorulme yalnizca ileri gider). Bu yuzden alan yalnizca profil CEVRIMICI oldugunda
+ * `now` ile tazelenir; cevrimdisi iken sabit kalir ve kendiliginden yaslanir — gercek
+ * presence semantigi, heartbeat de boyle calisir. `gorulmeDk` artik sadece hic degeri
+ * olmayan / bayat profillerin tek seferlik tohumlanmasinda kullanilir.
  */
 
 const VARSAYILAN_PERSONA: SeedPersona = {
@@ -67,41 +75,62 @@ export function presenceFor(persona: SeedPersona, seedKey: string, now: Date): S
 /** PostgREST URL siniri: id listesi tek sorguya konmaz (bkz. discover olayi 2026-09-17). */
 const ID_PARCA = 100;
 
+/** Son gorulmesi hic yazilmamis ya da bu kadar bayatlamis profil bir kez tohumlanir. */
+const TOHUM_ESIGI_MS = 12 * 60 * 60_000;
+
+async function topluYaz(idler: string[], patch: Record<string, unknown>): Promise<number> {
+  for (let i = 0; i < idler.length; i += ID_PARCA) {
+    const { error } = await supabase.from('users').update(patch).in('id', idler.slice(i, i + ID_PARCA));
+    if (error) throw error;
+  }
+  return idler.length;
+}
+
 /**
  * Tum seed profillerin cevrimici/son gorulme alanlarini tazeler. Ayni duruma dusen
  * profiller tek UPDATE ile yazilir: 416 satir icin 416 istek atilmaz.
+ *
+ * Durumu zaten dogru olan profile DOKUNULMAZ: cevrimdisi kalan bir profilin
+ * son gorulmesi sabittir, bos yere UPDATE yemez.
  */
 export async function refreshSeedPresence(now: Date = new Date()): Promise<number> {
   const { data: seedler, error } = await supabase
     .from('users')
-    .select('id, seed_persona')
+    .select('id, seed_persona, is_online, last_seen_at')
     .eq('is_seed_profile', true);
   if (error) throw error;
   if (!seedler?.length) return 0;
 
-  // Anahtar: `online` ya da gorulme dakikasi. Ayni anahtardakiler tek sorguda guncellenir.
-  const gruplar = new Map<string, string[]>();
+  const cevrimici: string[] = [];
+  const dusenler: string[] = [];
+  /** Tohumlanacaklar, gorulme dakikasina gore gruplanir: ayni dakika tek UPDATE. */
+  const tohum = new Map<number, string[]>();
+
   for (const u of seedler) {
+    const id = String(u.id);
     const persona = (u.seed_persona as SeedPersona | null) ?? VARSAYILAN_PERSONA;
-    const p = presenceFor(persona, String(u.id), now);
-    const anahtar = p.online ? 'online' : String(p.gorulmeDk);
-    const liste = gruplar.get(anahtar);
-    if (liste) liste.push(String(u.id));
-    else gruplar.set(anahtar, [String(u.id)]);
+    const p = presenceFor(persona, id, now);
+
+    if (p.online) { cevrimici.push(id); continue; }
+
+    const gorulme = u.last_seen_at ? Date.parse(String(u.last_seen_at)) : NaN;
+    if (Number.isNaN(gorulme) || now.getTime() - gorulme > TOHUM_ESIGI_MS) {
+      const liste = tohum.get(p.gorulmeDk);
+      if (liste) liste.push(id);
+      else tohum.set(p.gorulmeDk, [id]);
+    } else if (u.is_online) {
+      dusenler.push(id);   // cevrimiciydi, artik degil — son gorulme oldugu gibi kalir
+    }
   }
 
   let guncellenen = 0;
-  for (const [anahtar, idler] of gruplar) {
-    const online = anahtar === 'online';
-    const gorulme = new Date(now.getTime() - (online ? 0 : Number(anahtar) * 60_000)).toISOString();
-    for (let i = 0; i < idler.length; i += ID_PARCA) {
-      const { error: guncelleHatasi } = await supabase
-        .from('users')
-        .update({ is_online: online, last_seen_at: gorulme })
-        .in('id', idler.slice(i, i + ID_PARCA));
-      if (guncelleHatasi) throw guncelleHatasi;
-      guncellenen += Math.min(ID_PARCA, idler.length - i);
-    }
+  guncellenen += await topluYaz(cevrimici, { is_online: true, last_seen_at: now.toISOString() });
+  guncellenen += await topluYaz(dusenler, { is_online: false });
+  for (const [dk, idler] of tohum) {
+    guncellenen += await topluYaz(idler, {
+      is_online: false,
+      last_seen_at: new Date(now.getTime() - dk * 60_000).toISOString(),
+    });
   }
   return guncellenen;
 }

@@ -167,10 +167,15 @@ describe('processRow', () => {
     expect(sendMessage).not.toHaveBeenCalled();
   });
 
-  it('gonderimden sonra last_seen_at gunceller', async () => {
+  it('gonderimden sonra is_online + last_seen_at BIRLIKTE yazilir', async () => {
+    // Yalniz son gorulme yazilirsa sohbet basliginda "cevrimdisi" gorunurken saniyeler
+    // icinde cevap gelir — botu ele veren celiskinin ta kendisi (chat_screen_mixin
+    // statusTextFor once isOnline'a bakar, son gorulmeye degil).
     const { svc, fake } = await setup();
     await svc.processRow(row() as never);
-    expect(fake.table('users').find((u) => u.id === SEED)!.last_seen_at).toBeTruthy();
+    const u = fake.table('users').find((r) => r.id === SEED)!;
+    expect(u.is_online).toBe(true);
+    expect(Date.now() - new Date(u.last_seen_at as string).getTime()).toBeLessThan(5_000);
   });
 
   // GECMIS_LIMIT=20 yuzunden faz, kirpilmis gecmisten hesaplaniyordu: fazFor'a en fazla

@@ -106,6 +106,27 @@ describe('expireInactiveUsers — cron', () => {
     expect(fake.table('users')[0].is_online).toBe(true);
   });
 
+
+  it('seed profilleri KESMEZ — onlarin ritmi seed-presence cron\'una ait', async () => {
+    // Seed profil 5 dk'lik persona tikinde cevrimici yapiliyor; bu cron 3 dk'da bir
+    // calistigi icin eskiden pencerenin yarisini kesiyordu. Seed giris yapamaz,
+    // yani heartbeat de atmaz: burada yakalanmasi "takili kalmis cevrimici"
+    // temizligi degil, sadece ritmin bozulmasi demek.
+    const { fake, PresenceService } = await setup({
+      users: [
+        { id: A, is_online: true, last_seen_at: minsAgo(10), is_seed_profile: true },
+        { id: B, is_online: true, last_seen_at: minsAgo(10), is_seed_profile: false },
+        { id: C, is_online: true, last_seen_at: minsAgo(10) },   // kolon hic yazilmamis
+      ],
+    });
+
+    const expired = await PresenceService.expireInactiveUsers(3);
+
+    expect(expired).toBe(2);
+    const byId = Object.fromEntries(fake.table('users').map((u) => [u.id, u.is_online]));
+    expect(byId).toEqual({ [A]: true, [B]: false, [C]: false });
+  });
+
   it('DB hatasinda 0 doner ve PATLAMAZ — cron durmasin', async () => {
     // Firlatsaydi zamanlanmis gorev her tikte hata verir; kullanicilar o sure
     // boyunca cevrimici gorunmeye devam ederdi.

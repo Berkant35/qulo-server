@@ -350,6 +350,20 @@ const KRIZ_CEVABI =
 
 const GECMIS_LIMIT = 20;
 
+/**
+ * Bot bir sey yazdi: cevrimici bayragi ve son gorulme BIRLIKTE tazelenir.
+ * Yalniz `last_seen_at` yazilirsa sohbet basliginda "cevrimdisi" gorunurken
+ * saniyeler icinde cevap gelir — celiskinin ta kendisi. Bir sonraki presence
+ * tikinde (en fazla 5 dk) profil dogal ritmine doner.
+ */
+async function aktifIsaretle(seedUserId: string): Promise<void> {
+  const { error } = await supabase
+    .from('users')
+    .update({ is_online: true, last_seen_at: new Date().toISOString() })
+    .eq('id', seedUserId);
+  if (error) console.warn('[SeedReply] presence yazilamadi:', error.message);
+}
+
 function hataKodu(err: unknown): string {
   return String((err as { code?: string })?.code ?? (err as Error)?.message ?? '');
 }
@@ -461,7 +475,7 @@ export async function processRow(row: QueueRow): Promise<'sent' | 'deferred' | '
   }
 
   // "3 gun once goruldu" yazarken canli cevap yazma tutarsizligini kapat.
-  await supabase.from('users').update({ last_seen_at: new Date().toISOString() }).eq('id', row.seed_user_id);
+  await aktifIsaretle(row.seed_user_id);
   await markSent(row.id);
   return 'sent';
 }
@@ -532,7 +546,7 @@ export async function askQuestion(row: QueueRow): Promise<'sent' | 'deferred' | 
     return 'failed';
   }
 
-  await supabase.from('users').update({ last_seen_at: new Date().toISOString() }).eq('id', row.seed_user_id);
+  await aktifIsaretle(row.seed_user_id);
   await markSent(row.id);
   return 'sent';
 }
@@ -587,6 +601,7 @@ export async function answerQuestionRow(row: QueueRow): Promise<'sent' | 'deferr
     return 'failed';
   }
 
+  await aktifIsaretle(row.seed_user_id);
   await markSent(row.id);
   return 'sent';
 }
