@@ -64,8 +64,8 @@ describe('refreshSeedPresence', () => {
   it('tum seed profilleri tazeler, seed olmayanlara DOKUNMAZ', async () => {
     const fake = createFakeSupabase({
       users: [
-        { id: 's1', is_seed_profile: true, seed_persona: persona(), is_online: false, last_seen_at: '2026-09-12T10:00:00Z' },
-        { id: 's2', is_seed_profile: true, seed_persona: persona({ responder_type: 'anlik' }), is_online: false, last_seen_at: '2026-09-12T10:00:00Z' },
+        { id: 's1', is_seed_profile: true, is_test_account: true, seed_persona: persona(), is_online: false, last_seen_at: '2026-09-12T10:00:00Z' },
+        { id: 's2', is_seed_profile: true, is_test_account: true, seed_persona: persona({ responder_type: 'anlik' }), is_online: false, last_seen_at: '2026-09-12T10:00:00Z' },
         { id: 'gercek', is_seed_profile: false, is_online: false, last_seen_at: '2026-09-12T10:00:00Z' },
       ],
     });
@@ -88,7 +88,7 @@ describe('refreshSeedPresence', () => {
     // goruyordu; gercek hayatta son gorulme yalnizca ileri gider.
     const fake = createFakeSupabase({
       users: Array.from({ length: 40 }, (_, i) => ({
-        id: `s${i}`, is_seed_profile: true,
+        id: `s${i}`, is_seed_profile: true, is_test_account: true,
         seed_persona: persona({ work_pattern: 'esnek' }),
         is_online: false,
         last_seen_at: new Date(trSaat(20).getTime() - 30 * 60_000).toISOString(),
@@ -117,8 +117,8 @@ describe('refreshSeedPresence', () => {
     const taze = new Date(trSaat(3).getTime() - 90 * 60_000).toISOString();
     const fake = createFakeSupabase({
       users: [
-        { id: 's1', is_seed_profile: true, seed_persona: persona(), is_online: false, last_seen_at: taze },
-        { id: 's2', is_seed_profile: true, seed_persona: persona(), is_online: true, last_seen_at: taze },
+        { id: 's1', is_seed_profile: true, is_test_account: true, seed_persona: persona(), is_online: false, last_seen_at: taze },
+        { id: 's2', is_seed_profile: true, is_test_account: true, seed_persona: persona(), is_online: true, last_seen_at: taze },
       ],
     });
     vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
@@ -136,7 +136,7 @@ describe('refreshSeedPresence', () => {
     const an = trSaat(20);
     const fake = createFakeSupabase({
       users: Array.from({ length: 60 }, (_, i) => ({
-        id: `s${i}`, is_seed_profile: true,
+        id: `s${i}`, is_seed_profile: true, is_test_account: true,
         seed_persona: persona({ responder_type: 'anlik', work_pattern: 'esnek' }),
         is_online: false,
         last_seen_at: new Date(an.getTime() - 120 * 60_000).toISOString(),
@@ -158,9 +158,9 @@ describe('refreshSeedPresence', () => {
     const an = trSaat(3);   // uyku penceresi: hicbir profil cevrimici olmaz, tohum yolu kesin
     const fake = createFakeSupabase({
       users: [
-        { id: 'bayat', is_seed_profile: true, seed_persona: persona(), is_online: false,
+        { id: 'bayat', is_seed_profile: true, is_test_account: true, seed_persona: persona(), is_online: false,
           last_seen_at: new Date(an.getTime() - 5 * 24 * 60 * 60_000).toISOString() },
-        { id: 'bos', is_seed_profile: true, seed_persona: persona(), is_online: false, last_seen_at: null },
+        { id: 'bos', is_seed_profile: true, is_test_account: true, seed_persona: persona(), is_online: false, last_seen_at: null },
       ],
     });
     vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
@@ -174,6 +174,22 @@ describe('refreshSeedPresence', () => {
       expect(dk).toBeGreaterThan(0);
       expect(dk).toBeLessThanOrEqual(12 * 60);          // tohum esigi icinde
     }
+  });
+
+  it('is_test_account=false olan seed profile DOKUNMAZ — yazma kapisiyla ayni iki bayrak', async () => {
+    // Boyle bir satir discover'da gercek kullanicilara gorunur (matching.service
+    // `is_test_account` filtreler); ona uydurma cevrimici ritmi yazmak sahte sinyaldir.
+    const fake = createFakeSupabase({
+      users: [
+        { id: 'acik', is_seed_profile: true, is_test_account: false, seed_persona: persona(),
+          is_online: false, last_seen_at: '2026-09-12T10:00:00Z' },
+      ],
+    });
+    vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
+    const { refreshSeedPresence } = await import('../../src/services/seed-presence.service.js');
+
+    expect(await refreshSeedPresence(trSaat(20))).toBe(0);
+    expect(fake.table('users')[0].last_seen_at).toBe('2026-09-12T10:00:00Z');
   });
 
   it('seed yoksa no-op', async () => {

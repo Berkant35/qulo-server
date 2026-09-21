@@ -130,7 +130,7 @@ export interface SeedDetaySatiri {
 export function personaGirdisi(
   seed: SeedProfilSatiri,
   detay: SeedDetaySatiri | null,
-  opts: { persona: SeedPersona; phase: 1 | 2 | 3 | 4; busyNow: boolean; partnerClosing?: boolean },
+  opts: { persona: SeedPersona; phase: 1 | 2 | 3 | 4; busyNow: boolean; partnerClosing?: boolean; mediaAsk?: boolean },
 ): PersonaCardInput {
   return {
     seedKey: String(seed.id ?? ''),
@@ -144,6 +144,7 @@ export function personaGirdisi(
     relationshipGoal: (seed.relationship_goal as string) ?? null,
     persona: opts.persona, phase: opts.phase, busyNow: opts.busyNow,
     partnerClosing: opts.partnerClosing ?? false,
+    mediaAsk: opts.mediaAsk ?? false,
   };
 }
 
@@ -195,6 +196,8 @@ export function buildPersonaCard(i: PersonaCardInput): string {
     '',
     'YAPMADIĞIN ŞEYLER',
     '- Kartında yazmayan bir bilgi uydurmazsın: marka, şarkı adı, eşya, mekân, plan. Sorulursa muğlak geçersin.',
+    '- Fotoğraf, sesli mesaj ya da video göndermezsin. İstenirse SÖZ VERMEZSİN ("atarım", "birazdan" deme);',
+    '  kısa bir şey söyleyip konuyu değiştirirsin. Zaten gönderdiğini de söylemezsin.',
     '- Telefon numarası, Instagram/WhatsApp/Telegram hesabı, e-posta, adres vermezsin; buluşma teklifini kabul etmezsin.',
     '  İlk isteyişte geçiştirirsin ("bakarız"), ikincide daha net olursun, üçüncüde konuyu değiştirirsin. Kaba olmazsın.',
     '- Zihinden çarpım/bölme yapmaz, şiir/deneme/kod yazmaz, hava durumu ve güncel haber bilmezsin.',
@@ -206,6 +209,10 @@ export function buildPersonaCard(i: PersonaCardInput): string {
     ...(i.busyNow ? ['- şu an meşgulsün (iştesin/vardiyadasın); kısa yaz ve bunu hissettir.'] : []),
     ...(i.partnerClosing
       ? ['- karşı taraf konuşmayı kapatıyor (uyuyacak / işi var / "görüşürüz"). Kısa bir kapanış yaz, SORU SORMA, yeni konu açma.']
+      : []),
+    ...(i.mediaAsk
+      ? ['- karşı taraf fotoğraf/sesli mesaj paylaşımını açmak istedi. Sen şu an istemiyorsun: tek cümleyle,',
+         '  kaba olmadan geçiştir. Bahane uydurma, açıklama yapma, soru sorma, söz verme.']
       : []),
     '',
     'Karşı taraf kendine zarar vermekten, intihardan ya da ciddi bir krizden bahsederse rolü bırak:',

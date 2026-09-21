@@ -10,6 +10,7 @@ import type { LifecycleRuleKey } from './notification-engine/rules.js';
 export const PUSH_TYPES = [
   'new_message',
   'new_message_image',
+  'new_message_voice',
   'new_match',
   'new_match_solver',
   'new_match_badge',
@@ -66,6 +67,7 @@ interface NotificationTypeConfig {
 const NOTIFICATION_CONFIG: Record<AnyPushType, NotificationTypeConfig> = {
   new_message:            { category: 'messages' },
   new_message_image:      { category: 'messages' },
+  new_message_voice:      { category: 'messages' },
   new_match:              { actionUrl: '/matches', category: 'matches', badgeTemplateKey: 'new_match_badge' },
   new_match_solver:       { actionUrl: '/matches', category: 'matches' },
   new_match_badge:        { actionUrl: '/matches', category: 'matches' },

@@ -2,6 +2,7 @@
   "push": {
     "new_message": "{name} t'a envoyé un message",
     "new_message_image": "{name} t'a envoyé une photo",
+    "new_message_voice": "{name} t'a envoyé un message vocal",
     "new_match": "Nouveau match ! Quelqu'un a répondu correctement à toutes tes questions",
     "new_match_solver": "Félicitations ! Tu as répondu correctement à toutes les questions, tu as un nouveau match !",
     "new_match_badge": "Quelqu'un a résolu ton quiz avec le badge {badge} ! Tu as un nouveau match !",

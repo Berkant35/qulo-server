@@ -2,6 +2,7 @@
   "push": {
     "new_message": "{name} wysłał(a) Ci wiadomość",
     "new_message_image": "{name} wysłał(a) Ci zdjęcie",
+    "new_message_voice": "{name} wysłał(a) Ci wiadomość głosową",
     "new_match": "Nowe dopasowanie! Ktoś poprawnie odpowiedział na wszystkie Twoje pytania",
     "new_match_solver": "Gratulacje! Odpowiedział(a)eś poprawnie na wszystkie pytania, masz nowe dopasowanie!",
     "new_match_badge": "Ktoś rozwiązał Twój quiz z odznaką {badge}! Masz nowe dopasowanie!",

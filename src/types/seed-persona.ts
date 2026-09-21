@@ -45,4 +45,6 @@ export interface PersonaCardInput {
   busyNow: boolean;
   /** Karsi taraf konusmayi kapatiyor (uyuyacak, isi var, "gorusuruz"): kapanis yaz, soru sorma. */
   partnerClosing?: boolean;
+  /** Karsi taraf foto/ses paylasimi acmak istedi: nazikce gecistir (bot medya GONDEREMEZ). */
+  mediaAsk?: boolean;
 }

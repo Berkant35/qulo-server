@@ -1,10 +1,11 @@
 {
   "push": {
-    "new_message": "{name} size mesaj gonderdi",
-    "new_message_image": "{name} size bir fotograf gonderdi",
-    "new_match": "Yeni bir eslesme! Birisi tum sorularinizi dogru cozdu",
-    "new_match_solver": "Tebrikler! Tum sorulari dogru cozdun, yeni bir eslesmen var!",
-    "new_match_badge": "Birisi sorularini {badge} badge ile cozdu! Yeni eslesmen var!",
+    "new_message": "{name} size mesaj gönderdi",
+    "new_message_image": "{name} size bir fotoğraf gönderdi",
+    "new_message_voice": "{name} size sesli mesaj gönderdi",
+    "new_match": "Yeni bir eşleşme! Birisi tüm sorularınızı doğru çözdü",
+    "new_match_solver": "Tebrikler! Tüm soruları doğru çözdün, yeni bir eşleşmen var!",
+    "new_match_badge": "Birisi sorularını {badge} badge ile çözdü! Yeni eşleşmen var!",
     "chat_question_answered": "Sohbet sorunuz cevaplandi ({result})",
     "lifecycle_unread_message": {
       "title": "Okunmamış mesajın var",

@@ -1,12 +1,31 @@
 import cron from "node-cron";
 import { supabase } from "../config/supabase.js";
-import { scanAndEnqueue, claimDue, recoverStale, processRow, askQuestion, answerQuestionRow } from "../services/seed-reply.service.js";
+import {
+  scanAndEnqueue, claimDue, recoverStale,
+  processRow, askQuestion, answerQuestionRow, respondMediaRequest,
+  type QueueRow, type IslemSonucu,
+} from "../services/seed-reply.service.js";
 
 let task: cron.ScheduledTask | null = null;
 let inFlight = false;
 
 /** Tik basina ust sinir: chatLimiter servis cagrisinda devrede DEGIL, fren burada. */
 const TIK_BUTCESI = 6;
+
+/**
+ * Kuyruk turu -> isleyici. `Record` exhaustive: `kind` union'ina yeni bir deger
+ * eklendiginde bu tablo doldurulana kadar derleme kirilir. Donus tipi `string`'e
+ * genisletilmemeli, yoksa asagidaki `=== "failed"` karsilastirmasi tip denetiminden cikar.
+ *
+ * `??` fallback'i derleyiciye gore olu ama `claimDue` RPC sonucunu cast ediyor:
+ * uretimde union disi bir `kind` (eski satir) gercekten gelebilir.
+ */
+const ISLEYICILER: Record<QueueRow["kind"], (row: QueueRow) => Promise<IslemSonucu>> = {
+  message: processRow,
+  question: askQuestion,
+  question_answer: answerQuestionRow,
+  media_request: respondMediaRequest,
+};
 
 export async function seedReplyTick(): Promise<void> {
   if (inFlight) {
@@ -24,9 +43,7 @@ export async function seedReplyTick(): Promise<void> {
 
     const satirlar = await claimDue(TIK_BUTCESI);
     for (const row of satirlar) {
-      const sonuc = row.kind === "question" ? await askQuestion(row)
-        : row.kind === "question_answer" ? await answerQuestionRow(row)
-        : await processRow(row);
+      const sonuc = await (ISLEYICILER[row.kind] ?? processRow)(row);
       if (sonuc === "failed") {
         console.warn(`[SeedReplyCron] satir basarisiz match=${row.match_id} kind=${row.kind}`);
       }

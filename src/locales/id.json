@@ -2,6 +2,7 @@
   "push": {
     "new_message": "{name} mengirimimu pesan",
     "new_message_image": "{name} mengirimimu foto",
+    "new_message_voice": "{name} mengirimimu pesan suara",
     "new_match": "Kecocokan baru! Seseorang menjawab semua pertanyaanmu dengan benar",
     "new_match_solver": "Selamat! Kamu menjawab semua pertanyaan dengan benar, kamu punya kecocokan baru!",
     "new_match_badge": "Seseorang menyelesaikan kuismu dengan lencana {badge}! Kamu punya kecocokan baru!",

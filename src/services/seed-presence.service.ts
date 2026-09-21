@@ -97,7 +97,11 @@ export async function refreshSeedPresence(now: Date = new Date()): Promise<numbe
   const { data: seedler, error } = await supabase
     .from('users')
     .select('id, seed_persona, is_online, last_seen_at')
-    .eq('is_seed_profile', true);
+    // Yazma kapisiyla AYNI iki bayrak (`botYazabilir`): `is_test_account=false` yapilan
+    // bir seed profil gercek kullanicilara acilir, o profile uydurma bir cevrimici
+    // ritmi yazmak gercek bir kullaniciya sahte sinyal vermek olurdu.
+    .eq('is_seed_profile', true)
+    .eq('is_test_account', true);
   if (error) throw error;
   if (!seedler?.length) return 0;
 

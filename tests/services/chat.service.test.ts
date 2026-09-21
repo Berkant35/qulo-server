@@ -37,8 +37,15 @@ async function setup(seed: Tables = {}) {
     ...seed,
   });
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
+
+  // Push fire-and-forget: gercek servis cagrilsaydi Firebase'e uzanirdi.
+  const sendPush = vi.fn<(userId: string, type: string, ...rest: unknown[]) => Promise<void>>(async () => undefined);
+  vi.doMock('../../src/services/notification.service.js', () => ({
+    NotificationService: { sendPush, getUserDisplayName: vi.fn(async () => 'Berkant') },
+  }));
+
   const { chatService } = await import('../../src/services/chat.service.js');
-  return { fake, chatService };
+  return { fake, chatService, sendPush };
 }
 
 beforeEach(() => {
@@ -201,5 +208,40 @@ describe('markAsRead', () => {
 
     const other = fake.table('messages').find((m) => m.match_id !== MATCH)!;
     expect(other.read_at).toBeNull();
+  });
+});
+
+describe('sendMessage — bildirim sablonu medya turune gore', () => {
+  // Fotografin ozel sablonu vardi ama sesli mesaj "size mesaj gonderdi" diyordu:
+  // alici bildirimden neyin geldigini anlayamiyordu. Sablon 18 dilde de eklendi.
+  // Medya URL'si kendi storage'imizi gostermek zorunda (chat.service domain kapisi).
+  const MEDYA = 'https://test.supabase.co/storage/v1/object/public/chat-media/';
+
+  const gonder = async (over: { isImage?: boolean; audioUrl?: string }) => {
+    // Medya gonderimi iki tarafin da iznini ister (chat.service sendMessage kapisi).
+    const { chatService, sendPush } = await setup({
+      matches: [activeMatch({ media_enabled_by_user1: true, media_enabled_by_user2: true })],
+    });
+    const icerik = over.isImage ? `${MEDYA}a.jpg` : 'selam';
+    await chatService.sendMessage(
+      A, MATCH, icerik, over.isImage ?? false, over.audioUrl, over.audioUrl ? 7 : undefined,
+    );
+    await vi.waitFor(() => expect(sendPush).toHaveBeenCalled());
+    return sendPush.mock.calls[0]!;
+  };
+
+  it('sesli mesaj -> new_message_voice', async () => {
+    const [, tip] = await gonder({ audioUrl: `${MEDYA}a.m4a` });
+    expect(tip).toBe('new_message_voice');
+  });
+
+  it('fotograf -> new_message_image', async () => {
+    const [, tip] = await gonder({ isImage: true });
+    expect(tip).toBe('new_message_image');
+  });
+
+  it('duz metin -> new_message', async () => {
+    const [, tip] = await gonder({});
+    expect(tip).toBe('new_message');
   });
 });

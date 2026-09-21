@@ -189,7 +189,9 @@ export class ChatService {
 
     // Determine other user and send push notification
     const otherUserId = match.user1_id === userId ? match.user2_id : match.user1_id;
-    const pushType = isImage ? "new_message_image" : "new_message";
+    // Ses kendi sablonunu alir: fotografin ozel sablonu vardi ama sesli mesaj
+    // "size mesaj gonderdi" diyordu — alici neyin geldigini bildirimden anlayamiyordu.
+    const pushType = audioUrl ? "new_message_voice" : isImage ? "new_message_image" : "new_message";
 
     // Fire-and-forget push notification (resolve sender name for template)
     void NotificationService.getUserDisplayName(userId).then((senderName) =>
