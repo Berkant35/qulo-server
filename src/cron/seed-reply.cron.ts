@@ -2,7 +2,7 @@ import cron from "node-cron";
 import { supabase } from "../config/supabase.js";
 import {
   scanAndEnqueue, claimDue, recoverStale,
-  processRow, askQuestion, answerQuestionRow, respondMediaRequest,
+  processRow, askQuestion, answerQuestionRow, respondMediaRequest, markCancelled,
   type QueueRow, type IslemSonucu,
 } from "../services/seed-reply.service.js";
 
@@ -17,8 +17,11 @@ const TIK_BUTCESI = 6;
  * eklendiginde bu tablo doldurulana kadar derleme kirilir. Donus tipi `string`'e
  * genisletilmemeli, yoksa asagidaki `=== "failed"` karsilastirmasi tip denetiminden cikar.
  *
- * `??` fallback'i derleyiciye gore olu ama `claimDue` RPC sonucunu cast ediyor:
- * uretimde union disi bir `kind` (eski satir) gercekten gelebilir.
+ * Union disi bir `kind` uretimde GERCEKTEN gelebilir: `claimDue` RPC sonucunu cast
+ * ediyor ve Railway rolling deploy'unda eski instance yeni turleri gorur. 2026-09-21'de
+ * tam bu oldu — eski surum bir `media_request` satirini metin cevabi yoluna dusurdu,
+ * bot sohbete yazmaya calisti ve medya istegi `pending` kaldi. Bu yuzden bilinmeyen tur
+ * ARTIK metin cevabina dusmuyor: satir iptal edilir, dogru surum yeni satiri acar.
  */
 const ISLEYICILER: Record<QueueRow["kind"], (row: QueueRow) => Promise<IslemSonucu>> = {
   message: processRow,
@@ -43,7 +46,13 @@ export async function seedReplyTick(): Promise<void> {
 
     const satirlar = await claimDue(TIK_BUTCESI);
     for (const row of satirlar) {
-      const sonuc = await (ISLEYICILER[row.kind] ?? processRow)(row);
+      const isleyici = ISLEYICILER[row.kind];
+      if (!isleyici) {
+        console.warn(`[SeedReplyCron] bilinmeyen kuyruk turu, satir iptal: kind=${row.kind} id=${row.id}`);
+        await markCancelled(row.id, `bilinmeyen kind: ${row.kind}`);
+        continue;
+      }
+      const sonuc = await isleyici(row);
       if (sonuc === "failed") {
         console.warn(`[SeedReplyCron] satir basarisiz match=${row.match_id} kind=${row.kind}`);
       }

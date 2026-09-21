@@ -492,8 +492,17 @@ async function seedBaglami(
   return { sistem, turns, sonInsanMetni };
 }
 
+/**
+ * `last_error` sutununa yazilacak kisa kod. LLM hatalarinda kod TEK BASINA yetersiz:
+ * `seed-llm.service` hem HTTP durum hatasini hem ag hatasini `http` kodu altinda
+ * topluyor, yani "llm: http" satiri "401 mi, 429 mu, ag mi" sorusunu cevaplamiyordu
+ * (canli ornek 2026-09-21). Kod + mesajin bas kismi birlikte yazilir.
+ */
 function hataKodu(err: unknown): string {
-  return String((err as { code?: string })?.code ?? (err as Error)?.message ?? '');
+  const kod = (err as { code?: string })?.code;
+  const mesaj = (err as Error)?.message ?? '';
+  if (!kod) return String(mesaj);
+  return mesaj ? `${kod}: ${mesaj.slice(0, 120)}` : String(kod);
 }
 
 /**

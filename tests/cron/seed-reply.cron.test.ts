@@ -15,11 +15,12 @@ async function setup(enabled: boolean, satirlar: Satir[] = []) {
     answerQuestionRow: vi.fn(async () => 'sent' as const),
     respondMediaRequest: vi.fn(async () => 'sent' as const),
   };
+  const markCancelled = vi.fn(async () => undefined);
   vi.doMock('../../src/services/seed-reply.service.js', () => ({
-    scanAndEnqueue, claimDue, recoverStale, ...isleyiciler,
+    scanAndEnqueue, claimDue, recoverStale, markCancelled, ...isleyiciler,
   }));
   const mod = await import('../../src/cron/seed-reply.cron.js');
-  return { mod, scanAndEnqueue, claimDue, recoverStale, ...isleyiciler };
+  return { mod, scanAndEnqueue, claimDue, recoverStale, markCancelled, ...isleyiciler };
 }
 
 beforeEach(() => vi.resetModules());
@@ -61,10 +62,16 @@ describe('seedReplyTick', () => {
     }
   });
 
-  it('bilinmeyen tur metin cevabina duser — eski satirlar patlatmaz', async () => {
-    const { mod, processRow } = await setup(true, [{ id: 'r9', kind: 'gelecekteki_tur' }]);
+  it('bilinmeyen tur IPTAL edilir — metin cevabina DUSMEZ', async () => {
+    // Railway rolling deploy'unda eski instance yeni turleri gorur. 2026-09-21'de
+    // tam bu oldu: bir `media_request` satiri metin cevabi yoluna dustu, bot sohbete
+    // yazmaya calisti ve medya istegi `pending` kaldi. Yanlis eylem, eylemsizlikten kotu.
+    const { mod, processRow, markCancelled } = await setup(true, [{ id: 'r9', kind: 'gelecekteki_tur' }]);
+
     await mod.seedReplyTick();
-    expect(processRow).toHaveBeenCalledWith(expect.objectContaining({ id: 'r9' }));
+
+    expect(processRow).not.toHaveBeenCalled();
+    expect(markCancelled).toHaveBeenCalledWith('r9', expect.stringContaining('gelecekteki_tur'));
   });
 
   it('is tanimi 10 saniyelik zamanlamayi korur', async () => {
