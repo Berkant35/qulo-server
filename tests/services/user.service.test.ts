@@ -346,3 +346,26 @@ describe('userService.updateProfile — uygulama dili tercihlere dahil', () => {
     });
   });
 });
+
+/**
+ * Konum güncellemesi ülkeyi de yazar (2026-09-23). users.country tüm uygulama
+ * kullanıcılarında NULL kalıyordu: mobil isoCountryCode'u düşürüyor, şema da
+ * kabul etmiyordu. Çok bölgeli reklam değerlendirmesi bunsuz imkânsız.
+ */
+describe('userService.updateLocation — country', () => {
+  it('country verilince lat/lng/city ile birlikte users.country yazılır', async () => {
+    const { fake, userService } = await setup({ users: [user(ME)] });
+
+    await userService.updateLocation(ME, { lat: 41.0, lng: 29.0, city: 'Istanbul', country: 'TR' });
+
+    expect(fake.table('users')[0]).toMatchObject({ lat: 41.0, lng: 29.0, city: 'Istanbul', country: 'TR' });
+  });
+
+  it('country verilmezse mevcut değer korunur (eski istemci)', async () => {
+    const { fake, userService } = await setup({ users: [user(ME, { country: 'TR' })] });
+
+    await userService.updateLocation(ME, { lat: 52.3, lng: 4.9, city: 'Amsterdam' });
+
+    expect(fake.table('users')[0]).toMatchObject({ city: 'Amsterdam', country: 'TR' });
+  });
+});

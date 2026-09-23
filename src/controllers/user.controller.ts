@@ -46,8 +46,7 @@ export async function updateDetailsHandler(req: Request, res: Response, next: Ne
 
 export async function updateLocationHandler(req: Request, res: Response, next: NextFunction) {
   try {
-    const { lat, lng, city } = req.body as UpdateLocationInput;
-    await userService.updateLocation(req.user!.userId, lat, lng, city);
+    await userService.updateLocation(req.user!.userId, req.body as UpdateLocationInput);
     res.json({ message: "Location updated" });
   } catch (err) {
     next(err);

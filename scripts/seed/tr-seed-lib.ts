@@ -29,7 +29,7 @@ export const LOCALE = "tr";
 export const QUESTIONS_PER_PROFILE = 3;
 export const PERSONALITIES = ["İçe dönük", "Dışa dönük", "Ambivert"] as const;
 export const FREQUENCIES = ["YES", "NO", "SOMETIMES"] as const;
-const COUNTRY = "Türkiye";
+const COUNTRY = "TR"; // ISO 3166-1 alpha-2 (migration 062) — updateLocation ve FormatManager aynı biçim
 /** Türkiye sınır kutusu (kabaca) — ilçe koordinatları bunun içinde olmalı. */
 const TR_BBOX = { latMin: 35.8, latMax: 42.2, lngMin: 25.6, lngMax: 45.0 };
 const REFERRAL_LENGTH = 8; // users.referral_code VARCHAR(8)

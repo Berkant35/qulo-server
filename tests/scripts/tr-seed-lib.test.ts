@@ -146,7 +146,7 @@ describe("tr-seed-lib — saf builder'lar", () => {
     expect(row.gender).toBe("WOMAN");
     expect(row.gender_pref).toBe("MAN");
     expect(row.city).toBe("Bornova");
-    expect(row.country).toBe("Türkiye");
+    expect(row.country).toBe("TR"); // ISO-2, migration 062
     expect(row.bio).toBe(entry().bio);
     expect(row.interests).toEqual(["music", "travel", "food"]);
     expect(row.relationship_goal).toBe("NOT_SURE");

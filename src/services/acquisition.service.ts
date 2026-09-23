@@ -1,5 +1,6 @@
 import { supabase } from "../config/supabase.js";
 import { pickLabel } from "../utils/locales.js";
+import { Errors } from "../utils/errors.js";
 
 export class AcquisitionService {
   async getChannels(userId: string, overrideLocale?: string) {
@@ -44,13 +45,17 @@ export class AcquisitionService {
     let channelKey: string | null = null;
     let isFreeform = false;
     if (input.channelId) {
+      // Pasif/bilinmeyen kanal: FK 500'ü yerine 400; rollback "pasifleştir" stratejisi
+      // (061) ancak burada da filtrelenirse tutar — listeyi önbelleklemiş istemci geçemez.
       const { data: ch } = await supabase
         .from("acquisition_channels")
         .select("key, is_freeform")
         .eq("id", input.channelId)
+        .eq("is_active", true)
         .maybeSingle();
-      channelKey = ch?.key ?? null;
-      isFreeform = ch?.is_freeform ?? false;
+      if (!ch) throw Errors.VALIDATION_ERROR({ channel_id: "unknown or inactive channel" });
+      channelKey = ch.key;
+      isFreeform = ch.is_freeform;
     }
 
     const { error: insertErr } = await supabase.from("user_acquisition").insert({

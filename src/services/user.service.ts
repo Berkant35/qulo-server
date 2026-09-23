@@ -1,3 +1,4 @@
+import type { UpdateLocationInput } from "../validators/user.validator.js";
 import { supabase } from "../config/supabase.js";
 import type { SupportedLocale } from "../constants/locales.js";
 import { questionLocale } from "../constants/locales.js";
@@ -178,9 +179,10 @@ export class UserService {
     return details;
   }
 
-  async updateLocation(userId: string, lat: number, lng: number, city?: string) {
+  async updateLocation(userId: string, { lat, lng, city, country }: UpdateLocationInput) {
     const updateData: Record<string, unknown> = { lat, lng };
     if (city) updateData.city = city;
+    if (country) updateData.country = country;
 
     const { error } = await supabase
       .from("users")

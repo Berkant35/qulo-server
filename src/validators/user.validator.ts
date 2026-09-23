@@ -2,6 +2,10 @@ import { z } from "zod";
 import { SUPPORTED_LOCALES } from '../constants/locales.js';
 import { INTEREST_POOL } from '../constants/interest-pool.js';
 
+// ISO 3166-1 alpha-2 (mobil Placemark.isoCountryCode). users.country'ye yazan HER yol bunu
+// kullanır; FormatManager ve bölge bazlı kampanya raporları bu biçimi bekler, tam ad reddedilir.
+export const countryCodeSchema = z.string().regex(/^[A-Z]{2}$/);
+
 export const updateProfileSchema = z.object({
   name: z.string().trim().min(1).max(50).optional(),
   surname: z.string().trim().min(1).max(50).optional(),
@@ -11,7 +15,7 @@ export const updateProfileSchema = z.object({
   age_pref_min: z.number().int().min(18).max(99).optional(),
   age_pref_max: z.number().int().min(18).max(99).optional(),
   city: z.string().trim().max(100).optional(),
-  country: z.string().max(100).optional(),
+  country: countryCodeSchema.optional(),
   locale: z.enum(SUPPORTED_LOCALES as unknown as [string, ...string[]]).optional(),
   relationship_goal: z.enum(["SERIOUS", "FRIENDSHIP", "NOT_SURE"]).optional(),
   // Mobil 16 uygulama dilini sunuyor (AppConstants.supportedQuestionLocales); hepsi kabul.
@@ -62,6 +66,7 @@ export const updateLocationSchema = z.object({
   lat: z.number().min(-90).max(90),
   lng: z.number().min(-180).max(180),
   city: z.string().max(100).optional(),
+  country: countryCodeSchema.optional(),
 });
 
 export type UpdateLocationInput = z.infer<typeof updateLocationSchema>;
