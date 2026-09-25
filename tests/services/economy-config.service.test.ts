@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createFakeSupabase, type Tables, type FakeSupabaseOptions } from '../helpers/fake-supabase.js';
-import { activeConfigRow, economyConfigFixture } from '../helpers/economy-config.fixture.js';
-import type { EconomyConfigVersion } from '../../src/types/economy-config.schema.js';
+import { activeConfigRow, economyConfigFixture, rewardsWithoutStarterPowers } from '../helpers/economy-config.fixture.js';
+import { DEFAULT_STARTER_POWERS, type EconomyConfigVersion } from '../../src/types/economy-config.schema.js';
 
 /**
  * Ekonominin tek fiyat kaynağı. Buradaki bir hata tüm harcama/ödül akışlarına yayılır,
@@ -312,5 +312,58 @@ describe('compareVersions', () => {
       'config.powerCosts.ORACLE.greenCost',
       'config.powerCosts.ORACLE.purpleCost',
     ]);
+  });
+});
+
+/**
+ * Başlangıç paketi (2026-09-25): `rewards.starterPowers` — yeni kayıtta envantere verilen güçler.
+ * Retention ile aynı geriye uyum kalıbı: eski versiyonda alan yoksa varsayılan (her güçten 1).
+ */
+describe('starterPowers (başlangıç paketi)', () => {
+  it('alan yoksa varsayılana düşer: her güçten 1', async () => {
+    const { economyConfigService } = await setup({
+      economy_config_versions: [{ ...activeConfigRow(), config: { ...economyConfigFixture, rewards: rewardsWithoutStarterPowers() } }],
+    });
+
+    const { config } = await economyConfigService.getActiveConfig();
+    expect(config.rewards.starterPowers).toEqual(DEFAULT_STARTER_POWERS);
+    expect(Object.keys(config.rewards.starterPowers)).toHaveLength(8);
+  });
+
+  it('güç başına adet sınırını (5) aşan config reddedilir, DB\'ye yazılmaz', async () => {
+    const { fake, economyConfigService } = await setup();
+    const invalid = {
+      ...economyConfigFixture,
+      rewards: { ...economyConfigFixture.rewards, starterPowers: { ORACLE: 6 } },
+    };
+
+    await expect(economyConfigService.createVersion(invalid, 'admin', 'hatali')).rejects.toThrow();
+    expect(fake.table('economy_config_versions')).toHaveLength(1);
+  });
+
+  it('bilinmeyen güç adı reddedilir', async () => {
+    const { economyConfigService } = await setup();
+    const unknownPower: Record<string, number> = { LASER: 1 }; // çalışma zamanı anahtarı: şema reddetmeli
+    const invalid = {
+      ...economyConfigFixture,
+      rewards: { ...economyConfigFixture.rewards, starterPowers: unknownPower },
+    };
+
+    await expect(economyConfigService.createVersion(invalid, 'admin', 'hatali')).rejects.toThrow();
+  });
+
+  it('kısmi tanım geçerli: yalnız listelenen güçler kalır, varsayılanla doldurulmaz', async () => {
+    // RPC yok → iki sorgulu yedek yol gerçekten yazar; aksi halde eski aktif satır okunur.
+    const { economyConfigService } = await setup({}, {
+      rpc: { create_economy_config_version: { error: { message: 'rpc yok' } } },
+    });
+    const partial = {
+      ...economyConfigFixture,
+      rewards: { ...economyConfigFixture.rewards, starterPowers: { ORACLE: 2 } },
+    };
+
+    await economyConfigService.createVersion(partial, 'admin', 'yalniz oracle');
+    const { config } = await economyConfigService.getActiveConfig();
+    expect(config.rewards.starterPowers).toEqual({ ORACLE: 2 });
   });
 });

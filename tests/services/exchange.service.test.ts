@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createFakeSupabase, type Tables, type FakeSupabaseOptions } from '../helpers/fake-supabase.js';
 import { activeConfigRow } from '../helpers/economy-config.fixture.js';
+import { DEFAULT_STARTER_POWERS } from '../../src/types/economy-config.schema.js';
 
 /**
  * Exchange, elmasın gerçekten harcandığı yer: yeşil→mor dönüşümü ve güç satın alma.
@@ -353,5 +354,51 @@ describe('ExchangeService.getRates — teklif ile tahsilat ayni kaynaktan', () =
     // Tahsilat da ayni kolonu kullaniyor: 100 - 9 = 91.
     await exchangeService.buyPower('u1', 'NEW_POWER', 'PURPLE', 1);
     expect(fake.table('users')[0].purple_diamonds).toBe(91);
+  });
+});
+
+/**
+ * Başlangıç paketi (2026-09-25): kaynak config `rewards.starterPowers`; kayıt akışı `void` ile çağırır.
+ * Uçtan uca kayıt senaryoları auth.service.test'te; burada metodun kendi sözleşmesi.
+ */
+describe('ExchangeService.grantStarterPack', () => {
+  it('config\'teki paketi envantere yazar (varsayılan: her güçten 1)', async () => {
+    const { fake, exchangeService } = await setup({ users: [user()] });
+
+    await exchangeService.grantStarterPack('u1');
+
+    const rows = fake.table('user_power_inventory');
+    expect(rows).toHaveLength(Object.keys(DEFAULT_STARTER_POWERS).length);
+    expect(rows.every((r) => r.user_id === 'u1' && r.count === 1)).toBe(true);
+  });
+
+  it('aktif config yoksa fırlatmaz, envantere dokunmaz (fail-open)', async () => {
+    const quiet = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { fake, exchangeService } = await setup({ users: [user()], economy_config_versions: [] });
+
+    await expect(exchangeService.grantStarterPack('u1')).resolves.toBeUndefined();
+    expect(fake.table('user_power_inventory')).toHaveLength(0);
+    expect(quiet).toHaveBeenCalledWith(expect.stringContaining('Starter pack config unavailable'), expect.anything());
+    quiet.mockRestore();
+  });
+});
+
+describe('ExchangeService.tryUseInventory — eş zamanlılık', () => {
+  /**
+   * CAS regresyonu (server-review, 2026-09-25): eski `gte(count, 1)` ile iki eş zamanlı kullanım
+   * ikisini de N-1'e yazıp bir bedava kullanım sızdırıyordu. Şimdi yalnız okunan sayı hâlâ aynıysa düşer.
+   */
+  it('sayaç 2 iken iki eş zamanlı kullanımdan yalnız biri envanterden düşer', async () => {
+    const { fake, exchangeService } = await setup({
+      user_power_inventory: [{ id: 'i1', user_id: 'u1', power_name: 'ORACLE', count: 2 }],
+    });
+
+    const results = await Promise.all([
+      exchangeService.tryUseInventory('u1', 'ORACLE'),
+      exchangeService.tryUseInventory('u1', 'ORACLE'),
+    ]);
+
+    expect(results.filter(Boolean)).toHaveLength(1);
+    expect(fake.table('user_power_inventory')[0].count).toBe(1);
   });
 });

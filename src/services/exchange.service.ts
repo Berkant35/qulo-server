@@ -2,6 +2,7 @@ import { supabase } from "../config/supabase.js";
 import { diamondService } from "../services/diamond.service.js";
 import { Errors } from "../utils/errors.js";
 import { economyConfigService } from "./economy-config.service.js";
+import type { RewardsConfig } from "../types/economy-config.schema.js";
 
 class ExchangeService {
   // ── Convert green diamonds to purple (dynamic ratio) ──────────────
@@ -121,8 +122,40 @@ class ExchangeService {
   }
 
   /**
-   * Envantere guc ekle — ucretsiz. `buyPower` odeme sonrasi bunu cagirir; starter
-   * paket (yeni kullaniciya 2x ORACLE) ise dogrudan. Yeni sayiyi doner.
+   * Yeni kullaniciya baslangic paketi — kaynak ekonomi config `rewards.starterPowers`
+   * (varsayilan + karar gerekcesi: economy-config.schema.ts `DEFAULT_STARTER_POWERS`).
+   *
+   * 2026-09-25 oncesi auth.service'te sabit 2× ORACLE vardi: 90 kullanicinin 85'inde hic
+   * kullanilmadan duruyordu, quiz denemelerinin %95'i basarisizdi. Karar: her gucten 1
+   * ("ilk tadim"); adetler yeni config versiyonuyla deploy'suz degistirilir.
+   *
+   * Fail-open: config okunamazsa ya da bir guc yazilamazsa kayit bozulmaz; gucler bagimsiz
+   * denenir (biri patlarsa digerleri verilir). Cagiran `void` ile ateşler — her dal yakalanir,
+   * unhandled rejection uretmez.
+   */
+  async grantStarterPack(userId: string): Promise<void> {
+    let starter: RewardsConfig["starterPowers"];
+    try {
+      starter = (await economyConfigService.getConfig()).rewards.starterPowers;
+    } catch (err) {
+      console.error(`[exchange] Starter pack config unavailable (user ${userId}):`, err);
+      return;
+    }
+    await Promise.all(
+      Object.entries(starter).map(async ([name, quantity]) => {
+        if (!quantity) return;
+        try {
+          await this.grantPower(userId, name, quantity);
+        } catch (err) {
+          console.error(`[exchange] Starter power grant failed (${name}, user ${userId}):`, err);
+        }
+      }),
+    );
+  }
+
+  /**
+   * Envantere guc ekle — ucretsiz. `buyPower` odeme sonrasi bunu cagirir; `grantStarterPack`
+   * (yeni kullaniciya config'teki paket) dogrudan. Yeni sayiyi doner.
    *
    * Envanter gucu fungible DEGIL: baska bir seye harcanamaz, kullanilinca yok olur.
    * Bu yuzden mor elmas ekonomisini etkilemez.
@@ -235,12 +268,14 @@ class ExchangeService {
       return false;
     }
 
-    // Atomic decrement with optimistic lock
+    // Gercek CAS: yalniz okunan sayi hala aynıysa dus. `gte(1)` iki es zamanli kullanimda
+    // ikisini de N-1'e yazip bir bedava kullanim sizdiriyordu (count >= 2 iken, ornegin
+    // starterPowers adedi 2+ ayarlaninca). Yarisi kaybeden false doner → mor odemeye duser.
     const { data: updated, error: updateErr } = await supabase
       .from("user_power_inventory")
       .update({ count: data.count - 1, updated_at: new Date().toISOString() })
       .eq("id", data.id)
-      .gte("count", 1)
+      .eq("count", data.count)
       .select("count")
       .single();
 

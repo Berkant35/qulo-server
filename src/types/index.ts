@@ -3,15 +3,9 @@ export interface JwtPayload {
   email: string;
 }
 
-export type PowerName =
-  | "ORACLE"
-  | "HALF"
-  | "SKIP"
-  | "SKIP_ALL"
-  | "TIME_EXTEND"
-  | "HINT"
-  | "POWER_BLOCK"
-  | "POWER_UNBLOCK";
+// Tek kaynak: economy-config.schema.ts (powerCosts anahtarlarından türetilir).
+import type { PowerName } from "./economy-config.schema.js";
+export type { PowerName };
 
 // Chat question power sets (which powers are available per option count)
 export const CHAT_QUESTION_POWERS_2: PowerName[] = ["ORACLE", "SKIP"];

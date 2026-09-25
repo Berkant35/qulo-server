@@ -13,6 +13,8 @@ export const ECONOMY_BOUNDARIES = {
   referralPurple: { min: 5, max: 100 },
   maxCompletedReferrals: { min: 1, max: 50 },
   powerCost: { min: 1, max: 500 },
+  /** Yeni kayıtta envantere verilen güç adedi (güç başına). 0 = o güç hediye edilmez. */
+  starterPowerQuantity: { min: 0, max: 5 },
   // Subscription tier boundaries
   free: {
     dailyDiscovers: { min: 10, max: 200 },
@@ -62,18 +64,6 @@ const subscriptionLimitsSchema = z.object({
   premium: tierLimitsSchema,
 });
 
-const rewardsSchema = z.object({
-  milestones: z.record(z.string(), z.number().int().min(0)),
-  referralPurple: z.number().int().min(B.referralPurple.min).max(B.referralPurple.max),
-  maxCompletedReferrals: z.number().int().min(B.maxCompletedReferrals.min).max(B.maxCompletedReferrals.max),
-});
-
-const timingSchema = z.object({
-  questionTimeSeconds: z.number().int().min(B.questionTimeSeconds.min).max(B.questionTimeSeconds.max),
-  timeExtendSeconds: z.number().int().min(B.timeExtendSeconds.min).max(B.timeExtendSeconds.max),
-  timePresets: z.array(z.number().int().min(5).max(300)),
-});
-
 const powerCostSchema = z.object({
   greenCost: z.number().int().min(B.powerCost.min).max(B.powerCost.max),
   purpleCost: z.number().int().min(B.powerCost.min).max(B.powerCost.max),
@@ -88,6 +78,42 @@ const powerCostsSchema = z.object({
   HINT: powerCostSchema,
   POWER_BLOCK: powerCostSchema,
   POWER_UNBLOCK: powerCostSchema,
+});
+
+/** Güç adlarının TEK kaynağı: powerCosts anahtarları. Yeni güç = buraya bir satır, gerisi türetilir. */
+const powerNameSchema = powerCostsSchema.keyof();
+export const POWER_NAMES = powerNameSchema.options;
+export type PowerName = z.infer<typeof powerNameSchema>;
+
+/**
+ * Yeni kayıtta envantere verilen başlangıç paketi (karar 2026-09-25: her güçten 1).
+ * Önceki sabit (auth.service, yalnız 2× ORACLE) 90 kullanıcının 85'inde hiç kullanılmadan
+ * duruyordu; quiz denemelerinin %95'i başarısızdı. Amaç "ilk tadım": kullanıcı her gücün ne
+ * yaptığını bir kez bedava görsün, ikinci kullanımda duvar gerçek olsun. Eski config
+ * versiyonlarında alan yoksa bu varsayılan uygulanır (retention ile aynı geriye uyum kalıbı).
+ */
+export const DEFAULT_STARTER_POWERS: Readonly<Record<PowerName, number>> = {
+  ORACLE: 1, HALF: 1, SKIP: 1, SKIP_ALL: 1, TIME_EXTEND: 1, HINT: 1, POWER_BLOCK: 1, POWER_UNBLOCK: 1,
+};
+
+const starterPowersSchema = z
+  .record(
+    powerNameSchema,
+    z.number().int().min(B.starterPowerQuantity.min).max(B.starterPowerQuantity.max),
+  )
+  .default({ ...DEFAULT_STARTER_POWERS });
+
+const rewardsSchema = z.object({
+  milestones: z.record(z.string(), z.number().int().min(0)),
+  referralPurple: z.number().int().min(B.referralPurple.min).max(B.referralPurple.max),
+  maxCompletedReferrals: z.number().int().min(B.maxCompletedReferrals.min).max(B.maxCompletedReferrals.max),
+  starterPowers: starterPowersSchema,
+});
+
+const timingSchema = z.object({
+  questionTimeSeconds: z.number().int().min(B.questionTimeSeconds.min).max(B.questionTimeSeconds.max),
+  timeExtendSeconds: z.number().int().min(B.timeExtendSeconds.min).max(B.timeExtendSeconds.max),
+  timePresets: z.array(z.number().int().min(5).max(300)),
 });
 
 // Hesap silme retention teklifi (win-back). Mevcut config'lerde alan yoksa

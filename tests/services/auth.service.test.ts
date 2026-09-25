@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createFakeSupabase, type Tables, type FakeSupabaseOptions } from '../helpers/fake-supabase.js';
-import { activeConfigRow } from '../helpers/economy-config.fixture.js';
+import { activeConfigRow, economyConfigFixture, rewardsWithoutStarterPowers } from '../helpers/economy-config.fixture.js';
+import { DEFAULT_STARTER_POWERS } from '../../src/types/economy-config.schema.js';
 import { hashToken, hashPassword } from '../../src/utils/hash.js';
 
 /**
@@ -195,14 +196,16 @@ describe('register', () => {
     expect(fake.table('users')[0].gender_pref_set_at).toBeUndefined();
   });
 
-  it('yeni kullanıcıya başlangıç gücü verilir', async () => {
+  /** 2026-09-25: sabit 2× ORACLE yerine config'teki paket (varsayılan her güçten 1). Detay: alttaki describe. */
+  it('yeni kullanıcıya config\'teki başlangıç paketi (her güçten 1) envantere yazılır', async () => {
     const { fake, authService } = await setup({ users: [] });
     await authService.register(registerInput());
-    await vi.waitFor(() => expect(fake.table('user_power_inventory')).toHaveLength(1));
+    const expected = Object.keys(DEFAULT_STARTER_POWERS);
+    await vi.waitFor(() => expect(fake.table('user_power_inventory')).toHaveLength(expected.length));
 
-    expect(fake.table('user_power_inventory')[0]).toMatchObject({
-      power_name: 'ORACLE', count: 2,
-    });
+    const rows = fake.table('user_power_inventory');
+    expect(new Set(rows.map((r) => r.power_name))).toEqual(new Set(expected));
+    expect(rows.every((r) => r.count === 1 && r.user_id === fake.table('users')[0].id)).toBe(true);
   });
 
   it('davet kodu uygulanır', async () => {
@@ -650,10 +653,12 @@ describe('socialLogin', () => {
     expect(fake.table('users')[0].preferred_languages).toEqual(['de']);
   });
 
-  it('Case C — yeni sosyal kullanıcıya da başlangıç gücü verilir', async () => {
+  it('Case C — yeni sosyal kullanıcıya da başlangıç paketi (her güçten 1) verilir', async () => {
     const { fake, authService } = await setup({ users: [] });
     await authService.socialLogin(provider);
-    await vi.waitFor(() => expect(fake.table('user_power_inventory')).toHaveLength(1));
+    await vi.waitFor(() =>
+      expect(fake.table('user_power_inventory')).toHaveLength(Object.keys(DEFAULT_STARTER_POWERS).length));
+    expect(fake.table('user_power_inventory').every((r) => r.count === 1)).toBe(true);
   });
 
   it('Case C — yeni sosyal kullanıcının rızaları istemci meta\'sıyla kaydedilir', async () => {
@@ -895,5 +900,107 @@ describe('socialLogin', () => {
     const { fake, authService } = await setup({ users: [] });
     await authService.socialLogin({ ...provider, locale: 'tr_TR' });
     expect(fake.table('users')[0].locale).toBe('tr');
+  });
+});
+
+/**
+ * Başlangıç güçleri (2026-09-25): kaynak ekonomi config `rewards.starterPowers`, envantere yazılır.
+ * Sabit 2× ORACLE dönemi bitti — hangi güç, kaç adet: config'ten, deploy'suz değişir.
+ * Hediye fire-and-forget; bu yüzden envanter `vi.waitFor` ile beklenir.
+ */
+describe('başlangıç güçleri (rewards.starterPowers)', () => {
+  const inventoryOf = (fake: Awaited<ReturnType<typeof setup>>['fake'], userId: string) =>
+    fake.table('user_power_inventory').filter((r) => r.user_id === userId);
+
+  /** Aktif config satırı: starterPowers verilirse onunla, undefined ise alan tamamen yok (eski versiyon). */
+  const configWith = (starterPowers: Record<string, number> | undefined) => {
+    const rewards = rewardsWithoutStarterPowers();
+    return {
+      ...activeConfigRow(),
+      config: { ...economyConfigFixture, rewards: starterPowers ? { ...rewards, starterPowers } : rewards },
+    };
+  };
+
+  const ALL = Object.keys(DEFAULT_STARTER_POWERS);
+
+  it('eski config\'te starterPowers alanı yoksa varsayılan paket (her güçten 1) verilir', async () => {
+    const { fake, authService } = await setup({ users: [], economy_config_versions: [configWith(undefined)] });
+    await authService.register(registerInput());
+    const uid = fake.table('users')[0].id as string;
+
+    await vi.waitFor(() => expect(inventoryOf(fake, uid)).toHaveLength(ALL.length));
+    expect(inventoryOf(fake, uid).every((r) => r.count === 1)).toBe(true);
+  });
+
+  it('config yalnız bir gücü tanımlıyorsa yalnız o verilir, adet config\'ten gelir', async () => {
+    const { fake, authService } = await setup({ users: [], economy_config_versions: [configWith({ ORACLE: 2 })] });
+    await authService.register(registerInput());
+    const uid = fake.table('users')[0].id as string;
+
+    await vi.waitFor(() => expect(inventoryOf(fake, uid)).toHaveLength(1));
+    expect(inventoryOf(fake, uid)[0]).toMatchObject({ power_name: 'ORACLE', count: 2 });
+  });
+
+  it('adedi 0 olan güç hediye edilmez', async () => {
+    const { fake, authService } = await setup({ users: [], economy_config_versions: [configWith({ ORACLE: 0, HALF: 1 })] });
+    await authService.register(registerInput());
+    const uid = fake.table('users')[0].id as string;
+
+    await vi.waitFor(() => expect(inventoryOf(fake, uid)).toHaveLength(1));
+    expect(inventoryOf(fake, uid)[0]).toMatchObject({ power_name: 'HALF', count: 1 });
+  });
+
+  /** Fail-open: bir gücün yazımı patlarsa kayıt bozulmaz, diğer güçler yine verilir. */
+  it('bir gücün envanter yazımı patlarsa diğerleri verilir ve kayıt tamamlanır', async () => {
+    const quiet = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { fake, authService } = await setup(
+      { users: [] },
+      { failOn: [{ table: 'user_power_inventory', op: 'insert', failAfter: ALL.length - 1 }] },
+    );
+
+    await expect(authService.register(registerInput())).resolves.toMatchObject({ email: 'yeni@qulo.test' });
+    const uid = fake.table('users')[0].id as string;
+    await vi.waitFor(() => expect(inventoryOf(fake, uid)).toHaveLength(ALL.length - 1));
+    expect(quiet).toHaveBeenCalledWith(expect.stringContaining('Starter power grant failed'), expect.anything());
+    quiet.mockRestore();
+  });
+
+  it('aktif config yoksa kayıt yine tamamlanır, envanter boş kalır', async () => {
+    const quiet = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { fake, authService } = await setup({ users: [], economy_config_versions: [] });
+
+    await expect(authService.register(registerInput())).resolves.toMatchObject({ email: 'yeni@qulo.test' });
+    await vi.waitFor(() => expect(quiet).toHaveBeenCalledWith(expect.stringContaining('Starter pack config unavailable'), expect.anything()));
+    expect(fake.table('user_power_inventory')).toHaveLength(0);
+    quiet.mockRestore();
+  });
+
+  /**
+   * Hediye çiftçiliği (server-review, 2026-09-25): silinmiş hesap yeniden kaydolunca purge + Case C
+   * yeni hesap açıyor; paket her turda verilse "bedava SKIP_ALL → eşleşme → sil → kaydol" sınırsız olur.
+   */
+  it('silinmiş hesabın e-postasıyla yeniden kayıtta paket VERİLMEZ', async () => {
+    const { fake, authService } = await setup({
+      users: [{ id: UID, email: 'yeni@qulo.test', is_deleted: true }],
+    });
+
+    await authService.register(registerInput());
+    await vi.waitFor(() => expect(sentVerification).toHaveLength(1)); // kayıt akışı hediye noktasını geçti
+    await vi.advanceTimersByTimeAsync(50); // asenkron hediye zinciri (olsaydı) tamamlanırdı
+    expect(fake.table('users')).toHaveLength(1);
+    expect(fake.table('user_power_inventory')).toHaveLength(0);
+  });
+
+  it('silinmiş sosyal hesabın (provider eşleşmesi) yeniden girişinde paket VERİLMEZ', async () => {
+    const { fake, authService } = await setup({
+      users: [{ id: UID, email: 'social@qulo.test', provider_id: 'google-123', is_deleted: true }],
+    });
+
+    const result = await authService.socialLogin({ provider: 'google', id_token: 'tok' });
+    expect(result.accessToken).toBeTruthy(); // Case C: yeni hesap açıldı
+    await vi.advanceTimersByTimeAsync(50);
+    expect(fake.table('users')).toHaveLength(1);
+    expect(fake.table('users')[0].id).not.toBe(UID);
+    expect(fake.table('user_power_inventory')).toHaveLength(0);
   });
 });

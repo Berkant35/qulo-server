@@ -13,30 +13,7 @@ import { accountPurgeService } from "./account-purge.service.js";
 import { exchangeService } from "./exchange.service.js";
 import { verifyGoogleToken, verifyAppleToken, type SocialAuthPayload } from "../utils/social-auth.js";
 
-/**
- * Yeni kullaniciya verilen baslangic gucleri.
- *
- * Neden ORACLE: sadece sansi yukseltir (%70 isabet), eslesmeyi SATIN ALMAZ — SKIP/SKIP_ALL
- * 2 soruluk quizin yarisini/tamamini cozerdi. TIME_EXTEND anlamsiz (prod'da timeout
- * kaynakli fail yok), HINT kosullu (hint_text girilmemis sorularda calismiyor).
- * Neden 2: soru sayisi simetrisi — 2 soruluk quizde gecme sansi %12 → ~%49 (0.7²).
- * Neden envanter, neden elmas degil: envanter gucu fungible degil, mor ekonomisini
- * hic degistirmiyor; ayrica butondaki sayi rozeti gucu KESFETTIRIYOR.
- */
-const STARTER_POWERS: ReadonlyArray<{ name: string; quantity: number }> = [
-  { name: "ORACLE", quantity: 2 },
-];
-
 export class AuthService {
-  /** Yeni kayitta starter gucleri ver. Bloklamaz — hediye basarisiz olursa kayit yine tamamlanir. */
-  private grantStarterPowers(userId: string) {
-    for (const { name, quantity } of STARTER_POWERS) {
-      exchangeService.grantPower(userId, name, quantity).catch((err) => {
-        console.error(`[auth] Starter power grant failed (${name}):`, err);
-      });
-    }
-  }
-
   async register(data: RegisterInput, client: ClientMeta = {}) {
     const email = normalizeEmail(data.email);
 
@@ -61,6 +38,7 @@ export class AuthService {
     if (existing?.is_deleted) {
       await accountPurgeService.hardDeleteUser(existing.id);
     }
+    const purged = existing?.is_deleted === true;
 
     const passwordHash = await hashPassword(data.password);
     const verifyToken = generateToken();
@@ -105,7 +83,9 @@ export class AuthService {
       console.error("[auth] Failed to record consents:", err);
     });
 
-    this.grantStarterPowers(user.id);
+    // Baslangic paketi yalniz ILK hesaba: silip ayni e-postayla yeniden kaydolan tekrar almaz —
+    // aksi halde "kaydol → bedava SKIP_ALL → eslesme → sil → kaydol" dongusu sinirsiz bedava quiz olur.
+    if (!purged) void exchangeService.grantStarterPack(user.id);
 
     // Apply referral code if provided (don't block registration on failure)
     if (data.referral_code) {
@@ -376,6 +356,9 @@ export class AuthService {
       .eq("provider_id", providerId)
       .maybeSingle();
 
+    // Silinmis hesabin yeniden girisi (asagidaki iki purge dali) Case C'de yeni hesap acar
+    // ama baslangic paketini tekrar ALMAZ (bedava SKIP_ALL dongusu).
+    let purged = false;
     if (existingByProvider) {
       // Ban once bakilir: silinmis + banli hesap purge edilirse ban kacirilir.
       if (existingByProvider.is_banned) throw Errors.ACCOUNT_BANNED();
@@ -383,6 +366,7 @@ export class AuthService {
         // Soft-deleted: hard delete + fall through (Case B/C will create a fresh account).
         // Mirrors Case B (email match) behavior — symmetric recovery for re-signups.
         await accountPurgeService.hardDeleteUser(existingByProvider.id);
+        purged = true;
       } else {
         // Backfill name/surname if missing and provider gave them this round (e.g. first sign-in
         // saved an empty name due to a client bug — recover next time Apple/Google sends them).
@@ -408,6 +392,7 @@ export class AuthService {
         if (existingByEmail.is_banned) throw Errors.ACCOUNT_BANNED();
         if (existingByEmail.is_deleted) {
           await accountPurgeService.hardDeleteUser(existingByEmail.id);
+          purged = true;
         } else {
           const linkUpdate: Record<string, string> = {};
           if (!existingByEmail.provider_id) {
@@ -455,9 +440,8 @@ export class AuthService {
       console.error("[social-login] Failed to record consents:", err);
     });
 
-    // Sadece Case C (gercek yeni kullanici). Soft-delete kurtarma yukaridaki
-    // existingByEmail dalindan donduyor → tekrar hediye vermez.
-    this.grantStarterPowers(newUser.id);
+    // Baslangic paketi yalniz gercekten ilk hesaba (bkz. `purged`).
+    if (!purged) void exchangeService.grantStarterPack(newUser.id);
     // Kayit ile ayni politika: sutun INSERT'te dolu, RPC turev tabloyu tamamlar, fail-open.
     try {
       await userLanguageService.setUserLanguages(newUser.id, [locale]);

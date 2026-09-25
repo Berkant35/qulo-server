@@ -1,4 +1,4 @@
-import type { EconomyConfig } from '../../src/types/economy-config.schema.js';
+import { DEFAULT_STARTER_POWERS, type EconomyConfig } from '../../src/types/economy-config.schema.js';
 
 /**
  * economyConfigSchema'yı geçen geçerli bir config.
@@ -32,6 +32,7 @@ export const economyConfigFixture: EconomyConfig = {
     milestones: { '10': 5, '50': 25 },
     referralPurple: 20,
     maxCompletedReferrals: 10,
+    starterPowers: { ...DEFAULT_STARTER_POWERS },
   },
   timing: {
     questionTimeSeconds: 30,
@@ -65,4 +66,10 @@ export function activeConfigRow(overrides: Partial<EconomyConfig> = {}) {
     change_reason: 'test fixture',
     created_at: '2026-01-01T00:00:00Z',
   };
+}
+
+/** Eski config versiyonu: `rewards.starterPowers` alanı hiç yok (varsayılan devreye girmeli). */
+export function rewardsWithoutStarterPowers(): Omit<EconomyConfig['rewards'], 'starterPowers'> {
+  const { starterPowers: _omit, ...rest } = economyConfigFixture.rewards;
+  return rest;
 }
