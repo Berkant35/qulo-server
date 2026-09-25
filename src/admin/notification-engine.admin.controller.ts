@@ -18,7 +18,7 @@ interface PageExtras {
 
 /**
  * /admin/notification-engine — motorun tek ekrani: ayarlar (ac/kapa, dry-run, saat, tavanlar,
- * kural basina ac/kapa + cooldown), onizleme (simulasyon), kural istatistigi, son kosumlar, son kayitlar.
+ * kural basina ac/kapa + dizi), onizleme (simulasyon), kural istatistigi, son kosumlar, son kayitlar.
  */
 class NotificationEngineAdminController {
   private async renderPage(req: Request, res: Response, extras: PageExtras = {}) {
@@ -61,7 +61,9 @@ class NotificationEngineAdminController {
       }
       const parsed = parseEngineConfigForm(req.body ?? {}, loaded.config);
       if (!parsed.success) {
-        const detail = parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ");
+        const issues = parsed.error.issues;
+        const shown = issues.slice(0, 5).map((i) => `${i.path.join(".")}: ${i.message}`);
+        const detail = shown.join("; ") + (issues.length > 5 ? ` (+${issues.length - 5} hata daha)` : "");
         return res.redirect("/admin/notification-engine?error=" + encodeURIComponent(detail));
       }
       await saveEngineConfig(parsed.data, req.session.adminEmail ?? "admin");

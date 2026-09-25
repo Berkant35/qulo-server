@@ -1,10 +1,12 @@
 export { runEngine, summarizeDecisions, holdoutBucket, pickRule } from './engine.js';
+export { sequenceProgress } from './sequence.js';
+export type { SequenceState, SequenceProgress } from './sequence.js';
 export type { EngineMode, EffectiveMode, EngineDecision, EngineRunResult, DecisionKind } from './engine.js';
 export { loadEngineConfig, saveEngineConfig } from './config.js';
 export type { LoadedEngineConfig } from './config.js';
 export { LIFECYCLE_RULES, LIFECYCLE_RULE_KEYS, LIFECYCLE_RULES_BY_KEY, isLifecycleRuleKey } from './rules.js';
 export type { LifecycleRule, LifecycleRuleKey, RuleCategory, RuleMatch } from './rules.js';
-export { loadContext, isEligibleUser, isVisibleProfile, DAY_MS, DECISION_WINDOW_MS } from './context.js';
+export { loadContext, isEligibleUser, isVisibleProfile, DAY_MS, DECISION_WINDOW_MS, PUSH_LOG_RETENTION_DAYS } from './context.js';
 export type { EngineContext, EngineUser } from './context.js';
 export { utcOffsetHours, localHour } from './timezone.js';
 export { getEngineStats } from './stats.js';

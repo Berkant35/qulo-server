@@ -210,7 +210,7 @@ describe('runEngine — canli gonderim', () => {
   });
 });
 
-describe('runEngine — tavanlar, cooldown, holdout, tercih', () => {
+describe('runEngine — tavanlar, dizi, holdout, tercih', () => {
   it('gunluk tavan: bugun admin kampanyasi almis kullanici bastirilir (kampanyalar butceye dahil)', async () => {
     const { fake, runEngine } = await boot(
       seed({}, { notifications: [{ id: 'n0', user_id: 'A', type: 'campaign', created_at: ago(2 * H), is_read: false }] }),
@@ -242,7 +242,8 @@ describe('runEngine — tavanlar, cooldown, holdout, tercih', () => {
     expect(r.decisions[0]).toMatchObject({ decision: 'dry_run', ruleKey: 'lifecycle_match_waiting' });
   });
 
-  it('cooldown: ayni kural yakin zamanda gittiyse oncelikte sonraki kurala gecilir', async () => {
+  it('dizi: ayni kural son gonderimden schedule[step-1] gun gecmeden tekrar gitmez, oncelikte sonraki kurala gecilir', async () => {
+    // match_waiting varsayilan dizi [4]: 2 gun once gitti → bekler → new_people'a duser
     const tables = seed({}, { push_log: [sentRow('A', 'lifecycle_match_waiting', ago(2 * D))] });
     for (const id of ['N1', 'N2', 'N3']) tables.users!.push(user({ id, created_at: ago(2 * D), last_active_at: null }));
     const { runEngine } = await boot(tables);
@@ -253,12 +254,97 @@ describe('runEngine — tavanlar, cooldown, holdout, tercih', () => {
     expect(r.decisions.filter((d) => d.userId !== 'A')).toHaveLength(0);
   });
 
-  it('cooldown 30 gunden uzunsa da gorulur (lookback en uzun cooldown kadar)', async () => {
-    const tables = seed({ rules: { lifecycle_match_waiting: { cooldown_days: 60 } } }, { push_log: [sentRow('A', 'lifecycle_match_waiting', ago(40 * D))] });
-    const { runEngine } = await boot(tables);
-    const r = await runEngine('live', { now: NOW });
-    // 40 gun once gitmis, cooldown 60 → hala cooldown'da → match_waiting secilmez; A icin baska kural yok
+  it('dizi: aralik dolunca ikinci gonderim gider; dizi bitince SESSIZLIK (uc gonderimlik dizi, dorduncu yok)', async () => {
+    const cfg = { rules: { lifecycle_match_waiting: { schedule_days: [4, 10] } } };
+    // A 25 gundur girmiyor: tum gonderimler aktiflikten SONRA (dizi sifirlanmaz)
+    const withLog = (log: Row[]) => { const t = seed(cfg, { push_log: log }); t.users![0] = user({ id: 'A', last_active_at: ago(25 * D) }); return t; };
+    // 1 gonderim, 5 gun once → 4 gun gecti → 2. gonderim hazir
+    let r = await (await boot(withLog([sentRow('A', 'lifecycle_match_waiting', ago(5 * D))]))).runEngine('live', { now: NOW });
+    expect(r.decisions.find((d) => d.userId === 'A')).toMatchObject({ ruleKey: 'lifecycle_match_waiting', decision: 'dry_run' });
+    // 2 gonderim: sonuncusu 9 gun once (< 10) → bekler; A icin baska kural yok
+    r = await (await boot(withLog([sentRow('A', 'lifecycle_match_waiting', ago(20 * D)), sentRow('A', 'lifecycle_match_waiting', ago(9 * D))]))).runEngine('live', { now: NOW });
     expect(r.decisions.filter((d) => d.userId === 'A')).toHaveLength(0);
+    // 2 gonderim: sonuncusu 11 gun once (>= 10) → 3. ve son gonderim hazir
+    r = await (await boot(withLog([sentRow('A', 'lifecycle_match_waiting', ago(20 * D)), sentRow('A', 'lifecycle_match_waiting', ago(11 * D))]))).runEngine('live', { now: NOW });
+    expect(r.decisions.find((d) => d.userId === 'A')).toMatchObject({ ruleKey: 'lifecycle_match_waiting' });
+    // 3 gonderim (dizi tukendi) → aradan ne kadar gecerse gecsin bu kural gitmez
+    const three = [20, 15, 3].map((d) => sentRow('A', 'lifecycle_match_waiting', ago(d * D)));
+    r = await (await boot(withLog(three))).runEngine('live', { now: NOW });
+    expect(r.decisions.filter((d) => d.userId === 'A')).toHaveLength(0);
+    expect(r.noRule).toBe(1);
+  });
+
+  it('dizi sifirlama: resetOnActivity kuralda kullanici dondukten SONRAKI gonderimler sayilir; profil eksikte aktiflik sifirlamaz', async () => {
+    // A son aktif 5 gun once; match_waiting gonderimi 40 gun once (aktiflikten ONCE) → dizi bastan → hemen gider
+    let r = await (await boot(seed({}, { push_log: [sentRow('A', 'lifecycle_match_waiting', ago(40 * D))] }))).runEngine('live', { now: NOW });
+    expect(r.decisions.find((d) => d.userId === 'A')).toMatchObject({ ruleKey: 'lifecycle_match_waiting', decision: 'dry_run' });
+
+    // P: profili eksik, 5 gonderimlik dizi TUKENMIS; son aktifligi gonderimlerden sonra olsa da sifirlanmaz → sessizlik
+    const p = user({ id: 'P', question_count: 0, photos: [], last_active_at: ago(2 * D), created_at: ago(70 * D) });
+    const exhausted = [60, 58, 54, 47, 31].map((d) => sentRow('P', 'lifecycle_profile_incomplete', ago(d * D)));
+    const t = seed({}, { push_log: exhausted });
+    t.users = [p];
+    r = await (await boot(t)).runEngine('live', { now: NOW });
+    expect(r.decisions.filter((d) => d.userId === 'P')).toHaveLength(0);
+    expect(r.noRule).toBe(1);
+  });
+
+  it('sequenceProgress (saf): ready/waiting/silenced, bos dizi = tek gonderim, tam sinirda >= hazir', async () => {
+    const { sequenceProgress } = await import('../../../src/services/notification-engine/sequence.js');
+    const { LIFECYCLE_RULES_BY_KEY } = await import('../../../src/services/notification-engine/rules.js');
+    const rule = LIFECYCLE_RULES_BY_KEY.lifecycle_quiz_unfinished; // resetOnActivity: true
+    const u = user({ id: 'Q', last_active_at: ago(10 * D) }) as unknown as import('../../../src/services/notification-engine/context.js').EngineUser;
+    const entries = (log: Array<{ createdAt: number; decision?: string; ruleKey?: string; sequenceStep?: number | null }>) =>
+      log.map((l, i) => ({ id: i, ruleKey: l.ruleKey ?? rule.key, decision: l.decision ?? 'sent', createdAt: l.createdAt, sequenceStep: l.sequenceStep ?? null }));
+    const nowMs = NOW.getTime();
+    expect(sequenceProgress(u, entries([]), rule, [], nowMs)).toEqual({ state: 'ready', step: 0 });
+    expect(sequenceProgress(u, entries([{ createdAt: nowMs - 3 * D }]), rule, [], nowMs).state).toBe('silenced'); // tek gonderimlik dizi bitti
+    expect(sequenceProgress(u, entries([{ createdAt: nowMs - 3 * D }]), rule, [5], nowMs)).toEqual({ state: 'waiting', step: 1 });
+    expect(sequenceProgress(u, entries([{ createdAt: nowMs - 5 * D }]), rule, [5], nowMs).state).toBe('ready'); // tam sinir >=
+    expect(sequenceProgress(u, entries([{ createdAt: nowMs - 12 * D }]), rule, [5], nowMs).step).toBe(0); // aktiflikten once → sayilmaz
+    expect(sequenceProgress(u, entries([{ createdAt: nowMs - 3 * D, decision: 'dry_run' }]), rule, [5], nowMs).step).toBe(0);
+    expect(sequenceProgress(u, entries([{ createdAt: nowMs - 3 * D, ruleKey: 'lifecycle_winback' }]), rule, [5], nowMs).step).toBe(0);
+  });
+
+  it('dizi adimi EN YENI kaydin payload.sequence_step\'inden okunur: eski satirlar budansa da sayac gerilemez', async () => {
+    const { sequenceProgress } = await import('../../../src/services/notification-engine/sequence.js');
+    const { LIFECYCLE_RULES_BY_KEY } = await import('../../../src/services/notification-engine/rules.js');
+    const rule = LIFECYCLE_RULES_BY_KEY.lifecycle_profile_incomplete; // resetOnActivity: false
+    const u = user({ id: 'P', last_active_at: ago(1 * D) }) as unknown as import('../../../src/services/notification-engine/context.js').EngineUser;
+    const nowMs = NOW.getTime();
+    // 5 gonderimlik dizi tukenmis; 90 gunluk budama ilk 4 satiri silmis, yalniz sonuncusu (step 5) kalmis
+    const onlyNewest = [{ id: 1, ruleKey: rule.key, decision: 'sent', createdAt: nowMs - 40 * D, sequenceStep: 5 }];
+    expect(sequenceProgress(u, onlyNewest, rule, [2, 4, 7, 16], nowMs)).toEqual({ state: 'silenced', step: 5 });
+    // sequence_step'siz eski kayit → sayim (1 satir = step 1) → 16 gun gecmis mi? 40 > 2 → ready, 2. gonderim
+    const legacy = [{ id: 1, ruleKey: rule.key, decision: 'sent', createdAt: nowMs - 40 * D, sequenceStep: null }];
+    expect(sequenceProgress(u, legacy, rule, [2, 4, 7, 16], nowMs)).toEqual({ state: 'ready', step: 1 });
+  });
+
+  it('canli gonderimde push_log payload.sequence_step yazilir (1. gonderim = 1, sonraki kosumda 2)', async () => {
+    const { fake, runEngine } = await boot(seed({ dry_run: false }));
+    await runEngine('live', { now: NOW });
+    const first = fake.table('push_log').find((r) => r.user_id === 'A' && r.decision === 'sent');
+    expect(first?.payload).toMatchObject({ sequence_step: 1 });
+    // Ayni kayit sonraki turda okunur: match_waiting [4] → 1 gun sonra bekler (step 1), 5 gun sonra step 2 hazir
+    const later = new Date(NOW.getTime() + 5 * D);
+    const r = await runEngine('live', { now: later });
+    const second = r.decisions.find((d) => d.userId === 'A');
+    expect(second).toMatchObject({ ruleKey: 'lifecycle_match_waiting', sequenceStep: 2 });
+  });
+
+  it('her gun giren kullanici: match_waiting aktiflikle SIFIRLANMAZ (dun gitti → bugun gitmez), profil eksik [] + sifirlamasiz → tek gonderim sonra sessiz', async () => {
+    // A dun match_waiting aldi, bugun 2 saat once uygulamayi acti → dizi bastan baslamamali (eski kodda her gun giderdi)
+    const t = seed({}, { push_log: [sentRow('A', 'lifecycle_match_waiting', ago(1 * D))] });
+    t.users![0] = user({ id: 'A', last_active_at: ago(2 * H) });
+    let r = await (await boot(t)).runEngine('live', { now: NOW });
+    expect(r.decisions.filter((d) => d.userId === 'A')).toHaveLength(0);
+
+    const cfg = { rules: { lifecycle_profile_incomplete: { schedule_days: [] } } };
+    const p = user({ id: 'P', question_count: 0, photos: [], last_active_at: ago(2 * D), created_at: ago(30 * D) });
+    const t2 = seed(cfg, { push_log: [sentRow('P', 'lifecycle_profile_incomplete', ago(20 * D))] });
+    t2.users = [p];
+    r = await (await boot(t2)).runEngine('live', { now: NOW });
+    expect(r.decisions.filter((d) => d.userId === 'P')).toHaveLength(0);
     expect(r.noRule).toBe(1);
   });
 

@@ -64,6 +64,8 @@ export interface PushLogEntry {
   ruleKey: string;
   decision: string;
   createdAt: number;
+  /** payload.sequence_step — bu gonderimin dizi icindeki sirasi (1'den); eski kayitlarda null. */
+  sequenceStep: number | null;
 }
 
 export interface EngineContext {
@@ -91,6 +93,8 @@ const USER_COLUMNS =
 const PAGE_SIZE = 1000;
 /** "Gunde tek karar" penceresi (engine.ts DECISION_WINDOW_MS ile ayni). */
 export const DECISION_WINDOW_MS = 20 * 60 * 60 * 1000;
+/** push_log saklama suresi — analytics-cleanup bu kadar eskiyi siler, kural dizileri bu kadar geriye bakar. TEK kaynak. */
+export const PUSH_LOG_RETENTION_DAYS = 90;
 
 function iso(ms: number): string {
   return new Date(ms).toISOString();
@@ -146,6 +150,22 @@ interface PushLogRow {
   rule_key: string;
   decision: string;
   created_at: string;
+  /** PostgREST: `sequence_step:payload->>sequence_step` (string doner); fake-supabase tum satiri dondurur → payload'dan okunur. */
+  sequence_step?: string | number | null;
+  payload?: { sequence_step?: unknown } | null;
+}
+
+/** payload tasinmadan yalniz dizi adimi cekilir (payload'daki baslik/metin 90 gunluk sorguda egress yukudur). */
+const PUSH_LOG_COLUMNS = 'id, user_id, rule_key, decision, created_at, sequence_step:payload->>sequence_step';
+
+function sequenceStepOf(row: PushLogRow): number | null {
+  const raw = row.sequence_step ?? row.payload?.sequence_step;
+  const n = typeof raw === 'string' ? Number(raw) : typeof raw === 'number' ? raw : Number.NaN;
+  return Number.isInteger(n) && n > 0 ? n : null;
+}
+
+function toLogEntry(row: PushLogRow): PushLogEntry {
+  return { id: row.id, ruleKey: row.rule_key, decision: row.decision, createdAt: Date.parse(row.created_at), sequenceStep: sequenceStepOf(row) };
 }
 
 export interface CampaignSendRow {
@@ -165,7 +185,6 @@ export interface SendHistory {
  * gondericisi de buradan okur; boylece ikisi birbirinin gonderimini tavana sayar.
  */
 export async function loadSendHistory(nowMs: number, lookbackDays: number): Promise<SendHistory> {
-  const PUSH_LOG_COLUMNS = 'id, user_id, rule_key, decision, created_at';
   const sinceLookback = iso(nowMs - Math.max(7, lookbackDays) * DAY_MS);
   const since7d = iso(nowMs - 7 * DAY_MS);
   const [sentLog, campaignSends] = await Promise.all([
@@ -187,18 +206,11 @@ export function sendTimesByUser(history: SendHistory): Map<string, number[]> {
   return map;
 }
 
-export interface LoadContextOptions {
-  /** 'sent' satirlarinin ne kadar geriye yuklenecegi — en buyuk kural cooldown'u (min 7 gun, haftalik tavan icin). */
-  logLookbackDays?: number;
-}
-
-export async function loadContext(now: Date = new Date(), opts: LoadContextOptions = {}): Promise<EngineContext> {
+export async function loadContext(now: Date = new Date()): Promise<EngineContext> {
   const nowMs = now.getTime();
-  const lookbackDays = Math.max(7, opts.logLookbackDays ?? 30);
   const since30d = iso(nowMs - 30 * DAY_MS);
   const since14d = iso(nowMs - 14 * DAY_MS);
   const sinceDecisionWindow = iso(nowMs - DECISION_WINDOW_MS);
-  const PUSH_LOG_COLUMNS = 'id, user_id, rule_key, decision, created_at';
 
   const allUsers = await loadAllUsers();
   const usersById = new Map(allUsers.map((u) => [u.id, u]));
@@ -224,8 +236,8 @@ export async function loadContext(now: Date = new Date(), opts: LoadContextOptio
     fetchAll<EngineLike>((from, to) =>
       supabase.from('swipes').select('swiper_id, target_id, created_at').eq('action', 'LIKE').gte('created_at', since30d).order('created_at').range(from, to),
     ),
-    // Tavan + cooldown icin: sadece gercek gonderimler (lifecycle + kampanya), lookback kadar geriye
-    loadSendHistory(nowMs, lookbackDays),
+    // Tavan + dizi adimi icin: sadece gercek gonderimler (lifecycle + kampanya), push_log tutuldugu surece geriye
+    loadSendHistory(nowMs, PUSH_LOG_RETENTION_DAYS),
     // "Gunde tek karar" icin: son 20 saatteki her karar
     fetchAll<PushLogRow>((from, to) =>
       supabase.from('push_log').select(PUSH_LOG_COLUMNS).gte('created_at', sinceDecisionWindow).order('id').range(from, to),
@@ -258,7 +270,7 @@ export async function loadContext(now: Date = new Date(), opts: LoadContextOptio
   for (const row of [...sentLog, ...recentLog]) {
     if (seenLogIds.has(row.id)) continue; // son 20 saatteki 'sent' satiri iki sorguda da gelir
     seenLogIds.add(row.id);
-    push(logByUser, row.user_id, { id: row.id, ruleKey: row.rule_key, decision: row.decision, createdAt: Date.parse(row.created_at) });
+    push(logByUser, row.user_id, toLogEntry(row));
   }
 
   const sendTimes = sendTimesByUser(history);

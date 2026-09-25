@@ -1,3 +1,4 @@
+import { PUSH_LOG_RETENTION_DAYS } from "../services/notification-engine/context.js";
 import cron from "node-cron";
 import { supabase } from "../config/supabase.js";
 
@@ -65,7 +66,7 @@ export const analyticsCleanupCron = {
     cleanupTask = cron.schedule(this.schedule, async () => {
       try {
         const cutoff = new Date();
-        cutoff.setDate(cutoff.getDate() - 90);
+        cutoff.setDate(cutoff.getDate() - PUSH_LOG_RETENTION_DAYS);
         const cutoffStr = cutoff.toISOString();
 
         const { error } = await supabase
@@ -79,7 +80,7 @@ export const analyticsCleanupCron = {
           console.log(`[AnalyticsCleanup] Cleaned up events older than 90 days`);
         }
 
-        // Bildirim motoru karar kaydi da ayni pencerede budanir (istatistik 7 gunluk, 90 gun fazlasiyla yeter)
+        // Bildirim motoru karar kaydi da ayni pencerede budanir — kural dizileri bu sureye bagli (sequence.ts), sabit tek yerde
         const { error: pushLogError } = await supabase
           .from("push_log")
           .delete()

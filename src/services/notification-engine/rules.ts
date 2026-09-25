@@ -4,6 +4,7 @@ import type { EngineContext, EngineUser } from './context.js';
 /**
  * Faz 1 kurallari — oncelik sirasiyla. Her kural saf bir fonksiyondur: DB yok, sadece baglam.
  * Metinler locale JSON'da `push.<key>` = { title, body } (16 dil) + push_messages admin override.
+ * Dizi/sessizlik mantigi sequence.ts: ayni kural sinirli sayida, artan aralikla gider, sonra susar.
  * Tasarim: docs/superpowers/specs/2026-09-07-akilli-bildirim-motoru-design.md
  */
 export const LIFECYCLE_RULE_KEYS = [
@@ -29,7 +30,17 @@ export interface LifecycleRule {
   /** Backoffice'te gosterilen kisa aciklama. */
   description: string;
   category: RuleCategory;
-  defaultCooldownDays: number;
+  /**
+   * Dizi: ardisik gonderimler arasi gun. step = simdiye kadarki gonderim sayisi; ilk gonderim kural uyar
+   * uymaz, sonraki bir oncekinden schedule[step-1] gun sonra; dizi bitince SESSIZLIK (max gonderim = uzunluk + 1).
+   */
+  defaultScheduleDays: number[];
+  /**
+   * true: kullanici uygulamaya donunce dizi bastan baslar — YALNIZ kosulunda inaktiflik sarti olan kurallarda
+   * (aksi halde her gun giren kullanici her gun alir). false: aktiflik diziyi sifirlamaz (profil eksik, eslesmeye
+   * yazmadi — girip cikmak eksigi tamamlamak degil).
+   */
+  resetOnActivity: boolean;
   evaluate(user: EngineUser, ctx: EngineContext): RuleMatch | null;
 }
 
@@ -62,7 +73,8 @@ export const LIFECYCLE_RULES: LifecycleRule[] = [
     key: 'lifecycle_unread_message',
     description: '24 saatten eski okunmamis mesaj var, kullanici o mesajdan beri girmedi',
     category: 'messages',
-    defaultCooldownDays: 2,
+    defaultScheduleDays: [3],
+    resetOnActivity: true,
     evaluate(user, ctx) {
       const cutoff = ctx.now.getTime() - DAY_MS;
       const lastActive = lastActiveMs(user);
@@ -84,7 +96,8 @@ export const LIFECYCLE_RULES: LifecycleRule[] = [
     key: 'lifecycle_match_waiting',
     description: 'Son 30 gunde kurulmus, 24 saati gecmis eslesmede kullanici hic yazmamis',
     category: 'matches',
-    defaultCooldownDays: 3,
+    defaultScheduleDays: [4],
+    resetOnActivity: false,
     evaluate(user, ctx) {
       const cutoff = ctx.now.getTime() - DAY_MS;
       let best: { matchId: string; name: string; matchedAt: number } | null = null;
@@ -104,7 +117,8 @@ export const LIFECYCLE_RULES: LifecycleRule[] = [
     key: 'lifecycle_likes_waiting',
     description: 'Son girisinden sonra begeni almis, 1+ gundur girmiyor',
     category: 'campaigns',
-    defaultCooldownDays: 3,
+    defaultScheduleDays: [4, 7],
+    resetOnActivity: true,
     evaluate(user, ctx) {
       if (inactiveMs(user, ctx) < DAY_MS) return null;
       const lastActive = lastActiveMs(user);
@@ -118,7 +132,8 @@ export const LIFECYCLE_RULES: LifecycleRule[] = [
     key: 'lifecycle_quiz_unfinished',
     description: 'Son 14 gunde suresi dolmus yarim quiz var, 1+ gundur girmiyor',
     category: 'campaigns',
-    defaultCooldownDays: 3,
+    defaultScheduleDays: [],
+    resetOnActivity: true,
     evaluate(user, ctx) {
       if (inactiveMs(user, ctx) < DAY_MS) return null;
       let best: { targetId: string; name: string; startedAt: number } | null = null;
@@ -135,7 +150,8 @@ export const LIFECYCLE_RULES: LifecycleRule[] = [
     key: 'lifecycle_profile_incomplete',
     description: 'Kayit 24 saati gecmis, 2 sorudan az veya fotografsiz, 1+ gundur girmiyor',
     category: 'campaigns',
-    defaultCooldownDays: 3,
+    defaultScheduleDays: [2, 4, 7, 16],
+    resetOnActivity: false,
     evaluate(user, ctx) {
       if (ctx.now.getTime() - Date.parse(user.created_at) < DAY_MS) return null;
       if (inactiveMs(user, ctx) < DAY_MS) return null;
@@ -149,7 +165,8 @@ export const LIFECYCLE_RULES: LifecycleRule[] = [
     key: 'lifecycle_new_people',
     description: '3-30 gundur girmiyor ve bu hafta en az 3 gorunur yeni kullanici katildi',
     category: 'campaigns',
-    defaultCooldownDays: 7,
+    defaultScheduleDays: [7, 14],
+    resetOnActivity: true,
     evaluate(user, ctx) {
       const inactive = inactiveMs(user, ctx);
       if (inactive < 3 * DAY_MS || inactive >= 30 * DAY_MS) return null;
@@ -161,7 +178,8 @@ export const LIFECYCLE_RULES: LifecycleRule[] = [
     key: 'lifecycle_winback',
     description: '30+ gundur girmiyor',
     category: 'campaigns',
-    defaultCooldownDays: 30,
+    defaultScheduleDays: [30],
+    resetOnActivity: true,
     evaluate(user, ctx) {
       return inactiveMs(user, ctx) >= 30 * DAY_MS ? { params: {}, actionUrl: '/discover' } : null;
     },

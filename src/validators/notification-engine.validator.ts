@@ -2,9 +2,14 @@ import { z } from 'zod';
 import { LIFECYCLE_RULE_KEYS, LIFECYCLE_RULES_BY_KEY } from '../services/notification-engine/rules.js';
 import type { LifecycleRuleKey } from '../services/notification-engine/rules.js';
 
+export const MAX_SCHEDULE_STEPS = 10;
+/** Tek adim push_log saklama suresine (90) yaklasirsa son kayit budanir ve dizi bastan baslar; 60 guvenli pay. */
+export const MAX_SCHEDULE_STEP_DAYS = 60;
+
 export const ruleConfigSchema = z.object({
   enabled: z.boolean(),
-  cooldown_days: z.number().int().min(1).max(90),
+  /** Gonderimler arasi gunler; bos = tek gonderim. Dizi bitince kural o kullanici icin susar (sequence.ts). */
+  schedule_days: z.array(z.number().int().min(1).max(MAX_SCHEDULE_STEP_DAYS)).max(MAX_SCHEDULE_STEPS),
 });
 
 const rulesShape = Object.fromEntries(LIFECYCLE_RULE_KEYS.map((k) => [k, ruleConfigSchema])) as Record<
@@ -37,7 +42,7 @@ export const DEFAULT_ENGINE_CONFIG: EngineConfig = {
   holdout_pct: 0,
   max_per_run: 200,
   rules: Object.fromEntries(
-    LIFECYCLE_RULE_KEYS.map((k) => [k, { enabled: true, cooldown_days: LIFECYCLE_RULES_BY_KEY[k].defaultCooldownDays }]),
+    LIFECYCLE_RULE_KEYS.map((k) => [k, { enabled: true, schedule_days: [...LIFECYCLE_RULES_BY_KEY[k].defaultScheduleDays] }]),
   ) as EngineConfig['rules'],
 };
 
@@ -67,6 +72,20 @@ export function mergeEngineConfig(raw: unknown): { config: EngineConfig; valid: 
   return { config: DEFAULT_ENGINE_CONFIG, valid: false };
 }
 
+/**
+ * "2, 4, 7" → [2,4,7]; bos string → [] (tek gonderim); alan hic gelmemisse mevcut deger korunur (kismi form);
+ * gecersiz parca → NaN (zod reddeder). Fazla parca kirpilir ki hata listesi sismesin (.max zaten reddeder).
+ */
+export function parseScheduleField(raw: unknown, current: number[]): number[] {
+  if (raw === undefined) return current;
+  if (typeof raw !== 'string' || raw.trim() === '') return [];
+  return raw
+    .split(/[,\s]+/)
+    .filter(Boolean)
+    .slice(0, MAX_SCHEDULE_STEPS + 1)
+    .map((v) => (/^\d+$/.test(v) ? Number(v) : Number.NaN));
+}
+
 function intField(body: Record<string, unknown>, key: string, fallback: number): number {
   const raw = body[key];
   if (typeof raw !== 'string' || raw.trim() === '') return fallback;
@@ -89,7 +108,7 @@ export function parseEngineConfigForm(body: Record<string, unknown>, current: En
         k,
         {
           enabled: body[`rule_${k}_enabled`] === 'on',
-          cooldown_days: intField(body, `rule_${k}_cooldown`, current.rules[k].cooldown_days),
+          schedule_days: parseScheduleField(body[`rule_${k}_schedule`], current.rules[k].schedule_days),
         },
       ]),
     ),

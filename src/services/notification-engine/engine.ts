@@ -7,6 +7,7 @@ import { loadEngineConfig } from './config.js';
 import { DECISION_WINDOW_MS, loadContext } from './context.js';
 import type { EngineContext, EngineUser } from './context.js';
 import { LIFECYCLE_RULES } from './rules.js';
+import { sequenceProgress } from './sequence.js';
 import type { LifecycleRule, RuleCategory, RuleMatch } from './rules.js';
 import { DAY_MS, localHour, utcOffsetHours } from './timezone.js';
 import { holdoutBucket, throttleReason } from './throttle.js';
@@ -39,6 +40,8 @@ export interface EngineDecision {
   title: string | null;
   body: string | null;
   notificationId: string | null;
+  /** Bu gonderimin kural dizisindeki sirasi (1'den). push_log payload'ina yazilir, sequence.ts oradan okur. */
+  sequenceStep: number;
 }
 
 export interface EngineRunResult {
@@ -63,11 +66,6 @@ function hasDecisionSince(ctx: EngineContext, userId: string, sinceMs: number): 
   return (ctx.logByUser.get(userId) ?? []).some((e) => e.createdAt >= sinceMs);
 }
 
-function ruleInCooldown(ctx: EngineContext, userId: string, rule: LifecycleRule, cooldownDays: number, nowMs: number): boolean {
-  const since = nowMs - cooldownDays * DAY_MS;
-  return (ctx.logByUser.get(userId) ?? []).some((e) => e.decision === 'sent' && e.ruleKey === rule.key && e.createdAt >= since);
-}
-
 function prefDisabled(user: EngineUser, category: RuleCategory): boolean {
   return (user.notification_preferences?.[category] ?? true) === false;
 }
@@ -77,13 +75,15 @@ export function pickRule(
   ctx: EngineContext,
   config: EngineConfig,
   nowMs: number,
-): { rule: LifecycleRule; match: RuleMatch } | null {
+): { rule: LifecycleRule; match: RuleMatch; step: number } | null {
+  const entries = ctx.logByUser.get(user.id) ?? [];
   for (const rule of LIFECYCLE_RULES) {
     const ruleConfig = config.rules[rule.key];
     if (!ruleConfig.enabled) continue;
-    if (ruleInCooldown(ctx, user.id, rule, ruleConfig.cooldown_days, nowMs)) continue;
+    const progress = sequenceProgress(user, entries, rule, ruleConfig.schedule_days, nowMs);
+    if (progress.state !== 'ready') continue;
     const match = rule.evaluate(user, ctx);
-    if (match) return { rule, match };
+    if (match) return { rule, match, step: progress.step + 1 };
   }
   return null;
 }
@@ -91,7 +91,7 @@ export function pickRule(
 // ── push_log yazimi ────────────────────────────────────────────────────────────
 
 function logPayload(d: EngineDecision) {
-  return { title: d.title, body: d.body, action_url: d.actionUrl };
+  return { title: d.title, body: d.body, action_url: d.actionUrl, sequence_step: d.sequenceStep };
 }
 
 /** Karari kaydeder; basarisizsa null (cagiran gonderimi iptal eder). created_at acikca kosum zamani. */
@@ -150,9 +150,8 @@ export async function runEngine(mode: EngineMode = 'live', opts: { now?: Date } 
   };
   if (mode === 'live' && (!config.enabled || loaded.tableMissing)) return result;
 
-  // Cooldown kontrolu en uzun kural cooldown'u kadar geriye bakabilmeli (haftalik tavan icin min 7)
-  const logLookbackDays = Math.max(7, ...LIFECYCLE_RULES.map((r) => config.rules[r.key].cooldown_days));
-  const ctx = await loadContext(now, { logLookbackDays });
+  if (loaded.usedDefaults) console.warn('[NotificationEngine] DB config gecersiz — varsayilanlar (dry_run) kullaniliyor, backoffice\'ten kaydet');
+  const ctx = await loadContext(now);
   const persist = mode === 'live';
   let sends = 0;
 
@@ -180,7 +179,7 @@ export async function runEngine(mode: EngineMode = 'live', opts: { now?: Date } 
       result.noRule++;
       continue;
     }
-    const { rule, match } = picked;
+    const { rule, match, step } = picked;
     const locale = resolveLocale(user.locale);
     const base: EngineDecision = {
       userId: user.id,
@@ -193,6 +192,7 @@ export async function runEngine(mode: EngineMode = 'live', opts: { now?: Date } 
       title: null,
       body: null,
       notificationId: null,
+      sequenceStep: step,
     };
 
     // Tavan + holdout: throttle.ts (kampanya gondericisiyle ortak)
