@@ -1,12 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { createFakeSupabase } from '../helpers/fake-supabase.js';
 
 async function setup(opts: { enabled?: boolean; key?: string; ozet?: unknown } = {}) {
-  const fake = createFakeSupabase({ app_config: [{ id: 'cfg', photo_moderation_enabled: opts.enabled ?? true }] });
-  vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
   vi.doMock('../../src/config/env.js', () => ({ env: { NVIDIA_API_KEY: opts.key ?? 'nv-key' } }));
   const moderatePendingPhotos = vi.fn(async () => opts.ozet ?? { checked: 0, banned: 0, review: 0, errors: 0 });
-  vi.doMock('../../src/services/photo-moderation.service.js', () => ({ moderatePendingPhotos }));
+  const moderationEnabled = vi.fn(async () => opts.enabled ?? true);
+  vi.doMock('../../src/services/photo-moderation.service.js', () => ({ moderatePendingPhotos, moderationEnabled }));
   const mod = await import('../../src/cron/photo-moderation.cron.js');
   return { mod, moderatePendingPhotos };
 }

@@ -6,6 +6,7 @@ import { diamondService } from "./diamond.service.js";
 import { referralService } from "./referral.service.js";
 import { economyConfigService } from "./economy-config.service.js";
 import { userLanguageService } from "./user-language.service.js";
+import { moderateUploadedPhoto } from "./photo-moderation.service.js";
 import { Errors } from "../utils/errors.js";
 import { assertUuid } from "../utils/validation.js";
 import { haversineDistance } from "../utils/math.js";
@@ -325,6 +326,9 @@ export class UserService {
     } catch (err) {
       console.error("[uploadPhoto] recalculateProfileCompletion error:", err);
     }
+
+    // Cinsel icerik taramasi yukleme aninda, cevap beklenmeden (model 1-30 sn); hata icerde yutulur.
+    void moderateUploadedPhoto(userId, photoUrl);
 
     return { photos, url: photoUrl };
   }

@@ -19,13 +19,17 @@ async function setup(opts: {
   birinci?: Karar | Error;
   ikinci?: Karar | Error;
   fetchCevap?: unknown;
+  enabled?: boolean;
+  key?: string;
 } = {}) {
   const fake = createFakeSupabase({
     users: opts.users ?? [{ id: 'u1', photos: ['https://x/a.jpg'], is_deleted: false, is_banned: false, is_test_account: false, created_at: '2026-09-01' }],
     photo_moderation_checks: opts.checks ?? [],
     matches: [],
+    app_config: [{ id: 'cfg', photo_moderation_enabled: opts.enabled ?? true }],
   });
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
+  vi.doMock('../../src/config/env.js', () => ({ env: { NVIDIA_API_KEY: opts.key ?? 'nv-key' } }));
 
   const nimVisionModerate = vi.fn(async (_url: string, o?: { model?: string }) => {
     const k = o?.model === 'confirm-model' ? (opts.ikinci ?? { explicit: false, reason: 'clean' }) : (opts.birinci ?? { explicit: false, reason: 'clean' });
@@ -183,5 +187,34 @@ describe('moderatePendingPhotos', () => {
     expect(banUser).toHaveBeenCalledTimes(1);
     expect(ozet.checked).toBe(1);
     expect(nimVisionModerate).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('moderateUploadedPhoto (yukleme ani)', () => {
+  it('explicit fotograf: kayit + ban, sonuc doner', async () => {
+    const { mod, fake, banUser } = await setup({ birinci: { explicit: true, reason: 'exposed genitals' }, ikinci: { explicit: true, reason: 'nudity' } });
+    const r = await mod.moderateUploadedPhoto('u1', 'https://x/yeni.jpg');
+    expect(r).toEqual({ verdict: 'explicit', banned: true });
+    expect(banUser).toHaveBeenCalledWith('u1', 'sexual_content', mod.BAN_REASON_TEXT);
+    expect(fake.table('photo_moderation_checks')[0]).toMatchObject({ user_id: 'u1', photo_url: 'https://x/yeni.jpg', verdict: 'explicit', attempts: 1 });
+  });
+
+  it('kill-switch kapali -> null, model ve ban cagrilmaz', async () => {
+    const { mod, nimVisionModerate, banUser } = await setup({ enabled: false, birinci: { explicit: true, reason: 'x' } });
+    expect(await mod.moderateUploadedPhoto('u1', 'https://x/yeni.jpg')).toBeNull();
+    expect(nimVisionModerate).not.toHaveBeenCalled();
+    expect(banUser).not.toHaveBeenCalled();
+  });
+
+  it('NVIDIA_API_KEY yok -> null', async () => {
+    const { mod, nimVisionModerate } = await setup({ key: '' });
+    expect(await mod.moderateUploadedPhoto('u1', 'https://x/yeni.jpg')).toBeNull();
+    expect(nimVisionModerate).not.toHaveBeenCalled();
+  });
+
+  it('beklenmedik hata yukleme akisina sizmaz (null)', async () => {
+    const { mod, banUser } = await setup({ birinci: { explicit: true, reason: 'x' }, ikinci: { explicit: true, reason: 'y' } });
+    banUser.mockRejectedValueOnce(new Error('db down') as never);
+    await expect(mod.moderateUploadedPhoto('u1', 'https://x/yeni.jpg')).resolves.toBeNull();
   });
 });

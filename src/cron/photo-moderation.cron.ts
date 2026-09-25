@@ -1,19 +1,18 @@
 import cron from "node-cron";
-import { supabase } from "../config/supabase.js";
 import { env } from "../config/env.js";
-import { moderatePendingPhotos } from "../services/photo-moderation.service.js";
+import { moderatePendingPhotos, moderationEnabled } from "../services/photo-moderation.service.js";
 
 let task: cron.ScheduledTask | null = null;
 let inFlight = false;
 let anahtarUyarisiVerildi = false;
 
-/** Tik basina fotograf: 25 x (1-20 sn) 5 dk'lik pencereye sigar; noOverlap yedek fren. */
+/** Tik basina fotograf: 25 x (1-30 sn) saatlik pencereye rahat sigar; noOverlap yedek fren. */
 export const TIK_BUTCESI = 25;
 
 /**
- * Profil fotografi moderasyonu: gercek kullanicilarin taranmamis fotograflarini NIM gorsel
- * modelinden gecirir; cinsel icerik kesinlesirse hesabi banlar (ban.service e-posta + itiraz).
- * Kalici anahtar app_config.photo_moderation_enabled (her tikta okunur); NVIDIA_API_KEY yoksa no-op.
+ * Emniyet supurgesi: asil tarama yukleme aninda (`user.service.uploadPhoto` -> `moderateUploadedPhoto`).
+ * Bu cron yalniz kacanlari (sunucu yeniden basladi, NIM gecici hata, eski fotograflar) saatte bir isler.
+ * Kalici anahtar app_config.photo_moderation_enabled; NVIDIA_API_KEY yoksa no-op.
  */
 export async function photoModerationTick(): Promise<void> {
   if (inFlight) {
@@ -29,8 +28,7 @@ export async function photoModerationTick(): Promise<void> {
       }
       return;
     }
-    const { data: cfg } = await supabase.from("app_config").select("photo_moderation_enabled").limit(1).maybeSingle();
-    if (!cfg?.photo_moderation_enabled) return;
+    if (!(await moderationEnabled())) return;
 
     const ozet = await moderatePendingPhotos(TIK_BUTCESI);
     if (ozet.checked > 0) {
@@ -45,8 +43,8 @@ export async function photoModerationTick(): Promise<void> {
 
 export const photoModerationCron = {
   name: "photo-moderation",
-  description: "Profil fotografi cinsel icerik taramasi (NIM vision) + otomatik ban (5 dk)",
-  schedule: "*/5 * * * *",
+  description: "Profil fotografi taramasi emniyet supurgesi — asil tarama yukleme aninda (saatlik)",
+  schedule: "17 * * * *",
   running: false,
 
   start() {

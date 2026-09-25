@@ -1,4 +1,5 @@
 import { supabase } from "../config/supabase.js";
+import { env } from "../config/env.js";
 import { LlmError } from "./llm.common.js";
 import { NIM_VISION_CONFIRM_MODEL, NIM_VISION_MODEL, nimVisionModerate } from "./nim.service.js";
 import { banService } from "./ban.service.js";
@@ -145,31 +146,63 @@ async function kaydet(p: PendingPhoto, c: Classification): Promise<void> {
   if (error) console.error("[photo-moderation] kayit yazilamadi", { url: p.url, err: error.message });
 }
 
-/** Cron tiki: butce kadar fotograf siniflandirir; explicit -> ban (e-posta + itiraz baglantisi). */
+export interface PhotoOutcome { verdict: Verdict; banned: boolean }
+
+/** Tek fotograf: siniflandir, kaydet, explicit ise banla. Yukleme yolu ve cron ayni fonksiyonu kullanir. */
+export async function moderatePhoto(p: PendingPhoto): Promise<PhotoOutcome> {
+  const sonuc = await classifyPhoto(p.url);
+  if (sonuc.verdict === "error" && p.attempts + 1 >= MAX_ATTEMPTS) {
+    sonuc.verdict = "review";
+    sonuc.reason = `max_attempts: ${sonuc.reason}`;
+  }
+  await kaydet(p, sonuc);
+  if (sonuc.verdict === "review") {
+    // Gerekce (beden tarifi) log'a degil DB'ye; admin oradan okur.
+    console.warn(`[photo-moderation] REVIEW user=${p.userId} model=${sonuc.model}`);
+  }
+  let banned = false;
+  if (sonuc.verdict === "explicit") {
+    banned = await banService.banUser(p.userId, "sexual_content", BAN_REASON_TEXT);
+    console.warn(`[photo-moderation] BANNED user=${p.userId} yeni=${banned} model=${sonuc.model}`);
+  }
+  return { verdict: sonuc.verdict, banned };
+}
+
+/** Kill-switch + anahtar: yukleme yolu ve cron ayni kapidan gecer. */
+export async function moderationEnabled(): Promise<boolean> {
+  if (!env.NVIDIA_API_KEY) return false;
+  const { data: cfg } = await supabase.from("app_config").select("photo_moderation_enabled").limit(1).maybeSingle();
+  return Boolean(cfg?.photo_moderation_enabled);
+}
+
+/**
+ * Yukleme aninda tarama: `uploadPhoto` cevabi beklemez (model 1-30 sn), arka planda calisir.
+ * Hata yukleme akisina asla sizmaz; kacan fotografi saatlik cron suparur.
+ */
+export async function moderateUploadedPhoto(userId: string, url: string): Promise<PhotoOutcome | null> {
+  try {
+    if (!(await moderationEnabled())) return null;
+    return await moderatePhoto({ userId, url, attempts: 0 });
+  } catch (err) {
+    console.error("[photo-moderation] upload-time moderation failed", { userId, err: err instanceof Error ? err.message : err });
+    return null;
+  }
+}
+
+/** Cron tiki (emniyet supurgesi): yukleme anini kaciran fotograflari butce kadar isler. */
 export async function moderatePendingPhotos(budget: number): Promise<ModerationSummary> {
   const ozet: ModerationSummary = { checked: 0, banned: 0, review: 0, errors: 0 };
   const banlananlar = new Set<string>();
 
   for (const p of await listPendingPhotos(budget)) {
     if (banlananlar.has(p.userId)) continue;
-    const sonuc = await classifyPhoto(p.url);
-    if (sonuc.verdict === "error" && p.attempts + 1 >= MAX_ATTEMPTS) {
-      sonuc.verdict = "review";
-      sonuc.reason = `max_attempts: ${sonuc.reason}`;
-    }
-    await kaydet(p, sonuc);
+    const { verdict, banned } = await moderatePhoto(p);
     ozet.checked++;
-    if (sonuc.verdict === "error") ozet.errors++;
-    if (sonuc.verdict === "review") {
-      ozet.review++;
-      // Gerekce (beden tarifi) log'a degil DB'ye; admin oradan okur.
-      console.warn(`[photo-moderation] REVIEW user=${p.userId} model=${sonuc.model}`);
-    }
-    if (sonuc.verdict === "explicit") {
-      const banlandi = await banService.banUser(p.userId, "sexual_content", BAN_REASON_TEXT);
+    if (verdict === "error") ozet.errors++;
+    if (verdict === "review") ozet.review++;
+    if (verdict === "explicit") {
       banlananlar.add(p.userId);
-      if (banlandi) ozet.banned++;
-      console.warn(`[photo-moderation] BANNED user=${p.userId} yeni=${banlandi} model=${sonuc.model}`);
+      if (banned) ozet.banned++;
     }
   }
   return ozet;
