@@ -141,14 +141,27 @@ export const VISION_MODERATION_PROMPT =
   + 'or a sexual act. Swimwear, underwear, cleavage, or a shirtless man is NOT explicit.';
 
 /**
+ * Yedek onay istemi: onay modeli (Gemma) kuyrukta cevap vermezse ayni fotograf 11B'ye BU istemle
+ * yeniden sorulur. Ilk istemden farkli acidan (yanlis pozitif avi) sorar ki ayni model ikinci kez
+ * ayni halusinasyonu tekrarlamasin (canli: 11B "digital display"e "exposed nipples" demisti).
+ */
+export const VISION_VERIFY_PROMPT =
+  'A first-pass reviewer flagged this dating-app profile photo as sexually explicit. You are the second reviewer; '
+  + 'first-pass reviewers often hallucinate nudity on ordinary photos (screens, clothing, skin-toned fabric). '
+  + 'Look carefully and decide independently. Reply ONLY with JSON: {"explicit": true|false, "reason": "<short>"}. '
+  + 'explicit=true ONLY if you can clearly see exposed genitals, bare buttocks, exposed female nipples, or a sexual act. '
+  + 'Swimwear, underwear, cleavage, a shirtless man, or anything ambiguous is NOT explicit.';
+
+/**
  * Bir gorseli (data: URL, base64) cinsel icerik acisindan siniflandirir.
  * Model JSON dondurmezse `empty` hatasi — belirsizlik guvenli sayilmaz, karar cagirana ait.
  */
 export async function nimVisionModerate(
   imageDataUrl: string,
-  opts: { model?: string; timeoutMs?: number } = {},
+  opts: { model?: string; timeoutMs?: number; prompt?: string } = {},
 ): Promise<VisionModerationResult> {
   const model = opts.model ?? NIM_VISION_MODEL;
+  const prompt = opts.prompt ?? VISION_MODERATION_PROMPT;
   const json = await nimPost<ChatCompletion>('/chat/completions', {
     model,
     max_tokens: VISION_MAX_TOKENS,
@@ -156,7 +169,7 @@ export async function nimVisionModerate(
     messages: [{
       role: 'user',
       content: [
-        { type: 'text', text: VISION_MODERATION_PROMPT },
+        { type: 'text', text: prompt },
         { type: 'image_url', image_url: { url: imageDataUrl } },
       ],
     }],

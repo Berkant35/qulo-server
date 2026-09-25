@@ -18,6 +18,8 @@ async function setup(opts: {
   checks?: Record<string, unknown>[];
   birinci?: Karar | Error;
   ikinci?: Karar | Error;
+  /** Yedek onay (11B, verify istemi) — Gemma hata verince. */
+  yedek?: Karar | Error;
   fetchCevap?: unknown;
   enabled?: boolean;
   key?: string;
@@ -31,13 +33,15 @@ async function setup(opts: {
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
   vi.doMock('../../src/config/env.js', () => ({ env: { NVIDIA_API_KEY: opts.key ?? 'nv-key' } }));
 
-  const nimVisionModerate = vi.fn(async (_url: string, o?: { model?: string }) => {
-    const k = o?.model === 'confirm-model' ? (opts.ikinci ?? { explicit: false, reason: 'clean' }) : (opts.birinci ?? { explicit: false, reason: 'clean' });
+  const nimVisionModerate = vi.fn(async (_url: string, o?: { model?: string; prompt?: string }) => {
+    const k = o?.model === 'confirm-model' ? (opts.ikinci ?? { explicit: false, reason: 'clean' })
+      : o?.prompt === 'VERIFY' ? (opts.yedek ?? new Error('yedek tanimsiz'))
+      : (opts.birinci ?? { explicit: false, reason: 'clean' });
     if (k instanceof Error) throw k;
     return { ...k, raw: JSON.stringify(k) };
   });
   vi.doMock('../../src/services/nim.service.js', () => ({
-    nimVisionModerate, NIM_VISION_MODEL: 'primary-model', NIM_VISION_CONFIRM_MODEL: 'confirm-model',
+    nimVisionModerate, NIM_VISION_MODEL: 'primary-model', NIM_VISION_CONFIRM_MODEL: 'confirm-model', VISION_VERIFY_PROMPT: 'VERIFY',
   }));
   const banUser = vi.fn(async () => true);
   vi.doMock('../../src/services/ban.service.js', () => ({ banService: { banUser } }));
@@ -156,12 +160,36 @@ describe('moderatePendingPhotos', () => {
     expect(ozet.banned).toBe(0);
   });
 
-  it('onay modeli hata/timeout verirse error (yeniden denenir), ban YOK', async () => {
-    const { mod, fake, banUser } = await setup({ birinci: { explicit: true, reason: 'exposed genitals' }, ikinci: new Error('timeout') });
+  it('onay (Gemma) timeout + yedek onay (11B verify istemi) evet -> ban; model etiketi yedek', async () => {
+    const { mod, fake, banUser, nimVisionModerate } = await setup({ birinci: { explicit: true, reason: 'exposed genitals' }, ikinci: new Error('timeout'), yedek: { explicit: true, reason: 'clearly exposed genitals' } });
+    const ozet = await mod.moderatePendingPhotos(10);
+    expect(nimVisionModerate).toHaveBeenCalledTimes(3);
+    expect(nimVisionModerate).toHaveBeenLastCalledWith(expect.any(String), { model: 'primary-model', prompt: 'VERIFY' });
+    expect(ozet.banned).toBe(1);
+    expect(banUser).toHaveBeenCalledTimes(1);
+    expect(fake.table('photo_moderation_checks')[0]).toMatchObject({ verdict: 'explicit', model: 'primary-model#verify' });
+    expect(fake.table('photo_moderation_checks')[0].reason).toContain('onay hata');
+  });
+
+  it('onay timeout + yedek onay hayir -> review, ban YOK', async () => {
+    const { mod, fake, banUser } = await setup({ birinci: { explicit: true, reason: 'exposed nipples' }, ikinci: new Error('timeout'), yedek: { explicit: false, reason: 'skin-toned fabric' } });
+    await mod.moderatePendingPhotos(10);
+    expect(banUser).not.toHaveBeenCalled();
+    expect(fake.table('photo_moderation_checks')[0]).toMatchObject({ verdict: 'review' });
+  });
+
+  it('onay VE yedek onay hata -> error (yeniden denenir), ban YOK', async () => {
+    const { mod, fake, banUser } = await setup({ birinci: { explicit: true, reason: 'exposed genitals' }, ikinci: new Error('timeout'), yedek: new Error('timeout') });
     const ozet = await mod.moderatePendingPhotos(10);
     expect(banUser).not.toHaveBeenCalled();
     expect(ozet.errors).toBe(1);
     expect(fake.table('photo_moderation_checks')[0]).toMatchObject({ verdict: 'error', model: 'confirm-model' });
+  });
+
+  it('onay (Gemma) cevap verirse yedek hic cagrilmaz', async () => {
+    const { mod, nimVisionModerate } = await setup({ birinci: { explicit: true, reason: 'x' }, ikinci: { explicit: false, reason: 'swimsuit' } });
+    await mod.moderatePendingPhotos(10);
+    expect(nimVisionModerate).toHaveBeenCalledTimes(2);
   });
 
   it('11B hata verirse error kaydi (yeniden denenir), ban YOK', async () => {

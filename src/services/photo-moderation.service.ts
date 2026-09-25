@@ -1,7 +1,7 @@
 import { supabase } from "../config/supabase.js";
 import { env } from "../config/env.js";
 import { LlmError } from "./llm.common.js";
-import { NIM_VISION_CONFIRM_MODEL, NIM_VISION_MODEL, nimVisionModerate } from "./nim.service.js";
+import { NIM_VISION_CONFIRM_MODEL, NIM_VISION_MODEL, VISION_VERIFY_PROMPT, nimVisionModerate } from "./nim.service.js";
 import { banService } from "./ban.service.js";
 
 export type Verdict = "safe" | "explicit" | "review" | "error";
@@ -126,16 +126,26 @@ export async function classifyPhoto(url: string): Promise<Classification> {
     return { verdict: supheliGerekce(birinci.reason) ? "review" : "safe", reason: birinci.reason, model: NIM_VISION_MODEL };
   }
 
-  try {
-    const ikinci = await nimVisionModerate(indirme.dataUrl, { model: NIM_VISION_CONFIRM_MODEL, timeoutMs: CONFIRM_TIMEOUT_MS });
-    return {
-      verdict: ikinci.explicit ? "explicit" : "review",
-      reason: `tarama(true): ${birinci.reason} | onay(${ikinci.explicit}): ${ikinci.reason}`,
-      model: NIM_VISION_CONFIRM_MODEL,
-    };
-  } catch (err) {
-    return { verdict: "error", reason: `tarama(true): ${birinci.reason} | onay hata: ${hataMetni(err)}`, model: NIM_VISION_CONFIRM_MODEL };
+  // Onay 1: farkli aile (Gemma 4). Onay 2 (yedek): Gemma kuyrukta cevap vermezse 11B, farkli istemle.
+  // Canli 13:17-13:55Z: Gemma tam da explicit fotograflarda 90-180 sn timeout verdi, ban hic dusmedi.
+  const onaylar: { model: string; opts: Parameters<typeof nimVisionModerate>[1]; etiket: string }[] = [
+    { model: NIM_VISION_CONFIRM_MODEL, opts: { model: NIM_VISION_CONFIRM_MODEL, timeoutMs: CONFIRM_TIMEOUT_MS }, etiket: "onay" },
+    { model: `${NIM_VISION_MODEL}#verify`, opts: { model: NIM_VISION_MODEL, prompt: VISION_VERIFY_PROMPT }, etiket: "yedek-onay" },
+  ];
+  const hatalar: string[] = [];
+  for (const onay of onaylar) {
+    try {
+      const ikinci = await nimVisionModerate(indirme.dataUrl, onay.opts);
+      return {
+        verdict: ikinci.explicit ? "explicit" : "review",
+        reason: `tarama(true): ${birinci.reason} | ${onay.etiket}(${ikinci.explicit}): ${ikinci.reason}${hatalar.length ? ` | ${hatalar.join("; ")}` : ""}`,
+        model: onay.model,
+      };
+    } catch (err) {
+      hatalar.push(`${onay.etiket} hata: ${hataMetni(err)}`);
+    }
   }
+  return { verdict: "error", reason: `tarama(true): ${birinci.reason} | ${hatalar.join("; ")}`, model: NIM_VISION_CONFIRM_MODEL };
 }
 
 async function kaydet(p: PendingPhoto, c: Classification): Promise<void> {

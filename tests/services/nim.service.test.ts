@@ -196,6 +196,15 @@ describe('nimVisionModerate', () => {
     expect(body.model).toBe(NIM_VISION_CONFIRM_MODEL);
   });
 
+  it('prompt parametresi verilirse varsayilan istem yerine o gonderilir (yedek onay)', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(sohbet('{"explicit": false, "reason": "fabric"}'));
+    vi.stubGlobal('fetch', fetchMock);
+    const { nimVisionModerate, VISION_VERIFY_PROMPT } = await yukle();
+    await nimVisionModerate('data:image/jpeg;base64,AAAA', { prompt: VISION_VERIFY_PROMPT });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.messages[0].content[0]).toEqual({ type: 'text', text: VISION_VERIFY_PROMPT });
+  });
+
   it('JSON karari yoksa empty hatasi — belirsizlik guvenli SAYILMAZ', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(sohbet('I cannot classify this image.')));
     const { nimVisionModerate } = await yukle();
