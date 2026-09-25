@@ -28,6 +28,7 @@ import presenceRoutes from "./routes/presence.routes.js";
 import supportTicketRoutes from "./routes/support-ticket.routes.js";
 import analyticsTrackRoutes from "./routes/analytics.routes.js";
 import unsubscribeRoutes from "./routes/unsubscribe.routes.js";
+import banAppealRoutes from "./routes/ban-appeal.routes.js";
 import pageMessageRoutes from "./routes/page-message.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { idempotencyMiddleware } from "./middleware/idempotency.js";
@@ -126,6 +127,8 @@ app.use("/admin", adminRoutes);
 
 // Public (no auth) — email unsubscribe link target
 app.use(unsubscribeRoutes);
+// Public (no auth) — ban e-postasindaki itiraz baglantisi (tek kullanimlik token)
+app.use(banAppealRoutes);
 
 // Prevent caching of authenticated API responses
 app.use("/api/v1", (_req, res, next) => {

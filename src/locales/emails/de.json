@@ -17,5 +17,16 @@
     "body": "Du hast eine neue Übereinstimmung bei Qulo. Öffne die App, um zu sehen, wer es ist.",
     "cta": "Jetzt ansehen",
     "unsubscribe_label": "E-Mail-Benachrichtigungen deaktivieren"
+  },
+  "ban_notice": {
+    "subject": "Dein Qulo-Konto wurde gesperrt",
+    "headline": "Dein Konto wurde gesperrt",
+    "body": "Wir haben in deinem Profil Inhalte gefunden, die gegen die Community-Richtlinien von Qulo verstoßen. Dein Konto wurde daher gesperrt und deine Matches wurden geschlossen.",
+    "reason_label": "Grund",
+    "reason_sexual_content": "Ein Profilfoto mit Nacktheit oder sexuellem Inhalt.",
+    "reason_guidelines": "Verstoß gegen die Community-Richtlinien.",
+    "appeal_intro": "Wenn du glaubst, dass das ein Irrtum ist, kannst du über den Button unten Einspruch einlegen. Unser Team prüft ihn und antwortet per E-Mail.",
+    "appeal_cta": "Einspruch einlegen",
+    "footer": "Diese Nachricht wurde gesendet, weil eine Moderationsmaßnahme für dein Konto durchgeführt wurde."
   }
 }

@@ -17,5 +17,16 @@
     "body": "Tu as un nouveau match sur Qulo. Ouvre l'application pour voir de qui il s'agit.",
     "cta": "Voir maintenant",
     "unsubscribe_label": "Désactiver les e-mails"
+  },
+  "ban_notice": {
+    "subject": "Ton compte Qulo a été suspendu",
+    "headline": "Ton compte a été suspendu",
+    "body": "Nous avons trouvé sur ton profil du contenu contraire aux règles de la communauté Qulo. Ton compte a donc été suspendu et tes matchs ont été fermés.",
+    "reason_label": "Motif",
+    "reason_sexual_content": "Une photo de profil contenant de la nudité ou du contenu sexuel.",
+    "reason_guidelines": "Non-respect des règles de la communauté.",
+    "appeal_intro": "Si tu penses qu'il s'agit d'une erreur, tu peux faire appel avec le bouton ci-dessous. Notre équipe examinera ta demande et te répondra par e-mail.",
+    "appeal_cta": "Faire appel",
+    "footer": "Ce message a été envoyé parce qu'une action de modération a été appliquée à ton compte."
   }
 }

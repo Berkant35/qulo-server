@@ -15,6 +15,8 @@ interface AppConfigRow {
   /** Seed AI cevap cron kill-switch'leri (migration 059). */
   seed_reply_enabled: boolean;
   seed_reply_fast_mode: boolean;
+  /** Profil fotografi moderasyon cron kill-switch'i (migration 064). */
+  photo_moderation_enabled: boolean;
   updated_at: string;
 }
 

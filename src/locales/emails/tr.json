@@ -17,5 +17,16 @@
     "body": "Qulo'da yeni bir eşleşmen var. Şimdi kim olduğunu görmek için uygulamayı aç.",
     "cta": "Şimdi gör",
     "unsubscribe_label": "E-posta bildirimlerini kapat"
+  },
+  "ban_notice": {
+    "subject": "Qulo hesabın askıya alındı",
+    "headline": "Hesabın askıya alındı",
+    "body": "Profilinde Qulo topluluk kurallarına aykırı içerik tespit ettik; bu nedenle hesabın askıya alındı ve eşleşmelerin kapatıldı.",
+    "reason_label": "Sebep",
+    "reason_sexual_content": "Çıplaklık veya cinsel içerik barındıran bir profil fotoğrafı.",
+    "reason_guidelines": "Topluluk kurallarının ihlali.",
+    "appeal_intro": "Bunun bir hata olduğunu düşünüyorsan aşağıdaki butonla itiraz edebilirsin. Ekibimiz inceleyip e-posta ile dönüş yapar.",
+    "appeal_cta": "İtiraz et",
+    "footer": "Bu mesaj hesabında bir moderasyon işlemi yapıldığı için gönderildi."
   }
 }

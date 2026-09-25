@@ -17,5 +17,16 @@
     "body": "Qulo 上有了新匹配。打开应用查看是谁。",
     "cta": "立即查看",
     "unsubscribe_label": "关闭邮件通知"
+  },
+  "ban_notice": {
+    "subject": "你的 Qulo 账号已被停用",
+    "headline": "你的账号已被停用",
+    "body": "我们在你的个人资料中发现了违反 Qulo 社区准则的内容，因此你的账号已被停用，匹配已关闭。",
+    "reason_label": "原因",
+    "reason_sexual_content": "包含裸露或性内容的个人资料照片。",
+    "reason_guidelines": "违反社区准则。",
+    "appeal_intro": "如果你认为这是误判，可以点击下方按钮申诉。我们的团队会审核并通过邮件回复。",
+    "appeal_cta": "申诉",
+    "footer": "发送此邮件是因为你的账号受到了管理操作。"
   }
 }

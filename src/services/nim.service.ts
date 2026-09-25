@@ -13,13 +13,30 @@ export const NIM_BASE_URL = 'https://integrate.api.nvidia.com/v1';
 export const NIM_CHAT_MODEL = 'google/gemma-4-31b-it';
 export const NIM_SAFETY_MODEL = 'nvidia/nemotron-3.5-content-safety';
 export const NIM_EMBED_MODEL = 'nvidia/nemotron-3-embed-1b';
+/**
+ * Profil fotografi moderasyonu (photo-moderation.service). 11B: 1-7 sn, 4 MB base64 kabul etti
+ * (2026-09-25 canli tarama, 99 fotograf). Ayni taramada 11B uc kez celisti (explicit=false ama
+ * gerekce "exposed breasts") ve 514 baytlik bozuk dosyaya "exposed nipples" dedi; bu yuzden ban
+ * karari ikinci, FARKLI aileden bir modelin onayina bagli. Gemma 4 31B gorsel kabul ediyor
+ * (sentetik PNG sondasi 29 sn, dogru cevap). Denenip elenenler: llama-3.2-90b-vision (90 sn'de
+ * cevap yok), nemotron-nano-12b-v2-vl / gemma-3-27b / phi-4-multimodal / llama-4 (410/404).
+ */
+export const NIM_VISION_MODEL = 'meta/llama-3.2-11b-vision-instruct';
+export const NIM_VISION_CONFIRM_MODEL = NIM_CHAT_MODEL;
 
 const NIM_VARSAYILAN_TEMPERATURE = 1.0;
 const NIM_VARSAYILAN_MAX_TOKENS = 2000;
 /** Siniflandirici tek satir doner; fazlasi gereksiz. */
 const SAFETY_MAX_TOKENS = 60;
+/** Gorsel moderasyon JSON'u: {"explicit": bool, "reason": "..."} — kisa gerekce yeter. */
+const VISION_MAX_TOKENS = 80;
+/** Gorsel modeller ucretsiz kuyrukta 1-30 sn arasi (Gemma 4 sondasi 29 sn); 12 sn varsayilan keserdi. */
+const VISION_TIMEOUT_MS = 90_000;
 
-interface ChatMessage { role: 'system' | 'user' | 'assistant'; content: string }
+type ContentPart =
+  | { type: 'text'; text: string }
+  | { type: 'image_url'; image_url: { url: string } };
+interface ChatMessage { role: 'system' | 'user' | 'assistant'; content: string | ContentPart[] }
 interface ChatCompletion {
   choices?: { message?: { content?: string | null } }[];
   usage?: { prompt_tokens?: number; completion_tokens?: number };
@@ -109,4 +126,45 @@ export async function nimEmbed(
     throw new LlmError('empty', `NIM embedding sayisi uyusmuyor: ${vektorler.length}/${inputs.length}`);
   }
   return vektorler;
+}
+
+export interface VisionModerationResult { explicit: boolean; reason: string; raw: string }
+
+/**
+ * Cinsel icerik siniflandirma istemi. Mayo/ic camasiri/ustsuz erkek "explicit" DEGIL — flort
+ * uygulamasinda bunlar olagan; ban yalniz ciplaklik ve cinsel eylem icin.
+ */
+export const VISION_MODERATION_PROMPT =
+  'You are a strict content moderator for a dating app. Classify this profile photo. '
+  + 'Reply ONLY with JSON: {"explicit": true|false, "reason": "<short>"}. '
+  + 'explicit=true ONLY if the photo shows nudity (exposed genitals, bare buttocks, exposed female nipples) '
+  + 'or a sexual act. Swimwear, underwear, cleavage, or a shirtless man is NOT explicit.';
+
+/**
+ * Bir gorseli (data: URL, base64) cinsel icerik acisindan siniflandirir.
+ * Model JSON dondurmezse `empty` hatasi — belirsizlik guvenli sayilmaz, karar cagirana ait.
+ */
+export async function nimVisionModerate(
+  imageDataUrl: string,
+  opts: { model?: string; timeoutMs?: number } = {},
+): Promise<VisionModerationResult> {
+  const model = opts.model ?? NIM_VISION_MODEL;
+  const json = await nimPost<ChatCompletion>('/chat/completions', {
+    model,
+    max_tokens: VISION_MAX_TOKENS,
+    temperature: 0,
+    messages: [{
+      role: 'user',
+      content: [
+        { type: 'text', text: VISION_MODERATION_PROMPT },
+        { type: 'image_url', image_url: { url: imageDataUrl } },
+      ],
+    }],
+  }, opts.timeoutMs ?? VISION_TIMEOUT_MS);
+  const raw = (json.choices?.[0]?.message?.content ?? '').trim();
+  const karar = /"explicit"\s*:\s*(true|false)/i.exec(raw);
+  if (!karar) throw new LlmError('empty', `NIM gorsel moderasyon cevabi cozulemedi: ${raw.slice(0, 80)}`);
+  const gerekce = /"reason"\s*:\s*"([^"]*)"/i.exec(raw);
+  console.log(`[Llm] provider=nvidia model=${model} vision explicit=${karar[1]!.toLowerCase()}`);
+  return { explicit: karar[1]!.toLowerCase() === 'true', reason: (gerekce?.[1] ?? '').trim(), raw };
 }

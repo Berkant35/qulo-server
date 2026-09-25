@@ -168,3 +168,42 @@ describe('nimEmbed', () => {
     await expect(nimEmbed(['a', 'b'])).rejects.toMatchObject({ code: 'empty' });
   });
 });
+
+describe('nimVisionModerate', () => {
+  it('gorseli image_url parcasi olarak, temperature 0 ile vision modeline gonderir ve JSON kararini cozer', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(sohbet('{"explicit": true, "reason": "exposed genitals"}'));
+    vi.stubGlobal('fetch', fetchMock);
+    const { nimVisionModerate, NIM_VISION_MODEL, VISION_MODERATION_PROMPT } = await yukle();
+
+    const r = await nimVisionModerate('data:image/jpeg;base64,AAAA');
+    expect(r).toMatchObject({ explicit: true, reason: 'exposed genitals' });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.model).toBe(NIM_VISION_MODEL);
+    expect(body.temperature).toBe(0);
+    expect(body.messages[0].content).toEqual([
+      { type: 'text', text: VISION_MODERATION_PROMPT },
+      { type: 'image_url', image_url: { url: 'data:image/jpeg;base64,AAAA' } },
+    ]);
+  });
+
+  it('model parametresi one gecer (dogrulama modeli) ve false karari cozulur', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(sohbet('Sure! {"explicit": false, "reason": "swimsuit"}.'));
+    vi.stubGlobal('fetch', fetchMock);
+    const { nimVisionModerate, NIM_VISION_CONFIRM_MODEL } = await yukle();
+    const r = await nimVisionModerate('data:image/png;base64,BBBB', { model: NIM_VISION_CONFIRM_MODEL });
+    expect(r).toMatchObject({ explicit: false, reason: 'swimsuit' });
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.model).toBe(NIM_VISION_CONFIRM_MODEL);
+  });
+
+  it('JSON karari yoksa empty hatasi — belirsizlik guvenli SAYILMAZ', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(sohbet('I cannot classify this image.')));
+    const { nimVisionModerate } = await yukle();
+    await expect(nimVisionModerate('data:image/jpeg;base64,AAAA')).rejects.toMatchObject({ code: 'empty' });
+  });
+
+  it('anahtar yoksa no_key', async () => {
+    const { nimVisionModerate } = await yukle('');
+    await expect(nimVisionModerate('data:image/jpeg;base64,AAAA')).rejects.toMatchObject({ code: 'no_key' });
+  });
+});

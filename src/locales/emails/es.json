@@ -17,5 +17,16 @@
     "body": "Tienes una nueva coincidencia en Qulo. Abre la app para ver quién es.",
     "cta": "Ver ahora",
     "unsubscribe_label": "Desactivar correos"
+  },
+  "ban_notice": {
+    "subject": "Tu cuenta de Qulo ha sido suspendida",
+    "headline": "Tu cuenta ha sido suspendida",
+    "body": "Encontramos contenido en tu perfil que infringe las normas de la comunidad de Qulo, por lo que tu cuenta fue suspendida y tus matches se cerraron.",
+    "reason_label": "Motivo",
+    "reason_sexual_content": "Una foto de perfil con desnudez o contenido sexual.",
+    "reason_guidelines": "Infracción de las normas de la comunidad.",
+    "appeal_intro": "Si crees que es un error, puedes apelar con el botón de abajo. Nuestro equipo lo revisará y te responderá por correo.",
+    "appeal_cta": "Apelar",
+    "footer": "Este mensaje se envió porque se aplicó una acción de moderación a tu cuenta."
   }
 }

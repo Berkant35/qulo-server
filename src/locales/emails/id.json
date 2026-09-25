@@ -17,5 +17,16 @@
     "body": "Kamu punya kecocokan baru di Qulo. Buka aplikasi untuk melihat siapa dia.",
     "cta": "Lihat sekarang",
     "unsubscribe_label": "Matikan notifikasi email"
+  },
+  "ban_notice": {
+    "subject": "Akun Qulo kamu ditangguhkan",
+    "headline": "Akun kamu ditangguhkan",
+    "body": "Kami menemukan konten di profilmu yang melanggar pedoman komunitas Qulo, sehingga akunmu ditangguhkan dan match-mu ditutup.",
+    "reason_label": "Alasan",
+    "reason_sexual_content": "Foto profil yang mengandung ketelanjangan atau konten seksual.",
+    "reason_guidelines": "Pelanggaran pedoman komunitas.",
+    "appeal_intro": "Jika menurutmu ini keliru, kamu bisa mengajukan banding lewat tombol di bawah. Tim kami akan meninjau dan membalas lewat email.",
+    "appeal_cta": "Ajukan banding",
+    "footer": "Pesan ini dikirim karena ada tindakan moderasi pada akunmu."
   }
 }

@@ -17,5 +17,16 @@
     "body": "Je hebt een nieuwe match op Qulo. Open de app om te zien wie het is.",
     "cta": "Bekijk nu",
     "unsubscribe_label": "E-mailmeldingen uitschakelen"
+  },
+  "ban_notice": {
+    "subject": "Je Qulo-account is geschorst",
+    "headline": "Je account is geschorst",
+    "body": "We hebben op je profiel inhoud gevonden die in strijd is met de communityrichtlijnen van Qulo. Daarom is je account geschorst en zijn je matches gesloten.",
+    "reason_label": "Reden",
+    "reason_sexual_content": "Een profielfoto met naaktheid of seksuele inhoud.",
+    "reason_guidelines": "Overtreding van de communityrichtlijnen.",
+    "appeal_intro": "Denk je dat dit een vergissing is? Dan kun je met de knop hieronder bezwaar maken. Ons team bekijkt het en antwoordt per e-mail.",
+    "appeal_cta": "Bezwaar maken",
+    "footer": "Dit bericht is verzonden omdat er een moderatiemaatregel op je account is toegepast."
   }
 }

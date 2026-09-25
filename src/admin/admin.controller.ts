@@ -230,6 +230,7 @@ class AdminController {
       is_maintenance, maintenance_message_tr, maintenance_message_en,
       is_force_update_enabled,
       seed_reply_enabled, seed_reply_fast_mode,
+      photo_moderation_enabled,
     } = req.body;
 
     const versionFields: Record<string, string> = { min_version_ios, min_version_android, latest_version_ios, latest_version_android };
@@ -254,6 +255,8 @@ class AdminController {
         // Seed AI kill-switches (migration 059) — app-config.ejs'de checkbox olarak render edilir.
         seed_reply_enabled: seed_reply_enabled === "on",
         seed_reply_fast_mode: seed_reply_fast_mode === "on",
+        // Fotograf moderasyonu kill-switch (migration 064).
+        photo_moderation_enabled: photo_moderation_enabled === "on",
       });
 
       res.redirect("/admin/app-config?success=1");

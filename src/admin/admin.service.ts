@@ -3,6 +3,7 @@ import { env } from "../config/env.js";
 import { hashPassword, comparePassword, normalizeEmail } from "../utils/hash.js";
 import { sanitizeIlike } from "../utils/validation.js";
 import { Errors } from "../utils/errors.js";
+import { banService } from "../services/ban.service.js";
 import {
   PUSH_TYPES,
   loadDefaultTemplate,
@@ -150,28 +151,21 @@ class AdminService {
     if (error) throw Errors.SERVER_ERROR();
   }
 
+  /** Ban/unban tek yol ban.service: bayrak + eslesme kapatma + e-posta (itiraz baglantili). */
   async banUser(userId: string, reason: string = "Banned by admin") {
-    const { error: banError } = await supabase
-      .from("users")
-      .update({ is_banned: true, banned_at: new Date().toISOString(), ban_reason: reason })
-      .eq("id", userId);
-
-    if (banError) throw Errors.SERVER_ERROR();
-
-    // Deactivate all matches
-    await supabase
-      .from("matches")
-      .update({ is_active: false })
-      .or(`user1_id.eq.${userId},user2_id.eq.${userId}`);
+    try {
+      await banService.banUser(userId, "guidelines", reason);
+    } catch {
+      throw Errors.SERVER_ERROR();
+    }
   }
 
   async unbanUser(userId: string) {
-    const { error } = await supabase
-      .from("users")
-      .update({ is_banned: false, banned_at: null, ban_reason: null })
-      .eq("id", userId);
-
-    if (error) throw Errors.SERVER_ERROR();
+    try {
+      await banService.unbanUser(userId);
+    } catch {
+      throw Errors.SERVER_ERROR();
+    }
   }
 
   async deleteUser(userId: string) {

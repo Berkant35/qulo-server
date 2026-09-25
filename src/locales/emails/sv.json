@@ -17,5 +17,16 @@
     "body": "Du har en ny matchning på Qulo. Öppna appen för att se vem det är.",
     "cta": "Se nu",
     "unsubscribe_label": "Stäng av e-postmeddelanden"
+  },
+  "ban_notice": {
+    "subject": "Ditt Qulo-konto har stängts av",
+    "headline": "Ditt konto har stängts av",
+    "body": "Vi hittade innehåll i din profil som bryter mot Qulos communityregler. Därför har ditt konto stängts av och dina matchningar avslutats.",
+    "reason_label": "Orsak",
+    "reason_sexual_content": "En profilbild med nakenhet eller sexuellt innehåll.",
+    "reason_guidelines": "Brott mot communityreglerna.",
+    "appeal_intro": "Om du tror att detta är ett misstag kan du överklaga med knappen nedan. Vårt team granskar ärendet och svarar via e-post.",
+    "appeal_cta": "Överklaga",
+    "footer": "Det här meddelandet skickades eftersom en modereringsåtgärd har vidtagits på ditt konto."
   }
 }

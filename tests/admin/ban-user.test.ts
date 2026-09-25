@@ -30,15 +30,15 @@ beforeEach(() => vi.resetModules());
 describe('userAction — ban / unban', () => {
   it('ban: is_banned, banned_at, ban_reason yazilir; eslesmeler pasife alinir', async () => {
     const { fake, adminController } = await setup(
-      [{ id: 'u1', is_banned: false, banned_at: null, ban_reason: null, is_deleted: false }],
+      [{ id: '11111111-1111-4111-8111-111111111111', is_banned: false, banned_at: null, ban_reason: null, is_deleted: false }],
       [
-        { id: 'm1', user1_id: 'u1', user2_id: 'u2', is_active: true },
-        { id: 'm2', user1_id: 'u3', user2_id: 'u1', is_active: true },
+        { id: 'm1', user1_id: '11111111-1111-4111-8111-111111111111', user2_id: 'u2', is_active: true },
+        { id: 'm2', user1_id: 'u3', user2_id: '11111111-1111-4111-8111-111111111111', is_active: true },
         { id: 'm3', user1_id: 'u3', user2_id: 'u2', is_active: true },
       ],
     );
 
-    await cagir(adminController, 'u1', 'ban');
+    await cagir(adminController, '11111111-1111-4111-8111-111111111111', 'ban');
 
     const u = fake.table('users')[0]!;
     expect(u.is_banned).toBe(true);
@@ -52,10 +52,10 @@ describe('userAction — ban / unban', () => {
 
   it('unban: uc alan sifirlanir', async () => {
     const { fake, adminController } = await setup([
-      { id: 'u1', is_banned: true, banned_at: '2026-09-25T11:40:35Z', ban_reason: 'Banned by admin' },
+      { id: '11111111-1111-4111-8111-111111111111', is_banned: true, banned_at: '2026-09-25T11:40:35Z', ban_reason: 'Banned by admin' },
     ]);
 
-    await cagir(adminController, 'u1', 'unban');
+    await cagir(adminController, '11111111-1111-4111-8111-111111111111', 'unban');
 
     const u = fake.table('users')[0]!;
     expect(u.is_banned).toBe(false);

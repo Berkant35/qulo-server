@@ -129,3 +129,14 @@ export const webQuizAttemptLimiter = rateLimit({
   legacyHeaders: false,
   message: rateLimitResponse,
 });
+
+// E-posta baglantisi hedefleri (/unsubscribe, /ban-appeal): kimlik yok, token 256 bit (enumerasyon
+// pratik degil) ama her istek DB sorgusu; amplifikasyona karsi IP bazli dar tavan.
+export const emailLinkLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 20,
+  keyGenerator: clientKey,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitResponse,
+});

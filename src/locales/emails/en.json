@@ -17,5 +17,16 @@
     "body": "You have a new match on Qulo. Open the app to see who it is.",
     "cta": "See now",
     "unsubscribe_label": "Turn off email notifications"
+  },
+  "ban_notice": {
+    "subject": "Your Qulo account has been suspended",
+    "headline": "Your account has been suspended",
+    "body": "We found content on your profile that violates Qulo's community guidelines, so your account has been suspended and your matches were closed.",
+    "reason_label": "Reason",
+    "reason_sexual_content": "A profile photo containing nudity or sexual content.",
+    "reason_guidelines": "Violation of the community guidelines.",
+    "appeal_intro": "If you think this is a mistake, you can appeal with the button below. Our team will review it and reply by email.",
+    "appeal_cta": "Appeal",
+    "footer": "This message was sent because a moderation action was taken on your account."
   }
 }

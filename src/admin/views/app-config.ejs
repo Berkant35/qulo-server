@@ -97,6 +97,18 @@
     </div>
   </div>
 
+  <!-- Fotograf moderasyonu -->
+  <div class="card">
+    <h3 style="margin-bottom: 16px;">Fotoğraf Moderasyonu (NVIDIA NIM)</h3>
+    <div>
+      <label style="display:flex; align-items:center; gap:8px; font-size:14px; cursor:pointer;">
+        <input type="checkbox" name="photo_moderation_enabled" <%= config?.photo_moderation_enabled ? 'checked' : '' %>>
+        <span>Otomatik fotoğraf taraması ve ban aktif</span>
+      </label>
+      <p style="font-size:12px; color:#999; margin-top:4px;">Her 5 dakikada gerçek kullanıcıların taranmamış profil fotoğrafları görsel modelden geçer. Cinsel içerik iki modelde de kesinleşirse hesap banlanır, kullanıcıya itiraz bağlantılı e-posta gider. Sunucuda <code>NVIDIA_API_KEY</code> yoksa çalışmaz. Şüpheli ama kesinleşmeyenler <code>photo_moderation_checks</code> tablosunda <code>review</code> olarak bekler.</p>
+    </div>
+  </div>
+
   <div style="text-align: right;">
     <button type="submit" class="btn btn-primary" style="padding: 10px 32px; font-size: 15px;">Save Configuration</button>
   </div>

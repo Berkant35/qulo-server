@@ -17,5 +17,16 @@
     "body": "Masz nowe dopasowanie na Qulo. Otwórz aplikację, aby zobaczyć, kto to.",
     "cta": "Zobacz teraz",
     "unsubscribe_label": "Wyłącz powiadomienia e-mail"
+  },
+  "ban_notice": {
+    "subject": "Twoje konto Qulo zostało zawieszone",
+    "headline": "Twoje konto zostało zawieszone",
+    "body": "Znaleźliśmy w Twoim profilu treści naruszające zasady społeczności Qulo, dlatego Twoje konto zostało zawieszone, a dopasowania zamknięte.",
+    "reason_label": "Powód",
+    "reason_sexual_content": "Zdjęcie profilowe zawierające nagość lub treści seksualne.",
+    "reason_guidelines": "Naruszenie zasad społeczności.",
+    "appeal_intro": "Jeśli uważasz, że to pomyłka, możesz się odwołać przyciskiem poniżej. Nasz zespół to sprawdzi i odpowie e-mailem.",
+    "appeal_cta": "Odwołaj się",
+    "footer": "Ta wiadomość została wysłana, ponieważ wobec Twojego konta podjęto działanie moderacyjne."
   }
 }

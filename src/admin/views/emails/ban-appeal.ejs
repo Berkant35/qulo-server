@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head><meta charset="utf-8"><title>Ban itirazı</title></head>
+<body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1a1a1a;">
+  <h2 style="color:#BB86FC;">Qulo — Ban itirazı geldi</h2>
+  <table cellpadding="6" style="border-collapse:collapse;font-size:14px;">
+    <tr><td><strong>Kullanıcı</strong></td><td><%= name %> &lt;<%= email %>&gt;</td></tr>
+    <tr><td><strong>Kullanıcı ID</strong></td><td><code><%= userId %></code></td></tr>
+    <tr><td><strong>Ban tarihi</strong></td><td><%= bannedAt %></td></tr>
+    <tr><td><strong>Ban sebebi</strong></td><td><%= banReason %></td></tr>
+  </table>
+  <h3>Kullanıcının mesajı</h3>
+  <p style="white-space:pre-wrap;background:#f5f5f5;padding:12px;border-radius:8px;"><%= message || "(boş)" %></p>
+  <p><a href="<%= adminUrl %>">Admin panelinde aç</a></p>
+</body>
+</html>

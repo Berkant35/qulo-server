@@ -27,6 +27,10 @@ const envSchema = z.object({
   // App
   APP_URL: z.string().url().default("http://localhost:3000"),
   WEB_URL: z.string().url().default("https://quloapp.com"),
+  /** E-postalardaki sunucu baglantilari (unsubscribe, ban itirazi). */
+  API_BASE_URL: z.string().url().default("https://qulo-server-production.up.railway.app"),
+  /** Ban itirazi geldiginde bildirim gidecek adres; bos ise EMAIL_FROM. */
+  BAN_APPEAL_NOTIFY_EMAIL: z.string().email().or(z.literal("")).default(""),
 
   // RevenueCat
   REVENUECAT_WEBHOOK_SECRET: z.string().default(''),
