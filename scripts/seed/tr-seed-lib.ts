@@ -147,8 +147,12 @@ export const photoPostSchema = z.object({
   level: z.enum(["medium", "heavy"]).optional(),
   /** v2 çekim karakteri (temiz/gunluk/eski_telefon/dusuk_isik/flas/ekran_goruntusu/whatsapp). */
   karakter: z.string().min(1).optional(),
-}).passthrough().refine((p) => p.level !== undefined || p.karakter !== undefined, {
-  message: "post: v1 'level' ya da v2 'karakter' alanlarından biri bulunmalı",
+  /** v3 yöntem ailesi (kadraj/hdr_telefon/portre_modu/pus_parlama/kromatik/ham_temiz/eski_kamera + v2 devralınanlar). */
+  yontem: z.string().min(1).optional(),
+  /** v3 kırpma düzeltmesi: ham görselde (x0, y0, x1, y1) — AI denetiminde kusurlu bant kadraj dışına alındı. */
+  crop_fix: z.tuple([z.number().int(), z.number().int(), z.number().int(), z.number().int()]).optional(),
+}).passthrough().refine((p) => p.level !== undefined || p.karakter !== undefined || p.yontem !== undefined, {
+  message: "post: v1 'level', v2 'karakter' ya da v3 'yontem' alanlarından biri bulunmalı",
 });
 
 export const photoMetaSchema = z.object({

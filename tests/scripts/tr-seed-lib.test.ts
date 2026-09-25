@@ -398,9 +398,15 @@ describe("tr-seed-lib — seedProfile akışı (fake-supabase)", () => {
 });
 
 describe("tr-seed-lib — photoPostSchema (son işlem sürümleri)", () => {
-  it("v1 kaydı (level) ve v2 kaydı (karakter) birlikte kabul edilir", () => {
+  it("v1 kaydı (level), v2 kaydı (karakter) ve v3 kaydı (yontem + crop_fix) birlikte kabul edilir", () => {
     expect(photoPostSchema.safeParse({ kind: "phone", version: 1, level: "medium" }).success).toBe(true);
     expect(photoPostSchema.safeParse({ kind: "phone", version: 2, karakter: "dusuk_isik" }).success).toBe(true);
+    expect(photoPostSchema.safeParse({ kind: "phone", version: 3, yontem: "kadraj", crop_fix: [0, 0, 700, 933] }).success).toBe(true);
+    expect(photoPostSchema.safeParse({ kind: "phone", version: 3, yontem: "gunluk", karakter: "gunluk" }).success).toBe(true);
+  });
+
+  it("v3 crop_fix dört tam sayı olmalı", () => {
+    expect(photoPostSchema.safeParse({ kind: "phone", version: 3, yontem: "temiz", crop_fix: [0, 0, 700] }).success).toBe(false);
   });
 
   it("ikisi de yoksa reddedilir", () => {
