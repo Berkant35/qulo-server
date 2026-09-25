@@ -176,7 +176,8 @@ class QueryBuilder implements PromiseLike<Result<any>> {
    * alternatifin TUM filtreleri eslesmeli.
    */
   private readonly orGroups: Filter[][][] = [];
-  private orderBy: { column: string; ascending: boolean } | null = null;
+  /** Zincirdeki her `.order()` sirayla anahtar olur (PostgREST: ilk cagri birincil). */
+  private readonly orderBy: { column: string; ascending: boolean; nullsFirst: boolean }[] = [];
   private rangeBounds: { from: number; to: number } | null = null;
   private limitCount: number | null = null;
   private returnRows = false;
@@ -253,8 +254,10 @@ class QueryBuilder implements PromiseLike<Result<any>> {
     return this;
   }
 
-  order(column: string, opts?: { ascending?: boolean }) {
-    this.orderBy = { column, ascending: opts?.ascending ?? true };
+  order(column: string, opts?: { ascending?: boolean; nullsFirst?: boolean }) {
+    const ascending = opts?.ascending ?? true;
+    // Postgres varsayilani: ASC'de NULL en sonda, DESC'de en basta.
+    this.orderBy.push({ column, ascending, nullsFirst: opts?.nullsFirst ?? !ascending });
     return this;
   }
 
@@ -288,12 +291,21 @@ class QueryBuilder implements PromiseLike<Result<any>> {
     );
     const total = selected.length;
 
-    if (this.orderBy) {
-      const { column, ascending } = this.orderBy;
+    if (this.orderBy.length > 0) {
+      // Eskiden yalniz SON `.order()` tutuluyordu: `order(last_seen_at).order(id)`
+      // zinciri testte sadece id'ye gore siralaniyor, birincil anahtar sessizce
+      // kayboluyordu. Simdi anahtarlar sirayla, esitlikte bir sonrakine gecerek.
       selected = [...selected].sort((a, b) => {
-        if (a[column] === b[column]) return 0;
-        const cmp = a[column] > b[column] ? 1 : -1;
-        return ascending ? cmp : -cmp;
+        for (const { column, ascending, nullsFirst } of this.orderBy) {
+          const av = a[column];
+          const bv = b[column];
+          if (av === bv) continue;
+          if (av == null) return nullsFirst ? -1 : 1;
+          if (bv == null) return nullsFirst ? 1 : -1;
+          const cmp = av > bv ? 1 : -1;
+          return ascending ? cmp : -cmp;
+        }
+        return 0;
       });
     }
     if (this.rangeBounds) {

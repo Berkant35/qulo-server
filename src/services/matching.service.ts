@@ -35,6 +35,8 @@ interface CandidateRow {
   last_seen_at: string;
   boost_until: string | null;
   relationship_goal: string | null;
+  /** Seed (test) profili: gercek adaylar tukenmeden gosterilmez. */
+  is_seed_profile: boolean | null;
 }
 
 interface QuestionInfo {
@@ -154,12 +156,17 @@ export class MatchingService {
     let query = supabase
       .from("users")
       .select(
-        "id, name, bio, age, gender, city, lat, lng, photos, profile_completion, green_diamonds, like_received_count, times_shown_count, last_seen_at, boost_until, relationship_goal",
+        "id, name, bio, age, gender, city, lat, lng, photos, profile_completion, green_diamonds, like_received_count, times_shown_count, last_seen_at, boost_until, relationship_goal, is_seed_profile",
       )
       .eq("is_deleted", false)
       .eq("email_verified", true)
       .not("lat", "is", null)
       .not("lng", "is", null)
+      // Gercek kullanicilar ONCE cekilir: seed'ler (416 profil) surekli "cevrimici"
+      // ritmi tuttugu icin salt last_seen_at siralamasinda tavani doldurur ve
+      // gercek adaylar 500'un disinda kalabilir. Bu anahtar bellekteki
+      // siralamayla ayni (adim 7) — seed'ler her zaman en sonda.
+      .order("is_seed_profile", { ascending: true, nullsFirst: true })
       // `id` ikincil anahtar: `last_seen_at` esitliginde tiebreak yoksa kesme
       // noktasi yine belirsizlesir ve havuz 500'u astiginda ayni bug'in kucuk
       // bir versiyonu geri gelir.
@@ -360,14 +367,22 @@ export class MatchingService {
         boostActive: isBoostActive(c.boost_until),
       });
 
-      return { candidate: c, score, questionCount: qCount, tier: c.distance_tier };
+      return {
+        candidate: c,
+        score,
+        questionCount: qCount,
+        tier: c.distance_tier,
+        seedRank: c.is_seed_profile ? 1 : 0,
+      };
     });
 
-    // 7. Once tier artan, sonra tier icinde skor azalan.
+    // 7. Once gercek kullanicilar (seed'ler EN SONA), sonra tier artan, sonra
+    // tier icinde skor azalan. Seed profiller yalnizca gercek adaylar tukenince
+    // gelir — uzak bir gercek kullanici bile yakin bir seed'in onundedir.
     // Boost (+50) tier'i asamaz: boostlu uzak aday yakinlarin onune gecmez,
     // kendi tier'inin icinde yukselir. Bilincli — boost gorunurluk satar,
     // mesafe algisini bozmaz.
-    scored.sort((a, b) => a.tier - b.tier || b.score - a.score);
+    scored.sort((a, b) => a.seedRank - b.seedRank || a.tier - b.tier || b.score - a.score);
 
     // 8. Paginate
     const start = (page - 1) * PAGE_SIZE;

@@ -447,3 +447,93 @@ describe("discover — buyuk aday havuzu (canli olay 2026-09-17)", () => {
     await expect(svc.discover(VIEWER_ID, 1)).rejects.toThrow();
   });
 });
+
+describe("discover — seed profiller en sonda", () => {
+  // Seed profiller (416 test hesabi) herkese gorunur (is_test_admin varsayilani
+  // true). Gercek kullanicilar tukenmeden seed gosterilmemeli: uzak bir gercek
+  // aday bile yakin bir seed'in onundedir; tier/skor ancak seed olmayanlar
+  // arasinda ve seed'ler arasinda ayri ayri siralar.
+  it("yakin ve yuksek skorlu seed, uzak gercek adayin ARKASINDA kalir", async () => {
+    const service = await loadService({
+      users: [
+        viewerRow(),
+        candidateRow("seed-yakin", 5, {
+          is_seed_profile: true,
+          profile_completion: 100,
+          photos: ["a.jpg", "b.jpg", "c.jpg"],
+          like_received_count: 90,
+          times_shown_count: 100,
+        }),
+        candidateRow("gercek-uzak", 300, { is_seed_profile: false, profile_completion: 40 }),
+        candidateRow("gercek-yakin", 20, { is_seed_profile: false }),
+      ],
+      swipes: [],
+      matches: [],
+      questions: questionsFor(["seed-yakin", "gercek-uzak", "gercek-yakin"]),
+    });
+
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual(["gercek-yakin", "gercek-uzak", "seed-yakin"]);
+  });
+
+  it("gercek aday hic kalmayinca seed'ler gelir — havuz bos gorunmez", async () => {
+    const service = await loadService({
+      users: [
+        viewerRow(),
+        candidateRow("seed-1", 5, { is_seed_profile: true }),
+        candidateRow("seed-2", 50, { is_seed_profile: true }),
+        candidateRow("swiped", 1, { is_seed_profile: false }),
+      ],
+      swipes: [{ swiper_id: VIEWER_ID, target_id: "swiped", created_at: new Date().toISOString() }],
+      matches: [],
+      questions: questionsFor(["seed-1", "seed-2", "swiped"]),
+    });
+
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual(["seed-1", "seed-2"]);
+    expect(res.empty_reason).toBeUndefined();
+  });
+
+  it("seed'ler sayfa siniri asilinca da sonraki sayfalarda, gerceklerden sonra gelir", async () => {
+    // 12 gercek + 3 seed: sayfa 1 = 10 gercek, sayfa 2 = 2 gercek + 3 seed.
+    const gercekler = Array.from({ length: 12 }, (_, i) => uid(200 + i));
+    const seedler = Array.from({ length: 3 }, (_, i) => uid(300 + i));
+    const service = await loadService({
+      users: [
+        viewerRow(),
+        ...seedler.map((id) => candidateRow(id, 1, { is_seed_profile: true })),
+        ...gercekler.map((id, i) => candidateRow(id, 100 + i, { is_seed_profile: false })),
+      ],
+      swipes: [],
+      matches: [],
+      questions: questionsFor([...gercekler, ...seedler]),
+    });
+
+    const sayfa1 = await service.discover(VIEWER_ID, 1);
+    const sayfa2 = await service.discover(VIEWER_ID, 2);
+    expect(sayfa1.cards.every((c) => gercekler.includes(c.user_id))).toBe(true);
+    expect(sayfa2.cards.map((c) => c.user_id)).toEqual([gercekler[10], gercekler[11], ...seedler]);
+  });
+
+  it("aday tavani (500) dolunca seed'ler gercek kullanicilari sorgudan DISARI ITMEZ", async () => {
+    // Seed'ler surekli "cevrimici" ritmi tutar (last_seen_at taze). Sorgu salt
+    // last_seen_at ile siralansaydi 500 seed tavani doldurur, gercek kullanici
+    // hic cekilmezdi. Birincil anahtar is_seed_profile oldugu icin gercek
+    // kullanici, en eski last_seen_at ile bile listeye girer.
+    const seedler = Array.from({ length: 500 }, (_, i) => uid(1000 + i));
+    const eskiTarih = "2026-01-01T00:00:00Z";
+    const service = await loadService({
+      users: [
+        viewerRow(),
+        ...seedler.map((id) => candidateRow(id, 5, { is_seed_profile: true })),
+        candidateRow("gercek-eski", 10, { is_seed_profile: false, last_seen_at: eskiTarih }),
+      ],
+      swipes: [],
+      matches: [],
+      questions: questionsFor([...seedler, "gercek-eski"]),
+    });
+
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards[0].user_id).toBe("gercek-eski");
+  });
+});
