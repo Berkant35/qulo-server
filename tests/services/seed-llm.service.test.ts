@@ -83,3 +83,49 @@ describe('generateSeedReply', () => {
     await expect(generateSeedReply({ system: 's', turns: [] })).rejects.toMatchObject({ code: 'empty' });
   });
 });
+
+describe('generateSeedReply — SEED_LLM_PROVIDER=nvidia', () => {
+  async function nvidiaYukle(anahtar = 'nv-key') {
+    vi.doMock('../../src/config/env.js', () => ({
+      env: { GEMINI_API_KEY: '', NVIDIA_API_KEY: anahtar, SEED_LLM_PROVIDER: 'nvidia' },
+    }));
+    return import('../../src/services/seed-llm.service.js');
+  }
+
+  it('istegi NIM ucuna OpenAI semasiyla gonderir, Gemini anahtari gerekmez', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ choices: [{ message: { content: 'valla iyiyim ya' } }], usage: { prompt_tokens: 5, completion_tokens: 3 } }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    const { generateSeedReply, SEED_LLM_MODEL, SEED_LLM_PROVIDER } = await nvidiaYukle();
+
+    const r = await generateSeedReply({ system: 'Sen Elif\'sin.', turns: [{ role: 'user', text: 'nbr' }, { role: 'model', text: 'iyi' }] });
+
+    expect(SEED_LLM_PROVIDER).toBe('nvidia');
+    expect(SEED_LLM_MODEL).toBe('google/gemma-4-31b-it');
+    expect(r).toEqual({ text: 'valla iyiyim ya', inputTokens: 5, outputTokens: 3 });
+    const [url, init] = fetchMock.mock.calls[0]!;
+    expect(url).toBe('https://integrate.api.nvidia.com/v1/chat/completions');
+    expect((init as RequestInit).headers).toMatchObject({ Authorization: 'Bearer nv-key' });
+    const body = JSON.parse((init as RequestInit).body as string);
+    expect(body.model).toBe(SEED_LLM_MODEL);
+    expect(body.temperature).toBe(1.0);
+    expect(body.max_tokens).toBe(2000);
+    expect(body.messages).toEqual([
+      { role: 'system', content: 'Sen Elif\'sin.' },
+      { role: 'user', content: 'nbr' },
+      { role: 'assistant', content: 'iyi' },
+    ]);
+  });
+
+  it('NIM anahtari yoksa no_key hatasi SeedLlmError olarak gelir', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    const { generateSeedReply, SeedLlmError } = await nvidiaYukle('');
+    const hata = await generateSeedReply({ system: 's', turns: [] }).catch((e) => e);
+    expect(hata).toBeInstanceOf(SeedLlmError);
+    expect(hata.code).toBe('no_key');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});

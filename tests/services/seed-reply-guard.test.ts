@@ -51,6 +51,9 @@ describe('validateReply — elenmesi gerekenler', () => {
     ['yasak-gpt',        'GPT falan mı sandın beni',              'yasak_kelime'],
     ['yasak-gemini',     'gemini ne alaka şimdi',                 'yasak_kelime'],
     ['yasak-openai',     'openai diye bir şey bilmiyorum',        'yasak_kelime'],
+    ['yasak-gemma',      'gemma mı dedin, o ne',                  'yasak_kelime'],
+    ['yasak-nemotron',   'nemotron falan bilmem',                 'yasak_kelime'],
+    ['yasak-nvidia',     'nvidia ile ne alakam var',              'yasak_kelime'],
     ['yasak-algoritma',  'algoritma işte napalım',                'yasak_kelime'],
     ['yasak-programlan', 'öyle programlandım galiba',             'yasak_kelime'],
   ];

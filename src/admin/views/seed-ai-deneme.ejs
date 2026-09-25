@@ -3,7 +3,8 @@
 <p style="font-size:13px; color:#666; margin-bottom:20px;">
   Gerçek persona kartını kurar, gerçek modele sorar, gerçek denetimden geçirir —
   <strong>hiçbir şey kaydetmez</strong> (mesaj gitmez, kuyruğa satır açılmaz).
-  Her "Cevap üret" bir Gemini çağrısıdır (~$0.0005).
+  Her "Cevap üret" bir <strong><%= llmProvider %></strong> çağrısıdır (model <code><%= llmModel %></code>;
+  Gemini ~$0.0005, NVIDIA ücretsiz kota).
 </p>
 
 <% if (error) { %>

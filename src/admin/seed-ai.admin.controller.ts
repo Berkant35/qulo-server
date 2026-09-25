@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { supabase } from "../config/supabase.js";
 import { previewSeedReply, DenemeHatasi, type DenemeSonucu } from "../services/seed-reply-preview.service.js";
+import { SEED_LLM_MODEL, SEED_LLM_PROVIDER } from "../services/seed-llm.service.js";
 
 interface Tur { kim: "insan" | "seed"; text: string }
 
@@ -42,6 +43,8 @@ class SeedAiAdminController {
       .limit(500);
 
     res.render("seed-ai-deneme", {
+      llmProvider: SEED_LLM_PROVIDER,
+      llmModel: SEED_LLM_MODEL,
       profiller: profiller ?? [],
       secili: extras.secili ?? "",
       gecmis: extras.gecmis ?? [],

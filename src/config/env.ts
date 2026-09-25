@@ -36,6 +36,10 @@ const envSchema = z.object({
   // Gemini AI
   GEMINI_API_KEY: z.string().default(''),
 
+  // NVIDIA NIM (build.nvidia.com, OpenAI uyumlu) + seed cevap saglayicisi secimi
+  NVIDIA_API_KEY: z.string().default(''),
+  SEED_LLM_PROVIDER: z.enum(['gemini', 'nvidia']).default('gemini'),
+
   // Social Auth — Google
   GOOGLE_CLIENT_ID_WEB: z.string().default(''),
   GOOGLE_CLIENT_ID_IOS: z.string().default(''),
