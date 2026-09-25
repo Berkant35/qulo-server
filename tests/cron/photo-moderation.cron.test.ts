@@ -38,3 +38,26 @@ describe('photoModerationTick', () => {
     expect(moderatePendingPhotos).toHaveBeenCalledTimes(2);
   });
 });
+
+describe('photoModerationCron.start — acilis supurgesi', () => {
+  it('start() ACILIS_GECIKMESI_MS sonra bir tik calistirir; stop() iptal eder', async () => {
+    vi.useFakeTimers();
+    try {
+      const { mod, moderatePendingPhotos } = await setup();
+      mod.photoModerationCron.start();
+      expect(moderatePendingPhotos).not.toHaveBeenCalled();
+      await vi.advanceTimersByTimeAsync(mod.ACILIS_GECIKMESI_MS);
+      expect(moderatePendingPhotos).toHaveBeenCalledTimes(1);
+      mod.photoModerationCron.stop();
+
+      vi.resetModules();
+      const ikinci = await setup();
+      ikinci.mod.photoModerationCron.start();
+      ikinci.mod.photoModerationCron.stop();
+      await vi.advanceTimersByTimeAsync(ikinci.mod.ACILIS_GECIKMESI_MS);
+      expect(ikinci.moderatePendingPhotos).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});

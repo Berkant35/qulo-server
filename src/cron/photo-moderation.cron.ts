@@ -3,7 +3,14 @@ import { env } from "../config/env.js";
 import { moderatePendingPhotos, moderationEnabled } from "../services/photo-moderation.service.js";
 
 let task: cron.ScheduledTask | null = null;
+let acilisTiki: NodeJS.Timeout | null = null;
 let inFlight = false;
+
+/**
+ * Deploy sonrasi acilis supurgesi: Railway rolling deploy koşan tiki ortasinda kesiyor (ilk canli tik
+ * 8/25'te kesildi); kalanlar bir sonraki saat basini beklemesin. 2 dk: DB/NIM baglantilari otursun.
+ */
+export const ACILIS_GECIKMESI_MS = 2 * 60 * 1000;
 let anahtarUyarisiVerildi = false;
 
 /** Tik basina fotograf: 25 x (1-30 sn) saatlik pencereye rahat sigar; noOverlap yedek fren. */
@@ -50,12 +57,15 @@ export const photoModerationCron = {
   start() {
     if (task) return;
     task = cron.schedule(this.schedule, photoModerationTick, { noOverlap: true });
+    acilisTiki = setTimeout(() => { acilisTiki = null; void photoModerationTick(); }, ACILIS_GECIKMESI_MS);
+    acilisTiki.unref();
     this.running = true;
     console.log(`[Cron] ${this.name} started (${this.schedule})`);
   },
 
   stop() {
     if (task) { task.stop(); task = null; }
+    if (acilisTiki) { clearTimeout(acilisTiki); acilisTiki = null; }
     this.running = false;
     console.log(`[Cron] ${this.name} stopped`);
   },
