@@ -100,6 +100,36 @@ describe('sendMinuteFor / variantFor / isRecurrenceDay (saf)', () => {
     expect(variantFor({ ...c, variants: [] }, 5)).toEqual({ title: 'T', body: 'B' });
   });
 
+  it('variantFor dile ozgu: kullanicinin dilindeki satirlar arasinda rotasyon; dili yoksa etiketsiz yedek; o da yoksa ana metin', async () => {
+    const { variantFor } = await boot(tables());
+    const c = {
+      push_title: 'T', push_body: 'B',
+      variants: [
+        { title: 'ar1', body: 'a1', locale: 'ar' }, { title: 'ar2', body: 'a2', locale: 'ar' },
+        { title: 'en1', body: 'e1' },
+      ],
+    };
+    expect(variantFor(c, 10, 'ar')).toMatchObject({ title: 'ar1' });
+    expect(variantFor(c, 11, 'ar')).toMatchObject({ title: 'ar2' });
+    expect(variantFor(c, 11, 'fr')).toMatchObject({ title: 'en1' }); // fr satiri yok → etiketsiz yedek
+    expect(variantFor(c, 11, null)).toMatchObject({ title: 'en1' });
+    const onlyTagged = { ...c, variants: [{ title: 'ar1', body: 'a1', locale: 'ar' }] };
+    expect(variantFor(onlyTagged, 3, 'fr')).toEqual({ title: 'T', body: 'B' }); // yedek de yok → ana metin
+  });
+
+  it('gonderimde kullanicinin dili secilir: ar kullanicisina ar satiri, fr kullanicisina etiketsiz yedek', async () => {
+    const variants = [{ title: 'ar-baslik', body: 'ar-govde', locale: 'ar' }, { title: 'en-title', body: 'en-body' }];
+    const seed = tables({ campaigns: [campaign({ variants })], users: [user({ id: 'A', locale: 'ar', lng: 46 }), user({ id: 'F', locale: 'fr', lng: 2 })], notification_engine_config: [{ id: 1, config: { holdout_pct: 0 } }] });
+    const { send, campaignRecurringService } = await boot(seed);
+    // A (ar, lng 46 → UTC+3) ve F (fr, lng 2 → UTC+0): pencereyi 0-24 yapip ikisini de yakala
+    seed.campaigns![0]!.window_start_hour = 0; seed.campaigns![0]!.window_end_hour = 24;
+    const r = await campaignRecurringService.dispatch(new Date('2026-09-25T23:30:00.000Z'));
+    expect(r.sent).toBe(2);
+    const byToken = Object.fromEntries(send.mock.calls.map((c) => [c[0].token, c[0].notification.title]));
+    expect(byToken['tok-A']).toBe('ar-baslik');
+    expect(byToken['tok-F']).toBe('en-title');
+  });
+
   it('isRecurrenceDay: bos/null her gun, liste varsa yalniz o gunler', async () => {
     const { isRecurrenceDay } = await boot(tables());
     expect(isRecurrenceDay(null, 3)).toBe(true);

@@ -25,6 +25,8 @@ export const MAX_PHOTO_BYTES = 8 * 1024 * 1024;
 /** 514 baytlik bozuk dosyaya 11B "exposed nipples" dedi (2026-09-25); gercek fotograf bu kadar kucuk olamaz. */
 export const MIN_PHOTO_BYTES = 10 * 1024;
 const FETCH_TIMEOUT_MS = 15_000;
+/** Onay modeli (Gemma 4) ucretsiz kuyrukta 90 sn'yi asabiliyor (canli: tam da explicit fotograflarda); yol asenkron, bekleyebiliriz. */
+export const CONFIRM_TIMEOUT_MS = 180_000;
 /** Ban gerekcesi (users.ban_reason, admin panelinde gorunur). */
 export const BAN_REASON_TEXT = "photo_moderation: sexual content (NIM vision, confirmed)";
 
@@ -125,7 +127,7 @@ export async function classifyPhoto(url: string): Promise<Classification> {
   }
 
   try {
-    const ikinci = await nimVisionModerate(indirme.dataUrl, { model: NIM_VISION_CONFIRM_MODEL });
+    const ikinci = await nimVisionModerate(indirme.dataUrl, { model: NIM_VISION_CONFIRM_MODEL, timeoutMs: CONFIRM_TIMEOUT_MS });
     return {
       verdict: ikinci.explicit ? "explicit" : "review",
       reason: `tarama(true): ${birinci.reason} | onay(${ikinci.explicit}): ${ikinci.reason}`,

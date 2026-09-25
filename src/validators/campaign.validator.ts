@@ -11,6 +11,8 @@ export const MAX_VARIANTS = 10;
 export const campaignVariantSchema = z.object({
   title: z.string().trim().min(1).max(100),
   body: z.string().trim().min(1).max(500),
+  /** users.locale ile eslesir; yoksa varyant her dile yedek olarak kullanilir. */
+  locale: z.string().trim().toLowerCase().min(2).max(5).optional(),
 });
 export type CampaignVariant = z.infer<typeof campaignVariantSchema>;
 

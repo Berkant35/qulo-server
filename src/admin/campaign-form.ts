@@ -36,7 +36,10 @@ function intList(body: FormBody, key: string): number[] {
   return values.map((v) => Number(v)).filter((n) => Number.isFinite(n));
 }
 
-/** Textarea, satir basina "Baslik | Govde". Ayrac yoksa satir govde, baslik push_title'dan gelir. */
+/**
+ * Textarea, satir basina "[dil] Baslik | Govde". "[dil]" istege bagli (users.locale, orn. [tr]); yoksa varyant
+ * her dile yedek. Ayrac yoksa satir govde, baslik push_title'dan gelir.
+ */
 export function parseVariantLines(raw: string | undefined, fallbackTitle: string | undefined): CampaignVariant[] {
   if (!raw) return [];
   return raw
@@ -44,9 +47,14 @@ export function parseVariantLines(raw: string | undefined, fallbackTitle: string
     .map((line) => line.trim())
     .filter(Boolean)
     .map((line) => {
-      const sep = line.indexOf("|");
-      if (sep === -1) return { title: fallbackTitle ?? "", body: line };
-      return { title: line.slice(0, sep).trim(), body: line.slice(sep + 1).trim() };
+      const tag = /^\[([a-zA-Z-]{2,5})\]\s*/.exec(line);
+      const locale = tag ? tag[1]!.toLowerCase() : undefined;
+      const rest = tag ? line.slice(tag[0].length) : line;
+      const sep = rest.indexOf("|");
+      const variant = sep === -1
+        ? { title: fallbackTitle ?? "", body: rest.trim() }
+        : { title: rest.slice(0, sep).trim(), body: rest.slice(sep + 1).trim() };
+      return locale ? { ...variant, locale } : variant;
     });
 }
 

@@ -101,12 +101,13 @@ describe('moderatePendingPhotos', () => {
     expect(banUser).not.toHaveBeenCalled();
   });
 
-  it('tarama explicit + onay explicit -> ban (sexual_content) ve explicit kaydi', async () => {
-    const { mod, fake, banUser } = await setup({ birinci: { explicit: true, reason: 'exposed genitals' }, ikinci: { explicit: true, reason: 'nudity' } });
+  it('tarama explicit + onay explicit -> ban (sexual_content) ve explicit kaydi; onay uzun timeout ile', async () => {
+    const { mod, fake, banUser, nimVisionModerate } = await setup({ birinci: { explicit: true, reason: 'exposed genitals' }, ikinci: { explicit: true, reason: 'nudity' } });
     const ozet = await mod.moderatePendingPhotos(10);
     expect(ozet.banned).toBe(1);
     expect(banUser).toHaveBeenCalledWith('u1', 'sexual_content', mod.BAN_REASON_TEXT);
     expect(fake.table('photo_moderation_checks')[0]).toMatchObject({ verdict: 'explicit', model: 'confirm-model' });
+    expect(nimVisionModerate).toHaveBeenLastCalledWith(expect.any(String), { model: 'confirm-model', timeoutMs: mod.CONFIRM_TIMEOUT_MS });
   });
 
   it('tarama explicit ama onay katilmadi -> review, ban YOK', async () => {

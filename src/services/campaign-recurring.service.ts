@@ -80,10 +80,19 @@ export function sendMinuteFor(campaignId: string, localDate: string, startHour: 
   return startHour * 60 + (fnv1a32(`${campaignId}:${localDate}`) % span);
 }
 
-/** Gunluk rotasyon: ardisik gunlerde ardisik varyant; varyant yoksa kampanyanin ana metni. */
-export function variantFor(campaign: Pick<RecurringCampaign, "push_title" | "push_body" | "variants">, dayIndex: number): CampaignVariant {
-  if (!campaign.variants.length) return { title: campaign.push_title, body: campaign.push_body };
-  return campaign.variants[dayIndex % campaign.variants.length]!;
+/**
+ * Gunluk rotasyon, kullanicinin dilinde: once `locale` etiketi kullanicinin diliyle eslesen varyantlar,
+ * yoksa etiketsiz (her dile yedek) varyantlar, o da yoksa kampanyanin ana metni. Ardisik gunlerde ardisik varyant.
+ */
+export function variantFor(
+  campaign: Pick<RecurringCampaign, "push_title" | "push_body" | "variants">,
+  dayIndex: number,
+  userLocale: string | null = null,
+): CampaignVariant {
+  const forLocale = userLocale ? campaign.variants.filter((v) => v.locale === userLocale) : [];
+  const pool = forLocale.length ? forLocale : campaign.variants.filter((v) => !v.locale);
+  if (!pool.length) return { title: campaign.push_title, body: campaign.push_body };
+  return pool[dayIndex % pool.length]!;
 }
 
 export function isRecurrenceDay(days: number[] | null | undefined, isoWeekday: number): boolean {
@@ -197,7 +206,7 @@ class CampaignRecurringService {
       return "failed";
     }
 
-    const variant = variantFor(campaign, clock.dayIndex);
+    const variant = variantFor(campaign, clock.dayIndex, user.locale);
     let sent = false;
     try {
       sent = await NotificationService.sendPush(user.id, "campaign", { body: variant.body }, undefined, {

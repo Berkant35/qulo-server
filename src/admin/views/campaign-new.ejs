@@ -143,8 +143,8 @@
         </div>
         <p style="font-size: 12px; color: #b45309; margin: 6px 0 12px;">Bildirim motoruyla aynı günlük (1) / haftalık (3) tavanı ve holdout'u paylaşır. Her gün seçersen kişisel lifecycle bildirimleri bastırılır — öneri: haftada 2-3 gün.</p>
         <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Text variants (one per line, daily rotation)</label>
-        <textarea name="variants" rows="5" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-family: inherit; resize: vertical;" placeholder="Başlık | Gövde&#10;Başlık 2 | Gövde 2&#10;Yalnız gövde (başlık Push Title'dan)"><%= v.variants || '' %></textarea>
-        <p style="font-size: 12px; color: #999; margin-top: 4px;">En fazla 10 satır. Boşsa her gün Push Title / Push Body gider. Aynı metni her gün göndermek en hızlı opt-out sebebi.</p>
+        <textarea name="variants" rows="5" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-family: inherit; resize: vertical;" placeholder="[tr] Başlık | Gövde&#10;[tr] Başlık 2 | Gövde 2&#10;[en] Title | Body&#10;Etiketsiz satır = her dile yedek"><%= v.variants || '' %></textarea>
+        <p style="font-size: 12px; color: #999; margin-top: 4px;">En fazla 10 satır. Satır başına <code>[dil]</code> etiketi: kullanıcı kendi dilindeki satırlar arasında rotasyon görür; dili için satır yoksa etiketsiz satırlar, o da yoksa Push Title / Push Body. Aynı metni her gün göndermek en hızlı opt-out sebebi.</p>
       </div>
     </div>
   </div>

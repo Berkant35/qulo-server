@@ -9,6 +9,12 @@ describe('parseVariantLines', () => {
       { title: 'PT', body: 'sadece govde' },
     ]);
     expect(parseVariantLines(undefined, 'PT')).toEqual([]);
+    // dil etiketi: "[tr] Baslik | Govde" → locale 'tr'; buyuk harf kucultulur; etiketsiz satirda locale alani yok
+    expect(parseVariantLines('[TR] Merhaba | Selam\n[ar] مرحبا\nplain | p', 'PT')).toEqual([
+      { title: 'Merhaba', body: 'Selam', locale: 'tr' },
+      { title: 'PT', body: 'مرحبا', locale: 'ar' },
+      { title: 'plain', body: 'p' },
+    ]);
   });
 });
 
