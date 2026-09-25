@@ -22,7 +22,7 @@
     <dl class="detail-grid">
       <dt>Name</dt><dd><%= reported.name %> <%= reported.surname %></dd>
       <dt>Email</dt><dd><%= reported.email %></dd>
-      <dt>Banned</dt><dd><%= reported.is_deleted ? 'Yes' : 'No' %></dd>
+      <dt>Banned</dt><dd><%= reported.is_banned ? 'Yes' : 'No' %></dd>
     </dl>
     <a href="/admin/users/<%= reported.id %>" class="btn btn-primary btn-sm" style="margin-top:8px;">View Profile</a>
     <% } else { %>

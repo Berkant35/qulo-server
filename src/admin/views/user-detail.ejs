@@ -13,7 +13,8 @@
       <dt>Bio</dt><dd><%= user.bio || '-' %></dd>
       <dt>Online</dt><dd><span class="badge <%= user.is_online ? 'badge-online' : 'badge-offline' %>"><%= user.is_online ? 'Yes' : 'No' %></span></dd>
       <dt>Verified</dt><dd><%= user.email_verified ? 'Yes' : 'No' %></dd>
-      <dt>Banned</dt><dd><%= user.is_deleted ? 'Yes' : 'No' %></dd>
+      <dt>Banned</dt><dd><% if (user.is_banned) { %><span class="badge badge-offline" style="background:#ef4444;color:#fff;">Yes</span> <%= user.banned_at ? new Date(user.banned_at).toLocaleString() : '' %><%= user.ban_reason ? ' — ' + user.ban_reason : '' %><% } else { %>No<% } %></dd>
+      <dt>Deleted</dt><dd><%= user.is_deleted ? 'Yes' : 'No' %></dd>
       <dt>Last Seen</dt><dd><%= user.last_seen_at ? new Date(user.last_seen_at).toLocaleString() : '-' %></dd>
       <dt>Joined</dt><dd><%= new Date(user.created_at).toLocaleString() %></dd>
       <dt>Profile %</dt><dd><%= user.profile_completion %>%</dd>
@@ -46,7 +47,7 @@
       </div>
     </form>
     <div style="display:flex; gap:8px;">
-      <% if (user.is_deleted) { %>
+      <% if (user.is_banned) { %>
       <form method="POST" action="/admin/users/<%= user.id %>/action">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <input type="hidden" name="action" value="unban">

@@ -53,6 +53,7 @@ function candidateRow(id: string, kmAway: number, overrides: Record<string, unkn
     boost_until: null,
     relationship_goal: "SERIOUS",
     is_deleted: false,
+    is_banned: false,
     email_verified: true,
     is_test_account: false,
     ...overrides,
@@ -310,6 +311,20 @@ describe("discover — kademeli mesafe", () => {
 
     const res = await service.discover(VIEWER_ID, 1);
     expect(res.cards).toHaveLength(0);
+  });
+
+  // Backoffice ban'i yalniz API girisini kesiyordu; banli profil baskalarinin
+  // havuzunda kart olarak donmeye devam ediyordu.
+  it("banli aday discover havuzunda gorunmez", async () => {
+    const service = await loadService({
+      users: [viewerRow(), candidateRow("banli", 10, { is_banned: true }), candidateRow("temiz", 12)],
+      swipes: [],
+      matches: [],
+      questions: questionsFor(["banli", "temiz"]),
+    });
+
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual(["temiz"]);
   });
 
   it("fotografsiz aday hala elenir", async () => {

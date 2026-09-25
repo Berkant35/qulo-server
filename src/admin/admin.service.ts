@@ -99,7 +99,7 @@ class AdminService {
   async getUsers(page: number, limit: number, search?: string, gender?: string) {
     let query = supabase
       .from("users")
-      .select("id, email, name, surname, age, gender, city, green_diamonds, purple_diamonds, is_online, is_deleted, created_at, last_seen_at, photos", { count: "exact" })
+      .select("id, email, name, surname, age, gender, city, green_diamonds, purple_diamonds, is_online, is_deleted, is_banned, created_at, last_seen_at, photos", { count: "exact" })
       .eq("is_deleted", false)
       .order("created_at", { ascending: false })
       .range((page - 1) * limit, page * limit - 1);
@@ -273,7 +273,7 @@ class AdminService {
 
     const [{ data: reporter }, { data: reported }] = await Promise.all([
       supabase.from("users").select("id, email, name, surname, photos").eq("id", report.reporter_id).single(),
-      supabase.from("users").select("id, email, name, surname, photos, is_deleted").eq("id", report.reported_id).single(),
+      supabase.from("users").select("id, email, name, surname, photos, is_banned").eq("id", report.reported_id).single(),
     ]);
 
     return { report, reporter, reported };

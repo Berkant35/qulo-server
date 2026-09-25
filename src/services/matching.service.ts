@@ -159,6 +159,7 @@ export class MatchingService {
         "id, name, bio, age, gender, city, lat, lng, photos, profile_completion, green_diamonds, like_received_count, times_shown_count, last_seen_at, boost_until, relationship_goal, is_seed_profile",
       )
       .eq("is_deleted", false)
+      .eq("is_banned", false)
       .eq("email_verified", true)
       .not("lat", "is", null)
       .not("lng", "is", null)

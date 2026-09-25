@@ -23,7 +23,7 @@
         <td><%= u.gender %></td>
         <td><%= u.city || '-' %></td>
         <td><span style="color:#22c55e"><%= u.green_diamonds %></span> / <span style="color:#a855f7"><%= u.purple_diamonds %></span></td>
-        <td><span class="badge <%= u.is_online ? 'badge-online' : 'badge-offline' %>"><%= u.is_online ? 'Online' : 'Offline' %></span></td>
+        <td><% if (u.is_banned) { %><span class="badge" style="background:#ef4444;color:#fff;">Banned</span><% } else { %><span class="badge <%= u.is_online ? 'badge-online' : 'badge-offline' %>"><%= u.is_online ? 'Online' : 'Offline' %></span><% } %></td>
         <td><%= new Date(u.created_at).toLocaleDateString() %></td>
         <td><a href="/admin/users/<%= u.id %>" class="btn btn-primary btn-sm">Detail</a></td>
       </tr>
