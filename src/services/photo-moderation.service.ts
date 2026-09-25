@@ -30,13 +30,15 @@ export const BAN_REASON_TEXT = "photo_moderation: sexual content (NIM vision, co
 
 /**
  * 11B'nin `explicit=false` deyip gerekcede ciplaklik yazdigi goruldu (2026-09-25 tarama, 3/99).
- * Anahtar kelime gecen her gerekce dogrulama modeline gider; olumsuzlama ayiklamasi YOK —
- * "exposed nipples, not a sexual act" gibi cumleler ayiklamayla safe'e kacardi. Karar onay modelinde.
+ * Ban icin iki modelin de "evet" demesi sart oldugundan bu celiskiler banlanamaz; insan gozu icin
+ * `review`'a dusurulur (model cagrisi yok). Olumsuzlama ("no nudity") ayiklanir — canli ilk tikte
+ * her temiz fotograf bu yuzden onaya gidip Gemma kuyrugunu tikiyordu.
  */
 const SUPHELI_KELIME = /\b(exposed|nude|naked|nudity|genital|nipple|topless|sexual act)/i;
+const OLUMSUZLAMA = /\b(no|not|non|without|none|isn't|aren't|doesn't|does not)\b/i;
 
 export function supheliGerekce(reason: string): boolean {
-  return SUPHELI_KELIME.test(reason);
+  return SUPHELI_KELIME.test(reason) && !OLUMSUZLAMA.test(reason);
 }
 
 function hataMetni(err: unknown): string {
@@ -103,9 +105,10 @@ async function fotografiIndir(url: string): Promise<{ dataUrl: string } | { hata
 export interface Classification { verdict: Verdict; reason: string; model: string }
 
 /**
- * Iki asama: 11B tarar; explicit dediyse VEYA gerekcesi supheliyse onay modeli (Gemma 4) dogrular.
- * Ban yalniz IKISI de explicit derse; 11B celiskili (false + supheli gerekce) veya onay katilmaz/hata
- * verirse `review` (admin bakar). Belirsizlikte ASLA ban yok (fail-open), ama kayit dusulur.
+ * Iki asama: 11B tarar. "Evet" derse onay modeli (Gemma 4) sorulur: evet -> explicit (ban),
+ * hayir -> review, hata/timeout -> error (cron 1 saat sonra yeniden dener, 3 denemede review).
+ * 11B "hayir" derse onay cagrilmaz (ban zaten imkansiz): gerekce supheliyse review, degilse safe.
+ * Belirsizlikte ASLA ban yok (fail-open), ama kayit dusulur.
  */
 export async function classifyPhoto(url: string): Promise<Classification> {
   const indirme = await fotografiIndir(url);
@@ -117,22 +120,19 @@ export async function classifyPhoto(url: string): Promise<Classification> {
   } catch (err) {
     return { verdict: "error", reason: hataMetni(err), model: NIM_VISION_MODEL };
   }
-  if (!birinci.explicit && !supheliGerekce(birinci.reason)) {
-    return { verdict: "safe", reason: birinci.reason, model: NIM_VISION_MODEL };
+  if (!birinci.explicit) {
+    return { verdict: supheliGerekce(birinci.reason) ? "review" : "safe", reason: birinci.reason, model: NIM_VISION_MODEL };
   }
 
   try {
     const ikinci = await nimVisionModerate(indirme.dataUrl, { model: NIM_VISION_CONFIRM_MODEL });
-    // Ikisi evet -> explicit; yalniz biri evet -> review; ikisi hayir -> safe (ilk tik: "no nudity"
-    // gerekcesi anahtar kelimeyle onaya gitti ve temiz fotograf review'a dusuyordu).
-    const evetSayisi = Number(birinci.explicit) + Number(ikinci.explicit);
     return {
-      verdict: evetSayisi === 2 ? "explicit" : evetSayisi === 1 ? "review" : "safe",
-      reason: `tarama(${birinci.explicit}): ${birinci.reason} | onay(${ikinci.explicit}): ${ikinci.reason}`,
+      verdict: ikinci.explicit ? "explicit" : "review",
+      reason: `tarama(true): ${birinci.reason} | onay(${ikinci.explicit}): ${ikinci.reason}`,
       model: NIM_VISION_CONFIRM_MODEL,
     };
   } catch (err) {
-    return { verdict: "review", reason: `tarama(${birinci.explicit}): ${birinci.reason} | onay hata: ${hataMetni(err)}`, model: NIM_VISION_CONFIRM_MODEL };
+    return { verdict: "error", reason: `tarama(true): ${birinci.reason} | onay hata: ${hataMetni(err)}`, model: NIM_VISION_CONFIRM_MODEL };
   }
 }
 

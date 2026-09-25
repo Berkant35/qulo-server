@@ -51,13 +51,13 @@ beforeEach(() => vi.resetModules());
 afterEach(() => vi.unstubAllGlobals());
 
 describe('supheliGerekce', () => {
-  it('ciplaklik anahtar kelimesi gecen her gerekce supheli (olumsuzlama ayiklamasi YOK), gecmeyen degil', async () => {
+  it('ciplaklik kelimesi olumsuzlamasiz -> supheli (insan gozu); olumsuzlamali/gecmeyen -> degil', async () => {
     const { mod } = await setup();
     expect(mod.supheliGerekce('exposed breasts of women.')).toBe(true);
-    expect(mod.supheliGerekce('exposed nipples, not a sexual act')).toBe(true);
-    expect(mod.supheliGerekce('no visible genitals or breasts/nipples')).toBe(true);
+    expect(mod.supheliGerekce('exposed female breasts/nipples')).toBe(true);
+    expect(mod.supheliGerekce('no visible genitals or breasts/nipples')).toBe(false);
+    expect(mod.supheliGerekce('No nudity or sexual act is visible.')).toBe(false);
     expect(mod.supheliGerekce('shirtless man at the beach')).toBe(false);
-    expect(mod.supheliGerekce('face only, clothed')).toBe(false);
   });
 });
 
@@ -117,20 +117,20 @@ describe('moderatePendingPhotos', () => {
     expect(fake.table('photo_moderation_checks')[0].verdict).toBe('review');
   });
 
-  it('11B explicit=false ama gerekce supheli -> onay sorulur; onay explicit dese de IKISI birden degil -> review, ban YOK', async () => {
+  it('11B explicit=false ama gerekce supheli -> onay CAGRILMAZ (ban imkansiz), insan gozu icin review', async () => {
     const { mod, fake, nimVisionModerate, banUser } = await setup({ birinci: { explicit: false, reason: 'exposed female breasts/nipples' }, ikinci: { explicit: true, reason: 'nudity' } });
     await mod.moderatePendingPhotos(10);
-    expect(nimVisionModerate).toHaveBeenCalledTimes(2);
+    expect(nimVisionModerate).toHaveBeenCalledTimes(1);
     expect(banUser).not.toHaveBeenCalled();
-    expect(fake.table('photo_moderation_checks')[0]).toMatchObject({ verdict: 'review', attempts: 1 });
+    expect(fake.table('photo_moderation_checks')[0]).toMatchObject({ verdict: 'review', attempts: 1, model: 'primary-model' });
   });
 
-  it('gerekce anahtar kelimeyle onaya gitti ama IKISI de hayir dedi -> safe (review degil); canli ilk tik dersi', async () => {
-    const { mod, fake, nimVisionModerate, banUser } = await setup({ birinci: { explicit: false, reason: 'No nudity or sexual act is visible.' }, ikinci: { explicit: false, reason: 'image shows a car' } });
+  it('"No nudity" gerekcesi onaya GITMEZ, safe (canli ilk tik: Gemma kuyrugu bosuna doluyordu)', async () => {
+    const { mod, fake, nimVisionModerate, banUser } = await setup({ birinci: { explicit: false, reason: 'No nudity or sexual act is visible.' } });
     const ozet = await mod.moderatePendingPhotos(10);
-    expect(nimVisionModerate).toHaveBeenCalledTimes(2);
+    expect(nimVisionModerate).toHaveBeenCalledTimes(1);
     expect(ozet).toMatchObject({ review: 0, banned: 0 });
-    expect(fake.table('photo_moderation_checks')[0]).toMatchObject({ verdict: 'safe', model: 'confirm-model' });
+    expect(fake.table('photo_moderation_checks')[0]).toMatchObject({ verdict: 'safe', model: 'primary-model' });
     expect(banUser).not.toHaveBeenCalled();
   });
 
@@ -155,11 +155,12 @@ describe('moderatePendingPhotos', () => {
     expect(ozet.banned).toBe(0);
   });
 
-  it('onay modeli hata verirse review (fail-open), ban YOK', async () => {
-    const { mod, fake, banUser } = await setup({ birinci: { explicit: true, reason: 'exposed genitals' }, ikinci: new Error('HTTP 404') });
-    await mod.moderatePendingPhotos(10);
+  it('onay modeli hata/timeout verirse error (yeniden denenir), ban YOK', async () => {
+    const { mod, fake, banUser } = await setup({ birinci: { explicit: true, reason: 'exposed genitals' }, ikinci: new Error('timeout') });
+    const ozet = await mod.moderatePendingPhotos(10);
     expect(banUser).not.toHaveBeenCalled();
-    expect(fake.table('photo_moderation_checks')[0]).toMatchObject({ verdict: 'review' });
+    expect(ozet.errors).toBe(1);
+    expect(fake.table('photo_moderation_checks')[0]).toMatchObject({ verdict: 'error', model: 'confirm-model' });
   });
 
   it('11B hata verirse error kaydi (yeniden denenir), ban YOK', async () => {
