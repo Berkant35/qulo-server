@@ -6,7 +6,7 @@ export type { SegmentInput };
 
 export const RECURRENCES = ["none", "daily"] as const;
 export type Recurrence = (typeof RECURRENCES)[number];
-export const MAX_VARIANTS = 10;
+export const MAX_VARIANTS = 50; // dil basina ~5 satir × 10 dil
 
 export const campaignVariantSchema = z.object({
   title: z.string().trim().min(1).max(100),

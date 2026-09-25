@@ -17,8 +17,8 @@ describe('createCampaignSchema — tekrarlayan kampanya', () => {
     expect(createCampaignSchema.safeParse({ ...base, recurrence: 'daily', window_start_hour: 12, window_end_hour: 21 }).success).toBe(true);
   });
 
-  it('en fazla 10 varyant; gun listesi 1-7', () => {
-    const many = Array.from({ length: 11 }, (_, i) => ({ title: `t${i}`, body: `b${i}` }));
+  it('en fazla 50 varyant (dil basina ~5 × 10 dil); gun listesi 1-7', () => {
+    const many = Array.from({ length: 51 }, (_, i) => ({ title: `t${i}`, body: `b${i}` }));
     expect(createCampaignSchema.safeParse({ ...base, variants: many }).success).toBe(false);
     expect(createCampaignSchema.safeParse({ ...base, recurrence_days: [0] }).success).toBe(false);
     expect(createCampaignSchema.safeParse({ ...base, recurrence_days: [8] }).success).toBe(false);
