@@ -125,6 +125,15 @@ describe('moderatePendingPhotos', () => {
     expect(fake.table('photo_moderation_checks')[0]).toMatchObject({ verdict: 'review', attempts: 1 });
   });
 
+  it('gerekce anahtar kelimeyle onaya gitti ama IKISI de hayir dedi -> safe (review degil); canli ilk tik dersi', async () => {
+    const { mod, fake, nimVisionModerate, banUser } = await setup({ birinci: { explicit: false, reason: 'No nudity or sexual act is visible.' }, ikinci: { explicit: false, reason: 'image shows a car' } });
+    const ozet = await mod.moderatePendingPhotos(10);
+    expect(nimVisionModerate).toHaveBeenCalledTimes(2);
+    expect(ozet).toMatchObject({ review: 0, banned: 0 });
+    expect(fake.table('photo_moderation_checks')[0]).toMatchObject({ verdict: 'safe', model: 'confirm-model' });
+    expect(banUser).not.toHaveBeenCalled();
+  });
+
   it('error satiri MAX_ATTEMPTS denemede review\'a duser, deneme sayaci artar', async () => {
     const eski = new Date(NOW - 2 * 60 * 60 * 1000).toISOString();
     const { mod, fake } = await setup({

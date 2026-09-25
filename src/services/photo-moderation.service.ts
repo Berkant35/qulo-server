@@ -123,8 +123,11 @@ export async function classifyPhoto(url: string): Promise<Classification> {
 
   try {
     const ikinci = await nimVisionModerate(indirme.dataUrl, { model: NIM_VISION_CONFIRM_MODEL });
+    // Ikisi evet -> explicit; yalniz biri evet -> review; ikisi hayir -> safe (ilk tik: "no nudity"
+    // gerekcesi anahtar kelimeyle onaya gitti ve temiz fotograf review'a dusuyordu).
+    const evetSayisi = Number(birinci.explicit) + Number(ikinci.explicit);
     return {
-      verdict: birinci.explicit && ikinci.explicit ? "explicit" : "review",
+      verdict: evetSayisi === 2 ? "explicit" : evetSayisi === 1 ? "review" : "safe",
       reason: `tarama(${birinci.explicit}): ${birinci.reason} | onay(${ikinci.explicit}): ${ikinci.reason}`,
       model: NIM_VISION_CONFIRM_MODEL,
     };
