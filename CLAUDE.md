@@ -56,3 +56,9 @@ o testler güncellenmelidir.
 
 ## Review
 Feature/bugfix sonrası, commit öncesi `/server-review` skill'i çalıştırılır (SOLID + security).
+
+## Moderasyon / ban koduna dokununca
+`src/services/photo-moderation.service.ts`, `ban.service.ts`, `cron/photo-moderation.cron.ts`,
+`routes/ban-appeal.routes.ts`, `nim.service.ts` (vision) değişirse `tasks/test-cases.md`
+"Fotoğraf moderasyonu + ban + itiraz" bölümündeki **karar tablosu + kontrol listesi** uygulanır:
+önce ilgili satırın testi kırmızı, sonra kod, sonra tam suite, push sonrası canlı SQL/log doğrulaması.
