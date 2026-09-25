@@ -2,7 +2,6 @@ import type { Request, Response } from "express";
 import { SUPPORTED_LOCALES, type SupportedLocale } from "../constants/locales.js";
 import { adminService, pushTemplateAdminService } from "./admin.service.js";
 import { emailService } from "../services/email.service.js";
-import { campaignService } from "../services/campaign.service.js";
 import { appConfigService } from "../services/app-config.service.js";
 import { NotificationService, type PushType } from "../services/notification.service.js";
 import { economyConfigService } from "../services/economy-config.service.js";
@@ -179,79 +178,6 @@ class AdminController {
       const admins = await adminService.getAdmins();
       res.render("admins", { admins, session: req.session, csrfToken: req.session.csrfToken, error: e.message });
     }
-  }
-
-  // ── Campaign management ───────────────────────────────────────────
-  async campaigns(req: Request, res: Response) {
-    const page = Math.max(1, parseInt(req.query.page as string) || 1);
-    const { campaigns, total } = await campaignService.getCampaigns(page, 20);
-    const totalPages = Math.ceil(total / 20);
-    res.render("campaigns", { campaigns, page, totalPages, total, session: req.session });
-  }
-
-  async campaignNew(req: Request, res: Response) {
-    res.render("campaign-new", { session: req.session, csrfToken: req.session.csrfToken });
-  }
-
-  async campaignCreate(req: Request, res: Response) {
-    const data = req.body;
-    const segment: Record<string, any> = {};
-    if (data.segment_gender) segment.gender = data.segment_gender;
-    if (data.segment_age_min) segment.age_min = parseInt(data.segment_age_min);
-    if (data.segment_age_max) segment.age_max = parseInt(data.segment_age_max);
-    if (data.segment_cities) segment.cities = data.segment_cities.split(',').map((c: string) => c.trim()).filter(Boolean);
-    if (data.segment_subscription) segment.subscription_plan = data.segment_subscription;
-    if (data.segment_last_active) segment.last_active_days = parseInt(data.segment_last_active);
-    if (data.segment_completion_min) segment.profile_completion_min = parseInt(data.segment_completion_min);
-    if (data.segment_completion_max) segment.profile_completion_max = parseInt(data.segment_completion_max);
-    if (data.segment_registered_after) segment.registered_after = data.segment_registered_after;
-
-    const campaign = await campaignService.createCampaign({
-      title: data.title,
-      push_title: data.push_title,
-      push_body: data.push_body,
-      image_url: data.image_url || undefined,
-      action_url: data.action_url || undefined,
-      action_label: data.action_label || undefined,
-      segment,
-      scheduled_at: data.scheduled_at || undefined,
-    }, req.session.adminId!);
-
-    res.redirect(`/admin/campaigns/${campaign.id}`);
-  }
-
-  async campaignDetail(req: Request, res: Response) {
-    const id = req.params.id as string;
-    const campaign = await campaignService.getCampaignDetail(id);
-    if (!campaign) return res.status(404).render("error", { message: "Campaign not found", session: req.session });
-    const breakdown = await campaignService.getCampaignBreakdown(id);
-    const error = req.session.campaignError;
-    delete req.session.campaignError;
-    res.render("campaign-detail", { campaign, breakdown, error, session: req.session, csrfToken: req.session.csrfToken });
-  }
-
-  async campaignSend(req: Request, res: Response) {
-    const id = req.params.id as string;
-    try {
-      const result = await campaignService.sendCampaign(id);
-      console.log(`[Admin] Campaign ${id} sent:`, result);
-    } catch (err: any) {
-      console.error(`[Admin] Campaign ${id} send failed:`, err.message);
-      // Store error in session flash so detail page can show it
-      req.session.campaignError = err.message;
-    }
-    res.redirect(`/admin/campaigns/${id}`);
-  }
-
-  async campaignCancel(req: Request, res: Response) {
-    const id = req.params.id as string;
-    await campaignService.cancelCampaign(id);
-    res.redirect(`/admin/campaigns/${id}`);
-  }
-
-  async campaignPreviewCount(req: Request, res: Response) {
-    const count = await campaignService.previewSegmentCount(req.body);
-    res.json({ count });
   }
 
   // ── Send notification to specific user ──────────────────────────

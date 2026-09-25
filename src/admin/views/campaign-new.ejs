@@ -4,6 +4,12 @@
   <a href="/admin/campaigns" class="btn" style="background: #e5e7eb; color: #333;">Back to Campaigns</a>
 </div>
 
+<% const v = (typeof values !== 'undefined' && values) || {}; %>
+<% if (typeof error !== 'undefined' && error) { %>
+<div style="background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px;">
+  <strong>Form hatası:</strong> <%= error %>
+</div>
+<% } %>
 <form method="POST" action="/admin/campaigns" id="campaignForm">
   <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
 
@@ -13,15 +19,15 @@
     <div style="display: grid; gap: 14px;">
       <div>
         <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Campaign Title *</label>
-        <input type="text" name="title" required style="width: 100%;" placeholder="Internal name for this campaign" />
+        <input type="text" name="title" required style="width: 100%;" placeholder="Internal name for this campaign" value="<%= v.title || '' %>" />
       </div>
       <div>
         <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Push Title *</label>
-        <input type="text" name="push_title" required style="width: 100%;" placeholder="Notification title users will see" />
+        <input type="text" name="push_title" required style="width: 100%;" placeholder="Notification title users will see" value="<%= v.push_title || '' %>" />
       </div>
       <div>
         <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Push Body *</label>
-        <textarea name="push_body" required rows="3" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-family: inherit; resize: vertical;" placeholder="Notification message body"></textarea>
+        <textarea name="push_body" required rows="3" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-family: inherit; resize: vertical;" placeholder="Notification message body"><%= v.push_body || '' %></textarea>
       </div>
       <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
         <div>
@@ -48,8 +54,8 @@
         <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Gender</label>
         <select name="segment_gender" style="width: 100%;">
           <option value="">All</option>
-          <option value="man">Man</option>
-          <option value="woman">Woman</option>
+          <option value="MAN">Man</option>
+          <option value="WOMAN">Woman</option>
         </select>
       </div>
       <div>
@@ -88,6 +94,11 @@
         <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Registered After</label>
         <input type="date" name="segment_registered_after" style="width: 100%;" />
       </div>
+      <div>
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">App Locales</label>
+        <input type="text" name="segment_locales" style="width: 100%;" placeholder="tr  veya  en, de, fr" value="<%= v.segment_locales || '' %>" />
+        <p style="font-size: 11px; color: #999; margin-top: 4px;">Metin tek dilde gider; dil başına ayrı kampanya aç (users.locale).</p>
+      </div>
     </div>
 
     <div style="margin-top: 16px; display: flex; align-items: center; gap: 12px;">
@@ -98,11 +109,43 @@
 
   <!-- Schedule Section -->
   <div class="card">
-    <h3 style="margin-bottom: 16px; font-size: 16px; color: #1a1a2e;">Schedule (optional)</h3>
-    <div>
-      <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Scheduled At</label>
-      <input type="datetime-local" name="scheduled_at" style="width: 300px;" />
-      <p style="font-size: 12px; color: #999; margin-top: 4px;">Leave empty to save as draft</p>
+    <h3 style="margin-bottom: 16px; font-size: 16px; color: #1a1a2e;">Schedule</h3>
+    <div style="display: grid; gap: 14px;">
+      <div>
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Recurrence</label>
+        <select name="recurrence" id="recurrence" style="width: 300px;">
+          <option value="none" <%= v.recurrence !== 'daily' ? 'selected' : '' %>>One-off (send now / at scheduled time)</option>
+          <option value="daily" <%= v.recurrence === 'daily' ? 'selected' : '' %>>Recurring — every day, random minute in a local-time window</option>
+        </select>
+      </div>
+      <div id="oneOffFields">
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Scheduled At</label>
+        <input type="datetime-local" name="scheduled_at" style="width: 300px;" />
+        <p style="font-size: 12px; color: #999; margin-top: 4px;">Leave empty to save as draft</p>
+      </div>
+      <div id="recurringFields" style="display: none; border-left: 3px solid #a855f7; padding-left: 14px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 420px;">
+          <div>
+            <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Window start (local hour)</label>
+            <input type="number" name="window_start_hour" min="0" max="23" style="width: 100%;" value="<%= v.window_start_hour || 12 %>" />
+          </div>
+          <div>
+            <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Window end (local hour)</label>
+            <input type="number" name="window_end_hour" min="1" max="24" style="width: 100%;" value="<%= v.window_end_hour || 21 %>" />
+          </div>
+        </div>
+        <p style="font-size: 12px; color: #999; margin: 4px 0 12px;">Her gün pencere içinde rastgele bir dakika seçilir (kampanya + gün hash'i; iki sunucu aynı sonucu bulur). Kullanıcının yerel saati motorla aynı tahmin: tr → UTC+3, yoksa boylam.</p>
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px;">Days</label>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; font-size: 13px;">
+          <% ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach((d, i) => { %>
+            <label><input type="checkbox" name="recurrence_days" value="<%= i + 1 %>" checked /> <%= d %></label>
+          <% }) %>
+        </div>
+        <p style="font-size: 12px; color: #b45309; margin: 6px 0 12px;">Bildirim motoruyla aynı günlük (1) / haftalık (3) tavanı ve holdout'u paylaşır. Her gün seçersen kişisel lifecycle bildirimleri bastırılır — öneri: haftada 2-3 gün.</p>
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px;">Text variants (one per line, daily rotation)</label>
+        <textarea name="variants" rows="5" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-family: inherit; resize: vertical;" placeholder="Başlık | Gövde&#10;Başlık 2 | Gövde 2&#10;Yalnız gövde (başlık Push Title'dan)"><%= v.variants || '' %></textarea>
+        <p style="font-size: 12px; color: #999; margin-top: 4px;">En fazla 10 satır. Boşsa her gün Push Title / Push Body gider. Aynı metni her gün göndermek en hızlı opt-out sebebi.</p>
+      </div>
     </div>
   </div>
 
@@ -113,6 +156,19 @@
 </form>
 
 <script>
+(function () {
+  const select = document.getElementById('recurrence');
+  const oneOff = document.getElementById('oneOffFields');
+  const recurring = document.getElementById('recurringFields');
+  function sync() {
+    const daily = select.value === 'daily';
+    oneOff.style.display = daily ? 'none' : '';
+    recurring.style.display = daily ? '' : 'none';
+  }
+  select.addEventListener('change', sync);
+  sync();
+})();
+
 document.getElementById('previewBtn').addEventListener('click', async function() {
   const form = document.getElementById('campaignForm');
   const fd = new FormData(form);
@@ -136,6 +192,8 @@ document.getElementById('previewBtn').addEventListener('click', async function()
   if (compMax) segment.profile_completion_max = parseInt(compMax);
   const regAfter = fd.get('segment_registered_after');
   if (regAfter) segment.registered_after = regAfter;
+  const locales = fd.get('segment_locales');
+  if (locales) segment.locales = locales.split(',').map(l => l.trim().toLowerCase()).filter(Boolean);
 
   const resultEl = document.getElementById('previewResult');
   resultEl.textContent = 'Loading...';
@@ -148,7 +206,8 @@ document.getElementById('previewBtn').addEventListener('click', async function()
       body: JSON.stringify({ ...segment, _csrf: fd.get('_csrf') }),
     });
     const data = await res.json();
-    resultEl.textContent = data.count + ' users match this segment';
+    if (data.error) throw new Error(data.error);
+    resultEl.textContent = data.count + ' users with a push token match this segment (test/seed/banned excluded at send time)';
     resultEl.style.color = '#065f46';
   } catch (err) {
     resultEl.textContent = 'Error fetching count';

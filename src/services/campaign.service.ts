@@ -2,12 +2,21 @@ import { supabase } from "../config/supabase.js";
 import { isFcmAvailable } from "../config/firebase.js";
 import { NotificationService } from "./notification.service.js";
 import { segmentService } from "./segment.service.js";
+import { fetchAll, isEligibleUser } from "./notification-engine/context.js";
+import { DAY_MS } from "./notification-engine/timezone.js";
+import { isRecurring } from "../validators/campaign.validator.js";
 import type {
   SegmentInput,
   CreateCampaignInput,
 } from "../validators/campaign.validator.js";
 
 const BATCH_SIZE = 500;
+/** Tekrarlayan kampanya calisir durumda mi (scheduled) / duraklatildi mi. */
+export type RecurringState = "scheduled" | "paused";
+
+function warnIfError(step: string, campaignId: string, error: { message: string } | null): void {
+  if (error) console.warn(`[CampaignService] ${step} yazilamadi (${campaignId}):`, error.message);
+}
 
 class CampaignService {
   // ── Preview segment count (delegated to segmentService) ───────────
@@ -17,7 +26,8 @@ class CampaignService {
 
   // ── Create campaign ────────────────────────────────────────────────
   async createCampaign(data: CreateCampaignInput, adminId: string) {
-    const status = data.scheduled_at ? "scheduled" : "draft";
+    // Tekrarlayan kampanya dogdugu anda calisir (scheduled); durdurmak icin pause/cancel.
+    const status = isRecurring(data) || data.scheduled_at ? "scheduled" : "draft";
 
     const { data: campaign, error } = await supabase
       .from("campaigns")
@@ -30,6 +40,11 @@ class CampaignService {
         action_label: data.action_label ?? null,
         segment: data.segment,
         scheduled_at: data.scheduled_at ?? null,
+        recurrence: data.recurrence,
+        recurrence_days: data.recurrence_days ?? null,
+        window_start_hour: data.window_start_hour ?? null,
+        window_end_hour: data.window_end_hour ?? null,
+        variants: data.variants,
         status,
         created_by: adminId,
       })
@@ -58,13 +73,17 @@ class CampaignService {
     // 1. Get campaign and validate status
     const { data: campaign, error: getErr } = await supabase
       .from("campaigns")
-      .select("*")
+      .select("id, status, recurrence, segment, push_title, push_body, image_url, action_url, action_label")
       .eq("id", campaignId)
-      .single();
+      .maybeSingle();
 
-    if (getErr || !campaign) throw getErr ?? new Error("Campaign not found");
+    if (getErr) throw getErr;
+    if (!campaign) throw new Error("Campaign not found");
     if (campaign.status === "sent" || campaign.status === "cancelled") {
       throw new Error(`Campaign already ${campaign.status}`);
+    }
+    if (isRecurring(campaign)) {
+      throw new Error("Recurring campaigns are sent by the dispatcher, not manually");
     }
 
     // 2. Set status → sending
@@ -74,19 +93,15 @@ class CampaignService {
       .eq("id", campaignId);
 
     try {
-      // 3. Build segment query and get all matching users
-      const { data: users, count, error: segErr } = await segmentService.buildSegmentQuery(
-        campaign.segment as SegmentInput,
-      );
-      if (segErr) throw segErr;
-
-      const allUsers = users ?? [];
+      // 3. Segment (sayfali) + uygunluk: test/seed/banli hedef sayilmaz (motorla ayni kural)
+      const allUsers = (await segmentService.listSegmentTargets(campaign.segment as SegmentInput)).filter(isEligibleUser);
 
       // 4. Update total_targeted
-      await supabase
+      const { error: targetedErr } = await supabase
         .from("campaign_stats")
-        .update({ total_targeted: count ?? allUsers.length })
+        .update({ total_targeted: allUsers.length })
         .eq("campaign_id", campaignId);
+      warnIfError("total_targeted", campaignId, targetedErr);
 
       // 5. Batch send
       let totalSent = 0;
@@ -140,17 +155,19 @@ class CampaignService {
         }
 
         if (events.length) {
-          await supabase.from("campaign_events").insert(events);
+          const { error: eventsErr } = await supabase.from("campaign_events").insert(events);
+          warnIfError("campaign_events", campaignId, eventsErr);
         }
       }
 
       console.log(`[CampaignService] Campaign ${campaignId} completed: ${totalDelivered}/${totalSent} delivered, ${allUsers.length} targeted`);
 
       // 6. Update campaign_stats
-      await supabase
+      const { error: statsErr } = await supabase
         .from("campaign_stats")
         .update({ total_sent: totalSent, total_delivered: totalDelivered })
         .eq("campaign_id", campaignId);
+      warnIfError("campaign_stats", campaignId, statsErr);
 
       // 7. Set status → sent
       await supabase
@@ -158,7 +175,7 @@ class CampaignService {
         .update({ status: "sent", sent_at: new Date().toISOString() })
         .eq("id", campaignId);
 
-      return { totalSent, totalDelivered, totalTargeted: count ?? allUsers.length };
+      return { totalSent, totalDelivered, totalTargeted: allUsers.length };
     } catch (err) {
       // Revert to draft on failure
       await supabase
@@ -181,6 +198,7 @@ class CampaignService {
       .from("campaigns")
       .select("id")
       .eq("status", "scheduled")
+      .eq("recurrence", "none")
       .lte("scheduled_at", now.toISOString());
     if (error) throw error;
 
@@ -205,11 +223,12 @@ class CampaignService {
       .from("campaigns")
       .select("status")
       .eq("id", campaignId)
-      .single();
+      .maybeSingle();
 
-    if (getErr || !campaign) throw getErr ?? new Error("Campaign not found");
-    if (campaign.status !== "draft" && campaign.status !== "scheduled") {
-      throw new Error("Can only cancel draft or scheduled campaigns");
+    if (getErr) throw getErr;
+    if (!campaign) throw new Error("Campaign not found");
+    if (campaign.status !== "draft" && campaign.status !== "scheduled" && campaign.status !== "paused") {
+      throw new Error("Can only cancel draft, scheduled or paused campaigns");
     }
 
     const { error } = await supabase
@@ -218,6 +237,42 @@ class CampaignService {
       .eq("id", campaignId);
 
     if (error) throw error;
+  }
+
+  // ── Tekrarlayan kampanya: duraklat / surdur ───────────────────────
+  async setRecurringState(campaignId: string, state: RecurringState) {
+    const { data: campaign, error: getErr } = await supabase
+      .from("campaigns")
+      .select("status, recurrence")
+      .eq("id", campaignId)
+      .maybeSingle();
+
+    if (getErr) throw getErr;
+    if (!campaign) throw new Error("Campaign not found");
+    if (!isRecurring(campaign)) throw new Error("Only recurring campaigns can be paused/resumed");
+    const allowedFrom: RecurringState = state === "paused" ? "scheduled" : "paused";
+    if (campaign.status !== allowedFrom) throw new Error(`Campaign is ${campaign.status}, cannot set ${state}`);
+
+    const { error } = await supabase.from("campaigns").update({ status: state }).eq("id", campaignId);
+    if (error) throw error;
+  }
+
+  // ── Tekrarlayan kampanya: son N gunun gunluk gonderim/teslim sayilari (UTC gun) ──
+  async getRecurringDailyStats(campaignId: string, days = 7): Promise<Array<{ day: string; sent: number; delivered: number }>> {
+    const since = new Date(Date.now() - days * DAY_MS).toISOString();
+    const rows = await fetchAll<{ event: string; created_at: string }>((from, to) =>
+      supabase.from("campaign_events").select("event, created_at").eq("campaign_id", campaignId).gte("created_at", since).order("id").range(from, to),
+    );
+
+    const byDay = new Map<string, { day: string; sent: number; delivered: number }>();
+    for (const row of rows) {
+      const day = row.created_at.slice(0, 10);
+      const entry = byDay.get(day) ?? { day, sent: 0, delivered: 0 };
+      if (row.event === "sent") entry.sent++;
+      else if (row.event === "delivered") entry.delivered++;
+      byDay.set(day, entry);
+    }
+    return [...byDay.values()].sort((a, b) => (a.day < b.day ? 1 : -1));
   }
 
   // ── List campaigns (paginated) ─────────────────────────────────────
@@ -241,7 +296,7 @@ class CampaignService {
       .from("campaigns")
       .select("*, campaign_stats(*)")
       .eq("id", campaignId)
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
     return data;

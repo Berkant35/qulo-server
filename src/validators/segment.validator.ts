@@ -5,7 +5,7 @@ export const segmentSchema = z.object({
   gender: z.enum(["MAN", "WOMAN"]).optional(),
   age_min: z.number().int().min(18).max(99).optional(),
   age_max: z.number().int().min(18).max(99).optional(),
-  cities: z.array(z.string()).optional(),
+  cities: z.array(z.string().min(1).max(64)).max(50).optional(),
   subscription_plan: z.string().optional(),
   last_active_days: z.number().int().min(1).optional(),
   profile_completion_min: z.number().int().min(0).max(100).optional(),
@@ -19,6 +19,8 @@ export const segmentSchema = z.object({
   question_count_min: z.number().int().min(0).optional(),
   green_diamonds_max: z.number().int().min(0).optional(),
   is_premium: z.boolean().optional(),
+  /** users.locale (uygulama dili) — kampanya metnini dile gore ayirmak icin (tr / en ...). */
+  locales: z.array(z.string().min(2).max(5)).max(20).optional(),
   // NOT (pre-flight): photo_count (photos JSONB array, kolon değil) ve has_match
   // (matches JOIN gerektirir) Faz 2'ye ertelendi — users tablosunda kolon yok.
 }).refine(

@@ -1,7 +1,10 @@
 import { supabase } from "../config/supabase.js";
 import type { SegmentInput } from "../validators/segment.validator.js";
+import { fetchAll } from "./notification-engine/context.js";
 
 export interface SegmentUser {
+  /** Opsiyonel: page-message tarafi bu kolonu cekmiyor; locales filtresi olmayan segmentte gerekmez. */
+  locale?: string | null;
   gender: string | null;
   age: number | null;
   city: string | null;
@@ -15,14 +18,32 @@ export interface SegmentUser {
 
 const PREMIUM_PLANS = new Set(["plus", "premium"]);
 
+/** Kampanya gonderiminin ihtiyac duydugu kullanici alanlari: uygunluk (test/seed/ban/token) + yerel saat + tercih. */
+export interface SegmentTarget {
+  id: string;
+  push_token: string | null;
+  locale: string | null;
+  lng: number | null;
+  is_deleted: boolean | null;
+  is_banned: boolean | null;
+  is_test_account: boolean | null;
+  is_seed_profile: boolean | null;
+  notification_preferences: Record<string, boolean> | null;
+}
+
+const SEGMENT_TARGET_COLUMNS =
+  "id, push_token, locale, lng, is_deleted, is_banned, is_test_account, is_seed_profile, notification_preferences";
+
 class SegmentService {
   // ── SQL yön: segment → eşleşen user listesi (campaign push + admin preview) ──
   /** @internal — yalnızca campaign.service ve segment.service içinden çağrılmalı. */
-  buildSegmentQuery(segment: SegmentInput) {
+  buildSegmentQuery(segment: SegmentInput, opts: { count?: boolean } = { count: true }) {
+    // Push token'i olmayan kullanici kampanya alamaz: sayim da liste de onu haric tutar.
     let query = supabase
       .from("users")
-      .select("id, push_token", { count: "exact" })
-      .eq("is_deleted", false);
+      .select(SEGMENT_TARGET_COLUMNS, opts.count === false ? undefined : { count: "exact" })
+      .eq("is_deleted", false)
+      .not("push_token", "is", null);
 
     if (segment.gender) query = query.eq("gender", segment.gender);
     if (segment.age_min !== undefined) query = query.gte("age", segment.age_min);
@@ -42,8 +63,19 @@ class SegmentService {
     if (segment.green_diamonds_max !== undefined) query = query.lte("green_diamonds", segment.green_diamonds_max);
     if (segment.is_premium === true) query = query.in("subscription_plan", ["plus", "premium"]);
     if (segment.is_premium === false) query = query.eq("subscription_plan", "free");
+    if (segment.locales?.length) query = query.in("locale", segment.locales);
 
     return query;
+  }
+
+  /**
+   * Segmentteki TUM hedefler — sayfali (PostgREST max-rows 1000 sessizce kirpar; bu tuzaga
+   * discover'da dort kez dusuldu). Uygunluk (test/seed/ban) suzgeci cagiranda (isEligibleUser).
+   */
+  listSegmentTargets(segment: SegmentInput): Promise<SegmentTarget[]> {
+    return fetchAll<SegmentTarget>((from, to) =>
+      this.buildSegmentQuery(segment, { count: false }).order("id").range(from, to),
+    );
   }
 
   async previewSegmentCount(segment: SegmentInput): Promise<number> {
@@ -80,6 +112,7 @@ class SegmentService {
       const premium = PREMIUM_PLANS.has(user.subscription_plan ?? "free");
       if (segment.is_premium !== premium) return false;
     }
+    if (segment.locales?.length && !(user.locale && segment.locales.includes(user.locale))) return false;
     return true;
   }
 }

@@ -48,6 +48,11 @@ export interface StorageFailureSpec {
 
 export interface FakeSupabaseOptions {
   failOn?: FailureSpec[];
+  /**
+   * Tablo basina benzersiz kolonlar: `{ campaign_events: ['dedupe_key'] }`. Ayni degerle ikinci insert
+   * Postgres gibi `23505` hatasi doner (NULL/undefined kisita takilmaz). Claim-then-send desenleri boyle sinanir.
+   */
+  unique?: Record<string, string[]>;
   /** rpc(name, args) çağrılarına verilecek cevaplar. */
   rpc?: Record<string, { data?: unknown; error?: SupabaseError }>;
   /** Başlangıçtaki depolama dosyaları: `{ photos: ['user-id/a.jpg'] }`. */
@@ -190,6 +195,7 @@ class QueryBuilder implements PromiseLike<Result<any>> {
     private readonly wantCount: boolean,
     private readonly failure: SupabaseError | null,
     private readonly onConflict?: string,
+    private readonly uniqueColumns: string[] = [],
   ) {
     // select zaten satır döndürür; update/delete için .select() çağrılması gerekir.
     this.returnRows = mode === 'select';
@@ -342,6 +348,17 @@ class QueryBuilder implements PromiseLike<Result<any>> {
           assignDefined(existing, row);
           written.push(existing);
         } else {
+          // Benzersiz kolon (options.unique): ayni deger ikinci kez yazilamaz — Postgres 23505.
+          const clash = this.uniqueColumns.find(
+            (col) => row[col] != null && this.rows().some((r) => r[col] === row[col]),
+          );
+          if (clash) {
+            return {
+              data: [],
+              error: { message: `duplicate key value violates unique constraint (${this.table}.${clash})`, code: '23505' },
+              count: 0,
+            };
+          }
           // Postgres birincil anahtarı kendi üretir. Fake de üretmeli: aksi halde
           // `id` undefined kalır ve `.eq('id', undefined)` tüm satırlara çarpar.
           // Deterministik sayaç — testlerin tekrarlanabilirliği için rastgelelik yok.
@@ -460,7 +477,7 @@ export function createFakeSupabase(
         update: (patch: Row) =>
           new QueryBuilder(store, table, 'update', patch, false, failureFor(table, 'update')),
         insert: (payload: Row | Row[]) =>
-          new QueryBuilder(store, table, 'insert', payload, false, failureFor(table, 'insert')),
+          new QueryBuilder(store, table, 'insert', payload, false, failureFor(table, 'insert'), undefined, options.unique?.[table] ?? []),
         upsert: (payload: Row | Row[], opts?: { onConflict?: string }) =>
           new QueryBuilder(
             store, table, 'upsert', payload, false,

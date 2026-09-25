@@ -40,3 +40,17 @@ export function hashIp(ip: string): string {
   const key = env.IP_HASH_SECRET || env.JWT_REFRESH_SECRET;
   return crypto.createHmac("sha256", key).update(ip).digest("hex").slice(0, 32);
 }
+
+/**
+ * FNV-1a 32-bit — bagimliliksiz, deterministik (kriptografik DEGIL; sifre/token icin yukaridakiler).
+ * Kullanim: holdout kovasi (ayni kullanici her turda ayni grupta) ve tekrarlayan kampanyanin
+ * gunluk gonderim dakikasi (iki instance ayni sonucu bulur, ikinci gonderim olmaz).
+ */
+export function fnv1a32(input: string): number {
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < input.length; i++) {
+    hash ^= input.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return hash;
+}

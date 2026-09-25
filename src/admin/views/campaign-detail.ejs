@@ -55,8 +55,28 @@
         <span class="badge" style="background: #d1fae5; color: #065f46;">Sent</span>
       <% } else if (campaign.status === 'cancelled') { %>
         <span class="badge" style="background: #fef2f2; color: #991b1b;">Cancelled</span>
+      <% } else if (campaign.status === 'paused') { %>
+        <span class="badge" style="background: #fef3c7; color: #92400e;">Paused</span>
       <% } %>
     </dd>
+
+    <% if (campaign.recurrence === 'daily') { %>
+    <dt>Recurrence</dt>
+    <dd>
+      Every day, random minute between <strong><%= campaign.window_start_hour %>:00</strong> and <strong><%= campaign.window_end_hour %>:00</strong> (user local time)
+      <% const dayNames = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']; const days = campaign.recurrence_days || []; %>
+      · Days: <%= days.length ? days.map(d => dayNames[d - 1]).join(', ') : 'all' %>
+    </dd>
+    <dt>Variants</dt>
+    <dd>
+      <% const variants = campaign.variants || []; %>
+      <% if (!variants.length) { %><span style="color: #999;">none — Push Title / Push Body every day</span><% } else { %>
+      <ol style="margin: 0; padding-left: 18px; font-size: 13px;">
+        <% variants.forEach(vr => { %><li><strong><%= vr.title %></strong> — <%= vr.body %></li><% }) %>
+      </ol>
+      <% } %>
+    </dd>
+    <% } %>
 
     <dt>Push Title</dt>
     <dd><%= campaign.push_title %></dd>
@@ -93,6 +113,7 @@
           parts.push('Completion: ' + (seg.profile_completion_min || 0) + '%-' + (seg.profile_completion_max || 100) + '%');
         }
         if (seg.registered_after) parts.push('Registered after: ' + seg.registered_after);
+        if (seg.locales?.length) parts.push('Locales: ' + seg.locales.join(', '));
       %>
       <%= parts.length ? parts.join(' · ') : 'All users' %>
     </dd>
@@ -112,8 +133,45 @@
   </div>
 </div>
 
+<% if (campaign.recurrence === 'daily') { %>
+<!-- Recurring: last 7 days -->
+<div class="card">
+  <h3 style="margin-bottom: 12px; font-size: 16px; color: #1a1a2e;">Last 7 days</h3>
+  <% if (!dailyStats.length) { %>
+    <p style="color: #999; font-size: 13px;">No sends yet. Dispatcher runs every 15 min; first send lands after the day's random minute in the window.</p>
+  <% } else { %>
+  <table>
+    <thead><tr><th>Day (UTC)</th><th>Sent</th><th>Delivered (FCM)</th></tr></thead>
+    <tbody>
+      <% dailyStats.forEach(d => { %>
+      <tr><td><%= d.day %></td><td><%= d.sent %></td><td><%= d.delivered %></td></tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% } %>
+</div>
+<% } %>
+
 <!-- Action Buttons -->
-<% if (campaign.status === 'draft' || campaign.status === 'scheduled') { %>
+<% if (campaign.recurrence === 'daily' && (campaign.status === 'scheduled' || campaign.status === 'paused')) { %>
+<div class="card" style="display: flex; gap: 12px; align-items: center;">
+  <% if (campaign.status === 'scheduled') { %>
+  <form method="POST" action="/admin/campaigns/<%= campaign.id %>/pause" style="display: inline;">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <button type="submit" class="btn" style="background: #fef3c7; color: #92400e;">Pause</button>
+  </form>
+  <% } else { %>
+  <form method="POST" action="/admin/campaigns/<%= campaign.id %>/resume" style="display: inline;">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <button type="submit" class="btn btn-success">Resume</button>
+  </form>
+  <% } %>
+  <form method="POST" action="/admin/campaigns/<%= campaign.id %>/cancel" style="display: inline;">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <button type="submit" class="btn btn-danger" onclick="return confirm('Stop this recurring campaign for good?');">Cancel Campaign</button>
+  </form>
+</div>
+<% } else if (campaign.status === 'draft' || campaign.status === 'scheduled') { %>
 <div class="card" style="display: flex; gap: 12px; align-items: center;">
   <form method="POST" action="/admin/campaigns/<%= campaign.id %>/send" style="display: inline;">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>" />

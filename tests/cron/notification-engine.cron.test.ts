@@ -42,14 +42,17 @@ describe('cron tikleri', () => {
     expect(runEngine).toHaveBeenCalledTimes(2);
   });
 
-  it('campaignDispatchTick: dispatch patlasa da tik cozulur (motor cron\'undan bagimsiz)', async () => {
+  it('campaignDispatchTick: tek seferlik dispatch patlasa da tekrarlayanlar kosar ve tik cozulur', async () => {
     vi.resetModules();
     const dispatch = vi.fn().mockRejectedValueOnce(new Error('boom')).mockResolvedValueOnce({ dispatched: ['c1'], failed: [] });
+    const recurring = vi.fn().mockResolvedValueOnce({ campaigns: 1, sent: 1, failed: 0, skipped: {} }).mockRejectedValueOnce(new Error('boom2'));
     vi.doMock('../../src/services/campaign.service.js', () => ({ campaignService: { dispatchDueCampaigns: dispatch } }));
+    vi.doMock('../../src/services/campaign-recurring.service.js', () => ({ campaignRecurringService: { dispatch: recurring } }));
     const { campaignDispatchTick } = await import('../../src/cron/campaign-dispatch.cron.js');
 
     await expect(campaignDispatchTick()).resolves.toBeUndefined();
     await expect(campaignDispatchTick()).resolves.toBeUndefined();
     expect(dispatch).toHaveBeenCalledTimes(2);
+    expect(recurring).toHaveBeenCalledTimes(2);
   });
 });

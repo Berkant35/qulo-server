@@ -6,7 +6,8 @@ const H = 3600 * 1000;
 
 async function boot(campaigns: Array<Record<string, unknown>>, fcmAvailable = true) {
   vi.resetModules();
-  const fake = createFakeSupabase({ campaigns });
+  // recurrence='none': tek seferlik kuyruk; daily kampanyalar ayri gondericide (campaign-recurring)
+  const fake = createFakeSupabase({ campaigns: campaigns.map((c) => ({ recurrence: 'none', ...c })) });
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client, ensureStorageBuckets: async () => {} }));
   vi.doMock('../../src/config/firebase.js', () => ({ getFcm: () => null, isFcmAvailable: () => fcmAvailable, firebaseAdmin: {} }));
   const { campaignService } = await import('../../src/services/campaign.service.js');
@@ -50,6 +51,15 @@ describe('campaignService.dispatchDueCampaigns', () => {
     expect(await campaignService.dispatchDueCampaigns(NOW)).toEqual({ dispatched: [], failed: [] });
     expect(spy).not.toHaveBeenCalled();
     expect(fake.table('campaigns')[0]!.status).toBe('scheduled');
+  });
+
+  it('tekrarlayan (daily) kampanya scheduled olsa da tek seferlik kuyruga girmez', async () => {
+    const { campaignService } = await boot([
+      { id: 'c-daily', status: 'scheduled', recurrence: 'daily', scheduled_at: null },
+    ]);
+    const spy = vi.spyOn(campaignService, 'sendCampaign');
+    expect(await campaignService.dispatchDueCampaigns(NOW)).toEqual({ dispatched: [], failed: [] });
+    expect(spy).not.toHaveBeenCalled();
   });
 
   it('vadesi gelen yoksa hicbir gonderim yapilmaz', async () => {

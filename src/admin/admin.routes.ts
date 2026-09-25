@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { adminController } from "./admin.controller.js";
+import { campaignAdminController } from "./campaign.controller.js";
 import { questionBankController } from "./question-bank.controller.js";
 import { analyticsController } from "./analytics.controller.js";
 import { pageMessageAdminController } from "./page-message.admin.controller.js";
@@ -82,13 +83,15 @@ router.post("/economy-config", csrfValidate, (req, res) => adminController.updat
 router.get("/economy-config/history", (req, res) => adminController.economyConfigHistory(req, res));
 router.get("/economy-config/compare", (req, res) => adminController.economyConfigCompare(req, res));
 
-router.get("/campaigns", (req, res) => adminController.campaigns(req, res));
-router.get("/campaigns/new", (req, res) => adminController.campaignNew(req, res));
-router.post("/campaigns", csrfValidate, (req, res) => adminController.campaignCreate(req, res));
-router.get("/campaigns/:id", (req, res) => adminController.campaignDetail(req, res));
-router.post("/campaigns/:id/send", csrfValidate, (req, res) => adminController.campaignSend(req, res));
-router.post("/campaigns/:id/cancel", csrfValidate, (req, res) => adminController.campaignCancel(req, res));
-router.post("/campaigns/preview-count", csrfValidate, (req, res) => adminController.campaignPreviewCount(req, res));
+router.get("/campaigns", (req, res) => campaignAdminController.list(req, res));
+router.get("/campaigns/new", (req, res) => campaignAdminController.newForm(req, res));
+router.post("/campaigns", csrfValidate, (req, res) => campaignAdminController.create(req, res));
+router.post("/campaigns/preview-count", csrfValidate, (req, res) => campaignAdminController.previewCount(req, res));
+router.get("/campaigns/:id", (req, res) => campaignAdminController.detail(req, res));
+router.post("/campaigns/:id/send", csrfValidate, (req, res) => campaignAdminController.send(req, res));
+router.post("/campaigns/:id/cancel", csrfValidate, (req, res) => campaignAdminController.cancel(req, res));
+router.post("/campaigns/:id/pause", csrfValidate, (req, res) => campaignAdminController.pause(req, res));
+router.post("/campaigns/:id/resume", csrfValidate, (req, res) => campaignAdminController.resume(req, res));
 
 // Page Messages (sayfa-içi mesajlar)
 router.get("/page-messages", (req, res) => pageMessageAdminController.list(req, res));

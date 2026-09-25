@@ -9,6 +9,7 @@ import type { EngineContext, EngineUser } from './context.js';
 import { LIFECYCLE_RULES } from './rules.js';
 import type { LifecycleRule, RuleCategory, RuleMatch } from './rules.js';
 import { DAY_MS, localHour, utcOffsetHours } from './timezone.js';
+import { holdoutBucket, throttleReason } from './throttle.js';
 
 /**
  * Bildirim motoru — Faz 1, bilerek basit:
@@ -55,31 +56,16 @@ export interface EngineRunResult {
 }
 
 export { DECISION_WINDOW_MS };
-const WEEK_MS = 7 * DAY_MS;
+/** Testler ve backoffice ayni kovayi buradan da gorebilsin (asil yeri throttle.ts). */
+export { holdoutBucket };
 
 function hasDecisionSince(ctx: EngineContext, userId: string, sinceMs: number): boolean {
   return (ctx.logByUser.get(userId) ?? []).some((e) => e.createdAt >= sinceMs);
 }
 
-function sentCountSince(ctx: EngineContext, userId: string, sinceMs: number): number {
-  const lifecycle = (ctx.logByUser.get(userId) ?? []).filter((e) => e.decision === 'sent' && e.createdAt >= sinceMs).length;
-  const campaigns = (ctx.campaignSendsByUser.get(userId) ?? []).filter((t) => t >= sinceMs).length;
-  return lifecycle + campaigns;
-}
-
 function ruleInCooldown(ctx: EngineContext, userId: string, rule: LifecycleRule, cooldownDays: number, nowMs: number): boolean {
   const since = nowMs - cooldownDays * DAY_MS;
   return (ctx.logByUser.get(userId) ?? []).some((e) => e.decision === 'sent' && e.ruleKey === rule.key && e.createdAt >= since);
-}
-
-/** FNV-1a 32-bit — deterministik holdout: ayni kullanici her turda ayni grupta kalir. */
-export function holdoutBucket(userId: string): number {
-  let hash = 0x811c9dc5;
-  for (let i = 0; i < userId.length; i++) {
-    hash ^= userId.charCodeAt(i);
-    hash = Math.imul(hash, 0x01000193) >>> 0;
-  }
-  return hash % 100;
 }
 
 function prefDisabled(user: EngineUser, category: RuleCategory): boolean {
@@ -209,9 +195,10 @@ export async function runEngine(mode: EngineMode = 'live', opts: { now?: Date } 
       notificationId: null,
     };
 
-    if (sentCountSince(ctx, user.id, nowMs - DECISION_WINDOW_MS) >= config.daily_cap) { await record({ ...base, reason: 'daily_cap' }); continue; }
-    if (sentCountSince(ctx, user.id, nowMs - WEEK_MS) >= config.weekly_cap) { await record({ ...base, reason: 'weekly_cap' }); continue; }
-    if (holdoutBucket(user.id) < config.holdout_pct) { await record({ ...base, decision: 'holdout', reason: 'holdout' }); continue; }
+    // Tavan + holdout: throttle.ts (kampanya gondericisiyle ortak)
+    const throttled = throttleReason(user.id, ctx.sendTimes, config, nowMs);
+    if (throttled === 'holdout') { await record({ ...base, decision: 'holdout', reason: 'holdout' }); continue; }
+    if (throttled) { await record({ ...base, reason: throttled }); continue; }
     if (prefDisabled(user, rule.category)) { await record({ ...base, reason: 'pref_off' }); continue; }
 
     // Her modda once sablon: susturulmus/eksik sablon canli modda da inbox'a "[type]" satiri yazdirmamali

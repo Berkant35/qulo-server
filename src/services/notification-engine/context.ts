@@ -80,7 +80,8 @@ export interface EngineContext {
   newVisibleUsers7d: number;
   /** push_log: son 20 saatteki TUM kararlar + lookback penceresindeki 'sent' satirlari (id ile tekillestirilmis). */
   logByUser: Map<string, PushLogEntry[]>;
-  campaignSendsByUser: Map<string, number[]>;
+  /** Gercek gonderim zamanlari (lifecycle 'sent' + kampanya) — tavan/holdout icin throttle.ts'e verilir. */
+  sendTimes: Map<string, number[]>;
 }
 
 const USER_COLUMNS =
@@ -97,8 +98,8 @@ function iso(ms: number): string {
 
 type PageResult = PromiseLike<{ data: unknown; error: { message: string } | null }>;
 
-/** Sirali (order zorunlu) range sayfalamasiyla tum satirlari ceker. */
-async function fetchAll<T>(page: (from: number, to: number) => PageResult): Promise<T[]> {
+/** Sirali (order zorunlu) range sayfalamasiyla tum satirlari ceker. Liste sorgusu yazan HER servis bunu kullanir. */
+export async function fetchAll<T>(page: (from: number, to: number) => PageResult): Promise<T[]> {
   const all: T[] = [];
   for (let from = 0; ; from += PAGE_SIZE) {
     const { data, error } = await page(from, from + PAGE_SIZE - 1);
@@ -121,7 +122,10 @@ function loadAllUsers(): Promise<EngineUser[]> {
   );
 }
 
-export function isEligibleUser(u: EngineUser): boolean {
+/** Push'a uygunluk icin gereken alanlar — motor (EngineUser) ve kampanya hedefi ayni kurali paylasir. */
+export type EligibilityFields = Pick<EngineUser, 'is_deleted' | 'is_banned' | 'is_test_account' | 'is_seed_profile' | 'push_token'>;
+
+export function isEligibleUser(u: EligibilityFields): boolean {
   return (
     !u.is_deleted &&
     !u.is_banned &&
@@ -144,6 +148,45 @@ interface PushLogRow {
   created_at: string;
 }
 
+export interface CampaignSendRow {
+  user_id: string;
+  created_at: string;
+}
+
+export interface SendHistory {
+  /** push_log 'sent' satirlari (lookback kadar geriye). */
+  sentLog: PushLogRow[];
+  /** notifications.type='campaign' satirlari (son 7 gun) — admin/tekrarlayan kampanya gonderimleri. */
+  campaignSends: CampaignSendRow[];
+}
+
+/**
+ * Gercek gonderim gecmisi — gunluk/haftalik tavan icin tek kaynak. Motor da tekrarlayan kampanya
+ * gondericisi de buradan okur; boylece ikisi birbirinin gonderimini tavana sayar.
+ */
+export async function loadSendHistory(nowMs: number, lookbackDays: number): Promise<SendHistory> {
+  const PUSH_LOG_COLUMNS = 'id, user_id, rule_key, decision, created_at';
+  const sinceLookback = iso(nowMs - Math.max(7, lookbackDays) * DAY_MS);
+  const since7d = iso(nowMs - 7 * DAY_MS);
+  const [sentLog, campaignSends] = await Promise.all([
+    fetchAll<PushLogRow>((from, to) =>
+      supabase.from('push_log').select(PUSH_LOG_COLUMNS).eq('decision', 'sent').gte('created_at', sinceLookback).order('id').range(from, to),
+    ),
+    fetchAll<CampaignSendRow>((from, to) =>
+      supabase.from('notifications').select('user_id, created_at').eq('type', 'campaign').gte('created_at', since7d).order('created_at').range(from, to),
+    ),
+  ]);
+  return { sentLog, campaignSends };
+}
+
+/** Kullanici basina gercek gonderim zamanlari (lifecycle 'sent' + kampanya) — tavan sayimi icin. */
+export function sendTimesByUser(history: SendHistory): Map<string, number[]> {
+  const map = new Map<string, number[]>();
+  for (const row of history.sentLog) push(map, row.user_id, Date.parse(row.created_at));
+  for (const row of history.campaignSends) push(map, row.user_id, Date.parse(row.created_at));
+  return map;
+}
+
 export interface LoadContextOptions {
   /** 'sent' satirlarinin ne kadar geriye yuklenecegi — en buyuk kural cooldown'u (min 7 gun, haftalik tavan icin). */
   logLookbackDays?: number;
@@ -154,8 +197,6 @@ export async function loadContext(now: Date = new Date(), opts: LoadContextOptio
   const lookbackDays = Math.max(7, opts.logLookbackDays ?? 30);
   const since30d = iso(nowMs - 30 * DAY_MS);
   const since14d = iso(nowMs - 14 * DAY_MS);
-  const since7d = iso(nowMs - 7 * DAY_MS);
-  const sinceLookback = iso(nowMs - lookbackDays * DAY_MS);
   const sinceDecisionWindow = iso(nowMs - DECISION_WINDOW_MS);
   const PUSH_LOG_COLUMNS = 'id, user_id, rule_key, decision, created_at';
 
@@ -163,7 +204,7 @@ export async function loadContext(now: Date = new Date(), opts: LoadContextOptio
   const usersById = new Map(allUsers.map((u) => [u.id, u]));
   const users = allUsers.filter(isEligibleUser);
 
-  const [matches, messages, quizSessions, likes, sentLog, recentLog, campaignSends] = await Promise.all([
+  const [matches, messages, quizSessions, likes, history, recentLog] = await Promise.all([
     fetchAll<EngineMatch>((from, to) =>
       supabase.from('matches').select('id, user1_id, user2_id, matched_at').eq('is_active', true).gte('matched_at', since30d).order('matched_at').range(from, to),
     ),
@@ -183,18 +224,14 @@ export async function loadContext(now: Date = new Date(), opts: LoadContextOptio
     fetchAll<EngineLike>((from, to) =>
       supabase.from('swipes').select('swiper_id, target_id, created_at').eq('action', 'LIKE').gte('created_at', since30d).order('created_at').range(from, to),
     ),
-    // Tavan + cooldown icin: sadece gercek gonderimler, lookback kadar geriye
-    fetchAll<PushLogRow>((from, to) =>
-      supabase.from('push_log').select(PUSH_LOG_COLUMNS).eq('decision', 'sent').gte('created_at', sinceLookback).order('id').range(from, to),
-    ),
+    // Tavan + cooldown icin: sadece gercek gonderimler (lifecycle + kampanya), lookback kadar geriye
+    loadSendHistory(nowMs, lookbackDays),
     // "Gunde tek karar" icin: son 20 saatteki her karar
     fetchAll<PushLogRow>((from, to) =>
       supabase.from('push_log').select(PUSH_LOG_COLUMNS).gte('created_at', sinceDecisionWindow).order('id').range(from, to),
     ),
-    fetchAll<{ user_id: string; created_at: string }>((from, to) =>
-      supabase.from('notifications').select('user_id, created_at').eq('type', 'campaign').gte('created_at', since7d).order('created_at').range(from, to),
-    ),
   ]);
+  const { sentLog } = history;
 
   const matchesByUser = new Map<string, EngineMatch[]>();
   const activeMatchIds = new Set<string>();
@@ -224,8 +261,7 @@ export async function loadContext(now: Date = new Date(), opts: LoadContextOptio
     push(logByUser, row.user_id, { id: row.id, ruleKey: row.rule_key, decision: row.decision, createdAt: Date.parse(row.created_at) });
   }
 
-  const campaignSendsByUser = new Map<string, number[]>();
-  for (const row of campaignSends) push(campaignSendsByUser, row.user_id, Date.parse(row.created_at));
+  const sendTimes = sendTimesByUser(history);
 
   const newVisibleUsers7d = allUsers.filter(
     (u) => Date.parse(u.created_at) >= nowMs - 7 * DAY_MS && !u.is_test_account && !u.is_seed_profile && !u.is_banned && isVisibleProfile(u),
@@ -241,6 +277,6 @@ export async function loadContext(now: Date = new Date(), opts: LoadContextOptio
     likesByTarget,
     newVisibleUsers7d,
     logByUser,
-    campaignSendsByUser,
+    sendTimes,
   };
 }

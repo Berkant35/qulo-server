@@ -40,7 +40,7 @@ function ctx(partial: Partial<EngineContext> = {}): EngineContext {
     likesByTarget: new Map(),
     newVisibleUsers7d: 0,
     logByUser: new Map(),
-    campaignSendsByUser: new Map(),
+    sendTimes: new Map(),
     ...partial,
   };
 }
