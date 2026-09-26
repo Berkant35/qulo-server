@@ -12,21 +12,31 @@ export const authLimiter = rateLimit({
   message: rateLimitResponse,
 });
 
+/**
+ * Kimlikli rotalarda anahtar KULLANICI: IP bazli sayim NAT/CGNAT arkasindaki
+ * kullanicilari birbirine 429'latiyordu (once chat'te, 2026-09-25'te swipe'da
+ * yasandi). Kimliksiz istekte IP'ye duser (IPv6 /64 maskeli).
+ */
+export function userKey(req: { ip?: string; user?: { userId?: string } }): string {
+  return req.user?.userId ?? clientKey(req);
+}
+
+// Mobil kuyruk azalinca page=1'i yeniden ceker (her ~7 swipe'ta bir); 30/dk
+// tek kullanici icin bol, CGNAT'ta paylasilinca dardi.
 export const discoverLimiter = rateLimit({
   windowMs: 60 * 1000,
   limit: 30,
+  keyGenerator: userKey,
   standardHeaders: true,
   legacyHeaders: false,
   message: rateLimitResponse,
 });
 
-// Guc kullanimi artik her tap'te bir API cagrisi (envanter kapisi kalkti) — IP bazli
-// sayim NAT/CGNAT arkasindaki kullanicilari birbirine 429'latiyordu. Kimlikli istekte
-// kullanici bazina sayilir, anonim istekte IP'ye duser.
+// Guc kullanimi artik her tap'te bir API cagrisi (envanter kapisi kalkti).
 export const chatLimiter = rateLimit({
   windowMs: 60 * 1000,
   limit: 60,
-  keyGenerator: (req) => (req as { user?: { userId?: string } }).user?.userId ?? req.ip ?? "unknown",
+  keyGenerator: userKey,
   standardHeaders: true,
   legacyHeaders: false,
   message: rateLimitResponse,
@@ -40,9 +50,15 @@ export const analyticsTrackLimiter = rateLimit({
   message: rateLimitResponse,
 });
 
+// Canli olay 2026-09-25: bir kullanici 60 sn'de 40 swipe'a dayandi, 41. istek 429
+// aldi; mobil reject'i fire-and-forget attigi icin kart silindi ama swipe
+// kaydedilmedi — profil sonraki acilista geri geldi ("seed'lerden sonra gercek
+// kullanici cikti"). Insan hizi ~1/sn; kotuye kullanimi zaten gunluk swipe
+// limiti (subscriptionService) keser, bu tavan yalniz makine hizina karsi.
 export const swipeLimiter = rateLimit({
   windowMs: 60 * 1000,
-  limit: 40,
+  limit: 90,
+  keyGenerator: userKey,
   standardHeaders: true,
   legacyHeaders: false,
   message: rateLimitResponse,

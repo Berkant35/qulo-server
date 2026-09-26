@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { clientKey } from '../../src/middleware/rateLimit.js';
+import { clientKey, userKey } from '../../src/middleware/rateLimit.js';
 
 /**
  * IPv6'da istemci /64 prefix altındaki adresleri değiştirerek IP bazlı limiti aşabilir;
@@ -27,5 +27,28 @@ describe('clientKey', () => {
 
   it('IP yoksa "unknown"', () => {
     expect(clientKey({})).toBe('unknown');
+  });
+});
+
+/**
+ * Kimlikli rotalarda (discover/swipe/chat) anahtar kullanıcı: CGNAT arkasındaki iki
+ * kullanıcı aynı IP'yi paylaşsa da birbirinin limitini tüketmez. Kimlik yoksa IP.
+ */
+describe('userKey', () => {
+  it('kimlikli istekte kullanıcı id — aynı IP, farklı kullanıcı, farklı anahtar', () => {
+    const a = userKey({ ip: '203.0.113.7', user: { userId: 'u-1' } });
+    const b = userKey({ ip: '203.0.113.7', user: { userId: 'u-2' } });
+    expect(a).toBe('u-1');
+    expect(b).toBe('u-2');
+  });
+
+  it('aynı kullanıcı IP değiştirse de aynı anahtar (limit IP ile sıfırlanmaz)', () => {
+    expect(userKey({ ip: '203.0.113.7', user: { userId: 'u-1' } }))
+      .toBe(userKey({ ip: '198.51.100.9', user: { userId: 'u-1' } }));
+  });
+
+  it('kimliksiz istekte clientKey ile aynı (IPv6 /64 maskesi korunur)', () => {
+    const req = { ip: '2001:db8:85a3:1:8d3:1319:8a2e:370' };
+    expect(userKey(req)).toBe(clientKey(req));
   });
 });
