@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { appConfigService } from "../services/app-config.service.js";
-import { economyConfigService } from "../services/economy-config.service.js";
+import { economyConfigService, toPublicEconomyConfig } from "../services/economy-config.service.js";
 import { clientMetaFromHeaders } from "../utils/client-meta.js";
 import { localeFromRequestHeaders } from "../utils/locales.js";
 
@@ -19,8 +19,9 @@ export async function getAppConfigHandler(req: Request, res: Response, next: Nex
 
 export async function getEconomyConfigHandler(req: Request, res: Response, next: NextFunction) {
   try {
-    const config = await economyConfigService.getActiveConfig();
-    res.json(config);
+    // Herkese açık uç: rainbow bloğu (iç ekonomi kararları) yanıta girmez.
+    const { version, config } = await economyConfigService.getActiveConfig();
+    res.json({ version, config: toPublicEconomyConfig(config) });
   } catch (err) {
     next(err);
   }

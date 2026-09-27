@@ -6,6 +6,20 @@ import {
   type ConfigDiff,
 } from "../types/economy-config.schema.js";
 
+/** İstemcilere açık economy görünümü — `rainbow` bloğu hariç. */
+export type PublicEconomyConfig = Omit<EconomyConfig, "rainbow">;
+
+/**
+ * Herkese açık `GET /api/v1/app/economy` yanıtı için: `rainbow` bloğu (abonelik ödenmiş payları,
+ * anti-fraud hesap yaşı eşiği, itfa tavanı, maliyet tabanı) sunucu içi karar verisidir, dışarı
+ * sızmaz. Mobil bu bloğu okumuyor (2026-09-27 grep). Admin editörü tam config ile çalışır.
+ * Girişi değiştirmez — önbellekteki nesne paylaşılıyor.
+ */
+export function toPublicEconomyConfig(config: EconomyConfig): PublicEconomyConfig {
+  const { rainbow: _internal, ...publicConfig } = config;
+  return publicConfig;
+}
+
 class EconomyConfigService {
   private cachedConfig: { version: number; config: EconomyConfig } | null = null;
   private cacheExpiry = 0;

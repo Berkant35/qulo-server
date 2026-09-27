@@ -367,3 +367,22 @@ describe('starterPowers (başlangıç paketi)', () => {
     expect(config.rewards.starterPowers).toEqual({ ORACLE: 2 });
   });
 });
+
+/**
+ * GET /api/v1/app/economy herkese açık: `rainbow` bloğu (abonelik ödenmiş payları, anti-fraud
+ * hesap yaşı eşiği, itfa tavanı, maliyet tabanı) dışarı sızmamalı. Admin editörü tam config'i kullanır.
+ */
+describe('toPublicEconomyConfig', () => {
+  it('rainbow bloğunu düşürür, geri kalanı aynen korur', async () => {
+    const { toPublicEconomyConfig } = await import('../../src/services/economy-config.service.js');
+    const { economyConfigSchema } = await import('../../src/types/economy-config.schema.js');
+    const full = economyConfigSchema.parse(economyConfigFixture);
+
+    const pub = toPublicEconomyConfig(full);
+
+    expect(pub).not.toHaveProperty('rainbow');
+    const { rainbow: _omitted, ...rest } = full;
+    expect(pub).toEqual(rest);
+    expect(full).toHaveProperty('rainbow'); // giriş değişmez (önbellekteki nesne paylaşılıyor)
+  });
+});

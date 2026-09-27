@@ -54,3 +54,33 @@ describe("getAppConfigHandler — platform", () => {
     expect(await platformFor({ "x-app-platform": "windows" })).toBe("android");
   });
 });
+
+describe("getEconomyConfigHandler — herkese açık görünüm", () => {
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
+  it("yanıtta rainbow bloğu YOK; core/powerCosts/subscriptionLimits ve sürüm var", async () => {
+    // Üstteki blokların servis mock'ları (doMock) resetModules'tan sağ çıkar — gerçek servis gerekli.
+    vi.doUnmock("../../src/services/economy-config.service.js");
+    vi.doUnmock("../../src/services/app-config.service.js");
+    const { createFakeSupabase } = await import("../helpers/fake-supabase.js");
+    const { activeConfigRow } = await import("../helpers/economy-config.fixture.js");
+    const fake = createFakeSupabase({ economy_config_versions: [activeConfigRow()] });
+    vi.doMock("../../src/config/supabase.js", () => ({ supabase: fake.client }));
+    const { getEconomyConfigHandler } = await import("../../src/controllers/app.controller.js");
+    const res: any = { json: vi.fn() };
+    const next = vi.fn();
+
+    await getEconomyConfigHandler({ headers: {} } as any, res, next);
+
+    expect(next).not.toHaveBeenCalled();
+    const body = res.json.mock.calls[0][0];
+    expect(body.config).not.toHaveProperty("rainbow");
+    expect(body.config).toHaveProperty("core");
+    expect(body.config).toHaveProperty("powerCosts");
+    expect(body.config).toHaveProperty("subscriptionLimits");
+    expect(body.config).toHaveProperty("rewards");
+    expect(body).toHaveProperty("version");
+  });
+});
