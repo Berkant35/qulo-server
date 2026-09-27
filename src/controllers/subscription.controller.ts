@@ -61,12 +61,14 @@ export const activateSubscriptionHandler = async (
     }
     const expiresAt = verification.expiresAt;
 
+    // Bonusun ödenmiş payı yalnız RevenueCat'in doğruladığı gerçek, tam fiyatlı, kendi alımında.
     await subscriptionService.activateSubscription(
       userId,
       plan,
       `client_${userId}`,
       transaction_id || product_id,
       expiresAt,
+      verification.paidEligible === true,
     );
 
     const status = await subscriptionService.getStatus(userId);

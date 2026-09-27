@@ -221,7 +221,7 @@ describe('verifySubscription', () => {
       }),
     });
     const service = await setup();
-    await expect(service.verifySubscription('u1', 'quloplusmonthly2')).resolves.toEqual({
+    await expect(service.verifySubscription('u1', 'quloplusmonthly2')).resolves.toMatchObject({
       valid: true, expiresAt: '2026-10-01T00:00:00Z',
     });
   });
@@ -231,7 +231,7 @@ describe('verifySubscription', () => {
       body: subscriberBody({ subscriptions: { quloplusmonthly2: { expires_date: null } } }),
     });
     const service = await setup();
-    await expect(service.verifySubscription('u1', 'quloplusmonthly2')).resolves.toEqual({
+    await expect(service.verifySubscription('u1', 'quloplusmonthly2')).resolves.toMatchObject({
       valid: true,
     });
   });
@@ -241,6 +241,70 @@ describe('verifySubscription', () => {
     const service = await setup();
     await expect(service.verifySubscription('u1', 'quloplusmonthly2')).resolves.toMatchObject({
       valid: false, error: 'Verification service unavailable',
+    });
+  });
+});
+
+/**
+ * "Ödenmiş" uygunluğu RevenueCat verisinden (F4): sandbox / aile paylaşımı / TRIAL-INTRO-PROMOTIONAL
+ * 0 TL'lik "ödenmiş" mor üretmesin. API v1 alanları: non_subscriptions[].is_sandbox;
+ * subscriptions[p].is_sandbox, period_type (küçük harf: normal/trial/intro/…), ownership_type
+ * (PURCHASED | FAMILY_SHARED). Alan yoksa uygun değil.
+ */
+describe('ödenmiş uygunluğu', () => {
+  it('verifyPurchase: is_sandbox false → paidEligible true', async () => {
+    mockFetch({ body: subscriberBody({ non_subscriptions: { qulopurple50: [{ id: 'tx-1', is_sandbox: false }] } }) });
+    const service = await setup();
+    await expect(service.verifyPurchase('u1', 'qulopurple50')).resolves.toMatchObject({
+      valid: true, isSandbox: false, paidEligible: true,
+    });
+  });
+
+  it('verifyPurchase: sandbox → paidEligible false', async () => {
+    mockFetch({ body: subscriberBody({ non_subscriptions: { qulopurple50: [{ id: 'tx-1', is_sandbox: true }] } }) });
+    const service = await setup();
+    await expect(service.verifyPurchase('u1', 'qulopurple50', 'tx-1')).resolves.toMatchObject({
+      valid: true, isSandbox: true, paidEligible: false,
+    });
+  });
+
+  it('verifyPurchase: is_sandbox yoksa paidEligible false', async () => {
+    mockFetch({ body: subscriberBody({ non_subscriptions: { qulopurple50: [{ id: 'tx-1' }] } }) });
+    const service = await setup();
+    await expect(service.verifyPurchase('u1', 'qulopurple50')).resolves.toMatchObject({ valid: true, paidEligible: false });
+  });
+
+  const sub = (over: Record<string, unknown>) => subscriberBody({
+    subscriptions: {
+      quloplusmonthly2: {
+        expires_date: '2026-10-01T00:00:00Z', is_sandbox: false, period_type: 'normal', ownership_type: 'PURCHASED', ...over,
+      },
+    },
+  });
+
+  it('verifySubscription: gerçek, normal, kendi satın alması → alanlar + paidEligible true', async () => {
+    mockFetch({ body: sub({}) });
+    const service = await setup();
+    await expect(service.verifySubscription('u1', 'quloplusmonthly2')).resolves.toEqual({
+      valid: true, expiresAt: '2026-10-01T00:00:00Z',
+      isSandbox: false, periodType: 'normal', ownershipType: 'PURCHASED', paidEligible: true,
+    });
+  });
+
+  it.each([
+    ['sandbox', { is_sandbox: true }],
+    ['deneme', { period_type: 'trial' }],
+    ['giriş teklifi', { period_type: 'intro' }],
+    ['promosyon', { period_type: 'promotional' }],
+    ['aile paylaşımı', { ownership_type: 'FAMILY_SHARED' }],
+    ['ownership_type yok', { ownership_type: undefined }],
+    ['period_type yok', { period_type: undefined }],
+    ['is_sandbox yok', { is_sandbox: undefined }],
+  ])('verifySubscription: %s → paidEligible false', async (_label, over) => {
+    mockFetch({ body: sub(over) });
+    const service = await setup();
+    await expect(service.verifySubscription('u1', 'quloplusmonthly2')).resolves.toMatchObject({
+      valid: true, paidEligible: false,
     });
   });
 });

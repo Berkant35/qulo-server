@@ -293,6 +293,52 @@ describe('renewSubscription', () => {
   });
 });
 
+/**
+ * Aylık bonusun "ödenmiş" payı yalnız gerçek, tam fiyatlı, kendi satın alması için (F4):
+ * `paidEligible` verilmezse (varsayılan false) bonus yatar ama ödenmiş sayaç artmaz.
+ * Fixture payı: plus 0,3 → 200'ün 60'ı, premium 0,2 → 1000'in 200'ü.
+ */
+describe('aylık bonus — ödenmiş pay uygunluğu', () => {
+  const paidUser = (over: Record<string, unknown> = {}) => user({ purple_paid: 0, ...over });
+
+  it('activateSubscription: uygunluk verilmezse ödenmiş 0 (fail-safe)', async () => {
+    const { fake, subscriptionService } = await setup({ users: [paidUser()] });
+    await subscriptionService.activateSubscription('u1', 'plus', 'rc-1', 'tx-1', FUTURE);
+    expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 200, purple_paid: 0 });
+    expect(fake.table('diamond_transactions')[0].paid_amount).toBeUndefined();
+  });
+
+  it('activateSubscription: uygunsa tier payı ödenmiş', async () => {
+    const { fake, subscriptionService } = await setup({ users: [paidUser()] });
+    await subscriptionService.activateSubscription('u1', 'plus', 'rc-1', 'tx-1', FUTURE, true);
+    expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 200, purple_paid: 60 });
+  });
+
+  it('renewSubscription: uygunsa tier payı ödenmiş; değilse 0', async () => {
+    const seed = () => ({
+      users: [paidUser({ subscription_plan: 'premium', subscription_expires_at: NOW.toISOString() })],
+      user_subscriptions: [{ id: 's1', user_id: 'u1', plan: 'premium', status: 'active' }],
+    });
+    const eligible = await setup(seed());
+    await eligible.subscriptionService.renewSubscription('u1', 'tx-r', FUTURE, true);
+    expect(eligible.fake.table('users')[0]).toMatchObject({ purple_diamonds: 1000, purple_paid: 200 });
+
+    vi.resetModules();
+    const notEligible = await setup(seed());
+    await notEligible.subscriptionService.renewSubscription('u1', 'tx-r', FUTURE);
+    expect(notEligible.fake.table('users')[0]).toMatchObject({ purple_diamonds: 1000, purple_paid: 0 });
+  });
+
+  it('changeSubscription uygunluğu yeni planın bonusuna taşır', async () => {
+    const { fake, subscriptionService } = await setup({
+      users: [paidUser({ subscription_plan: 'plus', subscription_expires_at: FUTURE, rc_customer_id: 'rc-9' })],
+      user_subscriptions: [{ id: 's1', user_id: 'u1', plan: 'plus', status: 'active' }],
+    });
+    await subscriptionService.changeSubscription('u1', 'premium', 'tx-up', '2026-10-15T12:00:00Z', true);
+    expect(fake.table('users')[0]).toMatchObject({ subscription_plan: 'premium', purple_diamonds: 1000, purple_paid: 200 });
+  });
+});
+
 describe('cancelSubscription', () => {
   it('kaydı cancelled yapar ama kullanıcının erişimini hemen kesmez', async () => {
     const { fake, subscriptionService } = await setup({

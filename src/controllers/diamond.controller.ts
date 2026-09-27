@@ -52,12 +52,13 @@ export async function purchaseHandler(req: Request, res: Response, next: NextFun
     // için istemci onu boş göndererek anahtarı değiştirip aynı satın almayı
     // ikinci kez kredilendirebiliyordu. RevenueCat doğrulaması zaten yetkili
     // numarayı biliyor; onu kullanıyoruz.
+    // Ödenmiş mor yalnız RevenueCat'in doğruladığı gerçek alımda (sandbox / doğrulama atlandı → 0).
     const result = await diamondService.addPurple(
       userId,
       purpleAmount,
       "IAP_PURCHASE",
       verification.transactionId ?? transaction_id ?? product_id,
-      purpleAmount,
+      verification.paidEligible === true ? purpleAmount : 0,
     );
 
     // credited === 0 => kayit zaten vardi, yani BU istek hicbir sey yatirmadi.

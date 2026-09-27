@@ -58,6 +58,7 @@ describe("purchaseHandler — tekilleştirme anahtarı", () => {
     const { purchaseHandler, addPurple } = await loadHandler({
       valid: true,
       transactionId: "rc-authoritative-1",
+      paidEligible: true,
     });
     const { res } = makeRes();
 
@@ -70,6 +71,7 @@ describe("purchaseHandler — tekilleştirme anahtarı", () => {
     const { purchaseHandler, addPurple } = await loadHandler({
       valid: true,
       transactionId: "rc-authoritative-1",
+      paidEligible: true,
     });
     const { res } = makeRes();
 
@@ -107,12 +109,38 @@ describe("purchaseHandler — ödenmiş mor", () => {
     const { purchaseHandler, addPurple } = await loadHandler({
       valid: true,
       transactionId: "rc-paid-1",
+      isSandbox: false,
+      paidEligible: true,
     });
     const { res } = makeRes();
 
     await purchaseHandler(req({ product_id: "qulopurple400" }), res, vi.fn());
 
     expect(addPurple).toHaveBeenCalledWith("u1", 400, "IAP_PURCHASE", "rc-paid-1", 400);
+  });
+
+  // Sandbox (TestFlight / lisans testçisi) satın alması 0 TL: mor yatar, ödenmiş sayılmaz (F4).
+  it("sandbox satın alması mor yatırır ama ödenmiş 0", async () => {
+    const { purchaseHandler, addPurple } = await loadHandler({
+      valid: true,
+      transactionId: "rc-sandbox-1",
+      isSandbox: true,
+      paidEligible: false,
+    });
+    const { res } = makeRes();
+
+    await purchaseHandler(req({ product_id: "qulopurple400" }), res, vi.fn());
+
+    expect(addPurple).toHaveBeenCalledWith("u1", 400, "IAP_PURCHASE", "rc-sandbox-1", 0);
+  });
+
+  it("uygunluk bilgisi yoksa ödenmiş 0 (fail-safe)", async () => {
+    const { purchaseHandler, addPurple } = await loadHandler({ valid: true, transactionId: "rc-x" });
+    const { res } = makeRes();
+
+    await purchaseHandler(req({ product_id: "qulopurple400" }), res, vi.fn());
+
+    expect(addPurple).toHaveBeenCalledWith("u1", 400, "IAP_PURCHASE", "rc-x", 0);
   });
 });
 

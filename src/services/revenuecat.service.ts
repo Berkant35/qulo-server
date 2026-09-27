@@ -1,17 +1,43 @@
 import { env } from '../config/env.js';
+import { isPaidEligible, subscriberSubscriptionFacts } from '../utils/paid-eligibility.js';
 
+/** API v1 `subscriber.subscriptions[productId]` (docs: api-v1/customer-info-model). */
 interface RCSubscription {
   expires_date: string | null;
   purchase_date: string;
   product_identifier: string;
-  is_sandbox: boolean;
+  is_sandbox?: boolean;
+  /** "normal" | "trial" | "intro" | "promotional" | "prepaid" (küçük harf). */
+  period_type?: string;
+  /** "PURCHASED" | "FAMILY_SHARED". */
+  ownership_type?: string;
 }
 
 interface RCNonSubscription {
   id: string;
   purchase_date: string;
   product_identifier: string;
-  is_sandbox: boolean;
+  is_sandbox?: boolean;
+}
+
+export interface PurchaseVerification {
+  valid: boolean;
+  transactionId?: string;
+  isSandbox?: boolean;
+  /** Ödenmiş mor sayılır mı (utils/paid-eligibility). Yalnız RevenueCat'in doğruladığı gerçek alım. */
+  paidEligible?: boolean;
+  error?: string;
+}
+
+export interface SubscriptionVerification {
+  valid: boolean;
+  expiresAt?: string;
+  isSandbox?: boolean;
+  periodType?: string;
+  ownershipType?: string;
+  /** Aylık bonusun tier payı ödenmiş sayılır mı (utils/paid-eligibility). */
+  paidEligible?: boolean;
+  error?: string;
 }
 
 interface RCSubscriberResponse {
@@ -32,7 +58,7 @@ class RevenueCatService {
     userId: string,
     productId: string,
     transactionId?: string,
-  ): Promise<{ valid: boolean; transactionId?: string; isSandbox?: boolean; error?: string }> {
+  ): Promise<PurchaseVerification> {
     if (env.IAP_SKIP_VALIDATION === 'true') return { valid: true };
     if (!env.REVENUECAT_API_KEY) {
       return { valid: false, error: 'IAP validation not configured' };
@@ -52,7 +78,7 @@ class RevenueCatService {
       if (transactionId) {
         const match = purchases.find((p) => p.id === transactionId);
         if (!match) return { valid: false, error: 'Transaction ID not found' };
-        return { valid: true, transactionId: match.id, isSandbox: match.is_sandbox };
+        return this.verifiedPurchase(match);
       }
 
       // İstemci işlem numarası göndermediyse (RevenueCat listesi henüz senkron
@@ -63,7 +89,7 @@ class RevenueCatService {
       const latest = purchases.reduce((a, b) =>
         Date.parse(b.purchase_date) >= Date.parse(a.purchase_date) ? b : a,
       );
-      return { valid: true, transactionId: latest.id, isSandbox: latest.is_sandbox };
+      return this.verifiedPurchase(latest);
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : String(err);
       console.error('[RevenueCat] Verification error:', errorMsg);
@@ -77,7 +103,7 @@ class RevenueCatService {
   async verifySubscription(
     userId: string,
     productId: string,
-  ): Promise<{ valid: boolean; expiresAt?: string; error?: string }> {
+  ): Promise<SubscriptionVerification> {
     if (env.IAP_SKIP_VALIDATION === 'true') {
       return {
         valid: true,
@@ -97,22 +123,44 @@ class RevenueCatService {
         return { valid: false, error: 'Subscription not found for this product' };
       }
 
+      // Ödenmiş uygunluğu: yalnız PRODUCTION + kendi satın alması + normal dönem (eksik alan = hayır).
+      const facts = {
+        isSandbox: subscription.is_sandbox,
+        periodType: subscription.period_type,
+        ownershipType: subscription.ownership_type,
+      };
+      const paidEligible = isPaidEligible(subscriberSubscriptionFacts(facts), 'subscription');
+
       // Check if subscription is still active
       if (subscription.expires_date) {
         const expiresAt = new Date(subscription.expires_date);
         if (expiresAt < new Date()) {
           return { valid: false, error: 'Subscription has expired' };
         }
-        return { valid: true, expiresAt: subscription.expires_date };
+        return { valid: true, expiresAt: subscription.expires_date, ...facts, paidEligible };
       }
 
       // Lifetime subscription (no expiry)
-      return { valid: true };
+      return { valid: true, ...facts, paidEligible };
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : String(err);
       console.error('[RevenueCat] Subscription verification error:', errorMsg);
       return { valid: false, error: 'Verification service unavailable' };
     }
+  }
+
+  /**
+   * Doğrulanmış tüketilebilir alım. Tüketilebilir ürün aile paylaşımına açık değil (API v1
+   * non_subscriptions girdisinde ownership alanı da yok) — uygunluğu yalnız ortam belirler.
+   */
+  private verifiedPurchase(purchase: RCNonSubscription): PurchaseVerification {
+    const sandbox = purchase.is_sandbox;
+    return {
+      valid: true,
+      transactionId: purchase.id,
+      isSandbox: sandbox,
+      paidEligible: isPaidEligible({ sandbox, familyShared: false }, 'consumable'),
+    };
   }
 
   private async getSubscriber(userId: string): Promise<RCSubscriberResponse['subscriber'] | null> {

@@ -61,7 +61,8 @@ class SubscriptionService {
     plan: SubscriptionPlan,
     rcCustomerId: string,
     storeTransactionId: string,
-    expiresAt: string
+    expiresAt: string,
+    paidEligible = false,
   ): Promise<void> {
     // Aynı dönem için zaten aktif bir kayıt varsa yeni satır AÇMA — iki giriş
     // yolu (istemci + webhook) aynı satın almayı saniyeler arayla bildiriyor.
@@ -116,25 +117,14 @@ class SubscriptionService {
       })
       .eq('id', userId);
 
-    const config = await economyConfigService.getConfig();
-    const bonus = config.subscriptionLimits[plan].monthlyPurpleBonus;
-    if (bonus > 0) {
-      // Abonelik moru "yarı ödenmiş": tier payı kadarı rainbow üretebilir (economy rainbow bloğu).
-      const paid = Math.floor(bonus * config.rainbow.subscriptionPaidShare[plan]);
-      await diamondService.addPurple(
-        userId,
-        bonus,
-        'SUBSCRIPTION_BONUS',
-        subscriptionPeriodRef(plan, expiresAt),
-        paid,
-      );
-    }
+    await this.grantMonthlyBonus(userId, plan, expiresAt, paidEligible);
   }
 
   async renewSubscription(
     userId: string,
     storeTransactionId: string,
-    expiresAt: string
+    expiresAt: string,
+    paidEligible = false,
   ): Promise<void> {
     const { data: user } = await supabase
       .from('users')
@@ -160,19 +150,7 @@ class SubscriptionService {
       .update({ subscription_expires_at: expiresAt })
       .eq('id', userId);
 
-    const config = await economyConfigService.getConfig();
-    const bonus = config.subscriptionLimits[plan].monthlyPurpleBonus;
-    if (bonus > 0) {
-      // Abonelik moru "yarı ödenmiş": tier payı kadarı rainbow üretebilir (economy rainbow bloğu).
-      const paid = Math.floor(bonus * config.rainbow.subscriptionPaidShare[plan]);
-      await diamondService.addPurple(
-        userId,
-        bonus,
-        'SUBSCRIPTION_BONUS',
-        subscriptionPeriodRef(plan, expiresAt),
-        paid,
-      );
-    }
+    await this.grantMonthlyBonus(userId, plan, expiresAt, paidEligible);
   }
 
   async cancelSubscription(userId: string): Promise<void> {
@@ -209,7 +187,8 @@ class SubscriptionService {
     userId: string,
     newPlan: SubscriptionPlan,
     storeTransactionId: string,
-    expiresAt: string
+    expiresAt: string,
+    paidEligible = false,
   ): Promise<void> {
     await this.expireSubscription(userId);
 
@@ -224,7 +203,34 @@ class SubscriptionService {
       newPlan,
       user?.rc_customer_id || '',
       storeTransactionId,
-      expiresAt
+      expiresAt,
+      paidEligible,
+    );
+  }
+
+  /**
+   * Aylık mor bonusu — dönem anahtarıyla tekilleşir (bkz. subscriptionPeriodRef). Abonelik moru
+   * "yarı ödenmiş": tier payı kadarı rainbow üretebilir (economy rainbow bloğu), ama YALNIZ gerçek,
+   * tam fiyatlı, kendi satın almasında (`paidEligible`, utils/paid-eligibility). Aksi hâlde bonus
+   * yine tam yatar, ödenmiş payı 0.
+   */
+  private async grantMonthlyBonus(
+    userId: string,
+    plan: SubscriptionPlan,
+    expiresAt: string,
+    paidEligible: boolean,
+  ): Promise<void> {
+    const config = await economyConfigService.getConfig();
+    const bonus = config.subscriptionLimits[plan].monthlyPurpleBonus;
+    if (bonus <= 0) return;
+
+    const paid = paidEligible ? Math.floor(bonus * config.rainbow.subscriptionPaidShare[plan]) : 0;
+    await diamondService.addPurple(
+      userId,
+      bonus,
+      'SUBSCRIPTION_BONUS',
+      subscriptionPeriodRef(plan, expiresAt),
+      paid,
     );
   }
 

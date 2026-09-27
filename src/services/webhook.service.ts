@@ -7,18 +7,26 @@ import {
   RCEventType,
   storeProductKey,
 } from '../types/index.js';
+import { isPaidEligible, webhookPurchaseFacts } from '../utils/paid-eligibility.js';
+
+/** RevenueCat webhook olayı — `rcWebhookSchema.event` ile aynı alanlar. */
+export interface RevenueCatWebhookEvent {
+  type: string;
+  app_user_id: string;
+  product_id: string;
+  store?: string;
+  purchased_at_ms?: number;
+  expiration_at_ms?: number;
+  transaction_id?: string;
+  original_transaction_id?: string;
+  environment?: string | null;
+  period_type?: string | null;
+  is_family_share?: boolean | null;
+  price?: number | null;
+}
 
 class WebhookService {
-  async handleRevenueCatEvent(event: {
-    type: string;
-    app_user_id: string;
-    product_id: string;
-    store?: string;
-    purchased_at_ms?: number;
-    expiration_at_ms?: number;
-    transaction_id?: string;
-    original_transaction_id?: string;
-  }): Promise<void> {
+  async handleRevenueCatEvent(event: RevenueCatWebhookEvent): Promise<void> {
     const {
       type,
       app_user_id: userId,
@@ -27,6 +35,9 @@ class WebhookService {
       expiration_at_ms,
       transaction_id,
     } = event;
+
+    // Ödenmiş sayılma (rainbow kaynağı): yalnız PRODUCTION, aile paylaşımı değil, abonelikte NORMAL.
+    const facts = webhookPurchaseFacts(event);
 
     const eventType = type as RCEventType;
     const storeType = store === 'APP_STORE' ? 'apple' : 'google';
@@ -37,7 +48,8 @@ class WebhookService {
         userId,
         productId,
         storeType,
-        transaction_id || ''
+        transaction_id || '',
+        isPaidEligible(facts, 'consumable'),
       );
       return;
     }
@@ -67,16 +79,17 @@ class WebhookService {
     }
 
     const expiresAt = new Date(expiration_at_ms).toISOString();
+    const paidEligible = isPaidEligible(facts, 'subscription');
 
     switch (eventType) {
       case 'INITIAL_PURCHASE':
         await subscriptionService.activateSubscription(
-          userId, plan, userId, transaction_id || '', expiresAt
+          userId, plan, userId, transaction_id || '', expiresAt, paidEligible
         );
         break;
       case 'RENEWAL':
         await subscriptionService.renewSubscription(
-          userId, transaction_id || '', expiresAt
+          userId, transaction_id || '', expiresAt, paidEligible
         );
         break;
       case 'CANCELLATION':
@@ -87,12 +100,12 @@ class WebhookService {
         break;
       case 'PRODUCT_CHANGE':
         await subscriptionService.changeSubscription(
-          userId, plan, transaction_id || '', expiresAt
+          userId, plan, transaction_id || '', expiresAt, paidEligible
         );
         break;
       case 'UNCANCELLATION':
         await subscriptionService.renewSubscription(
-          userId, transaction_id || '', expiresAt
+          userId, transaction_id || '', expiresAt, paidEligible
         );
         break;
       default:
@@ -109,7 +122,8 @@ class WebhookService {
     userId: string,
     productId: string,
     store: string,
-    transactionId: string
+    transactionId: string,
+    paidEligible: boolean,
   ): Promise<void> {
     const { data: existing } = await supabase
       .from('iap_transactions')
@@ -122,8 +136,10 @@ class WebhookService {
     const purpleAmount = IAP_PRODUCT_MAP[storeProductKey(productId)];
     if (!purpleAmount) return;
 
-    // IAP tamamen ödenmiş mor: rainbow'u yalnız bu tür mor üretir (spec 2026-09-27).
-    await diamondService.addPurple(userId, purpleAmount, 'IAP_PURCHASE', transactionId, purpleAmount);
+    // IAP tamamen ödenmiş mor (spec 2026-09-27) — yalnız gerçek satın almada; sandbox/aile paylaşımı 0.
+    await diamondService.addPurple(
+      userId, purpleAmount, 'IAP_PURCHASE', transactionId, paidEligible ? purpleAmount : 0,
+    );
 
     await this.logIapTransaction(
       userId, productId, store, transactionId,
