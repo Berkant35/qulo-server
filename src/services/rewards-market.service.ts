@@ -1,8 +1,10 @@
+import { randomUUID } from "crypto";
 import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
 import type { ClientPlatform } from "../utils/client-meta.js";
-import { CAP_STATUSES, monthStartUtc } from "../utils/rewards.js";
+import { accountAgeDays, CAP_STATUSES, monthStartUtc } from "../utils/rewards.js";
 import type { RedemptionStatus, RewardBrand } from "../validators/rewards.validator.js";
+import { diamondService } from "./diamond.service.js";
 import { economyConfigService } from "./economy-config.service.js";
 import { rainbowAccessService, type RainbowAccessUser } from "./rainbow-access.service.js";
 
@@ -54,6 +56,16 @@ interface MarketUser extends RainbowAccessUser {
   created_at: string;
   rainbow_diamonds: number | null;
 }
+
+export interface RedeemResult {
+  redemption: RedemptionView;
+  /** İşlemden sonraki rainbow bakiyesi. */
+  balance: number;
+}
+
+/** Defter reason'ları; referans `redemption:<talep id>` (itfa ve iade aynı referansı taşır). */
+const REDEEM_REASON = "REWARD_REDEEM";
+const REFUND_REASON = "REWARD_REFUND";
 
 /** PostgREST numeric'i sayı döner; yine de tek yerde `Number` ile sabitlenir. */
 function toMarketItem(row: MarketItem): MarketItem {
@@ -132,6 +144,117 @@ export class RewardsMarketService {
       page,
       limit,
     };
+  }
+
+  /**
+   * Hediye kartı itfası (spec §2.6). Kapı sırası kasıtlı: idempotency → erişim → hesap yaşı →
+   * ürün/ülke → aylık tavan → rainbow CAS düşümü → talep. Test admin yaş/ülke/tavandan muaf.
+   * Eşzamanlı iki FARKLI talep tavanı birlikte aşabilir (tavan okuma-yazma atomik değil) — her talep
+   * zaten admin onayından geçer; bakiye ise CAS ile korunur (fazla harcama olmaz).
+   */
+  async redeem(
+    userId: string,
+    input: { itemId: string; idempotencyKey: string },
+    platform?: ClientPlatform,
+  ): Promise<RedeemResult> {
+    // Aynı anahtar = aynı talep. Kural kapılarından ÖNCE: ilk istek geçtiyse tekrarı da aynı sonucu görür.
+    const replay = await this.findByKey(userId, input.idempotencyKey);
+    if (replay) return { redemption: replay, balance: await this.rainbowBalance(userId) };
+
+    const user = await this.loadUser(userId);
+    if (!(await rainbowAccessService.isEnabled(user, platform))) throw Errors.RAINBOW_NOT_AVAILABLE();
+
+    const isAdmin = user.is_test_admin === true;
+    const rules = (await economyConfigService.getConfig()).rainbow;
+
+    if (!isAdmin && accountAgeDays(user.created_at, new Date()) < rules.minAccountAgeDays) {
+      throw Errors.REWARD_ACCOUNT_TOO_NEW(rules.minAccountAgeDays);
+    }
+
+    // Başka ülkenin ürünü "yok" gibi davranır (varlığı sızdırılmaz).
+    const item = await this.loadActiveItem(input.itemId);
+    if (!item || (!isAdmin && item.country_code !== (user.country ?? "").toUpperCase())) {
+      throw Errors.REWARD_ITEM_UNAVAILABLE();
+    }
+
+    if (!isAdmin) {
+      const used = await this.usedThisMonth(userId);
+      if (used + item.rainbow_price > rules.monthlyRedeemCap) {
+        throw Errors.REWARD_MONTHLY_CAP(rules.monthlyRedeemCap, used);
+      }
+    }
+
+    const redemptionId = randomUUID();
+    const reference = `redemption:${redemptionId}`;
+    // Yetersizse INSUFFICIENT_DIAMONDS — hiçbir şey yazılmaz.
+    const { rainbow: balance } = await diamondService.spendRainbow(userId, item.rainbow_price, REDEEM_REASON, reference);
+
+    const { data, error } = await supabase
+      .from("reward_redemptions")
+      .insert({
+        id: redemptionId,
+        user_id: userId,
+        item_id: item.id,
+        status: "PENDING",
+        rainbow_price: item.rainbow_price,
+        brand_key: item.brand_key,
+        country_code: item.country_code,
+        currency: item.currency,
+        face_value: item.face_value,
+        idempotency_key: input.idempotencyKey,
+        platform: platform === "ios" || platform === "android" ? platform : null,
+        is_test: isAdmin,
+      })
+      .select(REDEMPTION_COLUMNS)
+      .single();
+
+    if (error || !data) {
+      // Talep yazılamadı: düşülen rainbow iade edilir. 23505 = aynı anahtarla eşzamanlı istek kazandı.
+      await this.refundUnrecorded(userId, item.rainbow_price, reference);
+      if (error?.code === "23505") {
+        const winner = await this.findByKey(userId, input.idempotencyKey);
+        if (winner) return { redemption: winner, balance: await this.rainbowBalance(userId) };
+      }
+      throw Errors.SERVER_ERROR();
+    }
+
+    return { redemption: toRedemptionView(data as RedemptionView), balance };
+  }
+
+  private async findByKey(userId: string, idempotencyKey: string): Promise<RedemptionView | null> {
+    const { data, error } = await supabase
+      .from("reward_redemptions")
+      .select(REDEMPTION_COLUMNS)
+      .eq("user_id", userId)
+      .eq("idempotency_key", idempotencyKey)
+      .maybeSingle();
+    if (error) throw Errors.SERVER_ERROR();
+    return data ? toRedemptionView(data as RedemptionView) : null;
+  }
+
+  private async loadActiveItem(itemId: string): Promise<MarketItem | null> {
+    const { data, error } = await supabase
+      .from("reward_catalog_items")
+      .select(ITEM_COLUMNS)
+      .eq("id", itemId)
+      .eq("is_active", true)
+      .is("deleted_at", null)
+      .maybeSingle();
+    if (error) throw Errors.SERVER_ERROR();
+    return data ? toMarketItem(data as MarketItem) : null;
+  }
+
+  private async rainbowBalance(userId: string): Promise<number> {
+    return (await diamondService.getBalance(userId)).rainbow;
+  }
+
+  /** Telafi de başarısız olursa rainbow düşmüş, talep yok: defterdeki REWARD_REDEEM satırı elle kurtarma izi. */
+  private async refundUnrecorded(userId: string, amount: number, reference: string): Promise<void> {
+    try {
+      await diamondService.earnRainbow(userId, amount, REFUND_REASON, reference);
+    } catch (err) {
+      console.error("[rewards] CRITICAL: redemption insert failed AND refund failed", { userId, amount, reference, err });
+    }
   }
 
   private async loadUser(userId: string): Promise<MarketUser> {

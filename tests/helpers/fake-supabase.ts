@@ -50,8 +50,10 @@ export interface StorageFailureSpec {
 export interface FakeSupabaseOptions {
   failOn?: FailureSpec[];
   /**
-   * Tablo basina benzersiz kolonlar: `{ campaign_events: ['dedupe_key'] }`. Ayni degerle ikinci insert
-   * Postgres gibi `23505` hatasi doner (NULL/undefined kisita takilmaz). Claim-then-send desenleri boyle sinanir.
+   * Tablo basina benzersiz kisitlar: tek kolon (`{ campaign_events: ['dedupe_key'] }`) ya da bilesik
+   * anahtar (`{ reward_redemptions: ['user_id,idempotency_key'] }`). Ayni degerle ikinci insert Postgres
+   * gibi `23505` doner; anahtarin herhangi bir kolonu NULL/undefined ise kisita takilmaz.
+   * Claim-then-send desenleri boyle sinanir.
    */
   unique?: Record<string, string[]>;
   /** rpc(name, args) çağrılarına verilecek cevaplar. */
@@ -355,10 +357,13 @@ class QueryBuilder implements PromiseLike<Result<any>> {
           assignDefined(existing, row);
           written.push(existing);
         } else {
-          // Benzersiz kolon (options.unique): ayni deger ikinci kez yazilamaz — Postgres 23505.
-          const clash = this.uniqueColumns.find(
-            (col) => row[col] != null && this.rows().some((r) => r[col] === row[col]),
-          );
+          // Benzersiz kısıt (options.unique): tek kolon ya da "a,b" bileşik anahtar — Postgres 23505.
+          // Anahtarın bir kolonu NULL ise kısıt uygulanmaz (Postgres'te NULL'lar birbirine eşit değil).
+          const clash = this.uniqueColumns.find((spec) => {
+            const cols = spec.split(',').map((c) => c.trim());
+            if (cols.some((c) => row[c] == null)) return false;
+            return this.rows().some((r) => cols.every((c) => r[c] === row[c]));
+          });
           if (clash) {
             return {
               data: [],
