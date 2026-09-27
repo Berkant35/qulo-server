@@ -49,6 +49,11 @@ const req = (body: Record<string, unknown>): any => ({
   body,
 });
 
+// Konsol casusları (credited 0 anomali logu testleri) assertion patlasa da sızmasın.
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
 describe("purchaseHandler — tekilleştirme anahtarı", () => {
   beforeEach(() => {
     vi.resetModules();

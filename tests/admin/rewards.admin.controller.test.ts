@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 function fakeRes() {
   const res: any = {
@@ -51,6 +51,11 @@ async function setup(service: Record<string, unknown> = {}) {
 
 beforeEach(() => {
   vi.resetModules();
+});
+
+afterEach(() => {
+  // Konsol casusları test ortasında patlasa da sızmasın.
+  vi.restoreAllMocks();
 });
 
 describe('Rainbow Market yetkisi', () => {
