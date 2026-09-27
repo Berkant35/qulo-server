@@ -2,7 +2,7 @@ import { supabase } from '../config/supabase.js';
 import { buildPersonaCard, personaGirdisi } from './seed-persona.js';
 import { generateSeedReply, type LlmTurn } from './seed-llm.service.js';
 import { validateReply } from './seed-reply-guard.js';
-import { isBusy } from './seed-reply-timing.js';
+import { isBusy, VARSAYILAN_PERSONA } from './seed-reply-timing.js';
 import type { SeedPersona } from '../types/seed-persona.js';
 
 /**
@@ -29,13 +29,6 @@ export interface DenemeSonucu {
   profil: { id: string; name: string; age: number | null; city: string | null; gender: string | null; job: string | null };
   tokenler: { giris: number; cikis: number };
 }
-
-const VARSAYILAN_PERSONA: SeedPersona = {
-  responder_type: 'normal', work_pattern: 'esnek',
-  sleep_window: { start_min: 30, end_min: 450 },
-  style: { uzunluk: 'kisa', emoji: 'nadiren', yazim: 'gevsek', enerji: 'soru_soran' },
-  derived_at: '', model: 'fallback',
-};
 
 export class DenemeHatasi extends Error {}
 

@@ -92,7 +92,11 @@ export function computeReplyDelayMs(i: TimingInput): number {
   return Math.min(Math.max(hedefMs, MIN_MS), MAX_MS);
 }
 
-/** Persona karti bos seed icin gecikme/faz varsayilani (tarama ve kuyruk isleme ortak). */
+/**
+ * Persona karti bos seed icin varsayilan — TEK kaynak: tarama, kuyruk isleme, onizleme
+ * (seed-reply-preview) ve cevrimici ritmi (seed-presence) ayni nesneyi kullanir; hicbiri
+ * degistirmez. Eskiden uc birebir kopyaydi (2026-09-27).
+ */
 export const VARSAYILAN_PERSONA: SeedPersona = {
   responder_type: 'normal', work_pattern: 'esnek',
   sleep_window: { start_min: 30, end_min: 450 },

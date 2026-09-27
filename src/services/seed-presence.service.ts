@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { supabase } from '../config/supabase.js';
-import { isBusy, isSleeping } from './seed-reply-timing.js';
+import { isBusy, isSleeping, VARSAYILAN_PERSONA } from './seed-reply-timing.js';
 import type { SeedPersona } from '../types/seed-persona.js';
 
 /**
@@ -22,13 +22,6 @@ import type { SeedPersona } from '../types/seed-persona.js';
  * presence semantigi, heartbeat de boyle calisir. `gorulmeDk` artik sadece hic degeri
  * olmayan / bayat profillerin tek seferlik tohumlanmasinda kullanilir.
  */
-
-const VARSAYILAN_PERSONA: SeedPersona = {
-  responder_type: 'normal', work_pattern: 'esnek',
-  sleep_window: { start_min: 30, end_min: 450 },
-  style: { uzunluk: 'kisa', emoji: 'nadiren', yazim: 'gevsek', enerji: 'soru_soran' },
-  derived_at: '', model: 'fallback',
-};
 
 /** Cevrimici olma olasiligi: anlik cevaplayan biri gercekten de daha sik cevrimicidir. */
 const ONLINE_ORANI: Record<SeedPersona['responder_type'], number> = {
