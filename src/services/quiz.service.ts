@@ -2,7 +2,7 @@ import { supabase } from "../config/supabase.js";
 import { resolveLocale } from '../utils/locales.js';
 import { questionLocale } from "../constants/locales.js";
 import { Errors } from "../utils/errors.js";
-import { calculatePowerCost, calculateGreenReward, shuffleArray, pickOracleSuggestion } from "../utils/math.js";
+import { calculatePowerCost, calculateGreenReward, shuffleArray, pickOracleSuggestion, splitReward } from "../utils/math.js";
 import { diamondService } from "./diamond.service.js";
 import { exchangeService } from "./exchange.service.js";
 import { economyConfigService } from "./economy-config.service.js";
@@ -89,6 +89,11 @@ export class QuizService {
       costs[name] = { purple, green: calculateGreenReward(purple, ratio) };
     }
     return costs;
+  }
+
+  /** Ödül bölme oranı — toplam ödülle aynı oran (core.greenDiamondRewardRatio). */
+  private async rewardRatio(): Promise<number> {
+    return (await economyConfigService.getConfig()).core.greenDiamondRewardRatio;
   }
 
   /**
@@ -375,15 +380,15 @@ export class QuizService {
         const usedFromInventory = await exchangeService.tryUseInventory(solverId, powerUsed);
 
         if (!usedFromInventory) {
-          const { purple: cost, green: greenReward } =
+          const { purple: cost, green: total } =
             (await this.sessionPowerCosts(session.total_questions))[powerUsed];
 
-          // Spend purple diamonds from solver
-          await diamondService.spendPurple(solverId, cost, `POWER_USED:${powerUsed}`, sessionId);
-          // Earn green diamonds for target
-          await diamondService.earnGreen(session.target_id, greenReward, `POWER_REWARD:${powerUsed}`, sessionId);
+          // Önce ödenmiş mor düşer; ödenmiş payı hedefte RAINBOW olur (spec 2026-09-27).
+          const { paidUsed } = await diamondService.spendPurple(solverId, cost, `POWER_USED:${powerUsed}`, sessionId);
+          const reward = splitReward(total, paidUsed, await this.rewardRatio());
+          await diamondService.creditReward(session.target_id, reward, `POWER_REWARD:${powerUsed}`, sessionId);
 
-          // Track green earned on the question
+          // Soru istatistiği yalnız yeşil payı sayar (rainbow ayrı elmas).
           const { data: currentQData } = await supabase
             .from('questions')
             .select('stats_green_earned')
@@ -393,7 +398,7 @@ export class QuizService {
           if (currentQData) {
             await supabase
               .from('questions')
-              .update({ stats_green_earned: currentQData.stats_green_earned + greenReward })
+              .update({ stats_green_earned: currentQData.stats_green_earned + reward.green })
               .eq('id', currentQuestion.id);
           }
         }
@@ -889,11 +894,12 @@ export class QuizService {
     if (!usedFromInventory) {
       // TEK DOGRU KAYNAK — eskiden burasi `powers.base_cost`, normal guc kullanimi ise
       // `config.powerCosts` okuyordu (bkz. sessionPowerCosts).
-      const { purple: cost, green: greenReward } =
+      const { purple: cost, green: total } =
         (await this.sessionPowerCosts(session.total_questions))[powerType];
 
-      await diamondService.spendPurple(solverId, cost, `POWER_USED:${powerType}_RESCUE`, sessionId);
-      await diamondService.earnGreen(session.target_id, greenReward, `POWER_REWARD:${powerType}_RESCUE`, sessionId);
+      const { paidUsed } = await diamondService.spendPurple(solverId, cost, `POWER_USED:${powerType}_RESCUE`, sessionId);
+      const reward = splitReward(total, paidUsed, await this.rewardRatio());
+      await diamondService.creditReward(session.target_id, reward, `POWER_REWARD:${powerType}_RESCUE`, sessionId);
     }
 
     // Yanlış cevabı override et
