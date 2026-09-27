@@ -34,6 +34,7 @@ describe('rainbowAccessService.isEnabled', () => {
     ['listede olmayan ülke (TR)', { ...base, country: 'TR' }, 'android', false],
     ['ülke yok', { ...base, country: null }, 'android', false],
     ['platform bilinmiyor', base, undefined, false],
+    ['web platformu (market yalnız mobil) açık ülkede bile kapalı', base, 'web', false],
     ['küçük harf ülke kodu', { ...base, country: 'th' }, 'android', true],
     ['seed profil açık ülkede bile kapalı', { ...base, is_seed_profile: true }, 'android', false],
     ['test hesabı kapalı', { ...base, is_test_account: true }, 'android', false],
