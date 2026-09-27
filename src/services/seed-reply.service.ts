@@ -6,7 +6,6 @@ import { buildPersonaCard, personaGirdisi, type SeedProfilSatiri } from './seed-
 import { validateReply } from './seed-reply-guard.js';
 import { generateSeedReply } from './seed-llm.service.js';
 import { chatQuestionService } from './chat-question.service.js';
-import { mediaService } from './media.service.js';
 import { createChatQuestionSchema } from '../validators/chat-question.validator.js';
 
 // Tarama ayri modulde (seed-reply-scan.service.ts); cron ve testler tek giris noktasindan alir.
@@ -55,13 +54,13 @@ export function mesajMetni(m: MesajSatiri): string {
  * ama bunu zorlayan bir kisit yok: bir seed'de `is_test_account=false` yapilirsa profil
  * gercek kullanicilara acilir VE bot ona cevap yazmaya devam ederdi.
  */
-function botYazabilir<T extends { is_seed_profile?: unknown; is_test_account?: unknown }>(
+export function botYazabilir<T extends { is_seed_profile?: unknown; is_test_account?: unknown }>(
   u: T | null | undefined,
 ): u is T {
   return Boolean(u?.is_seed_profile) && Boolean(u?.is_test_account);
 }
 
-const KAPI_HATASI = 'alici seed profil degil (is_seed_profile + is_test_account)';
+export const KAPI_HATASI = 'alici seed profil degil (is_seed_profile + is_test_account)';
 
 export async function claimDue(limit: number): Promise<QueueRow[]> {
   const { data, error } = await supabase.rpc('claim_seed_replies', { p_limit: limit });
@@ -94,7 +93,7 @@ const MAX_DENEME = 3;
  * LLM hatasi ve cikti-denetimi basarisizligi satiri DOGRUDAN oldurmez.
  * `claim_seed_replies` claim aninda `attempts`'i artirir, yani ilk deneme `attempts = 1`.
  */
-async function backoffVeyaBitir(row: QueueRow, hata: string): Promise<'deferred' | 'failed'> {
+export async function backoffVeyaBitir(row: QueueRow, hata: string): Promise<'deferred' | 'failed'> {
   if (row.attempts >= MAX_DENEME) {
     await markFailed(row.id, hata);
     return 'failed';
@@ -146,7 +145,7 @@ export async function recoverStale(olderThanMs = 5 * 60_000): Promise<number> {
 
 // --- processRow: orkestrasyon (Task 7) -------------------------------------
 
-const KRIZ = /(yaşamak istemiyorum|intihar|kendime zarar|canıma kıy|ölmek istiyorum|yaşamaktan bıktım)/i;
+export const KRIZ = /(yaşamak istemiyorum|intihar|kendime zarar|canıma kıy|ölmek istiyorum|yaşamaktan bıktım)/i;
 
 /**
  * Karsi taraf konusmayi kapatiyor mu. Turkce ekler yuzunden kok bitislerinde `\b` YOK
@@ -158,11 +157,14 @@ const KAPANIS = /\b(iyi geceler|görüşürüz|gorusuruz|hoşça ?kal|hoscakal|k
 export function kapanisSinyali(text: string): boolean {
   return KAPANIS.test(text);
 }
-const YAS_ALTI = /\b(1[0-7])\s*yaş(ında|ındayım)?\b/i;
+export const YAS_ALTI = /\b(1[0-7])\s*yaş(ında|ındayım)?\b/i;
 const KRIZ_CEVABI =
   'ya böyle yazınca içim cız etti. ciddiyim, bunu tek başına taşıma — 112\'yi arayabilirsin ya da yakınındaki birine söyle. ben buradayım ama bu konuda gerçekten yardım alman lazım.';
 
 const GECMIS_LIMIT = 20;
+
+/** Medya istegi bir mesaj degil, bir eylem: gecmise `mesajMetni` ile ayni dilde girer. */
+const MEDYA_ISTEGI_ETIKETI = '(fotoğraf ve sesli mesaj paylaşımını açmak istedi)';
 
 /**
  * Bot bir sey yazdi: cevrimici bayragi ve son gorulme BIRLIKTE tazelenir.
@@ -170,7 +172,7 @@ const GECMIS_LIMIT = 20;
  * saniyeler icinde cevap gelir — celiskinin ta kendisi. Bir sonraki presence
  * tikinde (en fazla 5 dk) profil dogal ritmine doner.
  */
-async function aktifIsaretle(seedUserId: string): Promise<void> {
+export async function aktifIsaretle(seedUserId: string): Promise<void> {
   const { error } = await supabase
     .from('users')
     .update({ is_online: true, last_seen_at: new Date().toISOString() })
@@ -179,9 +181,9 @@ async function aktifIsaretle(seedUserId: string): Promise<void> {
 }
 
 /** Persona karti icin gereken seed alanlari; `personaGirdisi` ile ayni sozlesme. */
-type SeedSatiri = SeedProfilSatiri & { seed_persona?: unknown };
+export type SeedSatiri = SeedProfilSatiri & { seed_persona?: unknown };
 
-interface SeedBaglami {
+export interface SeedBaglami {
   sistem: string;
   turns: Array<{ role: 'model' | 'user'; text: string }>;
   /** Son INSAN mesajinin LLM'e giden hali; yas ve kriz kapilari bunun uzerinde calisir. */
@@ -193,7 +195,7 @@ interface SeedBaglami {
  * Metin cevabi ve medya gecistirmesi AYNI baglami kullanir; ayrildiklari yer
  * uretim POLITIKASI (uyari-probe'lu iki deneme vs tek deneme), baglam degil.
  */
-async function seedBaglami(
+export async function seedBaglami(
   row: QueueRow,
   seed: SeedSatiri,
   opts: { mediaAsk?: boolean } = {},
@@ -245,7 +247,7 @@ async function seedBaglami(
  * topluyor, yani "llm: http" satiri "401 mi, 429 mu, ag mi" sorusunu cevaplamiyordu
  * (canli ornek 2026-09-21). Kod + mesajin bas kismi birlikte yazilir.
  */
-function hataKodu(err: unknown): string {
+export function hataKodu(err: unknown): string {
   const kod = (err as { code?: string })?.code;
   const mesaj = (err as Error)?.message ?? '';
   if (!kod) return String(mesaj);
@@ -453,124 +455,6 @@ export async function answerQuestionRow(row: QueueRow): Promise<IslemSonucu> {
   }
 
   await aktifIsaretle(row.seed_user_id);
-  await markSent(row.id);
-  return 'sent';
-}
-
-// --- respondMediaRequest: foto/ses paylasim istegi (Task 060) ----------------
-
-/** Medya istegi bir mesaj degil, bir eylem: gecmise `mesajMetni` ile ayni dilde girer. */
-const MEDYA_ISTEGI_ETIKETI = '(fotoğraf ve sesli mesaj paylaşımını açmak istedi)';
-
-/**
- * Reddin ardindan sohbete yazilan tek cumlelik gecistirme. Best-effort:
- * uretilemezse sessiz kalinir — hazir kalip yazmak kalip tekrarina yol acar ve
- * botu ele veren en buyuk kaynak odur (bkz. processRow'daki ayni karar).
- *
- * `processRow`'dan tek farki uretim politikasi: orada uyari-probe'lu iki deneme
- * + backoff var, burada tek deneme. Ret zaten yapildigi icin satirin isi bitmistir;
- * CHAT_LOCKED dahil gonderim hatalari da yutulur — yeniden denemek reddi
- * tekrarlamak demek olurdu ve kullanici reddi zaten arayuzde gorur.
- */
-async function medyaGecistirmesiYaz(row: QueueRow, seed: SeedSatiri): Promise<void> {
-  let baglam: SeedBaglami;
-  try {
-    baglam = await seedBaglami(row, seed, { mediaAsk: true });
-  } catch (err) {
-    console.warn('[SeedReply] medya baglami kurulamadi:', hataKodu(err));
-    return;
-  }
-
-  // 18 yas alti beyani / kriz: ret YAPILIR (guvenli taraf) ama flort dilinde
-  // gecistirme YAZILMAZ. Metin satiri bu sebeple iptal edilmis olsa bile medya
-  // istegi AYRI bir tetikleyicidir (farkli id) ve iptal filtresine takilmaz —
-  // kapi bu yolda ayrica kurulmali.
-  if (YAS_ALTI.test(baglam.sonInsanMetni) || KRIZ.test(baglam.sonInsanMetni)) {
-    console.warn(`[SeedReply] medya gecistirmesi yazilmadi (yas/kriz kapisi) match=${row.match_id}`);
-    return;
-  }
-
-  let ham: string;
-  try {
-    ham = (await generateSeedReply({ system: baglam.sistem, turns: baglam.turns })).text;
-  } catch (err) {
-    console.warn('[SeedReply] medya gecistirmesi uretilemedi:', hataKodu(err));
-    return;
-  }
-
-  const denetim = validateReply(ham, baglam.sistem);
-  if (!denetim.ok) {
-    console.warn(`[SeedReply] medya gecistirmesi elendi (${denetim.reason}) match=${row.match_id}`);
-    return;
-  }
-
-  try {
-    await chatService.sendMessage(row.seed_user_id, row.match_id, denetim.text);
-  } catch (err) {
-    console.warn('[SeedReply] medya gecistirmesi gonderilemedi:', hataKodu(err));
-  }
-}
-
-/**
- * Bota acilan foto/ses paylasim istegini cevaplar: istek REDDEDILIR, ardindan
- * sohbete kisa ve nazik bir gecistirme yazilir.
- *
- * Neden kabul degil ret: bot medya GONDEREMEZ (`chatService.sendMessage` yalniz metin
- * alir). Kabul edilseydi karsi taraf foto atar, "sen de at" der, bot verdigi sozu
- * tutamazdi — botu ele veren en net durum. Ret, bir flort uygulamasinda siradan bir
- * davranistir ve asil sorunu da cozer.
- *
- * Sira onemli: ONCE reddet, SONRA yaz. Reddetmek kilitlenmeyi acan asil istir
- * (bekleyen istek varken `requestMedia` MEDIA_REQUEST_PENDING firlatir, timeout yok);
- * metin uretilemezse sessiz ret kalir. Tersi sirada bot "istemiyorum" yazip istegi
- * pending birakabilirdi.
- */
-export async function respondMediaRequest(row: QueueRow): Promise<IslemSonucu> {
-  // Kimlik cift kontrolu — diger yazma yollariyla AYNI kapi.
-  const { data: seed } = await supabase
-    .from('users')
-    .select('id, name, age, city, bio, gender, interests, relationship_goal, is_seed_profile, is_test_account, seed_persona')
-    .eq('id', row.seed_user_id).maybeSingle();
-  if (!botYazabilir(seed)) {
-    await markCancelled(row.id, KAPI_HATASI);
-    return 'cancelled';
-  }
-
-  if (!row.media_request_id) {
-    await markCancelled(row.id, 'media_request_id yok');
-    return 'cancelled';
-  }
-
-  if (!(await withinRateLimits(row.match_id, row.seed_user_id))) {
-    await deferRow(row.id, 30 * 60_000);
-    return 'deferred';
-  }
-
-  const { data: istek } = await supabase
-    .from('media_requests').select('id, match_id, status, requester_id')
-    .eq('id', row.media_request_id).maybeSingle();
-  // `match_id` esitligi: ret istegin eslesmesinde uygulanirken gecistirme
-  // `row.match_id`'ye yaziliyor — ikisi ayrilirsa bot baska bir sohbete yazar.
-  if (!istek || istek.status !== 'pending' ||
-      istek.requester_id === row.seed_user_id || istek.match_id !== row.match_id) {
-    await markCancelled(row.id, 'medya istegi cevaplanabilir durumda degil');
-    return 'cancelled';
-  }
-
-  try {
-    await mediaService.respondToRequest(row.media_request_id, row.seed_user_id, 'reject');
-  } catch (err) {
-    const kod = hataKodu(err);
-    if (kod.includes('NOT_MATCHED') || kod.includes('MATCH_INACTIVE') ||
-        kod.includes('MEDIA_REQUEST_NOT_FOUND') || kod.includes('MEDIA_REQUEST_NOT_RECIPIENT')) {
-      await markCancelled(row.id, kod);
-      return 'cancelled';
-    }
-    return backoffVeyaBitir(row, `medya reddi: ${kod}`);
-  }
-
-  await aktifIsaretle(row.seed_user_id);
-  await medyaGecistirmesiYaz(row, seed);
   await markSent(row.id);
   return 'sent';
 }

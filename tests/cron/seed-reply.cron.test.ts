@@ -16,9 +16,11 @@ async function setup(enabled: boolean, satirlar: Satir[] = []) {
     respondMediaRequest: vi.fn(async () => 'sent' as const),
   };
   const markCancelled = vi.fn(async () => undefined);
+  const { respondMediaRequest, ...servisIsleyicileri } = isleyiciler;
   vi.doMock('../../src/services/seed-reply.service.js', () => ({
-    scanAndEnqueue, claimDue, recoverStale, markCancelled, ...isleyiciler,
+    scanAndEnqueue, claimDue, recoverStale, markCancelled, ...servisIsleyicileri,
   }));
+  vi.doMock('../../src/services/seed-reply-media.service.js', () => ({ respondMediaRequest }));
   const mod = await import('../../src/cron/seed-reply.cron.js');
   return { mod, scanAndEnqueue, claimDue, recoverStale, markCancelled, ...isleyiciler };
 }

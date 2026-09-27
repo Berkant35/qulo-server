@@ -2,9 +2,10 @@ import cron from "node-cron";
 import { supabase } from "../config/supabase.js";
 import {
   scanAndEnqueue, claimDue, recoverStale,
-  processRow, askQuestion, answerQuestionRow, respondMediaRequest, markCancelled,
+  processRow, askQuestion, answerQuestionRow, markCancelled,
   type QueueRow, type IslemSonucu,
 } from "../services/seed-reply.service.js";
+import { respondMediaRequest } from "../services/seed-reply-media.service.js";
 
 let task: cron.ScheduledTask | null = null;
 let inFlight = false;

@@ -65,7 +65,8 @@ async function setup(opts: {
   vi.doMock('../../src/services/chat.service.js', () => ({ chatService: { sendMessage } }));
 
   const svc = await import('../../src/services/seed-reply.service.js');
-  return { fake, svc, sendMessage, generateSeedReply };
+  const medya = await import('../../src/services/seed-reply-media.service.js');
+  return { fake, svc, medya, sendMessage, generateSeedReply };
 }
 
 const istek = (fake: { table: (t: string) => Record<string, unknown>[] }) => fake.table('media_requests')[0]!;
@@ -74,9 +75,9 @@ beforeEach(() => vi.resetModules());
 
 describe('respondMediaRequest', () => {
   it('istegi REDDEDER ve sohbete kisa bir gecistirme yazar', async () => {
-    const { svc, fake, sendMessage } = await setup();
+    const { medya, fake, sendMessage } = await setup();
 
-    expect(await svc.respondMediaRequest(row() as never)).toBe('sent');
+    expect(await medya.respondMediaRequest(row() as never)).toBe('sent');
 
     expect(istek(fake).status).toBe('rejected');
     expect(sendMessage).toHaveBeenCalledWith(SEED, MATCH, 'yok şimdilik, öyle kalsın');
@@ -84,16 +85,16 @@ describe('respondMediaRequest', () => {
   });
 
   it('ret, isteyenin medya bayragini geri alir — kullanici tekrar isteyebilsin', async () => {
-    const { svc, fake } = await setup();
-    await svc.respondMediaRequest(row() as never);
+    const { medya, fake } = await setup();
+    await medya.respondMediaRequest(row() as never);
     const m = fake.table('matches')[0]!;
     expect(m.media_enabled_by_user2).toBe(false);
     expect(m.media_enabled_by_user1).toBe(false);
   });
 
   it('bot yazarken cevrimici gorunur (is_online + last_seen birlikte)', async () => {
-    const { svc, fake } = await setup();
-    await svc.respondMediaRequest(row() as never);
+    const { medya, fake } = await setup();
+    await medya.respondMediaRequest(row() as never);
     const u = fake.table('users').find((r) => r.id === SEED)!;
     expect(u.is_online).toBe(true);
     expect(Date.now() - new Date(u.last_seen_at as string).getTime()).toBeLessThan(5_000);
@@ -102,18 +103,18 @@ describe('respondMediaRequest', () => {
   it('LLM patlasa bile istek REDDEDILMIS kalir — kilitlenme her halukarda acilir', async () => {
     // Sessizlik, hazir kalip cevaptan iyidir (processRow'daki ayni karar); ama asil is
     // olan ret yapilmis olmali, yoksa kullanici o eslesmede bir daha medya isteyemez.
-    const { svc, fake, sendMessage } = await setup({ llmThrows: new Error('gemini down') });
+    const { medya, fake, sendMessage } = await setup({ llmThrows: new Error('gemini down') });
 
-    expect(await svc.respondMediaRequest(row() as never)).toBe('sent');
+    expect(await medya.respondMediaRequest(row() as never)).toBe('sent');
 
     expect(istek(fake).status).toBe('rejected');
     expect(sendMessage).not.toHaveBeenCalled();
   });
 
   it('cikti denetimi elenirse de ret ayakta kalir, mesaj yazilmaz', async () => {
-    const { svc, fake, sendMessage } = await setup({ llm: 'instagramdan yazsana bana' });
+    const { medya, fake, sendMessage } = await setup({ llm: 'instagramdan yazsana bana' });
 
-    expect(await svc.respondMediaRequest(row() as never)).toBe('sent');
+    expect(await medya.respondMediaRequest(row() as never)).toBe('sent');
 
     expect(istek(fake).status).toBe('rejected');
     expect(sendMessage).not.toHaveBeenCalled();
@@ -122,9 +123,9 @@ describe('respondMediaRequest', () => {
   it('ret YAZILAMAZSA mesaj da gonderilmez — sira garantisi', async () => {
     // Ters sirada bot "istemiyorum" yazip istegi pending birakirdi: hem celiski
     // hem kilitlenme. Yalniz media_requests.update bozulur, akisin hedeflenen adimi.
-    const { svc, fake, sendMessage } = await setup({ fail: [{ table: 'media_requests', op: 'update' }] });
+    const { medya, fake, sendMessage } = await setup({ fail: [{ table: 'media_requests', op: 'update' }] });
 
-    expect(await svc.respondMediaRequest(row() as never)).toBe('deferred');
+    expect(await medya.respondMediaRequest(row() as never)).toBe('deferred');
 
     expect(istek(fake).status).toBe('pending');
     expect(sendMessage).not.toHaveBeenCalled();
@@ -133,7 +134,7 @@ describe('respondMediaRequest', () => {
   it('18 yas alti beyaninda RET yapilir ama flort dilinde gecistirme YAZILMAZ', async () => {
     // Metin satiri bu sebeple iptal edilse bile medya istegi AYRI bir tetikleyici
     // (farkli id) oldugu icin iptal filtresine takilmiyordu: kapi bu yolda da lazim.
-    const { svc, fake, sendMessage, generateSeedReply } = await setup({
+    const { medya, fake, sendMessage, generateSeedReply } = await setup({
       seed: {
         messages: [{
           id: 'm1', match_id: MATCH, sender_id: INSAN, deleted_at: null,
@@ -142,7 +143,7 @@ describe('respondMediaRequest', () => {
       },
     });
 
-    expect(await svc.respondMediaRequest(row() as never)).toBe('sent');
+    expect(await medya.respondMediaRequest(row() as never)).toBe('sent');
 
     expect(istek(fake).status).toBe('rejected');      // guvenli taraf: medya ACILMAZ
     expect(sendMessage).not.toHaveBeenCalled();
@@ -150,7 +151,7 @@ describe('respondMediaRequest', () => {
   });
 
   it('kriz beyaninda da ret yapilir, gecistirme yazilmaz', async () => {
-    const { svc, fake, sendMessage, generateSeedReply } = await setup({
+    const { medya, fake, sendMessage, generateSeedReply } = await setup({
       seed: {
         messages: [{
           id: 'm1', match_id: MATCH, sender_id: INSAN, deleted_at: null,
@@ -159,7 +160,7 @@ describe('respondMediaRequest', () => {
       },
     });
 
-    expect(await svc.respondMediaRequest(row() as never)).toBe('sent');
+    expect(await medya.respondMediaRequest(row() as never)).toBe('sent');
 
     expect(istek(fake).status).toBe('rejected');
     expect(sendMessage).not.toHaveBeenCalled();
@@ -167,7 +168,7 @@ describe('respondMediaRequest', () => {
   });
 
   it('istek BASKA bir eslesmeye aitse islemez — tarama sorgusu tek savunma degil', async () => {
-    const { svc, fake, sendMessage } = await setup({
+    const { medya, fake, sendMessage } = await setup({
       seed: {
         media_requests: [{
           id: ISTEK, match_id: '99999999-9999-4999-8999-999999999999',
@@ -176,32 +177,32 @@ describe('respondMediaRequest', () => {
       },
     });
 
-    expect(await svc.respondMediaRequest(row() as never)).toBe('cancelled');
+    expect(await medya.respondMediaRequest(row() as never)).toBe('cancelled');
 
     expect(istek(fake).status).toBe('pending');
     expect(sendMessage).not.toHaveBeenCalled();
   });
 
   it('botun KENDI actigi istege cevap yazmaz', async () => {
-    const { svc, sendMessage } = await setup({
+    const { medya, sendMessage } = await setup({
       seed: { media_requests: [{ id: ISTEK, match_id: MATCH, requester_id: SEED, status: 'pending' }] },
     });
-    expect(await svc.respondMediaRequest(row() as never)).toBe('cancelled');
+    expect(await medya.respondMediaRequest(row() as never)).toBe('cancelled');
     expect(sendMessage).not.toHaveBeenCalled();
   });
 
   it('zaten cevaplanmis istegi tekrar islemez', async () => {
-    const { svc, sendMessage } = await setup({
+    const { medya, sendMessage } = await setup({
       seed: { media_requests: [{ id: ISTEK, match_id: MATCH, requester_id: INSAN, status: 'accepted' }] },
     });
-    expect(await svc.respondMediaRequest(row() as never)).toBe('cancelled');
+    expect(await medya.respondMediaRequest(row() as never)).toBe('cancelled');
     expect(sendMessage).not.toHaveBeenCalled();
   });
 
   it('is_test_account=false olan profil adina medya istegi CEVAPLAMAZ', async () => {
     // Diger yazma yollariyla ayni kimlik kapisi: ret de gercek bir kullaniciya
     // gorunen bir eylem (bildirim + bayrak degisikligi).
-    const { svc, fake, sendMessage } = await setup({
+    const { medya, fake, sendMessage } = await setup({
       seed: {
         users: [
           { id: SEED, is_seed_profile: true, is_test_account: false, name: 'Elif', seed_persona: null },
@@ -209,7 +210,7 @@ describe('respondMediaRequest', () => {
         ],
       },
     });
-    expect(await svc.respondMediaRequest(row() as never)).toBe('cancelled');
+    expect(await medya.respondMediaRequest(row() as never)).toBe('cancelled');
     expect(istek(fake).status).toBe('pending');
     expect(sendMessage).not.toHaveBeenCalled();
   });
