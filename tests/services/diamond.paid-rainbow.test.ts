@@ -56,6 +56,15 @@ describe('spendPurple — önce ödenmiş', () => {
     await expect(diamondService.spendPurple('u1', 20, 'x')).resolves.toEqual({ purple: 130, paidUsed: 20 });
     expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 130, purple_paid: 30 });
   });
+
+  it('ABA: araya giren ödenmiş harcama + bedava kredi ödenmiş sayacı şişiremez', async () => {
+    const { fake, diamondService } = await setup(
+      { users: [user({ purple_diamonds: 100, purple_paid: 30 })] },
+      { interleave: [{ table: 'users', mutate: (rows) => { rows[0].purple_diamonds = 100; rows[0].purple_paid = 0; } }] },
+    );
+    await expect(diamondService.spendPurple('u1', 10, 'x')).resolves.toEqual({ purple: 90, paidUsed: 0 });
+    expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 90, purple_paid: 0 });
+  });
 });
 
 describe('addPurple — ödenmiş pay', () => {

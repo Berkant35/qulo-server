@@ -78,7 +78,6 @@ export class DiamondService {
     const { after } = await this.casUpdate(
       userId,
       ["purple_diamonds", "purple_paid"],
-      "purple_diamonds",
       (row) => {
         const purple = row.purple_diamonds ?? 0;
         const paid = row.purple_paid ?? 0;
@@ -146,7 +145,6 @@ export class DiamondService {
     const { after } = await this.casUpdate(
       userId,
       ["purple_diamonds", "purple_paid"],
-      "purple_diamonds",
       (row) => ({
         purple_diamonds: (row.purple_diamonds ?? 0) + amount,
         purple_paid: (row.purple_paid ?? 0) + paid,
@@ -180,7 +178,7 @@ export class DiamondService {
 
   private async earn(userId: string, type: EarnedType, amount: number, reason: string, referenceId?: string) {
     const column = BALANCE_COLUMN[type];
-    const { after } = await this.casUpdate(userId, [column], column, (row) => ({
+    const { after } = await this.casUpdate(userId, [column], (row) => ({
       [column]: (row[column] ?? 0) + amount,
     }));
     await this.logTransaction(userId, type, +amount, reason, referenceId);
@@ -189,7 +187,7 @@ export class DiamondService {
 
   private async spend(userId: string, type: EarnedType, amount: number, reason: string, referenceId?: string) {
     const column = BALANCE_COLUMN[type];
-    const { after } = await this.casUpdate(userId, [column], column, (row) => {
+    const { after } = await this.casUpdate(userId, [column], (row) => {
       const current = row[column] ?? 0;
       if (current < amount) throw Errors.INSUFFICIENT_DIAMONDS(amount, current);
       return { [column]: current - amount };
@@ -199,16 +197,19 @@ export class DiamondService {
   }
 
   /**
-   * Tek satırlık bakiye değişikliği, gerçek compare-and-swap: okunan `guard` değeri hâlâ
-   * aynıysa yazar, değilse yeniden okuyup dener. Eski `.gte(eski)` guard'ı iki eşzamanlı
-   * artırımda birini kaybedebiliyordu. `guard` her zaman değişen bakiye kolonudur; ödenmiş
-   * sayaç yalnız mor bakiyeyle birlikte değiştiği için mor guard'ı onu da korur.
-   * `compute` hata fırlatabilir (ör. INSUFFICIENT_DIAMONDS) — o zaman hiçbir şey yazılmaz.
+   * Tek satırlık bakiye değişikliği, gerçek compare-and-swap: okunan HER `columns` değeri
+   * hâlâ aynıysa yazar, değilse yeniden okuyup dener. Eski `.gte(eski)` guard'ı iki eşzamanlı
+   * artırımda birini kaybedebiliyordu; tek kolonu (ör. sadece `purple_diamonds`) koruyan bir
+   * sonraki sürüm de ABA'ya açıktı — okunan `purple_paid` net değişmeden dursa bile araya giren
+   * iki işlem (ödenmiş harcama + bedava kredi) bakiyeyi eski değerine geri getirebiliyor, guard
+   * yine tutuyor ve `compute` bayat `purple_paid` ile hesaplanmış stale bir patch yazıyordu —
+   * bedava mor "ödenmiş" etiketi kazanıyordu. Şimdi okunan HER kolon compare'e dahil: `columns`
+   * içindeki her alan için `.eq(column, before[column])` zincirlenir, biri bile değişmişse guard
+   * tutmaz. `compute` hata fırlatabilir (ör. INSUFFICIENT_DIAMONDS) — o zaman hiçbir şey yazılmaz.
    */
   private async casUpdate(
     userId: string,
     columns: readonly string[],
-    guard: string,
     compute: (row: BalanceRow) => BalanceRow,
   ): Promise<{ before: BalanceRow; after: BalanceRow }> {
     const selection = columns.join(", ");
@@ -226,11 +227,15 @@ export class DiamondService {
       const before = row as unknown as BalanceRow;
       const patch = compute(before);
 
-      const { data: updated, error: updateErr } = await supabase
+      let query = supabase
         .from("users")
         .update(patch)
-        .eq("id", userId)
-        .eq(guard, before[guard] ?? 0)
+        .eq("id", userId);
+      for (const column of columns) {
+        query = query.eq(column, before[column]);
+      }
+
+      const { data: updated, error: updateErr } = await query
         .select(selection)
         .maybeSingle();
 

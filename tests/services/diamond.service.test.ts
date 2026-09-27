@@ -25,7 +25,7 @@ beforeEach(() => {
 });
 
 describe('DiamondService.getBalance', () => {
-  it('kullanıcının iki bakiyesini de döner', async () => {
+  it('kullanıcının üç bakiyesini de döner', async () => {
     const { diamondService } = await setup({ users: [user()] });
     await expect(diamondService.getBalance('u1')).resolves.toEqual({ green: 100, purple: 50, rainbow: 0 });
   });
