@@ -190,3 +190,28 @@ describe("purchaseHandler — yanit govdesi", () => {
     spy.mockRestore();
   });
 });
+
+describe("getHistoryHandler — platform", () => {
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
+  it("x-app-platform başlığını servise geçirir (rainbow görünürlüğü buna bağlı)", async () => {
+    const getHistory = vi.fn().mockResolvedValue({ items: [], total: 0, page: 2, limit: 10 });
+    vi.doMock("../../src/services/diamond.service.js", () => ({ diamondService: { getHistory } }));
+    vi.doMock("../../src/services/revenuecat.service.js", () => ({ revenueCatService: {} }));
+    const { getHistoryHandler } = await import("../../src/controllers/diamond.controller.js");
+    const { res, json } = makeRes();
+    const next = vi.fn();
+
+    await getHistoryHandler(
+      { user: { userId: "u1" }, query: { page: 2, limit: 10 }, headers: { "x-app-platform": "Android" } } as any,
+      res,
+      next,
+    );
+
+    expect(next).not.toHaveBeenCalled();
+    expect(getHistory).toHaveBeenCalledWith("u1", 2, 10, "android");
+    expect(json).toHaveBeenCalledWith({ items: [], total: 0, page: 2, limit: 10 });
+  });
+});

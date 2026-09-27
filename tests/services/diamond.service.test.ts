@@ -204,6 +204,7 @@ describe('DiamondService.earnGreen', () => {
 });
 
 describe('DiamondService.getHistory', () => {
+  // users satırı: getHistory rainbow erişimini kullanıcı satırından okur (F2, RAINBOW gizleme).
   const history = Array.from({ length: 25 }, (_, i) => ({
     id: `t${i}`,
     user_id: 'u1',
@@ -215,7 +216,7 @@ describe('DiamondService.getHistory', () => {
   }));
 
   it('varsayılan sayfa 20 kayıt döner, toplam sayıyı bildirir', async () => {
-    const { diamondService } = await setup({ diamond_transactions: history });
+    const { diamondService } = await setup({ users: [user()], diamond_transactions: history });
     const result = await diamondService.getHistory('u1');
 
     expect(result.items).toHaveLength(20);
@@ -224,7 +225,7 @@ describe('DiamondService.getHistory', () => {
   });
 
   it('ikinci sayfa kalanları döner', async () => {
-    const { diamondService } = await setup({ diamond_transactions: history });
+    const { diamondService } = await setup({ users: [user()], diamond_transactions: history });
     const result = await diamondService.getHistory('u1', 2);
 
     expect(result.items).toHaveLength(5);
@@ -232,7 +233,7 @@ describe('DiamondService.getHistory', () => {
   });
 
   it('en yeni kayıt başta', async () => {
-    const { diamondService } = await setup({ diamond_transactions: history });
+    const { diamondService } = await setup({ users: [user()], diamond_transactions: history });
     const result = await diamondService.getHistory('u1', 1, 3);
 
     expect(result.items.map((i: any) => i.id)).toEqual(['t24', 't23', 't22']);
@@ -240,6 +241,7 @@ describe('DiamondService.getHistory', () => {
 
   it('başka kullanıcının kayıtlarını sızdırmaz', async () => {
     const { diamondService } = await setup({
+      users: [user()],
       diamond_transactions: [...history, { id: 'x', user_id: 'u2', created_at: '2026-02-01T00:00:00Z' }],
     });
     const result = await diamondService.getHistory('u1', 1, 50);

@@ -1,6 +1,8 @@
 import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
 import { paidPortion, type RewardSplit } from "../utils/math.js";
+import type { ClientPlatform } from "../utils/client-meta.js";
+import { rainbowAccessService } from "./rainbow-access.service.js";
 
 export interface AddPurpleResult {
   /** Islemden sonraki toplam mor bakiye. */
@@ -42,14 +44,23 @@ export class DiamondService {
     };
   }
 
-  async getHistory(userId: string, page = 1, limit = 20) {
+  /**
+   * Yayındaki mobil sürümler GREEN dışı her satırı "mor" etiketliyor: rainbow erişimi kapalı
+   * kullanıcıya RAINBOW satırı "+N mor" hayaleti olarak görünürdü (spec §2.4). Erişim yoksa
+   * RAINBOW satırları sayım ve sayfalamadan ÖNCE elenir — toplam ve sayfalar tutarlı kalır.
+   */
+  async getHistory(userId: string, page = 1, limit = 20, platform?: ClientPlatform) {
     const from = (page - 1) * limit;
     const to = from + limit - 1;
+    const showRainbow = await rainbowAccessService.isEnabledForUser(userId, platform);
 
-    const { data, error, count } = await supabase
+    let query = supabase
       .from("diamond_transactions")
       .select("id, user_id, type, amount, reason, reference_id, created_at", { count: "exact" })
-      .eq("user_id", userId)
+      .eq("user_id", userId);
+    if (!showRainbow) query = query.neq("type", "RAINBOW");
+
+    const { data, error, count } = await query
       .order("created_at", { ascending: false })
       .range(from, to);
 

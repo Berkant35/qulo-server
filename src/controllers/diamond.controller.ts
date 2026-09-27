@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import { diamondService } from "../services/diamond.service.js";
 import { revenueCatService } from "../services/revenuecat.service.js";
 import { IAP_PRODUCT_MAP, storeProductKey } from "../types/index.js";
+import { clientMetaFromHeaders } from "../utils/client-meta.js";
 import type { HistoryQuery, PurchaseInput } from "../validators/diamond.validator.js";
 
 export async function getBalanceHandler(req: Request, res: Response, next: NextFunction) {
@@ -18,7 +19,9 @@ export async function getHistoryHandler(req: Request, res: Response, next: NextF
   try {
     const userId = req.user!.userId;
     const { page, limit } = req.query as unknown as HistoryQuery;
-    const result = await diamondService.getHistory(userId, page, limit);
+    // Platform rainbow görünürlüğünü belirler (erişim kapalıysa RAINBOW satırları gizlenir).
+    const { platform } = clientMetaFromHeaders(req.headers);
+    const result = await diamondService.getHistory(userId, page, limit, platform);
     res.json(result);
   } catch (err) {
     next(err);

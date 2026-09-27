@@ -255,3 +255,59 @@ describe('creditReward — bölünmüş ödül', () => {
     expect(fake.table('diamond_transactions')[0].type).toBe('GREEN');
   });
 });
+
+/**
+ * Yayındaki mobil sürümler GREEN dışı her geçmiş satırını "mor" etiketliyor: erişimi kapalı
+ * kullanıcıya RAINBOW satırı "+N mor" hayaleti olarak görünürdü (spec §2.4). Filtre sayfalama
+ * ve toplam sayımdan ÖNCE uygulanmalı — yoksa sayfalar eksik, toplam yanlış olur.
+ */
+describe('getHistory — rainbow erişimi', () => {
+  const rows = (userId: string) => [
+    { id: `${userId}-g1`, user_id: userId, type: 'GREEN', amount: 5, reason: 'x', reference_id: null, created_at: '2026-09-01T00:00:00Z' },
+    { id: `${userId}-r1`, user_id: userId, type: 'RAINBOW', amount: 3, reason: 'x', reference_id: null, created_at: '2026-09-02T00:00:00Z' },
+    { id: `${userId}-p1`, user_id: userId, type: 'PURPLE', amount: 10, reason: 'x', reference_id: null, created_at: '2026-09-03T00:00:00Z' },
+    { id: `${userId}-r2`, user_id: userId, type: 'RAINBOW', amount: 4, reason: 'x', reference_id: null, created_at: '2026-09-04T00:00:00Z' },
+  ];
+  const seed = () => ({
+    users: [
+      user({ id: 'tr', country: 'TR', is_test_admin: false, is_seed_profile: false, is_test_account: false }),
+      user({ id: 'th', country: 'TH', is_test_admin: false, is_seed_profile: false, is_test_account: false }),
+      user({ id: 'adm', country: 'TR', is_test_admin: true, is_seed_profile: false, is_test_account: false }),
+    ],
+    reward_market_countries: [{ country_code: 'TH', enabled: true, android_enabled: true, ios_enabled: false }],
+    diamond_transactions: [...rows('tr'), ...rows('th'), ...rows('adm')],
+  });
+
+  it('erişimi kapalı kullanıcı (TR, android) RAINBOW satırı görmez; toplam da saymaz', async () => {
+    const { diamondService } = await setup(seed());
+    const result = await diamondService.getHistory('tr', 1, 20, 'android');
+    expect(result.items.map((i: { type: string }) => i.type)).toEqual(['PURPLE', 'GREEN']);
+    expect(result.total).toBe(2);
+  });
+
+  it('sayfalama filtrelenmiş listeye göre: 1 kayıtlık 2. sayfa GREEN satırıdır', async () => {
+    const { diamondService } = await setup(seed());
+    const result = await diamondService.getHistory('tr', 2, 1, 'android');
+    expect(result.items.map((i: { id: string }) => i.id)).toEqual(['tr-g1']);
+  });
+
+  it('platform bilinmiyorsa (başlık yok) açık ülkede bile RAINBOW gizlenir', async () => {
+    const { diamondService } = await setup(seed());
+    const result = await diamondService.getHistory('th', 1, 20);
+    expect(result.items.every((i: { type: string }) => i.type !== 'RAINBOW')).toBe(true);
+    expect(result.total).toBe(2);
+  });
+
+  it('açık ülke + açık platform (TH, android) hepsini görür', async () => {
+    const { diamondService } = await setup(seed());
+    const result = await diamondService.getHistory('th', 1, 20, 'android');
+    expect(result.total).toBe(4);
+  });
+
+  it('test admin hepsini görür', async () => {
+    const { diamondService } = await setup(seed());
+    const result = await diamondService.getHistory('adm', 1, 20, 'ios');
+    expect(result.items.map((i: { type: string }) => i.type)).toEqual(['RAINBOW', 'PURPLE', 'RAINBOW', 'GREEN']);
+    expect(result.total).toBe(4);
+  });
+});
