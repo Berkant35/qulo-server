@@ -80,6 +80,17 @@ export const generalLimiter = rateLimit({
   message: rateLimitResponse,
 });
 
+// Hediye kartı itfası para hareketi: insan hızı dakikada birkaç talep; üstü makine. Kullanıcı anahtarlı
+// (CGNAT arkasındaki kullanıcılar birbirini 429'lamasın).
+export const rewardRedeemLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 10,
+  keyGenerator: userKey,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitResponse,
+});
+
 export const forgotPasswordLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
   limit: 3,
