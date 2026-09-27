@@ -1,6 +1,6 @@
 -- 067_rainbow_market.sql
 -- Rainbow elmas + hediye karti marketi.
--- Spec: docs/superpowers/specs/2026-09-27-rainbow-market-design.md
+-- Spec: qulo/docs/superpowers/specs/2026-09-27-rainbow-market-design.md
 --
 -- Neden: bedava dagitilan mor elmas (milestone, rozet, referral, abonelik bonusu, donusum)
 -- hediye kartina, yani gercek paraya donusmesin. Morun odenmis kismi gizli bir sayacta
@@ -107,15 +107,20 @@ REVOKE ALL ON reward_redemptions FROM anon, authenticated;
 
 -- 8) Baslangic katalogu — PASIF. Fiyat = ceil(cost_usd / 0.03); cost_usd = itibari deger
 --    (kur 2026-09-13) x (1 + Tremendous ucreti: hediye karti %0, cuzdan %5).
-INSERT INTO reward_catalog_items (brand_key, country_code, currency, face_value, cost_usd, rainbow_price, sort_order) VALUES
-  ('GRAB',      'ID', 'IDR', 25000, 1.42,  48, 10),
-  ('DANA',      'ID', 'IDR', 10000, 0.60,  20, 20),
-  ('SHOPEEPAY', 'ID', 'IDR', 10000, 0.60,  20, 30),
-  ('GRAB',      'TH', 'THB',    50, 1.51,  51, 10),
-  ('TRUEMONEY', 'TH', 'THB',    20, 0.64,  22, 20),
-  ('LINEMAN',   'TH', 'THB',   100, 3.03, 101, 30),
-  ('GRAB',      'MY', 'MYR',     5, 1.23,  41, 10),
-  ('TNG',       'MY', 'MYR',    10, 2.46,  82, 20),
-  ('FOODPANDA', 'MY', 'MYR',    10, 2.46,  82, 30);
+--    Yalniz katalog bossa eklenir — migration tekrar calistirilirsa cift satir olusmaz.
+INSERT INTO reward_catalog_items (brand_key, country_code, currency, face_value, cost_usd, rainbow_price, sort_order)
+SELECT v.brand_key, v.country_code, v.currency, v.face_value, v.cost_usd, v.rainbow_price, v.sort_order
+FROM (VALUES
+  ('GRAB',      'ID', 'IDR', 25000::numeric, 1.42::numeric,  48, 10),
+  ('DANA',      'ID', 'IDR', 10000::numeric, 0.60::numeric,  20, 20),
+  ('SHOPEEPAY', 'ID', 'IDR', 10000::numeric, 0.60::numeric,  20, 30),
+  ('GRAB',      'TH', 'THB',    50::numeric, 1.51::numeric,  51, 10),
+  ('TRUEMONEY', 'TH', 'THB',    20::numeric, 0.64::numeric,  22, 20),
+  ('LINEMAN',   'TH', 'THB',   100::numeric, 3.03::numeric, 101, 30),
+  ('GRAB',      'MY', 'MYR',     5::numeric, 1.23::numeric,  41, 10),
+  ('TNG',       'MY', 'MYR',    10::numeric, 2.46::numeric,  82, 20),
+  ('FOODPANDA', 'MY', 'MYR',    10::numeric, 2.46::numeric,  82, 30)
+) AS v(brand_key, country_code, currency, face_value, cost_usd, rainbow_price, sort_order)
+WHERE NOT EXISTS (SELECT 1 FROM reward_catalog_items);
 
 COMMIT;
