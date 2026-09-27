@@ -53,6 +53,12 @@ export const economyConfigFixture: EconomyConfig = {
     deletionDiamondAmount: 15,
     minAccountAgeDays: 7,
   },
+  rainbow: {
+    subscriptionPaidShare: { free: 0, plus: 0.3, premium: 0.2 },
+    monthlyRedeemCap: 150,
+    minAccountAgeDays: 30,
+    suggestedUsdPerRainbow: 0.03,
+  },
 };
 
 /** `economy_config_versions` tablosuna seed edilebilir satır. */
@@ -71,5 +77,11 @@ export function activeConfigRow(overrides: Partial<EconomyConfig> = {}) {
 /** Eski config versiyonu: `rewards.starterPowers` alanı hiç yok (varsayılan devreye girmeli). */
 export function rewardsWithoutStarterPowers(): Omit<EconomyConfig['rewards'], 'starterPowers'> {
   const { starterPowers: _omit, ...rest } = economyConfigFixture.rewards;
+  return rest;
+}
+
+/** Eski config versiyonu: `rainbow` bloğu hiç yok (varsayılan devreye girmeli). */
+export function configWithoutRainbow(): Omit<EconomyConfig, 'rainbow'> {
+  const { rainbow: _omit, ...rest } = economyConfigFixture;
   return rest;
 }

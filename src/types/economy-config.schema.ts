@@ -15,6 +15,11 @@ export const ECONOMY_BOUNDARIES = {
   powerCost: { min: 1, max: 500 },
   /** Yeni kayıtta envantere verilen güç adedi (güç başına). 0 = o güç hediye edilmez. */
   starterPowerQuantity: { min: 0, max: 5 },
+  /** Rainbow: abonelik bonusunun "ödenmiş" sayılan payı (0 = hiç rainbow üretmez). */
+  rainbowPaidShare: { min: 0, max: 0.5 },
+  rainbowMonthlyRedeemCap: { min: 20, max: 500 },
+  rainbowMinAccountAgeDays: { min: 0, max: 90 },
+  rainbowSuggestedUsd: { min: 0.005, max: 0.07 },
   // Subscription tier boundaries
   free: {
     dailyDiscovers: { min: 10, max: 200 },
@@ -125,6 +130,43 @@ const retentionSchema = z
   })
   .default({ deletionDiamondAmount: 15, minAccountAgeDays: 7 });
 
+/**
+ * Rainbow (spec 2026-09-27). Abonelik moru "yarı ödenmiş": birim maliyeti IAP'nin çok altında
+ * (Premium 0,67 sent/mor). Tamamı ödenmiş sayılsaydı Premium bonusu 450 rainbow = 13,50 $ kupon
+ * üretirdi, aboneden net 6,99 $ — her farmer -6,51 $. Pay tier başına: plus 0,30, premium 0,20
+ * → yük/net ~%39, IAP (%43) ile aynı bant. Eski config'lerde blok yoksa bu varsayılanlar.
+ */
+export const DEFAULT_RAINBOW = {
+  subscriptionPaidShare: { free: 0, plus: 0.3, premium: 0.2 },
+  monthlyRedeemCap: 150,
+  minAccountAgeDays: 30,
+  suggestedUsdPerRainbow: 0.03,
+} as const;
+
+const paidShareSchema = z.number().min(B.rainbowPaidShare.min).max(B.rainbowPaidShare.max);
+
+const rainbowSchema = z
+  .object({
+    subscriptionPaidShare: z
+      .object({ free: paidShareSchema, plus: paidShareSchema, premium: paidShareSchema })
+      .default({ ...DEFAULT_RAINBOW.subscriptionPaidShare }),
+    monthlyRedeemCap: z.number().int()
+      .min(B.rainbowMonthlyRedeemCap.min).max(B.rainbowMonthlyRedeemCap.max)
+      .default(DEFAULT_RAINBOW.monthlyRedeemCap),
+    minAccountAgeDays: z.number().int()
+      .min(B.rainbowMinAccountAgeDays.min).max(B.rainbowMinAccountAgeDays.max)
+      .default(DEFAULT_RAINBOW.minAccountAgeDays),
+    suggestedUsdPerRainbow: z.number()
+      .min(B.rainbowSuggestedUsd.min).max(B.rainbowSuggestedUsd.max)
+      .default(DEFAULT_RAINBOW.suggestedUsdPerRainbow),
+  })
+  .default({
+    subscriptionPaidShare: { ...DEFAULT_RAINBOW.subscriptionPaidShare },
+    monthlyRedeemCap: DEFAULT_RAINBOW.monthlyRedeemCap,
+    minAccountAgeDays: DEFAULT_RAINBOW.minAccountAgeDays,
+    suggestedUsdPerRainbow: DEFAULT_RAINBOW.suggestedUsdPerRainbow,
+  });
+
 // ── Main schema ──
 export const economyConfigSchema = z.object({
   core: coreSchema,
@@ -133,6 +175,7 @@ export const economyConfigSchema = z.object({
   timing: timingSchema,
   powerCosts: powerCostsSchema,
   retention: retentionSchema,
+  rainbow: rainbowSchema,
 });
 
 // ── TypeScript types (inferred from Zod) ──
@@ -144,6 +187,7 @@ export type RewardsConfig = z.infer<typeof rewardsSchema>;
 export type TimingConfig = z.infer<typeof timingSchema>;
 export type PowerCostsConfig = z.infer<typeof powerCostsSchema>;
 export type RetentionConfig = z.infer<typeof retentionSchema>;
+export type RainbowConfig = z.infer<typeof rainbowSchema>;
 
 export interface EconomyConfigVersion {
   id: string;
