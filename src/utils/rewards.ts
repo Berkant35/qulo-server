@@ -40,3 +40,17 @@ export function maskDeliveryCode(code: string | null | undefined): string {
   if (!code) return "";
   return code.length >= 10 ? `••••${code.slice(-4)}` : "••••";
 }
+
+/**
+ * Teslim linki de kod gibi nakit değerinde (bir defaya mahsus taşıyıcı kimlik bilgisi): backoffice
+ * kuyruğuna tam link değil yalnız host gider — path/query genelde talep/talep sahibini tanımlayan
+ * token taşır. Geçersiz ya da boş URL → null (joker sayfada göstermez).
+ */
+export function deliveryHost(url: string | null | undefined): string | null {
+  if (!url) return null;
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return null;
+  }
+}

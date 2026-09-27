@@ -77,10 +77,30 @@ export interface FakeSupabaseOptions {
 
 type FilterOp = 'eq' | 'neq' | 'gte' | 'lte' | 'gt' | 'lt' | 'in' | 'is' | 'notIs' | 'notIn' | 'like' | 'ilike';
 
-/** PostgREST LIKE deseni → RegExp: `%` = herhangi dizi, `_` = tek karakter, gerisi literal. */
+/**
+ * PostgREST LIKE deseni → RegExp: `%` = herhangi dizi, `_` = tek karakter, `\` (Postgres'in
+ * varsayılan LIKE escape karakteri) kendinden sonraki karakteri literal yapar — `\%`, `\_`, `\\`
+ * jokerlik yapmaz. Kaçış olmayan her karakter regex için ayrıca kaçışlanır.
+ */
 function likeToRegExp(pattern: string, ignoreCase: boolean): RegExp {
-  const escaped = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/%/g, '.*').replace(/_/g, '.');
-  return new RegExp(`^${escaped}$`, ignoreCase ? 'is' : 's');
+  const regexEscape = (ch: string) => ch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  let body = '';
+  for (let i = 0; i < pattern.length; i++) {
+    const ch = pattern[i]!;
+    if (ch === '\\' && i + 1 < pattern.length) {
+      body += regexEscape(pattern[i + 1]!);
+      i++;
+      continue;
+    }
+    if (ch === '%') {
+      body += '.*';
+    } else if (ch === '_') {
+      body += '.';
+    } else {
+      body += regexEscape(ch);
+    }
+  }
+  return new RegExp(`^${body}$`, ignoreCase ? 'is' : 's');
 }
 interface Filter {
   op: FilterOp;

@@ -4,6 +4,7 @@ import {
   accountAgeDays,
   suggestedRainbowPrice,
   maskDeliveryCode,
+  deliveryHost,
 } from '../../src/utils/rewards.js';
 
 describe('monthStartUtc', () => {
@@ -60,5 +61,18 @@ describe('maskDeliveryCode', () => {
     ['ABCDEFGHIJKL', '••••IJKL'],
   ])('%s → %s (kısa kodun son 4 hanesi kodun çoğunu açardı)', (code, masked) => {
     expect(maskDeliveryCode(code)).toBe(masked);
+  });
+});
+
+describe('deliveryHost', () => {
+  it.each([
+    [null, null],
+    [undefined, null],
+    ['', null],
+    ['not a url', null],
+    ['https://g.example/claim/SECRET123?x=1', 'g.example'],
+    ['https://sub.example.co:8443/path', 'sub.example.co'],
+  ])('%s → %s (link taşıyıcı kimlik bilgisi: yalnız host)', (url, host) => {
+    expect(deliveryHost(url as string | null | undefined)).toBe(host);
   });
 });

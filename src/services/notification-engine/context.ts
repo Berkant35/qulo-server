@@ -1,7 +1,10 @@
 import { supabase } from '../../config/supabase.js';
+import { fetchAll } from '../../utils/fetch-all.js';
 import { DAY_MS } from './timezone.js';
 
 export { DAY_MS };
+/** `fetchAll` artik src/utils/fetch-all.ts'te (Rainbow backoffice ozeti de kullaniyor); mevcut cagiranlar icin buradan da disa aciliyor. */
+export { fetchAll };
 
 /**
  * Motorun bir turda ihtiyac duydugu verinin bellek ici goruntusu.
@@ -89,8 +92,6 @@ export interface EngineContext {
 const USER_COLUMNS =
   'id, name, locale, lng, push_token, last_active_at, last_seen_at, created_at, question_count, photos, email_verified, ' +
   'notification_preferences, is_deleted, is_banned, is_test_account, is_seed_profile';
-/** Supabase/PostgREST varsayilan max-rows = 1000: sayfalanmayan sorgu sessizce kirpilir. Her liste sorgusu fetchAll'dan gecer. */
-const PAGE_SIZE = 1000;
 /** "Gunde tek karar" penceresi (engine.ts DECISION_WINDOW_MS ile ayni). */
 export const DECISION_WINDOW_MS = 20 * 60 * 60 * 1000;
 /** push_log saklama suresi — analytics-cleanup bu kadar eskiyi siler, kural dizileri bu kadar geriye bakar. TEK kaynak. */
@@ -98,20 +99,6 @@ export const PUSH_LOG_RETENTION_DAYS = 90;
 
 function iso(ms: number): string {
   return new Date(ms).toISOString();
-}
-
-type PageResult = PromiseLike<{ data: unknown; error: { message: string } | null }>;
-
-/** Sirali (order zorunlu) range sayfalamasiyla tum satirlari ceker. Liste sorgusu yazan HER servis bunu kullanir. */
-export async function fetchAll<T>(page: (from: number, to: number) => PageResult): Promise<T[]> {
-  const all: T[] = [];
-  for (let from = 0; ; from += PAGE_SIZE) {
-    const { data, error } = await page(from, from + PAGE_SIZE - 1);
-    if (error) throw error;
-    const rows = (data ?? []) as T[];
-    all.push(...rows);
-    if (rows.length < PAGE_SIZE) return all;
-  }
 }
 
 function push<K, V>(map: Map<K, V[]>, key: K, value: V): void {

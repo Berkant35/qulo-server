@@ -1,6 +1,7 @@
 import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
-import { CAP_STATUSES, maskDeliveryCode, monthStartUtc } from "../utils/rewards.js";
+import { fetchAll } from "../utils/fetch-all.js";
+import { CAP_STATUSES, deliveryHost, maskDeliveryCode, monthStartUtc } from "../utils/rewards.js";
 import type {
   AdminCatalogQuery,
   AdminRedemptionsQuery,
@@ -25,8 +26,6 @@ export const QUEUE_PAGE_SIZE = 30;
 const USER_SEARCH_LIMIT = 50;
 /** Sayfadaki (≤30) kullanıcının bu ayki talepleri; tavan 150 iken birkaç satır — sınır savunma. */
 const MONTH_TOTALS_LIMIT = 2000;
-/** Özet taraması: rainbow sahibi kullanıcı sayısı bunu aşarsa RPC SUM'a geçilmeli (backlog). */
-const SUMMARY_SCAN_LIMIT = 10_000;
 
 export interface QueueUser {
   id: string;
@@ -53,7 +52,8 @@ export interface QueueRow {
   admin_note: string | null;
   /** Teslim kodu nakit değerinde: backoffice'e asla ham gitmez. */
   masked_code: string;
-  delivery_url: string | null;
+  /** Teslim linki de taşıyıcı kimlik bilgisi (kod gibi): yalnız host gider, tam link asla. */
+  delivery_host: string | null;
   /** null = hesap kalıcı silinmiş (069: ON DELETE SET NULL). */
   user: QueueUser | null;
   /** Kullanıcının bu takvim ayındaki (UTC) PENDING + FULFILLED toplamı. */
@@ -70,17 +70,19 @@ export interface RewardsSummary {
   flaggedUsers: number;
 }
 
-interface QueueDbRow extends Omit<QueueRow, "masked_code" | "user" | "user_month_total"> {
+interface QueueDbRow extends Omit<QueueRow, "masked_code" | "delivery_host" | "user" | "user_month_total"> {
   user_id: string | null;
   delivery_code: string | null;
+  delivery_url: string | null;
 }
 
 function toQueueRow(row: QueueDbRow, users: Map<string, QueueUser>, totals: Map<string, number>): QueueRow {
-  const { user_id, delivery_code, ...rest } = row;
+  const { user_id, delivery_code, delivery_url, ...rest } = row;
   return {
     ...rest,
     face_value: Number(row.face_value),
     masked_code: maskDeliveryCode(delivery_code),
+    delivery_host: deliveryHost(delivery_url),
     user: user_id ? users.get(user_id) ?? null : null,
     user_month_total: user_id ? totals.get(user_id) ?? 0 : 0,
   };
@@ -330,34 +332,50 @@ export class RewardsAdminService {
     try {
       await diamondService.earnRainbow(decided.user_id, decided.rainbow_price, "REWARD_REFUND", `redemption:${id}`);
     } catch (err) {
+      // Hata "hiç yazılmadı" mı yoksa "bakiye yazıldı, defter satırı düşmedi" mi ayırt edilemiyor
+      // (earnRainbow önce CAS bakiye, sonra defter yazıyor) — elle düzeltme için en iyi çaba teşhis.
+      const [currentRainbow, refundLedgerRow] = await Promise.all([
+        this.currentRainbowBestEffort(decided.user_id),
+        this.refundLedgerRowExistsBestEffort(id),
+      ]);
       console.error("[rewards-admin] CRITICAL: redemption rejected but refund failed", {
-        id, userId: decided.user_id, amount: decided.rainbow_price, err,
+        id, userId: decided.user_id, amount: decided.rainbow_price, err, currentRainbow, refundLedgerRow,
       });
       throw Errors.REWARD_REFUND_FAILED();
     }
   }
 
-  /** Backoffice ana sayfası özeti. */
+  /** Backoffice ana sayfası özeti. Kayıt sayısı 1000'i (PostgREST varsayılan max-rows) aşabilir → `fetchAll`. */
   async getSummary(usdPerRainbow: number): Promise<RewardsSummary> {
     const monthStart = monthStartUtc(new Date());
-    const [pending, fulfilled, holders, flagged] = await Promise.all([
+    const [pending, flagged] = await Promise.all([
       supabase.from("reward_redemptions").select("id", { count: "exact" }).eq("status", "PENDING").limit(1),
-      supabase
-        .from("reward_redemptions")
-        .select("rainbow_price")
-        .eq("status", "FULFILLED")
-        .gte("decided_at", monthStart)
-        .limit(SUMMARY_SCAN_LIMIT),
-      supabase.from("users").select("rainbow_diamonds").gt("rainbow_diamonds", 0).limit(SUMMARY_SCAN_LIMIT),
       supabase.from("users").select("id", { count: "exact" }).not("rainbow_flagged_at", "is", null).limit(1),
     ]);
-    if (pending.error || fulfilled.error || holders.error || flagged.error) throw Errors.SERVER_ERROR();
+    if (pending.error || flagged.error) throw Errors.SERVER_ERROR();
 
-    const fulfilledRows = (fulfilled.data ?? []) as { rainbow_price: number }[];
-    const circulation = ((holders.data ?? []) as { rainbow_diamonds: number }[]).reduce(
-      (sum, u) => sum + u.rainbow_diamonds,
-      0,
-    );
+    let fulfilledRows: { rainbow_price: number }[];
+    let holderRows: { rainbow_diamonds: number }[];
+    try {
+      [fulfilledRows, holderRows] = await Promise.all([
+        fetchAll<{ rainbow_price: number }>((from, to) =>
+          supabase
+            .from("reward_redemptions")
+            .select("rainbow_price")
+            .eq("status", "FULFILLED")
+            .gte("decided_at", monthStart)
+            .order("id")
+            .range(from, to),
+        ),
+        fetchAll<{ rainbow_diamonds: number }>((from, to) =>
+          supabase.from("users").select("rainbow_diamonds").gt("rainbow_diamonds", 0).order("id").range(from, to),
+        ),
+      ]);
+    } catch {
+      throw Errors.SERVER_ERROR();
+    }
+
+    const circulation = holderRows.reduce((sum, u) => sum + u.rainbow_diamonds, 0);
 
     return {
       pending: pending.count ?? 0,
@@ -395,8 +413,15 @@ export class RewardsAdminService {
   }
 
   private async searchUserIds(q: string): Promise<string[]> {
-    // PostgREST LIKE jokerleri kullanıcı girdisinden temizlenir: arama düz "içerir" kalsın.
-    const needle = q.replace(/[%_*\\]/g, "");
+    // PostgreSQL LIKE joker karakterleri (`%`, `_`) girdiden SİLİNMEZ, kaçışlanır — yoksa
+    // "ali_veli@..." gibi gerçek karakter içeren e-postalar aranamaz olurdu. `\` da önce
+    // kaçışlanır (aksi halde girdideki bir `\` az sonra eklenen kaçış işaretiyle karışır).
+    // `*`: PostgREST bunu istekte `%` takma adı olarak çözer, kaçış geçerli olmaz — kaldırılır.
+    const needle = q
+      .replace(/\\/g, "\\\\")
+      .replace(/%/g, "\\%")
+      .replace(/_/g, "\\_")
+      .replace(/\*/g, "");
     if (!needle) return [];
     const { data, error } = await supabase
       .from("users")
@@ -405,6 +430,38 @@ export class RewardsAdminService {
       .limit(USER_SEARCH_LIMIT);
     if (error) throw Errors.SERVER_ERROR();
     return ((data ?? []) as { id: string }[]).map((u) => u.id);
+  }
+
+  /** En iyi çaba: `reject`'in CRITICAL logu için — asıl hatayı (REWARD_REFUND_FAILED) gölgelemesin. */
+  private async currentRainbowBestEffort(userId: string): Promise<number | null> {
+    try {
+      const { data, error } = await supabase
+        .from("users")
+        .select("rainbow_diamonds")
+        .eq("id", userId)
+        .maybeSingle();
+      if (error || !data) return null;
+      return (data as { rainbow_diamonds: number }).rainbow_diamonds;
+    } catch {
+      return null;
+    }
+  }
+
+  /** En iyi çaba: iade defter satırı gerçekten düşmüş mü (bakiye mi yoksa defter mi eksik kaldı). */
+  private async refundLedgerRowExistsBestEffort(redemptionId: string): Promise<boolean | null> {
+    try {
+      const { data, error } = await supabase
+        .from("diamond_transactions")
+        .select("id")
+        .eq("reference_id", `redemption:${redemptionId}`)
+        .eq("reason", "REWARD_REFUND")
+        .limit(1)
+        .maybeSingle();
+      if (error) return null;
+      return data !== null;
+    } catch {
+      return null;
+    }
   }
 
   private async loadQueueUsers(ids: string[]): Promise<Map<string, QueueUser>> {
