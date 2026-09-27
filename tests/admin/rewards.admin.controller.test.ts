@@ -12,6 +12,9 @@ function fakeRes() {
   return res;
 }
 
+/** Geçerli talep/ürün kimliği (admin `:id` parametresi uuid olmalı). */
+const RID = '6b3f2a1e-9c4d-4e5f-8a7b-1c2d3e4f5a6b';
+
 const req = (over: Record<string, unknown> = {}) =>
   ({ params: {}, query: {}, body: {}, session: { adminId: 'adm1', adminRole: 'SUPER_ADMIN', csrfToken: 't' }, ...over }) as any;
 
@@ -30,7 +33,7 @@ async function setup(service: Record<string, unknown> = {}) {
     softDeleteCatalogItem: vi.fn(async () => {}),
     listRedemptions: vi.fn(async () => ({ items: [], total: 0, page: 1, pageSize: 30 })),
     fulfill: vi.fn(async () => {}),
-    reject: vi.fn(async () => {}),
+    reject: vi.fn(async () => ({ refunded: true })),
     ...service,
   };
   vi.doMock('../../src/services/rewards-catalog-admin.service.js', () => ({ rewardsCatalogAdminService: rewardsAdminService }));
@@ -180,5 +183,45 @@ describe('talepler', () => {
     expect(res.redirectedTo).toBe('/admin/rewards/redemptions?error=failed');
     expect(errorSpy).toHaveBeenCalled();
     errorSpy.mockRestore();
+  });
+
+  it('ret: iade yazıldıysa notice=rejected; iade yoksa (hesap silinmiş / zaten iade edilmiş) notice=rejected_no_refund', async () => {
+    const { rewardsAdminController } = await setup();
+    const res = fakeRes();
+    await rewardsAdminController.reject(req({ params: { id: RID }, body: { reject_reason: 'stok yok' } }), res);
+    expect(res.redirectedTo).toBe('/admin/rewards/redemptions?notice=rejected');
+
+    vi.resetModules(); // ikinci servis mock'u yeni controller örneğine girsin
+    const { rewardsAdminController: c2 } = await setup({ reject: vi.fn(async () => ({ refunded: false })) });
+    const res2 = fakeRes();
+    await c2.reject(req({ params: { id: RID }, body: { reject_reason: 'stok yok' } }), res2);
+    expect(res2.redirectedTo).toBe('/admin/rewards/redemptions?notice=rejected_no_refund');
+  });
+
+  it('teslim: rainbow zaten iade edilmişse ?error=already_refunded; hesap kalıcı silinmişse ?error=account_deleted', async () => {
+    const { AppError } = await import('../../src/utils/errors.js');
+    const { rewardsAdminController } = await setup({
+      fulfill: vi.fn(async () => { throw new AppError('REWARD_ALREADY_REFUNDED', 409); }),
+    });
+    const res = fakeRes();
+    await rewardsAdminController.fulfill(req({ params: { id: RID }, body: { delivery_code: 'GRAB-1' } }), res);
+    expect(res.redirectedTo).toBe('/admin/rewards/redemptions?error=already_refunded');
+
+    vi.resetModules(); // ikinci servis mock'u yeni controller örneğine girsin
+    const { AppError: AppError2 } = await import('../../src/utils/errors.js');
+    const { rewardsAdminController: c2 } = await setup({
+      fulfill: vi.fn(async () => { throw new AppError2('REWARD_ACCOUNT_PURGED', 403); }),
+    });
+    const res2 = fakeRes();
+    await c2.fulfill(req({ params: { id: RID }, body: { delivery_code: 'GRAB-1' } }), res2);
+    expect(res2.redirectedTo).toBe('/admin/rewards/redemptions?error=account_deleted');
+  });
+
+  it('yeni ekran mesajları tanımlı (bilinmeyen kod gösterilmez kuralı bunları yutmasın)', async () => {
+    const { REWARDS_ERRORS, REWARDS_NOTICES } = await import('../../src/admin/rewards.admin.controller.js');
+    expect(REWARDS_ERRORS.already_refunded).toBe("Bu talebin Rainbow'u zaten iade edilmiş — teslim etme, reddet.");
+    expect(REWARDS_NOTICES.rejected_no_refund).toBe(
+      'Talep reddedildi (iade yok: hesap silinmiş ya da Rainbow zaten iade edilmiş).',
+    );
   });
 });

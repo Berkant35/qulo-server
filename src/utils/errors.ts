@@ -200,8 +200,9 @@ export const Errors = {
   REWARD_ITEM_UNAVAILABLE: () =>
     new AppError("REWARD_ITEM_UNAVAILABLE", 404, "Reward item is not available"),
 
-  REWARD_NOT_ELIGIBLE: () =>
-    new AppError("REWARD_NOT_ELIGIBLE", 403, "Account is not eligible for this reward"),
+  /** Backoffice: talep sahibinin hesabı kalıcı silinmiş — teslim edilemez, yalnız reddedilir. */
+  REWARD_ACCOUNT_PURGED: () =>
+    new AppError("REWARD_ACCOUNT_PURGED", 403, "Account was permanently deleted"),
 
   REWARD_ACCOUNT_TOO_NEW: (minDays: number) =>
     new AppError("REWARD_ACCOUNT_TOO_NEW", 403, "Account is too new to redeem rewards", { min_days: minDays }),
@@ -211,6 +212,10 @@ export const Errors = {
 
   REWARD_ALREADY_DECIDED: () =>
     new AppError("REWARD_ALREADY_DECIDED", 409, "Redemption was already decided"),
+
+  /** Backoffice: talebin rainbow'u zaten iade edilmiş (REWARD_REFUND satırı var) — teslim edilemez. */
+  REWARD_ALREADY_REFUNDED: () =>
+    new AppError("REWARD_ALREADY_REFUNDED", 409, "Redemption was already refunded"),
 
   REWARD_REDEMPTION_NOT_FOUND: () =>
     new AppError("REWARD_REDEMPTION_NOT_FOUND", 404, "Redemption not found"),

@@ -130,11 +130,18 @@ export class RewardsQueueService {
     };
   }
 
-  /** PENDING → FULFILLED, durum üzerinde CAS: iki admin aynı talebi iki kez sonuçlandıramaz. */
+  /**
+   * PENDING → FULFILLED, durum üzerinde CAS: iki admin aynı talebi iki kez sonuçlandıramaz. CAS hesabın
+   * hâlâ var olmasını da ister; eşleşmezse (başka admin karar verdi ya da hesap bu arada kalıcı silindi)
+   * REWARD_ALREADY_DECIDED — sayfa yenilenince gerçek durum görünür.
+   */
   async fulfill(id: string, input: FulfillInput, adminId: string): Promise<void> {
     const state = await this.loadPendingState(id);
     // Hesap kalıcı silinmiş: kodu görecek kimse yok — yalnız reddedilebilir (tedarikçiye boşa ödeme yok).
-    if (!state.user_id) throw Errors.REWARD_NOT_ELIGIBLE();
+    if (!state.user_id) throw Errors.REWARD_ACCOUNT_PURGED();
+    // İtfa telafisi iade yazmış olabilir (talep yazımı hata döndü ama satır sonradan commit oldu):
+    // rainbow'u geri verilmiş talebi teslim etmek bedava kart demek — yalnız reddedilebilir.
+    if (await this.refundRowExists(id)) throw Errors.REWARD_ALREADY_REFUNDED();
 
     const { data, error } = await supabase
       .from("reward_redemptions")
@@ -148,6 +155,7 @@ export class RewardsQueueService {
       })
       .eq("id", id)
       .eq("status", "PENDING")
+      .not("user_id", "is", null)
       .select("id")
       .maybeSingle();
     if (error) throw Errors.SERVER_ERROR();
@@ -159,9 +167,12 @@ export class RewardsQueueService {
    * İade yazılamazsa talep REJECTED KALIR ve REWARD_REFUND_FAILED döner: geri PENDING'e almak,
    * bakiye yazılıp defter satırı düştüğü durumda ikinci denemede ÇİFT iade ederdi. Eksik iade görünür
    * ve elle düzeltilir (kullanıcı detayından bakiye); fazla iade sessiz para kaybıdır.
+   * `refunded: false`: hesap kalıcı silinmiş ya da rainbow zaten iade edilmiş (itfa telafisi) — ret
+   * yazılır, ikinci iade yapılmaz.
    */
-  async reject(id: string, reason: string, adminId: string): Promise<void> {
+  async reject(id: string, reason: string, adminId: string): Promise<{ refunded: boolean }> {
     await this.loadPendingState(id);
+    const alreadyRefunded = await this.refundRowExists(id);
 
     const { data, error } = await supabase
       .from("reward_redemptions")
@@ -179,7 +190,7 @@ export class RewardsQueueService {
     if (!data) throw Errors.REWARD_ALREADY_DECIDED();
 
     const decided = data as { id: string; user_id: string | null; rainbow_price: number };
-    if (!decided.user_id) return; // hesap kalıcı silinmiş: iade edilecek bakiye yok
+    if (!decided.user_id || alreadyRefunded) return { refunded: false };
 
     try {
       await diamondService.earnRainbow(decided.user_id, decided.rainbow_price, REWARD_REFUND_REASON, redemptionReference(id));
@@ -195,6 +206,7 @@ export class RewardsQueueService {
       });
       throw Errors.REWARD_REFUND_FAILED();
     }
+    return { refunded: true };
   }
 
   /**
@@ -316,18 +328,27 @@ export class RewardsQueueService {
     }
   }
 
+  /**
+   * Bu talebin REWARD_REFUND defter satırı var mı. Karar girdisi: okunamazsa SERVER_ERROR (kapalı
+   * kalır — bilmeden teslim ya da iade yok). `type` filtresi 069'un RAINBOW referans indeksini kullanır.
+   */
+  private async refundRowExists(redemptionId: string): Promise<boolean> {
+    const { data, error } = await supabase
+      .from("diamond_transactions")
+      .select("id")
+      .eq("type", "RAINBOW")
+      .eq("reference_id", redemptionReference(redemptionId))
+      .eq("reason", REWARD_REFUND_REASON)
+      .limit(1)
+      .maybeSingle();
+    if (error) throw Errors.SERVER_ERROR();
+    return data !== null;
+  }
+
   /** En iyi çaba: iade defter satırı gerçekten düşmüş mü (bakiye mi yoksa defter mi eksik kaldı). */
   private async refundLedgerRowExistsBestEffort(redemptionId: string): Promise<boolean | null> {
     try {
-      const { data, error } = await supabase
-        .from("diamond_transactions")
-        .select("id")
-        .eq("reference_id", redemptionReference(redemptionId))
-        .eq("reason", REWARD_REFUND_REASON)
-        .limit(1)
-        .maybeSingle();
-      if (error) return null;
-      return data !== null;
+      return await this.refundRowExists(redemptionId);
     } catch {
       return null;
     }

@@ -22,6 +22,7 @@ export const REWARDS_ERRORS: Record<string, string> = {
   already_decided: "Bu talep zaten sonuçlanmış (başka bir admin karar vermiş olabilir).",
   not_found: "Talep bulunamadı.",
   account_deleted: "Hesap kalıcı silinmiş — talep yalnız reddedilebilir.",
+  already_refunded: "Bu talebin Rainbow'u zaten iade edilmiş — teslim etme, reddet.",
   refund_failed:
     "Talep reddedildi ama iadenin yazılıp yazılmadığı belirsiz. Elle düzeltmeden önce kullanıcının güncel " +
     "Rainbow bakiyesine ve Transactions'ta bu talebin REWARD_REFUND satırına bak (bakiye yazılmış, defter " +
@@ -34,6 +35,7 @@ export const REWARDS_NOTICES: Record<string, string> = {
   deleted: "Ürün silindi.",
   fulfilled: "Talep teslim edildi.",
   rejected: "Talep reddedildi, rainbow iade edildi.",
+  rejected_no_refund: "Talep reddedildi (iade yok: hesap silinmiş ya da Rainbow zaten iade edilmiş).",
 };
 
 /** Servis hatasını ekran koduna çevirir; beklenmeyen hata loglanır. */
@@ -44,7 +46,8 @@ export function rewardsErrorCode(err: unknown, context: string): string {
       case "REWARD_ITEM_UNAVAILABLE": return "item_unavailable";
       case "REWARD_ALREADY_DECIDED": return "already_decided";
       case "REWARD_REDEMPTION_NOT_FOUND": return "not_found";
-      case "REWARD_NOT_ELIGIBLE": return "account_deleted";
+      case "REWARD_ACCOUNT_PURGED": return "account_deleted";
+      case "REWARD_ALREADY_REFUNDED": return "already_refunded";
       case "REWARD_REFUND_FAILED": return "refund_failed";
     }
   }
@@ -228,8 +231,8 @@ class RewardsAdminController {
     const parsed = rejectSchema.safeParse(req.body);
     if (!parsed.success) return res.redirect("/admin/rewards/redemptions?error=invalid_input");
     try {
-      await rewardsQueueService.reject(String(req.params.id), parsed.data.reject_reason, req.session.adminId!);
-      res.redirect("/admin/rewards/redemptions?notice=rejected");
+      const { refunded } = await rewardsQueueService.reject(String(req.params.id), parsed.data.reject_reason, req.session.adminId!);
+      res.redirect(`/admin/rewards/redemptions?notice=${refunded ? "rejected" : "rejected_no_refund"}`);
     } catch (err) {
       res.redirect(`/admin/rewards/redemptions?error=${rewardsErrorCode(err, "reject")}`);
     }

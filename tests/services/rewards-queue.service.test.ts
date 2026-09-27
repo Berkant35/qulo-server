@@ -202,19 +202,55 @@ describe('rewardsQueueService.fulfill', () => {
     });
   });
 
-  it('hesap kalıcı silinmişse teslim edilmez (REWARD_NOT_ELIGIBLE), talep PENDING kalır', async () => {
+  it('hesap kalıcı silinmişse teslim edilmez (REWARD_ACCOUNT_PURGED), talep PENDING kalır', async () => {
     const { fake, rewardsQueueService } = await setup({ reward_redemptions: [redemption({ user_id: null })] });
     await expect(rewardsQueueService.fulfill('r1', { delivery_code: 'X' }, 'adm1')).rejects.toMatchObject({
-      code: 'REWARD_NOT_ELIGIBLE',
+      code: 'REWARD_ACCOUNT_PURGED',
     });
     expect(fake.table('reward_redemptions')[0].status).toBe('PENDING');
+  });
+
+  it('hesap okuma ile yazma arasında kalıcı silinirse CAS tutmaz: kod yazılmaz, talep PENDING kalır', async () => {
+    const { fake, rewardsQueueService } = await setup(
+      { users: [user()], reward_redemptions: [redemption({})] },
+      { interleave: [{ table: 'reward_redemptions', mutate: (rows) => { rows[0].user_id = null; } }] },
+    );
+    await expect(rewardsQueueService.fulfill('r1', { delivery_code: 'X' }, 'adm1')).rejects.toMatchObject({
+      code: 'REWARD_ALREADY_DECIDED',
+    });
+    expect(fake.table('reward_redemptions')[0]).toMatchObject({ status: 'PENDING', delivery_code: null });
+  });
+
+  it('talebin rainbow’u zaten iade edilmişse (itfa telafisi REWARD_REFUND yazmış) teslim edilmez: REWARD_ALREADY_REFUNDED', async () => {
+    const { fake, rewardsQueueService } = await setup({
+      users: [user()],
+      reward_redemptions: [redemption({})],
+      diamond_transactions: [
+        { id: 'd-refund', user_id: 'u1', type: 'RAINBOW', amount: 51, reason: REWARD_REFUND_REASON, reference_id: redemptionReference('r1') },
+      ],
+    });
+    await expect(rewardsQueueService.fulfill('r1', { delivery_code: 'GRAB-1' }, 'adm1')).rejects.toMatchObject({
+      code: 'REWARD_ALREADY_REFUNDED',
+    });
+    expect(fake.table('reward_redemptions')[0]).toMatchObject({ status: 'PENDING', delivery_code: null });
+  });
+
+  it('iade satırı okunamazsa teslim edilmez (kapalı kalır): SERVER_ERROR, talep PENDING', async () => {
+    const { fake, rewardsQueueService } = await setup(
+      { users: [user()], reward_redemptions: [redemption({})] },
+      { failOn: [{ table: 'diamond_transactions', op: 'select' }] },
+    );
+    await expect(rewardsQueueService.fulfill('r1', { delivery_code: 'GRAB-1' }, 'adm1')).rejects.toMatchObject({
+      code: 'SERVER_ERROR',
+    });
+    expect(fake.table('reward_redemptions')[0]).toMatchObject({ status: 'PENDING', delivery_code: null });
   });
 });
 
 describe('rewardsQueueService.reject', () => {
   it('PENDING → REJECTED ve rainbow REWARD_REFUND ile iade edilir (talep referansıyla)', async () => {
     const { fake, rewardsQueueService } = await setup({ users: [user()], reward_redemptions: [redemption({})] });
-    await rewardsQueueService.reject('r1', 'stok yok', 'adm1');
+    await expect(rewardsQueueService.reject('r1', 'stok yok', 'adm1')).resolves.toEqual({ refunded: true });
 
     expect(fake.table('reward_redemptions')[0]).toMatchObject({
       status: 'REJECTED', reject_reason: 'stok yok', decided_by: 'adm1',
@@ -245,11 +281,25 @@ describe('rewardsQueueService.reject', () => {
     expect(fake.table('users')[0].rainbow_diamonds).toBe(100);
   });
 
-  it('hesap kalıcı silinmişse ret yazılır, iade edilecek bakiye yok', async () => {
+  it('hesap kalıcı silinmişse ret yazılır, iade edilecek bakiye yok (refunded: false)', async () => {
     const { fake, rewardsQueueService } = await setup({ reward_redemptions: [redemption({ user_id: null })] });
-    await rewardsQueueService.reject('r1', 'hesap yok', 'adm1');
+    await expect(rewardsQueueService.reject('r1', 'hesap yok', 'adm1')).resolves.toEqual({ refunded: false });
     expect(fake.table('reward_redemptions')[0].status).toBe('REJECTED');
     expect(fake.table('diamond_transactions')).toHaveLength(0);
+  });
+
+  it('rainbow zaten iade edilmişse (itfa telafisi): talep REJECTED olur, ikinci iade YOK (refunded: false)', async () => {
+    const { fake, rewardsQueueService } = await setup({
+      users: [user()],
+      reward_redemptions: [redemption({})],
+      diamond_transactions: [
+        { id: 'd-refund', user_id: 'u1', type: 'RAINBOW', amount: 51, reason: REWARD_REFUND_REASON, reference_id: redemptionReference('r1') },
+      ],
+    });
+    await expect(rewardsQueueService.reject('r1', 'x', 'adm1')).resolves.toEqual({ refunded: false });
+    expect(fake.table('reward_redemptions')[0].status).toBe('REJECTED');
+    expect(fake.table('users')[0].rainbow_diamonds).toBe(100);
+    expect(fake.table('diamond_transactions').map((t) => t.id)).toEqual(['d-refund']);
   });
 
   it("iade yazılamazsa talep REJECTED kalır (geri PENDING'e alınmaz) ve REWARD_REFUND_FAILED", async () => {
