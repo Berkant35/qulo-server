@@ -194,6 +194,9 @@ export const Errors = {
   DIAMOND_COOLDOWN: () =>
     new AppError("DIAMOND_COOLDOWN", 403, "Diamond transactions are locked for 24 hours after social signup"),
 
+  RAINBOW_NOT_AVAILABLE: () =>
+    new AppError("RAINBOW_NOT_AVAILABLE", 403, "Rainbow diamonds are not available for this account"),
+
   INVALID_PHOTO_INDEX: () =>
     new AppError("INVALID_PHOTO_INDEX", 400, "Invalid photo index"),
 

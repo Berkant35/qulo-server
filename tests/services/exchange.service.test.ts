@@ -38,7 +38,7 @@ describe('ExchangeService.convertGreenToPurple', () => {
 
     await expect(exchangeService.convertGreenToPurple('u1', 30)).resolves.toEqual({
       purple_received: 10,
-      new_balance: { green: 0, purple: 10 },
+      new_balance: { green: 0, purple: 10, rainbow: 0 },
     });
 
     const row = fake.table('users')[0];

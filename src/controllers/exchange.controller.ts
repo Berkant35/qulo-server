@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { exchangeService } from "../services/exchange.service.js";
 import type { ConvertInput, BuyPowerInput } from "../validators/exchange.validator.js";
+import { clientMetaFromHeaders } from "../utils/client-meta.js";
 
 export async function convertHandler(req: Request, res: Response, next: NextFunction) {
   try {
@@ -17,7 +18,8 @@ export async function buyPowerHandler(req: Request, res: Response, next: NextFun
   try {
     const userId = req.user!.userId;
     const { power_name, diamond_type, quantity } = req.body as BuyPowerInput;
-    const result = await exchangeService.buyPower(userId, power_name, diamond_type, quantity);
+    const { platform } = clientMetaFromHeaders(req.headers);
+    const result = await exchangeService.buyPower(userId, power_name, diamond_type, quantity, platform);
     res.json(result);
   } catch (err) {
     next(err);

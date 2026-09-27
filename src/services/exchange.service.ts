@@ -2,7 +2,9 @@ import { supabase } from "../config/supabase.js";
 import { diamondService } from "../services/diamond.service.js";
 import { Errors } from "../utils/errors.js";
 import { economyConfigService } from "./economy-config.service.js";
+import { rainbowAccessService } from "./rainbow-access.service.js";
 import type { RewardsConfig } from "../types/economy-config.schema.js";
+import type { ClientPlatform } from "../utils/client-meta.js";
 
 class ExchangeService {
   // ── Convert green diamonds to purple (dynamic ratio) ──────────────
@@ -36,7 +38,7 @@ class ExchangeService {
 
     return {
       purple_received: purpleAmount,
-      new_balance: { green: balance.green, purple: balance.purple },
+      new_balance: balance,
     };
   }
 
@@ -44,17 +46,23 @@ class ExchangeService {
   async buyPower(
     userId: string,
     powerName: string,
-    diamondType: "GREEN" | "PURPLE",
+    diamondType: "GREEN" | "PURPLE" | "RAINBOW",
     quantity: number,
+    platform?: ClientPlatform,
   ) {
     if (quantity <= 0) {
       throw Errors.VALIDATION_ERROR({ quantity: "Must be a positive integer" });
     }
 
+    // Rainbow yalnız erişimi açık kullanıcıda harcanır; arka planda birikmiş rainbow kilitli.
+    if (diamondType === "RAINBOW" && !(await rainbowAccessService.isEnabledForUser(userId, platform))) {
+      throw Errors.RAINBOW_NOT_AVAILABLE();
+    }
+
     // Fetch power definition
     const { data: power, error: powerErr } = await supabase
       .from("powers")
-      .select("*")
+      .select("id, name, green_cost, purple_cost")
       .eq("name", powerName)
       .eq("is_active", true)
       .single();
@@ -67,9 +75,11 @@ class ExchangeService {
     const powerCosts = config.powerCosts;
     const configCost = powerCosts[powerName as keyof typeof powerCosts];
 
+    // Rainbow fiyatı yeşil fiyatıdır.
+    const useGreenPrice = diamondType !== "PURPLE";
     const unitCost = configCost
-      ? (diamondType === "GREEN" ? configCost.greenCost : configCost.purpleCost)
-      : (diamondType === "GREEN" ? power.green_cost : power.purple_cost);
+      ? (useGreenPrice ? configCost.greenCost : configCost.purpleCost)
+      : (useGreenPrice ? power.green_cost : power.purple_cost);
 
     if (!unitCost || unitCost <= 0) {
       throw Errors.VALIDATION_ERROR({
@@ -80,20 +90,13 @@ class ExchangeService {
     const totalCost = unitCost * quantity;
 
     // Spend diamonds
+    const spendReason = `buy_power_${powerName}`;
     if (diamondType === "GREEN") {
-      await diamondService.spendGreen(
-        userId,
-        totalCost,
-        `buy_power_${powerName}`,
-        power.id,
-      );
+      await diamondService.spendGreen(userId, totalCost, spendReason, power.id);
+    } else if (diamondType === "RAINBOW") {
+      await diamondService.spendRainbow(userId, totalCost, spendReason, power.id);
     } else {
-      await diamondService.spendPurple(
-        userId,
-        totalCost,
-        `buy_power_${powerName}`,
-        power.id,
-      );
+      await diamondService.spendPurple(userId, totalCost, spendReason, power.id);
     }
 
     const newCount = await this.grantPower(userId, powerName, quantity);
@@ -117,7 +120,7 @@ class ExchangeService {
 
     return {
       new_count: newCount,
-      new_balance: { green: balance.green, purple: balance.purple },
+      new_balance: balance,
     };
   }
 

@@ -67,8 +67,9 @@ describe('buyPowerSchema', () => {
     ).toBe(false);
   });
 
-  it('diamond_type yalnizca GREEN veya PURPLE', () => {
+  it('diamond_type GREEN, PURPLE veya RAINBOW; baskasi degil', () => {
     expect(buyPowerSchema.safeParse({ power_name: 'SKIP', diamond_type: 'PURPLE', quantity: 1 }).success).toBe(true);
+    expect(buyPowerSchema.safeParse({ power_name: 'HALF', diamond_type: 'RAINBOW', quantity: 1 }).success).toBe(true);
     expect(buyPowerSchema.safeParse({ power_name: 'SKIP', diamond_type: 'BLUE', quantity: 1 }).success).toBe(false);
   });
 
