@@ -7,7 +7,7 @@ import { NotificationService, type PushType } from "../services/notification.ser
 import { economyConfigService } from "../services/economy-config.service.js";
 import { economyConfigSchema, ECONOMY_BOUNDARIES } from "../types/economy-config.schema.js";
 import { supabase } from "../config/supabase.js";
-import { rewardsAdminService } from "../services/rewards-admin.service.js";
+import { rewardsQueueService } from "../services/rewards-queue.service.js";
 import {
   pushTemplateParamsSchema,
   pushTemplateQuerySchema,
@@ -116,7 +116,7 @@ class AdminController {
       else if (action === "reset_discovery") await adminService.resetUserDiscovery(id);
       else if (action === "test_admin_on" || action === "test_admin_off") {
         await adminService.setTestAdmin(id, action === "test_admin_on");
-      } else if (action === "clear_rainbow_flag") await rewardsAdminService.clearRainbowFlag(id);
+      } else if (action === "clear_rainbow_flag") await rewardsQueueService.clearRainbowFlag(id);
     } catch (err) {
       // Eskiden yalnız update_diamonds yakalanıyordu: diğer dallar patlayınca istek asılı kalıyordu.
       console.error(`[admin] userAction ${action} failed:`, { userId: id, err });

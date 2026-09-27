@@ -9,8 +9,8 @@ async function setup(seed: Tables = {}, options?: FakeSupabaseOptions) {
     options,
   );
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
-  const { rewardsAdminService } = await import('../../src/services/rewards-admin.service.js');
-  return { fake, rewardsAdminService };
+  const { rewardsQueueService } = await import('../../src/services/rewards-queue.service.js');
+  return { fake, rewardsQueueService };
 }
 
 const user = (over: Record<string, unknown> = {}) => ({
@@ -37,9 +37,9 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-describe('rewardsAdminService.listRedemptions', () => {
+describe('rewardsQueueService.listRedemptions', () => {
   it('varsayılan PENDING, en eski önce; kod maskeli; kullanıcı + uyarı + bu ay toplamı eklenir', async () => {
-    const { rewardsAdminService } = await setup({
+    const { rewardsQueueService } = await setup({
       users: [user({ rainbow_flagged_at: '2026-09-25T00:00:00Z' }), user({ id: 'u2', email: 'ayse@example.com', country: 'ID' })],
       reward_redemptions: [
         redemption({ id: 'r-new', created_at: '2026-09-22T00:00:00Z', idempotency_key: 'k1-000000' }),
@@ -49,7 +49,7 @@ describe('rewardsAdminService.listRedemptions', () => {
       ],
     });
 
-    const page = await rewardsAdminService.listRedemptions({ status: 'PENDING', page: 1 });
+    const page = await rewardsQueueService.listRedemptions({ status: 'PENDING', page: 1 });
 
     expect(page.items.map((r) => r.id)).toEqual(['r-old', 'r-new']);
     expect(page.total).toBe(2);
@@ -60,7 +60,7 @@ describe('rewardsAdminService.listRedemptions', () => {
   });
 
   it('sonuçlananlar en yeni önce; teslim kodu ve linki yalnız maskeli/host olarak döner', async () => {
-    const { rewardsAdminService } = await setup({
+    const { rewardsQueueService } = await setup({
       users: [user()],
       reward_redemptions: [
         redemption({
@@ -71,7 +71,7 @@ describe('rewardsAdminService.listRedemptions', () => {
       ],
     });
 
-    const page = await rewardsAdminService.listRedemptions({ status: 'ALL', page: 1 });
+    const page = await rewardsQueueService.listRedemptions({ status: 'ALL', page: 1 });
     expect(page.items.map((r) => r.id)).toEqual(['r-b', 'r-a']);
     expect(page.items[1].masked_code).toBe('••••1234');
     expect(page.items[1].delivery_host).toBe('g.example');
@@ -81,7 +81,7 @@ describe('rewardsAdminService.listRedemptions', () => {
   });
 
   it('e-posta araması ve ülke filtresi; eşleşme yoksa talep sorgusu atılmaz', async () => {
-    const { fake, rewardsAdminService } = await setup({
+    const { fake, rewardsQueueService } = await setup({
       users: [user(), user({ id: 'u2', email: 'ayse@example.com' })],
       reward_redemptions: [
         redemption({ id: 'r1', idempotency_key: 'k1-000000' }),
@@ -89,20 +89,20 @@ describe('rewardsAdminService.listRedemptions', () => {
       ],
     });
 
-    expect((await rewardsAdminService.listRedemptions({ status: 'ALL', q: 'ayse', page: 1 })).items.map((r) => r.id)).toEqual(['r2']);
-    expect((await rewardsAdminService.listRedemptions({ status: 'ALL', country: 'TH', page: 1 })).items.map((r) => r.id)).toEqual(['r1']);
+    expect((await rewardsQueueService.listRedemptions({ status: 'ALL', q: 'ayse', page: 1 })).items.map((r) => r.id)).toEqual(['r2']);
+    expect((await rewardsQueueService.listRedemptions({ status: 'ALL', country: 'TH', page: 1 })).items.map((r) => r.id)).toEqual(['r1']);
 
     // '_' kaçışsız bırakılsaydı (eski davranış: joker karakterleri silme) tek-karakter jokeri
     // olarak HER e-postaya uyar, eşleşme bulunur ve talep sorgusu atılırdı — bu yüzden bu
     // olmadan da yeşil kalan zayıf bir "hiç eşleşme yok" iddiası değil, kaçışın kendisi sınanıyor.
     const before = fake.queries.filter((q) => q.table === 'reward_redemptions').length;
-    const none = await rewardsAdminService.listRedemptions({ status: 'ALL', q: '_', page: 1 });
+    const none = await rewardsQueueService.listRedemptions({ status: 'ALL', q: '_', page: 1 });
     expect(none).toEqual({ items: [], total: 0, page: 1, pageSize: 30 });
     expect(fake.queries.filter((q) => q.table === 'reward_redemptions').length).toBe(before);
   });
 
   it('e-posta araması alt çizgiyi literal karakter olarak arar (LIKE joker kaçışı)', async () => {
-    const { rewardsAdminService } = await setup({
+    const { rewardsQueueService } = await setup({
       users: [
         user({ id: 'u1', email: 'ali_veli@example.com' }),
         user({ id: 'u2', email: 'alixveli@example.com' }),
@@ -113,32 +113,32 @@ describe('rewardsAdminService.listRedemptions', () => {
       ],
     });
 
-    const page = await rewardsAdminService.listRedemptions({ status: 'ALL', q: 'ali_veli', page: 1 });
+    const page = await rewardsQueueService.listRedemptions({ status: 'ALL', q: 'ali_veli', page: 1 });
     expect(page.items.map((r) => r.id)).toEqual(['r1']);
   });
 
   it("e-posta araması kaçışsız joker olarak eşleşmez ('_' ve '%' harflerini içermeyen e-postalarda)", async () => {
-    const { rewardsAdminService } = await setup({
+    const { rewardsQueueService } = await setup({
       users: [user({ id: 'u1', email: 'ali@example.com' })],
       reward_redemptions: [redemption({ id: 'r1', user_id: 'u1', idempotency_key: 'k1-000000' })],
     });
 
-    expect((await rewardsAdminService.listRedemptions({ status: 'ALL', q: '_', page: 1 })).items).toEqual([]);
-    expect((await rewardsAdminService.listRedemptions({ status: 'ALL', q: '%', page: 1 })).items).toEqual([]);
+    expect((await rewardsQueueService.listRedemptions({ status: 'ALL', q: '_', page: 1 })).items).toEqual([]);
+    expect((await rewardsQueueService.listRedemptions({ status: 'ALL', q: '%', page: 1 })).items).toEqual([]);
   });
 
   it('hesabı kalıcı silinmiş talep (user_id null) listede user: null', async () => {
-    const { rewardsAdminService } = await setup({ reward_redemptions: [redemption({ user_id: null })] });
-    const [row] = (await rewardsAdminService.listRedemptions({ status: 'PENDING', page: 1 })).items;
+    const { rewardsQueueService } = await setup({ reward_redemptions: [redemption({ user_id: null })] });
+    const [row] = (await rewardsQueueService.listRedemptions({ status: 'PENDING', page: 1 })).items;
     expect(row.user).toBeNull();
     expect(row.user_month_total).toBe(0);
   });
 });
 
-describe('rewardsAdminService.fulfill', () => {
+describe('rewardsQueueService.fulfill', () => {
   it('PENDING → FULFILLED: kod, link, not, karar veren ve zaman yazılır', async () => {
-    const { fake, rewardsAdminService } = await setup({ users: [user()], reward_redemptions: [redemption({})] });
-    await rewardsAdminService.fulfill('r1', { delivery_code: 'GRAB-1', delivery_url: 'https://g.example/x', admin_note: 'Tremendous #9' }, 'adm1');
+    const { fake, rewardsQueueService } = await setup({ users: [user()], reward_redemptions: [redemption({})] });
+    await rewardsQueueService.fulfill('r1', { delivery_code: 'GRAB-1', delivery_url: 'https://g.example/x', admin_note: 'Tremendous #9' }, 'adm1');
 
     expect(fake.table('reward_redemptions')[0]).toMatchObject({
       status: 'FULFILLED', delivery_code: 'GRAB-1', delivery_url: 'https://g.example/x', admin_note: 'Tremendous #9',
@@ -148,46 +148,46 @@ describe('rewardsAdminService.fulfill', () => {
   });
 
   it('retten sonra teslim → REWARD_ALREADY_DECIDED', async () => {
-    const { rewardsAdminService } = await setup({
+    const { rewardsQueueService } = await setup({
       users: [user()],
       reward_redemptions: [redemption({ status: 'REJECTED' })],
     });
-    await expect(rewardsAdminService.fulfill('r1', { delivery_code: 'X' }, 'adm1')).rejects.toMatchObject({
+    await expect(rewardsQueueService.fulfill('r1', { delivery_code: 'X' }, 'adm1')).rejects.toMatchObject({
       code: 'REWARD_ALREADY_DECIDED',
     });
   });
 
   it('eşzamanlı karar: okuma PENDING görür ama başka admin önce reddeder → CAS tutmaz, teslim edilmez', async () => {
-    const { fake, rewardsAdminService } = await setup(
+    const { fake, rewardsQueueService } = await setup(
       { users: [user()], reward_redemptions: [redemption({})] },
       { interleave: [{ table: 'reward_redemptions', mutate: (rows) => { rows[0].status = 'REJECTED'; } }] },
     );
-    await expect(rewardsAdminService.fulfill('r1', { delivery_code: 'X' }, 'adm1')).rejects.toMatchObject({
+    await expect(rewardsQueueService.fulfill('r1', { delivery_code: 'X' }, 'adm1')).rejects.toMatchObject({
       code: 'REWARD_ALREADY_DECIDED',
     });
     expect(fake.table('reward_redemptions')[0]).toMatchObject({ status: 'REJECTED', delivery_code: null });
   });
 
   it('olmayan talep → REWARD_REDEMPTION_NOT_FOUND', async () => {
-    const { rewardsAdminService } = await setup();
-    await expect(rewardsAdminService.fulfill('yok', { delivery_code: 'X' }, 'adm1')).rejects.toMatchObject({
+    const { rewardsQueueService } = await setup();
+    await expect(rewardsQueueService.fulfill('yok', { delivery_code: 'X' }, 'adm1')).rejects.toMatchObject({
       code: 'REWARD_REDEMPTION_NOT_FOUND',
     });
   });
 
   it('hesap kalıcı silinmişse teslim edilmez (REWARD_NOT_ELIGIBLE), talep PENDING kalır', async () => {
-    const { fake, rewardsAdminService } = await setup({ reward_redemptions: [redemption({ user_id: null })] });
-    await expect(rewardsAdminService.fulfill('r1', { delivery_code: 'X' }, 'adm1')).rejects.toMatchObject({
+    const { fake, rewardsQueueService } = await setup({ reward_redemptions: [redemption({ user_id: null })] });
+    await expect(rewardsQueueService.fulfill('r1', { delivery_code: 'X' }, 'adm1')).rejects.toMatchObject({
       code: 'REWARD_NOT_ELIGIBLE',
     });
     expect(fake.table('reward_redemptions')[0].status).toBe('PENDING');
   });
 });
 
-describe('rewardsAdminService.reject', () => {
+describe('rewardsQueueService.reject', () => {
   it('PENDING → REJECTED ve rainbow REWARD_REFUND ile iade edilir (talep referansıyla)', async () => {
-    const { fake, rewardsAdminService } = await setup({ users: [user()], reward_redemptions: [redemption({})] });
-    await rewardsAdminService.reject('r1', 'stok yok', 'adm1');
+    const { fake, rewardsQueueService } = await setup({ users: [user()], reward_redemptions: [redemption({})] });
+    await rewardsQueueService.reject('r1', 'stok yok', 'adm1');
 
     expect(fake.table('reward_redemptions')[0]).toMatchObject({
       status: 'REJECTED', reject_reason: 'stok yok', decided_by: 'adm1',
@@ -199,9 +199,9 @@ describe('rewardsAdminService.reject', () => {
   });
 
   it('ikinci ret çift iade etmez', async () => {
-    const { fake, rewardsAdminService } = await setup({ users: [user()], reward_redemptions: [redemption({})] });
-    await rewardsAdminService.reject('r1', 'stok yok', 'adm1');
-    await expect(rewardsAdminService.reject('r1', 'stok yok', 'adm1')).rejects.toMatchObject({
+    const { fake, rewardsQueueService } = await setup({ users: [user()], reward_redemptions: [redemption({})] });
+    await rewardsQueueService.reject('r1', 'stok yok', 'adm1');
+    await expect(rewardsQueueService.reject('r1', 'stok yok', 'adm1')).rejects.toMatchObject({
       code: 'REWARD_ALREADY_DECIDED',
     });
     expect(fake.table('users')[0].rainbow_diamonds).toBe(151);
@@ -209,40 +209,40 @@ describe('rewardsAdminService.reject', () => {
   });
 
   it('eşzamanlı karar: okuma PENDING görür ama başka admin önce çevirir → CAS tutmaz, iade yok', async () => {
-    const { fake, rewardsAdminService } = await setup(
+    const { fake, rewardsQueueService } = await setup(
       { users: [user()], reward_redemptions: [redemption({})] },
       { interleave: [{ table: 'reward_redemptions', mutate: (rows) => { rows[0].status = 'FULFILLED'; } }] },
     );
-    await expect(rewardsAdminService.reject('r1', 'x', 'adm1')).rejects.toMatchObject({ code: 'REWARD_ALREADY_DECIDED' });
+    await expect(rewardsQueueService.reject('r1', 'x', 'adm1')).rejects.toMatchObject({ code: 'REWARD_ALREADY_DECIDED' });
     expect(fake.table('diamond_transactions')).toHaveLength(0);
     expect(fake.table('users')[0].rainbow_diamonds).toBe(100);
   });
 
   it('hesap kalıcı silinmişse ret yazılır, iade edilecek bakiye yok', async () => {
-    const { fake, rewardsAdminService } = await setup({ reward_redemptions: [redemption({ user_id: null })] });
-    await rewardsAdminService.reject('r1', 'hesap yok', 'adm1');
+    const { fake, rewardsQueueService } = await setup({ reward_redemptions: [redemption({ user_id: null })] });
+    await rewardsQueueService.reject('r1', 'hesap yok', 'adm1');
     expect(fake.table('reward_redemptions')[0].status).toBe('REJECTED');
     expect(fake.table('diamond_transactions')).toHaveLength(0);
   });
 
   it("iade yazılamazsa talep REJECTED kalır (geri PENDING'e alınmaz) ve REWARD_REFUND_FAILED", async () => {
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const { fake, rewardsAdminService } = await setup(
+    const { fake, rewardsQueueService } = await setup(
       { users: [user()], reward_redemptions: [redemption({})] },
       { failOn: [{ table: 'users', op: 'update' }] },
     );
-    await expect(rewardsAdminService.reject('r1', 'x', 'adm1')).rejects.toMatchObject({ code: 'REWARD_REFUND_FAILED' });
+    await expect(rewardsQueueService.reject('r1', 'x', 'adm1')).rejects.toMatchObject({ code: 'REWARD_REFUND_FAILED' });
     expect(fake.table('reward_redemptions')[0].status).toBe('REJECTED');
     errorSpy.mockRestore();
   });
 
   it('bakiye CAS başarılı ama defter satırı düşmezse: belirsizlik teşhisi loglanır (currentRainbow, refundLedgerRow)', async () => {
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const { fake, rewardsAdminService } = await setup(
+    const { fake, rewardsQueueService } = await setup(
       { users: [user()], reward_redemptions: [redemption({})] },
       { failOn: [{ table: 'diamond_transactions', op: 'insert' }] },
     );
-    await expect(rewardsAdminService.reject('r1', 'x', 'adm1')).rejects.toMatchObject({ code: 'REWARD_REFUND_FAILED' });
+    await expect(rewardsQueueService.reject('r1', 'x', 'adm1')).rejects.toMatchObject({ code: 'REWARD_REFUND_FAILED' });
     expect(fake.table('reward_redemptions')[0].status).toBe('REJECTED');
     // Bakiye CAS'ı (users.update) başarılı oldu — 100 + 51 = 151 — ama defter (diamond_transactions.insert) patladı.
     expect(fake.table('users')[0].rainbow_diamonds).toBe(151);
@@ -254,9 +254,9 @@ describe('rewardsAdminService.reject', () => {
   });
 });
 
-describe('rewardsAdminService.getSummary / clearRainbowFlag', () => {
+describe('rewardsQueueService.getSummary / clearRainbowFlag', () => {
   it('bekleyen, bu ay teslim, dolaşım, tahmini yükümlülük, işaretli kullanıcı', async () => {
-    const { rewardsAdminService } = await setup({
+    const { rewardsQueueService } = await setup({
       users: [
         user({ rainbow_diamonds: 100, rainbow_flagged_at: '2026-09-25T00:00:00Z' }),
         user({ id: 'u2', rainbow_diamonds: 50 }),
@@ -269,7 +269,7 @@ describe('rewardsAdminService.getSummary / clearRainbowFlag', () => {
       ],
     });
 
-    expect(await rewardsAdminService.getSummary(0.03)).toEqual({
+    expect(await rewardsQueueService.getSummary(0.03)).toEqual({
       pending: 1,
       fulfilledThisMonth: 1,
       rainbowFulfilledThisMonth: 22,
@@ -283,14 +283,14 @@ describe('rewardsAdminService.getSummary / clearRainbowFlag', () => {
     const many = Array.from({ length: 1001 }, (_, i) =>
       user({ id: `u${String(i).padStart(4, '0')}`, email: `u${i}@example.com`, rainbow_diamonds: 1 }),
     );
-    const { rewardsAdminService } = await setup({ users: many });
-    expect((await rewardsAdminService.getSummary(0.03)).rainbowInCirculation).toBe(1001);
+    const { rewardsQueueService } = await setup({ users: many });
+    expect((await rewardsQueueService.getSummary(0.03)).rainbowInCirculation).toBe(1001);
   });
 
   it('uyarı temizlenir; olmayan kullanıcı USER_NOT_FOUND', async () => {
-    const { fake, rewardsAdminService } = await setup({ users: [user({ rainbow_flagged_at: '2026-09-25T00:00:00Z' })] });
-    await rewardsAdminService.clearRainbowFlag('u1');
+    const { fake, rewardsQueueService } = await setup({ users: [user({ rainbow_flagged_at: '2026-09-25T00:00:00Z' })] });
+    await rewardsQueueService.clearRainbowFlag('u1');
     expect(fake.table('users')[0].rainbow_flagged_at).toBeNull();
-    await expect(rewardsAdminService.clearRainbowFlag('yok')).rejects.toMatchObject({ code: 'USER_NOT_FOUND' });
+    await expect(rewardsQueueService.clearRainbowFlag('yok')).rejects.toMatchObject({ code: 'USER_NOT_FOUND' });
   });
 });

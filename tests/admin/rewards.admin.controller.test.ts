@@ -17,6 +17,7 @@ const req = (over: Record<string, unknown> = {}) =>
 
 async function setup(service: Record<string, unknown> = {}) {
   const { AppError } = await import('../../src/utils/errors.js');
+  // İki servis (katalog + kuyruk) tek düz nesnede: test yalnız override ettiği metodu verir.
   const rewardsAdminService = {
     listCountries: vi.fn(async () => [{ country_code: 'TH', currency: 'THB', enabled: false, android_enabled: true, ios_enabled: false, updated_at: null }]),
     getSummary: vi.fn(async () => ({ pending: 2, fulfilledThisMonth: 0, rainbowFulfilledThisMonth: 0, rainbowInCirculation: 0, estimatedLiabilityUsd: 0, flaggedUsers: 0 })),
@@ -32,7 +33,8 @@ async function setup(service: Record<string, unknown> = {}) {
     reject: vi.fn(async () => {}),
     ...service,
   };
-  vi.doMock('../../src/services/rewards-admin.service.js', () => ({ rewardsAdminService }));
+  vi.doMock('../../src/services/rewards-catalog-admin.service.js', () => ({ rewardsCatalogAdminService: rewardsAdminService }));
+  vi.doMock('../../src/services/rewards-queue.service.js', () => ({ rewardsQueueService: rewardsAdminService }));
   vi.doMock('../../src/services/economy-config.service.js', () => ({
     economyConfigService: {
       getConfig: vi.fn(async () => ({

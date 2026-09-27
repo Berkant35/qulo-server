@@ -2,7 +2,8 @@ import type { Request, Response } from "express";
 import type { ZodError } from "zod";
 import { AppError } from "../utils/errors.js";
 import { suggestedRainbowPrice } from "../utils/rewards.js";
-import { rewardsAdminService } from "../services/rewards-admin.service.js";
+import { rewardsCatalogAdminService } from "../services/rewards-catalog-admin.service.js";
+import { rewardsQueueService } from "../services/rewards-queue.service.js";
 import { economyConfigService } from "../services/economy-config.service.js";
 import {
   REWARD_BRANDS,
@@ -83,15 +84,15 @@ function formValues(body: Record<string, unknown>, id?: string) {
   };
 }
 
-type CatalogFormItem = ReturnType<typeof formValues> | Awaited<ReturnType<typeof rewardsAdminService.getCatalogItem>>;
+type CatalogFormItem = ReturnType<typeof formValues> | Awaited<ReturnType<typeof rewardsCatalogAdminService.getCatalogItem>>;
 
 class RewardsAdminController {
   async countries(req: Request, res: Response) {
     try {
       const { rainbow } = await economyConfigService.getConfig();
       const [countries, summary] = await Promise.all([
-        rewardsAdminService.listCountries(),
-        rewardsAdminService.getSummary(rainbow.suggestedUsdPerRainbow),
+        rewardsCatalogAdminService.listCountries(),
+        rewardsQueueService.getSummary(rainbow.suggestedUsdPerRainbow),
       ]);
       res.render("rewards-countries", {
         countries, summary, rules: rainbow, ...flash(req), active: "countries",
@@ -107,7 +108,7 @@ class RewardsAdminController {
     const parsed = countrySwitchSchema.safeParse(req.body);
     if (!parsed.success) return res.redirect("/admin/rewards?error=invalid_input");
     try {
-      await rewardsAdminService.updateCountry(String(req.params.code).toUpperCase(), parsed.data);
+      await rewardsCatalogAdminService.updateCountry(String(req.params.code).toUpperCase(), parsed.data);
       res.redirect("/admin/rewards?notice=saved");
     } catch (err) {
       res.redirect(`/admin/rewards?error=${rewardsErrorCode(err, "updateCountry")}`);
@@ -119,8 +120,8 @@ class RewardsAdminController {
     try {
       const [{ rainbow }, page, countries] = await Promise.all([
         economyConfigService.getConfig(),
-        rewardsAdminService.listCatalog(filter),
-        rewardsAdminService.listCountries(),
+        rewardsCatalogAdminService.listCatalog(filter),
+        rewardsCatalogAdminService.listCountries(),
       ]);
       const items = page.items.map((item) => ({
         ...item,
@@ -144,7 +145,7 @@ class RewardsAdminController {
 
   async catalogEdit(req: Request, res: Response) {
     try {
-      const item = await rewardsAdminService.getCatalogItem(String(req.params.id));
+      const item = await rewardsCatalogAdminService.getCatalogItem(String(req.params.id));
       if (!item) return res.redirect("/admin/rewards/catalog?error=item_unavailable");
       await this.renderEdit(req, res, item, null);
     } catch (err) {
@@ -156,7 +157,7 @@ class RewardsAdminController {
     const parsed = catalogItemSchema.safeParse(req.body);
     if (!parsed.success) return this.renderEdit(req, res, formValues(req.body), issues(parsed.error), 400);
     try {
-      await rewardsAdminService.createCatalogItem(parsed.data);
+      await rewardsCatalogAdminService.createCatalogItem(parsed.data);
       res.redirect("/admin/rewards/catalog?notice=saved");
     } catch (err) {
       await this.renderEdit(req, res, formValues(req.body), REWARDS_ERRORS[rewardsErrorCode(err, "catalogCreate")], 400);
@@ -168,7 +169,7 @@ class RewardsAdminController {
     const parsed = catalogItemSchema.safeParse(req.body);
     if (!parsed.success) return this.renderEdit(req, res, formValues(req.body, id), issues(parsed.error), 400);
     try {
-      await rewardsAdminService.updateCatalogItem(id, parsed.data);
+      await rewardsCatalogAdminService.updateCatalogItem(id, parsed.data);
       res.redirect("/admin/rewards/catalog?notice=saved");
     } catch (err) {
       await this.renderEdit(req, res, formValues(req.body, id), REWARDS_ERRORS[rewardsErrorCode(err, "catalogUpdate")], 400);
@@ -177,7 +178,7 @@ class RewardsAdminController {
 
   async catalogSetActive(req: Request, res: Response) {
     try {
-      await rewardsAdminService.setCatalogActive(String(req.params.id), req.body.active === "1");
+      await rewardsCatalogAdminService.setCatalogActive(String(req.params.id), req.body.active === "1");
       res.redirect("/admin/rewards/catalog?notice=saved");
     } catch (err) {
       res.redirect(`/admin/rewards/catalog?error=${rewardsErrorCode(err, "catalogSetActive")}`);
@@ -186,7 +187,7 @@ class RewardsAdminController {
 
   async catalogDelete(req: Request, res: Response) {
     try {
-      await rewardsAdminService.softDeleteCatalogItem(String(req.params.id));
+      await rewardsCatalogAdminService.softDeleteCatalogItem(String(req.params.id));
       res.redirect("/admin/rewards/catalog?notice=deleted");
     } catch (err) {
       res.redirect(`/admin/rewards/catalog?error=${rewardsErrorCode(err, "catalogDelete")}`);
@@ -197,8 +198,8 @@ class RewardsAdminController {
     const filter = adminRedemptionsQuerySchema.parse(req.query);
     try {
       const [page, countries] = await Promise.all([
-        rewardsAdminService.listRedemptions(filter),
-        rewardsAdminService.listCountries(),
+        rewardsQueueService.listRedemptions(filter),
+        rewardsCatalogAdminService.listCountries(),
       ]);
       res.render("rewards-redemptions", {
         rows: page.items, filter, total: page.total, page: page.page,
@@ -216,7 +217,7 @@ class RewardsAdminController {
     const parsed = fulfillSchema.safeParse(req.body);
     if (!parsed.success) return res.redirect("/admin/rewards/redemptions?error=invalid_input");
     try {
-      await rewardsAdminService.fulfill(String(req.params.id), parsed.data, req.session.adminId!);
+      await rewardsQueueService.fulfill(String(req.params.id), parsed.data, req.session.adminId!);
       res.redirect("/admin/rewards/redemptions?notice=fulfilled");
     } catch (err) {
       res.redirect(`/admin/rewards/redemptions?error=${rewardsErrorCode(err, "fulfill")}`);
@@ -227,7 +228,7 @@ class RewardsAdminController {
     const parsed = rejectSchema.safeParse(req.body);
     if (!parsed.success) return res.redirect("/admin/rewards/redemptions?error=invalid_input");
     try {
-      await rewardsAdminService.reject(String(req.params.id), parsed.data.reject_reason, req.session.adminId!);
+      await rewardsQueueService.reject(String(req.params.id), parsed.data.reject_reason, req.session.adminId!);
       res.redirect("/admin/rewards/redemptions?notice=rejected");
     } catch (err) {
       res.redirect(`/admin/rewards/redemptions?error=${rewardsErrorCode(err, "reject")}`);
@@ -238,7 +239,7 @@ class RewardsAdminController {
     try {
       const [{ rainbow }, countries] = await Promise.all([
         economyConfigService.getConfig(),
-        rewardsAdminService.listCountries(),
+        rewardsCatalogAdminService.listCountries(),
       ]);
       res.status(status).render("rewards-catalog-edit", {
         item, error, countries, brands: REWARD_BRANDS, usdPerRainbow: rainbow.suggestedUsdPerRainbow,
