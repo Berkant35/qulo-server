@@ -1,5 +1,5 @@
 import { supabase } from "../config/supabase.js";
-import { Errors } from "../utils/errors.js";
+import { AppError, Errors } from "../utils/errors.js";
 import { paidPortion, type RewardSplit } from "../utils/math.js";
 import type { ClientPlatform } from "../utils/client-meta.js";
 import { rainbowAccessService } from "./rainbow-access.service.js";
@@ -30,6 +30,18 @@ const BALANCE_COLUMN: Record<LedgerType, "green_diamonds" | "purple_diamonds" | 
 
 /** CAS çakışmasında yeniden deneme sayısı. Gerçek yarış nadir; 3 deneme sonra SERVER_ERROR. */
 const CAS_ATTEMPTS = 3;
+
+/**
+ * CAS yazımının sonucu belirsiz: update isteği hata döndü ama commit edilmiş olabilir (cevap yolda
+ * kaybolmuş olabilir). Dışarıya SERVER_ERROR olarak görünür; `addPurple` bunu ayırt eder — belirsiz
+ * yazımda claim satırını silmek çift krediye kapı açardı.
+ */
+class CasWriteUncertainError extends AppError {
+  constructor() {
+    super("SERVER_ERROR", 500, "Internal server error");
+    Object.setPrototypeOf(this, CasWriteUncertainError.prototype);
+  }
+}
 
 export class DiamondService {
   async getBalance(userId: string) {
@@ -167,32 +179,28 @@ export class DiamondService {
       throw Errors.SERVER_ERROR();
     }
 
-    const cas = await this.tryCasUpdate(
-      userId,
-      ["purple_diamonds", "purple_paid"],
-      (row) => ({
-        purple_diamonds: (row.purple_diamonds ?? 0) + amount,
-        purple_paid: (row.purple_paid ?? 0) + paid,
-      }),
-    );
+    let cas: CasResult | null;
+    try {
+      cas = await this.tryCasUpdate(
+        userId,
+        ["purple_diamonds", "purple_paid"],
+        (row) => ({
+          purple_diamonds: (row.purple_diamonds ?? 0) + amount,
+          purple_paid: (row.purple_paid ?? 0) + paid,
+        }),
+      );
+    } catch (err) {
+      // Okuma hatası / kullanıcı yok: bu çağrı HİÇBİR ŞEY yazmadı → claim'i bırak (kalırsa tekrar
+      // deneme duplicate guard'a takılır, gerçek satın alma kaybolur). Belirsiz yazımda claim KALIR.
+      if (!(err instanceof CasWriteUncertainError)) {
+        await this.releaseClaim(claim.id, { userId, referenceId: referenceId ?? null, reason, amount, cause: "cas_read_failed" });
+      }
+      throw err;
+    }
 
     if (!cas) {
-      // CAS tükendi: HİÇBİR deneme yazmadı (guard tutmadı). Claim satırı kalırsa tekrar deneme
-      // duplicate guard'a takılır → gerçek satın alma kaybolur. Satırı sil, hata dön; istemci/
-      // RevenueCat yeniden dener. (Update HATASI bu dala düşmez: yazmış olabilir, o yüzden kalır.)
-      const { error: deleteErr } = await supabase
-        .from("diamond_transactions")
-        .delete()
-        .eq("id", claim.id);
-      console.error("[Diamond] addPurple CAS exhausted — credit NOT applied; claim row delete attempted", {
-        userId,
-        referenceId: referenceId ?? null,
-        reason,
-        amount,
-        claimId: claim.id,
-        compensated: !deleteErr,
-        deleteError: deleteErr?.message ?? null,
-      });
+      // CAS tükendi: HİÇBİR deneme yazmadı (guard tutmadı) — claim'i bırak, istemci/RevenueCat yeniden dener.
+      await this.releaseClaim(claim.id, { userId, referenceId: referenceId ?? null, reason, amount, cause: "cas_exhausted" });
       throw Errors.SERVER_ERROR();
     }
 
@@ -324,7 +332,7 @@ export class DiamondService {
   /**
    * `casUpdate` çekirdeği. `null` = CAS tükendi: her denemede guard tuttu*MA*dı, yani bu çağrı
    * HİÇBİR ŞEY yazmadı — telafi (ör. claim satırını silmek) güvenli. Gerçek DB hatası ayrı:
-   * update hatası (commit edilmiş olabilir, cevap kaybolmuş olabilir) SERVER_ERROR fırlatır;
+   * update hatası (commit edilmiş olabilir, cevap kaybolmuş olabilir) CasWriteUncertainError (SERVER_ERROR) fırlatır;
    * okumada satır yoksa (PGRST116) USER_NOT_FOUND, başka her okuma hatası SERVER_ERROR.
    */
   private async tryCasUpdate(
@@ -364,7 +372,7 @@ export class DiamondService {
         .maybeSingle();
 
       if (updateErr) {
-        throw Errors.SERVER_ERROR();
+        throw new CasWriteUncertainError();
       }
       if (updated) {
         return { before, after: updated as unknown as BalanceRow };
@@ -372,6 +380,17 @@ export class DiamondService {
       // guard tutmadı: okuma ile yazma arasına başka bir istek girdi — yeniden oku.
     }
     return null;
+  }
+
+  /** Kredi uygulanmadı: claim satırını sil ki istemci/RevenueCat yeniden deneyebilsin. */
+  private async releaseClaim(claimId: string, context: Record<string, unknown>): Promise<void> {
+    const { error } = await supabase.from("diamond_transactions").delete().eq("id", claimId);
+    console.error("[Diamond] addPurple credit NOT applied — claim row delete attempted", {
+      ...context,
+      claimId,
+      compensated: !error,
+      deleteError: error?.message ?? null,
+    });
   }
 
   private async logTransaction(

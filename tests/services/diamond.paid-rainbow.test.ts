@@ -118,8 +118,8 @@ describe('addPurple — CAS tükenmesi ve dayanıklılık', () => {
     expect(iapRows(fake)).toHaveLength(0);
     expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 3, purple_paid: 0 });
     expect(errorSpy).toHaveBeenCalledWith(
-      expect.stringContaining('CAS'),
-      expect.objectContaining({ userId: 'u1', referenceId: 'tx-cas' }),
+      '[Diamond] addPurple credit NOT applied — claim row delete attempted',
+      expect.objectContaining({ userId: 'u1', referenceId: 'tx-cas', cause: 'cas_exhausted' }),
     );
 
     await expect(diamondService.addPurple('u1', 50, 'IAP_PURCHASE', 'tx-cas', 50))
@@ -142,8 +142,8 @@ describe('addPurple — CAS tükenmesi ve dayanıklılık', () => {
     await expect(diamondService.addPurple('u1', 50, 'IAP_PURCHASE', 'tx-del', 50))
       .rejects.toMatchObject({ code: 'SERVER_ERROR' });
     expect(errorSpy).toHaveBeenCalledWith(
-      expect.stringContaining('CAS'),
-      expect.objectContaining({ userId: 'u1', referenceId: 'tx-del', deleteError: expect.any(String) }),
+      '[Diamond] addPurple credit NOT applied — claim row delete attempted',
+      expect.objectContaining({ userId: 'u1', referenceId: 'tx-del', deleteError: expect.any(String), cause: 'cas_exhausted' }),
     );
     errorSpy.mockRestore();
   });
