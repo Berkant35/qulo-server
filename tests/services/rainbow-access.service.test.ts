@@ -77,6 +77,28 @@ describe('rainbowAccessService.isEnabled', () => {
       vi.useRealTimers();
     }
   });
+
+  it('okuma hatasında DB her istekte dövülmez: 5 sn geri çekilir, sonra yeniden dener', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    try {
+      vi.setSystemTime(new Date('2026-09-27T12:00:00Z'));
+      const { fake, rainbowAccessService } = await setup({}, {
+        failOn: [{ table: 'reward_market_countries', op: 'select' }],
+      });
+      const reads = () => fake.queries.filter((q) => q.table === 'reward_market_countries').length;
+
+      await expect(rainbowAccessService.isEnabled(base, 'android')).resolves.toBe(false); // hiç başarılı okuma yok → kapalı
+      await rainbowAccessService.isEnabled(base, 'android');
+      await rainbowAccessService.isEnabled(base, 'android');
+      expect(reads()).toBe(1);
+
+      vi.setSystemTime(new Date('2026-09-27T12:00:05.001Z'));
+      await rainbowAccessService.isEnabled(base, 'android');
+      expect(reads()).toBe(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });
 
 describe('rainbowAccessService.isEnabledForUser', () => {

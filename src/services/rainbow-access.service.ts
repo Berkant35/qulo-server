@@ -23,6 +23,9 @@ interface MarketCountryRow {
 /** Ülke anahtarları nadiren değişir; admin değiştirince `invalidate()` çağrılır (Plan 2). */
 const CACHE_TTL_MS = 60_000;
 
+/** Okuma hatasında yeniden deneme aralığı: kesinti sırasında her istek DB'yi dövmesin. */
+const ERROR_RETRY_MS = 5_000;
+
 export class RainbowAccessService {
   private cache: { at: number; rows: MarketCountryRow[] } | null = null;
 
@@ -56,7 +59,7 @@ export class RainbowAccessService {
   /**
    * Market ülkelerini okur veya önbellekten döner.
    * Okuma başarısız olursa son başarılı satırlar sunulur (asla kimse açılmaz, admin hariç);
-   * henüz başarılı okuma olmadıysa başka türlü tümü kapalı kalır.
+   * henüz başarılı okuma olmadıysa başka türlü tümü kapalı kalır. Hata sonucu 5 sn önbellekte kalır.
    */
   private async countries(): Promise<MarketCountryRow[]> {
     if (this.cache && Date.now() - this.cache.at < CACHE_TTL_MS) return this.cache.rows;
@@ -67,8 +70,12 @@ export class RainbowAccessService {
 
     if (error) {
       // Fail-closed: okunamazsa market kimseye açılmaz (admin hariç); bayat önbellek varsa o.
+      // Sonuç ERROR_RETRY_MS boyunca önbellekte tutulur (TTL'in sonuna yaslanır) — kesinti sırasında
+      // her istek yeniden sorgu atmasın.
       console.error("[rainbow-access] countries read failed:", error.message);
-      return this.cache?.rows ?? [];
+      const rows = this.cache?.rows ?? [];
+      this.cache = { at: Date.now() - CACHE_TTL_MS + ERROR_RETRY_MS, rows };
+      return rows;
     }
 
     this.cache = { at: Date.now(), rows: (data ?? []) as MarketCountryRow[] };
