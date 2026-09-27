@@ -5,7 +5,7 @@ import { diamondService } from "./diamond.service.js";
 import { exchangeService } from "./exchange.service.js";
 import { matchingService } from "./matching.service.js";
 import { NotificationService } from "./notification.service.js";
-import { calculatePowerCost, calculateGreenReward, shuffleArray, pickOracleSuggestion, splitReward } from "../utils/math.js";
+import { calculatePowerCost, calculateGreenReward, shuffleArray, pickOracleSuggestion, powerReward, type RewardSplit } from "../utils/math.js";
 import {
   CHAT_QUESTION_POWERS_2,
   CHAT_QUESTION_POWERS_4,
@@ -195,6 +195,31 @@ export class ChatQuestionService {
     if (used) return 0;
     const { paidUsed } = await diamondService.spendPurple(userId, purpleCost, reason, referenceId);
     return paidUsed;
+  }
+
+  /* ── Helper: rewardSender ──────────────────────────────────────── */
+  /**
+   * Güç harcamasının ödülü soruyu gönderene: `powerReward` ile bölünür (ödenmiş payı RAINBOW,
+   * spec 2026-09-27 §2.3) ve yatırılır. Kredi hatası yutulur + loglanır (harcama geri alınmaz —
+   * mevcut davranış); bölünmüş ödül yanıt alanları için yine döner.
+   */
+  private async rewardSender(
+    senderId: string,
+    cost: number,
+    paidUsed: number,
+    ratio: number,
+    reason: string,
+    questionId: string,
+  ): Promise<RewardSplit> {
+    const reward = powerReward(cost, paidUsed, ratio);
+    if (reward.green + reward.rainbow > 0) {
+      try {
+        await diamondService.creditReward(senderId, reward, reason, questionId);
+      } catch (err) {
+        console.error(`[chat-question] ${reason} failed:`, err);
+      }
+    }
+    return reward;
   }
 
   /**
@@ -426,15 +451,7 @@ export class ChatQuestionService {
       const cost = calculatePowerCost(ecConfig.powerCosts.SKIP.purpleCost, 1, ecConfig.core.questionCountMultipliers);
       const paidUsed = await this.tryUseOrSpend(userId, "SKIP", cost, "chat_question_skip", questionId);
 
-      // Ödül gönderene: ödenmiş payı RAINBOW (spec 2026-09-27).
-      const reward = splitReward(calculateGreenReward(cost, ratio), paidUsed, ratio);
-      if (reward.green + reward.rainbow > 0) {
-        try {
-          await diamondService.creditReward(question.sender_id, reward, "CHAT_QUESTION_SKIP_REWARD", questionId);
-        } catch (err) {
-          console.error("[chat-question] Skip reward failed:", err);
-        }
-      }
+      const reward = await this.rewardSender(question.sender_id, cost, paidUsed, ratio, "CHAT_QUESTION_SKIP_REWARD", questionId);
 
       // Mark as correct (auto-fill correct answer)
       const { data: updated, error: updateErr } = await supabase
@@ -577,15 +594,7 @@ export class ChatQuestionService {
     const cost = calculatePowerCost(ecConfig2.powerCosts.SKIP.purpleCost, 1, ecConfig2.core.questionCountMultipliers);
     const paidUsed = await this.tryUseOrSpend(userId, "SKIP", cost, "chat_question_rescue", questionId);
 
-    // Ödül gönderene: ödenmiş payı RAINBOW (spec 2026-09-27).
-    const reward = splitReward(calculateGreenReward(cost, ratio2), paidUsed, ratio2);
-    if (reward.green + reward.rainbow > 0) {
-      try {
-        await diamondService.creditReward(question.sender_id as string, reward, "CHAT_QUESTION_RESCUE_REWARD", questionId);
-      } catch (err) {
-        console.error("[chat-question] Rescue reward failed:", err);
-      }
-    }
+    const reward = await this.rewardSender(question.sender_id as string, cost, paidUsed, ratio2, "CHAT_QUESTION_RESCUE_REWARD", questionId);
 
     // Override answer to correct
     const { data: updated, error: updateErr } = await supabase
@@ -721,16 +730,8 @@ export class ChatQuestionService {
       throw err;
     }
 
-    // Ödül gönderene: ödenmiş payı RAINBOW (spec 2026-09-27).
     const ratio3 = ecConfig3.core.greenDiamondRewardRatio;
-    const reward = splitReward(calculateGreenReward(cost, ratio3), paidUsed, ratio3);
-    if (reward.green + reward.rainbow > 0) {
-      try {
-        await diamondService.creditReward(question.sender_id as string, reward, "CHAT_QUESTION_POWER_REWARD", questionId);
-      } catch (err) {
-        console.error("[chat-question] Power reward failed:", err);
-      }
-    }
+    const reward = await this.rewardSender(question.sender_id as string, cost, paidUsed, ratio3, "CHAT_QUESTION_POWER_REWARD", questionId);
 
     // ── Apply power effect ──
     let powerResult: Omit<UsePowerResult, 'power_name' | 'power_result'> = {};

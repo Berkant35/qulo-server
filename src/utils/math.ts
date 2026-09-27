@@ -97,3 +97,12 @@ export function splitReward(total: number, paidUsed: number, ratio: number): Rew
   const rainbow = Math.min(total, Math.floor(Math.max(0, paidUsed) * ratio));
   return { green: total - rainbow, rainbow };
 }
+
+/**
+ * Güç ödülü — TEK giriş noktası (spec 2026-09-27 §2.3): toplam bugünkü formül
+ * (`calculateGreenReward(cost, ratio)`), ödenmiş harcamanın payı rainbow, kalanı yeşil.
+ * Beş bölünen çağrı noktası (quiz gücü/kurtarma, sohbet SKIP/RESCUE/POWER) bunu kullanır.
+ */
+export function powerReward(cost: number, paidUsed: number, ratio: number): RewardSplit {
+  return splitReward(calculateGreenReward(cost, ratio), paidUsed, ratio);
+}

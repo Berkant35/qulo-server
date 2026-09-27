@@ -2,7 +2,7 @@ import { supabase } from "../config/supabase.js";
 import { resolveLocale } from '../utils/locales.js';
 import { questionLocale } from "../constants/locales.js";
 import { Errors } from "../utils/errors.js";
-import { calculatePowerCost, calculateGreenReward, shuffleArray, pickOracleSuggestion, splitReward } from "../utils/math.js";
+import { calculatePowerCost, calculateGreenReward, shuffleArray, pickOracleSuggestion, powerReward } from "../utils/math.js";
 import { diamondService } from "./diamond.service.js";
 import { exchangeService } from "./exchange.service.js";
 import { economyConfigService } from "./economy-config.service.js";
@@ -79,6 +79,16 @@ export class QuizService {
    * kullanim `config.powerCosts` okuyordu — iki ayri drift kaynagi kapatildi.
    */
   private async sessionPowerCosts(totalQuestions: number): Promise<Record<string, SessionPowerCost>> {
+    return (await this.sessionPowerPricing(totalQuestions)).costs;
+  }
+
+  /**
+   * Fiyat listesi + ödül bölme oranı TEK config okumasından: ücretlendirme ve ödül aynı config
+   * sürümünü görür (eskiden oran ikinci kez okunuyordu — arada sürüm değişirse ayrışabilirdi).
+   */
+  private async sessionPowerPricing(
+    totalQuestions: number,
+  ): Promise<{ costs: Record<string, SessionPowerCost>; ratio: number }> {
     const config = await economyConfigService.getConfig();
     const multipliers = config.core.questionCountMultipliers;
     const ratio = config.core.greenDiamondRewardRatio;
@@ -88,12 +98,7 @@ export class QuizService {
       const purple = calculatePowerCost(entry.purpleCost, totalQuestions, multipliers);
       costs[name] = { purple, green: calculateGreenReward(purple, ratio) };
     }
-    return costs;
-  }
-
-  /** Ödül bölme oranı — toplam ödülle aynı oran (core.greenDiamondRewardRatio). */
-  private async rewardRatio(): Promise<number> {
-    return (await economyConfigService.getConfig()).core.greenDiamondRewardRatio;
+    return { costs, ratio };
   }
 
   /**
@@ -380,12 +385,12 @@ export class QuizService {
         const usedFromInventory = await exchangeService.tryUseInventory(solverId, powerUsed);
 
         if (!usedFromInventory) {
-          const { purple: cost, green: total } =
-            (await this.sessionPowerCosts(session.total_questions))[powerUsed];
+          const { costs, ratio } = await this.sessionPowerPricing(session.total_questions);
+          const cost = costs[powerUsed].purple;
 
           // Önce ödenmiş mor düşer; ödenmiş payı hedefte RAINBOW olur (spec 2026-09-27).
           const { paidUsed } = await diamondService.spendPurple(solverId, cost, `POWER_USED:${powerUsed}`, sessionId);
-          const reward = splitReward(total, paidUsed, await this.rewardRatio());
+          const reward = powerReward(cost, paidUsed, ratio);
           await diamondService.creditReward(session.target_id, reward, `POWER_REWARD:${powerUsed}`, sessionId);
 
           // Soru istatistiği yalnız yeşil payı sayar (rainbow ayrı elmas).
@@ -894,11 +899,11 @@ export class QuizService {
     if (!usedFromInventory) {
       // TEK DOGRU KAYNAK — eskiden burasi `powers.base_cost`, normal guc kullanimi ise
       // `config.powerCosts` okuyordu (bkz. sessionPowerCosts).
-      const { purple: cost, green: total } =
-        (await this.sessionPowerCosts(session.total_questions))[powerType];
+      const { costs, ratio } = await this.sessionPowerPricing(session.total_questions);
+      const cost = costs[powerType].purple;
 
       const { paidUsed } = await diamondService.spendPurple(solverId, cost, `POWER_USED:${powerType}_RESCUE`, sessionId);
-      const reward = splitReward(total, paidUsed, await this.rewardRatio());
+      const reward = powerReward(cost, paidUsed, ratio);
       await diamondService.creditReward(session.target_id, reward, `POWER_REWARD:${powerType}_RESCUE`, sessionId);
     }
 

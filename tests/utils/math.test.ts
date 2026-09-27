@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { pickOracleSuggestion, paidPortion, splitReward } from '../../src/utils/math.js';
+import { pickOracleSuggestion, paidPortion, splitReward, powerReward } from '../../src/utils/math.js';
 
 /**
  * ORACLE seciminin degismezleri. Gercek `Math.random` ile 100 tekrar: mock yok,
@@ -67,5 +67,32 @@ describe('splitReward — toplam bugünkü formül, ödenmiş payı rainbow', ()
   });
   it('negatif ödenmiş 0 sayılır', () => {
     expect(splitReward(3, -5, 0.3)).toEqual({ green: 3, rainbow: 0 });
+  });
+});
+
+/**
+ * Güç ödülünün TEK giriş noktası (F7): toplam = floor(cost × ratio) (bugünkü formül),
+ * rainbow = min(toplam, floor(paidUsed × ratio)), yeşil = kalan. Beş çağrı noktası bunu kullanır.
+ */
+describe('powerReward', () => {
+  it('bedava harcama: tamamı yeşil', () => {
+    expect(powerReward(40, 0, 0.25)).toEqual({ green: 10, rainbow: 0 });
+  });
+
+  it('kısmen ödenmiş: ödenmiş payı rainbow', () => {
+    expect(powerReward(40, 20, 0.25)).toEqual({ green: 5, rainbow: 5 });
+  });
+
+  it('tamamı ödenmiş: tamamı rainbow', () => {
+    expect(powerReward(40, 40, 0.25)).toEqual({ green: 0, rainbow: 10 });
+  });
+
+  it('paidUsed maliyeti aşsa da rainbow toplamı aşamaz', () => {
+    expect(powerReward(40, 100, 0.25)).toEqual({ green: 0, rainbow: 10 });
+  });
+
+  it('yuvarlama: toplam ve rainbow ayrı ayrı aşağı', () => {
+    expect(powerReward(7, 3, 0.3)).toEqual({ green: 2, rainbow: 0 }); // toplam floor(2.1)=2, rainbow floor(0.9)=0
+    expect(powerReward(14, 7, 0.3)).toEqual({ green: 2, rainbow: 2 }); // toplam floor(4.2)=4, rainbow floor(2.1)=2
   });
 });
