@@ -130,6 +130,19 @@ describe('rewardsQueueService.listRedemptions', () => {
     expect((await rewardsQueueService.listRedemptions({ status: 'ALL', q: '%', page: 1 })).items).toEqual([]);
   });
 
+  it('kullanıcı filtresi (kullanıcı detayından): yalnız o kullanıcının talepleri', async () => {
+    const { rewardsQueueService } = await setup({
+      users: [user(), user({ id: 'u2', email: 'ayse@example.com' })],
+      reward_redemptions: [
+        redemption({ id: 'r1', idempotency_key: 'k1-000000' }),
+        redemption({ id: 'r2', user_id: 'u2', idempotency_key: 'k2-000000' }),
+      ],
+    });
+    const page = await rewardsQueueService.listRedemptions({ status: 'ALL', user: 'u2', page: 1 });
+    expect(page.items.map((r) => r.id)).toEqual(['r2']);
+    expect(page.total).toBe(1);
+  });
+
   it('aynı anda açılan talepler id ile kararlı sıralanır (sayfa sınırında kayma/tekrar yok)', async () => {
     const { rewardsQueueService } = await setup({
       users: [user()],

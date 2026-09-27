@@ -74,11 +74,16 @@ export const rejectSchema = z.object({
   reject_reason: z.preprocess(trimmed, z.string().min(1).max(500)),
 });
 
+/** Admin `:id` parametresi (ürün/talep): uuid değilse servis hiç çağrılmaz. */
+export const adminIdParamSchema = z.string().uuid();
+
 /** Admin liste filtreleri: bozuk değer sayfayı patlatmaz, varsayılana düşer. */
 export const adminRedemptionsQuerySchema = z.object({
   status: z.enum(["PENDING", "FULFILLED", "REJECTED", "ALL"]).catch("PENDING"),
   q: optionalText(100).catch(undefined),
   country: optionalCountry,
+  /** Kullanıcı detayından gelen kesin kullanıcı filtresi (e-posta alt dizgesi değil). */
+  user: z.preprocess(emptyToUndefined, z.string().uuid().optional()).catch(undefined),
   page: pageParam,
 });
 

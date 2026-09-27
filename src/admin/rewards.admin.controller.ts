@@ -8,6 +8,7 @@ import { economyConfigService } from "../services/economy-config.service.js";
 import {
   REWARD_BRANDS,
   adminCatalogQuerySchema,
+  adminIdParamSchema,
   adminRedemptionsQuerySchema,
   catalogItemSchema,
   countrySwitchSchema,
@@ -66,6 +67,15 @@ function flash(req: Request) {
     notice: messageFor(REWARDS_NOTICES, req.query.notice),
   };
 }
+
+/** `:id` uuid değilse null: servis (ve PostgREST'in uuid dönüşüm hatası → 500) hiç çağrılmaz. */
+function idParam(req: Request): string | null {
+  const parsed = adminIdParamSchema.safeParse(req.params.id);
+  return parsed.success ? parsed.data : null;
+}
+
+const CATALOG_UNAVAILABLE = "/admin/rewards/catalog?error=item_unavailable";
+const REDEMPTION_NOT_FOUND = "/admin/rewards/redemptions?error=not_found";
 
 function issues(error: ZodError): string {
   return error.errors.map((e) => `${e.path.join(".")}: ${e.message}`).join(" · ");
@@ -147,9 +157,11 @@ class RewardsAdminController {
   }
 
   async catalogEdit(req: Request, res: Response) {
+    const id = idParam(req);
+    if (!id) return res.redirect(CATALOG_UNAVAILABLE);
     try {
-      const item = await rewardsCatalogAdminService.getCatalogItem(String(req.params.id));
-      if (!item) return res.redirect("/admin/rewards/catalog?error=item_unavailable");
+      const item = await rewardsCatalogAdminService.getCatalogItem(id);
+      if (!item) return res.redirect(CATALOG_UNAVAILABLE);
       await this.renderEdit(req, res, item, null);
     } catch (err) {
       res.redirect(`/admin/rewards/catalog?error=${rewardsErrorCode(err, "catalogEdit")}`);
@@ -168,7 +180,8 @@ class RewardsAdminController {
   }
 
   async catalogUpdate(req: Request, res: Response) {
-    const id = String(req.params.id);
+    const id = idParam(req);
+    if (!id) return res.redirect(CATALOG_UNAVAILABLE);
     const parsed = catalogItemSchema.safeParse(req.body);
     if (!parsed.success) return this.renderEdit(req, res, formValues(req.body, id), issues(parsed.error), 400);
     try {
@@ -180,8 +193,10 @@ class RewardsAdminController {
   }
 
   async catalogSetActive(req: Request, res: Response) {
+    const id = idParam(req);
+    if (!id) return res.redirect(CATALOG_UNAVAILABLE);
     try {
-      await rewardsCatalogAdminService.setCatalogActive(String(req.params.id), req.body.active === "1");
+      await rewardsCatalogAdminService.setCatalogActive(id, req.body.active === "1");
       res.redirect("/admin/rewards/catalog?notice=saved");
     } catch (err) {
       res.redirect(`/admin/rewards/catalog?error=${rewardsErrorCode(err, "catalogSetActive")}`);
@@ -189,8 +204,10 @@ class RewardsAdminController {
   }
 
   async catalogDelete(req: Request, res: Response) {
+    const id = idParam(req);
+    if (!id) return res.redirect(CATALOG_UNAVAILABLE);
     try {
-      await rewardsCatalogAdminService.softDeleteCatalogItem(String(req.params.id));
+      await rewardsCatalogAdminService.softDeleteCatalogItem(id);
       res.redirect("/admin/rewards/catalog?notice=deleted");
     } catch (err) {
       res.redirect(`/admin/rewards/catalog?error=${rewardsErrorCode(err, "catalogDelete")}`);
@@ -200,13 +217,15 @@ class RewardsAdminController {
   async redemptions(req: Request, res: Response) {
     const filter = adminRedemptionsQuerySchema.parse(req.query);
     try {
-      const [page, countries] = await Promise.all([
+      const [{ rainbow }, page, countries] = await Promise.all([
+        economyConfigService.getConfig(),
         rewardsQueueService.listRedemptions(filter),
         rewardsCatalogAdminService.listCountries(),
       ]);
       res.render("rewards-redemptions", {
         rows: page.items, filter, total: page.total, page: page.page,
         totalPages: Math.max(1, Math.ceil(page.total / page.pageSize)),
+        monthlyCap: rainbow.monthlyRedeemCap,
         countries, ...flash(req), active: "redemptions",
         session: req.session, csrfToken: req.session.csrfToken,
       });
@@ -217,10 +236,12 @@ class RewardsAdminController {
   }
 
   async fulfill(req: Request, res: Response) {
+    const id = idParam(req);
+    if (!id) return res.redirect(REDEMPTION_NOT_FOUND);
     const parsed = fulfillSchema.safeParse(req.body);
     if (!parsed.success) return res.redirect("/admin/rewards/redemptions?error=invalid_input");
     try {
-      await rewardsQueueService.fulfill(String(req.params.id), parsed.data, req.session.adminId!);
+      await rewardsQueueService.fulfill(id, parsed.data, req.session.adminId!);
       res.redirect("/admin/rewards/redemptions?notice=fulfilled");
     } catch (err) {
       res.redirect(`/admin/rewards/redemptions?error=${rewardsErrorCode(err, "fulfill")}`);
@@ -228,10 +249,12 @@ class RewardsAdminController {
   }
 
   async reject(req: Request, res: Response) {
+    const id = idParam(req);
+    if (!id) return res.redirect(REDEMPTION_NOT_FOUND);
     const parsed = rejectSchema.safeParse(req.body);
     if (!parsed.success) return res.redirect("/admin/rewards/redemptions?error=invalid_input");
     try {
-      const { refunded } = await rewardsQueueService.reject(String(req.params.id), parsed.data.reject_reason, req.session.adminId!);
+      const { refunded } = await rewardsQueueService.reject(id, parsed.data.reject_reason, req.session.adminId!);
       res.redirect(`/admin/rewards/redemptions?notice=${refunded ? "rejected" : "rejected_no_refund"}`);
     } catch (err) {
       res.redirect(`/admin/rewards/redemptions?error=${rewardsErrorCode(err, "reject")}`);

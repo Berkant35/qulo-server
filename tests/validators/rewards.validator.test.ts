@@ -8,6 +8,7 @@ import {
   rejectSchema,
   adminRedemptionsQuerySchema,
   adminCatalogQuerySchema,
+  adminIdParamSchema,
 } from '../../src/validators/rewards.validator.js';
 
 const UUID = '3f1c9a52-7d7e-4b8e-9d6a-1b2c3d4e5f60';
@@ -107,5 +108,17 @@ describe('admin sorgu şemaları', () => {
     expect(adminCatalogQuerySchema.parse({ brand: 'DANA', country: 'ID', status: 'inactive', page: '2' })).toEqual({
       brand: 'DANA', country: 'ID', status: 'inactive', page: 2,
     });
+  });
+
+  it('kullanıcı filtresi yalnız uuid: bozuk/boş değer düşer (sayfa patlamaz), geçerli uuid korunur', () => {
+    expect(adminRedemptionsQuerySchema.parse({ status: 'ALL', user: UUID })).toMatchObject({ user: UUID });
+    expect(adminRedemptionsQuerySchema.parse({ status: 'ALL', user: "x' or 1=1" }).user).toBeUndefined();
+    expect(adminRedemptionsQuerySchema.parse({ status: 'ALL', user: '' }).user).toBeUndefined();
+  });
+
+  it('admin :id parametresi uuid olmalı', () => {
+    expect(adminIdParamSchema.safeParse(UUID).success).toBe(true);
+    expect(adminIdParamSchema.safeParse('r1').success).toBe(false);
+    expect(adminIdParamSchema.safeParse(undefined).success).toBe(false);
   });
 });

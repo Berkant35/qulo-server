@@ -139,8 +139,8 @@ describe('katalog', () => {
   it('aktiflik formu istenen durumu gönderir (active=0 → false)', async () => {
     const { rewardsAdminController, rewardsAdminService } = await setup();
     const res = fakeRes();
-    await rewardsAdminController.catalogSetActive(req({ params: { id: 'a' }, body: { active: '0' } }), res);
-    expect(rewardsAdminService.setCatalogActive).toHaveBeenCalledWith('a', false);
+    await rewardsAdminController.catalogSetActive(req({ params: { id: RID }, body: { active: '0' } }), res);
+    expect(rewardsAdminService.setCatalogActive).toHaveBeenCalledWith(RID, false);
   });
 });
 
@@ -148,7 +148,7 @@ describe('talepler', () => {
   it('kod da link de yoksa teslim formu servise gitmez', async () => {
     const { rewardsAdminController, rewardsAdminService } = await setup();
     const res = fakeRes();
-    await rewardsAdminController.fulfill(req({ params: { id: 'r1' }, body: { delivery_code: ' ' } }), res);
+    await rewardsAdminController.fulfill(req({ params: { id: RID }, body: { delivery_code: ' ' } }), res);
     expect(rewardsAdminService.fulfill).not.toHaveBeenCalled();
     expect(res.redirectedTo).toBe('/admin/rewards/redemptions?error=invalid_input');
   });
@@ -159,9 +159,9 @@ describe('talepler', () => {
       fulfill: vi.fn(async () => { throw new AppError('REWARD_ALREADY_DECIDED', 409); }),
     });
     const res = fakeRes();
-    await rewardsAdminController.fulfill(req({ params: { id: 'r1' }, body: { delivery_code: 'GRAB-1' } }), res);
+    await rewardsAdminController.fulfill(req({ params: { id: RID }, body: { delivery_code: 'GRAB-1' } }), res);
 
-    expect(rewardsAdminService.fulfill).toHaveBeenCalledWith('r1', expect.objectContaining({ delivery_code: 'GRAB-1' }), 'adm1');
+    expect(rewardsAdminService.fulfill).toHaveBeenCalledWith(RID, expect.objectContaining({ delivery_code: 'GRAB-1' }), 'adm1');
     expect(res.redirectedTo).toBe('/admin/rewards/redemptions?error=already_decided');
   });
 
@@ -171,7 +171,7 @@ describe('talepler', () => {
       reject: vi.fn(async () => { throw new AppError('REWARD_REFUND_FAILED', 500); }),
     });
     const res = fakeRes();
-    await rewardsAdminController.reject(req({ params: { id: 'r1' }, body: { reject_reason: 'stok yok' } }), res);
+    await rewardsAdminController.reject(req({ params: { id: RID }, body: { reject_reason: 'stok yok' } }), res);
     expect(res.redirectedTo).toBe('/admin/rewards/redemptions?error=refund_failed');
   });
 
@@ -179,7 +179,7 @@ describe('talepler', () => {
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const { rewardsAdminController } = await setup({ reject: vi.fn(async () => { throw new Error('boom'); }) });
     const res = fakeRes();
-    await rewardsAdminController.reject(req({ params: { id: 'r1' }, body: { reject_reason: 'x' } }), res);
+    await rewardsAdminController.reject(req({ params: { id: RID }, body: { reject_reason: 'x' } }), res);
     expect(res.redirectedTo).toBe('/admin/rewards/redemptions?error=failed');
     expect(errorSpy).toHaveBeenCalled();
     errorSpy.mockRestore();
@@ -223,5 +223,35 @@ describe('talepler', () => {
     expect(REWARDS_NOTICES.rejected_no_refund).toBe(
       'Talep reddedildi (iade yok: hesap silinmiş ya da Rainbow zaten iade edilmiş).',
     );
+  });
+
+  it('liste: aylık tavan görünüme gider (tavan aşımı rozeti), kullanıcı filtresi servise geçer', async () => {
+    const { rewardsAdminController, rewardsAdminService } = await setup();
+    const res = fakeRes();
+    await rewardsAdminController.redemptions(req({ query: { status: 'ALL', user: RID } }), res);
+
+    expect(res.rendered.view).toBe('rewards-redemptions');
+    expect(res.rendered.locals.monthlyCap).toBe(150);
+    expect(rewardsAdminService.listRedemptions).toHaveBeenCalledWith(expect.objectContaining({ status: 'ALL', user: RID }));
+  });
+});
+
+describe('admin :id parametresi (uuid değilse servis çağrılmaz)', () => {
+  it.each([
+    ['catalogEdit', {}, 'getCatalogItem', '/admin/rewards/catalog?error=item_unavailable'],
+    ['catalogUpdate', { brand_key: 'GRAB', country_code: 'TH', face_value: '50', rainbow_price: '51' }, 'updateCatalogItem', '/admin/rewards/catalog?error=item_unavailable'],
+    ['catalogSetActive', { active: '1' }, 'setCatalogActive', '/admin/rewards/catalog?error=item_unavailable'],
+    ['catalogDelete', {}, 'softDeleteCatalogItem', '/admin/rewards/catalog?error=item_unavailable'],
+    ['fulfill', { delivery_code: 'GRAB-1' }, 'fulfill', '/admin/rewards/redemptions?error=not_found'],
+    ['reject', { reject_reason: 'stok yok' }, 'reject', '/admin/rewards/redemptions?error=not_found'],
+  ] as const)('%s: bozuk id → yönlendirme, servis çağrılmaz', async (action, body, serviceMethod, target) => {
+    const { rewardsAdminController, rewardsAdminService } = await setup();
+    const res = fakeRes();
+    await (rewardsAdminController[action] as (rq: unknown, rs: unknown) => Promise<void>)(
+      req({ params: { id: "1' or '1'='1" }, body }),
+      res,
+    );
+    expect(res.redirectedTo).toBe(target);
+    expect(rewardsAdminService[serviceMethod]).not.toHaveBeenCalled();
   });
 });

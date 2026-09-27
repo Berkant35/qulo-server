@@ -109,6 +109,7 @@ export class RewardsQueueService {
     let query = supabase.from("reward_redemptions").select(QUEUE_COLUMNS, { count: "exact" });
     if (filter.status !== "ALL") query = query.eq("status", filter.status);
     if (filter.country) query = query.eq("country_code", filter.country);
+    if (filter.user) query = query.eq("user_id", filter.user);
     if (userFilter) query = query.in("user_id", userFilter);
 
     // `id` eşitlik bozucu: aynı anda açılan talepler sayfa sınırında kaymasın/tekrarlanmasın.

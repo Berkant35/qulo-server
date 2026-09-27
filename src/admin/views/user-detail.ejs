@@ -63,7 +63,7 @@
     </div>
     <% } %>
     <% if (session.adminRole === 'SUPER_ADMIN') { %>
-    <div style="font-size:12px; margin-bottom:8px;"><a href="/admin/rewards/redemptions?status=ALL&q=<%= encodeURIComponent(user.email || '') %>" style="color:#a855f7;">Rainbow hediye kartı talepleri &rarr;</a></div>
+    <div style="font-size:12px; margin-bottom:8px;"><a href="/admin/rewards/redemptions?status=ALL&user=<%= encodeURIComponent(user.id) %>" style="color:#a855f7;">Rainbow hediye kartı talepleri &rarr;</a></div>
     <% } %>
     <div style="display:flex; gap:8px;">
       <% if (user.is_banned) { %>
