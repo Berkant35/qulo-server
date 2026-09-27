@@ -2,7 +2,14 @@ import { randomUUID } from "crypto";
 import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
 import type { ClientPlatform } from "../utils/client-meta.js";
-import { accountAgeDays, CAP_STATUSES, monthStartUtc } from "../utils/rewards.js";
+import {
+  accountAgeDays,
+  CAP_STATUSES,
+  monthStartUtc,
+  redemptionReference,
+  REWARD_REDEEM_REASON,
+  REWARD_REFUND_REASON,
+} from "../utils/rewards.js";
 import type { RedemptionStatus, RewardBrand } from "../validators/rewards.validator.js";
 import { diamondService } from "./diamond.service.js";
 import { economyConfigService } from "./economy-config.service.js";
@@ -62,10 +69,6 @@ export interface RedeemResult {
   /** İşlemden sonraki rainbow bakiyesi. */
   balance: number;
 }
-
-/** Defter reason'ları; referans `redemption:<talep id>` (itfa ve iade aynı referansı taşır). */
-const REDEEM_REASON = "REWARD_REDEEM";
-const REFUND_REASON = "REWARD_REFUND";
 
 /** PostgREST numeric'i sayı döner; yine de tek yerde `Number` ile sabitlenir. */
 function toMarketItem(row: MarketItem): MarketItem {
@@ -185,9 +188,9 @@ export class RewardsMarketService {
     }
 
     const redemptionId = randomUUID();
-    const reference = `redemption:${redemptionId}`;
+    const reference = redemptionReference(redemptionId);
     // Yetersizse INSUFFICIENT_DIAMONDS — hiçbir şey yazılmaz.
-    const { rainbow: balance } = await diamondService.spendRainbow(userId, item.rainbow_price, REDEEM_REASON, reference);
+    const { rainbow: balance } = await diamondService.spendRainbow(userId, item.rainbow_price, REWARD_REDEEM_REASON, reference);
 
     const { data, error } = await supabase
       .from("reward_redemptions")
@@ -270,7 +273,7 @@ export class RewardsMarketService {
   /** Telafi de başarısız olursa rainbow düşmüş, talep yok: defterdeki REWARD_REDEEM satırı elle kurtarma izi. */
   private async refundUnrecorded(userId: string, amount: number, reference: string): Promise<void> {
     try {
-      await diamondService.earnRainbow(userId, amount, REFUND_REASON, reference);
+      await diamondService.earnRainbow(userId, amount, REWARD_REFUND_REASON, reference);
     } catch (err) {
       console.error("[rewards] CRITICAL: redemption insert failed AND refund failed", { userId, amount, reference, err });
     }

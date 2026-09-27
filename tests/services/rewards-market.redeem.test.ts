@@ -6,6 +6,7 @@ import {
   type Tables,
 } from '../helpers/fake-supabase.js';
 import { activeConfigRow } from '../helpers/economy-config.fixture.js';
+import { redemptionReference, REWARD_REDEEM_REASON, REWARD_REFUND_REASON } from '../../src/utils/rewards.js';
 
 const NOW = new Date('2026-09-27T12:00:00Z');
 const KEY = '11111111-1111-4111-8111-111111111111';
@@ -82,7 +83,7 @@ describe('rewardsMarketService.redeem — mutlu yol', () => {
     });
     expect(fake.table('diamond_transactions')).toEqual([
       expect.objectContaining({
-        type: 'RAINBOW', amount: -51, reason: 'REWARD_REDEEM', reference_id: `redemption:${result.redemption.id}`,
+        type: 'RAINBOW', amount: -51, reason: REWARD_REDEEM_REASON, reference_id: redemptionReference(result.redemption.id),
       }),
     ]);
   });
@@ -201,7 +202,7 @@ describe('rewardsMarketService.redeem — telafi', () => {
 
     expect(fake.table('users')[0].rainbow_diamonds).toBe(200);
     const ledger = fake.table('diamond_transactions');
-    expect(ledger.map((t) => [t.amount, t.reason])).toEqual([[-51, 'REWARD_REDEEM'], [51, 'REWARD_REFUND']]);
+    expect(ledger.map((t) => [t.amount, t.reason])).toEqual([[-51, REWARD_REDEEM_REASON], [51, REWARD_REFUND_REASON]]);
     expect(ledger[0].reference_id).toBe(ledger[1].reference_id);
     errorSpy.mockRestore();
   });
@@ -223,7 +224,7 @@ describe('rewardsMarketService.redeem — telafi', () => {
     expect(result.redemption.id).toBe('r-winner');
     expect(fake.table('reward_redemptions')).toHaveLength(1);
     expect(fake.table('users')[0].rainbow_diamonds).toBe(200);
-    expect(fake.table('diamond_transactions').map((t) => t.reason)).toEqual(['REWARD_REDEEM', 'REWARD_REFUND']);
+    expect(fake.table('diamond_transactions').map((t) => t.reason)).toEqual([REWARD_REDEEM_REASON, REWARD_REFUND_REASON]);
   });
 
   it('farklı anahtarla ikinci talep ayrı talep açar', async () => {
@@ -246,7 +247,7 @@ describe('rewardsMarketService.redeem — telafi', () => {
     expect(fake.table('reward_redemptions')).toHaveLength(1);
     expect(fake.table('reward_redemptions')[0].idempotency_key).toBe(KEY);
     expect(fake.table('users')[0].rainbow_diamonds).toBe(149);
-    expect(fake.table('diamond_transactions').map((t) => t.reason)).toEqual(['REWARD_REDEEM']);
+    expect(fake.table('diamond_transactions').map((t) => t.reason)).toEqual([REWARD_REDEEM_REASON]);
   });
 
   it('talep yazılamaz VE anahtar sorgusu da patlarsa: durum belirsiz, iade YAPILMAZ, SERVER_ERROR', async () => {
@@ -265,7 +266,7 @@ describe('rewardsMarketService.redeem — telafi', () => {
     await expect(rewardsMarketService.redeem('u1', input(), 'android')).rejects.toMatchObject({ code: 'SERVER_ERROR' });
 
     expect(fake.table('users')[0].rainbow_diamonds).toBe(149);
-    expect(fake.table('diamond_transactions').map((t) => t.reason)).toEqual(['REWARD_REDEEM']);
+    expect(fake.table('diamond_transactions').map((t) => t.reason)).toEqual([REWARD_REDEEM_REASON]);
     expect(fake.table('reward_redemptions')).toHaveLength(0);
     errorSpy.mockRestore();
   });

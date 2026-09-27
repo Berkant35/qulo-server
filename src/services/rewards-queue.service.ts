@@ -2,7 +2,14 @@ import { supabase } from "../config/supabase.js";
 import type { Page } from "../types/pagination.js";
 import { Errors } from "../utils/errors.js";
 import { fetchAll } from "../utils/fetch-all.js";
-import { CAP_STATUSES, deliveryHost, maskDeliveryCode, monthStartUtc } from "../utils/rewards.js";
+import {
+  CAP_STATUSES,
+  deliveryHost,
+  maskDeliveryCode,
+  monthStartUtc,
+  redemptionReference,
+  REWARD_REFUND_REASON,
+} from "../utils/rewards.js";
 import type {
   AdminRedemptionsQuery,
   FulfillInput,
@@ -170,7 +177,7 @@ export class RewardsQueueService {
     if (!decided.user_id) return; // hesap kalıcı silinmiş: iade edilecek bakiye yok
 
     try {
-      await diamondService.earnRainbow(decided.user_id, decided.rainbow_price, "REWARD_REFUND", `redemption:${id}`);
+      await diamondService.earnRainbow(decided.user_id, decided.rainbow_price, REWARD_REFUND_REASON, redemptionReference(id));
     } catch (err) {
       // Hata "hiç yazılmadı" mı yoksa "bakiye yazıldı, defter satırı düşmedi" mi ayırt edilemiyor
       // (earnRainbow önce CAS bakiye, sonra defter yazıyor) — elle düzeltme için en iyi çaba teşhis.
@@ -293,8 +300,8 @@ export class RewardsQueueService {
       const { data, error } = await supabase
         .from("diamond_transactions")
         .select("id")
-        .eq("reference_id", `redemption:${redemptionId}`)
-        .eq("reason", "REWARD_REFUND")
+        .eq("reference_id", redemptionReference(redemptionId))
+        .eq("reason", REWARD_REFUND_REASON)
         .limit(1)
         .maybeSingle();
       if (error) return null;

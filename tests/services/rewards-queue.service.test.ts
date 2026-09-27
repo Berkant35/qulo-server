@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createFakeSupabase, type Tables, type FakeSupabaseOptions } from '../helpers/fake-supabase.js';
+import { redemptionReference, REWARD_REFUND_REASON } from '../../src/utils/rewards.js';
 
 const NOW = new Date('2026-09-27T12:00:00Z');
 
@@ -194,7 +195,7 @@ describe('rewardsQueueService.reject', () => {
     });
     expect(fake.table('users')[0].rainbow_diamonds).toBe(151);
     expect(fake.table('diamond_transactions')).toEqual([
-      expect.objectContaining({ type: 'RAINBOW', amount: 51, reason: 'REWARD_REFUND', reference_id: 'redemption:r1' }),
+      expect.objectContaining({ type: 'RAINBOW', amount: 51, reason: REWARD_REFUND_REASON, reference_id: redemptionReference('r1') }),
     ]);
   });
 

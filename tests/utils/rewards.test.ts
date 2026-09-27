@@ -5,6 +5,9 @@ import {
   suggestedRainbowPrice,
   maskDeliveryCode,
   deliveryHost,
+  redemptionReference,
+  REWARD_REDEEM_REASON,
+  REWARD_REFUND_REASON,
 } from '../../src/utils/rewards.js';
 
 describe('monthStartUtc', () => {
@@ -74,5 +77,18 @@ describe('deliveryHost', () => {
     ['https://sub.example.co:8443/path', 'sub.example.co'],
   ])('%s → %s (link taşıyıcı kimlik bilgisi: yalnız host)', (url, host) => {
     expect(deliveryHost(url as string | null | undefined)).toBe(host);
+  });
+});
+
+describe('defter sözleşmesi (itfa + iade tek kaynak)', () => {
+  it('reason değerleri defterdeki sabit dizgeler (mevcut satırlar bunlarla yazıldı)', () => {
+    expect(REWARD_REDEEM_REASON).toBe('REWARD_REDEEM');
+    expect(REWARD_REFUND_REASON).toBe('REWARD_REFUND');
+  });
+
+  it('itfa ve iade aynı talep referansını taşır: redemption:<id>', () => {
+    expect(redemptionReference('3f1c9a52-7d7e-4b8e-9d6a-1b2c3d4e5f60')).toBe(
+      'redemption:3f1c9a52-7d7e-4b8e-9d6a-1b2c3d4e5f60',
+    );
   });
 });

@@ -6,6 +6,15 @@
 /** Aylık tavana sayılan talep durumları. Reddedilen talep iade edildiği için sayılmaz. */
 export const CAP_STATUSES = ["PENDING", "FULFILLED"] as const;
 
+/** Defter reason'ları — itfa (market) ve iade (market telafisi + backoffice reddi) buradan okur. */
+export const REWARD_REDEEM_REASON = "REWARD_REDEEM";
+export const REWARD_REFUND_REASON = "REWARD_REFUND";
+
+/** İtfa ve iade satırlarının ortak defter referansı: talebe bağlı iz (elle kurtarma bununla aranır). */
+export function redemptionReference(redemptionId: string): string {
+  return `redemption:${redemptionId}`;
+}
+
 const DAY_MS = 86_400_000;
 
 /** Tavan "bu takvim ayı": UTC ayının ilk anı (sunucu saat diliminden bağımsız). */
