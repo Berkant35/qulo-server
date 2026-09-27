@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createFakeSupabase, type Tables, type FakeSupabaseOptions } from '../helpers/fake-supabase.js';
 import { activeConfigRow } from '../helpers/economy-config.fixture.js';
 
@@ -64,6 +64,12 @@ const flagged = (fake: { table(n: string): Array<Record<string, unknown>> }) =>
 
 beforeEach(() => {
   vi.resetModules();
+  // "consumable refund processed" / sandbox logları test çıktısını boğmasın.
+  vi.spyOn(console, 'log').mockImplementation(() => {});
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
 });
 
 describe('tüketilebilir iade (CANCELLATION)', () => {
@@ -75,11 +81,96 @@ describe('tüketilebilir iade (CANCELLATION)', () => {
     expect(u1.purple_diamonds).toBe(250);
     expect(u1.purple_paid).toBe(50);
     expect(flagged(fake).sort()).toEqual(['u1', 'u2']);
+    // Kalıcı iz: negatif = bu iadenin geri aldığı ödenmiş mor (bakiye değişmedi).
     expect(fake.table('iap_transactions')).toEqual([
       expect.objectContaining({
         user_id: 'u1', transaction_id: 'refund:tx-9', rc_event_type: 'CANCELLATION', store: 'apple', amount_usd: -4.99,
+        purple_credited: -150,
       }),
     ]);
+  });
+
+  it('sandbox iadesi yok sayılır: claim yazılmaz, kimse işaretlenmez, sayaç değişmez', async () => {
+    const { fake, webhookService } = await setup();
+    await webhookService.handleRevenueCatEvent(refund({ environment: 'SANDBOX' }));
+
+    expect(fake.table('iap_transactions')).toHaveLength(0);
+    expect(flagged(fake)).toEqual([]);
+    expect(fake.table('users').find((u) => u.id === 'u1')!.purple_paid).toBe(200);
+  });
+
+  it('ödenmemiş (paid 0) satın almanın iadesi: iade eden işaretlenir, rainbow alıcısı işaretlenmez, sayaç değişmez', async () => {
+    const { fake, webhookService } = await setup({
+      diamond_transactions: [
+        { id: 'd-iap0', user_id: 'u1', type: 'PURPLE', amount: 150, paid_amount: 0, reason: 'IAP_PURCHASE', reference_id: 'tx-0', created_at: '2026-09-10T00:00:00Z' },
+        { id: 'd-s1', user_id: 'u1', type: 'PURPLE', amount: -40, paid_amount: 40, reason: 'POWER_USED:HALF', reference_id: 'sess-1', created_at: '2026-09-11T00:00:00Z' },
+        { id: 'd-r1', user_id: 'u2', type: 'RAINBOW', amount: 10, paid_amount: 0, reason: 'POWER_REWARD:HALF', reference_id: 'sess-1', created_at: '2026-09-11T00:00:01Z' },
+      ],
+    });
+    await webhookService.handleRevenueCatEvent(refund({ transaction_id: 'tx-0' }));
+
+    expect(flagged(fake)).toEqual(['u1']);
+    expect(fake.table('users').find((u) => u.id === 'u1')!.purple_paid).toBe(200);
+  });
+
+  it('başka kullanıcının satın alma sonrası ödenmiş harcamasından rainbow kazanan işaretlenmez (harcama taraması iade edenle sınırlı)', async () => {
+    const { fake, webhookService } = await setup({
+      users: [
+        { id: 'u1', green_diamonds: 0, purple_diamonds: 250, purple_paid: 200, rainbow_diamonds: 0, rainbow_flagged_at: null },
+        { id: 'u8', green_diamonds: 0, purple_diamonds: 100, purple_paid: 100, rainbow_diamonds: 0, rainbow_flagged_at: null },
+        { id: 'u9', green_diamonds: 0, purple_diamonds: 0, purple_paid: 0, rainbow_diamonds: 6, rainbow_flagged_at: null },
+      ],
+      diamond_transactions: [
+        { id: 'd-iap', user_id: 'u1', type: 'PURPLE', amount: 150, paid_amount: 150, reason: 'IAP_PURCHASE', reference_id: 'tx-9', created_at: '2026-09-10T00:00:00Z' },
+        { id: 'd-s9', user_id: 'u8', type: 'PURPLE', amount: -30, paid_amount: 30, reason: 'POWER_USED:HALF', reference_id: 'sess-9', created_at: '2026-09-12T00:00:00Z' },
+        { id: 'd-r9', user_id: 'u9', type: 'RAINBOW', amount: 6, paid_amount: 0, reason: 'POWER_REWARD:HALF', reference_id: 'sess-9', created_at: '2026-09-12T00:00:01Z' },
+      ],
+    });
+    await webhookService.handleRevenueCatEvent(refund());
+    expect(flagged(fake)).toEqual(['u1']);
+  });
+
+  it('bilinmeyen kullanıcı kimliği uuid değilse (22P02) yok sayılır: hata yok, yeniden deneme döngüsü yok', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { fake, webhookService } = await setup({}, {
+      failOn: [{ table: 'iap_transactions', op: 'insert', error: { message: 'invalid input syntax for type uuid', code: '22P02' } }],
+    });
+    await expect(
+      webhookService.handleRevenueCatEvent(refund({ app_user_id: '$RCAnonymousID:abc', transaction_id: 'tx-bilinmeyen' })),
+    ).resolves.toBeUndefined();
+    expect(flagged(fake)).toEqual([]);
+    expect(warnSpy).toHaveBeenCalled();
+  });
+
+  it('akış ortada koparsa (2. users yazımı) tekrar deneme ödenmiş sayacı İKİ KEZ düşürmez', async () => {
+    const first = await setup({}, { failOn: [{ table: 'users', op: 'update', failAfter: 1 }] });
+    await expect(first.webhookService.handleRevenueCatEvent(refund())).rejects.toMatchObject({ code: 'SERVER_ERROR' });
+    expect(first.fake.table('iap_transactions')).toHaveLength(0); // claim bırakıldı → RevenueCat yeniden dener
+
+    vi.resetModules();
+    const retry = await setup({
+      users: first.fake.table('users'),
+      diamond_transactions: first.fake.table('diamond_transactions'),
+      iap_transactions: first.fake.table('iap_transactions'),
+    });
+    await retry.webhookService.handleRevenueCatEvent(refund());
+    expect(retry.fake.table('users').find((u) => u.id === 'u1')!.purple_paid).toBe(50);
+    expect(flagged(retry.fake).sort()).toEqual(['u1', 'u2']);
+  });
+
+  it('işaretleme (flagUsers) patlarsa sayaç henüz düşmemiştir; tekrar denemede bir kez düşer', async () => {
+    const first = await setup({}, { failOn: [{ table: 'users', op: 'update' }] });
+    await expect(first.webhookService.handleRevenueCatEvent(refund())).rejects.toMatchObject({ code: 'SERVER_ERROR' });
+    expect(first.fake.table('users').find((u) => u.id === 'u1')!.purple_paid).toBe(200);
+
+    vi.resetModules();
+    const retry = await setup({
+      users: first.fake.table('users'),
+      diamond_transactions: first.fake.table('diamond_transactions'),
+      iap_transactions: first.fake.table('iap_transactions'),
+    });
+    await retry.webhookService.handleRevenueCatEvent(refund());
+    expect(retry.fake.table('users').find((u) => u.id === 'u1')!.purple_paid).toBe(50);
   });
 
   /**

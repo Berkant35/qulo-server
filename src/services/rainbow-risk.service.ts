@@ -6,6 +6,10 @@ import { diamondService } from "./diamond.service.js";
 const SPEND_SCAN_LIMIT = 500;
 /** `.in()` listesi URL'ye yazılır (PostgREST): uzun listeyi dilimle (`.in()` tuzağı, 2026-09-17). */
 const IN_CHUNK = 100;
+/** Dilim başına rainbow alıcı satırı: PostgREST max-rows (1000) — sessiz kırpma yerine uyarı. */
+const RECIPIENT_SCAN_LIMIT = 1000;
+/** Claim'e yazılamayan kullanıcı: FK (bilinmeyen id) ya da uuid olmayan RevenueCat kimliği. */
+const UNKNOWN_USER_CODES = new Set(["23503", "22P02"]);
 
 export interface ConsumableRefund {
   /** RevenueCat app_user_id. Kredinin kime yazıldığını defter söyler; bu yalnız yedek. */
@@ -14,6 +18,10 @@ export interface ConsumableRefund {
   productId: string;
   store: "apple" | "google";
   priceUsd: number | null;
+  /** RevenueCat `environment`: yalnız PRODUCTION iadesi işlenir (sandbox satın alma rainbow üretmez). */
+  environment: string | null;
+  /** RevenueCat `cancel_reason` (ör. CUSTOMER_SUPPORT) — yalnız loglanır. */
+  cancelReason: string | null;
 }
 
 interface PurchaseRow {
@@ -25,9 +33,10 @@ interface PurchaseRow {
 /**
  * Tüketilebilir IAP iadesinin rainbow sonuçları (spec §2.7; Plan 2 kararı "uyarı yayılsın").
  * Bakiye GERİ ALINMAZ (bugünkü politika). Yalnız:
- *  1) satın almanın ödenmiş payı `purple_paid` sayacından düşer (kalan mor bedava sayılır),
- *  2) iade eden VE onun satın almadan sonraki ödenmiş harcamalarından rainbow kazananlar
- *     `rainbow_flagged_at` ile işaretlenir — admin itfa kuyruğunda uyarıyı görür, kararı o verir.
+ *  1) iade eden VE (satın alma ödenmişse) onun satın almadan sonraki ödenmiş harcamalarından
+ *     rainbow kazananlar `rainbow_flagged_at` ile işaretlenir — admin itfa kuyruğunda uyarıyı görür,
+ *  2) satın almanın ödenmiş payı `purple_paid` sayacından düşer (kalan mor bedava sayılır) — EN SON:
+ *     önceki adım patlarsa claim bırakılır ve tekrar deneme sayacı ikinci kez düşürmez.
  * Harcama → ödül bağı defter referansıdır (quiz: session id, sohbet: soru id). Fazla işaretleme
  * (başka bir satın almanın ödenmiş morundan kazanan) kabul: işaret yalnız uyarıdır, engel değil.
  */
@@ -39,26 +48,36 @@ export class RainbowRiskService {
       });
       return;
     }
+    if (refund.environment !== "PRODUCTION") {
+      console.log("[rainbow-risk] non-production refund ignored", {
+        environment: refund.environment, transactionId: refund.transactionId, cancelReason: refund.cancelReason,
+      });
+      return;
+    }
 
-    const claimId = await this.claim(refund);
+    // Önce OKUMA: claim satırı gerçek alıcıya yazılsın (RevenueCat kimliği hesap değişince farklı olabilir).
+    const purchase = await this.findPurchase(refund.transactionId);
+    const refunderId = purchase?.user_id ?? refund.userId;
+
+    const claimId = await this.claim(refund, refunderId);
     if (!claimId) return;
 
+    let revokedPaid = 0;
     try {
-      const purchase = await this.findPurchase(refund.transactionId);
-      const refunderId = purchase?.user_id ?? refund.userId;
-      const revokedPaid = purchase && (purchase.paid_amount ?? 0) > 0
-        ? await diamondService.revokePaid(refunderId, purchase.paid_amount ?? 0)
-        : 0;
-      const recipients = purchase ? await this.findRewardRecipients(refunderId, purchase.created_at) : [];
+      // Ödenmemiş satın alma (sandbox/aile paylaşımı) rainbow üretmedi: alıcı aranmaz; iade eden yine
+      // işaretlenir (gerçek iade = chargeback sinyali).
+      const paid = purchase?.paid_amount ?? 0;
+      const recipients = purchase && paid > 0 ? await this.findRewardRecipients(refunderId, purchase.created_at) : [];
       await this.flagUsers([refunderId, ...recipients]);
+      revokedPaid = paid > 0 ? await diamondService.revokePaid(refunderId, paid) : 0;
 
       console.log("[rainbow-risk] consumable refund processed", {
         transactionId: refund.transactionId, refunderId, purchaseFound: purchase !== null,
-        revokedPaid, flaggedRecipients: recipients.length,
+        cancelReason: refund.cancelReason, revokedPaid, flaggedRecipients: recipients.length,
       });
     } catch (err) {
-      // Claim bırakılır ki RevenueCat yeniden denesin. Kısmi iş tekrarlanırsa en kötü sayaç iki kez
-      // düşer — güvenli yön (daha az rainbow); işaretleme zaten tekrarlanabilir.
+      // Claim bırakılır ki RevenueCat yeniden desin. Sayaç düşümü son adım: ondan önceki hata sayacı
+      // hiç düşürmemiştir; işaretleme zaten tekrarlanabilir.
       const { error: releaseErr } = await supabase.from("iap_transactions").delete().eq("id", claimId);
       if (releaseErr) {
         console.error("[rainbow-risk] refund claim release failed — retry will be skipped", {
@@ -67,14 +86,19 @@ export class RainbowRiskService {
       }
       throw err;
     }
+
+    await this.recordRevoked(claimId, refund.transactionId, revokedPaid);
   }
 
-  /** `refund:<tx>` claim'i: tekrarlanan olay 23505'e takılır (iap_transactions.transaction_id UNIQUE). */
-  private async claim(refund: ConsumableRefund): Promise<string | null> {
+  /**
+   * `refund:<tx>` claim'i: tekrarlanan olay 23505'e takılır (iap_transactions.transaction_id UNIQUE).
+   * `purple_credited` şimdilik null; iş bitince `recordRevoked` doldurur.
+   */
+  private async claim(refund: ConsumableRefund, refunderId: string): Promise<string | null> {
     const { data, error } = await supabase
       .from("iap_transactions")
       .insert({
-        user_id: refund.userId,
+        user_id: refunderId,
         product_id: refund.productId,
         store: refund.store,
         transaction_id: `refund:${refund.transactionId}`,
@@ -86,15 +110,31 @@ export class RainbowRiskService {
       .single();
 
     if (error?.code === "23505") return null; // bu iade zaten işlendi
-    if (error?.code === "23503") {
-      // Bilinmeyen kullanıcı (FK): yeniden denemek düzeltmez — 4xx/5xx dönüp sonsuz retry'a sokma.
+    if (error?.code && UNKNOWN_USER_CODES.has(error.code)) {
+      // Bilinmeyen kullanıcı (FK) ya da uuid olmayan kimlik: yeniden denemek düzeltmez — sonsuz retry'a sokma.
       console.warn("[rainbow-risk] refund for unknown user ignored", {
-        userId: refund.userId, transactionId: refund.transactionId,
+        userId: refunderId, transactionId: refund.transactionId, code: error.code,
       });
       return null;
     }
     if (error || !data) throw Errors.SERVER_ERROR();
     return (data as { id: string }).id;
+  }
+
+  /**
+   * Kalıcı iz: claim satırının `purple_credited`'ı NEGATİF = bu iadenin geri aldığı ödenmiş mor
+   * (bakiye dokunulmadı). İş bitti; yazılamazsa yalnız loglanır (claim kalır, tekrar deneme atlanır).
+   */
+  private async recordRevoked(claimId: string, transactionId: string, revokedPaid: number): Promise<void> {
+    const { error } = await supabase
+      .from("iap_transactions")
+      .update({ purple_credited: revokedPaid > 0 ? -revokedPaid : 0 })
+      .eq("id", claimId);
+    if (error) {
+      console.error("[rainbow-risk] refund processed but claim record update failed", {
+        claimId, transactionId, revokedPaid, error: error.message,
+      });
+    }
   }
 
   /** Satın alma defter satırı: referans mağaza işlem numarası (istemci + webhook yolu aynı, 068 tekil). */
@@ -120,10 +160,15 @@ export class RainbowRiskService {
       .gt("paid_amount", 0)
       .gte("created_at", since)
       .not("reference_id", "is", null)
+      .order("created_at", { ascending: true })
       .limit(SPEND_SCAN_LIMIT);
     if (error) throw Errors.SERVER_ERROR();
+    const spendRows = (spends ?? []) as { reference_id: string }[];
+    if (spendRows.length >= SPEND_SCAN_LIMIT) {
+      console.warn("[rainbow-risk] spend scan limit hit — later spends not checked", { refunderId, since, limit: SPEND_SCAN_LIMIT });
+    }
 
-    const refs = [...new Set(((spends ?? []) as { reference_id: string }[]).map((s) => s.reference_id))];
+    const refs = [...new Set(spendRows.map((s) => s.reference_id))];
     const recipients = new Set<string>();
     for (let i = 0; i < refs.length; i += IN_CHUNK) {
       const { data: earned, error: earnedErr } = await supabase
@@ -132,9 +177,16 @@ export class RainbowRiskService {
         .eq("type", "RAINBOW")
         .gt("amount", 0)
         .in("reference_id", refs.slice(i, i + IN_CHUNK))
-        .neq("user_id", refunderId);
+        .neq("user_id", refunderId)
+        .limit(RECIPIENT_SCAN_LIMIT);
       if (earnedErr) throw Errors.SERVER_ERROR();
-      for (const row of (earned ?? []) as { user_id: string }[]) recipients.add(row.user_id);
+      const earnedRows = (earned ?? []) as { user_id: string }[];
+      if (earnedRows.length >= RECIPIENT_SCAN_LIMIT) {
+        console.warn("[rainbow-risk] recipient scan limit hit — some recipients may be unflagged", {
+          refunderId, chunkStart: i, limit: RECIPIENT_SCAN_LIMIT,
+        });
+      }
+      for (const row of earnedRows) recipients.add(row.user_id);
     }
     return [...recipients];
   }

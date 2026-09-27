@@ -66,6 +66,8 @@ class WebhookService {
         productId,
         store: storeType,
         priceUsd: event.price ?? null,
+        environment: event.environment ?? null,
+        cancelReason: event.cancel_reason ?? null,
       });
       return;
     }
