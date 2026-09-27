@@ -91,3 +91,18 @@ export function computeReplyDelayMs(i: TimingInput): number {
 
   return Math.min(Math.max(hedefMs, MIN_MS), MAX_MS);
 }
+
+/** Persona karti bos seed icin gecikme/faz varsayilani (tarama ve kuyruk isleme ortak). */
+export const VARSAYILAN_PERSONA: SeedPersona = {
+  responder_type: 'normal', work_pattern: 'esnek',
+  sleep_window: { start_min: 30, end_min: 450 },
+  style: { uzunluk: 'kisa', emoji: 'nadiren', yazim: 'gevsek', enerji: 'soru_soran' },
+  derived_at: '', model: 'fallback',
+};
+
+export function fazFor(messageCount: number): 1 | 2 | 3 | 4 {
+  if (messageCount <= 10) return 1;
+  if (messageCount <= 15) return 2;
+  if (messageCount <= 24) return 3;
+  return 4;
+}
