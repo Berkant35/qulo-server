@@ -4,6 +4,7 @@ import { hashPassword, comparePassword, normalizeEmail } from "../utils/hash.js"
 import { sanitizeIlike } from "../utils/validation.js";
 import { Errors } from "../utils/errors.js";
 import { banService } from "../services/ban.service.js";
+import { diamondService } from "../services/diamond.service.js";
 import {
   PUSH_TYPES,
   loadDefaultTemplate,
@@ -177,37 +178,19 @@ class AdminService {
    * — mor düşerse ödenmiş sayaç sıkıştırılır. Eskiden defter satırı yazılmıyordu; artık her
    * değişen tür için ADMIN_ADJUST (denetim izi, test admin kontrolleri).
    */
-  async updateDiamonds(userId: string, green: number, purple: number, rainbow: number) {
-    const { data: current, error: readErr } = await supabase
-      .from("users")
-      .select("green_diamonds, purple_diamonds, purple_paid, rainbow_diamonds")
-      .eq("id", userId)
-      .single();
-    if (readErr || !current) throw Errors.USER_NOT_FOUND();
-
-    const { error: updateErr } = await supabase
-      .from("users")
-      .update({
-        green_diamonds: green,
-        purple_diamonds: purple,
-        rainbow_diamonds: rainbow,
-        purple_paid: Math.min(current.purple_paid ?? 0, purple),
-      })
-      .eq("id", userId);
-    if (updateErr) throw Errors.SERVER_ERROR();
-
-    const deltas: Array<[string, number]> = [
-      ["GREEN", green - (current.green_diamonds ?? 0)],
-      ["PURPLE", purple - (current.purple_diamonds ?? 0)],
-      ["RAINBOW", rainbow - (current.rainbow_diamonds ?? 0)],
-    ];
-    const rows = deltas
-      .filter(([, delta]) => delta !== 0)
-      .map(([type, amount]) => ({ user_id: userId, type, amount, reason: "ADMIN_ADJUST", reference_id: null }));
-    if (rows.length > 0) {
-      const { error: txErr } = await supabase.from("diamond_transactions").insert(rows);
-      if (txErr) throw Errors.SERVER_ERROR();
-    }
+  /**
+   * Admin bakiye düzenlemesi — kendi okuma/yazması yok, defterin CAS yolu (diamondService.setBalances):
+   * sıkıştırma taze satırdan, ADMIN_ADJUST satırları `admin:<adminId>` referansıyla.
+   * `rainbow` undefined = değişmez (form alanı yoksa 0'lanmasın).
+   */
+  async updateDiamonds(
+    userId: string,
+    green: number,
+    purple: number,
+    rainbow: number | undefined,
+    adminId: string,
+  ): Promise<void> {
+    await diamondService.setBalances(userId, { green, purple, rainbow }, "ADMIN_ADJUST", `admin:${adminId}`);
   }
 
   async setSubscription(userId: string, plan: string, durationDays: number) {

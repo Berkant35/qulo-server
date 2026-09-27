@@ -333,3 +333,15 @@ describe('addPurple — IAP referansı hesaplar arası tek (068)', () => {
     expect(fake.table('diamond_transactions')).toHaveLength(1);
   });
 });
+
+describe('setBalances — girdi koruması', () => {
+  it('negatif ya da tam sayı olmayan hedef VALIDATION_ERROR; hiçbir şey yazılmaz', async () => {
+    const { fake, diamondService } = await setup({ users: [user({ green_diamonds: 7 })] });
+    await expect(diamondService.setBalances('u1', { green: -1 }, 'ADMIN_ADJUST', 'admin:x'))
+      .rejects.toMatchObject({ code: 'VALIDATION_ERROR' });
+    await expect(diamondService.setBalances('u1', { rainbow: 1.5 }, 'ADMIN_ADJUST', 'admin:x'))
+      .rejects.toMatchObject({ code: 'VALIDATION_ERROR' });
+    expect(fake.table('users')[0]).toMatchObject({ green_diamonds: 7, rainbow_diamonds: 0 });
+    expect(fake.table('diamond_transactions')).toHaveLength(0);
+  });
+});

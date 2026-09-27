@@ -15,6 +15,12 @@ export type LedgerType = "GREEN" | "PURPLE" | "RAINBOW";
 type EarnedType = "GREEN" | "RAINBOW";
 type BalanceRow = Record<string, number | null | undefined>;
 type CasResult = { before: BalanceRow; after: BalanceRow };
+/** `setBalances` hedefi; verilmeyen tür değişmez. */
+export interface BalanceTarget {
+  green?: number;
+  purple?: number;
+  rainbow?: number;
+}
 
 const BALANCE_COLUMN: Record<LedgerType, "green_diamonds" | "purple_diamonds" | "rainbow_diamonds"> = {
   GREEN: "green_diamonds",
@@ -213,6 +219,50 @@ export class DiamondService {
   async creditReward(userId: string, split: RewardSplit, reason: string, referenceId?: string): Promise<void> {
     if (split.green > 0) await this.earnGreen(userId, split.green, reason, referenceId);
     if (split.rainbow > 0) await this.earnRainbow(userId, split.rainbow, reason, referenceId);
+  }
+
+  /**
+   * Bakiyeleri hedef değerlere ayarlar (admin düzenlemesi) — defterin CAS yolundan: tek
+   * `casUpdate` dört kolonu birden korur, hesap TAZE satırdan yapılır. Verilmeyen hedef = değişmez.
+   * `purple_paid = min(güncel purple_paid, yeni mor)` (sayaç bakiyeyi aşamaz; bayat okuma sayacı
+   * yeniden şişiremez). Her değişen tür için bir defter satırı; sayaç sıkıştırıldıysa düşen ödenmiş
+   * miktar PURPLE satırının `paid_amount`'u olur (harcamadaki `paidUsed` gibi).
+   */
+  async setBalances(
+    userId: string,
+    target: BalanceTarget,
+    reason: "ADMIN_ADJUST",
+    referenceId: string,
+  ): Promise<void> {
+    for (const [field, value] of Object.entries(target)) {
+      if (value !== undefined && !(Number.isInteger(value) && value >= 0)) {
+        throw Errors.VALIDATION_ERROR({ [field]: "must be a non-negative integer" });
+      }
+    }
+
+    const { before, after } = await this.casUpdate(
+      userId,
+      ["green_diamonds", "purple_diamonds", "purple_paid", "rainbow_diamonds"],
+      (row) => {
+        const purple = target.purple ?? row.purple_diamonds ?? 0;
+        return {
+          green_diamonds: target.green ?? row.green_diamonds ?? 0,
+          purple_diamonds: purple,
+          purple_paid: Math.min(row.purple_paid ?? 0, purple),
+          rainbow_diamonds: target.rainbow ?? row.rainbow_diamonds ?? 0,
+        };
+      },
+    );
+
+    const paidLowered = (before.purple_paid ?? 0) - (after.purple_paid ?? 0);
+    for (const type of ["GREEN", "PURPLE", "RAINBOW"] as const) {
+      const column = BALANCE_COLUMN[type];
+      const delta = (after[column] ?? 0) - (before[column] ?? 0);
+      if (delta === 0) continue;
+      await this.logTransaction(
+        userId, type, delta, reason, referenceId, type === "PURPLE" ? paidLowered : 0,
+      );
+    }
   }
 
   private async earn(userId: string, type: EarnedType, amount: number, reason: string, referenceId?: string) {

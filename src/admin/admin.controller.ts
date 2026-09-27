@@ -76,11 +76,18 @@ class AdminController {
     else if (action === "update_diamonds") {
       const green = parseInt(green_diamonds);
       const purple = parseInt(purple_diamonds);
-      const rainbow = parseInt(req.body.rainbow_diamonds ?? "0");
-      if ([green, purple, rainbow].some((n) => isNaN(n) || n < 0)) {
+      // Alan yok/boş = "değişmedi" (0 DEĞİL): eski form ya da eksik alan rainbow'u sıfırlamasın.
+      const rawRainbow = req.body.rainbow_diamonds;
+      const rainbow = rawRainbow == null || String(rawRainbow).trim() === "" ? undefined : parseInt(String(rawRainbow));
+      if ([green, purple, rainbow].some((n) => n !== undefined && (isNaN(n) || n < 0))) {
         return res.redirect(`/admin/users/${id}?error=invalid_diamonds`);
       }
-      await adminService.updateDiamonds(id, green, purple, rainbow);
+      try {
+        await adminService.updateDiamonds(id, green, purple, rainbow, req.session.adminId!);
+      } catch (err) {
+        console.error("[admin] update_diamonds failed:", { userId: id, err });
+        return res.redirect(`/admin/users/${id}?error=update_failed`);
+      }
     } else if (action === "set_subscription") {
       const { sub_plan, sub_days } = req.body;
       await adminService.setSubscription(id, sub_plan, parseInt(sub_days) || 30);
