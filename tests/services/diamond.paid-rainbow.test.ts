@@ -192,6 +192,25 @@ describe('addPurple — CAS tükenmesi ve dayanıklılık', () => {
   });
 });
 
+/** Okuma hatası "kullanıcı yok" değildir: şema/bağlantı hatası 404 diye gizlenmemeli. */
+describe('casUpdate okuma hatası', () => {
+  it('satır yoksa (PGRST116) USER_NOT_FOUND', async () => {
+    const { diamondService } = await setup({ users: [] });
+    await expect(diamondService.earnGreen('yok', 5, 'x')).rejects.toMatchObject({ code: 'USER_NOT_FOUND' });
+  });
+
+  it('başka bir okuma hatası SERVER_ERROR, hiçbir şey yazılmaz', async () => {
+    const { fake, diamondService } = await setup(
+      { users: [user({ green_diamonds: 3 })] },
+      { failOn: [{ table: 'users', op: 'select', error: { message: 'column does not exist', code: '42703' } }] },
+    );
+    await expect(diamondService.earnGreen('u1', 5, 'x')).rejects.toMatchObject({ code: 'SERVER_ERROR' });
+    await expect(diamondService.spendPurple('u1', 5, 'x')).rejects.toMatchObject({ code: 'SERVER_ERROR' });
+    expect(fake.table('users')[0]).toMatchObject({ green_diamonds: 3, purple_diamonds: 100 });
+    expect(fake.table('diamond_transactions')).toHaveLength(0);
+  });
+});
+
 describe('Rainbow bakiyesi', () => {
   it('earnRainbow artırır ve RAINBOW satırı yazar', async () => {
     const { fake, diamondService } = await setup({ users: [user()] });

@@ -249,7 +249,8 @@ export class DiamondService {
   /**
    * `casUpdate` çekirdeği. `null` = CAS tükendi: her denemede guard tuttu*MA*dı, yani bu çağrı
    * HİÇBİR ŞEY yazmadı — telafi (ör. claim satırını silmek) güvenli. Gerçek DB hatası ayrı:
-   * update hatası (commit edilmiş olabilir, cevap kaybolmuş olabilir) SERVER_ERROR fırlatır.
+   * update hatası (commit edilmiş olabilir, cevap kaybolmuş olabilir) SERVER_ERROR fırlatır;
+   * okumada satır yoksa (PGRST116) USER_NOT_FOUND, başka her okuma hatası SERVER_ERROR.
    */
   private async tryCasUpdate(
     userId: string,
@@ -264,7 +265,11 @@ export class DiamondService {
         .eq("id", userId)
         .single();
 
-      if (readErr || !row) {
+      if (readErr && readErr.code !== "PGRST116") {
+        // Şema/bağlantı hatası "kullanıcı yok" değildir — 404 diye gizlenmesin.
+        throw Errors.SERVER_ERROR();
+      }
+      if (!row) {
         throw Errors.USER_NOT_FOUND();
       }
 
