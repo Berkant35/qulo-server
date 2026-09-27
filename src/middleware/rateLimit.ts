@@ -91,6 +91,17 @@ export const rewardRedeemLimiter = rateLimit({
   message: rateLimitResponse,
 });
 
+// Rainbow market okumaları (GET /market, /redemptions) — kullanıcı anahtarlı, iki uç aynı bütçeyi
+// paylaşır: IP bazlı generalLimiter CGNAT arkasındaki kullanıcıları birbirine 429'latırdı.
+export const rewardReadLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 60,
+  keyGenerator: userKey,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitResponse,
+});
+
 export const forgotPasswordLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
   limit: 3,

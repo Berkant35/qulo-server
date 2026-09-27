@@ -31,8 +31,9 @@ async function serve(seed: Tables, opts: { fakeAuth: boolean }) {
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
   if (opts.fakeAuth) {
     vi.doMock('../../src/middleware/auth.js', () => ({
-      authMiddleware: (req: { user?: unknown }, _res: unknown, next: () => void) => {
-        req.user = { userId: 'u1' };
+      // `x-test-user` başlığı kimliği seçer (yoksa u1): kullanıcı anahtarlı limiter sınanabilsin.
+      authMiddleware: (req: { user?: unknown; headers: Record<string, unknown> }, _res: unknown, next: () => void) => {
+        req.user = { userId: typeof req.headers['x-test-user'] === 'string' ? req.headers['x-test-user'] : 'u1' };
         next();
       },
     }));
@@ -128,5 +129,20 @@ describe('/api/v1/rewards — kablolama', () => {
     const ok = await fetch(`${base}/redemptions?page=1&limit=10`);
     expect(ok.status).toBe(200);
     expect(await ok.json()).toEqual({ items: [], total: 0, page: 1, limit: 10 });
+  });
+
+  it('okuma limiti kullanıcı anahtarlı, dakikada 60: aynı kullanıcının 61. okuması 429; aynı IP’deki başka kullanıcı etkilenmez', async () => {
+    const { base } = await serve({}, { fakeAuth: true });
+    for (let i = 0; i < 60; i++) {
+      const ok = await fetch(`${base}/redemptions`, { headers: { 'x-test-user': 'u1' } });
+      expect(ok.status).toBe(200);
+    }
+    // /market ve /redemptions aynı kullanıcı bütçesini paylaşır.
+    const limited = await fetch(`${base}/market`, { headers: { 'x-test-user': 'u1', 'x-app-platform': 'android' } });
+    expect(limited.status).toBe(429);
+    expect((await limited.json()).error.code).toBe('RATE_LIMITED');
+
+    const other = await fetch(`${base}/redemptions`, { headers: { 'x-test-user': 'u2' } });
+    expect(other.status).toBe(200);
   });
 });
