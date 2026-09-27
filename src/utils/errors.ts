@@ -197,6 +197,27 @@ export const Errors = {
   RAINBOW_NOT_AVAILABLE: () =>
     new AppError("RAINBOW_NOT_AVAILABLE", 403, "Rainbow diamonds are not available for this account"),
 
+  REWARD_ITEM_UNAVAILABLE: () =>
+    new AppError("REWARD_ITEM_UNAVAILABLE", 404, "Reward item is not available"),
+
+  REWARD_NOT_ELIGIBLE: () =>
+    new AppError("REWARD_NOT_ELIGIBLE", 403, "Account is not eligible for this reward"),
+
+  REWARD_ACCOUNT_TOO_NEW: (minDays: number) =>
+    new AppError("REWARD_ACCOUNT_TOO_NEW", 403, "Account is too new to redeem rewards", { minDays }),
+
+  REWARD_MONTHLY_CAP: (cap: number, used: number) =>
+    new AppError("REWARD_MONTHLY_CAP", 403, "Monthly reward limit reached", { cap, used }),
+
+  REWARD_ALREADY_DECIDED: () =>
+    new AppError("REWARD_ALREADY_DECIDED", 409, "Redemption was already decided"),
+
+  REWARD_REDEMPTION_NOT_FOUND: () =>
+    new AppError("REWARD_REDEMPTION_NOT_FOUND", 404, "Redemption not found"),
+
+  REWARD_REFUND_FAILED: () =>
+    new AppError("REWARD_REFUND_FAILED", 500, "Redemption rejected but refund failed"),
+
   INVALID_PHOTO_INDEX: () =>
     new AppError("INVALID_PHOTO_INDEX", 400, "Invalid photo index"),
 
