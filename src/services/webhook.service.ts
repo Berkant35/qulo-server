@@ -122,7 +122,8 @@ class WebhookService {
     const purpleAmount = IAP_PRODUCT_MAP[storeProductKey(productId)];
     if (!purpleAmount) return;
 
-    await diamondService.addPurple(userId, purpleAmount, 'IAP_PURCHASE', transactionId);
+    // IAP tamamen ödenmiş mor: rainbow'u yalnız bu tür mor üretir (spec 2026-09-27).
+    await diamondService.addPurple(userId, purpleAmount, 'IAP_PURCHASE', transactionId, purpleAmount);
 
     await this.logIapTransaction(
       userId, productId, store, transactionId,

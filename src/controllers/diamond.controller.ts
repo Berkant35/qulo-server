@@ -54,6 +54,7 @@ export async function purchaseHandler(req: Request, res: Response, next: NextFun
       purpleAmount,
       "IAP_PURCHASE",
       verification.transactionId ?? transaction_id ?? product_id,
+      purpleAmount,
     );
 
     // credited === 0 => kayit zaten vardi, yani BU istek hicbir sey yatirmadi.

@@ -119,11 +119,14 @@ class SubscriptionService {
     const config = await economyConfigService.getConfig();
     const bonus = config.subscriptionLimits[plan].monthlyPurpleBonus;
     if (bonus > 0) {
+      // Abonelik moru "yarı ödenmiş": tier payı kadarı rainbow üretebilir (economy rainbow bloğu).
+      const paid = Math.floor(bonus * config.rainbow.subscriptionPaidShare[plan]);
       await diamondService.addPurple(
         userId,
         bonus,
         'SUBSCRIPTION_BONUS',
-        subscriptionPeriodRef(plan, expiresAt)
+        subscriptionPeriodRef(plan, expiresAt),
+        paid,
       );
     }
   }
@@ -160,11 +163,14 @@ class SubscriptionService {
     const config = await economyConfigService.getConfig();
     const bonus = config.subscriptionLimits[plan].monthlyPurpleBonus;
     if (bonus > 0) {
+      // Abonelik moru "yarı ödenmiş": tier payı kadarı rainbow üretebilir (economy rainbow bloğu).
+      const paid = Math.floor(bonus * config.rainbow.subscriptionPaidShare[plan]);
       await diamondService.addPurple(
         userId,
         bonus,
         'SUBSCRIPTION_BONUS',
-        subscriptionPeriodRef(plan, expiresAt)
+        subscriptionPeriodRef(plan, expiresAt),
+        paid,
       );
     }
   }

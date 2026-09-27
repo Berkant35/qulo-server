@@ -63,7 +63,7 @@ describe("purchaseHandler — tekilleştirme anahtarı", () => {
 
     await purchaseHandler(req({ product_id: "qulopurple50" }), res, vi.fn());
 
-    expect(addPurple).toHaveBeenCalledWith("u1", expect.any(Number), "IAP_PURCHASE", "rc-authoritative-1");
+    expect(addPurple).toHaveBeenCalledWith("u1", expect.any(Number), "IAP_PURCHASE", "rc-authoritative-1", 50);
   });
 
   it("istemci FARKLI bir değer gönderse de sunucununki kazanır", async () => {
@@ -79,7 +79,7 @@ describe("purchaseHandler — tekilleştirme anahtarı", () => {
       vi.fn(),
     );
 
-    expect(addPurple).toHaveBeenCalledWith("u1", expect.any(Number), "IAP_PURCHASE", "rc-authoritative-1");
+    expect(addPurple).toHaveBeenCalledWith("u1", expect.any(Number), "IAP_PURCHASE", "rc-authoritative-1", 50);
   });
 
   it("doğrulama başarısızsa elmas yatmaz", async () => {
@@ -93,6 +93,26 @@ describe("purchaseHandler — tekilleştirme anahtarı", () => {
 
     expect(addPurple).not.toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(403);
+  });
+});
+
+describe("purchaseHandler — ödenmiş mor", () => {
+  // IAP tamamen ödenmiş mor sayılır (spec 2026-09-27, Task 9): addPurple'ın 5.
+  // argümanı (paidAmount) yatırılan miktarın tamamına eşit olmalı.
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
+  it("IAP satın alması addPurple'a 5. argüman olarak yatırılan miktarın tamamını yollar", async () => {
+    const { purchaseHandler, addPurple } = await loadHandler({
+      valid: true,
+      transactionId: "rc-paid-1",
+    });
+    const { res } = makeRes();
+
+    await purchaseHandler(req({ product_id: "qulopurple400" }), res, vi.fn());
+
+    expect(addPurple).toHaveBeenCalledWith("u1", 400, "IAP_PURCHASE", "rc-paid-1", 400);
   });
 });
 
