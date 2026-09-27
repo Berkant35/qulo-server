@@ -7,18 +7,20 @@ import { referralService } from "./referral.service.js";
 import { economyConfigService } from "./economy-config.service.js";
 import { userLanguageService } from "./user-language.service.js";
 import { moderateUploadedPhoto } from "./photo-moderation.service.js";
+import { rainbowAccessService } from "./rainbow-access.service.js";
 import { Errors } from "../utils/errors.js";
 import { assertUuid } from "../utils/validation.js";
 import { haversineDistance } from "../utils/math.js";
 import { isKnownReasonCode } from "../constants/deletion-reasons.js";
 import type { UpdateProfileInput, UpdateDetailsInput } from "../validators/user.validator.js";
+import type { ClientPlatform } from "../utils/client-meta.js";
 
 export class UserService {
-  async getMe(userId: string) {
+  async getMe(userId: string, platform?: ClientPlatform) {
     const { data: user, error } = await supabase
       .from("users")
       .select(
-        "id, email, name, surname, bio, age, gender, gender_pref, gender_pref_set_at, match_radius_km, age_pref_min, age_pref_max, city, country, locale, lat, lng, photos, profile_completion, green_diamonds, purple_diamonds, is_online, last_seen_at, push_token, email_verified, passport_city, passport_lat, passport_lng, boost_until, like_received_count, times_shown_count, badge_rewards_claimed, preferred_languages, completion_rewards_claimed, relationship_goal, subscription_plan, subscription_expires_at, daily_swipes_used, daily_swipes_reset_at, daily_undos_used, strict_language_mode, interests, question_count, acquisition_answered, created_at",
+        "id, email, name, surname, bio, age, gender, gender_pref, gender_pref_set_at, match_radius_km, age_pref_min, age_pref_max, city, country, locale, lat, lng, photos, profile_completion, green_diamonds, purple_diamonds, rainbow_diamonds, is_test_admin, is_seed_profile, is_test_account, is_online, last_seen_at, push_token, email_verified, passport_city, passport_lat, passport_lng, boost_until, like_received_count, times_shown_count, badge_rewards_claimed, preferred_languages, completion_rewards_claimed, relationship_goal, subscription_plan, subscription_expires_at, daily_swipes_used, daily_swipes_reset_at, daily_undos_used, strict_language_mode, interests, question_count, acquisition_answered, created_at",
       )
       .eq("id", userId)
       .eq("is_deleted", false)
@@ -63,8 +65,15 @@ export class UserService {
       }
     }
 
+    // İç bayraklar yalnız erişim kararı için okunur; istemciye gitmez.
+    const { is_test_admin, is_seed_profile, is_test_account, ...publicUser } = user;
+    const rainbowEnabled = await rainbowAccessService.isEnabled(
+      { country: user.country, is_test_admin, is_seed_profile, is_test_account },
+      platform,
+    );
+
     return {
-      ...user,
+      ...publicUser,
       // question_count is kept in sync by trigger trg_sync_user_question_count (migration 028)
       question_count: user.question_count ?? 0,
       question_locales: questionLocales,
@@ -73,6 +82,8 @@ export class UserService {
       dailySwipesUsed: user.daily_swipes_used || 0,
       dailyUndosUsed: user.daily_undos_used || 0,
       details: details ?? null,
+      rainbow_diamonds: user.rainbow_diamonds ?? 0,
+      rainbow_enabled: rainbowEnabled,
     };
   }
 

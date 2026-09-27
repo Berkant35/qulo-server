@@ -4,6 +4,7 @@ import { badgeService } from "../services/badge.service.js";
 import { userLanguageService } from "../services/user-language.service.js";
 import { userInterestsService } from "../services/user-interests.service.js";
 import { questionService } from "../services/question.service.js";
+import { clientMetaFromHeaders } from "../utils/client-meta.js";
 import type {
   UpdateProfileInput,
   UpdateDetailsInput,
@@ -17,7 +18,8 @@ import { AppError, Errors } from "../utils/errors.js";
 
 export async function getMeHandler(req: Request, res: Response, next: NextFunction) {
   try {
-    const result = await userService.getMe(req.user!.userId);
+    const { platform } = clientMetaFromHeaders(req.headers);
+    const result = await userService.getMe(req.user!.userId, platform);
     res.json(result);
   } catch (err) {
     next(err);
