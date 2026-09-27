@@ -336,6 +336,10 @@ describe('rewardsMarketService.redeem — telafi', () => {
 
     const critical = errorSpy.mock.calls.find((c) => String(c[0]).includes('CRITICAL'));
     expect(critical?.[1]).toMatchObject({ userId: 'u1', amount: 51, reference: ledger[0].reference_id });
+    // İade CAS'ı hata döndü ama commit etmiş olabilir: log "iade yok" demez, kontrol edilecek yeri söyler.
+    expect(String(critical?.[0])).toContain(
+      `outcome uncertain — check rainbow balance and the REWARD_REFUND row for ${ledger[0].reference_id}`,
+    );
   });
 
   it('talep yazılamaz VE anahtar sorgusu da patlarsa: durum belirsiz, iade YAPILMAZ, SERVER_ERROR', async () => {

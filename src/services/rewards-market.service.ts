@@ -297,12 +297,18 @@ export class RewardsMarketService {
     return (await diamondService.getBalance(userId)).rainbow;
   }
 
-  /** Telafi de başarısız olursa rainbow düşmüş, talep yok: defterdeki REWARD_REDEEM satırı elle kurtarma izi. */
+  /**
+   * Telafi de hata dönerse sonuç BELİRSİZ: iade CAS'ı commit etmiş olabilir (bakiye geri gelmiş, defter
+   * satırı düşmemiş) ya da hiç yazılmamış olabilir. Defterdeki REWARD_REDEEM satırı elle kurtarma izi.
+   */
   private async refundUnrecorded(userId: string, amount: number, reference: string): Promise<void> {
     try {
       await diamondService.earnRainbow(userId, amount, REWARD_REFUND_REASON, reference);
     } catch (err) {
-      console.error("[rewards] CRITICAL: redemption insert failed AND refund failed", { userId, amount, reference, err });
+      console.error(
+        `[rewards] CRITICAL: redemption insert failed AND refund failed — outcome uncertain — check rainbow balance and the REWARD_REFUND row for ${reference}`,
+        { userId, amount, reference, err },
+      );
     }
   }
 

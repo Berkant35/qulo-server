@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createFakeSupabase, type Tables, type FakeSupabaseOptions } from '../helpers/fake-supabase.js';
 
 /**
@@ -24,6 +24,10 @@ beforeEach(() => {
   vi.spyOn(console, 'error').mockImplementation(() => {});
 });
 
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
 describe('addPurple — claim telafisi', () => {
   it('CAS okuması patlarsa hiçbir şey yazılmamıştır: claim silinir (tekrar deneme krediyi verir)', async () => {
     const { fake, diamondService } = await setup(seed(), { failOn: [{ table: 'users', op: 'select' }] });
@@ -44,6 +48,12 @@ describe('addPurple — claim telafisi', () => {
     expect(fake.table('diamond_transactions')).toEqual([
       expect.objectContaining({ reason: 'IAP_PURCHASE', reference_id: 'tx-1' }),
     ]);
+    // Belirsiz yazım sessiz kalmaz: elle mutabakat için claim ve bağlam CRITICAL loglanır.
+    const claimId = fake.table('diamond_transactions')[0].id;
+    const critical = vi.mocked(console.error).mock.calls.find((c) => String(c[0]).includes('CRITICAL'));
+    expect(critical?.[1]).toMatchObject({
+      claimId, userId: 'u1', referenceId: 'tx-1', reason: 'IAP_PURCHASE', amount: 150, cause: 'cas_write_uncertain',
+    });
   });
 
   it('CAS tükenirse claim silinir (mevcut davranış korunur)', async () => {

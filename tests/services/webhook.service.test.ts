@@ -198,6 +198,7 @@ describe('tüketilebilir satın alma (NON_RENEWING_PURCHASE)', () => {
   });
 
   it('idempotency okuma hatası: hata yükselir, kredi verilmez (RevenueCat yeniden dener)', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const { fake, webhookService } = await setup({}, { failOn: [{ table: 'iap_transactions', op: 'select' }] });
 
     await expect(
@@ -207,6 +208,10 @@ describe('tüketilebilir satın alma (NON_RENEWING_PURCHASE)', () => {
     ).rejects.toMatchObject({ code: 'SERVER_ERROR' });
 
     expect(fake.table('users')[0].purple_diamonds).toBe(0);
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('[webhook]'),
+      expect.objectContaining({ eventType: 'NON_RENEWING_PURCHASE', transactionId: 'tx-read-err', error: expect.any(String) }),
+    );
   });
 
   it('log upsert hatası: kredi yatar ama hata yükselir (log yazılamadı); ikinci teslimatta (arıza çözülmüş) kredi tekrar verilmez, log satırı yazılır', async () => {
@@ -214,10 +219,15 @@ describe('tüketilebilir satın alma (NON_RENEWING_PURCHASE)', () => {
       type: 'NON_RENEWING_PURCHASE', product_id: 'qulopurple50', transaction_id: 'tx-log-err',
     });
 
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const { fake, webhookService } = await setup({}, { failOn: [{ table: 'iap_transactions', op: 'insert' }] });
     await expect(webhookService.handleRevenueCatEvent(buy)).rejects.toMatchObject({ code: 'SERVER_ERROR' });
     expect(fake.table('users')[0].purple_diamonds).toBe(50);
     expect(fake.table('iap_transactions')).toHaveLength(0);
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('[webhook]'),
+      expect.objectContaining({ eventType: 'NON_RENEWING_PURCHASE', transactionId: 'tx-log-err', error: expect.any(String) }),
+    );
 
     // RevenueCat aynı webhook'u tekrar gönderir; bu sefer arıza yok (fake without the failure).
     vi.resetModules();
@@ -344,6 +354,19 @@ describe('idempotency ve dayanıklılık', () => {
 
     expect(fake.table('users')[0].purple_diamonds).toBe(200);
     expect(fake.table('user_subscriptions')).toHaveLength(1);
+  });
+
+  it('abonelik idempotency okuma hatası: hata yükselir ve bağlamıyla loglanır, abonelik yazılmaz', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { fake, webhookService } = await setup({}, { failOn: [{ table: 'iap_transactions', op: 'select' }] });
+
+    await expect(webhookService.handleRevenueCatEvent(event())).rejects.toMatchObject({ code: 'SERVER_ERROR' });
+
+    expect(fake.table('users')[0].subscription_plan).toBeNull();
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('[webhook]'),
+      expect.objectContaining({ eventType: 'INITIAL_PURCHASE', transactionId: 'tx-1', error: expect.any(String) }),
+    );
   });
 
   it('aynı transaction farklı event tipiyle işlenir (satın alma sonrası iptal)', async () => {

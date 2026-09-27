@@ -192,7 +192,12 @@ export class DiamondService {
     } catch (err) {
       // Okuma hatası / kullanıcı yok: bu çağrı HİÇBİR ŞEY yazmadı → claim'i bırak (kalırsa tekrar
       // deneme duplicate guard'a takılır, gerçek satın alma kaybolur). Belirsiz yazımda claim KALIR.
-      if (!(err instanceof CasWriteUncertainError)) {
+      if (err instanceof CasWriteUncertainError) {
+        // Bakiye yazılmış da olabilir yazılmamış da; claim kaldığı için tekrar deneme yatırmaz — elle mutabakat.
+        console.error("[Diamond] CRITICAL: addPurple balance write uncertain — claim kept, reconcile balance", {
+          claimId: claim.id, userId, referenceId: referenceId ?? null, reason, amount, cause: "cas_write_uncertain",
+        });
+      } else {
         await this.releaseClaim(claim.id, { userId, referenceId: referenceId ?? null, reason, amount, cause: "cas_read_failed" });
       }
       throw err;

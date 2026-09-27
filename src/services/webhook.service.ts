@@ -91,7 +91,12 @@ class WebhookService {
         .eq('rc_event_type', eventType)
         .maybeSingle();
 
-      if (existingErr) throw Errors.SERVER_ERROR();
+      if (existingErr) {
+        console.error('[webhook] idempotency read failed', {
+          eventType, transactionId: transaction_id, error: existingErr.message,
+        });
+        throw Errors.SERVER_ERROR();
+      }
 
       if (existing) {
         console.log(`[webhook] Skipping duplicate ${eventType} for transaction ${transaction_id}`);
@@ -159,7 +164,12 @@ class WebhookService {
       .eq('transaction_id', transactionId)
       .maybeSingle();
 
-    if (existingErr) throw Errors.SERVER_ERROR();
+    if (existingErr) {
+      console.error('[webhook] idempotency read failed', {
+        eventType: 'NON_RENEWING_PURCHASE', transactionId, error: existingErr.message,
+      });
+      throw Errors.SERVER_ERROR();
+    }
     if (existing) return;
 
     const purpleAmount = IAP_PRODUCT_MAP[storeProductKey(productId)];
@@ -210,7 +220,12 @@ class WebhookService {
       { onConflict: 'transaction_id' }
     );
 
-    if (error) throw Errors.SERVER_ERROR();
+    if (error) {
+      console.error('[webhook] iap_transactions log write failed', {
+        eventType: rcEventType, transactionId, error: error.message,
+      });
+      throw Errors.SERVER_ERROR();
+    }
   }
 }
 
