@@ -8,6 +8,7 @@
  * Buradaki yaklaşım cevap script'lemek DEĞİL, küçük bir tablo deposu modellemek:
  * test gerçek satırlarla başlar, servisi çağırır, satırların son hâlini doğrular.
  * `.gte()` guard'ı (compare-and-swap) gibi davranışlar da böylece gerçekten test edilir.
+ * `interleave` CAS yarışını simüle eder — update anında satır değiştirerek (bkz. `FakeSupabaseOptions.interleave`).
  *
  * Kapsam bilinçli olarak dar: sadece kod tabanının gerçekten kullandığı operasyonlar.
  * Yeni bir zincir gerekince buraya eklenir — spekülatif genellik yok.
@@ -59,6 +60,12 @@ export interface FakeSupabaseOptions {
   storage?: Record<string, string[]>;
   /** Depolama hata enjeksiyonu (bkz. `StorageFailureSpec`). */
   storageFailOn?: StorageFailureSpec[];
+  /**
+   * Eşzamanlı yazma (compare-and-swap yarışı) sınamak için: `update()` çağrıldığı anda,
+   * sorgu çalışmadan ÖNCE tablonun satırlarını değiştirir — servis okuduktan sonra başka
+   * bir istek araya girmiş gibi. `times` kadar tetiklenir (varsayılan 1).
+   */
+  interleave?: Array<{ table: string; mutate: (rows: Row[]) => void; times?: number }>;
 }
 
 type FilterOp = 'eq' | 'neq' | 'gte' | 'lte' | 'gt' | 'lt' | 'in' | 'is' | 'notIs' | 'notIn' | 'like' | 'ilike';
@@ -447,6 +454,18 @@ export function createFakeSupabase(
   // failAfter'ı sayabilmek için (tablo, op) başına çağrı sayacı.
   const opCounts = new Map<string, number>();
 
+  // interleave spec'i başına kalan tetiklenme sayısı.
+  const interleaveLeft = new Map<number, number>();
+  const runInterleave = (table: string) => {
+    options.interleave?.forEach((spec, index) => {
+      if (spec.table !== table) return;
+      const left = interleaveLeft.get(index) ?? spec.times ?? 1;
+      if (left <= 0) return;
+      interleaveLeft.set(index, left - 1);
+      spec.mutate((store[table] ??= []));
+    });
+  };
+
   const failureFor = (table: string, op: FailureSpec['op']): SupabaseError | null => {
     const spec = options.failOn?.find((f) => f.table === table && f.op === op);
     if (!spec) return null;
@@ -486,6 +505,7 @@ export function createFakeSupabase(
         },
         update: (patch: Row) => {
           kaydet('update');
+          runInterleave(table);
           return new QueryBuilder(store, table, 'update', patch, false, failureFor(table, 'update'));
         },
         insert: (payload: Row | Row[]) => {
