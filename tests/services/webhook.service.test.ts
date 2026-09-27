@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { createFakeSupabase, type Tables } from '../helpers/fake-supabase.js';
+import { createFakeSupabase, type Tables, type FakeSupabaseOptions } from '../helpers/fake-supabase.js';
 import { activeConfigRow } from '../helpers/economy-config.fixture.js';
 
 /**
@@ -10,15 +10,18 @@ import { activeConfigRow } from '../helpers/economy-config.fixture.js';
  * Gerçek subscriptionService ve diamondService kullanılıyor — mock'lanmıyor ki
  * zincirin tamamı (bonus yatırma, duplicate guard) sahiden test edilsin.
  */
-async function setup(seed: Tables = {}) {
-  const fake = createFakeSupabase({
-    economy_config_versions: [activeConfigRow()],
-    users: [{
-      id: 'u1', green_diamonds: 0, purple_diamonds: 0,
-      subscription_plan: null, subscription_expires_at: null, rc_customer_id: null,
-    }],
-    ...seed,
-  });
+async function setup(seed: Tables = {}, options: FakeSupabaseOptions = {}) {
+  const fake = createFakeSupabase(
+    {
+      economy_config_versions: [activeConfigRow()],
+      users: [{
+        id: 'u1', green_diamonds: 0, purple_diamonds: 0,
+        subscription_plan: null, subscription_expires_at: null, rc_customer_id: null,
+      }],
+      ...seed,
+    },
+    options,
+  );
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
   const { webhookService } = await import('../../src/services/webhook.service.js');
   return { fake, webhookService };
@@ -136,6 +139,41 @@ describe('tüketilebilir satın alma (NON_RENEWING_PURCHASE)', () => {
     expect(fake.table('iap_transactions')).toEqual([
       expect.objectContaining({ transaction_id: 'tx-client', rc_event_type: 'NON_RENEWING_PURCHASE', purple_credited: 0 }),
     ]);
+  });
+
+  it('idempotency okuma hatası: hata yükselir, kredi verilmez (RevenueCat yeniden dener)', async () => {
+    const { fake, webhookService } = await setup({}, { failOn: [{ table: 'iap_transactions', op: 'select' }] });
+
+    await expect(
+      webhookService.handleRevenueCatEvent(event({
+        type: 'NON_RENEWING_PURCHASE', product_id: 'qulopurple50', transaction_id: 'tx-read-err',
+      })),
+    ).rejects.toMatchObject({ code: 'SERVER_ERROR' });
+
+    expect(fake.table('users')[0].purple_diamonds).toBe(0);
+  });
+
+  it('log upsert hatası: kredi yatar ama hata yükselir (log yazılamadı); ikinci teslimatta (arıza çözülmüş) kredi tekrar verilmez, log satırı yazılır', async () => {
+    const buy = event({
+      type: 'NON_RENEWING_PURCHASE', product_id: 'qulopurple50', transaction_id: 'tx-log-err',
+    });
+
+    const { fake, webhookService } = await setup({}, { failOn: [{ table: 'iap_transactions', op: 'insert' }] });
+    await expect(webhookService.handleRevenueCatEvent(buy)).rejects.toMatchObject({ code: 'SERVER_ERROR' });
+    expect(fake.table('users')[0].purple_diamonds).toBe(50);
+    expect(fake.table('iap_transactions')).toHaveLength(0);
+
+    // RevenueCat aynı webhook'u tekrar gönderir; bu sefer arıza yok (fake without the failure).
+    vi.resetModules();
+    const { fake: fake2, webhookService: webhookService2 } = await setup({
+      users: fake.table('users'),
+      diamond_transactions: fake.table('diamond_transactions'),
+      iap_transactions: fake.table('iap_transactions'),
+    });
+    await webhookService2.handleRevenueCatEvent(buy);
+
+    expect(fake2.table('users')[0].purple_diamonds).toBe(50);
+    expect(fake2.table('iap_transactions')).toHaveLength(1);
   });
 });
 

@@ -17,6 +17,12 @@ async function setup(seed: Tables = {}, options: FakeSupabaseOptions = {}) {
         { id: 'u2', green_diamonds: 0, purple_diamonds: 0, purple_paid: 0, rainbow_diamonds: 10, rainbow_flagged_at: null },
         { id: 'u3', green_diamonds: 5, purple_diamonds: 0, purple_paid: 0, rainbow_diamonds: 5, rainbow_flagged_at: null },
         { id: 'u4', green_diamonds: 0, purple_diamonds: 0, purple_paid: 0, rainbow_diamonds: 2, rainbow_flagged_at: null },
+        // Fix round 1 / I1(b): sess-1'de (ödenmiş harcama) YEŞİL kazandı — RAINBOW tipi filtresi
+        // olmasa recipients'e sızardı. İşaretlenMEmeli.
+        { id: 'u6', green_diamonds: 0, purple_diamonds: 0, purple_paid: 0, rainbow_diamonds: 3, rainbow_flagged_at: null },
+        // Fix round 1 / I1(c): sess-2'de (BEDAVA harcama) RAINBOW kazandı — harcama sorgusundaki
+        // `paid_amount > 0` filtresi olmasa sess-2 refs'e girer, bu satır sızardı. İşaretlenMEmeli.
+        { id: 'u7', green_diamonds: 0, purple_diamonds: 0, purple_paid: 0, rainbow_diamonds: 4, rainbow_flagged_at: null },
       ],
       diamond_transactions: [
         // Satın alma (iade edilecek): 150 mor, tamamı ödenmiş.
@@ -24,9 +30,13 @@ async function setup(seed: Tables = {}, options: FakeSupabaseOptions = {}) {
         // Satın almadan SONRA ödenmiş harcama → u2 rainbow kazandı (aynı referans).
         { id: 'd-s1', user_id: 'u1', type: 'PURPLE', amount: -40, paid_amount: 40, reason: 'POWER_USED:HALF', reference_id: 'sess-1', created_at: '2026-09-11T00:00:00Z' },
         { id: 'd-r1', user_id: 'u2', type: 'RAINBOW', amount: 10, paid_amount: 0, reason: 'POWER_REWARD:HALF', reference_id: 'sess-1', created_at: '2026-09-11T00:00:01Z' },
+        // Aynı (ödenmiş) harcamadan YEŞİL kazanan — `.eq('type','RAINBOW')` filtresini pinler.
+        { id: 'd-g1', user_id: 'u6', type: 'GREEN', amount: 3, paid_amount: 0, reason: 'POWER_REWARD:HALF', reference_id: 'sess-1', created_at: '2026-09-11T00:00:02Z' },
         // Bedava harcama → u3 yalnız yeşil kazandı.
         { id: 'd-s2', user_id: 'u1', type: 'PURPLE', amount: -20, paid_amount: 0, reason: 'POWER_USED:HALF', reference_id: 'sess-2', created_at: '2026-09-12T00:00:00Z' },
         { id: 'd-g2', user_id: 'u3', type: 'GREEN', amount: 5, paid_amount: 0, reason: 'POWER_REWARD:HALF', reference_id: 'sess-2', created_at: '2026-09-12T00:00:01Z' },
+        // Aynı BEDAVA harcamadan RAINBOW kazanan — spend sorgusundaki `paid_amount > 0` filtresini pinler.
+        { id: 'd-r2', user_id: 'u7', type: 'RAINBOW', amount: 4, paid_amount: 0, reason: 'POWER_REWARD:HALF', reference_id: 'sess-2', created_at: '2026-09-12T00:00:02Z' },
         // Satın almadan ÖNCEKİ ödenmiş harcama → u4 (bu satın almayla ilgisiz).
         { id: 'd-s0', user_id: 'u1', type: 'PURPLE', amount: -10, paid_amount: 10, reason: 'POWER_USED:HALF', reference_id: 'sess-0', created_at: '2026-09-01T00:00:00Z' },
         { id: 'd-r0', user_id: 'u4', type: 'RAINBOW', amount: 2, paid_amount: 0, reason: 'POWER_REWARD:HALF', reference_id: 'sess-0', created_at: '2026-09-01T00:00:01Z' },
@@ -70,6 +80,32 @@ describe('tüketilebilir iade (CANCELLATION)', () => {
         user_id: 'u1', transaction_id: 'refund:tx-9', rc_event_type: 'CANCELLATION', store: 'apple', amount_usd: -4.99,
       }),
     ]);
+  });
+
+  /**
+   * Fix round 1 / I1(a): iade eden kim, RevenueCat `app_user_id`'sinden DEĞİL, defterdeki
+   * IAP_PURCHASE satırının `user_id`'sinden belirlenir. Aynı satın alma iki farklı hesaba
+   * yazılamaz (068 tekil), ama RevenueCat müşteri kimliği hesap değişince farklı olabilir —
+   * bu yüzden `refunderId = purchase?.user_id ?? refund.userId` gerçek alıcıyı bulur.
+   * `refund.userId` ('u1') ile ledger sahibi ('u5') kasıtlı olarak farklı: attribution
+   * `refund.userId`'yi kullansaydı bu test kırmızıya döner (u1 düşer/işaretlenir, u5 dokunulmaz).
+   */
+  it('iade eden ledger satırından belirlenir: RevenueCat app_user_id farklı olsa bile gerçek satın alan düşer/işaretlenir', async () => {
+    const { fake, webhookService } = await setup({
+      users: [
+        { id: 'u1', green_diamonds: 0, purple_diamonds: 250, purple_paid: 200, rainbow_diamonds: 0, rainbow_flagged_at: null },
+        { id: 'u5', green_diamonds: 0, purple_diamonds: 60, purple_paid: 60, rainbow_diamonds: 0, rainbow_flagged_at: null },
+      ],
+      diamond_transactions: [
+        { id: 'd-iap5', user_id: 'u5', type: 'PURPLE', amount: 60, paid_amount: 50, reason: 'IAP_PURCHASE', reference_id: 'tx-5', created_at: '2026-09-10T00:00:00Z' },
+      ],
+    });
+
+    await webhookService.handleRevenueCatEvent(refund({ transaction_id: 'tx-5' }));
+
+    expect(fake.table('users').find((u) => u.id === 'u5')!.purple_paid).toBe(10);
+    expect(flagged(fake)).toContain('u5');
+    expect(fake.table('users').find((u) => u.id === 'u1')!.purple_paid).toBe(200);
   });
 
   it('tekrarlanan olay (RevenueCat retry) bir kez işlenir: sayaç ikinci kez düşmez', async () => {

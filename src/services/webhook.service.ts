@@ -9,6 +9,7 @@ import {
   storeProductKey,
 } from '../types/index.js';
 import { isPaidEligible, webhookPurchaseFacts } from '../utils/paid-eligibility.js';
+import { Errors } from '../utils/errors.js';
 
 /** RevenueCat webhook olayı — `rcWebhookSchema.event` ile aynı alanlar. */
 export interface RevenueCatWebhookEvent {
@@ -80,12 +81,14 @@ class WebhookService {
 
     // Idempotency check — skip if we've already processed this (transaction_id, event_type) pair
     if (transaction_id) {
-      const { data: existing } = await supabase
+      const { data: existing, error: existingErr } = await supabase
         .from('iap_transactions')
         .select('id')
         .eq('transaction_id', transaction_id)
         .eq('rc_event_type', eventType)
         .maybeSingle();
+
+      if (existingErr) throw Errors.SERVER_ERROR();
 
       if (existing) {
         console.log(`[webhook] Skipping duplicate ${eventType} for transaction ${transaction_id}`);
@@ -140,12 +143,13 @@ class WebhookService {
     transactionId: string,
     paidEligible: boolean,
   ): Promise<void> {
-    const { data: existing } = await supabase
+    const { data: existing, error: existingErr } = await supabase
       .from('iap_transactions')
       .select('id')
       .eq('transaction_id', transactionId)
-      .single();
+      .maybeSingle();
 
+    if (existingErr) throw Errors.SERVER_ERROR();
     if (existing) return;
 
     const purpleAmount = IAP_PRODUCT_MAP[storeProductKey(productId)];
@@ -172,7 +176,10 @@ class WebhookService {
     amountUsd: number | null,
     purpleCredited: number | null
   ): Promise<void> {
-    await supabase.from('iap_transactions').upsert(
+    // Hata SERVER_ERROR fırlatır (RevenueCat yeniden dener): kredi zaten yatmış olabilir ama
+    // izi yazılamadı. Yeniden deneme güvenli — addPurple'ın referans guard'ı + tekil indeksler
+    // (047/068) ikinci krediyi engeller, bu adım yalnız denetim satırını tekrar yazmaya çalışır.
+    const { error } = await supabase.from('iap_transactions').upsert(
       {
         user_id: userId,
         product_id: productId,
@@ -184,6 +191,8 @@ class WebhookService {
       },
       { onConflict: 'transaction_id' }
     );
+
+    if (error) throw Errors.SERVER_ERROR();
   }
 }
 
