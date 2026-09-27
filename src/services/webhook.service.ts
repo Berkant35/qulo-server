@@ -10,6 +10,7 @@ import {
 } from '../types/index.js';
 import { isPaidEligible, webhookPurchaseFacts } from '../utils/paid-eligibility.js';
 import { Errors } from '../utils/errors.js';
+import { env } from '../config/env.js';
 
 /** RevenueCat webhook olayı — `rcWebhookSchema.event` ile aynı alanlar. */
 export interface RevenueCatWebhookEvent {
@@ -145,6 +146,13 @@ class WebhookService {
     transactionId: string,
     paidEligible: boolean,
   ): Promise<void> {
+    // İşlem numarası yoksa tekilleştirme imkânsız (ne iz satırı ne addPurple referans guard'ı tutar):
+    // asla kredi yok. 200 dönülür — yeniden denemek düzeltmez.
+    if (!transactionId) {
+      console.error('[webhook] consumable without transaction_id ignored — no dedupe possible', { userId, productId });
+      return;
+    }
+
     const { data: existing, error: existingErr } = await supabase
       .from('iap_transactions')
       .select('id')
@@ -156,6 +164,14 @@ class WebhookService {
 
     const purpleAmount = IAP_PRODUCT_MAP[storeProductKey(productId)];
     if (!purpleAmount) return;
+
+    // Doğrulama modu (varsayılan): webhook `transaction_id`'si ile istemci yolunun referansı iki
+    // platformda da aynı çıkana kadar webhook yatırmaz — yalnız iz satırı (kredi istemci yolundan).
+    if (env.RC_CONSUMABLE_WEBHOOK_CREDIT !== 'true') {
+      console.warn('[webhook] consumable credit disabled (verification mode)', { userId, productId, transactionId });
+      await this.logIapTransaction(userId, productId, store, transactionId, 'NON_RENEWING_PURCHASE', null, 0);
+      return;
+    }
 
     // IAP tamamen ödenmiş mor (spec 2026-09-27) — yalnız gerçek satın almada; sandbox/aile paylaşımı 0.
     // İstemci yolu aynı satın almayı zaten kredilediyse (aynı mağaza işlem numarası) `credited` 0 döner.

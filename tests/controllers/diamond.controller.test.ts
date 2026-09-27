@@ -281,7 +281,8 @@ describe("purchaseHandler — mağaza işlem numarası referans (uçtan uca)", (
     });
     vi.doMock("../../src/config/supabase.js", () => ({ supabase: fake.client }));
     vi.doMock("../../src/config/env.js", () => ({
-      env: { IAP_SKIP_VALIDATION: "", REVENUECAT_API_KEY: "rc-key", NODE_ENV: "test" },
+      // Webhook kredi yolu açık: ikinci yolun gerçekten duplicate'e takıldığı sınansın (kapalıyken hiç yatırmaz).
+      env: { IAP_SKIP_VALIDATION: "", REVENUECAT_API_KEY: "rc-key", NODE_ENV: "test", RC_CONSUMABLE_WEBHOOK_CREDIT: "true" },
     }));
     vi.stubGlobal("fetch", vi.fn(async () => ({
       ok: true,

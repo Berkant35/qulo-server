@@ -50,7 +50,63 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
+/**
+ * Tüketilebilir webhook kredisi `RC_CONSUMABLE_WEBHOOK_CREDIT` ile kapılı (varsayılan KAPALI =
+ * doğrulama modu): webhook `transaction_id`'sinin istemci yolunun referansıyla aynı olduğu iOS ve
+ * Android'de doğrulanana kadar webhook mor yatırmaz. `''` = tanımsız (dotenv mevcut anahtarı ezmez).
+ */
+let oncekiKredi: string | undefined;
+beforeEach(() => { oncekiKredi = process.env.RC_CONSUMABLE_WEBHOOK_CREDIT; });
+afterEach(() => {
+  if (oncekiKredi === undefined) delete process.env.RC_CONSUMABLE_WEBHOOK_CREDIT;
+  else process.env.RC_CONSUMABLE_WEBHOOK_CREDIT = oncekiKredi;
+  vi.restoreAllMocks();
+});
+
+describe('tüketilebilir webhook kredisi kapısı (RC_CONSUMABLE_WEBHOOK_CREDIT)', () => {
+  it.each(['', 'false'])('bayrak %j: mor yatmaz, iz satırı purple_credited 0 ile yazılır, uyarı loglanır', async (flag) => {
+    process.env.RC_CONSUMABLE_WEBHOOK_CREDIT = flag;
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { fake, webhookService } = await setup();
+
+    await webhookService.handleRevenueCatEvent(event({
+      type: 'NON_RENEWING_PURCHASE', product_id: 'qulopurple400', transaction_id: 'tx-buy', environment: 'PRODUCTION',
+    }));
+
+    expect(fake.table('users')[0].purple_diamonds).toBe(0);
+    expect(fake.table('diamond_transactions')).toHaveLength(0);
+    expect(fake.table('iap_transactions')).toEqual([
+      expect.objectContaining({
+        user_id: 'u1', product_id: 'qulopurple400', transaction_id: 'tx-buy',
+        rc_event_type: 'NON_RENEWING_PURCHASE', purple_credited: 0,
+      }),
+    ]);
+    expect(warnSpy).toHaveBeenCalledWith(
+      '[webhook] consumable credit disabled (verification mode)',
+      expect.objectContaining({ userId: 'u1', productId: 'qulopurple400', transactionId: 'tx-buy' }),
+    );
+  });
+
+  it.each(['', 'true'])('bayrak %j: transaction_id yoksa asla kredi yok (tekilleştirme imkânsız), iz yok, hata loglanır', async (flag) => {
+    process.env.RC_CONSUMABLE_WEBHOOK_CREDIT = flag;
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { fake, webhookService } = await setup();
+
+    await expect(webhookService.handleRevenueCatEvent(event({
+      type: 'NON_RENEWING_PURCHASE', product_id: 'qulopurple400', transaction_id: undefined,
+    }))).resolves.toBeUndefined();
+
+    expect(fake.table('users')[0].purple_diamonds).toBe(0);
+    expect(fake.table('diamond_transactions')).toHaveLength(0);
+    expect(fake.table('iap_transactions')).toHaveLength(0);
+    expect(errorSpy).toHaveBeenCalled();
+  });
+});
+
 describe('tüketilebilir satın alma (NON_RENEWING_PURCHASE)', () => {
+  // Kredi yolu: bayrak açık (üretimde doğrulamadan sonra açılır).
+  beforeEach(() => { process.env.RC_CONSUMABLE_WEBHOOK_CREDIT = 'true'; });
+
   it('ürün haritasındaki kadar mor elmas yatırır', async () => {
     const { fake, webhookService } = await setup();
 
@@ -339,6 +395,7 @@ describe('idempotency ve dayanıklılık', () => {
   });
 
   it('başka kullanıcının bakiyesine dokunmaz', async () => {
+    process.env.RC_CONSUMABLE_WEBHOOK_CREDIT = 'true'; // kredi yolu gerçekten çalışsın
     const { fake, webhookService } = await setup({
       users: [
         { id: 'u1', green_diamonds: 0, purple_diamonds: 0, subscription_plan: null, subscription_expires_at: null },
@@ -361,6 +418,8 @@ describe('idempotency ve dayanıklılık', () => {
  * kimliklerini tanıyordu → Android Premium ödemesi gelse bile plan yazılmayacaktı.
  */
 describe('Google Play ürün kimlikleri', () => {
+  beforeEach(() => { process.env.RC_CONSUMABLE_WEBHOOK_CREDIT = 'true'; });
+
   it("Play'deki premium kimliği 'qulopremiummonthly' premium plan verir", async () => {
     const { fake, webhookService } = await setup();
     await webhookService.handleRevenueCatEvent(event({

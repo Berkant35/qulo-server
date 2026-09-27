@@ -20,14 +20,21 @@ async function setup(seed: Tables = {}) {
 const NOW = new Date('2026-09-01T12:00:00Z');
 const EXPIRES_MS = new Date('2026-10-01T12:00:00Z').getTime();
 
+// Tüketilebilir kredi yolu `RC_CONSUMABLE_WEBHOOK_CREDIT=true` ister (varsayılan doğrulama modu yatırmaz).
+let oncekiKredi: string | undefined;
+
 beforeEach(() => {
   vi.resetModules();
   vi.useFakeTimers();
   vi.setSystemTime(NOW);
+  oncekiKredi = process.env.RC_CONSUMABLE_WEBHOOK_CREDIT;
+  process.env.RC_CONSUMABLE_WEBHOOK_CREDIT = 'true';
 });
 
 afterEach(() => {
   vi.useRealTimers();
+  if (oncekiKredi === undefined) delete process.env.RC_CONSUMABLE_WEBHOOK_CREDIT;
+  else process.env.RC_CONSUMABLE_WEBHOOK_CREDIT = oncekiKredi;
 });
 
 /** Gerçek (PRODUCTION, kendi satın alması, tam fiyat) RevenueCat olayı alanları — webhook her olayda yollar. */

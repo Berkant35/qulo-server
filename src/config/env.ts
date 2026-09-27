@@ -41,6 +41,16 @@ const envSchema = z.object({
   REVENUECAT_WEBHOOK_SECRET: z.string().default(''),
   REVENUECAT_API_KEY: z.string().default(''),
   IAP_SKIP_VALIDATION: z.string().default(''),
+  /**
+   * Tüketilebilir (NON_RENEWING_PURCHASE) webhook'u mor yatırsın mı. Bos/tanimsiz = KAPALI =
+   * dogrulama modu: webhook yalniz iz satiri yazar (purple_credited 0), kredi istemci yolundan gelir.
+   * Cift kredi korumasi webhook `transaction_id`'sinin istemci yolunun referansiyla
+   * (`store_transaction_id || purchase.id`) ayni olmasina dayanir; iOS ve Android'de dogrulanmadan "true" yapma.
+   */
+  RC_CONSUMABLE_WEBHOOK_CREDIT: z.preprocess(
+    (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
+    z.enum(["true", "false"]).optional(),
+  ),
 
   // Gemini AI
   GEMINI_API_KEY: z.string().default(''),
