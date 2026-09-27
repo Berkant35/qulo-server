@@ -4,6 +4,9 @@
 
 BEGIN;
 
+-- 069 ile aynı: kilit 3 sn'de alınamazsa düş, trafiği kuyrukta bekletme (FK adımları `users`'ı kilitler).
+SET LOCAL lock_timeout = '3s';
+
 DROP INDEX IF EXISTS idx_diamond_rainbow_reference;
 
 ALTER TABLE reward_redemptions DROP CONSTRAINT IF EXISTS reward_redemptions_user_id_fkey;
