@@ -74,3 +74,26 @@ export function pickOracleSuggestion<T>(
   const candidates = pool.length > 0 ? pool : wrong;
   return candidates[Math.floor(Math.random() * candidates.length)];
 }
+
+/** Güç ödülünün iki elmasa dağılımı. */
+export interface RewardSplit {
+  green: number;
+  rainbow: number;
+}
+
+/**
+ * Harcamanın ödenmiş (gerçek parayla alınmış mor) kısmı. Sıra "önce ödenmiş":
+ * harcama önce `purple_paid` sayacından düşer (kullanıcı kararı, spec 2026-09-27).
+ */
+export function paidPortion(amount: number, purplePaid: number): number {
+  return Math.max(0, Math.min(amount, purplePaid));
+}
+
+/**
+ * Güç ödülünü yeşil + rainbow'a böler. Toplam bugünkü `calculateGreenReward` ile aynı
+ * kalır; yalnız ödenmiş kısmın payı rainbow olur. Bedava mor hiçbir zaman rainbow üretmez.
+ */
+export function splitReward(total: number, paidUsed: number, ratio: number): RewardSplit {
+  const rainbow = Math.min(total, Math.floor(Math.max(0, paidUsed) * ratio));
+  return { green: total - rainbow, rainbow };
+}
