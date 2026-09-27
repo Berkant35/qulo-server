@@ -21,7 +21,7 @@ async function setup(tablo: Record<string, unknown>[]) {
 
 const cagir = async (c: any, id: string, action: string) => {
   const res = fakeRes();
-  await c.userAction({ params: { id }, body: { action }, session: {} } as never, res);
+  await c.userAction({ params: { id }, body: { action }, session: { adminRole: 'SUPER_ADMIN' } } as never, res);
   return res;
 };
 

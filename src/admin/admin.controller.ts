@@ -7,11 +7,30 @@ import { NotificationService, type PushType } from "../services/notification.ser
 import { economyConfigService } from "../services/economy-config.service.js";
 import { economyConfigSchema, ECONOMY_BOUNDARIES } from "../types/economy-config.schema.js";
 import { supabase } from "../config/supabase.js";
+import { rewardsAdminService } from "../services/rewards-admin.service.js";
 import {
   pushTemplateParamsSchema,
   pushTemplateQuerySchema,
   pushTemplateBodySchema,
 } from "../validators/push-template.validator.js";
+
+/** Para ve görünürlük değiştiren kullanıcı eylemleri yalnız süper admin (Rainbow Plan 2). */
+const SUPER_ADMIN_USER_ACTIONS = new Set(["update_diamonds", "test_admin_on", "test_admin_off", "clear_rainbow_flag"]);
+
+/** Kullanıcı detayındaki `?error=` kodu → mesaj (backoffice Türkçe). */
+const USER_ACTION_ERRORS: Record<string, string> = {
+  forbidden: "Bu işlem yalnız süper admin içindir.",
+  invalid_diamonds: "Elmas değerleri 0 ya da pozitif tam sayı olmalı.",
+  update_failed: "Bakiye güncellenemedi (eşzamanlı bir değişiklik olmuş olabilir) — sayfayı yenileyip tekrar dene.",
+  action_failed: "İşlem başarısız oldu, sunucu loglarına bak.",
+};
+
+/** Yalnız haritanın KENDİ anahtarı: `?error=constructor` prototip üyesine düşmesin. */
+function userActionError(key: unknown): string | null {
+  return typeof key === "string" && Object.prototype.hasOwnProperty.call(USER_ACTION_ERRORS, key)
+    ? USER_ACTION_ERRORS[key]
+    : null;
+}
 
 /**
  * HTML checkbox semantics: present + "on" -> true, present but unchecked -> false.
@@ -60,47 +79,69 @@ class AdminController {
   }
 
   async userDetail(req: Request, res: Response) {
-    const { user, details, questions } = await adminService.getUserDetail(req.params.id as string);
-    if (!user) return res.status(404).render("error", { message: "User not found", session: req.session });
-    const swipeCount = await adminService.getSwipeCount(req.params.id as string);
-    res.render("user-detail", { user, details, questions, swipeCount, session: req.session, csrfToken: req.session.csrfToken });
+    const id = req.params.id as string;
+    try {
+      const { user, details, questions } = await adminService.getUserDetail(id);
+      if (!user) return res.status(404).render("error", { message: "User not found", session: req.session });
+      const swipeCount = await adminService.getSwipeCount(id);
+      res.render("user-detail", {
+        user, details, questions, swipeCount,
+        error: userActionError(req.query.error),
+        session: req.session, csrfToken: req.session.csrfToken,
+      });
+    } catch (err) {
+      console.error("[admin] userDetail failed:", { userId: id, err });
+      res.status(500).render("error", { message: "Kullanıcı yüklenemedi.", session: req.session });
+    }
   }
 
   async userAction(req: Request, res: Response) {
     const id = req.params.id as string;
-    const { action, green_diamonds, purple_diamonds } = req.body;
+    const { action } = req.body;
 
-    if (action === "ban") await adminService.banUser(id);
-    else if (action === "unban") await adminService.unbanUser(id);
-    else if (action === "delete") await adminService.deleteUser(id);
-    else if (action === "update_diamonds") {
-      const green = parseInt(green_diamonds);
-      const purple = parseInt(purple_diamonds);
-      // Alan yok/boş = "değişmedi" (0 DEĞİL): eski form ya da eksik alan rainbow'u sıfırlamasın.
-      const rawRainbow = req.body.rainbow_diamonds;
-      const rainbow = rawRainbow == null || String(rawRainbow).trim() === "" ? undefined : parseInt(String(rawRainbow));
-      if ([green, purple, rainbow].some((n) => n !== undefined && (isNaN(n) || n < 0))) {
-        return res.redirect(`/admin/users/${id}?error=invalid_diamonds`);
-      }
-      try {
-        await adminService.updateDiamonds(id, green, purple, rainbow, req.session.adminId!);
-      } catch (err) {
-        console.error("[admin] update_diamonds failed:", { userId: id, err });
-        return res.redirect(`/admin/users/${id}?error=update_failed`);
-      }
-    } else if (action === "set_subscription") {
-      const { sub_plan, sub_days } = req.body;
-      await adminService.setSubscription(id, sub_plan, parseInt(sub_days) || 30);
-    } else if (action === "cancel_subscription") {
-      await adminService.cancelSubscription(id);
-    } else if (action === "reset_swipes") {
-      await adminService.resetSwipes(id);
-    } else if (action === "reset_discovery") {
-      await adminService.resetUserDiscovery(id);
-    } else if (action === "test_admin_on" || action === "test_admin_off") {
-      await adminService.setTestAdmin(id, action === "test_admin_on");
+    if (SUPER_ADMIN_USER_ACTIONS.has(action) && req.session.adminRole !== "SUPER_ADMIN") {
+      return res.redirect(`/admin/users/${id}?error=forbidden`);
+    }
+    if (action === "update_diamonds") return this.updateDiamondsAction(req, res, id);
+
+    try {
+      if (action === "ban") await adminService.banUser(id);
+      else if (action === "unban") await adminService.unbanUser(id);
+      else if (action === "delete") await adminService.deleteUser(id);
+      else if (action === "set_subscription") {
+        const { sub_plan, sub_days } = req.body;
+        await adminService.setSubscription(id, sub_plan, parseInt(sub_days) || 30);
+      } else if (action === "cancel_subscription") await adminService.cancelSubscription(id);
+      else if (action === "reset_swipes") await adminService.resetSwipes(id);
+      else if (action === "reset_discovery") await adminService.resetUserDiscovery(id);
+      else if (action === "test_admin_on" || action === "test_admin_off") {
+        await adminService.setTestAdmin(id, action === "test_admin_on");
+      } else if (action === "clear_rainbow_flag") await rewardsAdminService.clearRainbowFlag(id);
+    } catch (err) {
+      // Eskiden yalnız update_diamonds yakalanıyordu: diğer dallar patlayınca istek asılı kalıyordu.
+      console.error(`[admin] userAction ${action} failed:`, { userId: id, err });
+      return res.redirect(`/admin/users/${id}?error=action_failed`);
     }
 
+    res.redirect(`/admin/users/${id}`);
+  }
+
+  /** Alan yok/boş = "değişmedi" (0 DEĞİL); negatif/NaN servise gitmez. */
+  private async updateDiamondsAction(req: Request, res: Response, id: string) {
+    const green = parseInt(req.body.green_diamonds);
+    const purple = parseInt(req.body.purple_diamonds);
+    // Alan yok/boş = "değişmedi" (0 DEĞİL): eski form ya da eksik alan rainbow'u sıfırlamasın.
+    const rawRainbow = req.body.rainbow_diamonds;
+    const rainbow = rawRainbow == null || String(rawRainbow).trim() === "" ? undefined : parseInt(String(rawRainbow));
+    if ([green, purple, rainbow].some((n) => n !== undefined && (isNaN(n) || n < 0))) {
+      return res.redirect(`/admin/users/${id}?error=invalid_diamonds`);
+    }
+    try {
+      await adminService.updateDiamonds(id, green, purple, rainbow, req.session.adminId!);
+    } catch (err) {
+      console.error("[admin] update_diamonds failed:", { userId: id, err });
+      return res.redirect(`/admin/users/${id}?error=update_failed`);
+    }
     res.redirect(`/admin/users/${id}`);
   }
 

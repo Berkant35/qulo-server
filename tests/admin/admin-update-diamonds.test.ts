@@ -90,7 +90,7 @@ async function setupController(seed: Tables, options?: FakeSupabaseOptions) {
 const updateReq = (body: Record<string, unknown>) => ({
   params: { id: 'u1' },
   body: { action: 'update_diamonds', ...body },
-  session: { adminId: 'adm1' },
+  session: { adminId: 'adm1', adminRole: 'SUPER_ADMIN' },
 }) as never;
 
 describe('userAction — update_diamonds', () => {
