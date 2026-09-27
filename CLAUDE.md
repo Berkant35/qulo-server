@@ -8,6 +8,10 @@ Burada sadece server'a özgü kısım var.
   Yerel sunucu prod Supabase'e bağlı; kapısız her yerel sunucu ikinci bir prod cron çalıştırıcısıydı
   (2026-09-27: 24 saatteki 678 bin isteğin yarısı). Tek bir cron'u denemek için `/admin/crons`'tan
   yalnız o işi başlat; `CRON_ENABLED=true` DOKUZ işin hepsini prod DB'ye karşı açar (çift push/ban).
+- **Deploy (Railway)**: `railway.json` `healthcheckPath: /health` — yeni sürüm `/health` 2xx dönene kadar
+  (varsayılan 300 sn) aktif olmaz; açılışta çöken sürüm (ör. env parse hatası → `process.exit(1)`) hiç
+  devreye girmez, ÖNCEKİ sürüm hizmete devam eder ve deploy "failed" görünür → `railway logs --build`.
+  Kontrol yalnız deploy anında; `/health` DB'ye bakmaz (Supabase kesintisi deploy'u düşürmesin).
 - **SQL sınaması**: `npx tsx scripts/sql-checks/seed-reply-candidates.ts` → çıktıyı Supabase SQL
   editor / MCP `execute_sql` ile çalıştır; geri alınan işlemde senaryolar (fonksiyon değişince).
 - **Test**: `npx vitest run` | tek dosya: `npx vitest run tests/services/x.test.ts`
