@@ -1,5 +1,6 @@
 import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
+import { paidPortion, type RewardSplit } from "../utils/math.js";
 
 export interface AddPurpleResult {
   /** Islemden sonraki toplam mor bakiye. */
@@ -8,20 +9,24 @@ export interface AddPurpleResult {
   credited: number;
 }
 
-export class DiamondService {
-  // 24h social-signup cooldown devre dışı.
-  // Anti-fraud değeri minimaldi (kullanıcı yine de hesap aç + bekle ile bypass edebilir)
-  // ama legitimate kullanıcının mor elmasını harcamasını engelliyordu (satın almadan sonra dahi).
-  // Re-enable etmek istenirse: user.auth_provider !== 'email' && hoursSinceCreation < 24
-  // && !hasActiveSub && !hasIap koşullarını yeniden ekle.
-  private async checkSocialCooldown(_userId: string) {
-    return;
-  }
+export type LedgerType = "GREEN" | "PURPLE" | "RAINBOW";
+type EarnedType = "GREEN" | "RAINBOW";
+type BalanceRow = Record<string, number | null | undefined>;
 
+const BALANCE_COLUMN: Record<LedgerType, "green_diamonds" | "purple_diamonds" | "rainbow_diamonds"> = {
+  GREEN: "green_diamonds",
+  PURPLE: "purple_diamonds",
+  RAINBOW: "rainbow_diamonds",
+};
+
+/** CAS çakışmasında yeniden deneme sayısı. Gerçek yarış nadir; 3 deneme sonra SERVER_ERROR. */
+const CAS_ATTEMPTS = 3;
+
+export class DiamondService {
   async getBalance(userId: string) {
     const { data, error } = await supabase
       .from("users")
-      .select("green_diamonds, purple_diamonds")
+      .select("green_diamonds, purple_diamonds, rainbow_diamonds")
       .eq("id", userId)
       .single();
 
@@ -29,7 +34,11 @@ export class DiamondService {
       throw Errors.USER_NOT_FOUND();
     }
 
-    return { green: data.green_diamonds, purple: data.purple_diamonds };
+    return {
+      green: data.green_diamonds,
+      purple: data.purple_diamonds,
+      rainbow: data.rainbow_diamonds ?? 0,
+    };
   }
 
   async getHistory(userId: string, page = 1, limit = 20) {
@@ -55,74 +64,47 @@ export class DiamondService {
     };
   }
 
+  /**
+   * Mor harcama — ÖNCE ÖDENMİŞ. `paidUsed` harcamanın gerçek parayla alınmış kısmı;
+   * karşı tarafın ödülü bununla bölünür (spec 2026-09-27 §2.2).
+   */
   async spendPurple(
     userId: string,
     amount: number,
     reason: string,
     referenceId?: string,
-  ) {
-    // Check 24h cooldown for social signup users
-    await this.checkSocialCooldown(userId);
+  ): Promise<{ purple: number; paidUsed: number }> {
+    let paidUsed = 0;
+    const { after } = await this.casUpdate(
+      userId,
+      ["purple_diamonds", "purple_paid"],
+      "purple_diamonds",
+      (row) => {
+        const purple = row.purple_diamonds ?? 0;
+        const paid = row.purple_paid ?? 0;
+        if (purple < amount) throw Errors.INSUFFICIENT_DIAMONDS(amount, purple);
+        paidUsed = paidPortion(amount, paid);
+        return { purple_diamonds: purple - amount, purple_paid: paid - paidUsed };
+      },
+    );
 
-    // Read current balance for early validation
-    const { data: user, error: readErr } = await supabase
-      .from("users")
-      .select("purple_diamonds")
-      .eq("id", userId)
-      .single();
-
-    if (readErr || !user) {
-      throw Errors.USER_NOT_FOUND();
-    }
-
-    if (user.purple_diamonds < amount) {
-      throw Errors.INSUFFICIENT_DIAMONDS(amount, user.purple_diamonds);
-    }
-
-    // Atomic decrement — .gte() ensures balance hasn't dropped below amount since read
-    const { data: updated, error: updateErr } = await supabase
-      .from("users")
-      .update({ purple_diamonds: user.purple_diamonds - amount })
-      .eq("id", userId)
-      .gte("purple_diamonds", amount)
-      .select("purple_diamonds")
-      .single();
-
-    if (updateErr || !updated) {
-      throw Errors.INSUFFICIENT_DIAMONDS(amount, user.purple_diamonds);
-    }
-
-    // Insert transaction log
-    const { error: txErr } = await supabase
-      .from("diamond_transactions")
-      .insert({
-        user_id: userId,
-        type: "PURPLE",
-        amount: -amount,
-        reason,
-        reference_id: referenceId ?? null,
-      });
-
-    if (txErr) {
-      throw Errors.SERVER_ERROR();
-    }
-
-    return { purple: updated.purple_diamonds };
+    await this.logTransaction(userId, "PURPLE", -amount, reason, referenceId, paidUsed);
+    return { purple: after.purple_diamonds ?? 0, paidUsed };
   }
 
   /**
-   * `addPurple` sonucu.
-   * - `purple`  : islemden SONRAKI toplam mor bakiye
-   * - `credited`: BU cagrinin gercekten yatirdigi miktar (duplicate'te 0)
-   *
-   * Ikisi ayri: duplicate dallarinda bakiye degismez ama dogru bakiye donmeli.
+   * `paidAmount`: bu kredinin gerçek parayla alınmış kısmı (IAP = tamamı, abonelik bonusu =
+   * tier payı, diğer tüm kaynaklar 0). `[0, amount]` aralığına sıkıştırılır.
    */
   async addPurple(
     userId: string,
     amount: number,
     reason: string,
     referenceId?: string,
+    paidAmount = 0,
   ): Promise<AddPurpleResult> {
+    const paid = Math.max(0, Math.min(paidAmount, amount));
+
     // Duplicate guard — prevent same reward being given twice
     if (referenceId) {
       const { data: existing } = await supabase
@@ -138,23 +120,9 @@ export class DiamondService {
       }
     }
 
-    // NOT (2026-09-08): duplicate dalları artık `{ purple: <gerçek bakiye>,
-    // credited: 0 }` dönüyor, eskiden `{ purple: 0 }` dönüyordu. Gerekçe API
-    // SÖZLEŞMESİ DOĞRULUĞU: normal dalda bu alan "yeni toplam bakiye" demek, o
-    // yüzden duplicate'te 0 dönmek sözleşmeye göre "bakiyen sıfır" iddiasıydı.
-    // Bugünkü mobil istemci bu gövdeyi OKUMUYOR (`Future<void> purchase`), yani
-    // sahada görünen bir semptom değildi — ama sözleşmenin yalan söylememesi
-    // gerekiyor ve `credited` sayesinde "yatmadı" durumu artık ayırt edilebilir.
-    //
-    // ÖNCE KAYIT, SONRA BAKİYE — sıra kasıtlı.
-    //
-    // Yukarıdaki guard "önce oku sonra yaz" olduğu için yarışa açık: 2026-09-05'te
-    // iki istek 0,5 sn arayla geldi ve guard'ı aştı (500 yerine 1000 mor elmas).
-    // Son savunma `uniq_diamond_money_reference` kısmi benzersiz indeksi
-    // (migration 047, SUBSCRIPTION_BONUS + IAP_PURCHASE kapsıyor). O indeks
-    // ancak bu insert'te devreye girer; bakiyeyi önce artırsaydık kısıt
-    // reddettiğinde bakiye şişmiş ama log yazılmamış olurdu — para yoktan var
-    // olurdu. Bu yüzden insert bir "hak talebi" gibi önce yazılır.
+    // ÖNCE KAYIT, SONRA BAKİYE — sıra kasıtlı (2026-09-05 çift kredi olayı): son savunma
+    // `uniq_diamond_money_reference` kısmi benzersiz indeksi (047) ancak bu insert'te devreye
+    // girer; bakiyeyi önce artırsaydık kısıt reddettiğinde para yoktan var olurdu.
     const { error: txErr } = await supabase
       .from("diamond_transactions")
       .insert({
@@ -163,6 +131,7 @@ export class DiamondService {
         amount: +amount,
         reason,
         reference_id: referenceId ?? null,
+        ...(paid > 0 ? { paid_amount: paid } : {}),
       });
 
     if (txErr) {
@@ -174,133 +143,130 @@ export class DiamondService {
       throw Errors.SERVER_ERROR();
     }
 
-    // Read current balance
-    const { data: user, error: readErr } = await supabase
-      .from("users")
-      .select("purple_diamonds")
-      .eq("id", userId)
-      .single();
+    const { after } = await this.casUpdate(
+      userId,
+      ["purple_diamonds", "purple_paid"],
+      "purple_diamonds",
+      (row) => ({
+        purple_diamonds: (row.purple_diamonds ?? 0) + amount,
+        purple_paid: (row.purple_paid ?? 0) + paid,
+      }),
+    );
 
-    if (readErr || !user) {
-      throw Errors.USER_NOT_FOUND();
-    }
-
-    // Increment without optimistic lock — safe for sequential calls in same request
-    const { data: updated, error: updateErr } = await supabase
-      .from("users")
-      .update({ purple_diamonds: user.purple_diamonds + amount })
-      .eq("id", userId)
-      .select("purple_diamonds")
-      .single();
-
-    if (updateErr || !updated) {
-      throw Errors.SERVER_ERROR();
-    }
-
-    return { purple: updated.purple_diamonds, credited: amount };
+    return { purple: after.purple_diamonds ?? 0, credited: amount };
   }
 
-  async earnGreen(
+  async earnGreen(userId: string, amount: number, reason: string, referenceId?: string) {
+    return { green: await this.earn(userId, "GREEN", amount, reason, referenceId) };
+  }
+
+  async spendGreen(userId: string, amount: number, reason: string, referenceId?: string) {
+    return { green: await this.spend(userId, "GREEN", amount, reason, referenceId) };
+  }
+
+  async earnRainbow(userId: string, amount: number, reason: string, referenceId?: string) {
+    return { rainbow: await this.earn(userId, "RAINBOW", amount, reason, referenceId) };
+  }
+
+  async spendRainbow(userId: string, amount: number, reason: string, referenceId?: string) {
+    return { rainbow: await this.spend(userId, "RAINBOW", amount, reason, referenceId) };
+  }
+
+  /** Bölünmüş güç ödülünü yazar: her pozitif pay için bir defter satırı (aynı reason/ref). */
+  async creditReward(userId: string, split: RewardSplit, reason: string, referenceId?: string): Promise<void> {
+    if (split.green > 0) await this.earnGreen(userId, split.green, reason, referenceId);
+    if (split.rainbow > 0) await this.earnRainbow(userId, split.rainbow, reason, referenceId);
+  }
+
+  private async earn(userId: string, type: EarnedType, amount: number, reason: string, referenceId?: string) {
+    const column = BALANCE_COLUMN[type];
+    const { after } = await this.casUpdate(userId, [column], column, (row) => ({
+      [column]: (row[column] ?? 0) + amount,
+    }));
+    await this.logTransaction(userId, type, +amount, reason, referenceId);
+    return after[column] ?? 0;
+  }
+
+  private async spend(userId: string, type: EarnedType, amount: number, reason: string, referenceId?: string) {
+    const column = BALANCE_COLUMN[type];
+    const { after } = await this.casUpdate(userId, [column], column, (row) => {
+      const current = row[column] ?? 0;
+      if (current < amount) throw Errors.INSUFFICIENT_DIAMONDS(amount, current);
+      return { [column]: current - amount };
+    });
+    await this.logTransaction(userId, type, -amount, reason, referenceId);
+    return after[column] ?? 0;
+  }
+
+  /**
+   * Tek satırlık bakiye değişikliği, gerçek compare-and-swap: okunan `guard` değeri hâlâ
+   * aynıysa yazar, değilse yeniden okuyup dener. Eski `.gte(eski)` guard'ı iki eşzamanlı
+   * artırımda birini kaybedebiliyordu. `guard` her zaman değişen bakiye kolonudur; ödenmiş
+   * sayaç yalnız mor bakiyeyle birlikte değiştiği için mor guard'ı onu da korur.
+   * `compute` hata fırlatabilir (ör. INSUFFICIENT_DIAMONDS) — o zaman hiçbir şey yazılmaz.
+   */
+  private async casUpdate(
     userId: string,
+    columns: readonly string[],
+    guard: string,
+    compute: (row: BalanceRow) => BalanceRow,
+  ): Promise<{ before: BalanceRow; after: BalanceRow }> {
+    const selection = columns.join(", ");
+    for (let attempt = 0; attempt < CAS_ATTEMPTS; attempt++) {
+      const { data: row, error: readErr } = await supabase
+        .from("users")
+        .select(selection)
+        .eq("id", userId)
+        .single();
+
+      if (readErr || !row) {
+        throw Errors.USER_NOT_FOUND();
+      }
+
+      const before = row as unknown as BalanceRow;
+      const patch = compute(before);
+
+      const { data: updated, error: updateErr } = await supabase
+        .from("users")
+        .update(patch)
+        .eq("id", userId)
+        .eq(guard, before[guard] ?? 0)
+        .select(selection)
+        .maybeSingle();
+
+      if (updateErr) {
+        throw Errors.SERVER_ERROR();
+      }
+      if (updated) {
+        return { before, after: updated as unknown as BalanceRow };
+      }
+      // guard tutmadı: okuma ile yazma arasına başka bir istek girdi — yeniden oku.
+    }
+    throw Errors.SERVER_ERROR();
+  }
+
+  private async logTransaction(
+    userId: string,
+    type: LedgerType,
     amount: number,
     reason: string,
     referenceId?: string,
-  ) {
-    // Read current balance
-    const { data: user, error: readErr } = await supabase
-      .from("users")
-      .select("green_diamonds")
-      .eq("id", userId)
-      .single();
-
-    if (readErr || !user) {
-      throw Errors.USER_NOT_FOUND();
-    }
-
-    // Atomic increment — optimistic lock ensures no concurrent modification
-    const { data: updated, error: updateErr } = await supabase
-      .from("users")
-      .update({ green_diamonds: user.green_diamonds + amount })
-      .eq("id", userId)
-      .gte("green_diamonds", user.green_diamonds)
-      .select("green_diamonds")
-      .single();
-
-    if (updateErr || !updated) {
-      throw Errors.SERVER_ERROR();
-    }
-
-    // Insert transaction log
-    const { error: txErr } = await supabase
+    paidAmount = 0,
+  ): Promise<void> {
+    const { error } = await supabase
       .from("diamond_transactions")
       .insert({
         user_id: userId,
-        type: "GREEN",
-        amount: +amount,
+        type,
+        amount,
         reason,
         reference_id: referenceId ?? null,
+        ...(paidAmount > 0 ? { paid_amount: paidAmount } : {}),
       });
 
-    if (txErr) {
+    if (error) {
       throw Errors.SERVER_ERROR();
     }
-
-    return { green: updated.green_diamonds };
-  }
-
-  async spendGreen(
-    userId: string,
-    amount: number,
-    reason: string,
-    referenceId?: string,
-  ) {
-    // Check 24h cooldown for social signup users
-    await this.checkSocialCooldown(userId);
-
-    // Read current balance for early validation
-    const { data: user, error: readErr } = await supabase
-      .from("users")
-      .select("green_diamonds")
-      .eq("id", userId)
-      .single();
-
-    if (readErr || !user) {
-      throw Errors.USER_NOT_FOUND();
-    }
-
-    if (user.green_diamonds < amount) {
-      throw Errors.INSUFFICIENT_DIAMONDS(amount, user.green_diamonds);
-    }
-
-    // Atomic decrement — .gte() ensures balance hasn't dropped below amount since read
-    const { data: updated, error: updateErr } = await supabase
-      .from("users")
-      .update({ green_diamonds: user.green_diamonds - amount })
-      .eq("id", userId)
-      .gte("green_diamonds", amount)
-      .select("green_diamonds")
-      .single();
-
-    if (updateErr || !updated) {
-      throw Errors.INSUFFICIENT_DIAMONDS(amount, user.green_diamonds);
-    }
-
-    // Insert transaction log
-    const { error: txErr } = await supabase
-      .from("diamond_transactions")
-      .insert({
-        user_id: userId,
-        type: "GREEN",
-        amount: -amount,
-        reason,
-        reference_id: referenceId ?? null,
-      });
-
-    if (txErr) {
-      throw Errors.SERVER_ERROR();
-    }
-
-    return { green: updated.green_diamonds };
   }
 }
 

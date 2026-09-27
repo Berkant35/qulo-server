@@ -27,7 +27,7 @@ beforeEach(() => {
 describe('DiamondService.getBalance', () => {
   it('kullanıcının iki bakiyesini de döner', async () => {
     const { diamondService } = await setup({ users: [user()] });
-    await expect(diamondService.getBalance('u1')).resolves.toEqual({ green: 100, purple: 50 });
+    await expect(diamondService.getBalance('u1')).resolves.toEqual({ green: 100, purple: 50, rainbow: 0 });
   });
 
   it('kullanıcı yoksa USER_NOT_FOUND', async () => {
@@ -102,7 +102,7 @@ describe('DiamondService.spendPurple', () => {
     const { fake, diamondService } = await setup({ users: [user({ purple_diamonds: 15 })] });
 
     await expect(diamondService.spendPurple('u1', 15, 'buy_power_SHIELD'))
-      .resolves.toEqual({ purple: 0 });
+      .resolves.toEqual({ purple: 0, paidUsed: 0 });
 
     expect(fake.table('users')[0].purple_diamonds).toBe(0);
     expect(fake.table('diamond_transactions')[0]).toMatchObject({ type: 'PURPLE', amount: -15 });
