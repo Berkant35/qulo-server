@@ -10,6 +10,7 @@ const NOW = new Date('2026-09-01T12:00:00Z');
 interface EnvOverrides {
   IAP_SKIP_VALIDATION?: string;
   REVENUECAT_API_KEY?: string;
+  NODE_ENV?: string;
 }
 
 /** RevenueCat `/subscribers/:id` cevabını taklit eder. */
@@ -51,7 +52,7 @@ describe('verifyPurchase', () => {
     const fetchFn = mockFetch({ body: subscriberBody() });
     const service = await setup({ IAP_SKIP_VALIDATION: 'true' });
 
-    await expect(service.verifyPurchase('u1', 'qulopurple50')).resolves.toEqual({ valid: true });
+    await expect(service.verifyPurchase('u1', 'qulopurple50')).resolves.toMatchObject({ valid: true });
     expect(fetchFn).not.toHaveBeenCalled();
   });
 
@@ -305,6 +306,78 @@ describe('ödenmiş uygunluğu', () => {
     const service = await setup();
     await expect(service.verifySubscription('u1', 'quloplusmonthly2')).resolves.toMatchObject({
       valid: true, paidEligible: false,
+    });
+  });
+});
+
+/**
+ * Tek satın alma = tek kredi, iki yoldan da (F5). Webhook `transaction_id` MAĞAZA işlem numarası
+ * taşır; istemci yolu eskiden RevenueCat'in kendi `id`'sini anahtar yapıyordu → aynı alım iki
+ * farklı referansla iki kez kredilenebilirdi. Artık istemci yolu da mağaza numarasını döner
+ * (API v1 non_subscriptions[].store_transaction_id), yoksa RC id'ye düşer.
+ */
+describe('verifyPurchase — mağaza işlem numarası (F5)', () => {
+  it('store_transaction_id varsa referans odur', async () => {
+    mockFetch({
+      body: subscriberBody({
+        non_subscriptions: { qulopurple50: [{ id: 'o1_rc', store_transaction_id: '2000000123', is_sandbox: false }] },
+      }),
+    });
+    const service = await setup();
+    await expect(service.verifyPurchase('u1', 'qulopurple50')).resolves.toMatchObject({
+      valid: true, transactionId: '2000000123',
+    });
+  });
+
+  it('istemci RC id gönderir (mobil transactionIdentifier) — eşleşir, referans yine mağaza numarası', async () => {
+    mockFetch({
+      body: subscriberBody({
+        non_subscriptions: {
+          qulopurple50: [
+            { id: 'o1_a', store_transaction_id: 'GPA.1', is_sandbox: false },
+            { id: 'o1_b', store_transaction_id: 'GPA.2', is_sandbox: false },
+          ],
+        },
+      }),
+    });
+    const service = await setup();
+    await expect(service.verifyPurchase('u1', 'qulopurple50', 'o1_b')).resolves.toMatchObject({
+      valid: true, transactionId: 'GPA.2',
+    });
+  });
+
+  it('istemci mağaza numarasını gönderirse de eşleşir', async () => {
+    mockFetch({
+      body: subscriberBody({ non_subscriptions: { qulopurple50: [{ id: 'o1_a', store_transaction_id: 'GPA.1' }] } }),
+    });
+    const service = await setup();
+    await expect(service.verifyPurchase('u1', 'qulopurple50', 'GPA.1')).resolves.toMatchObject({
+      valid: true, transactionId: 'GPA.1',
+    });
+  });
+});
+
+describe('IAP_SKIP_VALIDATION (F5)', () => {
+  it('production\'da bayrak YOK SAYILIR: RevenueCat yine sorulur, sahte alım reddedilir', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const fetchFn = mockFetch({ body: subscriberBody({ non_subscriptions: {} }) });
+    const service = await setup({ IAP_SKIP_VALIDATION: 'true', REVENUECAT_API_KEY: 'rc-key', NODE_ENV: 'production' });
+
+    await expect(service.verifyPurchase('u1', 'qulopurple50')).resolves.toMatchObject({ valid: false });
+    await expect(service.verifySubscription('u1', 'quloplusmonthly2')).resolves.toMatchObject({ valid: false });
+    expect(fetchFn).toHaveBeenCalledTimes(2);
+    // Uyarı bir kez (her istekte log gürültüsü yok).
+    expect(warn.mock.calls.filter((c) => String(c[0]).includes('IAP_SKIP_VALIDATION'))).toHaveLength(1);
+    warn.mockRestore();
+  });
+
+  it('production dışı atlanınca ödenmiş sayılmaz (paidEligible false)', async () => {
+    const service = await setup({ IAP_SKIP_VALIDATION: 'true', NODE_ENV: 'development' });
+    await expect(service.verifyPurchase('u1', 'qulopurple50')).resolves.toEqual({
+      valid: true, validationSkipped: true, paidEligible: false,
+    });
+    await expect(service.verifySubscription('u1', 'quloplusmonthly2')).resolves.toMatchObject({
+      valid: true, validationSkipped: true, paidEligible: false,
     });
   });
 });

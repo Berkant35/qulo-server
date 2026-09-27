@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import type { AddPurpleResult } from "../../src/services/diamond.service.js";
 
 /**
@@ -134,6 +134,16 @@ describe("purchaseHandler — ödenmiş mor", () => {
     expect(addPurple).toHaveBeenCalledWith("u1", 400, "IAP_PURCHASE", "rc-sandbox-1", 0);
   });
 
+  // IAP_SKIP_VALIDATION (yalnız production dışı): RevenueCat'e sorulmadı → ödenmiş sayılmaz (F5).
+  it("doğrulama atlandıysa ödenmiş 0", async () => {
+    const { purchaseHandler, addPurple } = await loadHandler({ valid: true, validationSkipped: true, paidEligible: false });
+    const { res } = makeRes();
+
+    await purchaseHandler(req({ product_id: "qulopurple400", transaction_id: "dev-tx" }), res, vi.fn());
+
+    expect(addPurple).toHaveBeenCalledWith("u1", 400, "IAP_PURCHASE", "dev-tx", 0);
+  });
+
   it("uygunluk bilgisi yoksa ödenmiş 0 (fail-safe)", async () => {
     const { purchaseHandler, addPurple } = await loadHandler({ valid: true, transactionId: "rc-x" });
     const { res } = makeRes();
@@ -241,5 +251,77 @@ describe("getHistoryHandler — platform", () => {
     expect(next).not.toHaveBeenCalled();
     expect(getHistory).toHaveBeenCalledWith("u1", 2, 10, "android");
     expect(json).toHaveBeenCalledWith({ items: [], total: 0, page: 2, limit: 10 });
+  });
+});
+
+/**
+ * Uçtan uca (gerçek kontrolör + revenuecat + diamond + webhook servisleri, fake supabase + sahte
+ * fetch): tek satın alma = tek kredi, iki yoldan da (F5). İstemci yolunun referansı artık mağaza
+ * işlem numarası — webhook'un `transaction_id`'siyle aynı değer — yani ikinci yol duplicate'e takılır.
+ */
+describe("purchaseHandler — mağaza işlem numarası referans (uçtan uca)", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    vi.doUnmock("../../src/services/revenuecat.service.js");
+    vi.doUnmock("../../src/services/diamond.service.js");
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.doUnmock("../../src/config/env.js");
+    vi.doUnmock("../../src/config/supabase.js");
+  });
+
+  async function setupE2E() {
+    const { createFakeSupabase } = await import("../helpers/fake-supabase.js");
+    const { activeConfigRow } = await import("../helpers/economy-config.fixture.js");
+    const fake = createFakeSupabase({
+      economy_config_versions: [activeConfigRow()],
+      users: [{ id: "u1", green_diamonds: 0, purple_diamonds: 0, purple_paid: 0, rainbow_diamonds: 0 }],
+    });
+    vi.doMock("../../src/config/supabase.js", () => ({ supabase: fake.client }));
+    vi.doMock("../../src/config/env.js", () => ({
+      env: { IAP_SKIP_VALIDATION: "", REVENUECAT_API_KEY: "rc-key", NODE_ENV: "test" },
+    }));
+    vi.stubGlobal("fetch", vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        subscriber: {
+          subscriptions: {},
+          non_subscriptions: {
+            qulopurple400: [{ id: "o1_rc", store_transaction_id: "GPA.3344", is_sandbox: false, purchase_date: "2026-09-27T10:00:00Z" }],
+          },
+        },
+      }),
+    })));
+    const { purchaseHandler } = await import("../../src/controllers/diamond.controller.js");
+    const { webhookService } = await import("../../src/services/webhook.service.js");
+    return { fake, purchaseHandler, webhookService };
+  }
+
+  it("istemci yolu referansı mağaza numarası; aynı alımın webhook'u ikinci kez yatırmaz", async () => {
+    const { fake, purchaseHandler, webhookService } = await setupE2E();
+    const { res } = makeRes();
+    const next = vi.fn();
+
+    await purchaseHandler(
+      { user: { userId: "u1" }, body: { product_id: "qulopurple400", transaction_id: "o1_rc" } } as any,
+      res,
+      next,
+    );
+
+    expect(next).not.toHaveBeenCalled();
+    expect(fake.table("diamond_transactions")).toEqual([
+      expect.objectContaining({ reason: "IAP_PURCHASE", reference_id: "GPA.3344", amount: 400, paid_amount: 400 }),
+    ]);
+
+    await webhookService.handleRevenueCatEvent({
+      type: "NON_RENEWING_PURCHASE", app_user_id: "u1", product_id: "qulopurple400", store: "PLAY_STORE",
+      transaction_id: "GPA.3344", environment: "PRODUCTION", is_family_share: false,
+    });
+
+    expect(fake.table("users")[0]).toMatchObject({ purple_diamonds: 400, purple_paid: 400 });
+    expect(fake.table("diamond_transactions").filter((t) => t.reason === "IAP_PURCHASE")).toHaveLength(1);
   });
 });

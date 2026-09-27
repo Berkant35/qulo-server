@@ -1,9 +1,14 @@
 -- 067_rainbow_market_rollback.sql
+-- ONCE sunucu kodunu geri al (Roll back the server code BEFORE running this SQL): yeni kod
+-- dusurulen kolonlari okuyor (purple_paid, rainbow_diamonds, paid_amount) — SQL once calisirsa
+-- bakiye/defter sorgulari patlar.
 -- UYARI: rainbow bakiyeleri ve itfa talepleri silinir. Enum degeri 'RAINBOW' Postgres'te
 -- geri alinamaz; kalmasi zararsiz (eski kod o degeri yazmaz). RAINBOW defter satirlari silinir
 -- ki eski istemci/servis tanimadigi turle karsilasmasin.
 BEGIN;
 DELETE FROM diamond_transactions WHERE type = 'RAINBOW';
+-- Rainbow ile alinan guclerin kaydi: eski kod diamond_type'i yalniz GREEN/PURPLE bilir.
+DELETE FROM power_purchase_transactions WHERE diamond_type = 'RAINBOW';
 DROP TABLE IF EXISTS reward_redemptions;
 DROP TABLE IF EXISTS reward_catalog_items;
 DROP TABLE IF EXISTS reward_market_countries;

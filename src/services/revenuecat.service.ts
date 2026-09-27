@@ -13,8 +13,11 @@ interface RCSubscription {
   ownership_type?: string;
 }
 
+/** API v1 `subscriber.non_subscriptions[productId][]`. `id` = RevenueCat'in kendi numarası. */
 interface RCNonSubscription {
   id: string;
+  /** Mağazanın işlem numarası — webhook `transaction_id` ile aynı değer. */
+  store_transaction_id?: string;
   purchase_date: string;
   product_identifier: string;
   is_sandbox?: boolean;
@@ -22,7 +25,10 @@ interface RCNonSubscription {
 
 export interface PurchaseVerification {
   valid: boolean;
+  /** Tekilleştirme referansı: mağaza işlem numarası (yoksa RevenueCat id). */
   transactionId?: string;
+  /** IAP_SKIP_VALIDATION ile doğrulama atlandı (yalnız production dışı) — ödenmiş sayılmaz. */
+  validationSkipped?: boolean;
   isSandbox?: boolean;
   /** Ödenmiş mor sayılır mı (utils/paid-eligibility). Yalnız RevenueCat'in doğruladığı gerçek alım. */
   paidEligible?: boolean;
@@ -32,6 +38,7 @@ export interface PurchaseVerification {
 export interface SubscriptionVerification {
   valid: boolean;
   expiresAt?: string;
+  validationSkipped?: boolean;
   isSandbox?: boolean;
   periodType?: string;
   ownershipType?: string;
@@ -49,6 +56,22 @@ interface RCSubscriberResponse {
 
 class RevenueCatService {
   private readonly baseUrl = 'https://api.revenuecat.com/v1';
+  private warnedSkipInProduction = false;
+
+  /**
+   * IAP_SKIP_VALIDATION yalnız geliştirme içindir. Production'da bayrak YOK SAYILIR (bir kez
+   * uyarılır): açık kalırsa herkes sahte satın almayla elmas alabilirdi. Süreç SONLANDIRILMAZ —
+   * Railway'de değişken yanlışlıkla kalırsa prod'u düşürmek daha kötü (controller kararı).
+   */
+  private skipValidation(): boolean {
+    if (env.IAP_SKIP_VALIDATION !== 'true') return false;
+    if (env.NODE_ENV !== 'production') return true;
+    if (!this.warnedSkipInProduction) {
+      this.warnedSkipInProduction = true;
+      console.warn('[RevenueCat] IAP_SKIP_VALIDATION=true is IGNORED in production — purchases are verified');
+    }
+    return false;
+  }
 
   /**
    * Verify a consumable (diamond) purchase exists in RevenueCat.
@@ -59,7 +82,7 @@ class RevenueCatService {
     productId: string,
     transactionId?: string,
   ): Promise<PurchaseVerification> {
-    if (env.IAP_SKIP_VALIDATION === 'true') return { valid: true };
+    if (this.skipValidation()) return { valid: true, validationSkipped: true, paidEligible: false };
     if (!env.REVENUECAT_API_KEY) {
       return { valid: false, error: 'IAP validation not configured' };
     }
@@ -74,9 +97,12 @@ class RevenueCatService {
         return { valid: false, error: 'Purchase not found for this product' };
       }
 
-      // If transactionId provided, verify it matches
+      // If transactionId provided, verify it matches. Mobil RevenueCat id'sini
+      // (StoreTransaction.transactionIdentifier) yolluyor; mağaza numarası da kabul.
       if (transactionId) {
-        const match = purchases.find((p) => p.id === transactionId);
+        const match = purchases.find(
+          (p) => p.id === transactionId || p.store_transaction_id === transactionId,
+        );
         if (!match) return { valid: false, error: 'Transaction ID not found' };
         return this.verifiedPurchase(match);
       }
@@ -104,10 +130,12 @@ class RevenueCatService {
     userId: string,
     productId: string,
   ): Promise<SubscriptionVerification> {
-    if (env.IAP_SKIP_VALIDATION === 'true') {
+    if (this.skipValidation()) {
       return {
         valid: true,
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        validationSkipped: true,
+        paidEligible: false,
       };
     }
     if (!env.REVENUECAT_API_KEY) {
@@ -157,7 +185,9 @@ class RevenueCatService {
     const sandbox = purchase.is_sandbox;
     return {
       valid: true,
-      transactionId: purchase.id,
+      // Referans MAĞAZA işlem numarası: webhook `transaction_id` ile aynı değer, yani aynı alım
+      // iki yoldan gelse de tek referans → tek kredi (068 hesaplar arası tekillik). Eski RC id yedek.
+      transactionId: purchase.store_transaction_id || purchase.id,
       isSandbox: sandbox,
       paidEligible: isPaidEligible({ sandbox, familyShared: false }, 'consumable'),
     };

@@ -311,3 +311,25 @@ describe('getHistory — rainbow erişimi', () => {
     expect(result.total).toBe(4);
   });
 });
+
+/**
+ * 068 `uniq_diamond_iap_reference_global`: bir IAP referansı (mağaza işlem numarası) HESAPLAR
+ * ARASI tek kez yatar. Uygulama guard'ı kullanıcı başına; ikinci hesaba aynı referansla gelen
+ * kredi DB kısıtında (23505) durur ve addPurple bunu `credited: 0` olarak döner.
+ */
+describe('addPurple — IAP referansı hesaplar arası tek (068)', () => {
+  it('A\'ya yatan referans B\'ye yatmaz: credited 0, B\'nin bakiyesi değişmez', async () => {
+    const { fake, diamondService } = await setup(
+      { users: [user({ id: 'a', purple_diamonds: 0 }), user({ id: 'b', purple_diamonds: 5, purple_paid: 0 })] },
+      { unique: { diamond_transactions: ['reference_id'] } },
+    );
+
+    await expect(diamondService.addPurple('a', 400, 'IAP_PURCHASE', 'GPA.1', 400))
+      .resolves.toEqual({ purple: 400, credited: 400 });
+    await expect(diamondService.addPurple('b', 400, 'IAP_PURCHASE', 'GPA.1', 400))
+      .resolves.toEqual({ purple: 5, credited: 0 });
+
+    expect(fake.table('users').find((u) => u.id === 'b')).toMatchObject({ purple_diamonds: 5, purple_paid: 0 });
+    expect(fake.table('diamond_transactions')).toHaveLength(1);
+  });
+});
