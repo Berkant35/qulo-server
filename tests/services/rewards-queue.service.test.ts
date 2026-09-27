@@ -36,6 +36,8 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.useRealTimers();
+  // Konsol casusları test ortasında patlasa da sızmasın.
+  vi.restoreAllMocks();
 });
 
 describe('rewardsQueueService.listRedemptions', () => {
@@ -126,6 +128,30 @@ describe('rewardsQueueService.listRedemptions', () => {
 
     expect((await rewardsQueueService.listRedemptions({ status: 'ALL', q: '_', page: 1 })).items).toEqual([]);
     expect((await rewardsQueueService.listRedemptions({ status: 'ALL', q: '%', page: 1 })).items).toEqual([]);
+  });
+
+  it('aynı anda açılan talepler id ile kararlı sıralanır (sayfa sınırında kayma/tekrar yok)', async () => {
+    const { rewardsQueueService } = await setup({
+      users: [user()],
+      reward_redemptions: [
+        redemption({ id: 'r-b', created_at: '2026-09-20T00:00:00Z', idempotency_key: 'k1-000000' }),
+        redemption({ id: 'r-a', created_at: '2026-09-20T00:00:00Z', idempotency_key: 'k2-000000' }),
+      ],
+    });
+    const page = await rewardsQueueService.listRedemptions({ status: 'PENDING', page: 1 });
+    expect(page.items.map((r) => r.id)).toEqual(['r-a', 'r-b']);
+  });
+
+  it('bu ay toplamı yalnız PENDING + FULFILLED: aynı ayki REJECTED talep (iade edildi) sayılmaz', async () => {
+    const { rewardsQueueService } = await setup({
+      users: [user()],
+      reward_redemptions: [
+        redemption({ id: 'r1', idempotency_key: 'k1-000000' }),
+        redemption({ id: 'r-rej', status: 'REJECTED', rainbow_price: 100, created_at: '2026-09-15T00:00:00Z', idempotency_key: 'k2-000000' }),
+      ],
+    });
+    const [row] = (await rewardsQueueService.listRedemptions({ status: 'PENDING', page: 1 })).items;
+    expect(row.user_month_total).toBe(51);
   });
 
   it('hesabı kalıcı silinmiş talep (user_id null) listede user: null', async () => {
@@ -284,8 +310,33 @@ describe('rewardsQueueService.getSummary / clearRainbowFlag', () => {
     const many = Array.from({ length: 1001 }, (_, i) =>
       user({ id: `u${String(i).padStart(4, '0')}`, email: `u${i}@example.com`, rainbow_diamonds: 1 }),
     );
-    const { rewardsQueueService } = await setup({ users: many });
+    // maxRows: PostgREST gibi sayfasız okuma 1000'de kesilir — sayfalamayan sorgu burada 1000 görürdü.
+    const { rewardsQueueService } = await setup({ users: many }, { maxRows: 1000 });
     expect((await rewardsQueueService.getSummary(0.03)).rainbowInCirculation).toBe(1001);
+  });
+
+  it('özet gerçek kullanıcıyı ölçer: seed ve test hesabının rainbow’u dolaşıma, test talepleri bekleyen/teslim sayısına girmez', async () => {
+    const { rewardsQueueService } = await setup({
+      users: [
+        user({ rainbow_diamonds: 100 }),
+        user({ id: 'u-seed', rainbow_diamonds: 500, is_seed_profile: true }),
+        user({ id: 'u-test', rainbow_diamonds: 70, is_test_account: true }),
+      ],
+      reward_redemptions: [
+        redemption({ id: 'r1', idempotency_key: 'k1-000000' }),
+        redemption({ id: 'r-test-pending', is_test: true, idempotency_key: 'k2-000000' }),
+        redemption({ id: 'r2', status: 'FULFILLED', rainbow_price: 22, decided_at: '2026-09-10T00:00:00Z', idempotency_key: 'k3-000000' }),
+        redemption({ id: 'r-test-done', status: 'FULFILLED', is_test: true, rainbow_price: 101, decided_at: '2026-09-11T00:00:00Z', idempotency_key: 'k4-000000' }),
+      ],
+    });
+
+    expect(await rewardsQueueService.getSummary(0.03)).toMatchObject({
+      pending: 1,
+      fulfilledThisMonth: 1,
+      rainbowFulfilledThisMonth: 22,
+      rainbowInCirculation: 100,
+      estimatedLiabilityUsd: 3,
+    });
   });
 
   it('uyarı temizlenir; olmayan kullanıcı USER_NOT_FOUND', async () => {

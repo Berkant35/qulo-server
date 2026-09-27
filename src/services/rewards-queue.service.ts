@@ -23,8 +23,11 @@ const QUEUE_COLUMNS =
 export const QUEUE_PAGE_SIZE = 30;
 /** E-posta araması en fazla bu kadar kullanıcıya daralır: sonuç `.in()` ile URL'ye yazılır. */
 const USER_SEARCH_LIMIT = 50;
-/** Sayfadaki (≤30) kullanıcının bu ayki talepleri; tavan 150 iken birkaç satır — sınır savunma. */
-const MONTH_TOTALS_LIMIT = 2000;
+/**
+ * Sayfadaki (≤30) kullanıcının bu ayki talepleri; tavan 150 iken kullanıcı başına birkaç satır.
+ * PostgREST max-rows (1000) altında: sınır savunmadır, sessiz kırpma değil.
+ */
+const MONTH_TOTALS_LIMIT = 1000;
 
 export interface QueueUser {
   id: string;
@@ -108,8 +111,10 @@ export class RewardsQueueService {
     if (filter.country) query = query.eq("country_code", filter.country);
     if (userFilter) query = query.in("user_id", userFilter);
 
+    // `id` eşitlik bozucu: aynı anda açılan talepler sayfa sınırında kaymasın/tekrarlanmasın.
     const { data, error, count } = await query
       .order("created_at", { ascending: filter.status === "PENDING" })
+      .order("id", { ascending: true })
       .range(from, from + QUEUE_PAGE_SIZE - 1);
     if (error) throw Errors.SERVER_ERROR();
 
@@ -192,11 +197,20 @@ export class RewardsQueueService {
     }
   }
 
-  /** Backoffice ana sayfası özeti. Kayıt sayısı 1000'i (PostgREST varsayılan max-rows) aşabilir → `fetchAll`. */
+  /**
+   * Backoffice ana sayfası özeti. Kayıt sayısı 1000'i (PostgREST varsayılan max-rows) aşabilir → `fetchAll`.
+   * Gerçek kullanıcıyı ölçer: test admin talepleri (`is_test`) ve seed/test hesaplarının rainbow'u
+   * (erişimleri zaten kapalı, harcayamaz) sayılara girmez.
+   */
   async getSummary(usdPerRainbow: number): Promise<RewardsSummary> {
     const monthStart = monthStartUtc(new Date());
     const [pending, flagged] = await Promise.all([
-      supabase.from("reward_redemptions").select("id", { count: "exact" }).eq("status", "PENDING").limit(1),
+      supabase
+        .from("reward_redemptions")
+        .select("id", { count: "exact" })
+        .eq("status", "PENDING")
+        .eq("is_test", false)
+        .limit(1),
       supabase.from("users").select("id", { count: "exact" }).not("rainbow_flagged_at", "is", null).limit(1),
     ]);
     if (pending.error || flagged.error) throw Errors.SERVER_ERROR();
@@ -210,12 +224,20 @@ export class RewardsQueueService {
             .from("reward_redemptions")
             .select("rainbow_price")
             .eq("status", "FULFILLED")
+            .eq("is_test", false)
             .gte("decided_at", monthStart)
             .order("id")
             .range(from, to),
         ),
         fetchAll<{ rainbow_diamonds: number }>((from, to) =>
-          supabase.from("users").select("rainbow_diamonds").gt("rainbow_diamonds", 0).order("id").range(from, to),
+          supabase
+            .from("users")
+            .select("rainbow_diamonds")
+            .gt("rainbow_diamonds", 0)
+            .not("is_seed_profile", "is", true)
+            .not("is_test_account", "is", true)
+            .order("id")
+            .range(from, to),
         ),
       ]);
     } catch {

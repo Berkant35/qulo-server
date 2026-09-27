@@ -75,6 +75,12 @@ export interface FakeSupabaseOptions {
    * gördükten sonra aynı anahtarlı talebin yazılması) sınamak için. Varsayılan `'update'`.
    */
   interleave?: Array<{ table: string; op?: 'update' | 'select'; mutate: (rows: Row[]) => void; times?: number }>;
+  /**
+   * PostgREST `max-rows` (Supabase varsayılanı 1000): okuma sonucu range/limit'ten SONRA bu sayıyla
+   * kesilir, `count` gerçek toplamı döner. Opt-in — verilmezse kırpma yok. Sayfalamayı (`fetchAll`)
+   * unutan sorgu, bununla testte de eksik satır görür.
+   */
+  maxRows?: number;
 }
 
 type FilterOp = 'eq' | 'neq' | 'gte' | 'lte' | 'gt' | 'lt' | 'in' | 'is' | 'notIs' | 'notIn' | 'like' | 'ilike';
@@ -234,6 +240,8 @@ class QueryBuilder implements PromiseLike<Result<any>> {
     private readonly uniqueColumns: string[] = [],
     /** bkz. `FailureSpec.committed` — true ise işlem uygulanır, hata SONRA döner. */
     private readonly committed: boolean = false,
+    /** bkz. `FakeSupabaseOptions.maxRows` — yalnız okumada uygulanır. */
+    private readonly maxRows: number | null = null,
   ) {
     // select zaten satır döndürür; update/delete için .select() çağrılması gerekir.
     this.returnRows = mode === 'select';
@@ -357,6 +365,9 @@ class QueryBuilder implements PromiseLike<Result<any>> {
     }
     if (this.limitCount !== null) {
       selected = selected.slice(0, this.limitCount);
+    }
+    if (this.mode === 'select' && this.maxRows !== null) {
+      selected = selected.slice(0, this.maxRows);
     }
 
     return { affected: selected, total };
@@ -552,7 +563,7 @@ export function createFakeSupabase(
           const fail = failureFor(table, 'select');
           return new QueryBuilder(
             store, table, 'select', null, opts?.count === 'exact',
-            fail?.error ?? null, undefined, [], fail?.committed ?? false,
+            fail?.error ?? null, undefined, [], fail?.committed ?? false, options.maxRows ?? null,
           );
         },
         update: (patch: Row) => {
