@@ -5,7 +5,7 @@ import { diamondService } from "./diamond.service.js";
 import { exchangeService } from "./exchange.service.js";
 import { matchingService } from "./matching.service.js";
 import { NotificationService } from "./notification.service.js";
-import { calculatePowerCost, calculateGreenReward, shuffleArray, pickOracleSuggestion } from "../utils/math.js";
+import { calculatePowerCost, calculateGreenReward, shuffleArray, pickOracleSuggestion, splitReward } from "../utils/math.js";
 import {
   CHAT_QUESTION_POWERS_2,
   CHAT_QUESTION_POWERS_4,
@@ -180,17 +180,21 @@ export class ChatQuestionService {
   }
 
   /* ── Helper: tryUseOrSpend ─────────────────────────────────────── */
+  /**
+   * Envanter hakkı varsa onu kullanır, yoksa mor harcar. Dönüş: harcamanın ödenmiş kısmı
+   * (envanterden kullanıldıysa 0) — gönderenin ödülü bununla bölünür.
+   */
   private async tryUseOrSpend(
     userId: string,
     powerName: string,
     purpleCost: number,
     reason: string,
     referenceId?: string,
-  ): Promise<void> {
+  ): Promise<number> {
     const used = await exchangeService.tryUseInventory(userId, powerName);
-    if (!used) {
-      await diamondService.spendPurple(userId, purpleCost, reason, referenceId);
-    }
+    if (used) return 0;
+    const { paidUsed } = await diamondService.spendPurple(userId, purpleCost, reason, referenceId);
+    return paidUsed;
   }
 
   /**
@@ -418,21 +422,17 @@ export class ChatQuestionService {
       }
 
       const ecConfig = await economyConfigService.getConfig();
+      const ratio = ecConfig.core.greenDiamondRewardRatio;
       const cost = calculatePowerCost(ecConfig.powerCosts.SKIP.purpleCost, 1, ecConfig.core.questionCountMultipliers);
-      await this.tryUseOrSpend(userId, "SKIP", cost, "chat_question_skip", questionId);
+      const paidUsed = await this.tryUseOrSpend(userId, "SKIP", cost, "chat_question_skip", questionId);
 
-      // Calculate green reward for sender (dynamic ratio)
-      const greenReward = calculateGreenReward(cost, ecConfig.core.greenDiamondRewardRatio);
-      if (greenReward > 0) {
+      // Ödül gönderene: ödenmiş payı RAINBOW (spec 2026-09-27).
+      const reward = splitReward(calculateGreenReward(cost, ratio), paidUsed, ratio);
+      if (reward.green + reward.rainbow > 0) {
         try {
-          await diamondService.earnGreen(
-            question.sender_id,
-            greenReward,
-            "CHAT_QUESTION_SKIP_REWARD",
-            questionId,
-          );
+          await diamondService.creditReward(question.sender_id, reward, "CHAT_QUESTION_SKIP_REWARD", questionId);
         } catch (err) {
-          console.error("[chat-question] Skip green reward failed:", err);
+          console.error("[chat-question] Skip reward failed:", err);
         }
       }
 
@@ -460,7 +460,8 @@ export class ChatQuestionService {
         is_correct: true,
         unmatched: false,
         skipped: true,
-        green_reward: greenReward,
+        green_reward: reward.green,
+        rainbow_reward: reward.rainbow,
         powers_used: [...(question.powers_used ?? []), "SKIP"],
         correct_option: question.correct_option,
         answered_option: question.correct_option,
@@ -572,20 +573,17 @@ export class ChatQuestionService {
 
     // Pay for SKIP
     const ecConfig2 = await economyConfigService.getConfig();
+    const ratio2 = ecConfig2.core.greenDiamondRewardRatio;
     const cost = calculatePowerCost(ecConfig2.powerCosts.SKIP.purpleCost, 1, ecConfig2.core.questionCountMultipliers);
-    await this.tryUseOrSpend(userId, "SKIP", cost, "chat_question_rescue", questionId);
+    const paidUsed = await this.tryUseOrSpend(userId, "SKIP", cost, "chat_question_rescue", questionId);
 
-    const greenReward = calculateGreenReward(cost, ecConfig2.core.greenDiamondRewardRatio);
-    if (greenReward > 0) {
+    // Ödül gönderene: ödenmiş payı RAINBOW (spec 2026-09-27).
+    const reward = splitReward(calculateGreenReward(cost, ratio2), paidUsed, ratio2);
+    if (reward.green + reward.rainbow > 0) {
       try {
-        await diamondService.earnGreen(
-          question.sender_id as string,
-          greenReward,
-          "CHAT_QUESTION_RESCUE_REWARD",
-          questionId,
-        );
+        await diamondService.creditReward(question.sender_id as string, reward, "CHAT_QUESTION_RESCUE_REWARD", questionId);
       } catch (err) {
-        console.error("[chat-question] Rescue green reward failed:", err);
+        console.error("[chat-question] Rescue reward failed:", err);
       }
     }
 
@@ -611,7 +609,8 @@ export class ChatQuestionService {
       is_correct: true,
       unmatched: false,
       rescued: true,
-      green_reward: greenReward,
+      green_reward: reward.green,
+      rainbow_reward: reward.rainbow,
       powers_used: [...(question.powers_used ?? []), "SKIP_RESCUE"],
       correct_option: question.correct_option,
       answered_option: question.correct_option,
@@ -713,26 +712,23 @@ export class ChatQuestionService {
     // ATOMIK isaretleme — ucretlendirmeden ONCE (quiz ile ayni desen). Once-oku-
     // sonra-yaz yetmez: iki es zamanli istek ikisi de ucret alabilirdi.
     await this.markPowerUsed(question, powerName);
+    let paidUsed = 0;
     try {
-      await this.tryUseOrSpend(userId, powerName, cost, `chat_question_power_${powerName.toLowerCase()}`, questionId);
+      paidUsed = await this.tryUseOrSpend(userId, powerName, cost, `chat_question_power_${powerName.toLowerCase()}`, questionId);
     } catch (err) {
       // Odeme basarisiz — isareti geri al ki elmas alindiktan sonra tekrar denenebilsin.
       await this.unmarkPowerUsed(question, powerName);
       throw err;
     }
 
-    // Calculate green reward for sender
-    const greenReward = calculateGreenReward(cost, ecConfig3.core.greenDiamondRewardRatio);
-    if (greenReward > 0) {
+    // Ödül gönderene: ödenmiş payı RAINBOW (spec 2026-09-27).
+    const ratio3 = ecConfig3.core.greenDiamondRewardRatio;
+    const reward = splitReward(calculateGreenReward(cost, ratio3), paidUsed, ratio3);
+    if (reward.green + reward.rainbow > 0) {
       try {
-        await diamondService.earnGreen(
-          question.sender_id as string,
-          greenReward,
-          "CHAT_QUESTION_POWER_REWARD",
-          questionId,
-        );
+        await diamondService.creditReward(question.sender_id as string, reward, "CHAT_QUESTION_POWER_REWARD", questionId);
       } catch (err) {
-        console.error("[chat-question] Power green reward failed:", err);
+        console.error("[chat-question] Power reward failed:", err);
       }
     }
 
@@ -800,7 +796,8 @@ export class ChatQuestionService {
         return {
           power_result: { skipped: true },
           cost,
-          green_reward: greenReward,
+          green_reward: reward.green,
+          rainbow_reward: reward.rainbow,
           is_correct: true,
           question: this.sanitizeQuestion(updated, userId),
         };
@@ -809,7 +806,7 @@ export class ChatQuestionService {
 
     // powers_used artik ucretlendirmeden once atomik olarak yaziliyor (markPowerUsed).
 
-    return { power_name: powerName, cost, green_reward: greenReward, ...powerResult };
+    return { power_name: powerName, cost, green_reward: reward.green, rainbow_reward: reward.rainbow, ...powerResult };
   }
 
   /* ================================================================ */

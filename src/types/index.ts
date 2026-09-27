@@ -99,6 +99,8 @@ export interface AnswerQuestionResult {
   skipped?: boolean;
   rescued?: boolean;
   green_reward?: number;
+  /** Ödülün ödenmiş mordan gelen payı (spec 2026-09-27); yoksa 0/undefined. */
+  rainbow_reward?: number;
   powers_used?: string[];
   correct_option?: string;
   answered_option?: string | null;
@@ -115,6 +117,8 @@ export interface UsePowerResult {
   extra_seconds?: number;
   cost?: number;
   green_reward?: number;
+  /** Ödülün ödenmiş mordan gelen payı (spec 2026-09-27); yoksa 0/undefined. */
+  rainbow_reward?: number;
   is_correct?: boolean;
   question?: ChatQuestionBase;
   skipped?: boolean;
