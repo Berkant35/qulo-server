@@ -34,6 +34,11 @@ export interface FailureSpec {
    * metodun sadece ikinci yazımını bozup ilkinin geri alınmadığını gösterebilmek gerekiyor.
    */
   failAfter?: number;
+  /**
+   * İşlem UYGULANIR ama hata döner (commit edildi, cevap yolda kayboldu) — belirsiz yazım
+   * dallarını sınamak için. Varsayılan false: eski davranış (hiçbir şey yazılmadan hata döner).
+   */
+  committed?: boolean;
 }
 
 /** Depolama hata enjeksiyonu — `FailureSpec`'in storage karşılığı. */
@@ -205,6 +210,8 @@ class QueryBuilder implements PromiseLike<Result<any>> {
     private readonly failure: SupabaseError | null,
     private readonly onConflict?: string,
     private readonly uniqueColumns: string[] = [],
+    /** bkz. `FailureSpec.committed` — true ise işlem uygulanır, hata SONRA döner. */
+    private readonly committed: boolean = false,
   ) {
     // select zaten satır döndürür; update/delete için .select() çağrılması gerekir.
     this.returnRows = mode === 'select';
@@ -335,7 +342,9 @@ class QueryBuilder implements PromiseLike<Result<any>> {
 
   /** Asıl iş — her terminal operasyon buradan geçer. */
   private run(): Result<Row[]> {
-    if (this.failure) return { data: [], error: this.failure, count: 0 };
+    // `committed` değilse eski davranış: hiçbir şey uygulanmadan hemen hata.
+    // `committed` ise işlem AŞAĞIDA uygulanır, hata en sonda döner (commit sonrası kayıp cevap).
+    if (this.failure && !this.committed) return { data: [], error: this.failure, count: 0 };
 
     if (this.mode === 'insert' || this.mode === 'upsert') {
       const incoming = Array.isArray(this.payload) ? this.payload : [this.payload as Row];
@@ -381,6 +390,8 @@ class QueryBuilder implements PromiseLike<Result<any>> {
         }
       }
 
+      // Satır(lar) yazıldı; `committed` enjeksiyonu varsa şimdi devreye girer (yazım kalıcı, hata dönüyor).
+      if (this.failure) return { data: [], error: this.failure, count: 0 };
       return { data: this.returnRows ? written : [], error: null, count: written.length };
     }
 
@@ -394,6 +405,9 @@ class QueryBuilder implements PromiseLike<Result<any>> {
       const remaining = this.rows().filter((r) => !affected.includes(r));
       this.store[this.table] = remaining;
     }
+
+    // update/delete uygulandı; `committed` enjeksiyonu varsa hata burada döner (yazım kalıcı).
+    if (this.failure) return { data: [], error: this.failure, count: 0 };
 
     return {
       data: this.returnRows ? affected.map((r) => ({ ...r })) : [],
@@ -471,7 +485,10 @@ export function createFakeSupabase(
     });
   };
 
-  const failureFor = (table: string, op: FailureSpec['op']): SupabaseError | null => {
+  const failureFor = (
+    table: string,
+    op: FailureSpec['op'],
+  ): { error: SupabaseError; committed: boolean } | null => {
     const spec = options.failOn?.find((f) => f.table === table && f.op === op);
     if (!spec) return null;
 
@@ -480,7 +497,10 @@ export function createFakeSupabase(
     opCounts.set(key, seen + 1);
     if (seen < (spec.failAfter ?? 0)) return null;
 
-    return spec.error ?? { message: `fake failure: ${op} on ${table}` };
+    return {
+      error: spec.error ?? { message: `fake failure: ${op} on ${table}` },
+      committed: spec.committed ?? false,
+    };
   };
 
   // Depolama hata enjeksiyonu için (bucket, op) başına çağrı sayacı.
@@ -506,22 +526,35 @@ export function createFakeSupabase(
       return {
         select: (_columns?: string, opts?: { count?: string }) => {
           kaydet('select');
-          return new QueryBuilder(store, table, 'select', null, opts?.count === 'exact', failureFor(table, 'select'));
+          const fail = failureFor(table, 'select');
+          return new QueryBuilder(
+            store, table, 'select', null, opts?.count === 'exact',
+            fail?.error ?? null, undefined, [], fail?.committed ?? false,
+          );
         },
         update: (patch: Row) => {
           kaydet('update');
           runInterleave(table);
-          return new QueryBuilder(store, table, 'update', patch, false, failureFor(table, 'update'));
+          const fail = failureFor(table, 'update');
+          return new QueryBuilder(
+            store, table, 'update', patch, false,
+            fail?.error ?? null, undefined, [], fail?.committed ?? false,
+          );
         },
         insert: (payload: Row | Row[]) => {
           kaydet('insert');
-          return new QueryBuilder(store, table, 'insert', payload, false, failureFor(table, 'insert'), undefined, options.unique?.[table] ?? []);
+          const fail = failureFor(table, 'insert');
+          return new QueryBuilder(
+            store, table, 'insert', payload, false,
+            fail?.error ?? null, undefined, options.unique?.[table] ?? [], fail?.committed ?? false,
+          );
         },
         upsert: (payload: Row | Row[], opts?: { onConflict?: string }) => {
           kaydet('upsert');
+          const fail = failureFor(table, 'insert');
           return new QueryBuilder(
             store, table, 'upsert', payload, false,
-            failureFor(table, 'insert'), opts?.onConflict,
+            fail?.error ?? null, opts?.onConflict, [], fail?.committed ?? false,
           );
         },
         // `count` secenegi ONEMLI: PostgREST `.delete({ count: 'exact' })` ile
@@ -531,7 +564,11 @@ export function createFakeSupabase(
         // donuyordu ve o kontrol testlerde hic tetiklenmiyordu.
         delete: (opts?: { count?: 'exact' }) => {
           kaydet('delete');
-          return new QueryBuilder(store, table, 'delete', null, opts?.count === 'exact', failureFor(table, 'delete'));
+          const fail = failureFor(table, 'delete');
+          return new QueryBuilder(
+            store, table, 'delete', null, opts?.count === 'exact',
+            fail?.error ?? null, undefined, [], fail?.committed ?? false,
+          );
         },
       };
     },

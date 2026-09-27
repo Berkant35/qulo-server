@@ -233,4 +233,60 @@ describe('rewardsMarketService.redeem — telafi', () => {
     expect(fake.table('reward_redemptions')).toHaveLength(2);
     expect(fake.table('users')[0].rainbow_diamonds).toBe(98);
   });
+
+  it('talep aslında yazılmış ama cevap kaybolmuş (commit sonrası hata): iade YOK, mevcut talep döner', async () => {
+    const { fake, rewardsMarketService } = await setup(
+      { users: [user()] },
+      { failOn: [{ table: 'reward_redemptions', op: 'insert', committed: true }] },
+    );
+    const result = await rewardsMarketService.redeem('u1', input(), 'android');
+
+    expect(result.balance).toBe(149);
+    expect(result.redemption.status).toBe('PENDING');
+    expect(fake.table('reward_redemptions')).toHaveLength(1);
+    expect(fake.table('reward_redemptions')[0].idempotency_key).toBe(KEY);
+    expect(fake.table('users')[0].rainbow_diamonds).toBe(149);
+    expect(fake.table('diamond_transactions').map((t) => t.reason)).toEqual(['REWARD_REDEEM']);
+  });
+
+  it('talep yazılamaz VE anahtar sorgusu da patlarsa: durum belirsiz, iade YAPILMAZ, SERVER_ERROR', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { fake, rewardsMarketService } = await setup(
+      { users: [user()] },
+      {
+        failOn: [
+          { table: 'reward_redemptions', op: 'insert' },
+          // İlk çağrı (baştaki replay kontrolü) ve ikinci çağrı (usedThisMonth) başarılı kalsın;
+          // yalnız insert hatasından SONRAKİ findByKey (3. select) patlasın.
+          { table: 'reward_redemptions', op: 'select', failAfter: 2 },
+        ],
+      },
+    );
+    await expect(rewardsMarketService.redeem('u1', input(), 'android')).rejects.toMatchObject({ code: 'SERVER_ERROR' });
+
+    expect(fake.table('users')[0].rainbow_diamonds).toBe(149);
+    expect(fake.table('diamond_transactions').map((t) => t.reason)).toEqual(['REWARD_REDEEM']);
+    expect(fake.table('reward_redemptions')).toHaveLength(0);
+    errorSpy.mockRestore();
+  });
+});
+
+describe('rewardsMarketService.redeem — kullanıcı izolasyonu', () => {
+  it('idempotency anahtarı kullanıcıya özeldir: başka kullanıcının aynı anahtarlı talebi ne dönülür ne sızdırılır', async () => {
+    const { fake, rewardsMarketService } = await setup({
+      users: [user()],
+      reward_redemptions: [
+        existing({ id: 'r-u2', user_id: 'u2', idempotency_key: KEY, delivery_code: 'SECRET-CODE-9999' }),
+      ],
+    });
+
+    const result = await rewardsMarketService.redeem('u1', input(), 'android');
+
+    expect(result.redemption.id).not.toBe('r-u2');
+    expect(result.balance).toBe(149);
+    expect(JSON.stringify(result.redemption)).not.toContain('SECRET-CODE-9999');
+    expect(fake.table('users')[0].rainbow_diamonds).toBe(149);
+    expect(fake.table('reward_redemptions')).toHaveLength(2);
+    expect(fake.table('reward_redemptions').filter((r) => r.user_id === 'u1')).toHaveLength(1);
+  });
 });

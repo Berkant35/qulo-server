@@ -209,12 +209,31 @@ export class RewardsMarketService {
       .single();
 
     if (error || !data) {
-      // Talep yazılamadı: düşülen rainbow iade edilir. 23505 = aynı anahtarla eşzamanlı istek kazandı.
-      await this.refundUnrecorded(userId, item.rainbow_price, reference);
-      if (error?.code === "23505") {
-        const winner = await this.findByKey(userId, input.idempotencyKey);
-        if (winner) return { redemption: winner, balance: await this.rainbowBalance(userId) };
+      // Hata dönmüş olabilir ama satır GERÇEKTEN yazılmış olabilir (yanıt kayboldu — ör. commit
+      // sonrası ağ/gateway hatası). İade etmeden ÖNCE anahtarla tekrar oku: kayıp cevap ≠ yazılmamış
+      // satır. Okuma da patlarsa durum belirsizdir — bilmeden iade etmek bedava kart demek, o yüzden
+      // iade YAPILMAZ; iz bırakılır.
+      let found: RedemptionView | null;
+      try {
+        found = await this.findByKey(userId, input.idempotencyKey);
+      } catch (lookupErr) {
+        console.error("[rewards] CRITICAL: redemption insert error AND key lookup failed — belirsiz durum, iade YAPILMADI", {
+          userId, amount: item.rainbow_price, reference, redemptionId, err: lookupErr,
+        });
+        throw Errors.SERVER_ERROR();
       }
+
+      if (found?.id === redemptionId) {
+        // Bizim insert'imiz aslında yazılmış, sadece cevap kaybolmuş — iade YOK.
+        return { redemption: found, balance };
+      }
+      if (found) {
+        // Aynı anahtarla başka istek kazanmış (ör. 23505) — bizimki iade edilir, kazanan döner.
+        await this.refundUnrecorded(userId, item.rainbow_price, reference);
+        return { redemption: found, balance: await this.rainbowBalance(userId) };
+      }
+      // Satır hiç yazılmamış: iade edilir.
+      await this.refundUnrecorded(userId, item.rainbow_price, reference);
       throw Errors.SERVER_ERROR();
     }
 
