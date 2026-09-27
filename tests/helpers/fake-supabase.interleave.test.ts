@@ -27,4 +27,19 @@ describe('fake-supabase interleave', () => {
     }
     expect(calls).toBe(2);
   });
+
+  it("op 'select': tetik okuma anında (update tetiklemez); ilk okuma değişikliği görür", async () => {
+    const fake = createFakeSupabase(
+      { users: [{ id: 'u1', n: 1 }] },
+      { interleave: [{ table: 'users', op: 'select', mutate: (rows) => { rows[0].n = 7; } }] },
+    );
+
+    await fake.client.from('users').update({ n: 2 }).eq('id', 'u1');
+    expect(fake.table('users')[0].n).toBe(2); // update tetiklemedi
+
+    const read = await fake.client.from('users').select('n').eq('id', 'u1').maybeSingle();
+    expect(read.data).toMatchObject({ n: 7 });
+    await fake.client.from('users').update({ n: 3 }).eq('id', 'u1');
+    expect((await fake.client.from('users').select('n').eq('id', 'u1').maybeSingle()).data).toMatchObject({ n: 3 });
+  });
 });

@@ -71,8 +71,10 @@ export interface FakeSupabaseOptions {
    * Eşzamanlı yazma (compare-and-swap yarışı) sınamak için: `update()` çağrıldığı anda,
    * sorgu çalışmadan ÖNCE tablonun satırlarını değiştirir — servis okuduktan sonra başka
    * bir istek araya girmiş gibi. `times` kadar tetiklenir (varsayılan 1).
+   * `op: 'select'`: tetik `select()` anında — iki okuma arasına giren yazımı (ör. ön kontrol boş
+   * gördükten sonra aynı anahtarlı talebin yazılması) sınamak için. Varsayılan `'update'`.
    */
-  interleave?: Array<{ table: string; mutate: (rows: Row[]) => void; times?: number }>;
+  interleave?: Array<{ table: string; op?: 'update' | 'select'; mutate: (rows: Row[]) => void; times?: number }>;
 }
 
 type FilterOp = 'eq' | 'neq' | 'gte' | 'lte' | 'gt' | 'lt' | 'in' | 'is' | 'notIs' | 'notIn' | 'like' | 'ilike';
@@ -495,9 +497,9 @@ export function createFakeSupabase(
 
   // interleave spec'i başına kalan tetiklenme sayısı.
   const interleaveLeft = new Map<number, number>();
-  const runInterleave = (table: string) => {
+  const runInterleave = (table: string, op: 'update' | 'select') => {
     options.interleave?.forEach((spec, index) => {
-      if (spec.table !== table) return;
+      if (spec.table !== table || (spec.op ?? 'update') !== op) return;
       const left = interleaveLeft.get(index) ?? spec.times ?? 1;
       if (left <= 0) return;
       interleaveLeft.set(index, left - 1);
@@ -546,6 +548,7 @@ export function createFakeSupabase(
       return {
         select: (_columns?: string, opts?: { count?: string }) => {
           kaydet('select');
+          runInterleave(table, 'select');
           const fail = failureFor(table, 'select');
           return new QueryBuilder(
             store, table, 'select', null, opts?.count === 'exact',
@@ -554,7 +557,7 @@ export function createFakeSupabase(
         },
         update: (patch: Row) => {
           kaydet('update');
-          runInterleave(table);
+          runInterleave(table, 'update');
           const fail = failureFor(table, 'update');
           return new QueryBuilder(
             store, table, 'update', patch, false,

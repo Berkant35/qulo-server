@@ -63,6 +63,8 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.useRealTimers();
+  // Konsol casusları test ortasında patlasa da sızmasın.
+  vi.restoreAllMocks();
 });
 
 describe('rewardsMarketService.redeem — mutlu yol', () => {
@@ -136,10 +138,23 @@ describe('rewardsMarketService.redeem — kural kapıları (her biri tek başın
     expect(fake.table('diamond_transactions')).toHaveLength(0);
   });
 
-  it('hesap 30 günden yeni → REWARD_ACCOUNT_TOO_NEW (minDays 30)', async () => {
+  it('hesap 30 günden yeni → REWARD_ACCOUNT_TOO_NEW (params min_days 30)', async () => {
     const { fake, rewardsMarketService } = await setup({ users: [user({ created_at: '2026-09-17T12:00:00Z' })] });
     await expect(rewardsMarketService.redeem('u1', input(), 'android')).rejects.toMatchObject({
-      code: 'REWARD_ACCOUNT_TOO_NEW', params: { minDays: 30 },
+      code: 'REWARD_ACCOUNT_TOO_NEW', params: { min_days: 30 },
+    });
+    expect(fake.table('diamond_transactions')).toHaveLength(0);
+  });
+
+  it('tam 30 günlük hesap geçer (sınır dahil)', async () => {
+    const { rewardsMarketService } = await setup({ users: [user({ created_at: '2026-08-28T12:00:00Z' })] });
+    await expect(rewardsMarketService.redeem('u1', input(), 'android')).resolves.toMatchObject({ balance: 149 });
+  });
+
+  it('hesap yaşı hesaplanamıyorsa (bozuk created_at → NaN) kapı KAPALI: REWARD_ACCOUNT_TOO_NEW', async () => {
+    const { fake, rewardsMarketService } = await setup({ users: [user({ created_at: 'bozuk-tarih' })] });
+    await expect(rewardsMarketService.redeem('u1', input(), 'android')).rejects.toMatchObject({
+      code: 'REWARD_ACCOUNT_TOO_NEW',
     });
     expect(fake.table('diamond_transactions')).toHaveLength(0);
   });
@@ -227,6 +242,56 @@ describe('rewardsMarketService.redeem — telafi', () => {
     expect(fake.table('diamond_transactions').map((t) => t.reason)).toEqual([REWARD_REDEEM_REASON, REWARD_REFUND_REASON]);
   });
 
+  it('aynı anahtarla eşzamanlı kaybeden, bakiye düşümünde INSUFFICIENT görürse: kazanan talep döner (tekrar semantiği)', async () => {
+    let fakeRef: FakeSupabase | undefined;
+    const winner = existing({ id: 'r-winner', idempotency_key: KEY, created_at: '2026-09-27T11:59:59Z' });
+    const { fake, rewardsMarketService } = await setup(
+      { users: [user({ rainbow_diamonds: 60 })] },
+      {
+        // Ön kontrol boş görür; kaybedenin CAS'ı sırasında kazanan 51'i düşmüş ve talebini yazmıştır.
+        interleave: [{
+          table: 'users',
+          mutate: (rows) => { rows[0].rainbow_diamonds = 9; fakeRef!.table('reward_redemptions').push({ ...winner }); },
+        }],
+      },
+    );
+    fakeRef = fake;
+
+    const result = await rewardsMarketService.redeem('u1', input(), 'android');
+
+    expect(result.redemption.id).toBe('r-winner');
+    expect(result.balance).toBe(9);
+    expect(fake.table('users')[0].rainbow_diamonds).toBe(9);
+    expect(fake.table('reward_redemptions')).toHaveLength(1);
+    expect(fake.table('diamond_transactions')).toHaveLength(0); // kaybeden hiçbir şey yazmadı
+  });
+
+  it('aynı anahtarla eşzamanlı kaybeden, tavan kapısında REWARD_MONTHLY_CAP görürse: kazanan talep döner', async () => {
+    let fakeRef: FakeSupabase | undefined;
+    const winner = existing({ id: 'r-winner', idempotency_key: KEY, created_at: '2026-09-27T11:59:59Z' });
+    const { fake, rewardsMarketService } = await setup(
+      {
+        users: [user()],
+        reward_redemptions: [existing({ id: 'r1', status: 'PENDING', rainbow_price: 99, created_at: '2026-09-03T00:00:00Z', idempotency_key: 'k1-000000' })],
+      },
+      {
+        // Ön kontrol (findByKey) boş görür; ürün okunurken kazanan talebini yazar → 99 + 51 + 51 > 150.
+        interleave: [{
+          table: 'reward_catalog_items', op: 'select',
+          mutate: () => { fakeRef!.table('reward_redemptions').push({ ...winner }); },
+        }],
+      },
+    );
+    fakeRef = fake;
+
+    const result = await rewardsMarketService.redeem('u1', input(), 'android');
+
+    expect(result.redemption.id).toBe('r-winner');
+    expect(result.balance).toBe(200);
+    expect(fake.table('reward_redemptions')).toHaveLength(2);
+    expect(fake.table('diamond_transactions')).toHaveLength(0);
+  });
+
   it('farklı anahtarla ikinci talep ayrı talep açar', async () => {
     const { fake, rewardsMarketService } = await setup({ users: [user()] });
     await rewardsMarketService.redeem('u1', input(), 'android');
@@ -248,6 +313,29 @@ describe('rewardsMarketService.redeem — telafi', () => {
     expect(fake.table('reward_redemptions')[0].idempotency_key).toBe(KEY);
     expect(fake.table('users')[0].rainbow_diamonds).toBe(149);
     expect(fake.table('diamond_transactions').map((t) => t.reason)).toEqual([REWARD_REDEEM_REASON]);
+  });
+
+  it('talep yazılamaz VE iade de yazılamazsa: SERVER_ERROR, rainbow düşük kalır (149), defterde yalnız REWARD_REDEEM, CRITICAL log', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { fake, rewardsMarketService } = await setup(
+      { users: [user()] },
+      {
+        failOn: [
+          { table: 'reward_redemptions', op: 'insert' },
+          // 1. users.update = itfa düşümü (başarılı); 2. = iade CAS'ı (patlar).
+          { table: 'users', op: 'update', failAfter: 1 },
+        ],
+      },
+    );
+    await expect(rewardsMarketService.redeem('u1', input(), 'android')).rejects.toMatchObject({ code: 'SERVER_ERROR' });
+
+    expect(fake.table('users')[0].rainbow_diamonds).toBe(149);
+    const ledger = fake.table('diamond_transactions');
+    expect(ledger.map((t) => t.reason)).toEqual([REWARD_REDEEM_REASON]);
+    expect(fake.table('reward_redemptions')).toHaveLength(0);
+
+    const critical = errorSpy.mock.calls.find((c) => String(c[0]).includes('CRITICAL'));
+    expect(critical?.[1]).toMatchObject({ userId: 'u1', amount: 51, reference: ledger[0].reference_id });
   });
 
   it('talep yazılamaz VE anahtar sorgusu da patlarsa: durum belirsiz, iade YAPILMAZ, SERVER_ERROR', async () => {

@@ -204,7 +204,7 @@ export const Errors = {
     new AppError("REWARD_NOT_ELIGIBLE", 403, "Account is not eligible for this reward"),
 
   REWARD_ACCOUNT_TOO_NEW: (minDays: number) =>
-    new AppError("REWARD_ACCOUNT_TOO_NEW", 403, "Account is too new to redeem rewards", { minDays }),
+    new AppError("REWARD_ACCOUNT_TOO_NEW", 403, "Account is too new to redeem rewards", { min_days: minDays }),
 
   REWARD_MONTHLY_CAP: (cap: number, used: number) =>
     new AppError("REWARD_MONTHLY_CAP", 403, "Monthly reward limit reached", { cap, used }),

@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import { supabase } from "../config/supabase.js";
-import { Errors } from "../utils/errors.js";
+import { AppError, Errors } from "../utils/errors.js";
 import type { ClientPlatform } from "../utils/client-meta.js";
 import {
   accountAgeDays,
@@ -62,6 +62,13 @@ interface MarketUser extends RainbowAccessUser {
   id: string;
   created_at: string;
   rainbow_diamonds: number | null;
+}
+
+export interface RedemptionPage {
+  items: RedemptionView[];
+  total: number;
+  page: number;
+  limit: number;
 }
 
 export interface RedeemResult {
@@ -130,7 +137,7 @@ export class RewardsMarketService {
    * Kullanıcının kendi talepleri. Erişim kontrolü YOK: ülke sonradan kapansa da teslim edilmiş kod
    * kullanıcının malıdır, görünmeye devam eder.
    */
-  async listMyRedemptions(userId: string, page: number, limit: number) {
+  async listMyRedemptions(userId: string, page: number, limit: number): Promise<RedemptionPage> {
     const from = (page - 1) * limit;
     const { data, error, count } = await supabase
       .from("reward_redemptions")
@@ -170,7 +177,8 @@ export class RewardsMarketService {
     const isAdmin = user.is_test_admin === true;
     const rules = (await economyConfigService.getConfig()).rainbow;
 
-    if (!isAdmin && accountAgeDays(user.created_at, new Date()) < rules.minAccountAgeDays) {
+    // Kapalı kalır: yaş hesaplanamazsa (NaN) "yeni" sayılır — `< min` NaN'da kapıyı açardı.
+    if (!isAdmin && !(accountAgeDays(user.created_at, new Date()) >= rules.minAccountAgeDays)) {
       throw Errors.REWARD_ACCOUNT_TOO_NEW(rules.minAccountAgeDays);
     }
 
@@ -183,14 +191,22 @@ export class RewardsMarketService {
     if (!isAdmin) {
       const used = await this.usedThisMonth(userId);
       if (used + item.rainbow_price > rules.monthlyRedeemCap) {
-        throw Errors.REWARD_MONTHLY_CAP(rules.monthlyRedeemCap, used);
+        return this.replayOrThrow(userId, input.idempotencyKey, Errors.REWARD_MONTHLY_CAP(rules.monthlyRedeemCap, used));
       }
     }
 
     const redemptionId = randomUUID();
     const reference = redemptionReference(redemptionId);
     // Yetersizse INSUFFICIENT_DIAMONDS — hiçbir şey yazılmaz.
-    const { rainbow: balance } = await diamondService.spendRainbow(userId, item.rainbow_price, REWARD_REDEEM_REASON, reference);
+    let balance: number;
+    try {
+      ({ rainbow: balance } = await diamondService.spendRainbow(userId, item.rainbow_price, REWARD_REDEEM_REASON, reference));
+    } catch (err) {
+      if (err instanceof AppError && err.code === "INSUFFICIENT_DIAMONDS") {
+        return this.replayOrThrow(userId, input.idempotencyKey, err);
+      }
+      throw err;
+    }
 
     const { data, error } = await supabase
       .from("reward_redemptions")
@@ -241,6 +257,17 @@ export class RewardsMarketService {
     }
 
     return { redemption: toRedemptionView(data as RedemptionView), balance };
+  }
+
+  /**
+   * Aynı anahtarlı eşzamanlı ikinci istek: baştaki kontrol boş gördü ama kazanan talep araya girip
+   * tavanı doldurdu ya da bakiyeyi düşürdü. Kaybeden hata değil kazananın talebini görür (tekrar
+   * semantiği); anahtarla talep yoksa kapının hatası aynen döner.
+   */
+  private async replayOrThrow(userId: string, idempotencyKey: string, gateError: AppError): Promise<RedeemResult> {
+    const winner = await this.findByKey(userId, idempotencyKey);
+    if (!winner) throw gateError;
+    return { redemption: winner, balance: await this.rainbowBalance(userId) };
   }
 
   private async findByKey(userId: string, idempotencyKey: string): Promise<RedemptionView | null> {
