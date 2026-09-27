@@ -119,6 +119,24 @@ describe('tüketilebilir satın alma (NON_RENEWING_PURCHASE)', () => {
       expect(fake.table('users')[0].purple_diamonds, productId).toBe(amount);
     }
   });
+
+  it('istemci yolu aynı satın almayı zaten kredilediyse: ikinci kredi yok, log purple_credited 0', async () => {
+    const { fake, webhookService } = await setup({
+      diamond_transactions: [
+        { id: 'd1', user_id: 'u1', type: 'PURPLE', amount: 50, paid_amount: 50, reason: 'IAP_PURCHASE', reference_id: 'tx-client', created_at: '2026-09-01T11:00:00Z' },
+      ],
+      iap_transactions: [],
+    });
+
+    await webhookService.handleRevenueCatEvent(
+      event({ type: 'NON_RENEWING_PURCHASE', product_id: 'qulopurple50', transaction_id: 'tx-client', expiration_at_ms: null }),
+    );
+
+    expect(fake.table('users')[0].purple_diamonds).toBe(0);
+    expect(fake.table('iap_transactions')).toEqual([
+      expect.objectContaining({ transaction_id: 'tx-client', rc_event_type: 'NON_RENEWING_PURCHASE', purple_credited: 0 }),
+    ]);
+  });
 });
 
 describe('abonelik olayları', () => {

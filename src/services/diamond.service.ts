@@ -265,6 +265,20 @@ export class DiamondService {
     }
   }
 
+  /**
+   * İade: satın almanın ödenmiş payını sayaçtan geri alır — en fazla mevcut sayaç kadar (0'ın altına
+   * inmez). Bakiye DEĞİŞMEZ (iade politikası: mor geri alınmaz); kalan mor artık bedava sayılır ve
+   * rainbow üretmez. Dönüş: gerçekten düşen miktar. Defter satırı yazılmaz: iz `iap_transactions`
+   * iade claim'i + log (mobil geçmişte "0 mor" satırı çıkmasın).
+   */
+  async revokePaid(userId: string, amount: number): Promise<number> {
+    if (!(amount > 0)) return 0;
+    const { before, after } = await this.casUpdate(userId, ["purple_paid"], (row) => ({
+      purple_paid: Math.max(0, (row.purple_paid ?? 0) - amount),
+    }));
+    return (before.purple_paid ?? 0) - (after.purple_paid ?? 0);
+  }
+
   private async earn(userId: string, type: EarnedType, amount: number, reason: string, referenceId?: string) {
     const column = BALANCE_COLUMN[type];
     const { after } = await this.casUpdate(userId, [column], (row) => ({

@@ -1,6 +1,7 @@
 import { supabase } from '../config/supabase.js';
 import { diamondService } from './diamond.service.js';
 import { subscriptionService } from './subscription.service.js';
+import { rainbowRiskService } from './rainbow-risk.service.js';
 import {
   IAP_PRODUCT_MAP,
   SUBSCRIPTION_PRODUCT_MAP,
@@ -15,14 +16,15 @@ export interface RevenueCatWebhookEvent {
   app_user_id: string;
   product_id: string;
   store?: string;
-  purchased_at_ms?: number;
-  expiration_at_ms?: number;
+  purchased_at_ms?: number | null;
+  expiration_at_ms?: number | null;
   transaction_id?: string;
   original_transaction_id?: string;
   environment?: string | null;
   period_type?: string | null;
   is_family_share?: boolean | null;
   price?: number | null;
+  cancel_reason?: string | null;
 }
 
 class WebhookService {
@@ -40,7 +42,7 @@ class WebhookService {
     const facts = webhookPurchaseFacts(event);
 
     const eventType = type as RCEventType;
-    const storeType = store === 'APP_STORE' ? 'apple' : 'google';
+    const storeType: 'apple' | 'google' = store === 'APP_STORE' ? 'apple' : 'google';
 
     // Consumable purchase
     if (eventType === 'NON_RENEWING_PURCHASE') {
@@ -51,6 +53,19 @@ class WebhookService {
         transaction_id || '',
         isPaidEligible(facts, 'consumable'),
       );
+      return;
+    }
+
+    // Tüketilebilir iade: RevenueCat non-renewing satın alma iadesini CANCELLATION olarak gönderir
+    // (cancel_reason CUSTOMER_SUPPORT). Bakiye geri alınmaz; rainbow riski işaretlenir (spec §2.7).
+    if (eventType === 'CANCELLATION' && IAP_PRODUCT_MAP[storeProductKey(productId)]) {
+      await rainbowRiskService.handleConsumableRefund({
+        userId,
+        transactionId: transaction_id ?? '',
+        productId,
+        store: storeType,
+        priceUsd: event.price ?? null,
+      });
       return;
     }
 
@@ -137,13 +152,14 @@ class WebhookService {
     if (!purpleAmount) return;
 
     // IAP tamamen ödenmiş mor (spec 2026-09-27) — yalnız gerçek satın almada; sandbox/aile paylaşımı 0.
-    await diamondService.addPurple(
+    // İstemci yolu aynı satın almayı zaten kredilediyse (aynı mağaza işlem numarası) `credited` 0 döner.
+    const { credited } = await diamondService.addPurple(
       userId, purpleAmount, 'IAP_PURCHASE', transactionId, paidEligible ? purpleAmount : 0,
     );
 
     await this.logIapTransaction(
       userId, productId, store, transactionId,
-      'NON_RENEWING_PURCHASE', null, purpleAmount
+      'NON_RENEWING_PURCHASE', null, credited
     );
   }
 

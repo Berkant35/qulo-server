@@ -28,4 +28,15 @@ describe('rcWebhookSchema', () => {
     expect(rcWebhookSchema.safeParse({ event: { ...base, environment: 'STAGING', period_type: 'PREPAID' } }).success)
       .toBe(true);
   });
+
+  it('tüketilebilir olay ve iadesi expiration_at_ms: null gönderir — reddedilmez; cancel_reason korunur', () => {
+    const parsed = rcWebhookSchema.safeParse({
+      event: {
+        ...base, type: 'CANCELLATION', transaction_id: 'tx-1', expiration_at_ms: null,
+        purchased_at_ms: null, cancel_reason: 'CUSTOMER_SUPPORT', price: -4.99,
+      },
+    });
+    expect(parsed.success).toBe(true);
+    expect(parsed.success && parsed.data.event.cancel_reason).toBe('CUSTOMER_SUPPORT');
+  });
 });
