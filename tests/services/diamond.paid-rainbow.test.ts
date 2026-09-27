@@ -97,6 +97,101 @@ describe('addPurple — ödenmiş pay', () => {
   });
 });
 
+/**
+ * Gerçek bir satın alma CAS tükenmesinde kaybolmamalı: önce kayıt (claim) satırı yazılıyor,
+ * bakiye 3 denemede de yazılamazsa kayıt kalırsa tekrar deneme duplicate guard'a takılıp
+ * `credited: 0` döner — webhook yolunda SESSİZCE. Telafi: claim satırı silinir, hata döner.
+ */
+describe('addPurple — CAS tükenmesi ve dayanıklılık', () => {
+  const iapRows = (fake: { table: (n: string) => Array<Record<string, unknown>> }) =>
+    fake.table('diamond_transactions').filter((t) => t.reason === 'IAP_PURCHASE');
+
+  it('3 çakışmada da yazamazsa SERVER_ERROR; claim satırı kalmaz; aynı referansla tekrar tam yatar', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { fake, diamondService } = await setup(
+      { users: [user({ purple_diamonds: 0, purple_paid: 0 })] },
+      { interleave: [{ table: 'users', times: 3, mutate: (rows) => { rows[0].purple_diamonds += 1; } }] },
+    );
+
+    await expect(diamondService.addPurple('u1', 50, 'IAP_PURCHASE', 'tx-cas', 50))
+      .rejects.toMatchObject({ code: 'SERVER_ERROR' });
+    expect(iapRows(fake)).toHaveLength(0);
+    expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 3, purple_paid: 0 });
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('CAS'),
+      expect.objectContaining({ userId: 'u1', referenceId: 'tx-cas' }),
+    );
+
+    await expect(diamondService.addPurple('u1', 50, 'IAP_PURCHASE', 'tx-cas', 50))
+      .resolves.toEqual({ purple: 53, credited: 50 });
+    expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 53, purple_paid: 50 });
+    expect(iapRows(fake)).toHaveLength(1);
+    errorSpy.mockRestore();
+  });
+
+  it('claim satırı silinemezse de SERVER_ERROR ve yüksek sesle loglar', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { diamondService } = await setup(
+      { users: [user({ purple_diamonds: 0 })] },
+      {
+        interleave: [{ table: 'users', times: 3, mutate: (rows) => { rows[0].purple_diamonds += 1; } }],
+        failOn: [{ table: 'diamond_transactions', op: 'delete' }],
+      },
+    );
+
+    await expect(diamondService.addPurple('u1', 50, 'IAP_PURCHASE', 'tx-del', 50))
+      .rejects.toMatchObject({ code: 'SERVER_ERROR' });
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('CAS'),
+      expect.objectContaining({ userId: 'u1', referenceId: 'tx-del', deleteError: expect.any(String) }),
+    );
+    errorSpy.mockRestore();
+  });
+
+  it('tek çakışmada bir kez yeniden dener; iki artırım da korunur', async () => {
+    const { fake, diamondService } = await setup(
+      { users: [user({ purple_diamonds: 0, purple_paid: 0 })] },
+      { interleave: [{ table: 'users', mutate: (rows) => { rows[0].purple_diamonds += 7; rows[0].purple_paid += 7; } }] },
+    );
+
+    await expect(diamondService.addPurple('u1', 50, 'IAP_PURCHASE', 'tx-once', 50))
+      .resolves.toEqual({ purple: 57, credited: 50 });
+    expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 57, purple_paid: 57 });
+  });
+
+  it('paidAmount NaN/sonsuz ise 0 sayılır (sayaç bozulmaz)', async () => {
+    const { fake, diamondService } = await setup({ users: [user({ purple_diamonds: 0, purple_paid: 0 })] });
+    await diamondService.addPurple('u1', 10, 'IAP_PURCHASE', 'tx-nan', Number.NaN);
+    await diamondService.addPurple('u1', 10, 'IAP_PURCHASE', 'tx-inf', Number.POSITIVE_INFINITY);
+    expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 20, purple_paid: 0 });
+    expect(fake.table('diamond_transactions').every((t) => t.paid_amount === undefined)).toBe(true);
+  });
+
+  it('duplicate guard okunamazsa SERVER_ERROR ve hiçbir şey yazılmaz', async () => {
+    const { fake, diamondService } = await setup(
+      { users: [user({ purple_diamonds: 0 })] },
+      { failOn: [{ table: 'diamond_transactions', op: 'select' }] },
+    );
+
+    await expect(diamondService.addPurple('u1', 50, 'IAP_PURCHASE', 'tx-guard', 50))
+      .rejects.toMatchObject({ code: 'SERVER_ERROR' });
+    expect(fake.table('users')[0].purple_diamonds).toBe(0);
+    expect(fake.table('diamond_transactions')).toHaveLength(0);
+  });
+
+  it('harcama: araya giren düşüş bakiyeyi yetersiz bırakırsa yeniden denemede INSUFFICIENT, defter satırı yok', async () => {
+    const { fake, diamondService } = await setup(
+      { users: [user({ purple_diamonds: 100, purple_paid: 0 })] },
+      { interleave: [{ table: 'users', mutate: (rows) => { rows[0].purple_diamonds = 10; } }] },
+    );
+
+    await expect(diamondService.spendPurple('u1', 50, 'x'))
+      .rejects.toMatchObject({ code: 'INSUFFICIENT_DIAMONDS' });
+    expect(fake.table('users')[0].purple_diamonds).toBe(10);
+    expect(fake.table('diamond_transactions')).toHaveLength(0);
+  });
+});
+
 describe('Rainbow bakiyesi', () => {
   it('earnRainbow artırır ve RAINBOW satırı yazar', async () => {
     const { fake, diamondService } = await setup({ users: [user()] });

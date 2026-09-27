@@ -12,6 +12,7 @@ export interface AddPurpleResult {
 export type LedgerType = "GREEN" | "PURPLE" | "RAINBOW";
 type EarnedType = "GREEN" | "RAINBOW";
 type BalanceRow = Record<string, number | null | undefined>;
+type CasResult = { before: BalanceRow; after: BalanceRow };
 
 const BALANCE_COLUMN: Record<LedgerType, "green_diamonds" | "purple_diamonds" | "rainbow_diamonds"> = {
   GREEN: "green_diamonds",
@@ -93,7 +94,7 @@ export class DiamondService {
 
   /**
    * `paidAmount`: bu kredinin gerçek parayla alınmış kısmı (IAP = tamamı, abonelik bonusu =
-   * tier payı, diğer tüm kaynaklar 0). `[0, amount]` aralığına sıkıştırılır.
+   * tier payı, diğer tüm kaynaklar 0). `[0, amount]` aralığına sıkıştırılır; sayı değilse 0.
    */
   async addPurple(
     userId: string,
@@ -102,17 +103,22 @@ export class DiamondService {
     referenceId?: string,
     paidAmount = 0,
   ): Promise<AddPurpleResult> {
-    const paid = Math.max(0, Math.min(paidAmount, amount));
+    // NaN/sonsuz sayaca girerse `purple_paid` NaN olur ve CHECK/CAS bozulur — güvenli taraf 0.
+    const paid = Number.isFinite(paidAmount) ? Math.max(0, Math.min(paidAmount, amount)) : 0;
 
-    // Duplicate guard — prevent same reward being given twice
+    // Duplicate guard — prevent same reward being given twice. limit(1): eski veride aynı
+    // referansla birden çok satır olabilir (PROFILE_COMPLETION, 047 notu); maybeSingle o zaman
+    // hata verirdi. Okuma hatası yutulmaz: guard'ı görmeden yazmak çift kredi demek.
     if (referenceId) {
-      const { data: existing } = await supabase
+      const { data: existing, error: guardErr } = await supabase
         .from("diamond_transactions")
         .select("id")
         .eq("user_id", userId)
         .eq("reference_id", referenceId)
+        .limit(1)
         .maybeSingle();
 
+      if (guardErr) throw Errors.SERVER_ERROR();
       if (existing) {
         console.log(`[Diamond] Duplicate reward skipped: ${referenceId} for user ${userId}`);
         return { purple: (await this.getBalance(userId)).purple, credited: 0 };
@@ -122,7 +128,7 @@ export class DiamondService {
     // ÖNCE KAYIT, SONRA BAKİYE — sıra kasıtlı (2026-09-05 çift kredi olayı): son savunma
     // `uniq_diamond_money_reference` kısmi benzersiz indeksi (047) ancak bu insert'te devreye
     // girer; bakiyeyi önce artırsaydık kısıt reddettiğinde para yoktan var olurdu.
-    const { error: txErr } = await supabase
+    const { data: claim, error: txErr } = await supabase
       .from("diamond_transactions")
       .insert({
         user_id: userId,
@@ -131,18 +137,20 @@ export class DiamondService {
         reason,
         reference_id: referenceId ?? null,
         ...(paid > 0 ? { paid_amount: paid } : {}),
-      });
+      })
+      .select("id")
+      .single();
 
-    if (txErr) {
+    if (txErr || !claim) {
       // 23505 = unique_violation → yarışı kaybettik, ödül zaten verilmiş.
-      if (txErr.code === "23505") {
+      if (txErr?.code === "23505") {
         console.log(`[Diamond] Duplicate reward blocked by DB: ${referenceId} for user ${userId}`);
         return { purple: (await this.getBalance(userId)).purple, credited: 0 };
       }
       throw Errors.SERVER_ERROR();
     }
 
-    const { after } = await this.casUpdate(
+    const cas = await this.tryCasUpdate(
       userId,
       ["purple_diamonds", "purple_paid"],
       (row) => ({
@@ -151,7 +159,27 @@ export class DiamondService {
       }),
     );
 
-    return { purple: after.purple_diamonds ?? 0, credited: amount };
+    if (!cas) {
+      // CAS tükendi: HİÇBİR deneme yazmadı (guard tutmadı). Claim satırı kalırsa tekrar deneme
+      // duplicate guard'a takılır → gerçek satın alma kaybolur. Satırı sil, hata dön; istemci/
+      // RevenueCat yeniden dener. (Update HATASI bu dala düşmez: yazmış olabilir, o yüzden kalır.)
+      const { error: deleteErr } = await supabase
+        .from("diamond_transactions")
+        .delete()
+        .eq("id", claim.id);
+      console.error("[Diamond] addPurple CAS exhausted — credit NOT applied; claim row delete attempted", {
+        userId,
+        referenceId: referenceId ?? null,
+        reason,
+        amount,
+        claimId: claim.id,
+        compensated: !deleteErr,
+        deleteError: deleteErr?.message ?? null,
+      });
+      throw Errors.SERVER_ERROR();
+    }
+
+    return { purple: cas.after.purple_diamonds ?? 0, credited: amount };
   }
 
   async earnGreen(userId: string, amount: number, reason: string, referenceId?: string) {
@@ -206,12 +234,28 @@ export class DiamondService {
    * bedava mor "ödenmiş" etiketi kazanıyordu. Şimdi okunan HER kolon compare'e dahil: `columns`
    * içindeki her alan için `.eq(column, before[column])` zincirlenir, biri bile değişmişse guard
    * tutmaz. `compute` hata fırlatabilir (ör. INSUFFICIENT_DIAMONDS) — o zaman hiçbir şey yazılmaz.
+   * Denemeler tükenirse SERVER_ERROR (tükenmeyi ayırt etmesi gereken çağıran `tryCasUpdate`'i kullanır).
    */
   private async casUpdate(
     userId: string,
     columns: readonly string[],
     compute: (row: BalanceRow) => BalanceRow,
-  ): Promise<{ before: BalanceRow; after: BalanceRow }> {
+  ): Promise<CasResult> {
+    const result = await this.tryCasUpdate(userId, columns, compute);
+    if (!result) throw Errors.SERVER_ERROR();
+    return result;
+  }
+
+  /**
+   * `casUpdate` çekirdeği. `null` = CAS tükendi: her denemede guard tuttu*MA*dı, yani bu çağrı
+   * HİÇBİR ŞEY yazmadı — telafi (ör. claim satırını silmek) güvenli. Gerçek DB hatası ayrı:
+   * update hatası (commit edilmiş olabilir, cevap kaybolmuş olabilir) SERVER_ERROR fırlatır.
+   */
+  private async tryCasUpdate(
+    userId: string,
+    columns: readonly string[],
+    compute: (row: BalanceRow) => BalanceRow,
+  ): Promise<CasResult | null> {
     const selection = columns.join(", ");
     for (let attempt = 0; attempt < CAS_ATTEMPTS; attempt++) {
       const { data: row, error: readErr } = await supabase
@@ -247,7 +291,7 @@ export class DiamondService {
       }
       // guard tutmadı: okuma ile yazma arasına başka bir istek girdi — yeniden oku.
     }
-    throw Errors.SERVER_ERROR();
+    return null;
   }
 
   private async logTransaction(
