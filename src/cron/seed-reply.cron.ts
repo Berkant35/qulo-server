@@ -13,6 +13,13 @@ let inFlight = false;
 const TIK_BUTCESI = 6;
 
 /**
+ * Coken instance'in biraktigi `claimed` satirlar 5 dk sonra kurtarilir; bunu her 10 sn'lik
+ * tikte yapmak gunde 8.640 bos PATCH demekti (2026-09-27 istek patlamasi). Dakikada bir yeter.
+ */
+const KURTARMA_ARALIGI_MS = 60_000;
+let sonKurtarma = 0;
+
+/**
  * Kuyruk turu -> isleyici. `Record` exhaustive: `kind` union'ina yeni bir deger
  * eklendiginde bu tablo doldurulana kadar derleme kirilir. Donus tipi `string`'e
  * genisletilmemeli, yoksa asagidaki `=== "failed"` karsilastirmasi tip denetiminden cikar.
@@ -41,8 +48,17 @@ export async function seedReplyTick(): Promise<void> {
     const { data: cfg } = await supabase.from("app_config").select("seed_reply_enabled").limit(1).maybeSingle();
     if (!cfg?.seed_reply_enabled) return;
 
-    await recoverStale();
-    await scanAndEnqueue();
+    if (Date.now() - sonKurtarma >= KURTARMA_ARALIGI_MS) {
+      await recoverStale();
+      sonKurtarma = Date.now();
+    }
+    // Tarama (yeni is bulma) ile claim (kuyrukta bekleyeni teslim) bagimsiz: tarama patlasa da
+    // vakti gelmis cevaplar — ozellikle medya reddi (kilitlenme) — gonderilmeye devam eder.
+    try {
+      await scanAndEnqueue();
+    } catch (err) {
+      console.error("[SeedReplyCron] tarama hatasi:", err instanceof Error ? err.message : err);
+    }
 
     const satirlar = await claimDue(TIK_BUTCESI);
     for (const row of satirlar) {

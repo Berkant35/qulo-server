@@ -1,3 +1,4 @@
+import { env, type Env } from "../config/env.js";
 import { presenceCron } from "./presence.cron.js";
 import { analyticsAggregateCron, analyticsCleanupCron } from "./analytics.cron.js";
 import { notificationEngineCron } from "./notification-engine.cron.js";
@@ -18,7 +19,19 @@ export interface CronJob {
 
 const jobs: CronJob[] = [presenceCron, analyticsAggregateCron, analyticsCleanupCron, campaignDispatchCron, notificationEngineCron, webQuizPurgeCron, seedReplyCron, seedPresenceCron, photoModerationCron];
 
-export function initCrons() {
+/**
+ * Cron'lar yalniz uretim sunucusunda kendiliginden baslar. Yerel `npm run dev` ayni prod
+ * Supabase'ine baglaniyor (ayri test DB'si yok); kapisiz her gelistirici makinesi ikinci bir
+ * cron calistiricisiydi — 2026-09-27'de 24 saatteki 678 bin API isteginin yarisi buradandi.
+ * `CRON_ENABLED` acik secimdir: yerelde bir cron'u bilerek denemek (`true`) ya da uretimde
+ * cron calistirmamasi gereken ikinci bir servis/replika (`false`).
+ */
+export function initCrons(cfg: Pick<Env, "NODE_ENV" | "CRON_ENABLED"> = env) {
+  const acik = cfg.CRON_ENABLED ? cfg.CRON_ENABLED === "true" : cfg.NODE_ENV === "production";
+  if (!acik) {
+    console.log(`[Cron] Kapali (NODE_ENV=${cfg.NODE_ENV}); calistirmak icin CRON_ENABLED=true`);
+    return;
+  }
   // Hepsi baslar; seed-reply'in kalici anahtari app_config.seed_reply_enabled
   // (her tikta okunur), surec ici start/stop degil.
   for (const job of jobs) job.start();

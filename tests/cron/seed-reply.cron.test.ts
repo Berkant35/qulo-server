@@ -41,6 +41,43 @@ describe('seedReplyTick', () => {
     expect(claimDue).toHaveBeenCalledWith(expect.any(Number));
   });
 
+  it('tarama hata verse de vakti gelmis satirlar claim edilip islenir', async () => {
+    // Tarama (yeni is bulma) ile claim (zaten kuyrukta bekleyen isi teslim) bagimsiz: RPC
+    // eksik/bozuksa bile bekleyen medya reddi ve soru cevaplari susmamali (medya kilitlenmesi).
+    const { mod, scanAndEnqueue, claimDue, processRow } = await setup(true, [{ id: 'r1', kind: 'message' }]);
+    scanAndEnqueue.mockRejectedValueOnce(new Error('function seed_reply_candidates does not exist'));
+
+    await mod.seedReplyTick();
+
+    expect(claimDue).toHaveBeenCalledTimes(1);
+    expect(processRow).toHaveBeenCalledWith(expect.objectContaining({ id: 'r1' }));
+  });
+
+  it('kurtarma dakikada bir calisir — her 10 sn\'lik tikte PATCH atilmaz', async () => {
+    // recoverStale 5 dk'dan eski `claimed` satirlari toplar; her tikte cagrilmasi gunde
+    // 8.640 bos PATCH demekti (2026-09-27 istek patlamasi). Tarama ve claim her tikte kalir.
+    vi.useFakeTimers({ toFake: ['Date'] });
+    try {
+      const T0 = new Date('2026-09-27T10:00:00Z').getTime();
+      const { mod, recoverStale, claimDue } = await setup(true);
+
+      vi.setSystemTime(T0);
+      await mod.seedReplyTick();
+      vi.setSystemTime(T0 + 10_000);
+      await mod.seedReplyTick();
+      vi.setSystemTime(T0 + 50_000);
+      await mod.seedReplyTick();
+      expect(recoverStale).toHaveBeenCalledTimes(1);
+      expect(claimDue).toHaveBeenCalledTimes(3);
+
+      vi.setSystemTime(T0 + 61_000);
+      await mod.seedReplyTick();
+      expect(recoverStale).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('her kuyruk turu KENDI isleyicisine gider', async () => {
     // Yonlendirme tek satirlik bir tablo araması; yanlis eslesirse bot ornegin bir
     // medya istegine metin cevabi yazar ve istek pending kalir (kalici kilitlenme).

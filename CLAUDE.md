@@ -4,7 +4,12 @@ Root `CLAUDE.md` ("Test Disiplini") ve `tasks/test-cases.md` bu repo için de ge
 Burada sadece server'a özgü kısım var.
 
 ## Komutlar
-- **Dev**: `npm run dev` (tsx watch)
+- **Dev**: `npm run dev` (tsx watch) — **cron'lar çalışmaz** (yalnız `NODE_ENV=production`).
+  Yerel sunucu prod Supabase'e bağlı; kapısız her yerel sunucu ikinci bir prod cron çalıştırıcısıydı
+  (2026-09-27: 24 saatteki 678 bin isteğin yarısı). Tek bir cron'u denemek için `/admin/crons`'tan
+  yalnız o işi başlat; `CRON_ENABLED=true` DOKUZ işin hepsini prod DB'ye karşı açar (çift push/ban).
+- **SQL sınaması**: `npx tsx scripts/sql-checks/seed-reply-candidates.ts` → çıktıyı Supabase SQL
+  editor / MCP `execute_sql` ile çalıştır; geri alınan işlemde senaryolar (fonksiyon değişince).
 - **Test**: `npx vitest run` | tek dosya: `npx vitest run tests/services/x.test.ts`
 - **Typecheck**: `npx tsc -p tsconfig.test.json` (`tests/` dahil)
 - **Build**: `npm run build`

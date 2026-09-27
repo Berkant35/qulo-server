@@ -7,6 +7,11 @@ const envSchema = z.object({
   NODE_ENV: z
     .enum(["development", "production", "test"])
     .default("development"),
+  /** Cron'lari acik secimle ac/kapat; bos/tanimsizsa yalniz NODE_ENV=production calistirir (cron/index.ts). */
+  CRON_ENABLED: z.preprocess(
+    (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
+    z.enum(["true", "false"]).optional(),
+  ),
 
   // Supabase
   SUPABASE_URL: z.string().url(),

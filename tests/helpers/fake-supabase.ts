@@ -420,6 +420,12 @@ export interface FakeSupabase {
   table(name: string): Row[];
   /** Yapılan rpc çağrıları, sırayla. */
   rpcCalls: Array<{ name: string; args: unknown }>;
+  /**
+   * Yapılan tablo istekleri (`from(t).select/update/...`), sırayla. Her biri gerçekte bir
+   * HTTP isteğidir; 10 sn'lik cron'larda istek SAYISI da bir davranıştır (2026-09-27: tik
+   * başına ~39 istekle günde 337 bin istek). N+1'i sınamak için.
+   */
+  queries: Array<{ table: string; op: 'select' | 'update' | 'insert' | 'upsert' | 'delete' }>;
   /** Bir bucket'ta kalan dosya yolları — assert için. */
   storageFiles(bucket: string): string[];
 }
@@ -433,6 +439,7 @@ export function createFakeSupabase(
     Object.entries(seed).map(([t, rows]) => [t, rows.map((r) => ({ ...r }))]),
   );
   const rpcCalls: Array<{ name: string; args: unknown }> = [];
+  const queries: FakeSupabase['queries'] = [];
   const storageFiles: Record<string, string[]> = Object.fromEntries(
     Object.entries(options.storage ?? {}).map(([bucket, paths]) => [bucket, [...paths]]),
   );
@@ -471,25 +478,36 @@ export function createFakeSupabase(
 
   const client = {
     from(table: string) {
+      const kaydet = (op: FakeSupabase['queries'][number]['op']) => queries.push({ table, op });
       return {
-        select: (_columns?: string, opts?: { count?: string }) =>
-          new QueryBuilder(store, table, 'select', null, opts?.count === 'exact', failureFor(table, 'select')),
-        update: (patch: Row) =>
-          new QueryBuilder(store, table, 'update', patch, false, failureFor(table, 'update')),
-        insert: (payload: Row | Row[]) =>
-          new QueryBuilder(store, table, 'insert', payload, false, failureFor(table, 'insert'), undefined, options.unique?.[table] ?? []),
-        upsert: (payload: Row | Row[], opts?: { onConflict?: string }) =>
-          new QueryBuilder(
+        select: (_columns?: string, opts?: { count?: string }) => {
+          kaydet('select');
+          return new QueryBuilder(store, table, 'select', null, opts?.count === 'exact', failureFor(table, 'select'));
+        },
+        update: (patch: Row) => {
+          kaydet('update');
+          return new QueryBuilder(store, table, 'update', patch, false, failureFor(table, 'update'));
+        },
+        insert: (payload: Row | Row[]) => {
+          kaydet('insert');
+          return new QueryBuilder(store, table, 'insert', payload, false, failureFor(table, 'insert'), undefined, options.unique?.[table] ?? []);
+        },
+        upsert: (payload: Row | Row[], opts?: { onConflict?: string }) => {
+          kaydet('upsert');
+          return new QueryBuilder(
             store, table, 'upsert', payload, false,
             failureFor(table, 'insert'), opts?.onConflict,
-          ),
+          );
+        },
         // `count` secenegi ONEMLI: PostgREST `.delete({ count: 'exact' })` ile
         // silinen satir sayisini donuyor ve servisler "hicbir sey silinmedi"yi
         // (baskasinin kaydini silmeye calismak) bundan anliyor. Eskiden bu
         // secenek yok sayiliyordu, yani fake her zaman `count: undefined`
         // donuyordu ve o kontrol testlerde hic tetiklenmiyordu.
-        delete: (opts?: { count?: 'exact' }) =>
-          new QueryBuilder(store, table, 'delete', null, opts?.count === 'exact', failureFor(table, 'delete')),
+        delete: (opts?: { count?: 'exact' }) => {
+          kaydet('delete');
+          return new QueryBuilder(store, table, 'delete', null, opts?.count === 'exact', failureFor(table, 'delete'));
+        },
       };
     },
     /**
@@ -552,6 +570,7 @@ export function createFakeSupabase(
     client,
     table: (name: string) => (store[name] ??= []),
     rpcCalls,
+    queries,
     storageFiles: (bucket: string) => (storageFiles[bucket] ??= []),
   };
 }

@@ -44,11 +44,6 @@ export function fazFor(messageCount: number): 1 | 2 | 3 | 4 {
   return 4;
 }
 
-/** PostgREST sorgusu URL'de gidiyor: 416 seed icin tek bir .or() ifadesi ~42 KB olurdu
- *  (yaygin sunucu siniri ~8-16 KB). Parcali .in() hem sinirin altinda kaliyor hem
- *  fake-supabase'in destekledigi bicim. */
-const ID_PARCA = 100;
-
 /** Kalici basarisizliktan sonra ayni eslesmeye yeniden satir acmadan once beklenen sure. */
 const SOGUMA_MS = 6 * 60 * 60_000;
 
@@ -58,7 +53,11 @@ const SORU_OLASILIGI = 0.3;
 /** Ucretsiz kademe: eslesme basina gunde 2 soru (chat-question.service.ts:258). */
 const GUNLUK_SORU_KOTASI = 2;
 
-/** fazFor bu sayidan itibaren 4 doner; kapanis, bu esikten SONRA yazilmis seed mesajidir. */
+/**
+ * fazFor bu sayidan itibaren 4 doner. Spec §5: faz 4'te bir kez nazik kapanis yazilir,
+ * sonrasinda yeni satir acilmaz. Kapanis = sohbet bu esige ulastiktan SONRA yazilmis seed
+ * mesaji (0-tabanli indeks >= FAZ4_ESIK, yani 26. mesaj ve sonrasi) — aday RPC'sine verilir.
+ */
 const FAZ4_ESIK = 25;
 
 /** `__QUESTION__:<uuid>` bir soru karti isaretidir, mesaj metni degil. */
@@ -95,23 +94,6 @@ function botYazabilir<T extends { is_seed_profile?: unknown; is_test_account?: u
 
 const KAPI_HATASI = 'alici seed profil degil (is_seed_profile + is_test_account)';
 
-/**
- * Spec §5: faz 4'te bir kez nazik kapanis yazilir, sonrasinda yeni satir acilmaz.
- * Kapanis = sohbet FAZ4_ESIK mesaja ulastiktan SONRA yazilmis seed mesaji
- * (0-tabanli indeks >= FAZ4_ESIK, yani 26. mesaj ve sonrasi).
- */
-async function kapanisGonderildi(matchId: string, seedId: string, mesajSayisi: number): Promise<boolean> {
-  if (mesajSayisi <= FAZ4_ESIK) return false;
-  const { data } = await supabase
-    .from('messages')
-    .select('sender_id')
-    .eq('match_id', matchId)
-    .is('deleted_at', null)
-    .order('created_at', { ascending: true })
-    .range(FAZ4_ESIK, mesajSayisi - 1);
-  return (data ?? []).some((m) => m.sender_id === seedId);
-}
-
 /** Soru kotasi onden kontrol edilir: dolu iken satir acmak bos yere LLM cagrisi yakar. */
 async function soruKotasiDolu(matchId: string, seedId: string): Promise<boolean> {
   const gunBasi = new Date();
@@ -125,47 +107,47 @@ async function soruKotasiDolu(matchId: string, seedId: string): Promise<boolean>
   return (count ?? 0) >= GUNLUK_SORU_KOTASI;
 }
 
-async function seedEslesmeleri(seedIds: string[]) {
-  const bulunan = new Map<string, { id: string; user1_id: string; user2_id: string }>();
-  for (const kolon of ['user1_id', 'user2_id'] as const) {
-    for (let i = 0; i < seedIds.length; i += ID_PARCA) {
-      const { data } = await supabase
-        .from('matches')
-        .select('id, user1_id, user2_id')
-        .eq('is_active', true)
-        .in(kolon, seedIds.slice(i, i + ID_PARCA));
-      for (const m of data ?? []) {
-        bulunan.set(m.id as string, m as { id: string; user1_id: string; user2_id: string });
-      }
-    }
-  }
-  return [...bulunan.values()];
+/**
+ * `seed_reply_candidates` RPC satiri (migration 065): aksiyon bekleyebilecek seed
+ * eslesmesinin gercekleri. SQL yalniz aktif, seed tarafi `is_seed_profile` +
+ * `is_test_account` olan, ACIK kuyruk satiri olmayan ve insandan gelen bir tetikleyicisi
+ * (cevapsiz soru, bekleyen medya istegi ya da kapanis oncesi son mesaj) bulunan
+ * eslesmeleri dondurur; karar (tur, soguma, iptal, soru zari) asagida JS'te.
+ */
+export interface SeedAdayi {
+  match_id: string;
+  seed_user_id: string;
+  seed_persona: SeedPersona | null;
+  /** Silinmemis mesaj sayisi (faz). */
+  message_count: number;
+  /** Son SILINMEMIS mesaj. */
+  last_message_id: string | null;
+  last_message_sender_id: string | null;
+  /** Son mesaj `__QUESTION__:` soru karti isareti mi. */
+  last_message_is_question: boolean;
+  /** Seed, FAZ4_ESIK'ten sonra (kapanis) mesaj yazmis mi. */
+  kapanis_gonderildi: boolean;
+  /** Cevaplanmamis, terk edilmemis soru. */
+  pending_question_id: string | null;
+  pending_question_sender_id: string | null;
+  /** En yeni `pending` medya istegi. */
+  pending_media_request_id: string | null;
+  pending_media_requester_id: string | null;
 }
 
 /**
- * Bekleyen medya istekleri, eslesme basina degil parcali tek sorguda (cron 10 sn'de doner).
+ * Adaylar TEK istekte. Eskiden her 10 sn'lik tik 417 seed id'sini 100'luk parcalarla iki
+ * kolonda arayip (10 istek) eslesme basina mesaj + soru okuyordu (N+1): tik basina ~39
+ * istek, gunde ~337 bin — neredeyse hepsi "is yok" sonucu icin (2026-09-27).
  *
- * Hata FIRLATILIR, yutulmaz: bos donen bir sorgu "istek yok" gibi gorunur, bot metin
- * cevabi yazar ve istek sonsuza dek `pending` kalir — kapatmak icin yazdigimiz
- * kilitlenmenin ta kendisi. (Ayni sessiz-yutma deseni discover havuzunu 2026-09-17'de
- * herkes icin bosaltmisti.)
+ * Hata FIRLATILIR, yutulmaz: bos donen bir sorgu "aday yok" gibi gorunur ve botlar sessizce
+ * susar; bekleyen medya istegi de sonsuza dek `pending` kalir (kilitlenme). Ayni sessiz-yutma
+ * deseni discover havuzunu 2026-09-17'de herkes icin bosaltmisti.
  */
-async function bekleyenMedyaIstekleri(matchIdler: string[]) {
-  const harita = new Map<string, { id: string; requester_id: string }>();
-  for (let i = 0; i < matchIdler.length; i += ID_PARCA) {
-    const { data, error } = await supabase
-      .from('media_requests')
-      .select('id, match_id, requester_id, created_at')
-      .eq('status', 'pending')
-      .in('match_id', matchIdler.slice(i, i + ID_PARCA))
-      .order('created_at', { ascending: false });
-    if (error) throw error;
-    for (const r of data ?? []) {
-      const mid = r.match_id as string;
-      if (!harita.has(mid)) harita.set(mid, { id: r.id as string, requester_id: r.requester_id as string });
-    }
-  }
-  return harita;
+async function seedAdaylari(): Promise<SeedAdayi[]> {
+  const { data, error } = await supabase.rpc('seed_reply_candidates', { p_kapanis_esik: FAZ4_ESIK });
+  if (error) throw error;
+  return (data ?? []) as SeedAdayi[];
 }
 
 /** Kuyruk kaydi. UNIQUE ihlali (yaris) normaldir: baska instance ayni satiri acmistir. */
@@ -175,61 +157,24 @@ async function satirAc(alanlar: Record<string, unknown>): Promise<boolean> {
 }
 
 /**
- * Seed kadrosu (id + persona) cache suresi. 416 seed x persona tik basina ~142 KB idi;
- * 10 sn'lik cron'la gunde ~1,2 GB Supabase egress'i demekti (2026-09-21, ucretsiz kota asildi).
- * Kadro nadiren degisir ve cache guvenlik kapisi DEGIL: `botYazabilir` her yazmada
- * kullaniciyi DB'den yeniden okur, yani bayragi kaldirilan seed'e bot yazmaz.
+ * Insandan gelen tetikleyicisi olan seed eslesmelerini kuyruga alir. Eklenen satir sayisini doner.
+ * Bostaki tik (aday yok) tek istektir: RPC. Kapali satirlar ve hizli mod yalniz aday varsa okunur.
  */
-const SEED_KADRO_TTL_MS = 10 * 60_000;
-
-type SeedKadro = { id: string; seed_persona: unknown }[];
-let seedKadroCache: { at: number; seedler: SeedKadro } | null = null;
-
-async function seedKadrosu(now: Date): Promise<SeedKadro> {
-  if (seedKadroCache && now.getTime() - seedKadroCache.at < SEED_KADRO_TTL_MS) {
-    return seedKadroCache.seedler;
-  }
-  const { data, error } = await supabase
-    .from('users')
-    .select('id, seed_persona')
-    .eq('is_seed_profile', true)
-    .eq('is_test_account', true);
-  // Hata ve bos sonuc cache'lenmez: bos sorgu bayt tasimaz, yeni seed ise hemen gorulur.
-  if (error || !data?.length) return [];
-  const seedler = data as SeedKadro;
-  seedKadroCache = { at: now.getTime(), seedler };
-  return seedler;
-}
-
-/** Aktif eslesmelerde son silinmemis mesaji insan atmis olanlari kuyruga alir. Eklenen satir sayisini doner. */
 export async function scanAndEnqueue(now: Date = new Date(), rand: () => number = Math.random): Promise<number> {
-  const seedler = await seedKadrosu(now);
-  if (!seedler.length) return 0;
-
-  const seedIds = seedler.map((u) => u.id as string);
-  const seedIdSet = new Set(seedIds);
-  const personaOf = new Map(
-    seedler.map((u) => [u.id as string, (u.seed_persona as SeedPersona | null) ?? VARSAYILAN_PERSONA]),
-  );
-
-  const eslesmeler = await seedEslesmeleri(seedIds);
-  if (!eslesmeler.length) return 0;
-
-  const { data: acikSatirlar } = await supabase
-    .from('seed_reply_queue')
-    .select('match_id')
-    .in('status', ['pending', 'claimed']);
-  const acik = new Set((acikSatirlar ?? []).map((r) => r.match_id as string));
+  const adaylar = await seedAdaylari();
+  if (!adaylar.length) return 0;
 
   // `failed`/`cancelled` satir acik-satir filtresine girmez, insanin mesaji ise hala son
   // mesajdir: soguma olmadan tarama HER tikte yeni satir acar ve her tur denetim dongusu
   // yuzunden 2 Gemini cagrisi yakar. `withinRateLimits` fren olamaz, cunku GONDERILMIS
-  // mesajlari sayar — basarisiz satir hic mesaj yazmaz.
-  const { data: kapaliSatirlar } = await supabase
+  // mesajlari sayar — basarisiz satir hic mesaj yazmaz. Hata FIRLATILIR: yutulursa iki filtre
+  // bos kalir ve iptal edilmis tetikleyici (18 yas alti) de kuyruga geri girer.
+  const { data: kapaliSatirlar, error: kapaliHata } = await supabase
     .from('seed_reply_queue')
     .select('match_id, trigger_message_id, question_id, media_request_id, status')
     .in('status', ['failed', 'cancelled'])
     .gte('updated_at', new Date(now.getTime() - SOGUMA_MS).toISOString());
+  if (kapaliHata) throw kapaliHata;
 
   const sonHatali = new Set(
     (kapaliSatirlar ?? []).filter((r) => r.status === 'failed').map((r) => r.match_id as string),
@@ -244,99 +189,96 @@ export async function scanAndEnqueue(now: Date = new Date(), rand: () => number 
       .filter((v): v is string => typeof v === 'string'),
   );
 
-  const fastMode = await fastModeAcik();
-  const medyaIstegi = await bekleyenMedyaIstekleri(eslesmeler.map((m) => m.id as string));
+  // Hizli mod yalniz satir acilacaksa okunur: soguma/iptal yuzunden bekleyen aday her tikte
+  // gereksiz istek atmasin.
+  let fastMode: boolean | null = null;
+  const baglam: TaramaBaglami = {
+    now, rand, sonHatali, iptalTetikleyici,
+    hizliMod: async () => (fastMode ??= await fastModeAcik()),
+  };
+
   let eklenen = 0;
-
-  for (const m of eslesmeler) {
-    if (acik.has(m.id as string) || sonHatali.has(m.id as string)) continue;
-    const user1 = m.user1_id as string;
-    const user2 = m.user2_id as string;
-    const seedId = seedIdSet.has(user1) ? user1 : seedIdSet.has(user2) ? user2 : null;
-    if (!seedId) continue;
-
-    /** Oncelikli satirlar (soru cevabi, medya reddi) faz 1 gecikmesiyle acilir. */
-    const oncelikliAn = () => new Date(now.getTime() + computeReplyDelayMs({
-      persona: personaOf.get(seedId)!, now, fastMode, phase: 1,
-      messageCount: 0, msSinceLastExchange: null, rand,
-    })).toISOString();
-
-    // Bota sorulmus, cevaplanmamis soru varsa once onu cevapla (yoksa kilitli soruda sohbet olur).
-    const { data: bekleyen } = await supabase
-      .from('chat_questions')
-      .select('id, sender_id, answered_option, is_abandoned')
-      .eq('match_id', m.id)
-      .is('answered_option', null)
-      .eq('is_abandoned', false)
-      .limit(1);
-    const soru = bekleyen?.[0];
-    if (soru && soru.sender_id !== seedId) {
-      if (iptalTetikleyici.has(soru.id as string)) continue;
-      if (await satirAc({
-        match_id: m.id, seed_user_id: seedId, question_id: soru.id,
-        kind: 'question_answer', reply_due_at: oncelikliAn(),
-      })) eklenen += 1;
-      continue;
+  for (const a of adaylar) {
+    // Tek adayin hatasi (ör. bozuk persona → gecikme hesabi TypeError) digerlerini durdurmaz;
+    // eskiden tum tarama her tikte dusuyor ve diger sohbetler hic kuyruga giremiyordu.
+    try {
+      if (await adayiKuyrugaAl(a, baglam)) eklenen += 1;
+    } catch (err) {
+      console.error(`[SeedReply] aday islenemedi match=${a.match_id}:`, err instanceof Error ? err.message : err);
     }
-
-    // Bekleyen medya istegi: cevapsiz kalirsa KALICI kilitlenme — `requestMedia`
-    // bekleyen istek varken MEDIA_REQUEST_PENDING firlatir ve isteklerin timeout'u
-    // yoktur, yani kullanici o eslesmede bir daha foto/ses gonderemez.
-    const medya = medyaIstegi.get(m.id as string);
-    if (medya && medya.requester_id !== seedId) {
-      if (iptalTetikleyici.has(medya.id)) continue;
-      if (await satirAc({
-        match_id: m.id, seed_user_id: seedId, media_request_id: medya.id,
-        kind: 'media_request', reply_due_at: oncelikliAn(),
-      })) eklenen += 1;
-      continue;
-    }
-
-    // Son SILINMEMIS mesaj: silinmis mesaja cevap yazmak hem urkutucu hem "silinen icerik okundu" sinyali.
-    const { data: sonMesajlar } = await supabase
-      .from('messages')
-      .select('id, sender_id, content, created_at')
-      .eq('match_id', m.id)
-      .is('deleted_at', null)
-      .order('created_at', { ascending: false })
-      .limit(1);
-    const son = sonMesajlar?.[0];
-    if (!son || son.sender_id === seedId) continue;
-    if (typeof son.content === 'string' && son.content.startsWith(QUESTION_ONEKI)) continue;
-    if (iptalTetikleyici.has(son.id as string)) continue;
-
-    const { count } = await supabase
-      .from('messages')
-      .select('id', { count: 'exact', head: true })
-      .eq('match_id', m.id)
-      .is('deleted_at', null);
-    const mesajSayisi = count ?? 0;
-    const faz = fazFor(mesajSayisi);
-
-    if (faz === 4 && (await kapanisGonderildi(m.id as string, seedId, mesajSayisi))) continue;
-
-    // Spec §6.1: soru, metin cevabinin YERINE gecer — ikisi ayni anda gonderilmez.
-    const faz1SonUcteBir = faz === 1 && mesajSayisi >= FAZ1_SON_UCTE_BIR;
-    const soruSirasi = faz1SonUcteBir
-      && rand() < SORU_OLASILIGI
-      && !(await soruKotasiDolu(m.id as string, seedId));
-
-    const gecikme = computeReplyDelayMs({
-      persona: personaOf.get(seedId)!,
-      now, fastMode, phase: faz,
-      messageCount: mesajSayisi, msSinceLastExchange: null, rand,
-    });
-
-    if (await satirAc({
-      match_id: m.id, seed_user_id: seedId,
-      // Soru bir insan mesajinin cevabi DEGIL: trigger_message_id NULL kalir, boylece
-      // iptal edilirse ayni mesajin metin cevabi soguma filtresine takilmaz.
-      trigger_message_id: soruSirasi ? null : son.id,
-      kind: soruSirasi ? 'question' : 'message',
-      reply_due_at: new Date(now.getTime() + gecikme).toISOString(),
-    })) eklenen += 1;
   }
   return eklenen;
+}
+
+interface TaramaBaglami {
+  now: Date;
+  rand: () => number;
+  sonHatali: Set<string>;
+  iptalTetikleyici: Set<string>;
+  hizliMod: () => Promise<boolean>;
+}
+
+/** Tek adaya satir acar (acildiysa true). Dal onceligi: insanin sorusu > medya istegi > son mesaj. */
+async function adayiKuyrugaAl(a: SeedAdayi, b: TaramaBaglami): Promise<boolean> {
+  if (b.sonHatali.has(a.match_id)) return false;
+  const seedId = a.seed_user_id;
+  const persona = a.seed_persona ?? VARSAYILAN_PERSONA;
+
+  /** Oncelikli satirlar (soru cevabi, medya reddi) faz 1 gecikmesiyle acilir. */
+  const oncelikliAn = async () => new Date(b.now.getTime() + computeReplyDelayMs({
+    persona, now: b.now, fastMode: await b.hizliMod(), phase: 1,
+    messageCount: 0, msSinceLastExchange: null, rand: b.rand,
+  })).toISOString();
+
+  // Bota sorulmus, cevaplanmamis soru varsa once onu cevapla (yoksa kilitli soruda sohbet olur).
+  if (a.pending_question_id && a.pending_question_sender_id !== seedId) {
+    if (b.iptalTetikleyici.has(a.pending_question_id)) return false;
+    return satirAc({
+      match_id: a.match_id, seed_user_id: seedId, question_id: a.pending_question_id,
+      kind: 'question_answer', reply_due_at: await oncelikliAn(),
+    });
+  }
+
+  // Bekleyen medya istegi: cevapsiz kalirsa KALICI kilitlenme — `requestMedia`
+  // bekleyen istek varken MEDIA_REQUEST_PENDING firlatir ve isteklerin timeout'u
+  // yoktur, yani kullanici o eslesmede bir daha foto/ses gonderemez.
+  if (a.pending_media_request_id && a.pending_media_requester_id !== seedId) {
+    if (b.iptalTetikleyici.has(a.pending_media_request_id)) return false;
+    return satirAc({
+      match_id: a.match_id, seed_user_id: seedId, media_request_id: a.pending_media_request_id,
+      kind: 'media_request', reply_due_at: await oncelikliAn(),
+    });
+  }
+
+  // Son SILINMEMIS mesaj (SQL'de): silinmis mesaja cevap yazmak hem urkutucu hem
+  // "silinen icerik okundu" sinyali.
+  if (!a.last_message_id || a.last_message_sender_id === seedId) return false;
+  if (a.last_message_is_question) return false;
+  if (b.iptalTetikleyici.has(a.last_message_id)) return false;
+  if (a.kapanis_gonderildi) return false;
+
+  const mesajSayisi = a.message_count;
+  const faz = fazFor(mesajSayisi);
+
+  // Spec §6.1: soru, metin cevabinin YERINE gecer — ikisi ayni anda gonderilmez.
+  const faz1SonUcteBir = faz === 1 && mesajSayisi >= FAZ1_SON_UCTE_BIR;
+  const soruSirasi = faz1SonUcteBir
+    && b.rand() < SORU_OLASILIGI
+    && !(await soruKotasiDolu(a.match_id, seedId));
+
+  const gecikme = computeReplyDelayMs({
+    persona, now: b.now, fastMode: await b.hizliMod(), phase: faz,
+    messageCount: mesajSayisi, msSinceLastExchange: null, rand: b.rand,
+  });
+
+  return satirAc({
+    match_id: a.match_id, seed_user_id: seedId,
+    // Soru bir insan mesajinin cevabi DEGIL: trigger_message_id NULL kalir, boylece
+    // iptal edilirse ayni mesajin metin cevabi soguma filtresine takilmaz.
+    trigger_message_id: soruSirasi ? null : a.last_message_id,
+    kind: soruSirasi ? 'question' : 'message',
+    reply_due_at: new Date(b.now.getTime() + gecikme).toISOString(),
+  });
 }
 
 export async function claimDue(limit: number): Promise<QueueRow[]> {

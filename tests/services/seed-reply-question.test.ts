@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createFakeSupabase, type Tables } from '../helpers/fake-supabase.js';
+import { seedAdayi } from '../helpers/seed-reply-aday.js';
+import type { SeedAdayi } from '../../src/services/seed-reply.service.js';
 
 const SEED = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const INSAN = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
@@ -16,7 +18,9 @@ const soru = (over: Record<string, unknown> = {}) => ({
   answered_option: null, is_abandoned: false, has_unmatch_risk: false, has_chat_lock: false, ...over,
 });
 
-async function setup(opts: { seed?: Tables; llmJson?: string; createThrows?: Error; llmThrows?: Error } = {}) {
+async function setup(opts: {
+  seed?: Tables; llmJson?: string; createThrows?: Error; llmThrows?: Error; adaylar?: SeedAdayi[];
+} = {}) {
   const fake = createFakeSupabase({
     users: [
       { id: SEED, is_seed_profile: true, is_test_account: true, name: 'Elif', age: 31, city: 'Fethiye', bio: 'atölye', seed_persona: null },
@@ -29,7 +33,7 @@ async function setup(opts: { seed?: Tables; llmJson?: string; createThrows?: Err
     app_config: [{ id: 'cfg', seed_reply_enabled: true, seed_reply_fast_mode: false }],
     seed_reply_queue: [row()],
     ...opts.seed,
-  });
+  }, { rpc: { seed_reply_candidates: { data: opts.adaylar ?? [] } } });
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
 
   const varsayilan = JSON.stringify({
@@ -184,9 +188,31 @@ describe('answerQuestionRow', () => {
 
 describe('scanAndEnqueue — soru cevabi', () => {
   it('bota sorulmus cevaplanmamis soru icin question_answer satiri acar', async () => {
-    const { fake, svc } = await setup({ seed: { seed_reply_queue: [], chat_questions: [soru()] } });
-    await svc.scanAndEnqueue();
-    const satir = fake.table('seed_reply_queue').find((r) => r.kind === 'question_answer');
-    expect(satir).toMatchObject({ match_id: MATCH, seed_user_id: SEED, question_id: 'soru-1' });
+    const { fake, svc } = await setup({
+      seed: { seed_reply_queue: [], chat_questions: [soru()] },
+      adaylar: [seedAdayi(
+        { match_id: MATCH, seed_user_id: SEED, insan: INSAN },
+        { pending_question_id: 'soru-1', pending_question_sender_id: INSAN },
+      )],
+    });
+    expect(await svc.scanAndEnqueue()).toBe(1);
+    // Soru metin cevabinin ONUNE gecer: ayni tikte ikinci (metin) satiri acilmaz.
+    expect(fake.table('seed_reply_queue')).toEqual([
+      expect.objectContaining({ match_id: MATCH, seed_user_id: SEED, question_id: 'soru-1', kind: 'question_answer' }),
+    ]);
+  });
+
+  it('botun kendi sorusu cevap satiri acmaz — siradaki insan mesajina doner', async () => {
+    const { fake, svc } = await setup({
+      seed: { seed_reply_queue: [] },
+      adaylar: [seedAdayi(
+        { match_id: MATCH, seed_user_id: SEED, insan: INSAN },
+        { pending_question_id: 'soru-2', pending_question_sender_id: SEED },
+      )],
+    });
+    expect(await svc.scanAndEnqueue(new Date(), () => 0.9)).toBe(1);
+    const satir = fake.table('seed_reply_queue')[0]!;
+    expect(satir).toMatchObject({ kind: 'message', trigger_message_id: 'm1' });
+    expect(satir.question_id ?? null).toBeNull();
   });
 });

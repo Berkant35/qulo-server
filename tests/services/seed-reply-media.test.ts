@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createFakeSupabase, type Tables, type FakeSupabaseOptions } from '../helpers/fake-supabase.js';
+import { seedAdayi } from '../helpers/seed-reply-aday.js';
+import type { SeedAdayi } from '../../src/services/seed-reply.service.js';
 
 /**
  * Foto/ses paylasim istegi — seed profilin cevabi.
@@ -27,6 +29,7 @@ const row = (over: Record<string, unknown> = {}) => ({
 
 async function setup(opts: {
   seed?: Tables; llm?: string; llmThrows?: Error; fail?: FakeSupabaseOptions['failOn'];
+  adaylar?: SeedAdayi[];
 } = {}) {
   const fake = createFakeSupabase({
     users: [
@@ -43,7 +46,10 @@ async function setup(opts: {
     seed_reply_queue: [row()],
     app_config: [{ id: 'cfg', seed_reply_enabled: true, seed_reply_fast_mode: false }],
     ...opts.seed,
-  }, opts.fail ? { failOn: opts.fail } : undefined);
+  }, {
+    ...(opts.fail ? { failOn: opts.fail } : {}),
+    rpc: { seed_reply_candidates: { data: opts.adaylar ?? [] } },
+  });
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
 
   const generateSeedReply = vi.fn(async () => {
@@ -210,8 +216,13 @@ describe('respondMediaRequest', () => {
 });
 
 describe('scanAndEnqueue — medya istegi onceligi', () => {
+  const adayIstekli = (requester: string) => seedAdayi(
+    { match_id: MATCH, seed_user_id: SEED, insan: INSAN },
+    { pending_media_request_id: ISTEK, pending_media_requester_id: requester },
+  );
+
   it('bekleyen medya istegi varsa METIN satiri degil media_request satiri acar', async () => {
-    const { svc, fake } = await setup({ seed: { seed_reply_queue: [] } });
+    const { svc, fake } = await setup({ seed: { seed_reply_queue: [] }, adaylar: [adayIstekli(INSAN)] });
 
     expect(await svc.scanAndEnqueue(new Date('2026-09-16T17:00:00Z'), () => 0.5)).toBe(1);
 
@@ -222,30 +233,11 @@ describe('scanAndEnqueue — medya istegi onceligi', () => {
   });
 
   it('botun kendi actigi istek satir acmaz — sirdaki insan mesajina doner', async () => {
-    const { svc, fake } = await setup({
-      seed: {
-        seed_reply_queue: [],
-        media_requests: [{ id: ISTEK, match_id: MATCH, requester_id: SEED, status: 'pending' }],
-      },
-    });
+    const { svc, fake } = await setup({ seed: { seed_reply_queue: [] }, adaylar: [adayIstekli(SEED)] });
 
     expect(await svc.scanAndEnqueue(new Date('2026-09-16T17:00:00Z'), () => 0.5)).toBe(1);
 
-    expect(fake.table('seed_reply_queue')[0]!.kind).toBe('message');
-  });
-});
-
-describe('scanAndEnqueue — medya sorgusu hatayi yutmaz', () => {
-  it('media_requests okunamazsa FIRLATIR — sessizce metin cevabina dusmez', async () => {
-    // Sessiz yutma tam da kapatmaya calistigimiz kilitlenmeyi uretirdi: bot metin
-    // yazar, istek sonsuza dek pending kalir. (Discover olayi 2026-09-17: sessizce
-    // yutulan hata havuzu herkes icin bosaltmisti.)
-    const { svc } = await setup({
-      seed: { seed_reply_queue: [] },
-      fail: [{ table: 'media_requests', op: 'select' }],
-    });
-
-    await expect(svc.scanAndEnqueue(new Date('2026-09-16T17:00:00Z'), () => 0.5)).rejects.toBeTruthy();
+    expect(fake.table('seed_reply_queue')[0]).toMatchObject({ kind: 'message', trigger_message_id: 'm1' });
   });
 });
 
