@@ -53,6 +53,11 @@ export class RainbowAccessService {
     this.cache = null;
   }
 
+  /**
+   * Market ülkelerini okur veya önbellekten döner.
+   * Okuma başarısız olursa son başarılı satırlar sunulur (asla kimse açılmaz, admin hariç);
+   * henüz başarılı okuma olmadıysa başka türlü tümü kapalı kalır.
+   */
   private async countries(): Promise<MarketCountryRow[]> {
     if (this.cache && Date.now() - this.cache.at < CACHE_TTL_MS) return this.cache.rows;
 

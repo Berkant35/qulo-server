@@ -60,6 +60,22 @@ describe('rainbowAccessService.isEnabled', () => {
     await rainbowAccessService.isEnabled(base, 'android');
     expect(reads()).toBe(2);
   });
+
+  it('önbellek süresi dolduktan sonra okuma patlarsa son başarılı satırlar kullanılır', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    try {
+      vi.setSystemTime(new Date('2026-09-27T12:00:00Z'));
+      const { rainbowAccessService } = await setup({}, {
+        failOn: [{ table: 'reward_market_countries', op: 'select', failAfter: 1 }],
+      });
+      await expect(rainbowAccessService.isEnabled(base, 'android')).resolves.toBe(true); // 1. okuma başarılı, önbellek dolar
+      vi.setSystemTime(new Date('2026-09-27T12:01:01Z')); // TTL (60 sn) doldu
+      await expect(rainbowAccessService.isEnabled(base, 'android')).resolves.toBe(true); // 2. okuma patlar → bayat satırlar
+      await expect(rainbowAccessService.isEnabled({ ...base, country: 'ID' }, 'android')).resolves.toBe(false); // bayat satırda ID kapalı
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });
 
 describe('rainbowAccessService.isEnabledForUser', () => {
