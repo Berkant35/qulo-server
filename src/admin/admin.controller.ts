@@ -76,10 +76,11 @@ class AdminController {
     else if (action === "update_diamonds") {
       const green = parseInt(green_diamonds);
       const purple = parseInt(purple_diamonds);
-      if (isNaN(green) || isNaN(purple) || green < 0 || purple < 0) {
+      const rainbow = parseInt(req.body.rainbow_diamonds ?? "0");
+      if ([green, purple, rainbow].some((n) => isNaN(n) || n < 0)) {
         return res.redirect(`/admin/users/${id}?error=invalid_diamonds`);
       }
-      await adminService.updateDiamonds(id, green, purple);
+      await adminService.updateDiamonds(id, green, purple, rainbow);
     } else if (action === "set_subscription") {
       const { sub_plan, sub_days } = req.body;
       await adminService.setSubscription(id, sub_plan, parseInt(sub_days) || 30);

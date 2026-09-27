@@ -43,9 +43,11 @@
       <div style="display:flex; gap:8px; margin-bottom:8px;">
         <input type="text" name="green_diamonds" value="<%= user.green_diamonds %>" style="width:100px" placeholder="Green">
         <input type="text" name="purple_diamonds" value="<%= user.purple_diamonds %>" style="width:100px" placeholder="Purple">
+        <input type="text" name="rainbow_diamonds" value="<%= user.rainbow_diamonds ?? 0 %>" style="width:100px" placeholder="Rainbow">
         <button type="submit" class="btn btn-primary btn-sm">Update</button>
       </div>
     </form>
+    <div style="font-size:12px; color:#888; margin-bottom:8px;">Ödenmiş mor (gizli sayaç): <%= user.purple_paid ?? 0 %></div>
     <div style="display:flex; gap:8px;">
       <% if (user.is_banned) { %>
       <form method="POST" action="/admin/users/<%= user.id %>/action">

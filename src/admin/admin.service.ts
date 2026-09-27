@@ -172,11 +172,42 @@ class AdminService {
     await supabase.from("users").delete().eq("id", userId);
   }
 
-  async updateDiamonds(userId: string, green: number, purple: number) {
-    await supabase
+  /**
+   * Admin doğrudan bakiye ayarı. Değişmezler: purple_paid <= purple (migration 067 CHECK)
+   * — mor düşerse ödenmiş sayaç sıkıştırılır. Eskiden defter satırı yazılmıyordu; artık her
+   * değişen tür için ADMIN_ADJUST (denetim izi, test admin kontrolleri).
+   */
+  async updateDiamonds(userId: string, green: number, purple: number, rainbow: number) {
+    const { data: current, error: readErr } = await supabase
       .from("users")
-      .update({ green_diamonds: green, purple_diamonds: purple })
+      .select("green_diamonds, purple_diamonds, purple_paid, rainbow_diamonds")
+      .eq("id", userId)
+      .single();
+    if (readErr || !current) throw Errors.USER_NOT_FOUND();
+
+    const { error: updateErr } = await supabase
+      .from("users")
+      .update({
+        green_diamonds: green,
+        purple_diamonds: purple,
+        rainbow_diamonds: rainbow,
+        purple_paid: Math.min(current.purple_paid ?? 0, purple),
+      })
       .eq("id", userId);
+    if (updateErr) throw Errors.SERVER_ERROR();
+
+    const deltas: Array<[string, number]> = [
+      ["GREEN", green - (current.green_diamonds ?? 0)],
+      ["PURPLE", purple - (current.purple_diamonds ?? 0)],
+      ["RAINBOW", rainbow - (current.rainbow_diamonds ?? 0)],
+    ];
+    const rows = deltas
+      .filter(([, delta]) => delta !== 0)
+      .map(([type, amount]) => ({ user_id: userId, type, amount, reason: "ADMIN_ADJUST", reference_id: null }));
+    if (rows.length > 0) {
+      const { error: txErr } = await supabase.from("diamond_transactions").insert(rows);
+      if (txErr) throw Errors.SERVER_ERROR();
+    }
   }
 
   async setSubscription(userId: string, plan: string, durationDays: number) {
