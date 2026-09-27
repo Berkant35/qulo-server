@@ -10,6 +10,7 @@ import { notificationEngineAdminController } from "./notification-engine.admin.c
 import { adminAuth, superAdminOnly, ipWhitelist, csrfGenerate, csrfValidate } from "./admin.middleware.js";
 import { assetAdminController } from "./asset.admin.controller.js";
 import adminCronRoutes from "./cron.routes.js";
+import rewardsAdminRoutes from "./rewards.admin.routes.js";
 import { seedAiAdminController } from "./seed-ai.admin.controller.js";
 import rateLimit from "express-rate-limit";
 import multer from "multer";
@@ -146,6 +147,9 @@ router.post("/admins/:id/delete", superAdminOnly, csrfValidate, (req, res) => ad
 // Seed AI sohbet deneme ekrani (gercek model cagrisi yapar, hicbir sey yazmaz)
 router.get("/seed-ai", superAdminOnly, (req, res) => seedAiAdminController.page(req, res));
 router.post("/seed-ai", superAdminOnly, csrfValidate, (req, res) => seedAiAdminController.deneme(req, res));
+
+// Rainbow Market (ülke/platform anahtarları, katalog, hediye kartı talep kuyruğu) — yalnız süper admin
+router.use("/rewards", rewardsAdminRoutes);
 
 // Cron yonetimi (panel + baslat/durdur)
 router.use("/crons", adminCronRoutes);

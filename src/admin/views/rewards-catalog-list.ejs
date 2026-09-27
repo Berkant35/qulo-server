@@ -1,0 +1,67 @@
+<%- include('_header') %>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+  <h2>&#127752; Rainbow Market — Katalog</h2>
+  <a href="/admin/rewards/catalog/new" class="btn btn-primary">+ Yeni Ürün</a>
+</div>
+<%- include('_rewards-nav') %>
+
+<form method="GET" action="/admin/rewards/catalog" class="filters">
+  <select name="brand">
+    <option value="">Tüm markalar</option>
+    <% brands.forEach((b) => { %><option value="<%= b %>" <%= filter.brand === b ? 'selected' : '' %>><%= b %></option><% }) %>
+  </select>
+  <select name="country">
+    <option value="">Tüm ülkeler</option>
+    <% countries.forEach((c) => { %><option value="<%= c.country_code %>" <%= filter.country === c.country_code ? 'selected' : '' %>><%= c.country_code %></option><% }) %>
+  </select>
+  <select name="status">
+    <option value="all" <%= filter.status === 'all' ? 'selected' : '' %>>Tümü</option>
+    <option value="active" <%= filter.status === 'active' ? 'selected' : '' %>>Aktif</option>
+    <option value="inactive" <%= filter.status === 'inactive' ? 'selected' : '' %>>Pasif</option>
+  </select>
+  <button type="submit" class="btn btn-sm">Filtrele</button>
+  <span style="color:#666;font-size:13px;"><%= total %> ürün</span>
+</form>
+
+<div class="card">
+  <table>
+    <thead><tr><th>Ülke</th><th>Marka</th><th>Kupür</th><th>Maliyet</th><th>Rainbow</th><th>Önerilen</th><th>Sıra</th><th>Durum</th><th></th></tr></thead>
+    <tbody>
+      <% if (items.length === 0) { %><tr><td colspan="9" style="color:#666;">Ürün yok.</td></tr><% } %>
+      <% items.forEach((i) => { %>
+      <tr>
+        <td><%= i.country_code %></td>
+        <td><% if (i.logo_url) { %><img src="<%= i.logo_url %>" alt="" style="width:20px;height:20px;vertical-align:middle;" /> <% } %><%= i.brand_key %></td>
+        <td><%= i.face_value.toLocaleString() %> <%= i.currency %></td>
+        <td><%= i.cost_usd != null ? '$' + i.cost_usd : '-' %></td>
+        <td><strong><%= i.rainbow_price %></strong></td>
+        <td style="<%= i.suggested_price != null && i.suggested_price !== i.rainbow_price ? 'color:#b45309;font-weight:600;' : 'color:#666;' %>"
+            title="ceil(maliyet ÷ rainbow başına USD)"><%= i.suggested_price != null ? i.suggested_price : '-' %></td>
+        <td><%= i.sort_order %></td>
+        <td><span class="badge <%= i.is_active ? 'badge-resolved' : 'badge-offline' %>"><%= i.is_active ? 'Aktif' : 'Pasif' %></span></td>
+        <td style="white-space:nowrap;">
+          <a href="/admin/rewards/catalog/<%= i.id %>" class="btn btn-sm">Düzenle</a>
+          <form method="POST" action="/admin/rewards/catalog/<%= i.id %>/active" style="display:inline;">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <input type="hidden" name="active" value="<%= i.is_active ? '0' : '1' %>" />
+            <button type="submit" class="btn btn-sm"><%= i.is_active ? 'Pasifleştir' : 'Aktifleştir' %></button>
+          </form>
+          <form method="POST" action="/admin/rewards/catalog/<%= i.id %>/delete" style="display:inline;">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Ürün silinsin mi? Bekleyen talepler etkilenmez.')">Sil</button>
+          </form>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<% if (totalPages > 1) { %>
+<div class="pagination">
+  <% for (var p = 1; p <= totalPages; p++) { %>
+  <a href="/admin/rewards/catalog?page=<%= p %>&brand=<%= filter.brand || '' %>&country=<%= filter.country || '' %>&status=<%= filter.status %>" class="<%= p === page ? 'active' : '' %>"><%= p %></a>
+  <% } %>
+</div>
+<% } %>
+<%- include('_footer') %>

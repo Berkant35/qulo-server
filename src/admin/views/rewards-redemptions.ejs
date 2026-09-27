@@ -1,0 +1,82 @@
+<%- include('_header') %>
+<h2 style="margin-bottom:12px;">&#127752; Rainbow Market — Talepler</h2>
+<%- include('_rewards-nav') %>
+
+<form method="GET" action="/admin/rewards/redemptions" class="filters">
+  <select name="status">
+    <% ['PENDING', 'FULFILLED', 'REJECTED', 'ALL'].forEach((s) => { %>
+    <option value="<%= s %>" <%= filter.status === s ? 'selected' : '' %>><%= { PENDING: 'Bekleyen', FULFILLED: 'Teslim edildi', REJECTED: 'Reddedildi', ALL: 'Tümü' }[s] %></option>
+    <% }) %>
+  </select>
+  <select name="country">
+    <option value="">Tüm ülkeler</option>
+    <% countries.forEach((c) => { %><option value="<%= c.country_code %>" <%= filter.country === c.country_code ? 'selected' : '' %>><%= c.country_code %></option><% }) %>
+  </select>
+  <input name="q" value="<%= filter.q || '' %>" placeholder="E-posta ara" />
+  <button type="submit" class="btn btn-sm">Filtrele</button>
+  <span style="color:#666;font-size:13px;"><%= total %> talep</span>
+</form>
+
+<div class="card">
+  <table>
+    <thead><tr><th>Tarih</th><th>Kullanıcı</th><th>Ürün</th><th>Rainbow</th><th>Platform</th><th>Bu ay</th><th>Durum / Karar</th></tr></thead>
+    <tbody>
+      <% if (rows.length === 0) { %><tr><td colspan="7" style="color:#666;">Talep yok.</td></tr><% } %>
+      <% rows.forEach((r) => { %>
+      <tr style="vertical-align:top;">
+        <td style="font-size:12px;white-space:nowrap;"><%= new Date(r.created_at).toLocaleString() %></td>
+        <td>
+          <% if (r.user) { %>
+            <a href="/admin/users/<%= r.user.id %>" style="color:#a855f7;"><%= r.user.email || r.user.id %></a>
+            <div style="font-size:12px;color:#666;"><%= r.user.name || '' %> · <%= r.user.country || '?' %></div>
+            <% if (r.is_test) { %><span class="badge badge-reviewed">TEST</span><% } %>
+            <% if (r.user.rainbow_flagged_at) { %><span class="badge" style="background:#ef4444;color:#fff;" title="İade sinyali: bu kullanıcı ya da rainbow kazandığı satın alma iade edildi">⚠ İade uyarısı <%= new Date(r.user.rainbow_flagged_at).toLocaleDateString() %></span><% } %>
+            <% if (!r.is_test && r.user.country && r.user.country.toUpperCase() !== r.country_code) { %><span class="badge badge-pending" title="Bilgi: turist pazarında normal olabilir">Ülke farklı</span><% } %>
+            <% if (r.user.is_deleted) { %><span class="badge badge-offline">Hesap silme sürecinde</span><% } %>
+          <% } else { %>
+            <span class="badge badge-offline">Hesap kalıcı silinmiş</span>
+          <% } %>
+        </td>
+        <td><%= r.brand_key %> · <%= r.face_value.toLocaleString() %> <%= r.currency %> <span style="color:#666;">(<%= r.country_code %>)</span></td>
+        <td><strong><%= r.rainbow_price %></strong></td>
+        <td><%= r.platform || '-' %></td>
+        <td><%= r.user_month_total %></td>
+        <td style="min-width:280px;">
+          <% if (r.status === 'PENDING') { %>
+            <form method="POST" action="/admin/rewards/redemptions/<%= r.id %>/fulfill" style="margin-bottom:8px;">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <input name="delivery_code" placeholder="Kod / PIN" style="width:100%;margin-bottom:4px;" />
+              <input name="delivery_url" placeholder="https:// teslim linki" style="width:100%;margin-bottom:4px;" />
+              <input name="admin_note" placeholder="İç not (kullanıcı görmez)" style="width:100%;margin-bottom:4px;" />
+              <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Kod kullanıcıya teslim edilsin mi?')">Teslim et</button>
+            </form>
+            <form method="POST" action="/admin/rewards/redemptions/<%= r.id %>/reject">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <input name="reject_reason" placeholder="Ret sebebi (kullanıcı görür)" style="width:100%;margin-bottom:4px;" />
+              <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Reddedilsin ve <%= r.rainbow_price %> rainbow iade edilsin mi?')">Reddet + iade</button>
+            </form>
+          <% } else if (r.status === 'FULFILLED') { %>
+            <span class="badge badge-resolved">Teslim edildi</span>
+            <div style="font-size:12px;color:#666;margin-top:4px;">
+              <%= r.masked_code || '' %> <%= r.delivery_host ? '· link (' + r.delivery_host + ')' : '' %> · <%= r.decided_at ? new Date(r.decided_at).toLocaleString() : '' %>
+              <% if (r.admin_note) { %><br/>Not: <%= r.admin_note %><% } %>
+            </div>
+          <% } else { %>
+            <span class="badge badge-offline">Reddedildi</span>
+            <div style="font-size:12px;color:#666;margin-top:4px;"><%= r.reject_reason || '' %> · <%= r.decided_at ? new Date(r.decided_at).toLocaleString() : '' %></div>
+          <% } %>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<% if (totalPages > 1) { %>
+<div class="pagination">
+  <% for (var p = 1; p <= totalPages; p++) { %>
+  <a href="/admin/rewards/redemptions?page=<%= p %>&status=<%= filter.status %>&country=<%= filter.country || '' %>&q=<%= encodeURIComponent(filter.q || '') %>" class="<%= p === page ? 'active' : '' %>"><%= p %></a>
+  <% } %>
+</div>
+<% } %>
+<%- include('_footer') %>

@@ -1,0 +1,54 @@
+<%- include('_header') %>
+<h2 style="margin-bottom:12px;">&#127752; Rainbow Market</h2>
+<%- include('_rewards-nav') %>
+
+<div class="stats-grid">
+  <div class="stat-card"><div class="value"><%= summary.pending %></div><div class="label">Bekleyen talep</div></div>
+  <div class="stat-card"><div class="value"><%= summary.fulfilledThisMonth %></div><div class="label">Bu ay teslim (<%= summary.rainbowFulfilledThisMonth %> rainbow)</div></div>
+  <div class="stat-card"><div class="value"><%= summary.rainbowInCirculation %></div><div class="label">Dolaşımdaki rainbow (gizli dahil)</div></div>
+  <div class="stat-card"><div class="value">$<%= summary.estimatedLiabilityUsd %></div><div class="label">Tahmini yükümlülük</div></div>
+  <div class="stat-card"><div class="value"><%= summary.flaggedUsers %></div><div class="label">İade uyarılı kullanıcı</div></div>
+</div>
+
+<div class="card" style="margin-bottom:20px;">
+  <h3 style="margin-top:0;">Ülkeler</h3>
+  <p style="color:#666;font-size:13px;margin-top:0;">
+    Ülke kapalıyken market yalnız <strong>test admin</strong> hesaplarına görünür. Test akışı: ürünleri aktif et →
+    kendi hesabınla itfa et → Talepler'de reddet (iade) ya da teslim et → ülkeyi aç.
+    Değişiklik bu sunucuda hemen, başka replikada en geç 60 sn içinde geçerli olur.
+  </p>
+  <table>
+    <thead><tr><th>Ülke</th><th>Para birimi</th><th>Market açık</th><th>Android</th><th>iOS</th><th>Son değişiklik</th><th></th></tr></thead>
+    <tbody>
+      <%# <form> <tr>'nin çocuğu olamaz (tarayıcı dışarı atar, kutular forma bağlanmaz): kutular HTML5 `form` özniteliğiyle son hücredeki forma bağlanır. %>
+      <% countries.forEach((c) => { const formId = 'country-' + c.country_code; %>
+      <tr>
+        <td><strong><%= c.country_code %></strong></td>
+        <td><%= c.currency %></td>
+        <td><input type="checkbox" name="enabled" form="<%= formId %>" <%= c.enabled ? 'checked' : '' %> /></td>
+        <td><input type="checkbox" name="android_enabled" form="<%= formId %>" <%= c.android_enabled ? 'checked' : '' %> /></td>
+        <td><input type="checkbox" name="ios_enabled" form="<%= formId %>" <%= c.ios_enabled ? 'checked' : '' %> title="Apple 3.1.1 inceleme riski: açmadan önce inceleme notunu hazırla" /></td>
+        <td style="font-size:12px;color:#666;"><%= c.updated_at ? new Date(c.updated_at).toLocaleString() : '-' %></td>
+        <td>
+          <form id="<%= formId %>" method="POST" action="/admin/rewards/countries/<%= c.country_code %>">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('<%= c.country_code %> anahtarları kaydedilsin mi? Market açıksa gerçek kullanıcılar görür.')">Kaydet</button>
+          </form>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h3 style="margin-top:0;">Kurallar (Economy Config → <code>rainbow</code>)</h3>
+  <dl class="detail-grid">
+    <dt>Aylık itfa tavanı</dt><dd><%= rules.monthlyRedeemCap %> rainbow / kullanıcı (test admin muaf)</dd>
+    <dt>En az hesap yaşı</dt><dd><%= rules.minAccountAgeDays %> gün</dd>
+    <dt>Önerilen fiyat birimi</dt><dd>1 rainbow ≈ $<%= rules.suggestedUsdPerRainbow %></dd>
+    <dt>Abonelik ödenmiş payı</dt><dd>Plus %<%= Math.round(rules.subscriptionPaidShare.plus * 100) %> · Premium %<%= Math.round(rules.subscriptionPaidShare.premium * 100) %></dd>
+  </dl>
+  <p style="margin-bottom:0;"><a href="/admin/economy-config" style="color:#a855f7;">Economy Config'te düzenle &rarr;</a></p>
+</div>
+<%- include('_footer') %>

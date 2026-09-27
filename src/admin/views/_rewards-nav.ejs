@@ -1,0 +1,7 @@
+<div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+  <a href="/admin/rewards" class="btn btn-sm <%= active === 'countries' ? 'btn-primary' : '' %>">Ülkeler &amp; Özet</a>
+  <a href="/admin/rewards/catalog" class="btn btn-sm <%= active === 'catalog' ? 'btn-primary' : '' %>">Katalog</a>
+  <a href="/admin/rewards/redemptions" class="btn btn-sm <%= active === 'redemptions' ? 'btn-primary' : '' %>">Talepler</a>
+</div>
+<% if (typeof error !== 'undefined' && error) { %><div class="alert alert-error"><%= error %></div><% } %>
+<% if (typeof notice !== 'undefined' && notice) { %><div class="alert" style="background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;"><%= notice %></div><% } %>
