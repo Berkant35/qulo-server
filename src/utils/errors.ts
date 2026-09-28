@@ -226,6 +226,10 @@ export const Errors = {
   INVALID_PHOTO_INDEX: () =>
     new AppError("INVALID_PHOTO_INDEX", 400, "Invalid photo index"),
 
+  /** Beyan edilen tür uygun ama içerik çözülemeyen görsel (bkz. utils/image-normalize). */
+  INVALID_FILE_TYPE: () =>
+    new AppError("INVALID_FILE_TYPE", 400, "Only jpg and png files are allowed"),
+
   INTERESTS_INVALID: () =>
     new AppError("INTERESTS_INVALID", 400, "Invalid interest tags"),
 

@@ -1,10 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { createFakeSupabase } from '../helpers/fake-supabase.js';
+import { createFakeSupabase, type FailureSpec } from '../helpers/fake-supabase.js';
 
 type Satir = { id: string; kind: string };
 
-async function setup(enabled: boolean, satirlar: Satir[] = []) {
-  const fake = createFakeSupabase({ app_config: [{ id: 'cfg', seed_reply_enabled: enabled, seed_reply_fast_mode: false }] });
+async function setup(enabled: boolean, satirlar: Satir[] = [], failOn?: FailureSpec[]) {
+  const fake = createFakeSupabase(
+    { app_config: [{ id: 'cfg', seed_reply_enabled: enabled, seed_reply_fast_mode: false }] },
+    { failOn },
+  );
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
   const scanAndEnqueue = vi.fn(async () => 0);
   const claimDue = vi.fn(async () => satirlar);
@@ -22,8 +25,11 @@ async function setup(enabled: boolean, satirlar: Satir[] = []) {
   }));
   vi.doMock('../../src/services/seed-reply-media.service.js', () => ({ respondMediaRequest }));
   const mod = await import('../../src/cron/seed-reply.cron.js');
-  return { mod, scanAndEnqueue, claimDue, recoverStale, markCancelled, ...isleyiciler };
+  return { mod, fake, scanAndEnqueue, claimDue, recoverStale, markCancelled, ...isleyiciler };
 }
+
+const configOkumalari = (fake: { queries: Array<{ table: string; op: string }> }) =>
+  fake.queries.filter((q) => q.table === 'app_config' && q.op === 'select').length;
 
 beforeEach(() => vi.resetModules());
 
@@ -33,6 +39,16 @@ describe('seedReplyTick', () => {
     await mod.seedReplyTick();
     expect(scanAndEnqueue).not.toHaveBeenCalled();
     expect(claimDue).not.toHaveBeenCalled();
+  });
+
+  it('config OKUNAMAZSA kapali sayilir: tarama/claim yok (fail-closed)', async () => {
+    // `if (cfg && !cfg.seed_reply_enabled)` gibi bir "iyilestirme" kesintide botu calistirirdi.
+    const log = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { mod, scanAndEnqueue, claimDue } = await setup(true, [], [{ table: 'app_config', op: 'select' }]);
+    await mod.seedReplyTick();
+    expect(scanAndEnqueue).not.toHaveBeenCalled();
+    expect(claimDue).not.toHaveBeenCalled();
+    log.mockRestore();
   });
 
   it('kill-switch acikken kurtarma, tarama ve claim calisir', async () => {
@@ -55,9 +71,9 @@ describe('seedReplyTick', () => {
     expect(processRow).toHaveBeenCalledWith(expect.objectContaining({ id: 'r1' }));
   });
 
-  it('kurtarma dakikada bir calisir — her 10 sn\'lik tikte PATCH atilmaz', async () => {
+  it('kurtarma 5 dk\'da bir calisir — her tikte PATCH atilmaz', async () => {
     // recoverStale 5 dk'dan eski `claimed` satirlari toplar; her tikte cagrilmasi gunde
-    // 8.640 bos PATCH demekti (2026-09-27 istek patlamasi). Tarama ve claim her tikte kalir.
+    // binlerce bos PATCH demekti (2026-09-27 istek patlamasi). Tarama ve claim her tikte kalir.
     vi.useFakeTimers({ toFake: ['Date'] });
     try {
       const T0 = new Date('2026-09-27T10:00:00Z').getTime();
@@ -65,16 +81,74 @@ describe('seedReplyTick', () => {
 
       vi.setSystemTime(T0);
       await mod.seedReplyTick();
-      vi.setSystemTime(T0 + 10_000);
+      vi.setSystemTime(T0 + 30_000);
       await mod.seedReplyTick();
-      vi.setSystemTime(T0 + 50_000);
+      vi.setSystemTime(T0 + 299_000);
       await mod.seedReplyTick();
       expect(recoverStale).toHaveBeenCalledTimes(1);
       expect(claimDue).toHaveBeenCalledTimes(3);
 
-      vi.setSystemTime(T0 + 61_000);
+      vi.setSystemTime(T0 + 300_000);
       await mod.seedReplyTick();
       expect(recoverStale).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('kill-switch okumasi 60 sn onbellekli — her tikte app_config istegi atilmaz', async () => {
+    // 10 sn'lik tikte her seferinde okunan tek satirlik config gunde 8.640 istek demekti
+    // (2026-09-28 maliyet incelemesi: kalan isteklerin %69'u seed nabzi).
+    vi.useFakeTimers({ toFake: ['Date'] });
+    try {
+      const T0 = new Date('2026-09-28T10:00:00Z').getTime();
+      const { mod, fake, scanAndEnqueue } = await setup(true);
+
+      vi.setSystemTime(T0);
+      await mod.seedReplyTick();
+      vi.setSystemTime(T0 + 30_000);
+      await mod.seedReplyTick();
+      expect(configOkumalari(fake)).toBe(1);
+      expect(scanAndEnqueue).toHaveBeenCalledTimes(2);
+
+      vi.setSystemTime(T0 + 60_000);
+      await mod.seedReplyTick();
+      expect(configOkumalari(fake)).toBe(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('admin panelinden kapatma bir sonraki tikte etkili — onbellek beklenmez', async () => {
+    // Kill-switch acil durum anahtari: admin kapatinca bot 60 sn daha yazmaya devam etmemeli.
+    const { mod, scanAndEnqueue } = await setup(true);
+    await mod.seedReplyTick();
+    expect(scanAndEnqueue).toHaveBeenCalledTimes(1);
+
+    const { appConfigService } = await import('../../src/services/app-config.service.js');
+    await appConfigService.updateConfig({ seed_reply_enabled: false });
+    await mod.seedReplyTick();
+
+    expect(scanAndEnqueue).toHaveBeenCalledTimes(1);
+  });
+
+  it('SQL ile kapatma en gec 60 sn icinde etkili', async () => {
+    // Panel disi degisiklik (dogrudan SQL) bu surecin onbellegini temizleyemez; ust sinir TTL.
+    vi.useFakeTimers({ toFake: ['Date'] });
+    try {
+      const T0 = new Date('2026-09-28T10:00:00Z').getTime();
+      const { mod, fake, scanAndEnqueue } = await setup(true);
+
+      vi.setSystemTime(T0);
+      await mod.seedReplyTick();
+      fake.table('app_config')[0].seed_reply_enabled = false;
+      vi.setSystemTime(T0 + 30_000);
+      await mod.seedReplyTick();
+      expect(scanAndEnqueue).toHaveBeenCalledTimes(2);
+
+      vi.setSystemTime(T0 + 60_000);
+      await mod.seedReplyTick();
+      expect(scanAndEnqueue).toHaveBeenCalledTimes(2);
     } finally {
       vi.useRealTimers();
     }
@@ -113,10 +187,11 @@ describe('seedReplyTick', () => {
     expect(markCancelled).toHaveBeenCalledWith('r9', expect.stringContaining('gelecekteki_tur'));
   });
 
-  it('is tanimi 10 saniyelik zamanlamayi korur', async () => {
-    // Tek kapi app_config.seed_reply_enabled (yukaridaki iki test); cron her deploy'da
-    // baslar, bu yuzden zamanlamanin kaymasi dogrudan LLM cagri hacmini degistirir.
+  it('is tanimi 30 saniyelik zamanlamayi korur', async () => {
+    // Tek kapi app_config.seed_reply_enabled (yukaridaki testler); cron her deploy'da baslar,
+    // bu yuzden zamanlamanin kaymasi dogrudan istek hacmini degistirir: 10 sn'de bos tikler gunde
+    // ~27 bin istekti, 30 sn'de ~7,5 bin (2026-09-28). Kisaltmadan once supabase-cost-guard hesabi.
     const { mod } = await setup(true);
-    expect(mod.seedReplyCron.schedule).toBe('*/10 * * * * *');
+    expect(mod.seedReplyCron.schedule).toBe('*/30 * * * * *');
   });
 });

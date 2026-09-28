@@ -80,11 +80,8 @@ export async function uploadPhotoHandler(req: Request, res: Response, next: Next
       throw new AppError("NO_FILE", 400, "No file provided");
     }
 
-    const result = await userService.uploadPhoto(
-      req.user!.userId,
-      req.file.buffer,
-      req.file.mimetype,
-    );
+    // Beyan edilen mime kullanilmaz: servis icerigi cozup JPEG'e normalize eder.
+    const result = await userService.uploadPhoto(req.user!.userId, req.file.buffer);
     res.status(201).json(result);
   } catch (err) {
     next(err);

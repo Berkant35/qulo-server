@@ -76,6 +76,12 @@ export interface FakeSupabaseOptions {
    */
   interleave?: Array<{ table: string; op?: 'update' | 'select'; mutate: (rows: Row[]) => void; times?: number }>;
   /**
+   * Okuma-yazma yarışı için: tablonun İLK `select`'i sonucunu çağrı anında hesaplar (anlık görüntü)
+   * ama cevabı `until` çözülene kadar teslim etmez. Okuma sürerken araya giren yazım ve geç dönen
+   * ESKİ sonuç böyle modellenir (ör. ban anında süren önbellek dolumu, 2026-09-28).
+   */
+  holdRead?: { table: string; until: Promise<unknown> };
+  /**
    * PostgREST `max-rows` (Supabase varsayılanı 1000): okuma sonucu range/limit'ten SONRA bu sayıyla
    * kesilir, `count` gerçek toplamı döner. Opt-in — verilmezse kırpma yok. Sayfalamayı (`fetchAll`)
    * unutan sorgu, bununla testte de eksik satır görür.
@@ -126,10 +132,11 @@ interface Result<T> {
  * PostgREST gövdeyi `JSON.stringify` ile gönderir: değeri `undefined` olan alan
  * isteğe hiç girmez, satırdaki mevcut değer korunur. `Object.assign` ise onu
  * undefined ile ezer — fake prod'da olmayan bir veri kaybı gösterirdi.
+ * Değer KOPYALANIR: gerçek istekte çağıranın dizisi/nesnesi depoyla paylaşılmaz.
  */
 function assignDefined(target: Row, patch: Row): void {
   for (const [key, value] of Object.entries(patch)) {
-    if (value !== undefined) target[key] = value;
+    if (value !== undefined) target[key] = structuredClone(value);
   }
 }
 
@@ -242,6 +249,8 @@ class QueryBuilder implements PromiseLike<Result<any>> {
     private readonly committed: boolean = false,
     /** bkz. `FakeSupabaseOptions.maxRows` — yalnız okumada uygulanır. */
     private readonly maxRows: number | null = null,
+    /** bkz. `FakeSupabaseOptions.holdRead` — sonuç hesaplanır, teslimi bu söz çözülünce. */
+    private readonly hold: Promise<unknown> | null = null,
   ) {
     // select zaten satır döndürür; update/delete için .select() çağrılması gerekir.
     this.returnRows = mode === 'select';
@@ -416,7 +425,7 @@ class QueryBuilder implements PromiseLike<Result<any>> {
           // Postgres birincil anahtarı kendi üretir. Fake de üretmeli: aksi halde
           // `id` undefined kalır ve `.eq('id', undefined)` tüm satırlara çarpar.
           // Deterministik sayaç — testlerin tekrarlanabilirliği için rastgelelik yok.
-          const created = { ...row };
+          const created = structuredClone(row);
           if (created.id === undefined) created.id = `fake-${++autoId}`;
           this.rows().push(created);
           written.push(created);
@@ -443,7 +452,9 @@ class QueryBuilder implements PromiseLike<Result<any>> {
     if (this.failure) return { data: [], error: this.failure, count: 0 };
 
     return {
-      data: this.returnRows ? affected.map((r) => ({ ...r })) : [],
+      // Derin kopya: dönen satırdaki dizi (ör. `photos`) çağıranda değişirse depoya SIZMAMALI —
+      // sığ kopyada `photos.push()` depoyu değiştiriyor, `update` hiç yapılmasa da test geçiyordu (2026-09-28).
+      data: this.returnRows ? affected.map((r) => structuredClone(r)) : [],
       error: null,
       count: this.wantCount ? total : undefined,
     };
@@ -451,6 +462,7 @@ class QueryBuilder implements PromiseLike<Result<any>> {
 
   async single(): Promise<Result<Row | null>> {
     const result = this.run();
+    if (this.hold) await this.hold;
     if (result.error) return { data: null, error: result.error };
     if (result.data.length !== 1) return { data: null, error: NOT_ONE_ROW };
     return { data: result.data[0], error: null };
@@ -458,6 +470,7 @@ class QueryBuilder implements PromiseLike<Result<any>> {
 
   async maybeSingle(): Promise<Result<Row | null>> {
     const result = this.run();
+    if (this.hold) await this.hold;
     if (result.error) return { data: null, error: result.error };
     if (result.data.length > 1) return { data: null, error: NOT_ONE_ROW };
     return { data: result.data[0] ?? null, error: null };
@@ -468,7 +481,9 @@ class QueryBuilder implements PromiseLike<Result<any>> {
     onfulfilled?: ((value: Result<any>) => TResult1 | PromiseLike<TResult1>) | null,
     onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null,
   ): PromiseLike<TResult1 | TResult2> {
-    return Promise.resolve(this.run()).then(onfulfilled, onrejected);
+    const result = this.run();
+    const teslim = this.hold ? this.hold.then(() => result) : Promise.resolve(result);
+    return teslim.then(onfulfilled, onrejected);
   }
 }
 
@@ -487,7 +502,15 @@ export interface FakeSupabase {
   queries: Array<{ table: string; op: 'select' | 'update' | 'insert' | 'upsert' | 'delete' }>;
   /** Bir bucket'ta kalan dosya yolları — assert için. */
   storageFiles(bucket: string): string[];
+  /**
+   * Başarılı `upload` çağrıları, sırayla: gövde ve seçenekler (contentType, cacheControl) —
+   * depoya GERÇEKTE ne yazıldığını sınamak için (ör. PNG değil JPEG, önbellek başlığı).
+   */
+  storageUploads: Array<{ bucket: string; path: string; body: unknown; opts?: StorageUploadOptions }>;
 }
+
+/** `storage.from(b).upload` seçeneklerinin kod tabanında kullanılan kısmı. */
+export interface StorageUploadOptions { upsert?: boolean; contentType?: string; cacheControl?: string }
 
 export function createFakeSupabase(
   seed: Tables = {},
@@ -495,9 +518,10 @@ export function createFakeSupabase(
 ): FakeSupabase {
   // Seed'i derin kopyala — aynı fixture'ı birden çok testte kullanmak güvenli olsun.
   const store: Tables = Object.fromEntries(
-    Object.entries(seed).map(([t, rows]) => [t, rows.map((r) => ({ ...r }))]),
+    Object.entries(seed).map(([t, rows]) => [t, rows.map((r) => structuredClone(r))]),
   );
   const rpcCalls: Array<{ name: string; args: unknown }> = [];
+  const storageUploads: FakeSupabase['storageUploads'] = [];
   const queries: FakeSupabase['queries'] = [];
   const storageFiles: Record<string, string[]> = Object.fromEntries(
     Object.entries(options.storage ?? {}).map(([bucket, paths]) => [bucket, [...paths]]),
@@ -505,6 +529,14 @@ export function createFakeSupabase(
 
   // failAfter'ı sayabilmek için (tablo, op) başına çağrı sayacı.
   const opCounts = new Map<string, number>();
+
+  // holdRead yalnız İLK eşleşen okumaya uygulanır.
+  let holdKullanildi = false;
+  const holdFor = (table: string): Promise<unknown> | null => {
+    if (!options.holdRead || holdKullanildi || options.holdRead.table !== table) return null;
+    holdKullanildi = true;
+    return options.holdRead.until;
+  };
 
   // interleave spec'i başına kalan tetiklenme sayısı.
   const interleaveLeft = new Map<number, number>();
@@ -564,6 +596,7 @@ export function createFakeSupabase(
           return new QueryBuilder(
             store, table, 'select', null, opts?.count === 'exact',
             fail?.error ?? null, undefined, [], fail?.committed ?? false, options.maxRows ?? null,
+            holdFor(table),
           );
         },
         update: (patch: Row) => {
@@ -621,13 +654,14 @@ export function createFakeSupabase(
         // yakalanan kopya bayat kalır, aynı nesneyle ikinci çağrı silineni geri getirirdi.
         const files = () => (storageFiles[bucket] ??= []);
         return {
-          async upload(path: string, _body: unknown, opts?: { upsert?: boolean; contentType?: string }) {
+          async upload(path: string, body: unknown, opts?: StorageUploadOptions) {
             const failure = storageFailureFor(bucket, 'upload');
             if (failure) return { data: null, error: failure };
             if (files().includes(path) && !opts?.upsert) {
               return { data: null, error: { message: 'The resource already exists', code: '409' } };
             }
             if (!files().includes(path)) files().push(path);
+            storageUploads.push({ bucket, path, body, opts });
             return { data: { path }, error: null };
           },
           // Gerçek istemcide senkron ve hatasızdır; URL biçimi prod ile aynı kalıpta.
@@ -668,5 +702,6 @@ export function createFakeSupabase(
     rpcCalls,
     queries,
     storageFiles: (bucket: string) => (storageFiles[bucket] ??= []),
+    storageUploads,
   };
 }

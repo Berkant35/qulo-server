@@ -64,6 +64,20 @@ export const swipeLimiter = rateLimit({
   message: rateLimitResponse,
 });
 
+/**
+ * Gorsel yukleme sunucuda cozulup yeniden kodlaniyor (utils/image-normalize: CPU + bellek).
+ * Kullanici basina dakikada 20: profil en fazla 6 fotograf, sohbette sesli mesaj dahil insan
+ * hizi bunun altinda; genel limiter IP bazli oldugu icin tek hesabin cozme yukunu sinirlamiyordu.
+ */
+export const uploadLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 20,
+  keyGenerator: userKey,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitResponse,
+});
+
 export const quizLimiter = rateLimit({
   windowMs: 60 * 1000,
   limit: 30,

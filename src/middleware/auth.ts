@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { verifyAccessToken } from "../utils/jwt.js";
 import type { JwtPayload } from "../types/index.js";
 import { Errors } from "../utils/errors.js";
-import { supabase } from "../config/supabase.js";
+import { banStatusService } from "../services/ban-status.service.js";
 
 declare global {
   namespace Express {
@@ -38,14 +38,8 @@ export async function authMiddleware(
   }
 
   try {
-    // Check if user is banned
-    const { data: userRow } = await supabase
-      .from("users")
-      .select("is_banned")
-      .eq("id", decoded.userId)
-      .single();
-
-    if (userRow?.is_banned) {
+    // 60 sn önbellekli; ban/unban anında temizlenir (bkz. ban-status.service).
+    if (await banStatusService.isBanned(decoded.userId)) {
       return next(Errors.ACCOUNT_BANNED());
     }
 

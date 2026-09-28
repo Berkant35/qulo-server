@@ -7,6 +7,7 @@ import { env } from "../config/env.js";
 import { sendEmail } from "../utils/gmail.js";
 import { resolveLocale } from "../utils/locales.js";
 import { emailLocales } from "../utils/email-locales.js";
+import { banStatusService } from "./ban-status.service.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -59,6 +60,9 @@ class BanService {
       .eq("id", userId)
       .eq("is_banned", false)
       .select("id");
+    // Hata olsa da temizle (yazımın gidip gitmediği belirsiz); satır zaten banlıysa (SQL ile)
+    // önbellekteki eski "banlı değil" kaydı da düşmeli.
+    banStatusService.invalidate(userId);
     if (banError) throw new Error(`ban update failed: ${banError.message}`);
     if (!data || data.length === 0) return false;
 
@@ -78,6 +82,7 @@ class BanService {
       .from("users")
       .update({ is_banned: false, banned_at: null, ban_reason: null })
       .eq("id", userId);
+    banStatusService.invalidate(userId);
     if (error) throw new Error(`unban update failed: ${error.message}`);
     await supabase.from("ban_appeals").update({ status: "resolved" }).eq("user_id", userId).neq("status", "resolved");
   }

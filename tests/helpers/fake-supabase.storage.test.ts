@@ -49,4 +49,18 @@ describe('fake-supabase storage', () => {
     expect((await list()).error).not.toBeNull();
     expect((await list()).error).toBeNull();
   });
+
+  it('upload gövdeyi ve seçenekleri kaydeder; reddedilen (409) yazım kaydedilmez', async () => {
+    const fake = createFakeSupabase({}, { storage: { photos: ['u/a.jpg'] } });
+    const bucket = fake.client.storage.from('photos');
+    const govde = Buffer.from([0xff, 0xd8, 0xff]);
+
+    await bucket.upload('u/b.jpg', govde, { contentType: 'image/jpeg', cacheControl: '31536000', upsert: false });
+    const { error } = await bucket.upload('u/a.jpg', govde, { upsert: false });
+
+    expect(error?.code).toBe('409');
+    expect(fake.storageUploads).toEqual([
+      { bucket: 'photos', path: 'u/b.jpg', body: govde, opts: { contentType: 'image/jpeg', cacheControl: '31536000', upsert: false } },
+    ]);
+  });
 });

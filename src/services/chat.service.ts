@@ -4,6 +4,8 @@ import { blockService } from "./block.service.js";
 import { Errors } from "../utils/errors.js";
 import { assertUuid } from "../utils/validation.js";
 import { env } from "../config/env.js";
+import { normalizeUploadedImage, NORMAL_GORSEL_MIME } from "../utils/image-normalize.js";
+import { DEGISMEZ_DOSYA_CACHE_CONTROL } from "../constants/storage.js";
 
 interface Match {
   id: string;
@@ -96,12 +98,18 @@ export class ChatService {
       throw Errors.MEDIA_NOT_ENABLED();
     }
 
-    const ext = mimeType.startsWith("audio/") ? "m4a" : mimeType === "image/png" ? "png" : "jpg";
-    const fileName = `${matchId}/${Date.now()}.${ext}`;
+    // Gorseller JPEG'e normalize edilir (bkz. utils/image-normalize); ses oldugu gibi yazilir.
+    const ses = mimeType.startsWith("audio/");
+    const govde = ses ? fileBuffer : await normalizeUploadedImage(fileBuffer, "chat");
+    const fileName = `${matchId}/${Date.now()}.${ses ? "m4a" : "jpg"}`;
 
     const { error: uploadError } = await supabase.storage
       .from("chat-media")
-      .upload(fileName, fileBuffer, { contentType: mimeType, upsert: false });
+      .upload(fileName, govde, {
+        contentType: ses ? mimeType : NORMAL_GORSEL_MIME,
+        cacheControl: DEGISMEZ_DOSYA_CACHE_CONTROL,
+        upsert: false,
+      });
 
     if (uploadError) {
       console.error("[chat] media upload failed:", uploadError);

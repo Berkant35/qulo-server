@@ -1,4 +1,5 @@
 import { supabase } from '../config/supabase.js';
+import { appConfigService } from './app-config.service.js';
 import { computeReplyDelayMs, fazFor, VARSAYILAN_PERSONA } from './seed-reply-timing.js';
 import type { SeedPersona } from '../types/seed-persona.js';
 
@@ -25,8 +26,8 @@ const GUNLUK_SORU_KOTASI = 2;
 const FAZ4_ESIK = 25;
 
 async function fastModeAcik(): Promise<boolean> {
-  const { data } = await supabase.from('app_config').select('seed_reply_fast_mode').limit(1).maybeSingle();
-  return Boolean(data?.seed_reply_fast_mode);
+  const cfg = await appConfigService.getRow();
+  return Boolean(cfg?.seed_reply_fast_mode);
 }
 
 /** Soru kotasi onden kontrol edilir: dolu iken satir acmak bos yere LLM cagrisi yakar. */

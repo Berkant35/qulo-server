@@ -9,9 +9,11 @@ export function errorHandler(
 ): void {
   // body-parser hataları (bozuk JSON, limit aşımı) istemci hatasıdır; herkese açık
   // uçlarda 500 + stack log gürültüsü yerine 400/413.
-  const bodyErr = err as Error & { type?: string };
+  const bodyErr = err as Error & { type?: string; code?: string };
   if (bodyErr.type === "entity.parse.failed") err = Errors.INVALID_JSON();
   else if (bodyErr.type === "entity.too.large") err = Errors.PAYLOAD_TOO_LARGE();
+  // multer dosya boyutu sınırı (foto 5 MB, sohbet 10 MB): `statusCode` taşımadığı için 500'e düşüyordu.
+  else if (bodyErr.name === "MulterError" && bodyErr.code === "LIMIT_FILE_SIZE") err = Errors.PAYLOAD_TOO_LARGE();
 
   // Check both instanceof and duck-typing for AppError
   if (err instanceof AppError) {

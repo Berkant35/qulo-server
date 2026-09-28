@@ -18,6 +18,17 @@ const CANDIDATE_FETCH_LIMIT = 500;
 /** URL uzunlugu icin dislama listesi tavani; asilirsa kalani bellekte elenir. */
 const MAX_EXCLUDE_IDS = 1000;
 
+/** `match_list_summaries` satiri (migration 070): mesajsiz eslesmede son mesaj alanlari NULL. */
+interface MatchListSummary {
+  match_id: string;
+  content: string | null;
+  sender_id: string | null;
+  is_image: boolean | null;
+  audio_url: string | null;
+  created_at: string | null;
+  unread_count: number;
+}
+
 interface CandidateRow {
   id: string;
   name: string;
@@ -598,25 +609,15 @@ export class MatchingService {
       m.user1_id === userId ? (m.user2_id as string) : (m.user1_id as string),
     );
 
-    // Fetch users, last messages, and unread counts in parallel
-    const [usersResult, lastMessagesResult, unreadResult] = await Promise.all([
+    // Karsi kullanicilar + eslesme basina TEK ozet satiri (son mesaj + okunmamis, migration 070).
+    // Eskiden tum eslesmelerin tum mesajlari cekilip JS'te ilki seciliyordu: cevap sohbet
+    // gecmisiyle sinirsiz buyuyor, PostgREST max-rows (1000) sonrasini sessizce kesiyordu.
+    const [usersResult, ozetResult] = await Promise.all([
       supabase
         .from("users")
         .select("id, name, age, city, photos, bio, is_online, last_seen_at")
         .in("id", otherIds),
-      supabase
-        .from("messages")
-        .select("match_id, content, sender_id, is_image, audio_url, created_at, deleted_at")
-        .in("match_id", matchIds)
-        .is("deleted_at", null)
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("messages")
-        .select("match_id")
-        .in("match_id", matchIds)
-        .neq("sender_id", userId)
-        .is("read_at", null)
-        .is("deleted_at", null),
+      supabase.rpc("match_list_summaries", { p_user_id: userId, p_match_ids: matchIds }),
     ]);
 
     const otherMap = new Map<string, (typeof usersResult.data extends (infer U)[] | null ? U : never)>();
@@ -626,37 +627,28 @@ export class MatchingService {
       }
     }
 
-    // Build last message map (first occurrence per match_id = most recent)
-    const lastMsgMap = new Map<string, { content: string; sender_id: string; is_image: boolean; audio_url: string | null; created_at: string }>();
-    if (lastMessagesResult.data) {
-      for (const msg of lastMessagesResult.data) {
-        const mid = msg.match_id as string;
-        if (!lastMsgMap.has(mid)) {
-          lastMsgMap.set(mid, {
-            content: msg.content as string,
-            sender_id: msg.sender_id as string,
-            is_image: msg.is_image === true,
-            audio_url: (msg.audio_url as string | null) ?? null,
-            created_at: msg.created_at as string,
-          });
-        }
-      }
+    // Karsi kullanicilar okunamazsa her eslesme `user: null` donuyordu (sessiz). Liste bu haliyle
+    // kullanilamaz: hata firlatilir ve loglanir.
+    if (usersResult.error) {
+      console.error("[matching] getMatches users error:", usersResult.error.message);
+      throw Errors.SERVER_ERROR();
     }
-
-    // Build unread count map
-    const unreadMap = new Map<string, number>();
-    if (unreadResult.data) {
-      for (const msg of unreadResult.data) {
-        const mid = msg.match_id as string;
-        unreadMap.set(mid, (unreadMap.get(mid) ?? 0) + 1);
-      }
+    // Ozet okunamazsa liste yine doner (onizlemesiz, okunmamis 0) — eski davranis; ama sessiz degil.
+    if (ozetResult.error) {
+      console.error("[matching] match_list_summaries error:", ozetResult.error.message);
+    }
+    const ozetMap = new Map<string, MatchListSummary>();
+    for (const ozet of (ozetResult.data ?? []) as MatchListSummary[]) {
+      ozetMap.set(ozet.match_id, ozet);
     }
 
     return matches.map((m) => {
       const otherId = m.user1_id === userId ? (m.user2_id as string) : (m.user1_id as string);
       const other = otherMap.get(otherId);
-      const lastMsg = lastMsgMap.get(m.id as string);
-      const unread = unreadMap.get(m.id as string) ?? 0;
+      const ozet = ozetMap.get(m.id as string);
+      // Mesajsiz eslesmede ozet satiri var ama son mesaj alanlari NULL.
+      const lastMsg = ozet?.created_at ? ozet : undefined;
+      const unread = ozet?.unread_count ?? 0;
 
       let lastMessagePreview: string | null = null;
       if (lastMsg) {

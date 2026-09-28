@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { createFakeSupabase, type Tables } from "../helpers/fake-supabase.js";
+import { createFakeSupabase, type FakeSupabase, type FakeSupabaseOptions, type Tables } from "../helpers/fake-supabase.js";
 
 const VIEWER_ID = "00000000-0000-4000-8000-000000000001";
 
@@ -68,15 +68,19 @@ function questionsFor(userIds: string[], locale = "tr") {
   ]);
 }
 
+/** Son `loadService` cagrisinin sahte istemcisi — rpc/tablo istek sayisi iddialari icin. */
+let sonFake: FakeSupabase;
+
 async function loadService(
   tables: Tables,
-  opts: { userLanguages?: string[]; failOn?: Array<Record<string, unknown>> } = {},
+  opts: { userLanguages?: string[]; failOn?: Array<Record<string, unknown>>; rpc?: FakeSupabaseOptions["rpc"] } = {},
 ) {
   vi.resetModules();
   const fake = createFakeSupabase(tables, {
-    rpc: { increment_times_shown: { data: null }, increment_like_received: { data: null } },
+    rpc: { increment_times_shown: { data: null }, increment_like_received: { data: null }, ...opts.rpc },
     ...(opts.failOn ? { failOn: opts.failOn as never } : {}),
   });
+  sonFake = fake;
   vi.doMock("../../src/config/supabase.js", () => ({ supabase: fake.client }));
   vi.doMock("../../src/services/block.service.js", () => ({
     blockService: { getBlockedIds: async () => [], getBlockerIds: async () => [] },
@@ -102,31 +106,29 @@ describe("getMatches — son mesaj onizlemesi dili", () => {
   // mobil eslesme listesi metni oldugu gibi gosteriyor.
   const OTHER = uid(2);
   const MATCH = "match-1";
+  const tables: Tables = {
+    users: [viewerRow(), candidateRow(OTHER, 1, { is_online: false })],
+    matches: [
+      { id: MATCH, user1_id: VIEWER_ID, user2_id: OTHER, matched_at: "2026-09-14T08:00:00Z", is_active: true },
+    ],
+  };
 
-  function tablesWithLastMessage(message: Record<string, unknown>): Tables {
+  /** `match_list_summaries` (migration 070) ozet satiri; son mesaj SECIMI SQL sinamasinda. */
+  function ozet(alanlar: Record<string, unknown>): { rpc: FakeSupabaseOptions["rpc"] } {
     return {
-      users: [viewerRow(), candidateRow(OTHER, 1, { is_online: false })],
-      matches: [
-        { id: MATCH, user1_id: VIEWER_ID, user2_id: OTHER, matched_at: "2026-09-14T08:00:00Z", is_active: true },
-      ],
-      messages: [
-        {
-          match_id: MATCH,
-          sender_id: OTHER,
-          content: "icerik",
-          is_image: false,
-          audio_url: null,
-          read_at: null,
-          deleted_at: null,
-          created_at: "2026-09-14T09:00:00Z",
-          ...message,
+      rpc: {
+        match_list_summaries: {
+          data: [{
+            match_id: MATCH, content: "icerik", sender_id: OTHER, is_image: false, audio_url: null,
+            created_at: "2026-09-14T09:00:00Z", unread_count: 0, ...alanlar,
+          }],
         },
-      ],
+      },
     };
   }
 
   it("sesli mesaj istenen dilde", async () => {
-    const service = await loadService(tablesWithLastMessage({ audio_url: "https://cdn.example/a.m4a", content: "Sesli mesaj" }));
+    const service = await loadService(tables, ozet({ audio_url: "https://cdn.example/a.m4a", content: "Sesli mesaj" }));
 
     const [en] = await service.getMatches(VIEWER_ID, "en");
     const [de] = await service.getMatches(VIEWER_ID, "de");
@@ -136,7 +138,7 @@ describe("getMatches — son mesaj onizlemesi dili", () => {
   });
 
   it("foto istenen dilde", async () => {
-    const service = await loadService(tablesWithLastMessage({ is_image: true, content: "https://cdn.example/p.jpg" }));
+    const service = await loadService(tables, ozet({ is_image: true, content: "https://cdn.example/p.jpg" }));
 
     const [ja] = await service.getMatches(VIEWER_ID, "ja");
 
@@ -144,7 +146,7 @@ describe("getMatches — son mesaj onizlemesi dili", () => {
   });
 
   it("header gondermeyen eski istemci (tr) eskisiyle ayni metni gorur", async () => {
-    const service = await loadService(tablesWithLastMessage({ audio_url: "https://cdn.example/a.m4a" }));
+    const service = await loadService(tables, ozet({ audio_url: "https://cdn.example/a.m4a" }));
 
     const [tr] = await service.getMatches(VIEWER_ID, "tr");
 
@@ -152,11 +154,102 @@ describe("getMatches — son mesaj onizlemesi dili", () => {
   });
 
   it("metin mesaji cevrilmez, oldugu gibi doner", async () => {
-    const service = await loadService(tablesWithLastMessage({ content: "selam nasilsin" }));
+    const service = await loadService(tables, ozet({ content: "selam nasilsin" }));
 
     const [en] = await service.getMatches(VIEWER_ID, "en");
 
     expect(en.last_message).toBe("selam nasilsin");
+  });
+});
+
+describe("getMatches — eslesme basina tek ozet (migration 070)", () => {
+  // Eskiden tum eslesmelerin TUM mesajlari cekiliyordu: egress sohbet gecmisiyle sinirsiz
+  // buyuyor, PostgREST max-rows (1000) sonrasini sessizce kesiyordu (2026-09-28 maliyet incelemesi).
+  const OTHER = uid(2);
+  const OTHER2 = uid(3);
+  const M1 = "match-1";
+  const M2 = "match-2";
+  const tables: Tables = {
+    users: [viewerRow(), candidateRow(OTHER, 1), candidateRow(OTHER2, 2)],
+    matches: [
+      { id: M1, user1_id: VIEWER_ID, user2_id: OTHER, matched_at: "2026-09-14T08:00:00Z", is_active: true },
+      { id: M2, user1_id: OTHER2, user2_id: VIEWER_ID, matched_at: "2026-09-13T08:00:00Z", is_active: true },
+    ],
+    // RPC'ye gecildiyse bu satirlar HIC okunmamali (asagidaki istek iddiasi).
+    messages: [{ match_id: M1, sender_id: OTHER, content: "tablodan", is_image: false, audio_url: null, read_at: null, deleted_at: null, created_at: "2026-09-14T09:00:00Z" }],
+  };
+
+  it("RPC kullanici ve eslesme id'leriyle cagrilir; messages tablosu hic okunmaz", async () => {
+    const service = await loadService(tables, { rpc: { match_list_summaries: { data: [] } } });
+
+    await service.getMatches(VIEWER_ID, "tr");
+
+    expect(sonFake.rpcCalls).toContainEqual({
+      name: "match_list_summaries",
+      args: { p_user_id: VIEWER_ID, p_match_ids: [M1, M2] },
+    });
+    expect(sonFake.queries.filter((q) => q.table === "messages")).toEqual([]);
+  });
+
+  it("son mesaj, gonderen, zaman ve okunmamis sayisi ozetten gelir", async () => {
+    const service = await loadService(tables, {
+      rpc: {
+        match_list_summaries: {
+          data: [{ match_id: M2, content: "merhaba", sender_id: OTHER2, is_image: false, audio_url: null, created_at: "2026-09-14T10:00:00Z", unread_count: 3 }],
+        },
+      },
+    });
+
+    const liste = await service.getMatches(VIEWER_ID, "tr");
+    const m2 = liste.find((m) => m.match_id === M2)!;
+
+    expect(m2).toMatchObject({
+      last_message: "merhaba",
+      last_message_sender_id: OTHER2,
+      last_message_sent_at: "2026-09-14T10:00:00Z",
+      unread_count: 3,
+    });
+  });
+
+  it("mesajsiz eslesme (ozet alanlari NULL) ve ozeti hic gelmeyen eslesme: onizleme null, okunmamis 0", async () => {
+    const service = await loadService(tables, {
+      rpc: {
+        match_list_summaries: {
+          data: [{ match_id: M1, content: null, sender_id: null, is_image: null, audio_url: null, created_at: null, unread_count: 0 }],
+        },
+      },
+    });
+
+    const liste = await service.getMatches(VIEWER_ID, "tr");
+
+    expect(liste).toHaveLength(2);
+    for (const m of liste) {
+      expect(m).toMatchObject({ last_message: null, last_message_sent_at: null, last_message_sender_id: null, unread_count: 0 });
+    }
+  });
+
+  it("karsi kullanicilar okunamazsa SERVER_ERROR firlatilir ve loglanir (sessiz user: null yok)", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const service = await loadService(tables, {
+      rpc: { match_list_summaries: { data: [] } },
+      failOn: [{ table: "users", op: "select" }],
+    });
+
+    await expect(service.getMatches(VIEWER_ID, "tr")).rejects.toMatchObject({ code: "SERVER_ERROR" });
+    expect(log).toHaveBeenCalledWith("[matching] getMatches users error:", expect.any(String));
+  });
+
+  it("RPC hatasi: liste yine doner (onizlemesiz) ve hata loglanir", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const service = await loadService(tables, {
+      rpc: { match_list_summaries: { error: { message: "function match_list_summaries does not exist" } } },
+    });
+
+    const liste = await service.getMatches(VIEWER_ID, "tr");
+
+    expect(liste.map((m) => m.match_id)).toEqual([M1, M2]);
+    expect(liste.every((m) => m.last_message === null && m.unread_count === 0)).toBe(true);
+    expect(log).toHaveBeenCalledWith("[matching] match_list_summaries error:", "function match_list_summaries does not exist");
   });
 });
 

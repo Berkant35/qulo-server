@@ -1,7 +1,7 @@
 import { Router } from "express";
 import multer from "multer";
 import { authMiddleware } from "../middleware/auth.js";
-import { generalLimiter, quickAssignLimiter } from "../middleware/rateLimit.js";
+import { generalLimiter, quickAssignLimiter, uploadLimiter } from "../middleware/rateLimit.js";
 import { validate } from "../middleware/validate.js";
 import {
   updateProfileSchema,
@@ -41,7 +41,7 @@ import {
   quickAssignQuestionsHandler,
 } from "../controllers/user.controller.js";
 import { profileGuard } from "../middleware/profileGuard.js";
-import { AppError } from "../utils/errors.js";
+import { Errors } from "../utils/errors.js";
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -50,7 +50,7 @@ const upload = multer({
     if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
       cb(null, true);
     } else {
-      cb(new AppError("INVALID_FILE_TYPE", 400, "Only jpg and png files are allowed"));
+      cb(Errors.INVALID_FILE_TYPE());
     }
   },
 });
@@ -67,7 +67,7 @@ router.patch("/me/details", validate(updateDetailsSchema), updateDetailsHandler)
 router.patch("/me/location", validate(updateLocationSchema), updateLocationHandler);
 router.patch("/me/push-token", validate(updatePushTokenSchema), updatePushTokenHandler);
 router.post("/me/heartbeat", heartbeatHandler);
-router.post("/me/photos", upload.single("photo"), uploadPhotoHandler);
+router.post("/me/photos", uploadLimiter, upload.single("photo"), uploadPhotoHandler);
 router.post("/me/interests", validate(setInterestsSchema), setInterestsHandler);
 router.post("/me/quick-assign-questions", quickAssignLimiter, quickAssignQuestionsHandler);
 router.post("/me/boost", profileGuard, boostHandler);

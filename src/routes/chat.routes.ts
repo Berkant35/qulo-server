@@ -1,6 +1,7 @@
 import { Router } from "express";
 import multer from "multer";
-import { chatLimiter } from "../middleware/rateLimit.js";
+import { chatLimiter, uploadLimiter } from "../middleware/rateLimit.js";
+import { Errors } from "../utils/errors.js";
 import { validate } from "../middleware/validate.js";
 import { authMiddleware } from "../middleware/auth.js";
 import { sendMessageSchema, chatQuerySchema, reactionSchema } from "../validators/chat.validator.js";
@@ -54,7 +55,8 @@ const upload = multer({
     if (ALLOWED_CHAT_MIME_TYPES.has(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error("INVALID_FILE_TYPE"));
+      // Duz Error errorHandler'da 500 oluyordu; beyan edilen tur yanlis = 400.
+      cb(Errors.INVALID_FILE_TYPE());
     }
   },
 });
@@ -65,8 +67,8 @@ router.use(chatLimiter);
 
 router.get("/:match_id/messages", validate(chatQuerySchema, "query"), getMessagesHandler);
 router.post("/:match_id/messages", validate(sendMessageSchema), sendMessageHandler);
-router.post("/:match_id/upload", upload.single("file"), uploadMediaHandler);
-router.post("/:match_id/question-upload", upload.single("file"), uploadQuestionMediaHandler);
+router.post("/:match_id/upload", uploadLimiter, upload.single("file"), uploadMediaHandler);
+router.post("/:match_id/question-upload", uploadLimiter, upload.single("file"), uploadQuestionMediaHandler);
 router.post("/:match_id/read", markAsReadHandler);
 router.delete("/:match_id/messages/:message_id", deleteMessageHandler);
 router.post("/:match_id/messages/:message_id/reactions", validate(reactionSchema), addReactionHandler);

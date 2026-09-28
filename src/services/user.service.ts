@@ -11,6 +11,8 @@ import { rainbowAccessService } from "./rainbow-access.service.js";
 import { Errors } from "../utils/errors.js";
 import { assertUuid } from "../utils/validation.js";
 import { haversineDistance } from "../utils/math.js";
+import { normalizeUploadedImage, NORMAL_GORSEL_MIME } from "../utils/image-normalize.js";
+import { DEGISMEZ_DOSYA_CACHE_CONTROL } from "../constants/storage.js";
 import { isKnownReasonCode } from "../constants/deletion-reasons.js";
 import type { UpdateProfileInput, UpdateDetailsInput } from "../validators/user.validator.js";
 import type { ClientPlatform } from "../utils/client-meta.js";
@@ -285,7 +287,7 @@ export class UserService {
       .eq("user_id", userId);
   }
 
-  async uploadPhoto(userId: string, fileBuffer: Buffer, mimeType: string) {
+  async uploadPhoto(userId: string, fileBuffer: Buffer) {
     // Get current photos
     const { data: user, error: fetchError } = await supabase
       .from("users")
@@ -303,13 +305,16 @@ export class UserService {
       throw Errors.MAX_PHOTOS_REACHED();
     }
 
-    const ext = mimeType === "image/png" ? "png" : "jpg";
-    const fileName = `${userId}/${Date.now()}.${ext}`;
+    // Beyan edilen mime'a guvenilmez: mobil kirpma PNG'yi `image/jpeg` diye yolluyordu (8 kat buyuk).
+    // Foto sinirindan SONRA: reddedilecek yukleme icin gorsel cozulmez (CPU).
+    const jpeg = await normalizeUploadedImage(fileBuffer, "user");
+    const fileName = `${userId}/${Date.now()}.jpg`;
 
     const { error: uploadError } = await supabase.storage
       .from("photos")
-      .upload(fileName, fileBuffer, {
-        contentType: mimeType,
+      .upload(fileName, jpeg, {
+        contentType: NORMAL_GORSEL_MIME,
+        cacheControl: DEGISMEZ_DOSYA_CACHE_CONTROL,
         upsert: false,
       });
 

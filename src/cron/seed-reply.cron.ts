@@ -1,5 +1,5 @@
 import cron from "node-cron";
-import { supabase } from "../config/supabase.js";
+import { appConfigService } from "../services/app-config.service.js";
 import {
   scanAndEnqueue, claimDue, recoverStale,
   processRow, askQuestion, answerQuestionRow, markCancelled,
@@ -10,14 +10,18 @@ import { respondMediaRequest } from "../services/seed-reply-media.service.js";
 let task: cron.ScheduledTask | null = null;
 let inFlight = false;
 
-/** Tik basina ust sinir: chatLimiter servis cagrisinda devrede DEGIL, fren burada. */
-const TIK_BUTCESI = 6;
+/**
+ * Tik basina ust sinir: chatLimiter servis cagrisinda devrede DEGIL, fren burada. 10 sn'lik tikte 6
+ * idi (dakikada en fazla 36 satir); 30 sn'lik tikte ayni dakikalik kapasite icin 18.
+ */
+const TIK_BUTCESI = 18;
 
 /**
- * Coken instance'in biraktigi `claimed` satirlar 5 dk sonra kurtarilir; bunu her 10 sn'lik
- * tikte yapmak gunde 8.640 bos PATCH demekti (2026-09-27 istek patlamasi). Dakikada bir yeter.
+ * Coken instance'in biraktigi `claimed` satirlar 5 dk sonra kurtarilir; bunu her tikte yapmak
+ * gunde binlerce bos PATCH demekti (2026-09-27 istek patlamasi). 5 dk'da bir yeter: takili bir
+ * satir en gec ~10 dk'da geri doner — yalniz cokme/deploy aninda olur.
  */
-const KURTARMA_ARALIGI_MS = 60_000;
+const KURTARMA_ARALIGI_MS = 5 * 60_000;
 let sonKurtarma = 0;
 
 /**
@@ -45,8 +49,9 @@ export async function seedReplyTick(): Promise<void> {
   }
   inFlight = true;
   try {
-    // Kalici kill-switch: her tikta okunur; restart varsayilana dondurmez.
-    const { data: cfg } = await supabase.from("app_config").select("seed_reply_enabled").limit(1).maybeSingle();
+    // Kalici kill-switch (DB'de; restart varsayilana dondurmez). Okuma 60 sn onbellekli: admin
+    // panelinden kapatmak aninda, SQL ile kapatmak en gec 60 sn'de etkili. Okuma hatasi = kapali.
+    const cfg = await appConfigService.getRow();
     if (!cfg?.seed_reply_enabled) return;
 
     if (Date.now() - sonKurtarma >= KURTARMA_ARALIGI_MS) {
@@ -82,10 +87,15 @@ export async function seedReplyTick(): Promise<void> {
   }
 }
 
+/**
+ * 30 sn: bos tik = RPC x2 (+ dakikada bir config). 10 sn'de gunde ~27 bin istek demekti — Supabase
+ * istegi faturalamaz ama her istek ~2,5 KB log ingest'idir (2026-09-28 maliyet incelemesi). Persona
+ * gecikmeleri en az 15 sn; tik araligi cevabi en fazla ~30 sn geciktirir.
+ */
 export const seedReplyCron = {
   name: "seed-reply",
-  description: "Seed profillerin AI cevaplari (10 sn; app_config.seed_reply_enabled ile acilir)",
-  schedule: "*/10 * * * * *",
+  description: "Seed profillerin AI cevaplari (30 sn; app_config.seed_reply_enabled ile acilir)",
+  schedule: "*/30 * * * * *",
   running: false,
 
   start() {

@@ -16,48 +16,16 @@
  *   SINAMA_RAPORU {"eksik": [], "fazla": [], "aday_sayisi": N, "alan_hatasi": []}
  * Fonksiyonu degistiren her migration'da calistir; yeni kural = yeni senaryo.
  */
-import { readdirSync, readFileSync } from 'node:fs';
-import { join, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { KOK, migrationSec, fonksiyonGovdesi, q } from './ortak.js';
 
-const KOK = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const SEMA = 'sinama';
-const IMZA = 'CREATE OR REPLACE FUNCTION seed_reply_candidates(';
-
-function migrationSec(): string {
-  const i = process.argv.indexOf('--migration');
-  if (i > 0 && process.argv[i + 1]) return join(KOK, process.argv[i + 1]!);
-  const tanimlayan = readdirSync(join(KOK, 'migrations'))
-    .filter((f) => f.endsWith('.sql') && !f.includes('rollback'))
-    .sort()
-    .filter((f) => readFileSync(join(KOK, 'migrations', f), 'utf8').includes(IMZA));
-  if (!tanimlayan.length) throw new Error('seed_reply_candidates tanimlayan migration yok');
-  return join(KOK, 'migrations', tanimlayan[tanimlayan.length - 1]!);
-}
-
-/** Migration'daki fonksiyonu gecici semaya tasir; donusum eksikse durur (sinanan != uretim olmasin). */
-function fonksiyonGovdesi(yol: string): string {
-  const src = readFileSync(yol, 'utf8');
-  const bas = src.indexOf(IMZA);
-  const son = src.indexOf('$$;', bas);
-  if (bas < 0 || son < 0) throw new Error(`fonksiyon govdesi bulunamadi: ${yol}`);
-  const fn = src.slice(bas, son + 3)
-    .replace(IMZA, `CREATE FUNCTION ${SEMA}.seed_reply_candidates(`)
-    .replace('SET search_path = public, pg_temp', `SET search_path = ${SEMA}, pg_temp`)
-    .replace('AS $$', 'AS $fn$')
-    .replace(/\$\$;$/, '$fn$;');
-  if (fn.includes('$$') || !fn.includes(`${SEMA}, pg_temp`) || !fn.includes(`${SEMA}.seed_reply_candidates(`)) {
-    throw new Error('donusum eksik — sinanan SQL uretimdekiyle ayni olmayabilir');
-  }
-  return fn;
-}
+const FONKSIYON = 'seed_reply_candidates';
 
 // --- kimlikler: SQL'de `sinama.u(n)` = 00000000-0000-4000-8000-<n hex>, `sinama.t(dk)` = 10:00 + dk ---
 const S1 = 0x51, S2 = 0x52, S3 = 0x53, H1 = 0xa1, H2 = 0xa2;   // seed'ler (S2: is_test_account=false), insanlar
 const M = (k: number) => 0x1000 + k;                              // eslesme
 const MSG = (k: number, i: number) => 0x200000 + k * 100 + i;    // mesaj
 const u = (n: number) => `${SEMA}.u(${n})`;
-const q = (s: string | null) => (s === null ? 'NULL' : `'${s}'`);
 
 const eslesmeler: string[] = [];
 const mesajlar: string[] = [];
@@ -142,7 +110,7 @@ bekle(0x21, { seed_user_id: U(S1), pending_question_id: U(0xc0211) });
 esl(0x22, S1, H1); msj(0x22, 0, H1); msj(0x22, 1, S1); medya(0xd0221, 0x22, H1, 'pending', 2); medya(0xd0222, 0x22, S1, 'pending', 3);
 bekle(0x22, { seed_user_id: U(S1), pending_media_request_id: U(0xd0221), pending_media_requester_id: U(H1) });
 
-const migration = migrationSec();
+const migration = migrationSec(FONKSIYON);
 const T = `${SEMA}.`;
 
 process.stdout.write(`-- seed_reply_candidates sinamasi — kaynak: ${migration.slice(KOK.length + 1)}
@@ -161,7 +129,7 @@ BEGIN
   CREATE TABLE ${T}media_requests (id uuid PRIMARY KEY, match_id uuid NOT NULL, requester_id uuid NOT NULL, status text NOT NULL, created_at timestamptz NOT NULL);
   CREATE TABLE ${T}seed_reply_queue (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), match_id uuid NOT NULL, status text NOT NULL);
 
-  ${fonksiyonGovdesi(migration)}
+  ${fonksiyonGovdesi(migration, FONKSIYON, SEMA)}
 
   INSERT INTO ${T}users VALUES (${u(S1)}, true, true, '{"tip":"s1"}'), (${u(S2)}, true, false, '{"tip":"s2"}'),
     (${u(S3)}, true, true, '{"tip":"s3"}'), (${u(H1)}, false, false, NULL), (${u(H2)}, false, false, NULL);

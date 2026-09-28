@@ -12,8 +12,13 @@ Burada sadece server'a özgü kısım var.
   (varsayılan 300 sn) aktif olmaz; açılışta çöken sürüm (ör. env parse hatası → `process.exit(1)`) hiç
   devreye girmez, ÖNCEKİ sürüm hizmete devam eder ve deploy "failed" görünür → `railway logs --build`.
   Kontrol yalnız deploy anında; `/health` DB'ye bakmaz (Supabase kesintisi deploy'u düşürmesin).
-- **SQL sınaması**: `npx tsx scripts/sql-checks/seed-reply-candidates.ts` → çıktıyı Supabase SQL
-  editor / MCP `execute_sql` ile çalıştır; geri alınan işlemde senaryolar (fonksiyon değişince).
+- **SQL sınaması**: `npx tsx scripts/sql-checks/<fonksiyon>.ts` (`seed-reply-candidates`,
+  `match-list-summaries`) → çıktıyı Supabase SQL editor / MCP `execute_sql` ile çalıştır; geri alınan
+  işlemde senaryolar (fonksiyon değişince). Ortak parça `scripts/sql-checks/ortak.ts`.
+- **Maliyet**: yeni cron/yoklama, sık uç nokta, upload ya da realtime yazarken
+  `.claude/skills/businessCaseSkills/supabase-cost-guard.md` (tik başı istek × günlük tik × ~2,5 KB log).
+  Süreç içi önbellek `src/utils/ttl-cache.ts`; yüklenen görsel `src/utils/image-normalize.ts` ile JPEG'e
+  (sharp, native — açılışta yüklenemezse deploy healthcheck'te düşer, eski sürüm hizmete devam eder).
 - **Test**: `npx vitest run` | tek dosya: `npx vitest run tests/services/x.test.ts`
 - **Typecheck**: `npx tsc -p tsconfig.test.json` (`tests/` dahil)
 - **Build**: `npm run build`

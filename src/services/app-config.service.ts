@@ -1,6 +1,20 @@
 import { supabase } from "../config/supabase.js";
+import { TtlCache } from "../utils/ttl-cache.js";
 
-interface AppConfigRow {
+/**
+ * Tek satırlık app_config her resume'da (/app/config) ve seed cron'unun her tikinde okunuyordu.
+ * Admin güncellemesi bu süreçte önbelleği anında temizler; SQL ile yapılan değişiklik en geç
+ * bu süre sonunda görünür (seed kill-switch dahil).
+ */
+export const APP_CONFIG_TTL_MS = 60_000;
+
+/**
+ * `AppConfigRow`'un tamamı — `select("*")` yerine (tablo 2026-09-28'de tam bu 15 kolon). Tek sabit
+ * metin olmalı: `+` ile birleştirilirse supabase-js'in tip ayrıştırıcısı çözemez.
+ */
+const APP_CONFIG_KOLONLARI = "id, min_version_ios, min_version_android, latest_version_ios, latest_version_android, store_url_ios, store_url_android, is_maintenance, maintenance_message_tr, maintenance_message_en, is_force_update_enabled, seed_reply_enabled, seed_reply_fast_mode, photo_moderation_enabled, updated_at";
+
+export interface AppConfigRow {
   id: string;
   min_version_ios: string;
   min_version_android: string;
@@ -21,14 +35,33 @@ interface AppConfigRow {
 }
 
 class AppConfigService {
-  async getConfig(platform: "ios" | "android", locale: string) {
-    const { data, error } = await supabase
-      .from("app_config")
-      .select("*")
-      .limit(1)
-      .single();
+  private readonly onbellek = new TtlCache<"satir", Readonly<AppConfigRow>>(APP_CONFIG_TTL_MS);
 
-    if (error || !data) {
+  /**
+   * Önbellekli satır (paylaşılan nesne — değiştirme). Okuma hatası `null` döner ve önbelleğe
+   * YAZILMAZ; admin güncellemesi sırasında süren okuma eski satırı geri yazamaz (`getOrLoad`).
+   */
+  async getRow(): Promise<Readonly<AppConfigRow> | null> {
+    const row = await this.onbellek.getOrLoad("satir", async () => {
+      const { data, error } = await supabase
+        .from("app_config")
+        .select(APP_CONFIG_KOLONLARI)
+        .limit(1)
+        .single();
+      if (error || !data) {
+        // Kesinti sessiz kalmasin: seed kill-switch bu durumda "kapali" sayilir.
+        console.error("[app-config] okunamadi:", error?.message ?? "satir yok");
+        return undefined;
+      }
+      return data as AppConfigRow;
+    });
+    return row ?? null;
+  }
+
+  async getConfig(platform: "ios" | "android", locale: string) {
+    const row = await this.getRow();
+
+    if (!row) {
       return {
         minVersion: "0.0.0",
         latestVersion: "0.0.0",
@@ -39,7 +72,6 @@ class AppConfigService {
       };
     }
 
-    const row = data as AppConfigRow;
     const isIos = platform === "ios";
     const lang = locale.startsWith("tr") ? "tr" : "en";
 
@@ -70,9 +102,11 @@ class AppConfigService {
       .from("app_config")
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq("id", existing.id)
-      .select("*")
+      .select(APP_CONFIG_KOLONLARI)
       .single();
 
+    // Hata olsa bile temizle: yazımın gidip gitmediği belirsizse eski değeri sunmak daha kötü.
+    this.onbellek.clear();
     if (error) throw error;
     return data;
   }
