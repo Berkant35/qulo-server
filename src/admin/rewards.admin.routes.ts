@@ -36,8 +36,9 @@ const bannerUpload = multer({ storage: multer.memoryStorage(), limits: { fileSiz
 /**
  * Kart formu multipart: gövde (csrf token dahil) `csrfValidate`'ten ÖNCE çözülmeli. Boyut/biçim hatası
  * JSON 500 yerine bölüm sayfasına hata olarak döner — bu dalda durum değiştiren hiçbir şey çalışmaz.
+ * Dışa açık: rota dizilimi testi (tests/admin/rewards.admin.routes.test.ts) sırayı kimlikle doğrular.
  */
-function cardForm(req: Request, res: Response, next: NextFunction) {
+export function cardForm(req: Request, res: Response, next: NextFunction) {
   bannerUpload.single("image")(req, res, (err: unknown) => {
     if (err) return res.redirect(`/admin/rewards/sections/${encodeURIComponent(String(req.params.id))}?error=image_invalid`);
     next();
