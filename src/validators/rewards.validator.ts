@@ -32,6 +32,8 @@ export const redeemSchema = z.object({
   item_id: z.string().uuid(),
   /** İstemci onay ekranı açılınca BİR kez üretir; aynı anahtarla tekrar = aynı talep, ikinci düşüm yok. */
   idempotency_key: z.string().uuid(),
+  /** İtfa bir bölüm kartından başladıysa (ölçüm). Bozuk değer 400 değil: yok sayılır; servis görünürlüğü doğrular. */
+  source_item_id: z.string().uuid().optional().catch(undefined),
 });
 
 export const redemptionsQuerySchema = z.object({

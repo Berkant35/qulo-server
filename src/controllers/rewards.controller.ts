@@ -22,12 +22,13 @@ export async function getMarketHandler(req: Request, res: Response, next: NextFu
 
 export async function redeemHandler(req: Request, res: Response, next: NextFunction) {
   try {
-    const { item_id, idempotency_key } = req.body as RedeemInput;
+    const { item_id, idempotency_key, source_item_id } = req.body as RedeemInput;
     const { platform } = clientMetaFromHeaders(req.headers);
     const result = await rewardsMarketService.redeem(
       req.user!.userId,
-      { itemId: item_id, idempotencyKey: idempotency_key },
+      { itemId: item_id, idempotencyKey: idempotency_key, sourceItemId: source_item_id },
       platform,
+      localeFromTag(req.headers["accept-language"]),
     );
     res.json(result);
   } catch (err) {

@@ -22,7 +22,7 @@ import { rewardsCatalogCache, type MarketItem } from "./rewards-catalog-cache.js
 export type { MarketItem } from "./rewards-catalog-cache.js";
 
 const USER_COLUMNS =
-  "id, country, created_at, rainbow_diamonds, is_test_admin, is_seed_profile, is_test_account";
+  "id, country, created_at, rainbow_diamonds, is_test_admin, is_seed_profile, is_test_account, has_reward_redemptions";
 const REDEMPTION_COLUMNS =
   "id, status, brand_key, country_code, currency, face_value, rainbow_price, delivery_code, delivery_url, reject_reason, created_at, decided_at";
 /** Bir kullanıcının bir aydaki talepleri — tavan 150 rainbow iken birkaç satır; sınır savunma. */
@@ -63,6 +63,7 @@ interface MarketUser extends RainbowAccessUser {
   id: string;
   created_at: string;
   rainbow_diamonds: number | null;
+  has_reward_redemptions?: boolean | null;
 }
 
 export interface RedemptionPage {
@@ -160,8 +161,9 @@ export class RewardsMarketService {
    */
   async redeem(
     userId: string,
-    input: { itemId: string; idempotencyKey: string },
+    input: { itemId: string; idempotencyKey: string; sourceItemId?: string },
     platform?: ClientPlatform,
+    locale: SupportedLocale = "en",
   ): Promise<RedeemResult> {
     // Aynı anahtar = aynı talep. Kural kapılarından ÖNCE: ilk istek geçtiyse tekrarı da aynı sonucu görür.
     const replay = await this.findByKey(userId, input.idempotencyKey);
@@ -191,6 +193,9 @@ export class RewardsMarketService {
       }
     }
 
+    // Kaynak kart yalnız bu kullanıcıya şu an görünen bir kartsa yazılır — ölçüm uydurma id ile şişmesin.
+    const sourceItemId = await this.visibleSourceItem(input.sourceItemId, user, platform, locale);
+
     const redemptionId = randomUUID();
     const reference = redemptionReference(redemptionId);
     // Yetersizse INSUFFICIENT_DIAMONDS — hiçbir şey yazılmaz.
@@ -219,6 +224,7 @@ export class RewardsMarketService {
         idempotency_key: input.idempotencyKey,
         platform: platform === "ios" || platform === "android" ? platform : null,
         is_test: isAdmin,
+        source_item_id: sourceItemId,
       })
       .select(REDEMPTION_COLUMNS)
       .single();
@@ -240,6 +246,7 @@ export class RewardsMarketService {
 
       if (found?.id === redemptionId) {
         // Bizim insert'imiz aslında yazılmış, sadece cevap kaybolmuş — iade YOK.
+        await this.markHasRedemptions(user);
         return { redemption: found, balance };
       }
       if (found) {
@@ -252,6 +259,7 @@ export class RewardsMarketService {
       throw Errors.SERVER_ERROR();
     }
 
+    await this.markHasRedemptions(user);
     return { redemption: toRedemptionView(data as RedemptionView), balance };
   }
 
@@ -306,6 +314,38 @@ export class RewardsMarketService {
     } catch (err) {
       console.error("[rewards] page sections unavailable — market served without sections:", err);
       return [];
+    }
+  }
+
+  /** Görüntüleyenin bu an gördüğü bölüm kartlarından biri mi? Bölümler okunamazsa null (itfa etkilenmez). */
+  private async visibleSourceItem(
+    sourceItemId: string | undefined,
+    user: MarketUser,
+    platform: ClientPlatform | undefined,
+    locale: SupportedLocale,
+  ): Promise<string | null> {
+    if (!sourceItemId) return null;
+    const isAdmin = user.is_test_admin === true;
+    const country = isAdmin ? null : (user.country ?? "").toUpperCase();
+    const catalog = await rewardsCatalogCache.listForCountry(country);
+    const sections = await this.sectionsFor(
+      { country, platform: toTargetPlatform(platform), locale, isTestAdmin: isAdmin },
+      catalog,
+    );
+    return sections.some((s) => s.items.some((item) => item.id === sourceItemId)) ? sourceItemId : null;
+  }
+
+  /**
+   * Tek yönlü bayrak: "Hediye kartlarım" girişi Rainbow kapalıyken de görünsün (spec §7.6). Yazılamazsa
+   * itfa yine başarılıdır (talep kayıtlı); iz bırakılır, bir sonraki itfa yeniden dener.
+   */
+  private async markHasRedemptions(user: MarketUser): Promise<void> {
+    if (user.has_reward_redemptions) return;
+    const { error } = await supabase.from("users").update({ has_reward_redemptions: true }).eq("id", user.id);
+    if (error) {
+      console.error("[rewards] has_reward_redemptions yazilamadi — talep kayitli, bir sonraki itfa yeniden dener", {
+        userId: user.id, err: error.message,
+      });
     }
   }
 

@@ -22,7 +22,7 @@ export class UserService {
     const { data: user, error } = await supabase
       .from("users")
       .select(
-        "id, email, name, surname, bio, age, gender, gender_pref, gender_pref_set_at, match_radius_km, age_pref_min, age_pref_max, city, country, locale, lat, lng, photos, profile_completion, green_diamonds, purple_diamonds, rainbow_diamonds, is_test_admin, is_seed_profile, is_test_account, is_online, last_seen_at, push_token, email_verified, passport_city, passport_lat, passport_lng, boost_until, like_received_count, times_shown_count, badge_rewards_claimed, preferred_languages, completion_rewards_claimed, relationship_goal, subscription_plan, subscription_expires_at, daily_swipes_used, daily_swipes_reset_at, daily_undos_used, strict_language_mode, interests, question_count, acquisition_answered, created_at",
+        "id, email, name, surname, bio, age, gender, gender_pref, gender_pref_set_at, match_radius_km, age_pref_min, age_pref_max, city, country, locale, lat, lng, photos, profile_completion, green_diamonds, purple_diamonds, rainbow_diamonds, has_reward_redemptions, is_test_admin, is_seed_profile, is_test_account, is_online, last_seen_at, push_token, email_verified, passport_city, passport_lat, passport_lng, boost_until, like_received_count, times_shown_count, badge_rewards_claimed, preferred_languages, completion_rewards_claimed, relationship_goal, subscription_plan, subscription_expires_at, daily_swipes_used, daily_swipes_reset_at, daily_undos_used, strict_language_mode, interests, question_count, acquisition_answered, created_at",
       )
       .eq("id", userId)
       .eq("is_deleted", false)
@@ -86,6 +86,8 @@ export class UserService {
       details: details ?? null,
       rainbow_diamonds: user.rainbow_diamonds ?? 0,
       rainbow_enabled: rainbowEnabled,
+      // Talebi olan kullanıcı "Hediye kartlarım"a Rainbow kapalıyken de ulaşır (spec §7.6). Ek sorgu yok.
+      has_reward_redemptions: user.has_reward_redemptions ?? false,
     };
   }
 

@@ -42,4 +42,12 @@ describe('userService.getMe — rainbow', () => {
     expect(me).not.toHaveProperty('is_seed_profile');
     expect(me).not.toHaveProperty('is_test_account');
   });
+
+  it('has_reward_redemptions yanıtta: true, false; NULL → false', async () => {
+    for (const [stored, expected] of [[true, true], [false, false], [null, false]] as const) {
+      vi.resetModules();
+      const { userService } = await setup({ users: [user({ has_reward_redemptions: stored })] });
+      await expect(userService.getMe('u1', 'android')).resolves.toMatchObject({ has_reward_redemptions: expected });
+    }
+  });
 });

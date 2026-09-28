@@ -169,4 +169,27 @@ describe('/api/v1/rewards — kablolama', () => {
     expect(bad.status).toBe(200);
     expect((await bad.json()).sections[0].heading).toBe('Deals');
   });
+
+  it('POST /redeem: source_item_id iletilir; bozuk değer 400 değil, yok sayılır', async () => {
+    const { base, fake } = await serve({
+      page_sections: [{
+        id: 's1', page_key: 'rewards_market', section_type: 'featured_items', heading: null, sort_order: 0,
+        status: 'published', countries: null, platforms: null, locales: null, autoplay_seconds: 5, deleted_at: null,
+      }],
+      page_section_items: [{
+        id: '9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d', section_id: 's1', sort_order: 0, is_active: true,
+        countries: null, platforms: null, locales: null, image_url: null, content: null, action_type: 'none',
+        action_catalog_item_id: null, action_route: null, catalog_item_id: '3f1c9a52-7d7e-4b8e-9d6a-1b2c3d4e5f60',
+      }],
+    }, { fakeAuth: true });
+    const post = (key: string, source: unknown) => fetch(`${base}/redeem`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-app-platform': 'android' },
+      body: JSON.stringify({ item_id: '3f1c9a52-7d7e-4b8e-9d6a-1b2c3d4e5f60', idempotency_key: key, source_item_id: source }),
+    });
+
+    expect((await post('11111111-1111-4111-8111-111111111111', '9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d')).status).toBe(200);
+    expect((await post('22222222-2222-4222-8222-222222222222', 'bozuk')).status).toBe(200);
+    expect(fake.table('reward_redemptions').map((r) => r.source_item_id)).toEqual(['9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d', null]);
+  });
 });
