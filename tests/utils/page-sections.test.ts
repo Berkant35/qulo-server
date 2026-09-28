@@ -189,4 +189,22 @@ describe('resolveSections', () => {
     const perSection = many.map((s) => banner({ id: `b-${s.id}`, section_id: s.id }));
     expect(resolveSections(many, perSection, catalog, ctx())).toHaveLength(SECTION_LIMITS.sectionsPerPage);
   });
+
+  it('sınır geçersiz kartlar düştükten SONRA sayılır: öndeki geçersiz kartlar yer kaplamaz', () => {
+    // Görselsiz, pasif ve hedefi çözülmeyen kartlar (her türden 3) geçerlilerin ÖNÜNDE.
+    const invalid = [0, 1, 2].flatMap((n) => [
+      banner({ id: `x-noimg-${n}`, sort_order: n * 3, image_url: null }),
+      banner({ id: `x-off-${n}`, sort_order: n * 3 + 1, is_active: false }),
+      banner({ id: `x-gone-${n}`, sort_order: n * 3 + 2, action_catalog_item_id: 'c-yok' }),
+    ]);
+    const valid = Array.from({ length: 9 }, (_, n) => banner({ id: `b${n}`, sort_order: 100 + n }));
+    const [carousel] = resolveSections([section()], [...invalid, ...valid], catalog, ctx());
+    expect(carousel.items.map((i) => i.id)).toEqual(valid.slice(0, SECTION_LIMITS.carouselItems).map((c) => c.id));
+
+    const s2 = section({ id: 's2', section_type: 'featured_items' });
+    const unresolved = Array.from({ length: 12 }, (_, n) => featured({ id: `x${n}`, sort_order: n, catalog_item_id: 'c-yok' }));
+    const feats = Array.from({ length: 13 }, (_, n) => featured({ id: `f${n}`, sort_order: 100 + n }));
+    const [featuredView] = resolveSections([s2], [...unresolved, ...feats], catalog, ctx());
+    expect(featuredView.items.map((i) => i.id)).toEqual(feats.slice(0, SECTION_LIMITS.featuredItems).map((c) => c.id));
+  });
 });
