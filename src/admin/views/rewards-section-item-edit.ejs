@@ -16,7 +16,6 @@
     ['Türkçe + İngilizce', locales.filter((l) => l === 'tr' || l === 'en'), true],
     ['Diğer diller', locales.filter((l) => l !== 'tr' && l !== 'en'), false],
   ];
-  const optionLabel = (o) => `${o.brand_key} · ${o.country_code} · ${o.face_value} ${o.currency}${o.is_active ? '' : ' (pasif)'}`;
 %>
 <h2 style="margin-bottom:12px;">&#127752; <%= editing ? 'Kartı düzenle' : (banner ? 'Yeni banner kartı' : 'Yeni öne çıkan ürün') %></h2>
 <%- include('_rewards-nav') %>
@@ -55,7 +54,7 @@
     <label>Ürün ("Katalog ürünü" seçiliyse; bölümün ülkelerine süzülü)</label>
     <select name="action_catalog_item_id" style="width:100%;margin-bottom:8px;">
       <option value="">—</option>
-      <% options.forEach((o) => { %><option value="<%= o.id %>" <%= productId === o.id ? 'selected' : '' %>><%= optionLabel(o) %></option><% }) %>
+      <% options.forEach((o) => { %><option value="<%= o.id %>" <%= productId === o.id ? 'selected' : '' %>><%= o.label %></option><% }) %>
     </select>
     <label>Sayfa ("Uygulama içi sayfa" seçiliyse)</label>
     <select name="action_route" style="width:100%;margin-bottom:12px;">
@@ -65,7 +64,7 @@
   <% } else { %>
     <label>Ürün * (bölümün ülkelerine süzülü)</label>
     <select name="catalog_item_id" style="width:100%;margin-bottom:12px;">
-      <% options.forEach((o) => { %><option value="<%= o.id %>" <%= productId === o.id ? 'selected' : '' %>><%= optionLabel(o) %></option><% }) %>
+      <% options.forEach((o) => { %><option value="<%= o.id %>" <%= productId === o.id ? 'selected' : '' %>><%= o.label %></option><% }) %>
     </select>
   <% } %>
 

@@ -3,6 +3,7 @@ import ejs from 'ejs';
 import { join } from 'node:path';
 import { LOCALE_NAMES, SUPPORTED_LOCALES } from '../../src/constants/locales.js';
 import { APP_ROUTES, SECTION_LIMITS, TARGET_PLATFORMS } from '../../src/utils/page-sections.js';
+import { productLabel } from '../../src/admin/page-sections.admin.view.js';
 
 /** Görünümler EJS'te çalışma anında derlenir: sözdizimi/yerel değişken hatası ancak render'da çıkar. */
 const VIEWS = join(process.cwd(), 'src', 'admin', 'views');
@@ -19,7 +20,9 @@ const render = (view: string, locals: Record<string, unknown>) =>
 const section = { id: 's1', section_type: 'banner_carousel', heading: { tr: 'Fırsatlar' }, status: 'draft', countries: ['TH'], platforms: null, locales: null, autoplay_seconds: 5 };
 const stats = { impressions: 3, clicks: 1, redemptions: 0, breakdown: [{ country: 'TH', platform: 'android', impressions: 3, clicks: 1, redemptions: 0 }] };
 const item = { id: 'b1', section_id: 's1', is_active: true, countries: null, platforms: null, locales: ['th'], image_url: 'https://cdn.example/b.jpg', content: { en: { title: 'Grab', cta_label: 'Get' } }, action_type: 'none', action_catalog_item_id: null, action_route: null, catalog_item_id: null, target_unavailable: true, label: 'Grab', targeting: 'tüm ülkeler · tüm platformlar · th', stats };
-const option = { id: 'c1', brand_key: 'GRAB', country_code: 'TH', currency: 'THB', face_value: 50, is_active: false };
+const product = { id: 'c1', brand_key: 'GRAB' as const, country_code: 'TH', currency: 'THB', face_value: 50, is_active: false };
+/** Controller seçenekleri etiketli verir (`productLabel`); görünüm etiketi yeniden kurmaz. */
+const option = { ...product, label: productLabel(product) };
 
 describe('sayfa bölümleri görünümleri', () => {
   it('nav\'da Sayfa bölümleri sekmesi', async () => {

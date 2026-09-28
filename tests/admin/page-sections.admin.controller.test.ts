@@ -49,7 +49,8 @@ async function setup(over: Record<string, unknown> = {}, statsImpl?: () => Promi
     rewardsCatalogAdminService: { listCountries: vi.fn(async () => [{ country_code: 'TH', currency: 'THB', enabled: false, android_enabled: true, ios_enabled: false, updated_at: null }]) },
   }));
   const mod = await import('../../src/admin/page-sections.admin.controller.js');
-  return { ...mod, admin, stats, AppError };
+  const view = await import('../../src/admin/page-sections.admin.view.js');
+  return { ...mod, ...view, admin, stats, AppError };
 }
 
 beforeEach(() => {
@@ -187,6 +188,22 @@ describe('pageSectionsAdminController — kartlar', () => {
     await c.itemDelete(req({ params: { id: SID, itemId: 'x' } }), bad);
     expect(admin.deleteItem).not.toHaveBeenCalled();
     expect(bad.redirectedTo).toBe('/admin/rewards/sections?error=not_found');
+  });
+
+  it('kart formu ürün seçeneklerini etiketli verir (görünüm etiketi yeniden kurmaz)', async () => {
+    const { pageSectionsAdminController: c, admin } = await setup({
+      catalogOptions: vi.fn(async () => [
+        { id: CAT, brand_key: 'GRAB', country_code: 'TH', currency: 'THB', face_value: 50, is_active: true },
+        { id: 'c-off', brand_key: 'TRUEMONEY', country_code: 'TH', currency: 'THB', face_value: 20, is_active: false },
+      ]),
+    });
+    const res = fakeRes();
+    await c.itemNew(req({ params: { id: SID } }), res);
+    expect(admin.catalogOptions).toHaveBeenCalledWith(['TH']);
+    expect(res.rendered.locals.options.map((o: { label: string }) => o.label)).toEqual([
+      'GRAB · TH · 50 THB',
+      'TRUEMONEY · TH · 20 THB (pasif)',
+    ]);
   });
 
   it('hata kodu eşlemesi; beklenmeyen hata loglanıp failed olur', async () => {
