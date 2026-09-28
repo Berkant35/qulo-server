@@ -66,8 +66,6 @@ class SubscriptionService {
   ): Promise<void> {
     // Aynı dönem için zaten aktif bir kayıt varsa yeni satır AÇMA — iki giriş
     // yolu (istemci + webhook) aynı satın almayı saniyeler arayla bildiriyor.
-    // Sadece hâlâ aktif olanlara bakılır; changeSubscription önce eskiyi
-    // expired yaptığı için plan değişimi bundan etkilenmez.
     // limit(1): geçmişte mükerrer satır oluştuysa maybeSingle çok-satır hatası
     // verip null döndürür ve kod mükerrerliği çoğaltarak insert'e düşerdi.
     const { data: existingRows, error: lookupError } = await supabase
@@ -97,6 +95,18 @@ class SubscriptionService {
         })
         .eq('id', existing.id);
     } else {
+      // Yeni dönem öncekinin yerini alır (yükseltme: istemci yeni ürünü bildirir, eski satır
+      // açık kalırsa sonraki RENEWAL onu da yeni plana/süreye çekerdi).
+      const { error: supersedeError } = await supabase
+        .from('user_subscriptions')
+        .update({ status: 'expired', updated_at: new Date().toISOString() })
+        .eq('user_id', userId)
+        .eq('status', 'active');
+      if (supersedeError) {
+        // Fırlatılmaz (yukarıdaki gerekçe): erişimin kaynağı `users`; eski satır açık kalır.
+        console.error('[subscription] previous period close failed:', supersedeError.message);
+      }
+
       await supabase.from('user_subscriptions').insert({
         user_id: userId,
         plan,
@@ -120,23 +130,21 @@ class SubscriptionService {
     await this.grantMonthlyBonus(userId, plan, expiresAt, paidEligible);
   }
 
+  /**
+   * Plan olayın ürününden gelir, kullanıcının kayıtlı planından DEĞİL: Apple yükseltmesi yürürlüğe
+   * girince RENEWAL yeni ürünle gelir; kayıtlı plan eski ürünü gösterir.
+   */
   async renewSubscription(
     userId: string,
+    plan: SubscriptionPlan,
     storeTransactionId: string,
     expiresAt: string,
     paidEligible = false,
   ): Promise<void> {
-    const { data: user } = await supabase
-      .from('users')
-      .select('subscription_plan')
-      .eq('id', userId)
-      .single();
-
-    const plan = (user?.subscription_plan as SubscriptionPlan) || 'plus';
-
     await supabase
       .from('user_subscriptions')
       .update({
+        plan,
         status: 'active',
         expires_at: expiresAt,
         store_transaction_id: storeTransactionId,
@@ -147,7 +155,7 @@ class SubscriptionService {
 
     await supabase
       .from('users')
-      .update({ subscription_expires_at: expiresAt })
+      .update({ subscription_plan: plan, subscription_expires_at: expiresAt })
       .eq('id', userId);
 
     await this.grantMonthlyBonus(userId, plan, expiresAt, paidEligible);
@@ -164,15 +172,36 @@ class SubscriptionService {
       .eq('status', 'active');
   }
 
-  async expireSubscription(userId: string): Promise<void> {
+  /**
+   * Otomatik yenileme yeniden açıldı: dönem değişmez, yalnız iptal edilmiş GÜNCEL satır aktifleşir.
+   * Bonus yok — dönemin bonusu satın almada/yenilemede verildi.
+   */
+  async uncancelSubscription(userId: string): Promise<void> {
     await supabase
+      .from('user_subscriptions')
+      .update({ status: 'active', updated_at: new Date().toISOString() })
+      .eq('user_id', userId)
+      .eq('status', 'cancelled')
+      .gt('expires_at', new Date().toISOString());
+  }
+
+  /**
+   * Biten ürünün satırlarını kapatır ve erişimi kaldırır. Webhook yolunda erişim hemen ardından
+   * mağaza durumundan yeniden yazılır (`applyStoreState`): Google yükseltmesinde eski ürünün
+   * EXPIRATION'ı gelse de yeni ürün aktifse erişim geri gelir. `plan` verilirse yalnız o planın
+   * satırları kapanır (yeni ürünün satırı açık kalır).
+   */
+  async expireSubscription(userId: string, plan?: SubscriptionPlan): Promise<void> {
+    let rows = supabase
       .from('user_subscriptions')
       .update({
         status: 'expired',
         updated_at: new Date().toISOString(),
       })
       .eq('user_id', userId)
-      .eq('status', 'active');
+      .in('status', ['active', 'cancelled']);
+    if (plan) rows = rows.eq('plan', plan);
+    await rows;
 
     await supabase
       .from('users')
@@ -183,29 +212,26 @@ class SubscriptionService {
       .eq('id', userId);
   }
 
-  async changeSubscription(
+  /**
+   * Erişimin mağazadaki doğrusu (RevenueCat GET /subscribers) — webhook olay alanlarından kurulan
+   * durumu ezer. Olay sırası garanti değil ve PRODUCT_CHANGE/iade/yükseltme modlarında olay
+   * alanları erişimi yanlış anlatıyor (2026-09-28 olayı). Hata fırlatılır: RevenueCat yeniden dener.
+   */
+  async applyStoreState(
     userId: string,
-    newPlan: SubscriptionPlan,
-    storeTransactionId: string,
-    expiresAt: string,
-    paidEligible = false,
+    state: { plan: SubscriptionPlan; expiresAt: string } | null,
   ): Promise<void> {
-    await this.expireSubscription(userId);
-
-    const { data: user } = await supabase
+    const { error } = await supabase
       .from('users')
-      .select('rc_customer_id')
-      .eq('id', userId)
-      .single();
-
-    await this.activateSubscription(
-      userId,
-      newPlan,
-      user?.rc_customer_id || '',
-      storeTransactionId,
-      expiresAt,
-      paidEligible,
-    );
+      .update({
+        subscription_plan: state?.plan ?? null,
+        subscription_expires_at: state?.expiresAt ?? null,
+      })
+      .eq('id', userId);
+    if (error) {
+      console.error('[subscription] store state write failed:', error.message);
+      throw Errors.SERVER_ERROR();
+    }
   }
 
   /**

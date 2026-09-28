@@ -381,3 +381,81 @@ describe('IAP_SKIP_VALIDATION (F5)', () => {
     });
   });
 });
+
+/**
+ * Webhook sonrası erişimin doğrusu. 2026-09-28 olayının gerçek RevenueCat cevabı: plus yükseltme
+ * anında bitmiş, premium bir ay sonra bitiyor (yenileme kapalı — erişim sürer).
+ */
+describe('getActiveSubscription', () => {
+  const sub = (expires: string | null, over: Record<string, unknown> = {}) => ({
+    expires_date: expires, purchase_date: '2026-08-01T12:00:00Z', ...over,
+  });
+
+  it('canlı olay: bitmiş plus atlanır, yenilemesi kapalı premium aktif', async () => {
+    mockFetch({ body: subscriberBody({ subscriptions: {
+      quloplusmonthly2: sub('2026-09-01T11:00:00Z'),
+      qulopremiummonthly2: sub('2026-10-01T12:00:00Z', { unsubscribe_detected_at: '2026-09-01T11:30:00Z' }),
+    } }) });
+    const service = await setup();
+    await expect(service.getActiveSubscription('u1')).resolves.toEqual({
+      plan: 'premium', expiresAt: '2026-10-01T12:00:00.000Z',
+    });
+  });
+
+  it('ikisi de aktifse (Google yükseltmesi, zaman orantılı) üst plan kazanır — daha erken bitse bile', async () => {
+    mockFetch({ body: subscriberBody({ subscriptions: {
+      'quloplusmonthly2:quloplus-monthly': sub('2026-10-01T12:00:00Z'),
+      'qulopremiummonthly:qulopremium-monthly': sub('2026-09-20T12:00:00Z'),
+    } }) });
+    const service = await setup();
+    await expect(service.getActiveSubscription('u1')).resolves.toEqual({
+      plan: 'premium', expiresAt: '2026-09-20T12:00:00.000Z',
+    });
+  });
+
+  it('iade edilen abonelik erişim vermez', async () => {
+    mockFetch({ body: subscriberBody({ subscriptions: {
+      qulopremiummonthly2: sub('2026-10-01T12:00:00Z', { refunded_at: '2026-09-01T10:00:00Z' }),
+    } }) });
+    const service = await setup();
+    await expect(service.getActiveSubscription('u1')).resolves.toBeNull();
+  });
+
+  it('ödeme sorunu ek süresi erişimi uzatır', async () => {
+    mockFetch({ body: subscriberBody({ subscriptions: {
+      quloplusmonthly2: sub('2026-08-31T12:00:00Z', { grace_period_expires_date: '2026-09-07T12:00:00Z' }),
+    } }) });
+    const service = await setup();
+    await expect(service.getActiveSubscription('u1')).resolves.toEqual({
+      plan: 'plus', expiresAt: '2026-09-07T12:00:00.000Z',
+    });
+  });
+
+  it('bilinmeyen ürün ve süresiz kayıt sayılmaz; abone yoksa (404) null', async () => {
+    mockFetch({ body: subscriberBody({ subscriptions: {
+      baskaurun: sub('2026-10-01T12:00:00Z'),
+      quloplusmonthly2: sub(null),
+    } }) });
+    const service = await setup();
+    await expect(service.getActiveSubscription('u1')).resolves.toBeNull();
+
+    vi.resetModules();
+    mockFetch({ status: 404 });
+    const service404 = await setup();
+    await expect(service404.getActiveSubscription('u1')).resolves.toBeNull();
+  });
+
+  it('API hatası fırlatılır (erişim tahminle yazılmaz)', async () => {
+    mockFetch({ status: 500 });
+    const service = await setup();
+    await expect(service.getActiveSubscription('u1')).rejects.toThrow();
+  });
+
+  it('canSyncSubscriptions: anahtar yoksa ya da doğrulama atlanıyorsa kapalı', async () => {
+    expect((await setup()).canSyncSubscriptions()).toBe(true);
+    vi.resetModules();
+    expect((await setup({ REVENUECAT_API_KEY: '' })).canSyncSubscriptions()).toBe(false);
+    vi.resetModules();
+    expect((await setup({ REVENUECAT_API_KEY: 'rc-key', IAP_SKIP_VALIDATION: 'true', NODE_ENV: 'test' })).canSyncSubscriptions()).toBe(false);
+  });
+});

@@ -1,5 +1,6 @@
 import { env } from '../config/env.js';
 import { isPaidEligible, subscriberSubscriptionFacts } from '../utils/paid-eligibility.js';
+import { SUBSCRIPTION_PRODUCT_MAP, storeProductKey, type SubscriptionPlan } from '../types/index.js';
 
 /** API v1 `subscriber.subscriptions[productId]` (docs: api-v1/customer-info-model). */
 interface RCSubscription {
@@ -11,7 +12,20 @@ interface RCSubscription {
   period_type?: string;
   /** "PURCHASED" | "FAMILY_SHARED". */
   ownership_type?: string;
+  /** İade edildiyse dolu — erişim yok (RevenueCat: iade aboneliği hemen bitirir). */
+  refunded_at?: string | null;
+  /** Ödeme sorunu ek süresi — bu süre boyunca erişim sürer (BILLING_ISSUE erişimi kesmez). */
+  grace_period_expires_date?: string | null;
 }
+
+/** Mağazadaki güncel abonelik: erişimin doğrusu. */
+export interface StoreSubscriptionState {
+  plan: SubscriptionPlan;
+  /** Erişimin bittiği an — ödeme sorunu ek süresi dahil. */
+  expiresAt: string;
+}
+
+const PLAN_RANK: Record<SubscriptionPlan, number> = { plus: 1, premium: 2 };
 
 /** API v1 `subscriber.non_subscriptions[productId][]`. `id` = RevenueCat'in kendi numarası. */
 interface RCNonSubscription {
@@ -175,6 +189,39 @@ class RevenueCatService {
       console.error('[RevenueCat] Subscription verification error:', errorMsg);
       return { valid: false, error: 'Verification service unavailable' };
     }
+  }
+
+  /** Webhook sonrası mağaza senkronu yapılabilir mi (anahtar var, doğrulama atlanmıyor). */
+  canSyncSubscriptions(): boolean {
+    return Boolean(env.REVENUECAT_API_KEY) && !this.skipValidation();
+  }
+
+  /**
+   * Kullanıcının şu an erişim veren aboneliği; yoksa null. RevenueCat önerisi: her webhook'tan
+   * sonra GET /subscribers ile durumu yeniden oku (olay sırası garanti değil). Birden çok ürün
+   * aynı anda aktifse (Google yükseltmesi, eski ürün henüz bitmemiş) üst plan kazanır, eşitse
+   * geç biten. API hatası FIRLATILIR — çağıran erişimi tahminle yazmamalı.
+   */
+  async getActiveSubscription(userId: string): Promise<StoreSubscriptionState | null> {
+    const subscriber = await this.getSubscriber(userId);
+    if (!subscriber) return null;
+
+    const now = Date.now();
+    let best: (StoreSubscriptionState & { endsAt: number }) | null = null;
+    for (const [productId, sub] of Object.entries(subscriber.subscriptions ?? {})) {
+      const plan = SUBSCRIPTION_PRODUCT_MAP[storeProductKey(productId)];
+      if (!plan || sub.refunded_at || !sub.expires_date) continue;
+      const endsAt = Math.max(
+        Date.parse(sub.expires_date),
+        sub.grace_period_expires_date ? Date.parse(sub.grace_period_expires_date) : 0,
+      );
+      if (!(endsAt > now)) continue;
+      const better = !best
+        || PLAN_RANK[plan] > PLAN_RANK[best.plan]
+        || (PLAN_RANK[plan] === PLAN_RANK[best.plan] && endsAt > best.endsAt);
+      if (better) best = { plan, expiresAt: new Date(endsAt).toISOString(), endsAt };
+    }
+    return best ? { plan: best.plan, expiresAt: best.expiresAt } : null;
   }
 
   /**

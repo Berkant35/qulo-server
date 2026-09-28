@@ -41,6 +41,7 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.useRealTimers();
+  vi.restoreAllMocks();
 });
 
 describe('getStatus', () => {
@@ -261,7 +262,7 @@ describe('renewSubscription', () => {
       user_subscriptions: [{ id: 's1', user_id: 'u1', plan: 'plus', status: 'active' }],
     });
 
-    await subscriptionService.renewSubscription('u1', 'tx-renew', FUTURE);
+    await subscriptionService.renewSubscription('u1', 'plus', 'tx-renew', FUTURE);
 
     expect(fake.table('users')[0].subscription_expires_at).toBe(FUTURE);
     expect(fake.table('users')[0].purple_diamonds).toBe(200);
@@ -270,14 +271,16 @@ describe('renewSubscription', () => {
     });
   });
 
-  it('planı olmayan kullanıcıda plus\'a düşer (varsayılan)', async () => {
+  it('plan olaydan gelir: kayıtlı plan eski olsa da yeni plana geçirir ve onun bonusunu verir', async () => {
     const { fake, subscriptionService } = await setup({
-      users: [user({ subscription_plan: null })],
-      user_subscriptions: [{ id: 's1', user_id: 'u1', status: 'active' }],
+      users: [user({ subscription_plan: 'plus', subscription_expires_at: FUTURE })],
+      user_subscriptions: [{ id: 's1', user_id: 'u1', plan: 'plus', status: 'active' }],
     });
 
-    await subscriptionService.renewSubscription('u1', 'tx-1', FUTURE);
-    expect(fake.table('users')[0].purple_diamonds).toBe(200);
+    await subscriptionService.renewSubscription('u1', 'premium', 'tx-up', FUTURE);
+
+    expect(fake.table('users')[0]).toMatchObject({ subscription_plan: 'premium', purple_diamonds: 1000 });
+    expect(fake.table('user_subscriptions')[0].plan).toBe('premium');
   });
 
   it('aynı transaction ile ikinci yenileme bonusu tekrar vermez', async () => {
@@ -286,8 +289,8 @@ describe('renewSubscription', () => {
       user_subscriptions: [{ id: 's1', user_id: 'u1', status: 'active' }],
     });
 
-    await subscriptionService.renewSubscription('u1', 'tx-1', FUTURE);
-    await subscriptionService.renewSubscription('u1', 'tx-1', FUTURE);
+    await subscriptionService.renewSubscription('u1', 'premium', 'tx-1', FUTURE);
+    await subscriptionService.renewSubscription('u1', 'premium', 'tx-1', FUTURE);
 
     expect(fake.table('users')[0].purple_diamonds).toBe(1000);
   });
@@ -320,22 +323,13 @@ describe('aylık bonus — ödenmiş pay uygunluğu', () => {
       user_subscriptions: [{ id: 's1', user_id: 'u1', plan: 'premium', status: 'active' }],
     });
     const eligible = await setup(seed());
-    await eligible.subscriptionService.renewSubscription('u1', 'tx-r', FUTURE, true);
+    await eligible.subscriptionService.renewSubscription('u1', 'premium', 'tx-r', FUTURE, true);
     expect(eligible.fake.table('users')[0]).toMatchObject({ purple_diamonds: 1000, purple_paid: 200 });
 
     vi.resetModules();
     const notEligible = await setup(seed());
-    await notEligible.subscriptionService.renewSubscription('u1', 'tx-r', FUTURE);
+    await notEligible.subscriptionService.renewSubscription('u1', 'premium', 'tx-r', FUTURE);
     expect(notEligible.fake.table('users')[0]).toMatchObject({ purple_diamonds: 1000, purple_paid: 0 });
-  });
-
-  it('changeSubscription uygunluğu yeni planın bonusuna taşır', async () => {
-    const { fake, subscriptionService } = await setup({
-      users: [paidUser({ subscription_plan: 'plus', subscription_expires_at: FUTURE, rc_customer_id: 'rc-9' })],
-      user_subscriptions: [{ id: 's1', user_id: 'u1', plan: 'plus', status: 'active' }],
-    });
-    await subscriptionService.changeSubscription('u1', 'premium', 'tx-up', '2026-10-15T12:00:00Z', true);
-    expect(fake.table('users')[0]).toMatchObject({ subscription_plan: 'premium', purple_diamonds: 1000, purple_paid: 200 });
   });
 });
 
@@ -407,45 +401,77 @@ describe('expireSubscription', () => {
   });
 });
 
-describe('changeSubscription', () => {
-  it('plus → premium yükseltmede yeni tier ve bonusu uygular', async () => {
+describe('activateSubscription — yeni dönem öncekinin yerini alır', () => {
+  it('farklı bitişli yeni dönem: eski aktif satır expired, tek aktif satır yeni plan', async () => {
     const { fake, subscriptionService } = await setup({
       users: [user({ subscription_plan: 'plus', subscription_expires_at: FUTURE, rc_customer_id: 'rc-1' })],
-      user_subscriptions: [{ id: 's1', user_id: 'u1', plan: 'plus', status: 'active' }],
+      user_subscriptions: [{ id: 's1', user_id: 'u1', plan: 'plus', status: 'active', expires_at: FUTURE }],
     });
 
-    await subscriptionService.changeSubscription('u1', 'premium', 'tx-up', FUTURE);
-
-    expect(fake.table('users')[0]).toMatchObject({
-      subscription_plan: 'premium', purple_diamonds: 1000,
-    });
-  });
-
-  it('premium → plus düşürmede rc_customer_id korunur', async () => {
-    const { fake, subscriptionService } = await setup({
-      users: [user({ subscription_plan: 'premium', subscription_expires_at: FUTURE, rc_customer_id: 'rc-9' })],
-      user_subscriptions: [{ id: 's1', user_id: 'u1', plan: 'premium', status: 'active' }],
-    });
-
-    await subscriptionService.changeSubscription('u1', 'plus', 'tx-down', FUTURE);
-
-    expect(fake.table('users')[0]).toMatchObject({
-      subscription_plan: 'plus', rc_customer_id: 'rc-9',
-    });
-  });
-
-  it('eski kaydı expired yapar, yenisini açar', async () => {
-    const { fake, subscriptionService } = await setup({
-      users: [user({ subscription_plan: 'plus', subscription_expires_at: FUTURE })],
-      user_subscriptions: [{ id: 's1', user_id: 'u1', plan: 'plus', status: 'active' }],
-    });
-
-    await subscriptionService.changeSubscription('u1', 'premium', 'tx-up', FUTURE);
+    await subscriptionService.activateSubscription('u1', 'premium', 'client_u1', 'tx-up', '2026-10-01T12:01:00Z');
 
     const rows = fake.table('user_subscriptions');
-    expect(rows).toHaveLength(2);
     expect(rows.find((r) => r.id === 's1')!.status).toBe('expired');
-    expect(rows.find((r) => r.plan === 'premium')!.status).toBe('active');
+    expect(rows.filter((r) => r.status === 'active').map((r) => r.plan)).toEqual(['premium']);
+    expect(fake.table('users')[0]).toMatchObject({ subscription_plan: 'premium', purple_diamonds: 1000 });
+  });
+
+  it('aynı dönem (istemci + webhook): satır güncellenir, yenisi açılmaz, diğer satırlar kapanmaz', async () => {
+    const { fake, subscriptionService } = await setup({
+      users: [user()],
+      user_subscriptions: [{ id: 's1', user_id: 'u1', plan: 'plus', status: 'active', expires_at: FUTURE }],
+    });
+
+    await subscriptionService.activateSubscription('u1', 'plus', 'u1', 'tx-1', FUTURE);
+
+    expect(fake.table('user_subscriptions')).toEqual([
+      expect.objectContaining({ id: 's1', status: 'active', store_transaction_id: 'tx-1' }),
+    ]);
+  });
+});
+
+describe('expireSubscription — plan kapsamlı', () => {
+  it('plan verilirse yalnız o planın satırları kapanır (iptal edilmişler dahil)', async () => {
+    const { fake, subscriptionService } = await setup({
+      users: [user({ subscription_plan: 'premium', subscription_expires_at: FUTURE })],
+      user_subscriptions: [
+        { id: 's0', user_id: 'u1', plan: 'plus', status: 'cancelled' },
+        { id: 's1', user_id: 'u1', plan: 'premium', status: 'active' },
+      ],
+    });
+
+    await subscriptionService.expireSubscription('u1', 'plus');
+
+    const rows = fake.table('user_subscriptions');
+    expect(rows.find((r) => r.id === 's0')!.status).toBe('expired');
+    expect(rows.find((r) => r.id === 's1')!.status).toBe('active');
+  });
+});
+
+describe('applyStoreState — erişimin mağazadaki doğrusu', () => {
+  it('aktif abonelik plan + bitişi yazar', async () => {
+    const { fake, subscriptionService } = await setup({
+      users: [user({ subscription_plan: 'plus', subscription_expires_at: PAST })],
+    });
+    await subscriptionService.applyStoreState('u1', { plan: 'premium', expiresAt: FUTURE });
+    expect(fake.table('users')[0]).toMatchObject({ subscription_plan: 'premium', subscription_expires_at: FUTURE });
+  });
+
+  it('abonelik yoksa plan ve bitiş temizlenir', async () => {
+    const { fake, subscriptionService } = await setup({
+      users: [user({ subscription_plan: 'plus', subscription_expires_at: FUTURE })],
+    });
+    await subscriptionService.applyStoreState('u1', null);
+    expect(fake.table('users')[0]).toMatchObject({ subscription_plan: null, subscription_expires_at: null });
+  });
+
+  it('yazım hatası fırlatılır (RevenueCat yeniden dener)', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { subscriptionService } = await setup(
+      { users: [user()] },
+      { failOn: [{ table: 'users', op: 'update' }] },
+    );
+    await expect(subscriptionService.applyStoreState('u1', null)).rejects.toThrow();
   });
 });
 

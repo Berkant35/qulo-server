@@ -2,6 +2,7 @@ import { supabase } from '../config/supabase.js';
 import { diamondService } from './diamond.service.js';
 import { subscriptionService } from './subscription.service.js';
 import { rainbowRiskService } from './rainbow-risk.service.js';
+import { revenueCatService, type StoreSubscriptionState } from './revenuecat.service.js';
 import {
   IAP_PRODUCT_MAP,
   SUBSCRIPTION_PRODUCT_MAP,
@@ -106,6 +107,8 @@ class WebhookService {
 
     const expiresAt = new Date(expiration_at_ms).toISOString();
     const paidEligible = isPaidEligible(facts, 'subscription');
+    // Yazmadan ÖNCE okunur: okuma patlarsa hiçbir şey yazılmamış olur, RevenueCat yeniden dener.
+    const storeState = await this.readStoreState(userId);
 
     switch (eventType) {
       case 'INITIAL_PURCHASE':
@@ -115,33 +118,53 @@ class WebhookService {
         break;
       case 'RENEWAL':
         await subscriptionService.renewSubscription(
-          userId, transaction_id || '', expiresAt, paidEligible
+          userId, plan, transaction_id || '', expiresAt, paidEligible
         );
+        break;
+      case 'UNCANCELLATION':
+        await subscriptionService.uncancelSubscription(userId);
         break;
       case 'CANCELLATION':
         await subscriptionService.cancelSubscription(userId);
         break;
       case 'EXPIRATION':
-        await subscriptionService.expireSubscription(userId);
+        await subscriptionService.expireSubscription(userId, plan);
         break;
+      // PRODUCT_CHANGE yalnız bilgilendirme (RevenueCat: değişim henüz yürürlükte değil):
+      // `product_id` ESKİ ürün, `expiration_at_ms` eski ürünün kesildiği an. Yürürlüğe girince
+      // Apple'da RENEWAL, Google'da INITIAL_PURCHASE yeni ürünle gelir. Buradan dönem açmak
+      // 2026-09-28'de fazladan bonus yatırdı ve premium alan kullanıcıyı bitmiş plus'a düşürdü.
       case 'PRODUCT_CHANGE':
-        await subscriptionService.changeSubscription(
-          userId, plan, transaction_id || '', expiresAt, paidEligible
-        );
-        break;
-      case 'UNCANCELLATION':
-        await subscriptionService.renewSubscription(
-          userId, transaction_id || '', expiresAt, paidEligible
-        );
-        break;
       default:
         break;
     }
+
+    // Erişim olay alanlarından değil mağazadaki güncel durumdan (bkz. readStoreState).
+    if (storeState !== undefined) await subscriptionService.applyStoreState(userId, storeState);
 
     await this.logIapTransaction(
       userId, productId, storeType, transaction_id || '',
       eventType, null, null
     );
+  }
+
+  /**
+   * Mağazadaki güncel abonelik (RevenueCat: "calling the GET /subscribers REST API endpoint after
+   * receiving any webhook"). Olay sırası garanti değil; Google'ın zaman orantılı yükseltmesinde yeni
+   * ürün eskisinden ÖNCE bitebilir; iade dönemi erken bitirir — erişim olay alanlarıyla doğru
+   * kurulamıyor. `undefined` = senkron yapılandırılmamış (yerel), olay türevli durum kalır.
+   * Okuma hatası fırlatılır (iz satırı yazılmadan): RevenueCat yeniden dener.
+   */
+  private async readStoreState(userId: string): Promise<StoreSubscriptionState | null | undefined> {
+    if (!revenueCatService.canSyncSubscriptions()) return undefined;
+    try {
+      return await revenueCatService.getActiveSubscription(userId);
+    } catch (err) {
+      console.error('[webhook] store state read failed', {
+        userId, error: err instanceof Error ? err.message : String(err),
+      });
+      throw Errors.SERVER_ERROR();
+    }
   }
 
   private async handleConsumablePurchase(

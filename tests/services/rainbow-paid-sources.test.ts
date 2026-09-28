@@ -13,6 +13,10 @@ async function setup(seed: Tables = {}) {
     ...seed,
   });
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
+  // Mağaza senkronu kapalı: burada sınanan bonusun ödenmiş payı (yerel .env anahtarı gerçek API'ye gitmesin).
+  vi.doMock('../../src/services/revenuecat.service.js', () => ({
+    revenueCatService: { canSyncSubscriptions: () => false, getActiveSubscription: async () => null },
+  }));
   const { webhookService } = await import('../../src/services/webhook.service.js');
   return { fake, webhookService };
 }
@@ -148,9 +152,16 @@ describe('yenileme ve plan değişimi', () => {
     expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 200, purple_paid: 0 });
   });
 
-  it('PRODUCT_CHANGE (NORMAL, PRODUCTION) yeni planın payını ödenmiş sayar', async () => {
+  // Yükseltme yürürlüğe girince yeni ürünün RENEWAL'ı gelir (PRODUCT_CHANGE bilgilendirme, bonus yok).
+  it('yükseltme RENEWAL\'ı (NORMAL, PRODUCTION) yeni planın payını ödenmiş sayar', async () => {
     const { fake, webhookService } = await setup(renewalSeed());
-    await webhookService.handleRevenueCatEvent(renewal({ type: 'PRODUCT_CHANGE', product_id: 'qulopremiummonthly2', transaction_id: 'tx-pc' }));
+    await webhookService.handleRevenueCatEvent(renewal({ product_id: 'qulopremiummonthly2', transaction_id: 'tx-up' }));
     expect(fake.table('users')[0]).toMatchObject({ subscription_plan: 'premium', purple_diamonds: 1000, purple_paid: 200 });
+  });
+
+  it('PRODUCT_CHANGE bonus yatırmaz, ödenmiş sayaç değişmez', async () => {
+    const { fake, webhookService } = await setup(renewalSeed());
+    await webhookService.handleRevenueCatEvent(renewal({ type: 'PRODUCT_CHANGE', transaction_id: 'tx-pc' }));
+    expect(fake.table('users')[0]).toMatchObject({ subscription_plan: 'plus', purple_diamonds: 0, purple_paid: 0 });
   });
 });
