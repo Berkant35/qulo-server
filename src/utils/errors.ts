@@ -223,6 +223,24 @@ export const Errors = {
   REWARD_REFUND_FAILED: () =>
     new AppError("REWARD_REFUND_FAILED", 500, "Redemption rejected but refund failed"),
 
+  PAGE_SECTION_NOT_FOUND: () =>
+    new AppError("PAGE_SECTION_NOT_FOUND", 404, "Page section or card not found"),
+
+  /** Backoffice: sayfa başına bölüm sınırı (spec §3). */
+  PAGE_SECTION_LIMIT: (limit: number) =>
+    new AppError("PAGE_SECTION_LIMIT", 400, "Too many sections on this page", { limit }),
+
+  /** Backoffice: bölümde aktif kart sınırı (carousel 8, öne çıkanlar 12). */
+  PAGE_SECTION_ITEM_LIMIT: (limit: number) =>
+    new AppError("PAGE_SECTION_ITEM_LIMIT", 400, "Too many active cards in this section", { limit }),
+
+  /** Backoffice: kartın hedef ürünü yok/silinmiş ya da bölümün ülkelerinde değil. */
+  PAGE_SECTION_TARGET_INVALID: () =>
+    new AppError("PAGE_SECTION_TARGET_INVALID", 400, "Card target product is not available for this section"),
+
+  PAGE_SECTION_IMAGE_REQUIRED: () =>
+    new AppError("PAGE_SECTION_IMAGE_REQUIRED", 400, "Banner image is required"),
+
   INVALID_PHOTO_INDEX: () =>
     new AppError("INVALID_PHOTO_INDEX", 400, "Invalid photo index"),
 
