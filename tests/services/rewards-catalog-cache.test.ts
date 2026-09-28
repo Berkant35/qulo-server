@@ -11,9 +11,9 @@ const items = () => [
   { id: 'i-dana', brand_key: 'DANA', country_code: 'ID', currency: 'IDR', face_value: 10000, cost_usd: 0.6, rainbow_price: 20, is_active: true, sort_order: 0, logo_url: null, deleted_at: null },
 ];
 
-async function setup(options?: FakeSupabaseOptions) {
+async function setup(options?: FakeSupabaseOptions, catalogRows = items()) {
   const fake = createFakeSupabase({
-    reward_catalog_items: items(),
+    reward_catalog_items: catalogRows,
     reward_market_countries: [{ country_code: 'TH', currency: 'THB', enabled: true, android_enabled: true, ios_enabled: false }],
   }, options);
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
@@ -83,6 +83,31 @@ describe('rewardsCatalogCache', () => {
 
     await rewardsCatalogCache.listForCountry('TH');
     expect(catalogReads()).toBe(2);
+  });
+
+  it('aktif katalog 500 satır sınırına ulaşırsa her yüklemede bir kez uyarı (sınır ötesi ürün listelenmez VE itfa edilemez)', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const many = Array.from({ length: 501 }, (_, n) => ({
+      id: `i-${String(n).padStart(3, '0')}`, brand_key: 'GRAB', country_code: 'TH', currency: 'THB', face_value: n + 1,
+      cost_usd: 1, rainbow_price: 10, is_active: true, sort_order: n, logo_url: null, deleted_at: null,
+    }));
+    const { rewardsCatalogCache, CATALOG_CACHE_TTL_MS } = await setup(undefined, many);
+    const truncationWarnings = () => warnSpy.mock.calls.filter((c) => String(c[0]).includes('500')).length;
+
+    expect(await rewardsCatalogCache.listForCountry('TH')).toHaveLength(500);
+    expect(await rewardsCatalogCache.getActive('i-500')).toBeNull();
+    expect(truncationWarnings()).toBe(1); // ikinci okuma önbellekten: yükleme yok, uyarı yok
+
+    vi.setSystemTime(new Date(NOW.getTime() + CATALOG_CACHE_TTL_MS + 1));
+    await rewardsCatalogCache.listForCountry('TH');
+    expect(truncationWarnings()).toBe(2);
+  });
+
+  it('sınırın altında uyarı yok', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { rewardsCatalogCache } = await setup();
+    await rewardsCatalogCache.listForCountry('TH');
+    expect(warnSpy).not.toHaveBeenCalled();
   });
 
   it('admin katalog yazımı önbelleği bu süreçte hemen düşürür', async () => {

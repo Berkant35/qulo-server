@@ -57,7 +57,15 @@ class RewardsCatalogCache {
         console.error("[rewards-catalog] aktif katalog okunamadi:", error.message);
         throw Errors.SERVER_ERROR();
       }
-      return ((data ?? []) as MarketItem[]).map(toMarketItem);
+      const rows = (data ?? []) as MarketItem[];
+      if (rows.length >= ACTIVE_ITEM_LIMIT) {
+        // Sessiz kesilme olmasın: sınırın ötesindeki ürünler markette görünmez VE itfa edilemez (getActive yok der).
+        console.warn(
+          `[rewards-catalog] aktif katalog ${ACTIVE_ITEM_LIMIT} satir sinirinda — sinir otesindeki urunler listelenmez ve itfa edilemez`,
+          { limit: ACTIVE_ITEM_LIMIT },
+        );
+      }
+      return rows.map(toMarketItem);
     });
     return items ?? [];
   }
