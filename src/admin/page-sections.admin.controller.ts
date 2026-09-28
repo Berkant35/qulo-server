@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { LOCALE_NAMES, SUPPORTED_LOCALES } from "../constants/locales.js";
-import { APP_ROUTES, SECTION_LIMITS, TARGET_PLATFORMS, type PageKey } from "../utils/page-sections.js";
+import { APP_ROUTES, REWARDS_MARKET_PAGE, SECTION_LIMITS, TARGET_PLATFORMS } from "../utils/page-sections.js";
 import { pageSectionsAdminService, type AdminSection, type AdminSectionItem } from "../services/page-sections-admin.service.js";
 import { pageSectionEventsService, type ItemStats } from "../services/page-section-events.service.js";
 import { rewardsCatalogAdminService } from "../services/rewards-catalog-admin.service.js";
@@ -18,7 +18,6 @@ import {
   type SectionItemRowView,
 } from "./page-sections.admin.view.js";
 
-const PAGE: PageKey = "rewards_market";
 const LIST = "/admin/rewards/sections";
 const NOT_FOUND = `${LIST}?error=not_found`;
 
@@ -49,7 +48,7 @@ const sectionPage = (id: string) => `${LIST}/${id}`;
 class PageSectionsAdminController {
   async list(req: Request, res: Response) {
     try {
-      const sections = await pageSectionsAdminService.listSections(PAGE);
+      const sections = await pageSectionsAdminService.listSections(REWARDS_MARKET_PAGE);
       res.render("rewards-sections-list", {
         sections: sections.map((s) => ({ ...s, targeting: targetingSummary(s) })),
         ...flash(req),
@@ -69,7 +68,7 @@ class PageSectionsAdminController {
     const parsed = sectionFormSchema.safeParse(req.body);
     if (!parsed.success) return this.renderSection(req, res, null, req.body, zodIssues(parsed.error), 400);
     try {
-      const section = await pageSectionsAdminService.createSection(PAGE, parsed.data, req.session.adminId!);
+      const section = await pageSectionsAdminService.createSection(REWARDS_MARKET_PAGE, parsed.data, req.session.adminId!);
       res.redirect(`${sectionPage(section.id)}?notice=saved`);
     } catch (err) {
       await this.renderSection(req, res, null, req.body, SECTIONS_ERRORS[sectionsErrorCode(err, "create")], 400);
@@ -259,7 +258,7 @@ class PageSectionsAdminController {
       if (found) {
         let stats = new Map<string, ItemStats>();
         try {
-          stats = await pageSectionEventsService.stats(PAGE, days);
+          stats = await pageSectionEventsService.stats(REWARDS_MARKET_PAGE, days);
         } catch (err) {
           console.error("[Admin] page sections stats failed:", err);
           statsError = "İstatistik okunamadı — sayılar geçici olarak 0 görünüyor.";

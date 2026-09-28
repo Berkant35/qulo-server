@@ -9,6 +9,8 @@ import type { ClientPlatform } from "./client-meta.js";
 
 export const PAGE_KEYS = ["rewards_market"] as const;
 export type PageKey = (typeof PAGE_KEYS)[number];
+/** Rainbow market ekranı — market yanıtı, itfa kaynak kartı, olaylar ve backoffice aynı sayfayı okur. */
+export const REWARDS_MARKET_PAGE: PageKey = "rewards_market";
 
 export const SECTION_TYPES = ["banner_carousel", "featured_items"] as const;
 export type SectionType = (typeof SECTION_TYPES)[number];
@@ -157,7 +159,8 @@ const isFilledText = (value: unknown): boolean => typeof value === "string" && v
 const optionalText = (value: unknown): string | null => (isFilledText(value) ? (value as string).trim() : null);
 const isAppRoute = (value: unknown): value is AppRoute => (APP_ROUTES as readonly unknown[]).includes(value);
 
-function byOrder(a: { sort_order: number; id: string }, b: { sort_order: number; id: string }): number {
+/** Bölüm/kart sırası: `sort_order`, eşitlikte id (deterministik) — okuma ve backoffice sıralaması aynı kural. */
+export function byOrder(a: { sort_order: number; id: string }, b: { sort_order: number; id: string }): number {
   return a.sort_order - b.sort_order || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
 }
 

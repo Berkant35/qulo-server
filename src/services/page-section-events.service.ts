@@ -1,12 +1,11 @@
 import { supabase } from "../config/supabase.js";
 import type { ClientPlatform } from "../utils/client-meta.js";
 import { Errors } from "../utils/errors.js";
-import { toTargetPlatform, type PageKey } from "../utils/page-sections.js";
+import { REWARDS_MARKET_PAGE, toTargetPlatform, type PageKey } from "../utils/page-sections.js";
 import type { SectionEventsInput } from "../validators/rewards.validator.js";
 import { pageSectionsService } from "./page-sections.service.js";
 import { rainbowAccessService, type RainbowAccessUser } from "./rainbow-access.service.js";
 
-const EVENTS_PAGE: PageKey = "rewards_market";
 const DAY_MS = 86_400_000;
 
 export interface ItemStatsBreakdown {
@@ -33,7 +32,7 @@ export interface ItemStats {
 class PageSectionEventsService {
   /** Yazılan (ya da zaten o gün var olan) satır sayısı. Yayında olmayan / bilinmeyen kart sessizce düşer. */
   async record(userId: string, events: SectionEventsInput["events"], platform?: ClientPlatform): Promise<number> {
-    const published = await pageSectionsService.publishedItemSections(EVENTS_PAGE);
+    const published = await pageSectionsService.publishedItemSections(REWARDS_MARKET_PAGE);
     const seen = new Set<string>();
     const accepted: { item_id: string; section_id: string; event: string }[] = [];
     for (const e of events) {

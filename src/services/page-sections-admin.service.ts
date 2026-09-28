@@ -4,6 +4,7 @@ import { DEGISMEZ_DOSYA_CACHE_CONTROL } from "../constants/storage.js";
 import { Errors } from "../utils/errors.js";
 import { normalizeUploadedImage, NORMAL_GORSEL_MIME } from "../utils/image-normalize.js";
 import {
+  byOrder,
   SECTION_LIMITS,
   type PageKey,
   type SectionItemRow,
@@ -69,8 +70,6 @@ const nextOrder = (rows: { sort_order: number }[]): number =>
 const targetingOf = (input: Pick<SectionInput, "countries" | "platforms" | "locales">) => ({
   countries: input.countries, platforms: input.platforms, locales: input.locales,
 });
-const byOrder = (a: { sort_order: number; id: string }, b: { sort_order: number; id: string }) =>
-  a.sort_order - b.sort_order || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
 
 /**
  * Backoffice "Sayfa bölümleri" (spec 2026-09-28 §6). Yalnız süper admin çağırır (rewards.admin.routes).

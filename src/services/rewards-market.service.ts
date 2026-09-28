@@ -3,7 +3,13 @@ import { supabase } from "../config/supabase.js";
 import { AppError, Errors } from "../utils/errors.js";
 import type { ClientPlatform } from "../utils/client-meta.js";
 import type { SupportedLocale } from "../constants/locales.js";
-import { toTargetPlatform, type PageSectionView, type TargetPlatform, type ViewerContext } from "../utils/page-sections.js";
+import {
+  REWARDS_MARKET_PAGE,
+  toTargetPlatform,
+  type PageSectionView,
+  type TargetPlatform,
+  type ViewerContext,
+} from "../utils/page-sections.js";
 import {
   accountAgeDays,
   CAP_STATUSES,
@@ -127,23 +133,18 @@ export class RewardsMarketService {
     const user = await this.loadUser(userId);
     if (!(await rainbowAccessService.isEnabled(user, platform))) throw Errors.RAINBOW_NOT_AVAILABLE();
 
-    const isAdmin = user.is_test_admin === true;
-    // Test admin: önizleme ülkesi ya da "Tümü" (null). Normal kullanıcı yalnız kendi ülkesi.
-    const country = isAdmin ? (options.previewCountry ?? null) : (user.country ?? "").toUpperCase();
+    const viewer = this.viewerOf(user, platform, options.locale ?? "en", options.previewCountry);
     const [config, items, used] = await Promise.all([
       economyConfigService.getConfig(),
-      rewardsCatalogCache.listForCountry(country),
+      rewardsCatalogCache.listForCountry(viewer.country),
       this.usedThisMonth(userId),
     ]);
-    const sections = await this.sectionsFor(
-      { country, platform: toTargetPlatform(platform), locale: options.locale ?? "en", isTestAdmin: isAdmin },
-      items,
-    );
+    const sections = await this.sectionsFor(viewer, items);
 
     return {
       balance: user.rainbow_diamonds ?? 0,
       items,
-      monthly_cap: isAdmin ? null : config.rainbow.monthlyRedeemCap,
+      monthly_cap: viewer.isTestAdmin ? null : config.rainbow.monthlyRedeemCap,
       used_this_month: used,
       sections,
     };
@@ -191,7 +192,8 @@ export class RewardsMarketService {
     const user = await this.loadUser(userId);
     if (!(await rainbowAccessService.isEnabled(user, platform))) throw Errors.RAINBOW_NOT_AVAILABLE();
 
-    const isAdmin = user.is_test_admin === true;
+    const viewer = this.viewerOf(user, platform, locale);
+    const isAdmin = viewer.isTestAdmin;
     const rules = (await economyConfigService.getConfig()).rainbow;
 
     // Kapalı kalır: yaş hesaplanamazsa (NaN) "yeni" sayılır — `< min` NaN'da kapıyı açardı.
@@ -201,7 +203,7 @@ export class RewardsMarketService {
 
     // Başka ülkenin ürünü "yok" gibi davranır (varlığı sızdırılmaz).
     const item = await rewardsCatalogCache.getActive(input.itemId);
-    if (!item || (!isAdmin && item.country_code !== (user.country ?? "").toUpperCase())) {
+    if (!item || (!isAdmin && item.country_code !== viewer.country)) {
       throw Errors.REWARD_ITEM_UNAVAILABLE();
     }
 
@@ -213,7 +215,7 @@ export class RewardsMarketService {
     }
 
     // Kaynak kart yalnız bu kullanıcıya şu an görünen bir kartsa yazılır — ölçüm uydurma id ile şişmesin.
-    const sourceItemId = await this.visibleSourceItem(input.sourceItemId, user, platform, locale);
+    const sourceItemId = await this.visibleSourceItem(input.sourceItemId, viewer, userId);
 
     const redemptionId = randomUUID();
     const reference = redemptionReference(redemptionId);
@@ -239,7 +241,7 @@ export class RewardsMarketService {
       currency: item.currency,
       face_value: item.face_value,
       idempotency_key: input.idempotencyKey,
-      platform: platform === "ios" || platform === "android" ? platform : null,
+      platform: toTargetPlatform(platform),
       is_test: isAdmin,
       source_item_id: sourceItemId,
     });
@@ -346,7 +348,7 @@ export class RewardsMarketService {
    */
   private async sectionsFor(ctx: ViewerContext, catalog: MarketItem[]): Promise<PageSectionView<MarketItem>[]> {
     try {
-      return await pageSectionsService.resolveForUser("rewards_market", ctx, catalog);
+      return await pageSectionsService.resolveForUser(REWARDS_MARKET_PAGE, ctx, catalog);
     } catch (err) {
       console.error("[rewards] page sections unavailable — market served without sections:", err);
       return [];
@@ -359,26 +361,39 @@ export class RewardsMarketService {
    */
   private async visibleSourceItem(
     sourceItemId: string | undefined,
-    user: MarketUser,
-    platform: ClientPlatform | undefined,
-    locale: SupportedLocale,
+    viewer: ViewerContext,
+    userId: string,
   ): Promise<string | null> {
     if (!sourceItemId) return null;
     try {
-      const isAdmin = user.is_test_admin === true;
-      const country = isAdmin ? null : (user.country ?? "").toUpperCase();
-      const catalog = await rewardsCatalogCache.listForCountry(country);
-      const sections = await this.sectionsFor(
-        { country, platform: toTargetPlatform(platform), locale, isTestAdmin: isAdmin },
-        catalog,
-      );
+      const catalog = await rewardsCatalogCache.listForCountry(viewer.country);
+      const sections = await this.sectionsFor(viewer, catalog);
       return sections.some((s) => s.items.some((item) => item.id === sourceItemId)) ? sourceItemId : null;
     } catch (err) {
       console.warn("[rewards] kaynak kart dogrulanamadi — talep kaynaksiz yazilir, itfa etkilenmez", {
-        userId: user.id, sourceItemId, err,
+        userId, sourceItemId, err,
       });
       return null;
     }
+  }
+
+  /**
+   * Görüntüleyen (market, kaynak kart, itfa ülke kapısı tek kaynaktan): normal kullanıcı kendi ülkesiyle
+   * (büyük harf); test admin önizleme ülkesiyle ya da "Tümü" (null = ülke süzmesi yok).
+   */
+  private viewerOf(
+    user: MarketUser,
+    platform: ClientPlatform | undefined,
+    locale: SupportedLocale,
+    previewCountry?: string,
+  ): ViewerContext {
+    const isTestAdmin = user.is_test_admin === true;
+    return {
+      country: isTestAdmin ? (previewCountry ?? null) : (user.country ?? "").toUpperCase(),
+      platform: toTargetPlatform(platform),
+      locale,
+      isTestAdmin,
+    };
   }
 
   /**
