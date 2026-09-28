@@ -54,6 +54,16 @@ export const marketQuerySchema = z.object({
     .catch(undefined),
 });
 
+export const SECTION_EVENTS = ["impression", "click"] as const;
+
+/** Bölüm kartı olayları — istemci toplar, ekrandan çıkışta / dakikada en çok bir kez yollar. */
+export const sectionEventsSchema = z.object({
+  events: z
+    .array(z.object({ item_id: z.string().uuid(), event: z.enum(SECTION_EVENTS) }))
+    .min(1)
+    .max(50),
+});
+
 // ── Backoffice (form gövdeleri string gelir) ─────────────────────────
 
 export const countrySwitchSchema = z.object({
@@ -112,6 +122,7 @@ export const adminCatalogQuerySchema = z.object({
 export type RedeemInput = z.infer<typeof redeemSchema>;
 export type RedemptionsQuery = z.infer<typeof redemptionsQuerySchema>;
 export type MarketQuery = z.infer<typeof marketQuerySchema>;
+export type SectionEventsInput = z.infer<typeof sectionEventsSchema>;
 export type CountrySwitchInput = z.infer<typeof countrySwitchSchema>;
 export type CatalogItemInput = z.infer<typeof catalogItemSchema>;
 export type FulfillInput = z.infer<typeof fulfillSchema>;

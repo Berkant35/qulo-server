@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { rewardsMarketService } from "../services/rewards-market.service.js";
-import type { MarketQuery, RedeemInput, RedemptionsQuery } from "../validators/rewards.validator.js";
+import { pageSectionEventsService } from "../services/page-section-events.service.js";
+import type { MarketQuery, RedeemInput, RedemptionsQuery, SectionEventsInput } from "../validators/rewards.validator.js";
 import { clientMetaFromHeaders } from "../utils/client-meta.js";
 import { localeFromTag } from "../utils/locales.js";
 
@@ -40,6 +41,18 @@ export async function listRedemptionsHandler(req: Request, res: Response, next: 
   try {
     const { page, limit } = req.query as unknown as RedemptionsQuery;
     res.json(await rewardsMarketService.listMyRedemptions(req.user!.userId, page, limit));
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function recordSectionEventsHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { events } = req.body as SectionEventsInput;
+    const { platform } = clientMetaFromHeaders(req.headers);
+    await pageSectionEventsService.record(req.user!.userId, events, platform);
+    // Düşen (bilinmeyen/yayında olmayan) olaylar da 204: istemci yeniden denemesin.
+    res.status(204).end();
   } catch (err) {
     next(err);
   }

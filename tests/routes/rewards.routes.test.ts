@@ -192,4 +192,30 @@ describe('/api/v1/rewards — kablolama', () => {
     expect((await post('22222222-2222-4222-8222-222222222222', 'bozuk')).status).toBe(200);
     expect(fake.table('reward_redemptions').map((r) => r.source_item_id)).toEqual(['9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d', null]);
   });
+
+  it('POST /events: kimliksiz 401; boş, 51 olay ya da bozuk uuid 400; geçerli 204; dakikada 30 istek sonra 429', async () => {
+    const unauth = await serve({}, { fakeAuth: false });
+    expect((await fetch(`${unauth.base}/events`, { method: 'POST' })).status).toBe(401);
+    await close?.();
+    close = null;
+    vi.resetModules();
+
+    const { base } = await serve({}, { fakeAuth: true });
+    const post = (events: unknown, user = 'u1') => fetch(`${base}/events`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-app-platform': 'android', 'x-test-user': user },
+      body: JSON.stringify({ events }),
+    });
+    const one = { item_id: '0b1b1b1b-0000-4000-8000-000000000001', event: 'impression' };
+
+    expect((await post([])).status).toBe(400);
+    expect((await post(Array.from({ length: 51 }, () => one))).status).toBe(400);
+    expect((await post([{ item_id: 'x', event: 'impression' }])).status).toBe(400);
+    expect((await post([{ ...one, event: 'hover' }])).status).toBe(400);
+
+    // Bilinmeyen kart da 204: istemci yeniden denemesin (sessizce düşer). Önceki 4 istek de limite sayıldı.
+    for (let i = 0; i < 26; i++) expect((await post([one])).status).toBe(204);
+    expect((await post([one])).status).toBe(429);
+    expect((await post([one], 'u2')).status).toBe(204);
+  });
 });

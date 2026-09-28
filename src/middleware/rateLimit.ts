@@ -116,6 +116,17 @@ export const rewardReadLimiter = rateLimit({
   message: rateLimitResponse,
 });
 
+// Bölüm kartı olayları (POST /rewards/events) — istemci toplar ve dakikada en çok bir kez yollar;
+// 30/dk yanlış yapılandırılmış istemciye karşı tavan. Kullanıcı anahtarlı (CGNAT).
+export const rewardEventsLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 30,
+  keyGenerator: userKey,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitResponse,
+});
+
 export const forgotPasswordLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
   limit: 3,
