@@ -8,6 +8,7 @@ import type {
   RewardBrand,
 } from "../validators/rewards.validator.js";
 import { rainbowAccessService } from "./rainbow-access.service.js";
+import { rewardsCatalogCache } from "./rewards-catalog-cache.js";
 
 const COUNTRY_COLUMNS = "country_code, currency, enabled, android_enabled, ios_enabled, updated_at";
 const CATALOG_COLUMNS =
@@ -53,6 +54,7 @@ function toCatalogItem(row: CatalogItem): CatalogItem {
  * Backoffice "Rainbow Market" — ülke anahtarları ve katalog (spec §6). Yalnız süper admin çağırır
  * (rewards.admin.routes). Ülke anahtarı marketi gerçek kullanıcılara açar; katalog fiyatı bekleyen
  * talepleri etkilemez (talep açılışta ürünü anlık görüntüler). Talep kuyruğu: `rewards-queue.service`.
+ * Katalog yazımları market önbelleğini (rewards-catalog-cache) bu süreçte hemen düşürür.
  */
 export class RewardsCatalogAdminService {
   async listCountries(): Promise<MarketCountry[]> {
@@ -124,6 +126,7 @@ export class RewardsCatalogAdminService {
       .select(CATALOG_COLUMNS)
       .single();
     if (error || !data) throw Errors.SERVER_ERROR();
+    rewardsCatalogCache.invalidate();
     return toCatalogItem(data as CatalogItem);
   }
 
@@ -138,6 +141,7 @@ export class RewardsCatalogAdminService {
       .maybeSingle();
     if (error) throw Errors.SERVER_ERROR();
     if (!data) throw Errors.REWARD_ITEM_UNAVAILABLE();
+    rewardsCatalogCache.invalidate();
   }
 
   /** İstenen durumu doğrudan yazar (okumadan): çift tıklama ya da tekrar gönderim güvenli. */
@@ -151,6 +155,7 @@ export class RewardsCatalogAdminService {
       .maybeSingle();
     if (error) throw Errors.SERVER_ERROR();
     if (!data) throw Errors.REWARD_ITEM_UNAVAILABLE();
+    rewardsCatalogCache.invalidate();
   }
 
   /** Soft delete: geçmiş talepler ürüne FK ile bağlı; satır kalır, katalogdan ve marketten düşer. */
@@ -162,6 +167,7 @@ export class RewardsCatalogAdminService {
       .eq("id", id)
       .is("deleted_at", null);
     if (error) throw Errors.SERVER_ERROR();
+    rewardsCatalogCache.invalidate();
   }
 
   /** Para birimi formdan gelmez: ülkenin para birimidir (TH → THB). Bilinmeyen ülke reddedilir. */

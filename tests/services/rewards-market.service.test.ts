@@ -123,6 +123,13 @@ describe('rewardsMarketService.getMarket', () => {
     );
     await expect(rewardsMarketService.getMarket('u1', 'android')).rejects.toMatchObject({ code: 'SERVER_ERROR' });
   });
+
+  it('katalog önbellekten: art arda iki market açılışı kataloğu bir kez okur', async () => {
+    const { fake, rewardsMarketService } = await setup({ users: [user()] });
+    await rewardsMarketService.getMarket('u1', 'android');
+    await rewardsMarketService.getMarket('u1', 'android');
+    expect(fake.queries.filter((q) => q.table === 'reward_catalog_items').length).toBe(1);
+  });
 });
 
 describe('rewardsMarketService.listMyRedemptions', () => {

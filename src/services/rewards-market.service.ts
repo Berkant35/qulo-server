@@ -14,26 +14,16 @@ import type { RedemptionStatus, RewardBrand } from "../validators/rewards.valida
 import { diamondService } from "./diamond.service.js";
 import { economyConfigService } from "./economy-config.service.js";
 import { rainbowAccessService, type RainbowAccessUser } from "./rainbow-access.service.js";
+import { rewardsCatalogCache, type MarketItem } from "./rewards-catalog-cache.js";
+
+export type { MarketItem } from "./rewards-catalog-cache.js";
 
 const USER_COLUMNS =
   "id, country, created_at, rainbow_diamonds, is_test_admin, is_seed_profile, is_test_account";
-const ITEM_COLUMNS = "id, brand_key, country_code, currency, face_value, rainbow_price, logo_url";
 const REDEMPTION_COLUMNS =
   "id, status, brand_key, country_code, currency, face_value, rainbow_price, delivery_code, delivery_url, reject_reason, created_at, decided_at";
-/** Katalog küçük (ülke başına birkaç kupür); yine de sınırsız okuma yok. */
-const MARKET_ITEM_LIMIT = 200;
 /** Bir kullanıcının bir aydaki talepleri — tavan 150 rainbow iken birkaç satır; sınır savunma. */
 const MONTH_SCAN_LIMIT = 1000;
-
-export interface MarketItem {
-  id: string;
-  brand_key: RewardBrand;
-  country_code: string;
-  currency: string;
-  face_value: number;
-  rainbow_price: number;
-  logo_url: string | null;
-}
 
 export interface MarketView {
   balance: number;
@@ -77,19 +67,6 @@ export interface RedeemResult {
   balance: number;
 }
 
-/** PostgREST numeric'i sayı döner; yine de tek yerde `Number` ile sabitlenir. */
-function toMarketItem(row: MarketItem): MarketItem {
-  return {
-    id: row.id,
-    brand_key: row.brand_key,
-    country_code: row.country_code,
-    currency: row.currency,
-    face_value: Number(row.face_value),
-    rainbow_price: row.rainbow_price,
-    logo_url: row.logo_url ?? null,
-  };
-}
-
 function toRedemptionView(row: RedemptionView): RedemptionView {
   return {
     id: row.id,
@@ -111,6 +88,7 @@ function toRedemptionView(row: RedemptionView): RedemptionView {
  * Rainbow market (spec 2026-09-27 §2.6). Görünürlük tek kaynaktan: `rainbowAccessService`.
  * Test admin tüm ülkelerin aktif ürünlerini görür (ülkeler kullanıcılara kapalıyken uçtan uca
  * deneme — kullanıcı isteği 2026-09-27).
+ * Katalog 60 sn önbellekten (rewards-catalog-cache); admin yazımı bu süreçte hemen düşürür.
  */
 export class RewardsMarketService {
   /** Market ekranı. Erişim kapalıysa 403: katalog bile görünmez. */
@@ -121,7 +99,7 @@ export class RewardsMarketService {
     const isAdmin = user.is_test_admin === true;
     const [config, items, used] = await Promise.all([
       economyConfigService.getConfig(),
-      this.listActiveItems(isAdmin ? null : (user.country ?? "").toUpperCase()),
+      rewardsCatalogCache.listForCountry(isAdmin ? null : (user.country ?? "").toUpperCase()),
       this.usedThisMonth(userId),
     ]);
 
@@ -183,7 +161,7 @@ export class RewardsMarketService {
     }
 
     // Başka ülkenin ürünü "yok" gibi davranır (varlığı sızdırılmaz).
-    const item = await this.loadActiveItem(input.itemId);
+    const item = await rewardsCatalogCache.getActive(input.itemId);
     if (!item || (!isAdmin && item.country_code !== (user.country ?? "").toUpperCase())) {
       throw Errors.REWARD_ITEM_UNAVAILABLE();
     }
@@ -281,18 +259,6 @@ export class RewardsMarketService {
     return data ? toRedemptionView(data as RedemptionView) : null;
   }
 
-  private async loadActiveItem(itemId: string): Promise<MarketItem | null> {
-    const { data, error } = await supabase
-      .from("reward_catalog_items")
-      .select(ITEM_COLUMNS)
-      .eq("id", itemId)
-      .eq("is_active", true)
-      .is("deleted_at", null)
-      .maybeSingle();
-    if (error) throw Errors.SERVER_ERROR();
-    return data ? toMarketItem(data as MarketItem) : null;
-  }
-
   private async rainbowBalance(userId: string): Promise<number> {
     return (await diamondService.getBalance(userId)).rainbow;
   }
@@ -317,25 +283,6 @@ export class RewardsMarketService {
     if (error) throw Errors.SERVER_ERROR();
     if (!data) throw Errors.USER_NOT_FOUND();
     return data as MarketUser;
-  }
-
-  /** `countryCode` null = test admin: tüm ülkeler. */
-  private async listActiveItems(countryCode: string | null): Promise<MarketItem[]> {
-    let query = supabase
-      .from("reward_catalog_items")
-      .select(ITEM_COLUMNS)
-      .eq("is_active", true)
-      .is("deleted_at", null);
-    if (countryCode !== null) query = query.eq("country_code", countryCode);
-
-    const { data, error } = await query
-      .order("country_code", { ascending: true })
-      .order("sort_order", { ascending: true })
-      .order("face_value", { ascending: true })
-      .limit(MARKET_ITEM_LIMIT);
-
-    if (error) throw Errors.SERVER_ERROR();
-    return ((data ?? []) as MarketItem[]).map(toMarketItem);
   }
 
   /** Bu takvim ayında (UTC) tavana sayılan talep toplamı. */
