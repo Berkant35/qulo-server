@@ -1,5 +1,4 @@
 import type { Request, Response } from "express";
-import type { ZodError } from "zod";
 import { AppError } from "../utils/errors.js";
 import { suggestedRainbowPrice } from "../utils/rewards.js";
 import { rewardsCatalogAdminService } from "../services/rewards-catalog-admin.service.js";
@@ -8,13 +7,13 @@ import { economyConfigService } from "../services/economy-config.service.js";
 import {
   REWARD_BRANDS,
   adminCatalogQuerySchema,
-  adminIdParamSchema,
   adminRedemptionsQuerySchema,
   catalogItemSchema,
   countrySwitchSchema,
   fulfillSchema,
   rejectSchema,
 } from "../validators/rewards.validator.js";
+import { flashMessage, uuidParam, zodIssues } from "./admin-form.js";
 
 /** `?error=` kodu → ekrandaki mesaj (backoffice Türkçe). Bilinmeyen kod gösterilmez. */
 export const REWARDS_ERRORS: Record<string, string> = {
@@ -56,30 +55,15 @@ export function rewardsErrorCode(err: unknown, context: string): string {
   return "failed";
 }
 
-/** Yalnız haritanın KENDİ anahtarı: `?error=constructor` prototip üyesine düşmesin. */
-function messageFor(map: Record<string, string>, key: unknown): string | null {
-  return typeof key === "string" && Object.prototype.hasOwnProperty.call(map, key) ? map[key] : null;
-}
-
 function flash(req: Request) {
   return {
-    error: messageFor(REWARDS_ERRORS, req.query.error),
-    notice: messageFor(REWARDS_NOTICES, req.query.notice),
+    error: flashMessage(REWARDS_ERRORS, req.query.error),
+    notice: flashMessage(REWARDS_NOTICES, req.query.notice),
   };
-}
-
-/** `:id` uuid değilse null: servis (ve PostgREST'in uuid dönüşüm hatası → 500) hiç çağrılmaz. */
-function idParam(req: Request): string | null {
-  const parsed = adminIdParamSchema.safeParse(req.params.id);
-  return parsed.success ? parsed.data : null;
 }
 
 const CATALOG_UNAVAILABLE = "/admin/rewards/catalog?error=item_unavailable";
 const REDEMPTION_NOT_FOUND = "/admin/rewards/redemptions?error=not_found";
-
-function issues(error: ZodError): string {
-  return error.errors.map((e) => `${e.path.join(".")}: ${e.message}`).join(" · ");
-}
 
 /** Geçersiz formu, admin'in girdiği değerlerle yeniden göstermek için. */
 function formValues(body: Record<string, unknown>, id?: string) {
@@ -157,7 +141,7 @@ class RewardsAdminController {
   }
 
   async catalogEdit(req: Request, res: Response) {
-    const id = idParam(req);
+    const id = uuidParam(req.params.id);
     if (!id) return res.redirect(CATALOG_UNAVAILABLE);
     try {
       const item = await rewardsCatalogAdminService.getCatalogItem(id);
@@ -170,7 +154,7 @@ class RewardsAdminController {
 
   async catalogCreate(req: Request, res: Response) {
     const parsed = catalogItemSchema.safeParse(req.body);
-    if (!parsed.success) return this.renderEdit(req, res, formValues(req.body), issues(parsed.error), 400);
+    if (!parsed.success) return this.renderEdit(req, res, formValues(req.body), zodIssues(parsed.error), 400);
     try {
       await rewardsCatalogAdminService.createCatalogItem(parsed.data);
       res.redirect("/admin/rewards/catalog?notice=saved");
@@ -180,10 +164,10 @@ class RewardsAdminController {
   }
 
   async catalogUpdate(req: Request, res: Response) {
-    const id = idParam(req);
+    const id = uuidParam(req.params.id);
     if (!id) return res.redirect(CATALOG_UNAVAILABLE);
     const parsed = catalogItemSchema.safeParse(req.body);
-    if (!parsed.success) return this.renderEdit(req, res, formValues(req.body, id), issues(parsed.error), 400);
+    if (!parsed.success) return this.renderEdit(req, res, formValues(req.body, id), zodIssues(parsed.error), 400);
     try {
       await rewardsCatalogAdminService.updateCatalogItem(id, parsed.data);
       res.redirect("/admin/rewards/catalog?notice=saved");
@@ -193,7 +177,7 @@ class RewardsAdminController {
   }
 
   async catalogSetActive(req: Request, res: Response) {
-    const id = idParam(req);
+    const id = uuidParam(req.params.id);
     if (!id) return res.redirect(CATALOG_UNAVAILABLE);
     try {
       await rewardsCatalogAdminService.setCatalogActive(id, req.body.active === "1");
@@ -204,7 +188,7 @@ class RewardsAdminController {
   }
 
   async catalogDelete(req: Request, res: Response) {
-    const id = idParam(req);
+    const id = uuidParam(req.params.id);
     if (!id) return res.redirect(CATALOG_UNAVAILABLE);
     try {
       await rewardsCatalogAdminService.softDeleteCatalogItem(id);
@@ -236,7 +220,7 @@ class RewardsAdminController {
   }
 
   async fulfill(req: Request, res: Response) {
-    const id = idParam(req);
+    const id = uuidParam(req.params.id);
     if (!id) return res.redirect(REDEMPTION_NOT_FOUND);
     const parsed = fulfillSchema.safeParse(req.body);
     if (!parsed.success) return res.redirect("/admin/rewards/redemptions?error=invalid_input");
@@ -249,7 +233,7 @@ class RewardsAdminController {
   }
 
   async reject(req: Request, res: Response) {
-    const id = idParam(req);
+    const id = uuidParam(req.params.id);
     if (!id) return res.redirect(REDEMPTION_NOT_FOUND);
     const parsed = rejectSchema.safeParse(req.body);
     if (!parsed.success) return res.redirect("/admin/rewards/redemptions?error=invalid_input");

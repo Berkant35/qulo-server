@@ -1,0 +1,138 @@
+<%- include('_header') %>
+<%
+  const editing = !!section;
+  const val = (key, fallback) => form ? (typeof form[key] === 'string' ? form[key] : '') : (fallback ?? '');
+  const picked = (key, list) => form ? [].concat(form[key] ?? []) : (list ?? []);
+  const heading = (l) => val('heading_' + l, section && section.heading ? section.heading[l] : '');
+  const type = editing ? section.section_type : val('section_type', 'banner_carousel');
+  const cardLimit = type === 'banner_carousel' ? limits.carouselItems : limits.featuredItems;
+%>
+<h2 style="margin-bottom:12px;">&#127752; <%= editing ? 'Bölümü düzenle' : 'Yeni bölüm' %></h2>
+<%- include('_rewards-nav') %>
+<p><a href="/admin/rewards/sections">← Bölümler</a></p>
+
+<form method="POST" action="<%= editing ? '/admin/rewards/sections/' + section.id : '/admin/rewards/sections' %>">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+  <div class="card" style="max-width:760px;">
+    <label>Tür *</label>
+    <% if (editing) { %>
+      <input type="hidden" name="section_type" value="<%= section.section_type %>" />
+      <p style="margin-top:0;"><strong><%= section.section_type === 'banner_carousel' ? 'Banner carousel' : 'Öne çıkan ürünler' %></strong>
+        <span style="color:#666;font-size:12px;">(tür oluşturulduktan sonra değişmez; durum: <%= section.status === 'published' ? 'YAYINDA' : 'TASLAK' %>)</span></p>
+    <% } else { %>
+      <select name="section_type" style="width:100%;margin-bottom:12px;">
+        <option value="banner_carousel" <%= type === 'banner_carousel' ? 'selected' : '' %>>Banner carousel (1–<%= limits.carouselItems %> görsel kart)</option>
+        <option value="featured_items" <%= type === 'featured_items' ? 'selected' : '' %>>Öne çıkan ürünler (1–<%= limits.featuredItems %> ürün)</option>
+      </select>
+    <% } %>
+
+    <label>Başlık (dil başına ≤ <%= limits.headingLength %> karakter; hepsi boş = başlıksız)</label>
+    <details open style="margin-bottom:8px;">
+      <summary>Türkçe + İngilizce</summary>
+      <% ['tr', 'en'].forEach((l) => { %>
+        <div><small><%= localeNames[l] %></small>
+          <input name="heading_<%= l %>" maxlength="<%= limits.headingLength %>" value="<%= heading(l) %>" style="width:100%;" /></div>
+      <% }) %>
+    </details>
+    <details style="margin-bottom:12px;">
+      <summary>Diğer diller</summary>
+      <% locales.filter((l) => l !== 'tr' && l !== 'en').forEach((l) => { %>
+        <div><small><%= localeNames[l] %> (<%= l %>)</small>
+          <input name="heading_<%= l %>" maxlength="<%= limits.headingLength %>" value="<%= heading(l) %>" style="width:100%;" /></div>
+      <% }) %>
+    </details>
+
+    <label>Ülkeler (hiçbiri = hepsi)</label>
+    <div style="margin-bottom:12px;">
+      <% countries.forEach((c) => { %>
+        <label style="margin-right:12px;"><input type="checkbox" name="countries" value="<%= c.country_code %>" <%= picked('countries', section && section.countries).includes(c.country_code) ? 'checked' : '' %> /> <%= c.country_code %></label>
+      <% }) %>
+    </div>
+    <label>Platformlar (hiçbiri = hepsi)</label>
+    <div style="margin-bottom:12px;">
+      <% platforms.forEach((p) => { %>
+        <label style="margin-right:12px;"><input type="checkbox" name="platforms" value="<%= p %>" <%= picked('platforms', section && section.platforms).includes(p) ? 'checked' : '' %> /> <%= p === 'ios' ? 'iOS' : 'Android' %></label>
+      <% }) %>
+    </div>
+    <label>Diller (hiçbiri = hepsi)</label>
+    <div style="margin-bottom:12px;">
+      <% locales.forEach((l) => { %>
+        <label style="margin-right:8px;white-space:nowrap;"><input type="checkbox" name="locales" value="<%= l %>" <%= picked('locales', section && section.locales).includes(l) ? 'checked' : '' %> /> <%= l %></label>
+      <% }) %>
+    </div>
+
+    <% if (!editing || type === 'banner_carousel') { %>
+      <label>Otomatik kayma, sn (yalnız carousel; 0 = kapalı, 3–10)</label>
+      <input name="autoplay_seconds" type="number" min="0" max="10" value="<%= val('autoplay_seconds', section ? section.autoplay_seconds : 5) %>" style="width:120px;margin-bottom:12px;" />
+    <% } %>
+
+    <div>
+      <button type="submit" class="btn btn-primary"><%= editing ? 'Kaydet' : 'Oluştur (taslak)' %></button>
+      <a href="/admin/rewards/sections" class="btn">Vazgeç</a>
+    </div>
+  </div>
+</form>
+
+<% if (editing) { %>
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+    <h3 style="margin:0;"><%= type === 'banner_carousel' ? 'Kartlar' : 'Ürünler' %> (aktif en çok <%= cardLimit %>)</h3>
+    <div>
+      <a href="?days=7" class="btn btn-sm <%= days === 7 ? 'btn-primary' : '' %>">Son 7 gün</a>
+      <a href="?days=30" class="btn btn-sm <%= days === 30 ? 'btn-primary' : '' %>">Son 30 gün</a>
+      <a href="/admin/rewards/sections/<%= section.id %>/items/new" class="btn btn-sm btn-primary">+ <%= type === 'banner_carousel' ? 'Kart ekle' : 'Ürün ekle' %></a>
+    </div>
+  </div>
+  <% if (statsError) { %><div class="alert alert-error"><%= statsError %></div><% } %>
+  <table>
+    <thead><tr><th>Sıra</th><th>Kart</th><th>Hedefleme</th><th>Durum</th><th>Gösterim</th><th>Tıklama</th><th>İtfa</th><th></th></tr></thead>
+    <tbody>
+      <% if (items.length === 0) { %><tr><td colspan="8" style="color:#666;">Henüz kart yok — kartı olmayan bölüm uygulamada görünmez.</td></tr><% } %>
+      <% items.forEach((it, i) => { %>
+      <tr>
+        <td style="white-space:nowrap;">
+          <%= i + 1 %>
+          <form method="POST" action="/admin/rewards/sections/<%= section.id %>/items/<%= it.id %>/move" style="display:inline;">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" /><input type="hidden" name="direction" value="up" />
+            <button type="submit" class="btn btn-sm" <%= i === 0 ? 'disabled' : '' %>>↑</button>
+          </form>
+          <form method="POST" action="/admin/rewards/sections/<%= section.id %>/items/<%= it.id %>/move" style="display:inline;">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" /><input type="hidden" name="direction" value="down" />
+            <button type="submit" class="btn btn-sm" <%= i === items.length - 1 ? 'disabled' : '' %>>↓</button>
+          </form>
+        </td>
+        <td>
+          <% if (it.image_url) { %><img src="<%= it.image_url %>" alt="" style="width:72px;height:40px;object-fit:cover;vertical-align:middle;border-radius:4px;" /> <% } %>
+          <%= it.label %>
+          <% if (it.target_unavailable) { %><span class="badge badge-offline">görünmüyor: ürün pasif</span><% } %>
+        </td>
+        <td style="font-size:12px;"><%= it.targeting %></td>
+        <td><span class="badge <%= it.is_active ? 'badge-resolved' : 'badge-offline' %>"><%= it.is_active ? 'Aktif' : 'Pasif' %></span></td>
+        <td><%= it.stats.impressions %></td>
+        <td><%= it.stats.clicks %></td>
+        <td><%= it.stats.redemptions %></td>
+        <td style="white-space:nowrap;">
+          <a href="/admin/rewards/sections/<%= section.id %>/items/<%= it.id %>" class="btn btn-sm">Düzenle</a>
+          <form method="POST" action="/admin/rewards/sections/<%= section.id %>/items/<%= it.id %>/active" style="display:inline;">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <input type="hidden" name="active" value="<%= it.is_active ? '0' : '1' %>" />
+            <button type="submit" class="btn btn-sm"><%= it.is_active ? 'Pasifleştir' : 'Aktifleştir' %></button>
+          </form>
+          <form method="POST" action="/admin/rewards/sections/<%= section.id %>/items/<%= it.id %>/delete" style="display:inline;" onsubmit="return confirm('Kart silinsin mi? İstatistikleri de silinir.');">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <button type="submit" class="btn btn-sm btn-danger">Sil</button>
+          </form>
+        </td>
+      </tr>
+      <% if (it.stats.breakdown.length > 0) { %>
+      <tr><td></td><td colspan="7" style="color:#666;font-size:12px;">
+        <%= it.stats.breakdown.map((b) => `${b.country || '?'}/${b.platform || '?'}: ${b.impressions} gösterim, ${b.clicks} tıklama, ${b.redemptions} itfa`).join(' · ') %>
+      </td></tr>
+      <% } %>
+      <% }) %>
+    </tbody>
+  </table>
+  <p style="color:#666;font-size:12px;margin-bottom:0;">Gösterim ve tıklama kullanıcı başı günde bir sayılır. İtfa = bu karttan başlayan hediye kartı talebi.</p>
+</div>
+<% } %>
+<%- include('_footer') %>

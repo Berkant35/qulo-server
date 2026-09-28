@@ -1,0 +1,55 @@
+<%- include('_header') %>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+  <h2>&#127752; Rainbow Market — Sayfa bölümleri</h2>
+  <a href="/admin/rewards/sections/new" class="btn btn-primary">+ Yeni bölüm</a>
+</div>
+<%- include('_rewards-nav') %>
+<p style="color:#666;font-size:13px;margin-top:0;">
+  Market ekranının vitrini. Değişiklik uygulamada en geç 60 sn içinde görünür. TASLAK bölümleri yalnız test admin
+  görür (telefondaki ülke seçiciyle önizle). Sayfa başına en fazla <%= limits.sectionsPerPage %> bölüm.
+</p>
+
+<div class="card">
+  <table>
+    <thead><tr><th>Sıra</th><th>Tür</th><th>Başlık</th><th>Durum</th><th>Hedefleme</th><th>Kart</th><th></th></tr></thead>
+    <tbody>
+      <% if (sections.length === 0) { %><tr><td colspan="7" style="color:#666;">Henüz bölüm yok.</td></tr><% } %>
+      <% sections.forEach((s, i) => { %>
+      <tr>
+        <td style="white-space:nowrap;">
+          <%= i + 1 %>
+          <form method="POST" action="/admin/rewards/sections/<%= s.id %>/move" style="display:inline;">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" /><input type="hidden" name="direction" value="up" />
+            <button type="submit" class="btn btn-sm" <%= i === 0 ? 'disabled' : '' %>>↑</button>
+          </form>
+          <form method="POST" action="/admin/rewards/sections/<%= s.id %>/move" style="display:inline;">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" /><input type="hidden" name="direction" value="down" />
+            <button type="submit" class="btn btn-sm" <%= i === sections.length - 1 ? 'disabled' : '' %>>↓</button>
+          </form>
+        </td>
+        <td><%= s.section_type === 'banner_carousel' ? 'Banner carousel' : 'Öne çıkan ürünler' %></td>
+        <td><%= (s.heading && (s.heading.tr || s.heading.en)) || '—' %></td>
+        <td><span class="badge <%= s.status === 'published' ? 'badge-resolved' : 'badge-pending' %>"><%= s.status === 'published' ? 'YAYINDA' : 'TASLAK' %></span></td>
+        <td style="font-size:12px;"><%= s.targeting %></td>
+        <td>
+          <%= s.active_item_count %>/<%= s.item_count %>
+          <% if (s.unavailable_count > 0) { %><span class="badge badge-offline"><%= s.unavailable_count %> kart görünmüyor: ürün pasif</span><% } %>
+        </td>
+        <td style="white-space:nowrap;">
+          <a href="/admin/rewards/sections/<%= s.id %>" class="btn btn-sm">Düzenle</a>
+          <form method="POST" action="/admin/rewards/sections/<%= s.id %>/status" style="display:inline;">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <input type="hidden" name="status" value="<%= s.status === 'published' ? 'draft' : 'published' %>" />
+            <button type="submit" class="btn btn-sm"><%= s.status === 'published' ? 'Taslağa al' : 'Yayınla' %></button>
+          </form>
+          <form method="POST" action="/admin/rewards/sections/<%= s.id %>/delete" style="display:inline;" onsubmit="return confirm('Bölüm silinsin mi? Uygulamadan hemen kalkar.');">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <button type="submit" class="btn btn-sm btn-danger">Sil</button>
+          </form>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<%- include('_footer') %>

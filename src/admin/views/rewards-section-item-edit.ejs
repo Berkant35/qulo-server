@@ -1,0 +1,94 @@
+<%- include('_header') %>
+<%
+  const editing = !!item;
+  const banner = section.section_type === 'banner_carousel';
+  const val = (key, fallback) => form ? (typeof form[key] === 'string' ? form[key] : '') : (fallback ?? '');
+  const picked = (key, list) => form ? [].concat(form[key] ?? []) : (list ?? []);
+  const textOf = (field, l) => {
+    const stored = item && item.content && item.content[l] ? item.content[l][field === 'cta' ? 'cta_label' : field] : '';
+    return val(field + '_' + l, stored);
+  };
+  const activeChecked = form ? form.is_active === 'on' : (item ? item.is_active : true);
+  const actionType = val('action_type', item ? item.action_type : 'none');
+  const productId = banner ? val('action_catalog_item_id', item ? item.action_catalog_item_id : '') : val('catalog_item_id', item ? item.catalog_item_id : '');
+  const route = val('action_route', item ? item.action_route : '');
+  const localeGroups = [
+    ['Türkçe + İngilizce', locales.filter((l) => l === 'tr' || l === 'en'), true],
+    ['Diğer diller', locales.filter((l) => l !== 'tr' && l !== 'en'), false],
+  ];
+  const optionLabel = (o) => `${o.brand_key} · ${o.country_code} · ${o.face_value} ${o.currency}${o.is_active ? '' : ' (pasif)'}`;
+%>
+<h2 style="margin-bottom:12px;">&#127752; <%= editing ? 'Kartı düzenle' : (banner ? 'Yeni banner kartı' : 'Yeni öne çıkan ürün') %></h2>
+<%- include('_rewards-nav') %>
+<p><a href="/admin/rewards/sections/<%= section.id %>">← Bölüme dön</a></p>
+
+<form method="POST" enctype="multipart/form-data" action="<%= editing ? '/admin/rewards/sections/' + section.id + '/items/' + item.id : '/admin/rewards/sections/' + section.id + '/items' %>">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+  <div class="card" style="max-width:760px;">
+  <% if (banner) { %>
+    <label>Görsel <%= editing ? '(yeni seçilmezse mevcut kalır)' : '*' %></label>
+    <p style="color:#666;font-size:12px;margin-top:0;">Metinsiz görsel — yazıyı uygulama çizer (18 dil). JPG/PNG/WEBP, ≤ 8 MB; sunucu ≤ 1440 px JPEG'e çevirir.</p>
+    <% if (editing && item.image_url) { %><div><img src="<%= item.image_url %>" alt="" style="max-width:320px;border-radius:6px;margin:6px 0;" /></div><% } %>
+    <input type="file" name="image" accept="image/jpeg,image/png,image/webp" style="margin-bottom:12px;" />
+
+    <label>Metin (başlık ≤ <%= limits.titleLength %>, alt başlık ≤ <%= limits.subtitleLength %>, buton ≤ <%= limits.ctaLength %>; en az bir dilde başlık)</label>
+    <% localeGroups.forEach(([title, group, open]) => { %>
+      <details <%= open ? 'open' : '' %> style="margin-bottom:8px;">
+        <summary><%= title %></summary>
+        <% group.forEach((l) => { %>
+          <fieldset style="border:1px solid #eee;margin:6px 0;padding:6px;">
+            <legend><small><%= localeNames[l] %> (<%= l %>)</small></legend>
+            <input name="title_<%= l %>" maxlength="<%= limits.titleLength %>" placeholder="Başlık" value="<%= textOf('title', l) %>" style="width:100%;" />
+            <input name="subtitle_<%= l %>" maxlength="<%= limits.subtitleLength %>" placeholder="Alt başlık (isteğe bağlı)" value="<%= textOf('subtitle', l) %>" style="width:100%;" />
+            <input name="cta_<%= l %>" maxlength="<%= limits.ctaLength %>" placeholder="Buton (isteğe bağlı)" value="<%= textOf('cta', l) %>" style="width:100%;" />
+          </fieldset>
+        <% }) %>
+      </details>
+    <% }) %>
+
+    <label>Buton hedefi</label>
+    <select name="action_type" style="width:100%;margin-bottom:8px;">
+      <option value="none" <%= actionType === 'none' ? 'selected' : '' %>>Yok (yalnız görsel)</option>
+      <option value="catalog_item" <%= actionType === 'catalog_item' ? 'selected' : '' %>>Katalog ürünü (itfa sayfası açılır)</option>
+      <option value="app_route" <%= actionType === 'app_route' ? 'selected' : '' %>>Uygulama içi sayfa</option>
+    </select>
+    <label>Ürün ("Katalog ürünü" seçiliyse; bölümün ülkelerine süzülü)</label>
+    <select name="action_catalog_item_id" style="width:100%;margin-bottom:8px;">
+      <option value="">—</option>
+      <% options.forEach((o) => { %><option value="<%= o.id %>" <%= productId === o.id ? 'selected' : '' %>><%= optionLabel(o) %></option><% }) %>
+    </select>
+    <label>Sayfa ("Uygulama içi sayfa" seçiliyse)</label>
+    <select name="action_route" style="width:100%;margin-bottom:12px;">
+      <option value="">—</option>
+      <% appRoutes.forEach((r) => { %><option value="<%= r %>" <%= route === r ? 'selected' : '' %>><%= routeLabels[r] %></option><% }) %>
+    </select>
+  <% } else { %>
+    <label>Ürün * (bölümün ülkelerine süzülü)</label>
+    <select name="catalog_item_id" style="width:100%;margin-bottom:12px;">
+      <% options.forEach((o) => { %><option value="<%= o.id %>" <%= productId === o.id ? 'selected' : '' %>><%= optionLabel(o) %></option><% }) %>
+    </select>
+  <% } %>
+
+    <label>Kart hedeflemesi (hiçbiri = bölümden devralır)</label>
+    <div style="margin-bottom:8px;">
+      <% countries.forEach((c) => { %>
+        <label style="margin-right:12px;"><input type="checkbox" name="countries" value="<%= c.country_code %>" <%= picked('countries', item && item.countries).includes(c.country_code) ? 'checked' : '' %> /> <%= c.country_code %></label>
+      <% }) %>
+    </div>
+    <div style="margin-bottom:8px;">
+      <% platforms.forEach((p) => { %>
+        <label style="margin-right:12px;"><input type="checkbox" name="platforms" value="<%= p %>" <%= picked('platforms', item && item.platforms).includes(p) ? 'checked' : '' %> /> <%= p === 'ios' ? 'iOS' : 'Android' %></label>
+      <% }) %>
+    </div>
+    <div style="margin-bottom:12px;">
+      <% locales.forEach((l) => { %>
+        <label style="margin-right:8px;white-space:nowrap;"><input type="checkbox" name="locales" value="<%= l %>" <%= picked('locales', item && item.locales).includes(l) ? 'checked' : '' %> /> <%= l %></label>
+      <% }) %>
+    </div>
+
+    <label style="display:block;margin-bottom:12px;"><input type="checkbox" name="is_active" <%= activeChecked ? 'checked' : '' %> /> Aktif</label>
+    <button type="submit" class="btn btn-primary"><%= editing ? 'Kaydet' : 'Ekle' %></button>
+    <a href="/admin/rewards/sections/<%= section.id %>" class="btn">Vazgeç</a>
+  </div>
+</form>
+<%- include('_footer') %>
