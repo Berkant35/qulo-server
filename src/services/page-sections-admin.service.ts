@@ -385,6 +385,7 @@ class PageSectionsAdminService {
   /**
    * Komşuyla yer değiştirir ve listeyi 0..n-1 numaralar (eski eşit sort_order'lar da düzelir); yalnız
    * değişen satırlar yazılır (≤ 12 satır, nadir admin işlemi). Uçtaki öğe o yöne gidemez: etkisiz.
+   * Yazımlar tek tek (transaction yok): yarıda patlarsa yazılan kısım kalıcıdır, önbellek YİNE düşer.
    */
   private async reorder(
     table: "page_sections" | "page_section_items",
@@ -400,15 +401,18 @@ class PageSectionsAdminService {
 
     const [moved] = ordered.splice(index, 1);
     ordered.splice(target, 0, moved!);
-    for (const [position, row] of ordered.entries()) {
-      if (row.sort_order === position) continue;
-      const { error } = await supabase
-        .from(table)
-        .update({ sort_order: position, updated_at: new Date().toISOString() })
-        .eq("id", row.id);
-      if (error) throw Errors.SERVER_ERROR();
+    try {
+      for (const [position, row] of ordered.entries()) {
+        if (row.sort_order === position) continue;
+        const { error } = await supabase
+          .from(table)
+          .update({ sort_order: position, updated_at: new Date().toISOString() })
+          .eq("id", row.id);
+        if (error) throw Errors.SERVER_ERROR();
+      }
+    } finally {
+      pageSectionsService.invalidate();
     }
-    pageSectionsService.invalidate();
   }
 
   /** Metinsiz banner görseli: JPEG'e normalize (≤ 1440, q80), değişmez yol + 30 gün önbellek (CDN HIT). */

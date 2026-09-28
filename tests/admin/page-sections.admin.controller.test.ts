@@ -206,6 +206,23 @@ describe('pageSectionsAdminController — kartlar', () => {
     ]);
   });
 
+  it('kart sıralama: geçersiz yön bölüm sayfasına invalid_input (bölüm id uuid değilse listeye); servis çağrılmaz', async () => {
+    const { pageSectionsAdminController: c, admin } = await setup();
+    const bad = fakeRes();
+    await c.itemMove(req({ params: { id: SID, itemId: IID }, body: { direction: 'sideways' } }), bad);
+    expect(bad.redirectedTo).toBe(`/admin/rewards/sections/${SID}?error=invalid_input`);
+
+    const badSection = fakeRes();
+    await c.itemMove(req({ params: { id: 'nope', itemId: IID }, body: { direction: 'sideways' } }), badSection);
+    expect(badSection.redirectedTo).toBe('/admin/rewards/sections?error=invalid_input');
+    expect(admin.moveItem).not.toHaveBeenCalled();
+
+    const ok = fakeRes();
+    await c.itemMove(req({ params: { id: SID, itemId: IID }, body: { direction: 'up' } }), ok);
+    expect(admin.moveItem).toHaveBeenCalledWith(SID, IID, 'up');
+    expect(ok.redirectedTo).toBe(`/admin/rewards/sections/${SID}?notice=saved`);
+  });
+
   it('hata kodu eşlemesi; beklenmeyen hata loglanıp failed olur', async () => {
     const { sectionsErrorCode, AppError } = await setup();
     expect(sectionsErrorCode(new AppError('INVALID_FILE_TYPE', 400), 'x')).toBe('image_invalid');

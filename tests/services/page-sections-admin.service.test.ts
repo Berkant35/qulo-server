@@ -275,3 +275,20 @@ describe('okuma önbelleği — kalan yazım yolları', () => {
     expect(read(await reader.snapshot('rewards_market'))).toEqual(expected);
   });
 });
+
+describe('sıralama yarıda patlarsa', () => {
+  it('hata yayılır VE önbellek yine düşer (yazılan kısmi sıra bir sonraki snapshot\'ta görünür)', async () => {
+    const { fake, admin, reader } = await setup(
+      { page_sections: [seededSection({ id: 'a', sort_order: 0 }), seededSection({ id: 'b', sort_order: 1 }), seededSection({ id: 'c', sort_order: 2 })] },
+      // c yukarı: c 2→1 (1. update, yazılır), b 1→2 (2. update, patlar).
+      { failOn: [{ table: 'page_sections', op: 'update', failAfter: 1 }] },
+    );
+    expect((await reader.snapshot('rewards_market')).sections.find((x) => x.id === 'c')?.sort_order).toBe(2);
+
+    await expect(admin.moveSection('c', 'up')).rejects.toMatchObject({ code: 'SERVER_ERROR' });
+
+    expect(fake.table('page_sections').map((x) => `${x.id}${x.sort_order}`)).toEqual(['a0', 'b1', 'c1']);
+    const after = await reader.snapshot('rewards_market');
+    expect(after.sections.find((x) => x.id === 'c')?.sort_order).toBe(1);
+  });
+});

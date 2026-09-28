@@ -174,7 +174,11 @@ class PageSectionsAdminController {
 
   async itemMove(req: Request, res: Response) {
     const parsed = moveSchema.safeParse(req.body);
-    if (!parsed.success) return res.redirect(`${LIST}?error=invalid_input`);
+    if (!parsed.success) {
+      // Kart işlemi bölüm sayfasından gelir: hata oraya döner (bölüm id bozuksa listeye).
+      const sectionId = uuidParam(req.params.id);
+      return res.redirect(`${sectionId ? sectionPage(sectionId) : LIST}?error=invalid_input`);
+    }
     await this.itemAction(req, res, "itemMove", (sectionId, itemId) =>
       pageSectionsAdminService.moveItem(sectionId, itemId, parsed.data.direction), "saved");
   }
