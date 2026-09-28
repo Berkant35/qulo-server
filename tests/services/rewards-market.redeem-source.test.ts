@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { createFakeSupabase, type FakeSupabaseOptions, type Tables } from '../helpers/fake-supabase.js';
+import { createFakeSupabase, type FakeSupabase, type FakeSupabaseOptions, type Tables } from '../helpers/fake-supabase.js';
 import { activeConfigRow } from '../helpers/economy-config.fixture.js';
+import { REWARD_REDEEM_REASON, REWARD_REFUND_REASON } from '../../src/utils/rewards.js';
 
 const NOW = new Date('2026-09-28T12:00:00Z');
 const KEY = '11111111-1111-4111-8111-111111111111';
@@ -135,5 +136,101 @@ describe('redeem — has_reward_redemptions', () => {
     const { fake, rewardsMarketService } = await setup({ users: [user({ rainbow_diamonds: 10 })] });
     await expect(rewardsMarketService.redeem('u1', input(), 'android')).rejects.toMatchObject({ code: 'INSUFFICIENT_DIAMONDS' });
     expect(fake.table('users')[0].has_reward_redemptions).toBe(false);
+  });
+});
+
+describe('redeem — ölçüm itfayı düşürmez', () => {
+  it('görünürlük adımında katalog okunamazsa kaynak NULL, itfa başarılı, uyarı loglanır', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { fake, rewardsMarketService } = await setup({ users: [user()] });
+    const { rewardsCatalogCache } = await import('../../src/services/rewards-catalog-cache.js');
+    const { Errors } = await import('../../src/utils/errors.js');
+    // İtfada `listForCountry`'yi YALNIZ görünürlük adımı çağırır (ürün okuması `getActive`): reddetmek tam o
+    // adımı hedefler — önbellek süresine ve sorgu sırasına bağlı kalmadan "katalog o an okunamadı" durumu.
+    const listSpy = vi.spyOn(rewardsCatalogCache, 'listForCountry').mockRejectedValue(Errors.SERVER_ERROR());
+
+    const result = await rewardsMarketService.redeem('u1', input({ sourceItemId: 'b-live' }), 'android');
+
+    expect(listSpy).toHaveBeenCalledTimes(1);
+    expect(result.redemption.status).toBe('PENDING');
+    expect(fake.table('reward_redemptions')[0].source_item_id).toBeNull();
+    expect(fake.table('users')[0].rainbow_diamonds).toBe(149);
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('kaynak kart'),
+      expect.objectContaining({ userId: 'u1', sourceItemId: 'b-live' }),
+    );
+  });
+});
+
+describe('redeem — kaynak kart FK yarışı (23503)', () => {
+  const FK = {
+    message: 'insert or update on table "reward_redemptions" violates foreign key constraint "reward_redemptions_source_item_id_fkey"',
+    code: '23503',
+  };
+  const inserts = (fake: FakeSupabase) =>
+    fake.queries.filter((q) => q.table === 'reward_redemptions' && q.op === 'insert').length;
+  const reasons = (fake: FakeSupabase) => fake.table('diamond_transactions').map((t) => t.reason);
+
+  it('kart okuma ile yazım arasında silinirse: talep kaynaksız yazılır, rainbow bir kez düşer, iade yok', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { fake, rewardsMarketService } = await setup(
+      { users: [user()] },
+      { failOn: [{ table: 'reward_redemptions', op: 'insert', times: 1, error: FK }] },
+    );
+
+    const result = await rewardsMarketService.redeem('u1', input({ sourceItemId: 'b-live' }), 'android');
+
+    expect(result).toMatchObject({ balance: 149, redemption: { status: 'PENDING' } });
+    expect(inserts(fake)).toBe(2);
+    const rows = fake.table('reward_redemptions');
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ id: result.redemption.id, idempotency_key: KEY, source_item_id: null });
+    expect(fake.table('users')[0]).toMatchObject({ rainbow_diamonds: 149, has_reward_redemptions: true });
+    expect(reasons(fake)).toEqual([REWARD_REDEEM_REASON]);
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('23503'), expect.objectContaining({ sourceItemId: 'b-live' }));
+  });
+
+  it('kaynaksız tekrar da patlarsa: yalnız BİR tekrar, sonra mevcut iade yolu (iade + SERVER_ERROR)', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { fake, rewardsMarketService } = await setup(
+      { users: [user()] },
+      { failOn: [{ table: 'reward_redemptions', op: 'insert', error: FK }] },
+    );
+
+    await expect(rewardsMarketService.redeem('u1', input({ sourceItemId: 'b-live' }), 'android'))
+      .rejects.toMatchObject({ code: 'SERVER_ERROR' });
+
+    expect(inserts(fake)).toBe(2);
+    expect(fake.table('reward_redemptions')).toHaveLength(0);
+    expect(fake.table('users')[0].rainbow_diamonds).toBe(200);
+    expect(reasons(fake)).toEqual([REWARD_REDEEM_REASON, REWARD_REFUND_REASON]);
+  });
+
+  it('23503 ama kaynak zaten NULL: tekrar yok, mevcut iade yolu değişmez', async () => {
+    const { fake, rewardsMarketService } = await setup(
+      { users: [user()] },
+      { failOn: [{ table: 'reward_redemptions', op: 'insert', error: FK }] },
+    );
+
+    await expect(rewardsMarketService.redeem('u1', input(), 'android')).rejects.toMatchObject({ code: 'SERVER_ERROR' });
+
+    expect(inserts(fake)).toBe(1);
+    expect(fake.table('users')[0].rainbow_diamonds).toBe(200);
+    expect(reasons(fake)).toEqual([REWARD_REDEEM_REASON, REWARD_REFUND_REASON]);
+  });
+
+  it('23503 dışı hata (kaynak dolu): tekrar yok, mevcut iade yolu değişmez', async () => {
+    const { fake, rewardsMarketService } = await setup(
+      { users: [user()] },
+      { failOn: [{ table: 'reward_redemptions', op: 'insert', error: { message: 'canceling statement due to statement timeout', code: '57014' } }] },
+    );
+
+    await expect(rewardsMarketService.redeem('u1', input({ sourceItemId: 'b-live' }), 'android'))
+      .rejects.toMatchObject({ code: 'SERVER_ERROR' });
+
+    expect(inserts(fake)).toBe(1);
+    expect(fake.table('reward_redemptions')).toHaveLength(0);
+    expect(fake.table('users')[0].rainbow_diamonds).toBe(200);
+    expect(reasons(fake)).toEqual([REWARD_REDEEM_REASON, REWARD_REFUND_REASON]);
   });
 });

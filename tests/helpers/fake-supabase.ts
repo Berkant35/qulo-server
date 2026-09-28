@@ -35,6 +35,11 @@ export interface FailureSpec {
    */
   failAfter?: number;
   /**
+   * Kaç çağrı patlasın (varsayılan: `failAfter`'dan sonrakilerin hepsi) — `StorageFailureSpec.times` gibi.
+   * "İlk deneme hata, tek yeniden deneme başarılı" dalı için (ör. itfa insert'ünde FK 23503 → kaynaksız tekrar).
+   */
+  times?: number;
+  /**
    * İşlem UYGULANIR ama hata döner (commit edildi, cevap yolda kayboldu) — belirsiz yazım
    * dallarını sınamak için. Varsayılan false: eski davranış (hiçbir şey yazılmadan hata döner).
    */
@@ -560,7 +565,9 @@ export function createFakeSupabase(
     const key = `${table}:${op}`;
     const seen = opCounts.get(key) ?? 0;
     opCounts.set(key, seen + 1);
-    if (seen < (spec.failAfter ?? 0)) return null;
+    const start = spec.failAfter ?? 0;
+    if (seen < start) return null;
+    if (spec.times !== undefined && seen >= start + spec.times) return null;
 
     return {
       error: spec.error ?? { message: `fake failure: ${op} on ${table}` },

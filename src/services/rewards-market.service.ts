@@ -3,7 +3,7 @@ import { supabase } from "../config/supabase.js";
 import { AppError, Errors } from "../utils/errors.js";
 import type { ClientPlatform } from "../utils/client-meta.js";
 import type { SupportedLocale } from "../constants/locales.js";
-import { toTargetPlatform, type PageSectionView, type ViewerContext } from "../utils/page-sections.js";
+import { toTargetPlatform, type PageSectionView, type TargetPlatform, type ViewerContext } from "../utils/page-sections.js";
 import {
   accountAgeDays,
   CAP_STATUSES,
@@ -27,6 +27,8 @@ const REDEMPTION_COLUMNS =
   "id, status, brand_key, country_code, currency, face_value, rainbow_price, delivery_code, delivery_url, reject_reason, created_at, decided_at";
 /** Bir kullanıcının bir aydaki talepleri — tavan 150 rainbow iken birkaç satır; sınır savunma. */
 const MONTH_SCAN_LIMIT = 1000;
+/** Postgres yabancı anahtar ihlali — ör. kaynak kart okuma ile talep yazımı arasında kalıcı silindi. */
+const FOREIGN_KEY_VIOLATION = "23503";
 
 export interface MarketView {
   balance: number;
@@ -71,6 +73,23 @@ export interface RedemptionPage {
   total: number;
   page: number;
   limit: number;
+}
+
+/** `reward_redemptions` insert satırı (talep anında ürünün anlık görüntüsü). */
+interface RedemptionInsert {
+  id: string;
+  user_id: string;
+  item_id: string;
+  status: "PENDING";
+  rainbow_price: number;
+  brand_key: RewardBrand;
+  country_code: string;
+  currency: string;
+  face_value: number;
+  idempotency_key: string;
+  platform: TargetPlatform | null;
+  is_test: boolean;
+  source_item_id: string | null;
 }
 
 export interface RedeemResult {
@@ -209,27 +228,23 @@ export class RewardsMarketService {
       throw err;
     }
 
-    const { data, error } = await supabase
-      .from("reward_redemptions")
-      .insert({
-        id: redemptionId,
-        user_id: userId,
-        item_id: item.id,
-        status: "PENDING",
-        rainbow_price: item.rainbow_price,
-        brand_key: item.brand_key,
-        country_code: item.country_code,
-        currency: item.currency,
-        face_value: item.face_value,
-        idempotency_key: input.idempotencyKey,
-        platform: platform === "ios" || platform === "android" ? platform : null,
-        is_test: isAdmin,
-        source_item_id: sourceItemId,
-      })
-      .select(REDEMPTION_COLUMNS)
-      .single();
+    const inserted = await this.insertRedemption({
+      id: redemptionId,
+      user_id: userId,
+      item_id: item.id,
+      status: "PENDING",
+      rainbow_price: item.rainbow_price,
+      brand_key: item.brand_key,
+      country_code: item.country_code,
+      currency: item.currency,
+      face_value: item.face_value,
+      idempotency_key: input.idempotencyKey,
+      platform: platform === "ios" || platform === "android" ? platform : null,
+      is_test: isAdmin,
+      source_item_id: sourceItemId,
+    });
 
-    if (error || !data) {
+    if (!inserted) {
       // Hata dönmüş olabilir ama satır GERÇEKTEN yazılmış olabilir (yanıt kayboldu — ör. commit
       // sonrası ağ/gateway hatası). İade etmeden ÖNCE anahtarla tekrar oku: kayıp cevap ≠ yazılmamış
       // satır. Okuma da patlarsa durum belirsizdir — bilmeden iade etmek bedava kart demek, o yüzden
@@ -260,7 +275,28 @@ export class RewardsMarketService {
     }
 
     await this.markHasRedemptions(user);
-    return { redemption: toRedemptionView(data as RedemptionView), balance };
+    return { redemption: inserted, balance };
+  }
+
+  /**
+   * Talebi yazar; yazılamadıysa null (çağıran kayıp cevap / iade yolunu işletir). Kaynak kart görünürlük
+   * okuması ile yazım arasında kalıcı silinmişse (FK 23503) ölçüm bağı düşürülüp BİR kez yeniden denenir:
+   * ölçüm itfayı düşürmez. 23503 satır yazılmadı demektir; tekrar aynı id + anahtarla gider, onun hatası
+   * da olağan yola düşer.
+   */
+  private async insertRedemption(row: RedemptionInsert): Promise<RedemptionView | null> {
+    let { data, error } = await this.writeRedemption(row);
+    if (error?.code === FOREIGN_KEY_VIOLATION && row.source_item_id !== null) {
+      console.warn("[rewards] talep yazimi 23503 — kaynak kart silinmis olabilir, kaynaksiz yeniden deneniyor", {
+        redemptionId: row.id, userId: row.user_id, sourceItemId: row.source_item_id, err: error.message,
+      });
+      ({ data, error } = await this.writeRedemption({ ...row, source_item_id: null }));
+    }
+    return error || !data ? null : toRedemptionView(data as RedemptionView);
+  }
+
+  private async writeRedemption(row: RedemptionInsert) {
+    return supabase.from("reward_redemptions").insert(row).select(REDEMPTION_COLUMNS).single();
   }
 
   /**
@@ -317,7 +353,10 @@ export class RewardsMarketService {
     }
   }
 
-  /** Görüntüleyenin bu an gördüğü bölüm kartlarından biri mi? Bölümler okunamazsa null (itfa etkilenmez). */
+  /**
+   * Görüntüleyenin bu an gördüğü bölüm kartlarından biri mi? Ölçüm itfayı asla düşürmez: katalog ya da
+   * bölümler okunamazsa (herhangi bir hata) kaynak null yazılır, iz bırakılır.
+   */
   private async visibleSourceItem(
     sourceItemId: string | undefined,
     user: MarketUser,
@@ -325,14 +364,21 @@ export class RewardsMarketService {
     locale: SupportedLocale,
   ): Promise<string | null> {
     if (!sourceItemId) return null;
-    const isAdmin = user.is_test_admin === true;
-    const country = isAdmin ? null : (user.country ?? "").toUpperCase();
-    const catalog = await rewardsCatalogCache.listForCountry(country);
-    const sections = await this.sectionsFor(
-      { country, platform: toTargetPlatform(platform), locale, isTestAdmin: isAdmin },
-      catalog,
-    );
-    return sections.some((s) => s.items.some((item) => item.id === sourceItemId)) ? sourceItemId : null;
+    try {
+      const isAdmin = user.is_test_admin === true;
+      const country = isAdmin ? null : (user.country ?? "").toUpperCase();
+      const catalog = await rewardsCatalogCache.listForCountry(country);
+      const sections = await this.sectionsFor(
+        { country, platform: toTargetPlatform(platform), locale, isTestAdmin: isAdmin },
+        catalog,
+      );
+      return sections.some((s) => s.items.some((item) => item.id === sourceItemId)) ? sourceItemId : null;
+    } catch (err) {
+      console.warn("[rewards] kaynak kart dogrulanamadi — talep kaynaksiz yazilir, itfa etkilenmez", {
+        userId: user.id, sourceItemId, err,
+      });
+      return null;
+    }
   }
 
   /**
