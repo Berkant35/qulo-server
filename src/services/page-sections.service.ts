@@ -2,8 +2,10 @@ import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
 import { TtlCache } from "../utils/ttl-cache.js";
 import {
+  ITEM_LOAD_LIMIT,
   PAGE_KEYS,
   resolveSections,
+  SECTION_LOAD_LIMIT,
   type PageKey,
   type PageSectionView,
   type SectionItemRow,
@@ -22,9 +24,6 @@ const SECTION_COLUMNS =
   "id, page_key, section_type, heading, sort_order, status, countries, platforms, locales, autoplay_seconds";
 const ITEM_COLUMNS =
   "id, section_id, sort_order, is_active, countries, platforms, locales, image_url, content, action_type, action_catalog_item_id, action_route, catalog_item_id";
-/** Yayında ≤ 10 bölüm; taslaklarla birlikte savunma sınırı. */
-const SECTION_LOAD_LIMIT = 50;
-const ITEM_LOAD_LIMIT = 1000;
 
 export interface PageSnapshot {
   sections: ReadonlyArray<SectionRow>;

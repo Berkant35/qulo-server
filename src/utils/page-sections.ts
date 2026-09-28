@@ -38,6 +38,10 @@ export const SECTION_LIMITS = {
   ctaLength: 24,
 } as const;
 
+/** Savunma okuma sınırları (okuma önbelleği + backoffice): yayında ≤ 10 bölüm, taslaklarla birlikte ≤ 50. */
+export const SECTION_LOAD_LIMIT = 50;
+export const ITEM_LOAD_LIMIT = 1000;
+
 export type LocalizedText = Partial<Record<SupportedLocale, string>>;
 export interface BannerText {
   title?: string;

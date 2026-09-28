@@ -200,6 +200,16 @@ describe('öne çıkanlar + ortak kart işlemleri', () => {
     await admin.createFeaturedItem('s1', featuredInput({ is_active: false }));
   });
 
+  it('yeni kart en büyük sort_order\'ın arkasına eklenir (kardeşler DB\'de karışık sırada olsa da)', async () => {
+    const featuredRow = (n: number, sort: number) => seededItem(n, { image_url: null, content: null, catalog_item_id: CAT_TH, sort_order: sort });
+    const { fake, admin } = await setup({
+      page_sections: [seededSection({ section_type: 'featured_items' })],
+      page_section_items: [featuredRow(0, 0), featuredRow(1, 7), featuredRow(2, 3)],
+    });
+    await admin.createFeaturedItem('s1', featuredInput({ is_active: false }));
+    expect(fake.table('page_section_items').at(-1)).toMatchObject({ catalog_item_id: CAT_TH, is_active: false, sort_order: 8 });
+  });
+
   it('kart sıralama ve silme; başka bölümün kartı bulunamaz', async () => {
     const { fake, admin, reader } = await setup({
       page_sections: [seededSection(), seededSection({ id: 's2', sort_order: 1 })],

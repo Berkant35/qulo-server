@@ -5,7 +5,9 @@ import { Errors } from "../utils/errors.js";
 import { normalizeUploadedImage, NORMAL_GORSEL_MIME } from "../utils/image-normalize.js";
 import {
   byOrder,
+  ITEM_LOAD_LIMIT,
   SECTION_LIMITS,
+  SECTION_LOAD_LIMIT,
   type PageKey,
   type SectionItemRow,
   type SectionRow,
@@ -249,7 +251,8 @@ class PageSectionsAdminService {
       .select(SECTION_COLUMNS)
       .eq("page_key", pageKey)
       .is("deleted_at", null)
-      .order("sort_order", { ascending: true });
+      .order("sort_order", { ascending: true })
+      .limit(SECTION_LOAD_LIMIT);
     if (error) throw Errors.SERVER_ERROR();
     return (data ?? []) as AdminSection[];
   }
@@ -290,7 +293,8 @@ class PageSectionsAdminService {
       .from("page_section_items")
       .select(ITEM_COLUMNS)
       .in("section_id", sectionIds)
-      .order("sort_order", { ascending: true });
+      .order("sort_order", { ascending: true })
+      .limit(ITEM_LOAD_LIMIT);
     if (error) throw Errors.SERVER_ERROR();
     const rows = (data ?? []) as ItemRow[];
     const states = await this.catalogStates(rows.map(targetOf).filter((id): id is string => id !== null));
@@ -322,27 +326,32 @@ class PageSectionsAdminService {
     }
   }
 
+  /** Aktif kart sayısı satır taşımadan (`count`, head); sayı okunamazsa kapı kapalı kalır. */
   private async assertActiveRoom(section: SectionRow, excludeItemId: string | null): Promise<void> {
-    const { data, error } = await supabase
+    let query = supabase
       .from("page_section_items")
-      .select("id")
+      .select("id", { count: "exact", head: true })
       .eq("section_id", section.id)
       .eq("is_active", true);
-    if (error) throw Errors.SERVER_ERROR();
-    const active = ((data ?? []) as { id: string }[]).filter((row) => row.id !== excludeItemId).length;
+    if (excludeItemId) query = query.neq("id", excludeItemId);
+    const { count, error } = await query;
+    if (error || count === null) throw Errors.SERVER_ERROR();
     const limit = itemLimit(section);
-    if (active >= limit) throw Errors.PAGE_SECTION_ITEM_LIMIT(limit);
+    if (count >= limit) throw Errors.PAGE_SECTION_ITEM_LIMIT(limit);
   }
 
   private async insertItem(section: SectionRow, row: ItemPatch): Promise<void> {
-    const { data: siblings, error: readError } = await supabase
+    // Yalnız en büyük sort_order (tek satır): sona eklemek için tüm kardeşleri çekmeye gerek yok.
+    const { data: last, error: readError } = await supabase
       .from("page_section_items")
       .select("sort_order")
-      .eq("section_id", section.id);
+      .eq("section_id", section.id)
+      .order("sort_order", { ascending: false })
+      .limit(1);
     if (readError) throw Errors.SERVER_ERROR();
     const { error } = await supabase
       .from("page_section_items")
-      .insert({ ...row, section_id: section.id, sort_order: nextOrder((siblings ?? []) as { sort_order: number }[]) });
+      .insert({ ...row, section_id: section.id, sort_order: nextOrder((last ?? []) as { sort_order: number }[]) });
     if (error) throw Errors.SERVER_ERROR();
     pageSectionsService.invalidate();
   }
