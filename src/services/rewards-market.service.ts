@@ -2,6 +2,8 @@ import { randomUUID } from "crypto";
 import { supabase } from "../config/supabase.js";
 import { AppError, Errors } from "../utils/errors.js";
 import type { ClientPlatform } from "../utils/client-meta.js";
+import type { SupportedLocale } from "../constants/locales.js";
+import { toTargetPlatform, type PageSectionView, type ViewerContext } from "../utils/page-sections.js";
 import {
   accountAgeDays,
   CAP_STATUSES,
@@ -13,6 +15,7 @@ import {
 import type { RedemptionStatus, RewardBrand } from "../validators/rewards.validator.js";
 import { diamondService } from "./diamond.service.js";
 import { economyConfigService } from "./economy-config.service.js";
+import { pageSectionsService } from "./page-sections.service.js";
 import { rainbowAccessService, type RainbowAccessUser } from "./rainbow-access.service.js";
 import { rewardsCatalogCache, type MarketItem } from "./rewards-catalog-cache.js";
 
@@ -31,6 +34,14 @@ export interface MarketView {
   /** null = tavan uygulanmaz (test admin). */
   monthly_cap: number | null;
   used_this_month: number;
+  sections: PageSectionView<MarketItem>[];
+}
+
+export interface MarketOptions {
+  /** Bölüm metinlerinin dili (Accept-Language). */
+  locale?: SupportedLocale;
+  /** Yalnız test admin: katalog + bölümler bu ülkeye süzülür; yoksa "Tümü". Normal kullanıcıda yok sayılır. */
+  previewCountry?: string;
 }
 
 export interface RedemptionView {
@@ -92,22 +103,29 @@ function toRedemptionView(row: RedemptionView): RedemptionView {
  */
 export class RewardsMarketService {
   /** Market ekranı. Erişim kapalıysa 403: katalog bile görünmez. */
-  async getMarket(userId: string, platform?: ClientPlatform): Promise<MarketView> {
+  async getMarket(userId: string, platform?: ClientPlatform, options: MarketOptions = {}): Promise<MarketView> {
     const user = await this.loadUser(userId);
     if (!(await rainbowAccessService.isEnabled(user, platform))) throw Errors.RAINBOW_NOT_AVAILABLE();
 
     const isAdmin = user.is_test_admin === true;
+    // Test admin: önizleme ülkesi ya da "Tümü" (null). Normal kullanıcı yalnız kendi ülkesi.
+    const country = isAdmin ? (options.previewCountry ?? null) : (user.country ?? "").toUpperCase();
     const [config, items, used] = await Promise.all([
       economyConfigService.getConfig(),
-      rewardsCatalogCache.listForCountry(isAdmin ? null : (user.country ?? "").toUpperCase()),
+      rewardsCatalogCache.listForCountry(country),
       this.usedThisMonth(userId),
     ]);
+    const sections = await this.sectionsFor(
+      { country, platform: toTargetPlatform(platform), locale: options.locale ?? "en", isTestAdmin: isAdmin },
+      items,
+    );
 
     return {
       balance: user.rainbow_diamonds ?? 0,
       items,
       monthly_cap: isAdmin ? null : config.rainbow.monthlyRedeemCap,
       used_this_month: used,
+      sections,
     };
   }
 
@@ -275,6 +293,19 @@ export class RewardsMarketService {
         `[rewards] CRITICAL: redemption insert failed AND refund failed — outcome uncertain — check rainbow balance and the REWARD_REFUND row for ${reference}`,
         { userId, amount, reference, err },
       );
+    }
+  }
+
+  /**
+   * Bölümler vitrin süslemesidir: okunamazsa market bölümsüz sunulur ve olay loglanır — katalog ve itfa
+   * bölüm tablolarına bağlı değil, bir bölüm arızası market ekranını kapatmasın.
+   */
+  private async sectionsFor(ctx: ViewerContext, catalog: MarketItem[]): Promise<PageSectionView<MarketItem>[]> {
+    try {
+      return await pageSectionsService.resolveForUser("rewards_market", ctx, catalog);
+    } catch (err) {
+      console.error("[rewards] page sections unavailable — market served without sections:", err);
+      return [];
     }
   }
 

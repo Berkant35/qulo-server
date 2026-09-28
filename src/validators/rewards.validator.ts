@@ -39,6 +39,19 @@ export const redemptionsQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(50).default(20),
 });
 
+/** Test admin'in market önizleme ülkeleri (067 market ülkeleri). */
+export const MARKET_PREVIEW_COUNTRIES = ["TH", "ID", "MY"] as const;
+
+/**
+ * `GET /market?country=` — yalnız test admin için anlamlı (servis normal kullanıcıda yok sayar).
+ * Bozuk değer 400 değil: yok sayılır ("Tümü").
+ */
+export const marketQuerySchema = z.object({
+  country: z
+    .preprocess((v) => (typeof v === "string" ? v.trim().toUpperCase() : v), z.enum(MARKET_PREVIEW_COUNTRIES).optional())
+    .catch(undefined),
+});
+
 // ── Backoffice (form gövdeleri string gelir) ─────────────────────────
 
 export const countrySwitchSchema = z.object({
@@ -96,6 +109,7 @@ export const adminCatalogQuerySchema = z.object({
 
 export type RedeemInput = z.infer<typeof redeemSchema>;
 export type RedemptionsQuery = z.infer<typeof redemptionsQuerySchema>;
+export type MarketQuery = z.infer<typeof marketQuerySchema>;
 export type CountrySwitchInput = z.infer<typeof countrySwitchSchema>;
 export type CatalogItemInput = z.infer<typeof catalogItemSchema>;
 export type FulfillInput = z.infer<typeof fulfillSchema>;

@@ -145,4 +145,28 @@ describe('/api/v1/rewards — kablolama', () => {
     const other = await fetch(`${base}/redemptions`, { headers: { 'x-test-user': 'u2' } });
     expect(other.status).toBe(200);
   });
+
+  it('GET /market: normal kullanıcıda ?country yok sayılır, bozuk değer 400 değil; Accept-Language bölüm dilini seçer', async () => {
+    const { base } = await serve({
+      page_sections: [{
+        id: 's1', page_key: 'rewards_market', section_type: 'banner_carousel', heading: { en: 'Deals', th: 'ดีล' },
+        sort_order: 0, status: 'published', countries: null, platforms: null, locales: null, autoplay_seconds: 5, deleted_at: null,
+      }],
+      page_section_items: [{
+        id: 'b1', section_id: 's1', sort_order: 0, is_active: true, countries: null, platforms: null, locales: null,
+        image_url: 'https://cdn.example/b1.jpg', content: { en: { title: 'Hi' } }, action_type: 'none',
+        action_catalog_item_id: null, action_route: null, catalog_item_id: null,
+      }],
+    }, { fakeAuth: true });
+
+    const res = await fetch(`${base}/market?country=id`, { headers: { 'x-app-platform': 'android', 'accept-language': 'th-TH,th;q=0.9' } });
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.items.map((i: { country_code: string }) => i.country_code)).toEqual(['TH']);
+    expect(body.sections[0].heading).toBe('ดีล');
+
+    const bad = await fetch(`${base}/market?country=ZZZ`, { headers: { 'x-app-platform': 'android' } });
+    expect(bad.status).toBe(200);
+    expect((await bad.json()).sections[0].heading).toBe('Deals');
+  });
 });
