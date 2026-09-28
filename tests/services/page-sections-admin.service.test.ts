@@ -232,3 +232,46 @@ describe('öne çıkanlar + ortak kart işlemleri', () => {
     expect((await admin.catalogOptions(null)).map((o) => o.id)).toEqual([CAT_ID, CAT_TH, CAT_OFF]);
   });
 });
+
+describe('okuma önbelleği — kalan yazım yolları', () => {
+  type Admin = Awaited<ReturnType<typeof setup>>['admin'];
+  type Snapshot = Awaited<ReturnType<Awaited<ReturnType<typeof setup>>['reader']['snapshot']>>;
+  const item = (snap: Snapshot, id: string) => snap.items.find((i) => i.id === id)!;
+  const section = (snap: Snapshot, id: string) => snap.sections.find((x) => x.id === id)!;
+
+  // Her satır: önbellek ısınmışken tek yazım → bir sonraki snapshot değişikliği görmeli (yeniden okuma).
+  const cases: Array<[string, (admin: Admin) => Promise<void>, (snap: Snapshot) => unknown, unknown]> = [
+    ['setItemActive', (a) => a.setItemActive('s1', 'b0', false), (snap) => item(snap, 'b0').is_active, false],
+    [
+      'updateBannerItem',
+      (a) => a.updateBannerItem('s1', 'b0', bannerInput({ content: { en: { title: 'Yeni' } } }), null),
+      (snap) => item(snap, 'b0').content?.en?.title,
+      'Yeni',
+    ],
+    [
+      'updateFeaturedItem',
+      (a) => a.updateFeaturedItem('s2', 'f0', featuredInput({ catalog_item_id: CAT_OFF })),
+      (snap) => item(snap, 'f0').catalog_item_id,
+      CAT_OFF,
+    ],
+    ['moveSection', (a) => a.moveSection('s2', 'up'), (snap) => section(snap, 's2').sort_order, 0],
+    ['moveItem', (a) => a.moveItem('s1', 'b1', 'up'), (snap) => item(snap, 'b1').sort_order, 0],
+  ];
+
+  it.each(cases)('%s sonrası bir sonraki snapshot değişikliği görür', async (_name, act, read, expected) => {
+    const { admin, reader } = await setup({
+      page_sections: [seededSection(), seededSection({ id: 's2', section_type: 'featured_items', sort_order: 1 })],
+      page_section_items: [
+        seededItem(0),
+        seededItem(1),
+        seededItem(0, { id: 'f0', section_id: 's2', image_url: null, content: null, catalog_item_id: CAT_TH }),
+      ],
+    });
+    const before = await reader.snapshot('rewards_market');
+    expect(read(before)).not.toEqual(expected);
+
+    await act(admin);
+
+    expect(read(await reader.snapshot('rewards_market'))).toEqual(expected);
+  });
+});
