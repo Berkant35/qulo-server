@@ -196,6 +196,16 @@ describe('register', () => {
     expect(fake.table('users')[0].gender_pref_set_at).toBeUndefined();
   });
 
+  // Kart 2026-09-29-apple-signin-test-admin-bug: prod DB'de is_test_admin sutununun default'u
+  // `true`'ya drift etmisti, INSERT'te alan yazilmadigindan yeni her kullanici test_admin olarak
+  // yazilyordu. Fix hem migration 073 (default false) hem de burada acik yazim; test insert
+  // payload'unu dogrular — DB default'undan bagimsiz kalir.
+  it('yeni kullanici is_test_admin=false ile yazilir (DB default drift savunmasi)', async () => {
+    const { fake, authService } = await setup({ users: [] });
+    await authService.register(registerInput());
+    expect(fake.table('users')[0].is_test_admin).toBe(false);
+  });
+
   /** 2026-09-25: sabit 2× ORACLE yerine config'teki paket (varsayılan her güçten 1). Detay: alttaki describe. */
   it('yeni kullanıcıya config\'teki başlangıç paketi (her güçten 1) envantere yazılır', async () => {
     const { fake, authService } = await setup({ users: [] });
@@ -623,6 +633,25 @@ describe('socialLogin', () => {
       email: 'social@qulo.test', provider_id: 'google-123',
       auth_provider: 'google', email_verified: true,
     });
+  });
+
+  // Kart 2026-09-29-apple-signin-test-admin-bug: 48 Apple relay hesabi + 51 Google hesabi
+  // sosyal Case C insert'i is_test_admin yazmadan gecince prod DB default `true` drift'i
+  // yuzunden test_admin isaretlenmisti. Case C'de acik `is_test_admin: false` yazimini kilitler.
+  it('Case C — yeni sosyal kullanici is_test_admin=false ile yazilir (DB default drift savunmasi)', async () => {
+    const { fake, authService } = await setup({ users: [] });
+    await authService.socialLogin(provider);
+    expect(fake.table('users')[0].is_test_admin).toBe(false);
+  });
+
+  it('Case C — Apple sagalayicisi (hide-my-email relay) is_test_admin=false yazar', async () => {
+    socialPayload = { email: 'abcd@privaterelay.appleid.com', providerId: 'apple.001.xyz', name: 'A', surname: 'B' };
+    const { fake, authService } = await setup({ users: [] });
+    await authService.socialLogin({ provider: 'apple', id_token: 't', name: 'A', surname: 'B' });
+    const row = fake.table('users')[0];
+    expect(row.is_test_admin).toBe(false);
+    expect(row.auth_provider).toBe('apple');
+    expect(row.email).toBe('abcd@privaterelay.appleid.com');
   });
 
   it('Case C — yaş yoksa profil eksik bildirilir', async () => {

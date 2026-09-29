@@ -61,6 +61,9 @@ export class AuthService {
         locale,
         // Sutun satir dogarken dolu: RPC patlasa bile kullanici dilsiz kalmaz (054 DEFAULT '{}').
         preferred_languages: [locale],
+        // is_test_admin sunucu-only: prod DB default'u bir donem `true`'ya drift etmisti
+        // (bkz. migration 073). Insert'te acikca yazip DB default'una bagimliligi keseriz.
+        is_test_admin: false,
         verify_token: verifyTokenHash,
         token_expires_at: tokenExpiresAt,
         email_verified: false,
@@ -427,6 +430,11 @@ export class AuthService {
         referral_code: referralCode,
         locale,
         preferred_languages: [locale],
+        // is_test_admin sunucu-only: sosyal kayit (Apple/Google) Case C insert'i alani
+        // set etmedigi surece DB default'una bagimliydi; Haziran-Eylul 2026 drift'inde
+        // (default `true`) 48 Apple relay + 51 Google hesabi yanlisligiyla test_admin
+        // isaretlendi. Migration 073 default'u false'a cekti, kod artik acikca yaziyor.
+        is_test_admin: false,
       })
       .select("id, email, age")
       .single();
