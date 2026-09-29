@@ -18,7 +18,7 @@ import {
   REWARD_REDEEM_REASON,
   REWARD_REFUND_REASON,
 } from "../utils/rewards.js";
-import type { RedemptionStatus, RewardBrand } from "../validators/rewards.validator.js";
+import { MARKET_PREVIEW_COUNTRIES, type RedemptionStatus, type RewardBrand } from "../validators/rewards.validator.js";
 import { diamondService } from "./diamond.service.js";
 import { economyConfigService } from "./economy-config.service.js";
 import { pageSectionsService } from "./page-sections.service.js";
@@ -43,6 +43,8 @@ export interface MarketView {
   monthly_cap: number | null;
   used_this_month: number;
   sections: PageSectionView<MarketItem>[];
+  /** Test admin'in market ülke önizlemesi (mobil ülke çipleri); diğer herkes için boş. */
+  preview_countries: string[];
 }
 
 export interface MarketOptions {
@@ -147,6 +149,7 @@ export class RewardsMarketService {
       monthly_cap: viewer.isTestAdmin ? null : config.rainbow.monthlyRedeemCap,
       used_this_month: used,
       sections,
+      preview_countries: viewer.isTestAdmin ? [...MARKET_PREVIEW_COUNTRIES] : [],
     };
   }
 

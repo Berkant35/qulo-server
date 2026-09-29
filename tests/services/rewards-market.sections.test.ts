@@ -109,6 +109,19 @@ describe('rewardsMarketService.getMarket — sections', () => {
     expect(errorSpy).toHaveBeenCalled();
   });
 
+  it('önizleme ülkeleri: normal kullanıcıda boş', async () => {
+    const { rewardsMarketService } = await setup({ users: [user()] });
+    const market = await rewardsMarketService.getMarket('u1', 'android');
+    expect(market.preview_countries).toEqual([]);
+  });
+
+  it('önizleme ülkeleri: test admin\'de market ülkeleri (seçili önizlemeden bağımsız)', async () => {
+    const { rewardsMarketService } = await setup({ users: [user({ is_test_admin: true })] });
+    expect((await rewardsMarketService.getMarket('u1', 'android')).preview_countries).toEqual(['TH', 'ID', 'MY']);
+    expect((await rewardsMarketService.getMarket('u1', 'android', { previewCountry: 'ID' })).preview_countries)
+      .toEqual(['TH', 'ID', 'MY']);
+  });
+
   it('yük bütçesi: önbellek sıcakken market açılışı yalnız kullanıcı satırı + bu ay kullanımı okur', async () => {
     const { fake, rewardsMarketService } = await setup({ users: [user()] });
     await rewardsMarketService.getMarket('u1', 'android');
