@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createFakeSupabase, type Tables } from '../helpers/fake-supabase.js';
-import { activeConfigRow } from '../helpers/economy-config.fixture.js';
+import { activeConfigRow, rainbowSwitchRow } from '../helpers/economy-config.fixture.js';
 
 /** Fixture: HALF yeşil fiyatı 30 → rainbow fiyatı da 30. */
 async function setup(seed: Tables) {
@@ -48,6 +48,28 @@ describe('ExchangeService.buyPower — RAINBOW', () => {
     const { exchangeService } = await setup({ users: [user({ country: 'TR' })] });
     await expect(exchangeService.buyPower('u1', 'HALF', 'RAINBOW', 1, 'android')).rejects.toMatchObject({
       code: 'RAINBOW_NOT_AVAILABLE',
+    });
+  });
+
+  it('ana anahtar kapalı: test admin (test hesabı değil) reddedilir ve hiçbir şey düşmez', async () => {
+    const { fake, exchangeService } = await setup({
+      economy_config_versions: [rainbowSwitchRow(false)],
+      users: [user({ is_test_admin: true })],
+    });
+    await expect(exchangeService.buyPower('u1', 'HALF', 'RAINBOW', 1, 'android')).rejects.toMatchObject({
+      code: 'RAINBOW_NOT_AVAILABLE', statusCode: 403,
+    });
+    expect(fake.table('users')[0].rainbow_diamonds).toBe(100);
+    expect(fake.table('power_purchase_transactions')).toHaveLength(0);
+  });
+
+  it('ana anahtar kapalı: test hesabı Rainbow ile alır (iç test)', async () => {
+    const { exchangeService } = await setup({
+      economy_config_versions: [rainbowSwitchRow(false)],
+      users: [user({ country: 'TR', is_test_account: true })],
+    });
+    await expect(exchangeService.buyPower('u1', 'HALF', 'RAINBOW', 1, 'ios')).resolves.toMatchObject({
+      new_count: 1, new_balance: { rainbow: 70 },
     });
   });
 

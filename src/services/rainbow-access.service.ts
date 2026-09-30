@@ -1,10 +1,12 @@
 import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
 import type { ClientPlatform } from "../utils/client-meta.js";
+import { economyConfigService } from "./economy-config.service.js";
 
 /**
  * Rainbow'un (ve marketin) kime görünür olduğu — TEK KAYNAK. İstemci yalnız bu kararın
  * bayrağını okur (spec 2026-09-27 §2.4). Kapalı olan kullanıcıda rainbow arka planda birikir.
+ * Girişler: getMe `rainbow_enabled`, market / itfa / bölüm olayları, güç alımında RAINBOW, elmas geçmişi.
  */
 export interface RainbowAccessUser {
   country: string | null;
@@ -29,7 +31,15 @@ const ERROR_RETRY_MS = 5_000;
 export class RainbowAccessService {
   private cache: { at: number; rows: MarketCountryRow[] } | null = null;
 
+  /**
+   * Ana anahtar (economy config `rainbow.enabled`, yoksa kapalı) kapalıyken yalnız iç test hesapları
+   * (`is_test_account`, seed değil) görür: `is_test_admin` tek başına açmaz — prod'da test hesabı olmayan
+   * kullanıcılarda da true (kayıt default'u drift'i, migration 073). Açıkken yayın kuralları: test admin
+   * her yerde, sonra ülke + platform bayrakları.
+   */
   async isEnabled(user: RainbowAccessUser, platform?: ClientPlatform): Promise<boolean> {
+    if (!(await this.launched())) return user.is_test_account === true && user.is_seed_profile !== true;
+
     if (user.is_test_admin) return true;
     if (user.is_seed_profile || user.is_test_account) return false;
     if (!user.country || (platform !== "android" && platform !== "ios")) return false;
@@ -54,6 +64,19 @@ export class RainbowAccessService {
 
   invalidate(): void {
     this.cache = null;
+  }
+
+  /**
+   * Ana anahtar. Economy config önbellekli (5 dk; backoffice kaydı o süreci hemen tazeler). Okunamazsa
+   * KAPALI sayılır ve hata yutulur: hiçbir okuma hatası Rainbow'u açmaz, getMe de bu yüzden düşmez.
+   */
+  private async launched(): Promise<boolean> {
+    try {
+      return (await economyConfigService.getConfig()).rainbow.enabled;
+    } catch (err) {
+      console.error("[rainbow-access] economy config okunamadi — ana anahtar kapali sayildi:", err instanceof Error ? err.message : err);
+      return false;
+    }
   }
 
   /**

@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createFakeSupabase, type Tables, type FakeSupabaseOptions } from '../helpers/fake-supabase.js';
 import type { CatalogItemInput } from '../../src/validators/rewards.validator.js';
+import { rainbowSwitchRow } from '../helpers/economy-config.fixture.js';
 
 const countries = () => [
   { country_code: 'TH', currency: 'THB', enabled: false, android_enabled: true, ios_enabled: false, updated_at: null },
@@ -16,7 +17,10 @@ const item = (over: Record<string, unknown>) => ({
 });
 
 async function setup(seed: Tables = {}, options?: FakeSupabaseOptions) {
-  const fake = createFakeSupabase({ reward_market_countries: countries(), reward_catalog_items: [], ...seed }, options);
+  // Ülke anahtarı yalnız ana anahtar açıkken anlam taşır (Rainbow yayında).
+  const fake = createFakeSupabase({
+    economy_config_versions: [rainbowSwitchRow(true)], reward_market_countries: countries(), reward_catalog_items: [], ...seed,
+  }, options);
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
   const { rewardsCatalogAdminService } = await import('../../src/services/rewards-catalog-admin.service.js');
   const { rainbowAccessService } = await import('../../src/services/rainbow-access.service.js');

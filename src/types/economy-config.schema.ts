@@ -137,6 +137,12 @@ const retentionSchema = z
  * → yük/net ~%39, IAP (%43) ile aynı bant. Eski config'lerde blok yoksa bu varsayılanlar.
  */
 export const DEFAULT_RAINBOW = {
+  /**
+   * Ana anahtar (kullanıcı kararı 2026-09-30): kapalıyken Rainbow + market yalnız iç test hesaplarına
+   * (`is_test_account`) görünür; açıkken test admin + ülke/platform kuralları. Karar tek yerde:
+   * `rainbowAccessService`. Anahtar yoksa KAPALI — eski config sürümleri kendiliğinden kapalı kalır.
+   */
+  enabled: false,
   subscriptionPaidShare: { free: 0, plus: 0.3, premium: 0.2 },
   monthlyRedeemCap: 150,
   minAccountAgeDays: 30,
@@ -147,6 +153,7 @@ const paidShareSchema = z.number().min(B.rainbowPaidShare.min).max(B.rainbowPaid
 
 const rainbowSchema = z
   .object({
+    enabled: z.boolean().default(DEFAULT_RAINBOW.enabled),
     subscriptionPaidShare: z
       .object({ free: paidShareSchema, plus: paidShareSchema, premium: paidShareSchema })
       .default({ ...DEFAULT_RAINBOW.subscriptionPaidShare }),
@@ -161,6 +168,7 @@ const rainbowSchema = z
       .default(DEFAULT_RAINBOW.suggestedUsdPerRainbow),
   })
   .default({
+    enabled: DEFAULT_RAINBOW.enabled,
     subscriptionPaidShare: { ...DEFAULT_RAINBOW.subscriptionPaidShare },
     monthlyRedeemCap: DEFAULT_RAINBOW.monthlyRedeemCap,
     minAccountAgeDays: DEFAULT_RAINBOW.minAccountAgeDays,

@@ -54,6 +54,9 @@ export const economyConfigFixture: EconomyConfig = {
     minAccountAgeDays: 7,
   },
   rainbow: {
+    // Testler varsayılan olarak YAYINDAKİ davranışı (ana anahtar açık) sınar; prod varsayılanı kapalı.
+    // Kapalı hal için `rainbowSwitchRow(false)`.
+    enabled: true,
     subscriptionPaidShare: { free: 0, plus: 0.3, premium: 0.2 },
     monthlyRedeemCap: 150,
     minAccountAgeDays: 30,
@@ -72,6 +75,11 @@ export function activeConfigRow(overrides: Partial<EconomyConfig> = {}) {
     change_reason: 'test fixture',
     created_at: '2026-01-01T00:00:00Z',
   };
+}
+
+/** Rainbow ana anahtarı (`rainbow.enabled`) verilen durumda olan etkin config satırı. */
+export function rainbowSwitchRow(enabled: boolean) {
+  return activeConfigRow({ rainbow: { ...economyConfigFixture.rainbow, enabled } });
 }
 
 /** Eski config versiyonu: `rewards.starterPowers` alanı hiç yok (varsayılan devreye girmeli). */

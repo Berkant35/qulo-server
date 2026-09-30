@@ -64,6 +64,8 @@ export class AuthService {
         // is_test_admin sunucu-only: prod DB default'u bir donem `true`'ya drift etmisti
         // (bkz. migration 073). Insert'te acikca yazip DB default'una bagimliligi keseriz.
         is_test_admin: false,
+        // Rainbow ana anahtari kapaliyken tek kapi bu bayrak; test hesaplari seed betiklerinden acilir.
+        is_test_account: false,
         verify_token: verifyTokenHash,
         token_expires_at: tokenExpiresAt,
         email_verified: false,
@@ -435,6 +437,8 @@ export class AuthService {
         // (default `true`) 48 Apple relay + 51 Google hesabi yanlisligiyla test_admin
         // isaretlendi. Migration 073 default'u false'a cekti, kod artik acikca yaziyor.
         is_test_admin: false,
+        // Rainbow ana anahtari kapaliyken tek kapi bu bayrak (ayni drift savunmasi).
+        is_test_account: false,
       })
       .select("id, email, age")
       .single();

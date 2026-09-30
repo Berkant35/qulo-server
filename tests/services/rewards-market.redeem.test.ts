@@ -5,7 +5,7 @@ import {
   type FakeSupabaseOptions,
   type Tables,
 } from '../helpers/fake-supabase.js';
-import { activeConfigRow } from '../helpers/economy-config.fixture.js';
+import { activeConfigRow, rainbowSwitchRow } from '../helpers/economy-config.fixture.js';
 import { redemptionReference, REWARD_REDEEM_REASON, REWARD_REFUND_REASON } from '../../src/utils/rewards.js';
 
 const NOW = new Date('2026-09-27T12:00:00Z');
@@ -119,6 +119,39 @@ describe('rewardsMarketService.redeem — mutlu yol', () => {
 
     const created = fake.table('reward_redemptions').find((r) => r.idempotency_key === KEY);
     expect(created).toMatchObject({ item_id: 'i-dana', country_code: 'ID', is_test: true, platform: null });
+  });
+});
+
+/** Ana anahtar kapalı (2.0.14'te gömülü): itfa yalnız iç test hesaplarında; test admin tek başına itfa edemez. */
+describe('rewardsMarketService.redeem — ana anahtar kapalı', () => {
+  const closed = { economy_config_versions: [rainbowSwitchRow(false)] };
+
+  it.each([
+    ['test admin (test hesabı değil)', { is_test_admin: true }, 'android'],
+    ['normal kullanıcı açık ülke + açık platform', {}, 'android'],
+  ] as const)('%s → RAINBOW_NOT_AVAILABLE, hiçbir şey yazılmaz', async (_name, over, platform) => {
+    const { fake, rewardsMarketService } = await setup({ ...closed, users: [user(over)] });
+    await expect(rewardsMarketService.redeem('u1', input(), platform)).rejects.toMatchObject({
+      code: 'RAINBOW_NOT_AVAILABLE', statusCode: 403,
+    });
+    expect(fake.table('users')[0].rainbow_diamonds).toBe(200);
+    expect(fake.table('reward_redemptions')).toHaveLength(0);
+    expect(fake.table('diamond_transactions')).toHaveLength(0);
+  });
+
+  it('test hesabı (admin değil) kendi ülkesinde itfa eder; talep is_test (gerçek ödeme kuyruğuna/özetine girmez)', async () => {
+    const { fake, rewardsMarketService } = await setup({ ...closed, users: [user({ is_test_account: true })] });
+    await rewardsMarketService.redeem('u1', input(), 'ios');
+    expect(fake.table('reward_redemptions')[0]).toMatchObject({ item_id: 'i-grab', is_test: true });
+  });
+
+  it('test hesabı + test admin itfa eder (iç test); talep is_test', async () => {
+    const { fake, rewardsMarketService } = await setup({
+      ...closed, users: [user({ country: 'TR', is_test_admin: true, is_test_account: true })],
+    });
+    await rewardsMarketService.redeem('u1', input(), 'ios');
+    expect(fake.table('users')[0].rainbow_diamonds).toBe(149);
+    expect(fake.table('reward_redemptions')[0]).toMatchObject({ item_id: 'i-grab', is_test: true });
   });
 });
 

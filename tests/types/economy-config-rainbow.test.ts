@@ -18,6 +18,29 @@ describe('economy config — rainbow bloğu', () => {
     expect(parsed.rainbow.subscriptionPaidShare.plus).toBe(0.1);
   });
 
+  // Ana anahtar (kullanıcı kararı 2026-09-30): anahtar yoksa Rainbow KAPALI — migration'sız, eski
+  // config sürümleri (prod v4'te blok hiç yok) kendiliğinden kapalı kalır.
+  it('ana anahtar: blok yoksa kapalı', () => {
+    expect(economyConfigSchema.parse(configWithoutRainbow()).rainbow.enabled).toBe(false);
+  });
+
+  it('ana anahtar: blok var ama `enabled` yoksa kapalı', () => {
+    const { enabled: _omit, ...withoutSwitch } = economyConfigFixture.rainbow;
+    const parsed = economyConfigSchema.parse({ ...economyConfigFixture, rainbow: withoutSwitch });
+    expect(parsed.rainbow.enabled).toBe(false);
+    expect(parsed.rainbow.monthlyRedeemCap).toBe(150);
+  });
+
+  it('ana anahtar: açık değer korunur (zod ayıklamaz)', () => {
+    const parsed = economyConfigSchema.parse({ ...economyConfigFixture, rainbow: { ...DEFAULT_RAINBOW, enabled: true } });
+    expect(parsed.rainbow.enabled).toBe(true);
+  });
+
+  it('ana anahtar: boolean olmayan değer reddedilir ("true" metni açmaz)', () => {
+    const result = economyConfigSchema.safeParse({ ...economyConfigFixture, rainbow: { ...DEFAULT_RAINBOW, enabled: 'true' } });
+    expect(result.success).toBe(false);
+  });
+
   it.each([
     ['ödenmiş pay 0,5 üstü', { subscriptionPaidShare: { free: 0, plus: 0.6, premium: 0.2 } }],
     ['tavan 20 altı', { monthlyRedeemCap: 10 }],

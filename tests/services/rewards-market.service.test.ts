@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createFakeSupabase, type Tables, type FakeSupabaseOptions } from '../helpers/fake-supabase.js';
-import { activeConfigRow } from '../helpers/economy-config.fixture.js';
+import { activeConfigRow, rainbowSwitchRow } from '../helpers/economy-config.fixture.js';
 
 const NOW = new Date('2026-09-27T12:00:00Z');
 
@@ -129,6 +129,40 @@ describe('rewardsMarketService.getMarket', () => {
     await rewardsMarketService.getMarket('u1', 'android');
     await rewardsMarketService.getMarket('u1', 'android');
     expect(fake.queries.filter((q) => q.table === 'reward_catalog_items').length).toBe(1);
+  });
+});
+
+/** Ana anahtar kapalı (2.0.14'te gömülü): market yalnız iç test hesaplarına; test admin tek başına giremez. */
+describe('rewardsMarketService.getMarket — ana anahtar kapalı', () => {
+  const closed = { economy_config_versions: [rainbowSwitchRow(false)] };
+
+  it.each([
+    ['test admin (test hesabı değil), TR iOS', { country: 'TR', is_test_admin: true }, 'ios'],
+    ['test admin açık ülke + açık platform', { is_test_admin: true }, 'android'],
+    ['normal kullanıcı açık ülke + açık platform', {}, 'android'],
+  ] as const)('%s → RAINBOW_NOT_AVAILABLE, önizleme ülkeleri de dönmez', async (_name, over, platform) => {
+    const { rewardsMarketService } = await setup({ ...closed, users: [user(over)] });
+    await expect(rewardsMarketService.getMarket('u1', platform, { previewCountry: 'TH' })).rejects.toMatchObject({
+      code: 'RAINBOW_NOT_AVAILABLE', statusCode: 403,
+    });
+  });
+
+  it('test hesabı + test admin: iç test sürer (tüm ülkeler, tavansız, önizleme ülkeleri)', async () => {
+    const { rewardsMarketService } = await setup({
+      ...closed, users: [user({ country: 'TR', is_test_admin: true, is_test_account: true })],
+    });
+    const market = await rewardsMarketService.getMarket('u1', 'ios');
+    expect(market.items.map((i) => i.id)).toEqual(['i-dana', 'i-grab', 'i-lineman']);
+    expect(market.monthly_cap).toBeNull();
+    expect(market.preview_countries).toEqual(['TH', 'ID', 'MY']);
+  });
+
+  it('test hesabı (admin değil): kendi ülkesinin ürünleri, tavan uygulanır, önizleme yok', async () => {
+    const { rewardsMarketService } = await setup({ ...closed, users: [user({ is_test_account: true })] });
+    const market = await rewardsMarketService.getMarket('u1', 'ios');
+    expect(market.items.map((i) => i.id)).toEqual(['i-grab', 'i-lineman']);
+    expect(market.monthly_cap).toBe(150);
+    expect(market.preview_countries).toEqual([]);
   });
 });
 

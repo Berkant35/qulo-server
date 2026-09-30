@@ -25,6 +25,7 @@
   <div class="card">
     <h3 style="margin-bottom: 12px;">Config JSON</h3>
     <p style="font-size: 12px; color: #999; margin-bottom: 8px;">Edit the full economy configuration as JSON. The schema will be validated on save.</p>
+    <p style="font-size: 12px; color: #999; margin-bottom: 8px;">Rainbow ana anahtarı: <code>rainbow.enabled</code>. <code>false</code> (varsayılan) → Rainbow ve market yalnız <code>is_test_account</code> hesaplarında; <code>true</code> → test admin + Rainbow Market ülke/platform ayarları. Yalnız bu formdan değiştirin (SQL ile yazılan değer önbelleği tazelemez; bozuk değer tüm economy config'i okunmaz yapar). Değişiklik en geç 5 dakikada tüm sunuculara yansır.</p>
     <textarea name="config_json" rows="30" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:4px; font-family:'SF Mono',Monaco,Consolas,monospace; font-size:13px; background:#1a1a2e; color:#4ade80; resize:vertical; line-height:1.5;"><%= config ? JSON.stringify(config, null, 2) : '{\n  "core": {},\n  "subscriptionLimits": {},\n  "rewards": {},\n  "timing": {}\n}' %></textarea>
   </div>
 

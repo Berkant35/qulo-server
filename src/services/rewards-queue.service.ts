@@ -212,8 +212,8 @@ export class RewardsQueueService {
 
   /**
    * Backoffice ana sayfası özeti. Kayıt sayısı 1000'i (PostgREST varsayılan max-rows) aşabilir → `fetchAll`.
-   * Gerçek kullanıcıyı ölçer: test admin talepleri (`is_test`) ve seed/test hesaplarının rainbow'u
-   * (erişimleri zaten kapalı, harcayamaz) sayılara girmez.
+   * Gerçek kullanıcıyı ölçer: iç test talepleri (`is_test` — test admin ya da test hesabı) ve seed/test
+   * hesaplarının rainbow'u sayılara girmez.
    */
   async getSummary(usdPerRainbow: number): Promise<RewardsSummary> {
     const monthStart = monthStartUtc(new Date());

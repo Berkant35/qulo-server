@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createFakeSupabase, type Tables, type FakeSupabaseOptions } from '../helpers/fake-supabase.js';
+import { rainbowSwitchRow } from '../helpers/economy-config.fixture.js';
 
 /**
  * Ödenmiş mor sayacı + Rainbow. Para güvenliği: bedava mor asla rainbow üretmemeli,
@@ -276,6 +277,7 @@ describe('getHistory — rainbow erişimi', () => {
     ],
     reward_market_countries: [{ country_code: 'TH', enabled: true, android_enabled: true, ios_enabled: false }],
     diamond_transactions: [...rows('tr'), ...rows('th'), ...rows('adm')],
+    economy_config_versions: [rainbowSwitchRow(true)],
   });
 
   it('erişimi kapalı kullanıcı (TR, android) RAINBOW satırı görmez; toplam da saymaz', async () => {
@@ -309,6 +311,13 @@ describe('getHistory — rainbow erişimi', () => {
     const result = await diamondService.getHistory('adm', 1, 20, 'ios');
     expect(result.items.map((i: { type: string }) => i.type)).toEqual(['RAINBOW', 'PURPLE', 'RAINBOW', 'GREEN']);
     expect(result.total).toBe(4);
+  });
+
+  it('ana anahtar kapalı: test admin (test hesabı değil) RAINBOW satırı görmez', async () => {
+    const { diamondService } = await setup({ ...seed(), economy_config_versions: [rainbowSwitchRow(false)] });
+    const result = await diamondService.getHistory('adm', 1, 20, 'ios');
+    expect(result.items.map((i: { type: string }) => i.type)).toEqual(['PURPLE', 'GREEN']);
+    expect(result.total).toBe(2);
   });
 });
 

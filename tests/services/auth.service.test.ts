@@ -206,6 +206,14 @@ describe('register', () => {
     expect(fake.table('users')[0].is_test_admin).toBe(false);
   });
 
+  // Rainbow ana anahtarı kapalıyken tek kapı `is_test_account` (2026-09-30): aynı drift bu sütunda olursa
+  // her yeni kayıt Rainbow'u görürdü. Test hesapları kayıt akışından değil seed betiklerinden açılır.
+  it('yeni kullanici is_test_account=false ile yazilir (Rainbow kapisi DB default drift savunmasi)', async () => {
+    const { fake, authService } = await setup({ users: [] });
+    await authService.register(registerInput());
+    expect(fake.table('users')[0].is_test_account).toBe(false);
+  });
+
   /** 2026-09-25: sabit 2× ORACLE yerine config'teki paket (varsayılan her güçten 1). Detay: alttaki describe. */
   it('yeni kullanıcıya config\'teki başlangıç paketi (her güçten 1) envantere yazılır', async () => {
     const { fake, authService } = await setup({ users: [] });
@@ -642,6 +650,7 @@ describe('socialLogin', () => {
     const { fake, authService } = await setup({ users: [] });
     await authService.socialLogin(provider);
     expect(fake.table('users')[0].is_test_admin).toBe(false);
+    expect(fake.table('users')[0].is_test_account).toBe(false);
   });
 
   it('Case C — Apple sagalayicisi (hide-my-email relay) is_test_admin=false yazar', async () => {
@@ -650,6 +659,7 @@ describe('socialLogin', () => {
     await authService.socialLogin({ provider: 'apple', id_token: 't', name: 'A', surname: 'B' });
     const row = fake.table('users')[0];
     expect(row.is_test_admin).toBe(false);
+    expect(row.is_test_account).toBe(false);
     expect(row.auth_provider).toBe('apple');
     expect(row.email).toBe('abcd@privaterelay.appleid.com');
   });

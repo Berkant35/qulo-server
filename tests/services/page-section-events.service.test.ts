@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createFakeSupabase, type FakeSupabaseOptions, type Tables } from '../helpers/fake-supabase.js';
+import { rainbowSwitchRow } from '../helpers/economy-config.fixture.js';
 
 const NOW = new Date('2026-09-28T12:00:00Z');
 const B1 = '0b1b1b1b-0000-4000-8000-000000000001';
@@ -19,6 +20,7 @@ const card = (over: Record<string, unknown>) => ({
 
 async function setup(seed: Tables = {}, options?: FakeSupabaseOptions) {
   const fake = createFakeSupabase({
+    economy_config_versions: [rainbowSwitchRow(true)],
     reward_market_countries: [{ country_code: 'TH', currency: 'THB', enabled: true, android_enabled: true, ios_enabled: false }],
     users: [{ id: 'u1', country: 'th', is_test_admin: false, is_seed_profile: false, is_test_account: false }],
     page_sections: [section({ id: 's1' }), section({ id: 's-draft', status: 'draft' })],
@@ -85,6 +87,20 @@ describe('pageSectionEventsService.record', () => {
     const { fake, pageSectionEventsService } = await setup();
     expect(await pageSectionEventsService.record('u1', [{ item_id: B1, event: 'impression' }], 'ios')).toBe(0);
     expect(fake.table('page_section_events')).toHaveLength(0);
+  });
+
+  it('ana anahtar kapalı: test admin (test hesabı değil) olayı yazılmaz; test hesabınınki yazılır', async () => {
+    const { fake, pageSectionEventsService } = await setup({
+      economy_config_versions: [rainbowSwitchRow(false)],
+      users: [
+        { id: 'adm', country: 'TH', is_test_admin: true, is_seed_profile: false, is_test_account: false },
+        { id: 'qa', country: 'TR', is_test_admin: true, is_seed_profile: false, is_test_account: true },
+      ],
+    });
+    expect(await pageSectionEventsService.record('adm', [{ item_id: B1, event: 'impression' }], 'android')).toBe(0);
+    expect(fake.table('page_section_events')).toHaveLength(0);
+    expect(await pageSectionEventsService.record('qa', [{ item_id: B1, event: 'impression' }], 'ios')).toBe(1);
+    expect(fake.table('page_section_events').map((e) => e.user_id)).toEqual(['qa']);
   });
 
   it('yazım hatası SERVER_ERROR (sessiz yutulmaz)', async () => {

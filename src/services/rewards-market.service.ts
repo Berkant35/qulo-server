@@ -245,7 +245,8 @@ export class RewardsMarketService {
       face_value: item.face_value,
       idempotency_key: input.idempotencyKey,
       platform: toTargetPlatform(platform),
-      is_test: isAdmin,
+      // İç test talebi (test admin ya da ana anahtar kapalıyken giren test hesabı) gerçek ödeme özetine girmez.
+      is_test: isAdmin || user.is_test_account === true,
       source_item_id: sourceItemId,
     });
 

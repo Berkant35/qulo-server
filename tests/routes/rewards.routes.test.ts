@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import type { AddressInfo } from 'net';
 import type { Server } from 'http';
 import { createFakeSupabase, type Tables } from '../helpers/fake-supabase.js';
-import { activeConfigRow } from '../helpers/economy-config.fixture.js';
+import { activeConfigRow, rainbowSwitchRow } from '../helpers/economy-config.fixture.js';
 
 /**
  * Router'ı gerçek Express + errorHandler ile loopback'te (127.0.0.1) ayağa kaldırır: kablolama
@@ -104,6 +104,37 @@ describe('/api/v1/rewards — kablolama', () => {
     const res = await fetch(`${base}/market`);
     expect(res.status).toBe(403);
     expect((await res.json()).error.code).toBe('RAINBOW_NOT_AVAILABLE');
+  });
+
+  it('ana anahtar kapalı + test admin (test hesabı değil): /market ve /redeem 403 RAINBOW_NOT_AVAILABLE, /redemptions açık kalır', async () => {
+    const { base, fake } = await serve({
+      economy_config_versions: [rainbowSwitchRow(false)],
+      users: [{
+        id: 'u1', country: 'TH', created_at: '2026-08-01T00:00:00Z', green_diamonds: 0, purple_diamonds: 0,
+        purple_paid: 0, rainbow_diamonds: 200, is_test_admin: true, is_seed_profile: false, is_test_account: false,
+        is_banned: false,
+      }],
+    }, { fakeAuth: true });
+
+    const market = await fetch(`${base}/market?country=TH`, { headers: { 'x-app-platform': 'android' } });
+    expect(market.status).toBe(403);
+    expect((await market.json()).error.code).toBe('RAINBOW_NOT_AVAILABLE');
+
+    const redeem = await fetch(`${base}/redeem`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-app-platform': 'android' },
+      body: JSON.stringify({
+        item_id: '3f1c9a52-7d7e-4b8e-9d6a-1b2c3d4e5f60',
+        idempotency_key: '11111111-1111-4111-8111-111111111111',
+      }),
+    });
+    expect(redeem.status).toBe(403);
+    expect((await redeem.json()).error.code).toBe('RAINBOW_NOT_AVAILABLE');
+    expect(fake.table('reward_redemptions')).toHaveLength(0);
+    expect(fake.table('users')[0].rainbow_diamonds).toBe(200);
+
+    // Teslim edilmiş kodlar kullanıcının malı (spec §7.6): "Hediye kartlarım" Rainbow kapalıyken de okunur.
+    expect((await fetch(`${base}/redemptions`)).status).toBe(200);
   });
 
   it('POST /redeem geçerli gövdeyle 200 ve PENDING talep', async () => {
