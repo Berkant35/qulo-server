@@ -15,6 +15,14 @@
       "title": "Il tuo match ti aspetta",
       "body": "Hai fatto match con {name} ma non avete ancora parlato. Manda il primo messaggio!"
     },
+    "lifecycle_day1_return": {
+      "title": "Scopri ti aspetta",
+      "body": "Nuovi profili ti aspettano. Rispondi a qualche domanda e ottieni il tuo primo match!"
+    },
+    "lifecycle_day1_return_likes": {
+      "title": "Il tuo profilo si fa notare 👀",
+      "body": "Like ricevuti da quando sei arrivato: {count}. Vieni a dare un'occhiata!"
+    },
     "lifecycle_likes_waiting": {
       "title": "Qualcuno ti ha messo like 👀",
       "body": "{count} persone ti hanno messo like mentre eri via. Vieni a vedere!"

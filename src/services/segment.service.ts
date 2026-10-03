@@ -29,10 +29,12 @@ export interface SegmentTarget {
   is_test_account: boolean | null;
   is_seed_profile: boolean | null;
   notification_preferences: Record<string, boolean> | null;
+  /** Yeni kullanici kampanya sessizligi icin (throttle.inNewUserCampaignQuiet). */
+  created_at: string | null;
 }
 
 const SEGMENT_TARGET_COLUMNS =
-  "id, push_token, locale, lng, is_deleted, is_banned, is_test_account, is_seed_profile, notification_preferences";
+  "id, push_token, locale, lng, is_deleted, is_banned, is_test_account, is_seed_profile, notification_preferences, created_at";
 
 class SegmentService {
   // ── SQL yön: segment → eşleşen user listesi (campaign push + admin preview) ──

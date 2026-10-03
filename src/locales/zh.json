@@ -15,6 +15,14 @@
       "title": "你的匹配在等你",
       "body": "你和{name}匹配成功了，但还没聊过。发出第一条消息吧！"
     },
+    "lifecycle_day1_return": {
+      "title": "发现页在等你",
+      "body": "有新的资料在等你。回答几个问题，拿下你的第一个配对吧！"
+    },
+    "lifecycle_day1_return_likes": {
+      "title": "你的资料正受到关注 👀",
+      "body": "注册以来有{count}人喜欢了你。快来看看！"
+    },
     "lifecycle_likes_waiting": {
       "title": "有人喜欢了你 👀",
       "body": "你不在的时候有{count}个人喜欢了你。快来看看！"

@@ -15,6 +15,14 @@
       "title": "Eşleşmen seni bekliyor",
       "body": "{name} ile eşleştin ama henüz konuşmadınız. İlk mesajı sen at!"
     },
+    "lifecycle_day1_return": {
+      "title": "Keşfet seni bekliyor",
+      "body": "Seni bekleyen yeni profiller var. Birkaç soru çöz, ilk eşleşmeni yakala!"
+    },
+    "lifecycle_day1_return_likes": {
+      "title": "Profilin ilgi görüyor 👀",
+      "body": "Katıldığından beri {count} kişi seni beğendi. Gel bir bak!"
+    },
     "lifecycle_likes_waiting": {
       "title": "Seni beğenenler var 👀",
       "body": "Sen yokken {count} kişi seni beğendi. Gel bir bak!"

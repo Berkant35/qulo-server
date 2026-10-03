@@ -10,6 +10,7 @@ import type { EngineContext, EngineUser } from './context.js';
 export const LIFECYCLE_RULE_KEYS = [
   'lifecycle_unread_message',
   'lifecycle_match_waiting',
+  'lifecycle_day1_return',
   'lifecycle_likes_waiting',
   'lifecycle_quiz_unfinished',
   'lifecycle_profile_incomplete',
@@ -18,11 +19,20 @@ export const LIFECYCLE_RULE_KEYS = [
 ] as const;
 
 export type LifecycleRuleKey = (typeof LIFECYCLE_RULE_KEYS)[number];
+
+/**
+ * Kuralin metin varyantlari: ayni kural (inbox tipi + dizi sayaci tek), veriye gore farkli sablon.
+ * Sablonlar locale JSON'da `push.<key>`; admin panelinde (PUSH_TYPES) ayri satir olarak duzenlenir.
+ */
+export const LIFECYCLE_TEMPLATE_VARIANTS = ['lifecycle_day1_return_likes'] as const;
+export type LifecycleTemplateVariant = (typeof LIFECYCLE_TEMPLATE_VARIANTS)[number];
 export type RuleCategory = 'messages' | 'matches' | 'campaigns';
 
 export interface RuleMatch {
   params: Record<string, string>;
   actionUrl: string;
+  /** Varsayilan sablon (kural anahtari) yerine kullanilacak varyant; yoksa kural anahtari. */
+  templateKey?: LifecycleTemplateVariant;
 }
 
 export interface LifecycleRule {
@@ -68,6 +78,29 @@ function otherUserOf(match: { user1_id: string; user2_id: string }, userId: stri
 
 const NEW_PEOPLE_MIN_COUNT = 3;
 
+/**
+ * Ilk gun geri cagirma penceresi. Motor yalniz yerel gonderim saatinde (19:00) karar verir; kayittan
+ * 4-30 saat sonrasina dusen ILK pencere = kayit gununun ya da ertesi gunun aksami. Dizi bos → tek gonderim.
+ * 29 Eyl-3 Eki: ilk bildirim karari kayittan medyan 56,7 saat sonraydi; ertesi gun donen 1/27.
+ */
+export const DAY1_MIN_AGE_MS = 4 * 60 * 60 * 1000;
+export const DAY1_MAX_AGE_MS = 30 * 60 * 60 * 1000;
+/**
+ * Ilk oturum payi: last_seen_at kayittan bu kadar sonrasina kadarsa kullanici hala ilk oturumdadir
+ * (heartbeat 60 sn; ilk oturum medyani ~5 dk). Daha gecse "geri dondu" sayilir.
+ * Yalniz last_seen_at — last_active_at yalniz resume'da yazilir, ilk gunde guvenilmez.
+ */
+export const DAY1_FIRST_SESSION_MS = 2 * 60 * 60 * 1000;
+
+/** Kayittan beri gercek kullanicilardan (seed/test haric — "kisi" iddiasi uydurma olmasin) gelen begeni sayisi. */
+function realLikesSince(user: EngineUser, ctx: EngineContext, sinceMs: number): number {
+  return (ctx.likesByTarget.get(user.id) ?? []).filter((like) => {
+    if (like.swiper_id === user.id || Date.parse(like.created_at) <= sinceMs) return false;
+    const swiper = ctx.usersById.get(like.swiper_id);
+    return !!swiper && !swiper.is_seed_profile && !swiper.is_test_account;
+  }).length;
+}
+
 export const LIFECYCLE_RULES: LifecycleRule[] = [
   {
     key: 'lifecycle_unread_message',
@@ -111,6 +144,24 @@ export const LIFECYCLE_RULES: LifecycleRule[] = [
         if (!best || matchedAt > best.matchedAt) best = { matchId: match.id, name: other.name ?? '', matchedAt };
       }
       return best ? { params: { name: best.name }, actionUrl: `/chat/${best.matchId}` } : null;
+    },
+  },
+  {
+    key: 'lifecycle_day1_return',
+    description: 'Kayittan 4-30 saat sonraki ilk aksam penceresi, ilk oturumdan beri donmedi (tek gonderim)',
+    category: 'campaigns',
+    defaultScheduleDays: [],
+    resetOnActivity: false,
+    evaluate(user, ctx): RuleMatch | null {
+      const createdMs = Date.parse(user.created_at);
+      if (!Number.isFinite(createdMs)) return null;
+      const age = ctx.now.getTime() - createdMs;
+      if (age < DAY1_MIN_AGE_MS || age > DAY1_MAX_AGE_MS) return null;
+      const lastSeenMs = user.last_seen_at ? Date.parse(user.last_seen_at) : Number.NaN;
+      if (Number.isFinite(lastSeenMs) && lastSeenMs - createdMs > DAY1_FIRST_SESSION_MS) return null;
+      const likes = realLikesSince(user, ctx, createdMs);
+      if (likes > 0) return { params: { count: String(likes) }, actionUrl: '/discover', templateKey: 'lifecycle_day1_return_likes' };
+      return { params: {}, actionUrl: '/discover' };
     },
   },
   {

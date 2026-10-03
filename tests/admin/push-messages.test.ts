@@ -55,7 +55,7 @@ describe('pushTemplateAdminService.list (shape)', () => {
     });
   });
 
-  it('returns the 7 event types + 7 lifecycle types (no campaign, no quiz_started, no passport_expired)', async () => {
+  it('returns the 7 event types + lifecycle types + lifecycle template variants (no campaign, no quiz_started, no passport_expired)', async () => {
     vi.resetModules();
     vi.doMock('../../src/config/supabase.js', () => ({
       supabase: {
@@ -67,9 +67,9 @@ describe('pushTemplateAdminService.list (shape)', () => {
       },
     }));
     const { pushTemplateAdminService: svc } = await import('../../src/admin/admin.service.js');
-    const { LIFECYCLE_RULE_KEYS } = await import('../../src/services/notification-engine/rules.js');
+    const { LIFECYCLE_RULE_KEYS, LIFECYCLE_TEMPLATE_VARIANTS } = await import('../../src/services/notification-engine/rules.js');
     const rows = await svc.list('tr');
-    expect(rows.length).toBe(7 + LIFECYCLE_RULE_KEYS.length);
+    expect(rows.length).toBe(7 + LIFECYCLE_RULE_KEYS.length + LIFECYCLE_TEMPLATE_VARIANTS.length);
     const types = rows.map((r) => r.type).sort();
     expect(types).toEqual([
       'chat_question_answered',
@@ -80,7 +80,10 @@ describe('pushTemplateAdminService.list (shape)', () => {
       'new_message_image',
       'new_message_voice',
       ...LIFECYCLE_RULE_KEYS,
+      ...LIFECYCLE_TEMPLATE_VARIANTS,
     ].sort());
+    // Ilk gun varyanti admin panelinde ayri satir olarak duzenlenebilir
+    expect(types).toContain('lifecycle_day1_return_likes');
     expect(types).not.toContain('campaign');
     expect(types).not.toContain('quiz_started');
     expect(types).not.toContain('passport_expired');

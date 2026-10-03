@@ -50,10 +50,11 @@ const B = user({ id: 'B', name: 'Bora' });
 const match = { id: 'm1', user1_id: 'A', user2_id: 'B', matched_at: ago(3 * D) };
 
 describe('rules — oncelik sirasi ve anahtarlar', () => {
-  it('7 kural, oncelik dizilimi sabit', () => {
+  it('8 kural, oncelik dizilimi sabit (ilk gun geri cagirma eslesme/mesajdan sonra)', () => {
     expect(LIFECYCLE_RULES.map((r) => r.key)).toEqual([
       'lifecycle_unread_message',
       'lifecycle_match_waiting',
+      'lifecycle_day1_return',
       'lifecycle_likes_waiting',
       'lifecycle_quiz_unfinished',
       'lifecycle_profile_incomplete',
@@ -203,5 +204,64 @@ describe('lifecycle_winback', () => {
     expect(rule.evaluate(user({ id: 'A', last_active_at: ago(31 * D) }), ctx())).toEqual({ params: {}, actionUrl: '/discover' });
     expect(rule.evaluate(user({ id: 'A', last_active_at: ago(29 * D) }), ctx())).toBeNull();
     expect(rule.evaluate(user({ id: 'A', last_active_at: null, created_at: ago(45 * D) }), ctx())).toEqual({ params: {}, actionUrl: '/discover' });
+  });
+});
+
+describe('lifecycle_day1_return (ilk gun geri cagirma, 3 Eki)', () => {
+  const rule = LIFECYCLE_RULES_BY_KEY.lifecycle_day1_return;
+  // Kayit 10 saat once, ilk oturum 5 dk surmus, sonra donmemis.
+  const yeni = (o: Partial<EngineUser> = {}) =>
+    user({ id: 'N', created_at: ago(10 * H), last_seen_at: ago(10 * H - 5 * 60 * 1000), last_active_at: null, ...o });
+
+  it('kayittan 4-30 saat sonra, ilk oturumdan beri donmemis → discover, genel sablon', () => {
+    expect(rule.evaluate(yeni(), ctx())).toEqual({ params: {}, actionUrl: '/discover' });
+  });
+
+  it('pencere sinirlari: 3 saat → yok; 4 saat → var; 30 saat → var; 31 saat → yok', () => {
+    const at = (ageMs: number) => yeni({ created_at: ago(ageMs), last_seen_at: ago(ageMs) });
+    expect(rule.evaluate(at(3 * H), ctx())).toBeNull();
+    expect(rule.evaluate(at(4 * H), ctx())).not.toBeNull();
+    expect(rule.evaluate(at(30 * H), ctx())).not.toBeNull();
+    expect(rule.evaluate(at(31 * H), ctx())).toBeNull();
+  });
+
+  it('ilk oturumdan sonra geri donmus (last_seen_at kayittan 2 saatten gec) → yok', () => {
+    expect(rule.evaluate(yeni({ last_seen_at: ago(1 * H) }), ctx())).toBeNull();
+  });
+
+  it('last_seen_at hic yazilmamis → donmemis sayilir; last_active_at taze olsa da karar last_seen_at ile', () => {
+    expect(rule.evaluate(yeni({ last_seen_at: null }), ctx())).not.toBeNull();
+    expect(rule.evaluate(yeni({ last_active_at: ago(1 * H) }), ctx())).not.toBeNull();
+  });
+
+  it('kayittan sonra GERCEK kullanicidan begeni → begeni varyanti + sayi; seed/test/oncesi/silinmis sayilmaz', () => {
+    const gercek = user({ id: 'G' });
+    const seed = user({ id: 'S', is_seed_profile: true, is_test_account: true });
+    const tester = user({ id: 'T', is_test_account: true });
+    const c = ctx({ users: [gercek, seed, tester] });
+    c.likesByTarget.set('N', [
+      { swiper_id: 'G', target_id: 'N', created_at: ago(2 * H) },
+      { swiper_id: 'S', target_id: 'N', created_at: ago(2 * H) },
+      { swiper_id: 'T', target_id: 'N', created_at: ago(2 * H) },
+      { swiper_id: 'ghost', target_id: 'N', created_at: ago(2 * H) },
+      { swiper_id: 'G', target_id: 'N', created_at: ago(20 * H) }, // kayittan once — imkansiz ama sinir
+    ]);
+    expect(rule.evaluate(yeni(), c)).toEqual({
+      params: { count: '1' },
+      actionUrl: '/discover',
+      templateKey: 'lifecycle_day1_return_likes',
+    });
+  });
+
+  it('yalniz seed begenisi varsa genel sablona duser (uydurma "kisi" sayisi yok)', () => {
+    const seed = user({ id: 'S', is_seed_profile: true, is_test_account: true });
+    const c = ctx({ users: [seed] });
+    c.likesByTarget.set('N', [{ swiper_id: 'S', target_id: 'N', created_at: ago(2 * H) }]);
+    expect(rule.evaluate(yeni(), c)).toEqual({ params: {}, actionUrl: '/discover' });
+  });
+
+  it('tek gonderim: dizi bos, aktiflik diziyi sifirlamaz', () => {
+    expect(rule.defaultScheduleDays).toEqual([]);
+    expect(rule.resetOnActivity).toBe(false);
   });
 });

@@ -15,6 +15,14 @@
       "title": "Je match wacht op je",
       "body": "Je hebt een match met {name}, maar jullie hebben nog niet gepraat. Stuur het eerste bericht!"
     },
+    "lifecycle_day1_return": {
+      "title": "Ontdekken wacht op je",
+      "body": "Er wachten nieuwe profielen op je. Beantwoord een paar vragen en scoor je eerste match!"
+    },
+    "lifecycle_day1_return_likes": {
+      "title": "Je profiel valt op 👀",
+      "body": "Likes sinds je je aanmeldde: {count}. Kom eens kijken!"
+    },
     "lifecycle_likes_waiting": {
       "title": "Mensen vinden je leuk 👀",
       "body": "{count} mensen hebben je geliket terwijl je weg was. Kom kijken!"

@@ -15,6 +15,14 @@
       "title": "Twoje dopasowanie czeka",
       "body": "Masz dopasowanie z {name}, ale jeszcze nie rozmawialiście. Napisz jako pierwszy(-a)!"
     },
+    "lifecycle_day1_return": {
+      "title": "Odkrywaj czeka na Ciebie",
+      "body": "Czekają na Ciebie nowe profile. Odpowiedz na kilka pytań i zdobądź pierwsze dopasowanie!"
+    },
+    "lifecycle_day1_return_likes": {
+      "title": "Twój profil przyciąga uwagę 👀",
+      "body": "Polubienia od dołączenia: {count}. Zajrzyj!"
+    },
     "lifecycle_likes_waiting": {
       "title": "Ktoś Cię polubił 👀",
       "body": "{count} osób polubiło Cię, gdy Cię nie było. Wpadnij zobaczyć!"

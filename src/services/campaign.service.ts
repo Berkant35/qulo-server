@@ -3,6 +3,7 @@ import { isFcmAvailable } from "../config/firebase.js";
 import { NotificationService } from "./notification.service.js";
 import { segmentService } from "./segment.service.js";
 import { fetchAll, isEligibleUser } from "./notification-engine/context.js";
+import { inNewUserCampaignQuiet } from "./notification-engine/throttle.js";
 import { DAY_MS } from "./notification-engine/timezone.js";
 import { isRecurring } from "../validators/campaign.validator.js";
 import type {
@@ -93,8 +94,12 @@ class CampaignService {
       .eq("id", campaignId);
 
     try {
-      // 3. Segment (sayfali) + uygunluk: test/seed/banli hedef sayilmaz (motorla ayni kural)
-      const allUsers = (await segmentService.listSegmentTargets(campaign.segment as SegmentInput)).filter(isEligibleUser);
+      // 3. Segment (sayfali) + uygunluk: test/seed/banli hedef sayilmaz (motorla ayni kural);
+      // kayittan sonraki ilk 48 saatteki kullanicilar da (gunluk tavani lifecycle'a birak)
+      const nowMs = Date.now();
+      const allUsers = (await segmentService.listSegmentTargets(campaign.segment as SegmentInput)).filter(
+        (u) => isEligibleUser(u) && !inNewUserCampaignQuiet(u.created_at, nowMs),
+      );
 
       // 4. Update total_targeted
       const { error: targetedErr } = await supabase

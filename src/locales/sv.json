@@ -15,6 +15,14 @@
       "title": "Din matchning väntar",
       "body": "Du matchade med {name} men ni har inte pratat än. Skicka första meddelandet!"
     },
+    "lifecycle_day1_return": {
+      "title": "Upptäck väntar på dig",
+      "body": "Nya profiler väntar på dig. Svara på några frågor och få din första match!"
+    },
+    "lifecycle_day1_return_likes": {
+      "title": "Din profil syns 👀",
+      "body": "Gillningar sedan du gick med: {count}. Kom och kika!"
+    },
     "lifecycle_likes_waiting": {
       "title": "Någon gillar dig 👀",
       "body": "{count} personer gillade dig medan du var borta. Kom och kika!"

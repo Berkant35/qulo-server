@@ -2,8 +2,8 @@ import { getFcm, isFcmAvailable } from '../config/firebase.js';
 import { supabase } from '../config/supabase.js';
 import { resolveLocale } from '../utils/locales.js';
 import { serverLocales as locales } from '../utils/server-locales.js';
-import { LIFECYCLE_RULE_KEYS, LIFECYCLE_RULES } from './notification-engine/rules.js';
-import type { LifecycleRuleKey } from './notification-engine/rules.js';
+import { LIFECYCLE_RULE_KEYS, LIFECYCLE_RULES, LIFECYCLE_TEMPLATE_VARIANTS } from './notification-engine/rules.js';
+import type { LifecycleRuleKey, LifecycleTemplateVariant } from './notification-engine/rules.js';
 
 // Admin-editable push template types (shown in /admin/push-messages panel).
 // Validator (pushTemplateParamsSchema) accepts only these.
@@ -17,6 +17,8 @@ export const PUSH_TYPES = [
   'chat_question_answered',
   // Lifecycle (bildirim motoru) tipleri — rules.ts tek kaynak; admin panelinde dil dil duzenlenir/susturulur
   ...LIFECYCLE_RULE_KEYS,
+  // Lifecycle metin varyantlari (ayni kural, veriye gore farkli sablon) — admin panelinde ayri satir
+  ...LIFECYCLE_TEMPLATE_VARIANTS,
 ] as const;
 
 export type PushType = typeof PUSH_TYPES[number];
@@ -75,6 +77,8 @@ const NOTIFICATION_CONFIG: Record<AnyPushType, NotificationTypeConfig> = {
   campaign:               { category: 'campaigns' },
   // Lifecycle — kategori rules.ts'ten (tek kaynak); action_url motor tarafindan karar basina verilir
   ...(Object.fromEntries(LIFECYCLE_RULES.map((r) => [r.key, { category: r.category }])) as Record<LifecycleRuleKey, NotificationTypeConfig>),
+  // Varyantlar yalniz sablon olarak cozulur (inbox tipi kural anahtaridir); kategori kuralinkiyle ayni
+  ...(Object.fromEntries(LIFECYCLE_TEMPLATE_VARIANTS.map((v) => [v, { category: 'campaigns' }])) as Record<LifecycleTemplateVariant, NotificationTypeConfig>),
 };
 
 /** sendPushDetailed'in gonderMEme sebebi — push_log'a yazilir, backoffice'te gorunur. */
@@ -253,6 +257,8 @@ export class NotificationService {
       actionUrl?: string;
       actionLabel?: string;
       campaignId?: string;
+      /** Sablon varyanti: metin bu anahtardan cozulur, inbox satirinin tipi `type` kalir. */
+      templateKey?: LifecycleTemplateVariant;
     },
   ): Promise<PushSendResult> {
     const skipped = (reason: PushSkipReason, notificationId: string | null = null, title: string | null = null, body: string | null = null): PushSendResult =>
@@ -290,7 +296,7 @@ export class NotificationService {
       } else {
         // Import edilen resolveLocale ile single source of truth — 16 dil
         const safeLocale: SupportedLocale = resolveLocale(user.locale);
-        const rendered = await NotificationService.renderPush(type, safeLocale, params);
+        const rendered = await NotificationService.renderPush(options?.templateKey ?? type, safeLocale, params);
         if (!rendered) {
           console.warn(`[NotificationService] No push template for type=${type}, locale=${safeLocale} — DB persisted, FCM skipped`);
           body = `[${type}]`;

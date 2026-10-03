@@ -69,3 +69,40 @@ describe('campaignService.dispatchDueCampaigns', () => {
     expect(spy).not.toHaveBeenCalled();
   });
 });
+
+describe('campaignService.sendCampaign — yeni kullanici kampanya sessizligi (ilk 48 saat, 3 Eki)', () => {
+  const D = 24 * H;
+  const target = (id: string, createdAgoMs: number | null) => ({
+    id,
+    push_token: `tok-${id}`,
+    locale: 'tr',
+    lng: 29,
+    is_deleted: false,
+    is_banned: false,
+    is_test_account: false,
+    is_seed_profile: false,
+    notification_preferences: null,
+    created_at: createdAgoMs == null ? null : new Date(Date.now() - createdAgoMs).toISOString(),
+  });
+
+  it('kayittan 48 saatten yeni kullaniciya tek seferlik kampanya gitmez; eski ve created_at bilinmeyen kullaniciya gider', async () => {
+    vi.resetModules();
+    const fake = createFakeSupabase({
+      campaigns: [{ id: 'c1', status: 'draft', recurrence: 'none', segment: {}, push_title: 'T', push_body: 'B', image_url: null, action_url: null, action_label: null }],
+      campaign_stats: [{ id: 's1', campaign_id: 'c1', total_targeted: 0, total_sent: 0, total_delivered: 0 }],
+      campaign_events: [],
+      notifications: [],
+      push_messages: [],
+      users: [target('YENI', 10 * H), target('SINIR', 47 * H), target('ESKI', 3 * D), target('BILINMIYOR', null)],
+    });
+    const send = vi.fn().mockResolvedValue('msg-1');
+    vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client, ensureStorageBuckets: async () => {} }));
+    vi.doMock('../../src/config/firebase.js', () => ({ getFcm: () => ({ send }), isFcmAvailable: () => true, firebaseAdmin: {} }));
+    const { campaignService } = await import('../../src/services/campaign.service.js');
+
+    const r = await campaignService.sendCampaign('c1');
+    expect(r.totalTargeted).toBe(2);
+    expect(fake.table('notifications').map((n) => n.user_id).sort()).toEqual(['BILINMIYOR', 'ESKI']);
+    expect(fake.table('campaign_stats')[0]!.total_targeted).toBe(2);
+  });
+});

@@ -5,7 +5,7 @@ import { NotificationService } from "./notification.service.js";
 import { segmentService, type SegmentTarget } from "./segment.service.js";
 import { loadEngineConfig } from "./notification-engine/config.js";
 import { fetchAll, isEligibleUser, loadSendHistory, sendTimesByUser } from "./notification-engine/context.js";
-import { throttleReason, type ThrottleConfig } from "./notification-engine/throttle.js";
+import { inNewUserCampaignQuiet, throttleReason, type ThrottleConfig } from "./notification-engine/throttle.js";
 import { DAY_MS, localClock, utcOffsetHours, type LocalClock } from "./notification-engine/timezone.js";
 import { fnv1a32 } from "../utils/hash.js";
 import type { CampaignVariant, SegmentInput } from "../validators/campaign.validator.js";
@@ -22,6 +22,7 @@ import type { CampaignVariant, SegmentInput } from "../validators/campaign.valid
  * haftalik kotasini tuketip lifecycle bildirimlerini bastirir — backoffice formunda uyarilir, oneri
  * haftada 2-3 gun. Ardisik gunlerin slotlari 20 saatten yakinsa gonderim tavan acilana kadar
  * ayni pencere icinde ertelenir (kayip yok; claim yerel gune bagli).
+ * Kayittan sonraki ilk 48 saat kampanya gitmez (throttle.inNewUserCampaignQuiet) — lifecycle oncelikli.
  *
  * Kayit (campaign_events.dedupe_key = kampanya:kullanici:yerelGun) FCM'den ONCE atilir; unique index
  * ikinci instance'i durdurur.
@@ -45,6 +46,7 @@ export type RecurringSkip =
   | "before_slot"
   | "after_window"
   | "already_sent"
+  | "new_user"
   | "holdout"
   | "daily_cap"
   | "weekly_cap"
@@ -68,7 +70,7 @@ function emptyResult(): RecurringDispatchResult {
     campaigns: 0,
     sent: 0,
     failed: 0,
-    skipped: { not_day: 0, before_slot: 0, after_window: 0, already_sent: 0, holdout: 0, daily_cap: 0, weekly_cap: 0, pref_off: 0, claimed_elsewhere: 0 },
+    skipped: { not_day: 0, before_slot: 0, after_window: 0, already_sent: 0, new_user: 0, holdout: 0, daily_cap: 0, weekly_cap: 0, pref_off: 0, claimed_elsewhere: 0 },
   };
 }
 
@@ -121,6 +123,7 @@ export function decideRecurringSkip(input: RecurringDecisionInput): RecurringSki
   if (clock.minuteOfDay >= campaign.window_end_hour * 60) return "after_window";
   if (clock.minuteOfDay < sendMinuteFor(campaign.id, clock.date, campaign.window_start_hour, campaign.window_end_hour)) return "before_slot";
   if (claimed.has(dedupeKeyFor(campaign.id, user.id, clock.date))) return "already_sent";
+  if (inNewUserCampaignQuiet(user.created_at, nowMs)) return "new_user";
   const throttled = throttleReason(user.id, sendTimes, config, nowMs);
   if (throttled) return throttled;
   if (user.notification_preferences?.campaigns === false) return "pref_off";

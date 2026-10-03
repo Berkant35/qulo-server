@@ -15,6 +15,14 @@
       "title": "Kecocokanmu menunggu",
       "body": "Kamu cocok dengan {name} tapi belum ngobrol. Kirim pesan pertama!"
     },
+    "lifecycle_day1_return": {
+      "title": "Jelajahi menunggumu",
+      "body": "Ada profil baru yang menunggumu. Jawab beberapa pertanyaan dan dapatkan match pertamamu!"
+    },
+    "lifecycle_day1_return_likes": {
+      "title": "Profilmu menarik perhatian 👀",
+      "body": "Sejak bergabung, {count} orang menyukaimu. Yuk lihat!"
+    },
     "lifecycle_likes_waiting": {
       "title": "Ada yang menyukaimu 👀",
       "body": "{count} orang menyukaimu saat kamu pergi. Yuk, lihat!"

@@ -202,7 +202,7 @@ export async function runEngine(mode: EngineMode = 'live', opts: { now?: Date } 
     if (prefDisabled(user, rule.category)) { await record({ ...base, reason: 'pref_off' }); continue; }
 
     // Her modda once sablon: susturulmus/eksik sablon canli modda da inbox'a "[type]" satiri yazdirmamali
-    const rendered = await NotificationService.renderPush(rule.key, locale, match.params);
+    const rendered = await NotificationService.renderPush(match.templateKey ?? rule.key, locale, match.params);
     if (!rendered) { await record({ ...base, reason: 'template_muted' }); continue; }
 
     if (effective !== 'live') {
@@ -221,7 +221,10 @@ export async function runEngine(mode: EngineMode = 'live', opts: { now?: Date } 
       continue;
     }
     sends++;
-    const sent = await NotificationService.sendPushDetailed(user.id, rule.key, match.params, undefined, { actionUrl: match.actionUrl });
+    const sent = await NotificationService.sendPushDetailed(user.id, rule.key, match.params, undefined, {
+      actionUrl: match.actionUrl,
+      templateKey: match.templateKey,
+    });
     const final: EngineDecision = {
       ...base,
       decision: sent.sent ? 'sent' : 'failed',

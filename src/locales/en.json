@@ -15,6 +15,14 @@
       "title": "Your match is waiting",
       "body": "You matched with {name} but haven't talked yet. Send the first message!"
     },
+    "lifecycle_day1_return": {
+      "title": "Discover is waiting for you",
+      "body": "New profiles are waiting for you. Answer a few questions and get your first match!"
+    },
+    "lifecycle_day1_return_likes": {
+      "title": "Your profile is getting noticed 👀",
+      "body": "Likes since you joined: {count}. Come take a look!"
+    },
     "lifecycle_likes_waiting": {
       "title": "People liked you 👀",
       "body": "{count} people liked you while you were away. Come take a look!"

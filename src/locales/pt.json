@@ -15,6 +15,14 @@
       "title": "Seu match está esperando",
       "body": "Você deu match com {name}, mas ainda não conversaram. Mande a primeira mensagem!"
     },
+    "lifecycle_day1_return": {
+      "title": "O Descobrir está te esperando",
+      "body": "Tem perfis novos esperando por você. Responda algumas perguntas e consiga seu primeiro match!"
+    },
+    "lifecycle_day1_return_likes": {
+      "title": "Seu perfil está chamando atenção 👀",
+      "body": "Curtidas desde que você entrou: {count}. Dá uma olhada!"
+    },
     "lifecycle_likes_waiting": {
       "title": "Tem gente que curtiu você 👀",
       "body": "{count} pessoas curtiram você enquanto você estava fora. Vem ver!"

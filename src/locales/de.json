@@ -15,6 +15,14 @@
       "title": "Dein Match wartet",
       "body": "Du hast ein Match mit {name}, aber ihr habt noch nicht geschrieben. Mach den ersten Schritt!"
     },
+    "lifecycle_day1_return": {
+      "title": "Entdecken wartet auf dich",
+      "body": "Neue Profile warten auf dich. Beantworte ein paar Fragen und hol dir dein erstes Match!"
+    },
+    "lifecycle_day1_return_likes": {
+      "title": "Dein Profil fällt auf 👀",
+      "body": "Likes seit deiner Anmeldung: {count}. Schau mal rein!"
+    },
     "lifecycle_likes_waiting": {
       "title": "Jemand mag dich 👀",
       "body": "{count} Personen haben dich geliked, während du weg warst. Schau mal rein!"

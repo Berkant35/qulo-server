@@ -417,3 +417,71 @@ describe('runEngine — simulasyon (backoffice onizleme)', () => {
     expect(send).not.toHaveBeenCalled();
   });
 });
+
+describe('runEngine — ilk gun geri cagirma (lifecycle_day1_return, 3 Eki)', () => {
+  // N: tr, 10 saat once kaydoldu, ilk oturum 5 dk, sonra donmedi. G (gercek) kayittan sonra begendi.
+  const yeni = () => user({ id: 'N', created_at: ago(10 * H), last_seen_at: ago(10 * H - 5 * 60 * 1000), last_active_at: null });
+  const tables = (extra: Partial<Tables> = {}) =>
+    seed(
+      { dry_run: false },
+      {
+        users: [yeni(), user({ id: 'G', name: 'Gaye', locale: 'en', lng: 0 })],
+        matches: [],
+        swipes: [{ swiper_id: 'G', target_id: 'N', action: 'LIKE', created_at: ago(2 * H) }],
+        ...extra,
+      },
+    );
+
+  it('begeni varyanti gercek sayiyla gider; inbox tipi ve push_log kural anahtari lifecycle_day1_return', async () => {
+    const { fake, runEngine, send } = await boot(tables());
+    const r = await runEngine('live', { now: NOW });
+    expect(r.decisions).toHaveLength(1);
+    expect(r.decisions[0]).toMatchObject({ userId: 'N', ruleKey: 'lifecycle_day1_return', decision: 'sent', title: 'Profilin ilgi görüyor 👀' });
+    expect(r.decisions[0]!.body).toContain('1 kişi seni beğendi');
+    const msg = send.mock.calls[0]![0];
+    expect(msg.data.type).toBe('lifecycle_day1_return');
+    expect(msg.data.action_url).toBe('/discover');
+    expect(fake.table('notifications')[0]).toMatchObject({ user_id: 'N', type: 'lifecycle_day1_return', title: 'Profilin ilgi görüyor 👀' });
+    expect(fake.table('push_log')[0]).toMatchObject({ rule_key: 'lifecycle_day1_return', decision: 'sent' });
+  });
+
+  it('begeni yoksa genel sablon; ikinci aksam ayni kullaniciya tekrar GITMEZ (tek gonderim)', async () => {
+    const { runEngine } = await boot(tables({ swipes: [] }));
+    const r = await runEngine('live', { now: NOW });
+    expect(r.decisions[0]).toMatchObject({ ruleKey: 'lifecycle_day1_return', decision: 'sent', title: 'Keşfet seni bekliyor' });
+
+    // 24 saat sonra (yas 34 saat, pencere disi olsa da) — dizi bos: daha once 'sent' varsa susar
+    const later = new Date(NOW.getTime() + 24 * H);
+    const again = await boot(
+      tables({
+        swipes: [],
+        users: [user({ id: 'N', created_at: new Date(later.getTime() - 28 * H).toISOString(), last_seen_at: null, last_active_at: null })],
+        push_log: [sentRow('N', 'lifecycle_day1_return', new Date(later.getTime() - 24 * H).toISOString())],
+      }),
+    );
+    const r2 = await again.runEngine('live', { now: later });
+    expect(r2.decisions.find((d) => d.ruleKey === 'lifecycle_day1_return')).toBeUndefined();
+  });
+
+  it('varyant admin panelinden susturulursa (push_messages) template_muted — kural anahtari degil varyant cozulur', async () => {
+    const { fake, runEngine, send } = await boot(
+      tables({ push_messages: [{ type: 'lifecycle_day1_return_likes', locale: 'tr', title: null, body: null, is_active: false }] }),
+    );
+    const r = await runEngine('live', { now: NOW });
+    expect(r.decisions[0]).toMatchObject({ ruleKey: 'lifecycle_day1_return', decision: 'suppressed', reason: 'template_muted' });
+    expect(fake.table('notifications')).toHaveLength(0);
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it('holdout kovasi gecerli: holdout_pct 50 iken kovasi < 50 olan yeni kullanici holdout karari alir', async () => {
+    const { holdoutBucket } = await import('../../../src/services/notification-engine/throttle.js');
+    const id = ['N', 'N1', 'N2', 'N3', 'N4', 'N5'].find((x) => holdoutBucket(x) < 50)!;
+    const u = { ...yeni(), id };
+    const { runEngine, send } = await boot(
+      seed({ dry_run: false, holdout_pct: 50 }, { users: [u], matches: [], swipes: [] }),
+    );
+    const r = await runEngine('live', { now: NOW });
+    expect(r.decisions[0]).toMatchObject({ userId: id, ruleKey: 'lifecycle_day1_return', decision: 'holdout' });
+    expect(send).not.toHaveBeenCalled();
+  });
+});

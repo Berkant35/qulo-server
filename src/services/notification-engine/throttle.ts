@@ -1,6 +1,6 @@
 import { fnv1a32 } from '../../utils/hash.js';
 import { DECISION_WINDOW_MS } from './context.js';
-import { WEEK_MS } from './timezone.js';
+import { DAY_MS, WEEK_MS } from './timezone.js';
 
 /**
  * "Bogmama" politikasi — TEK yer. Lifecycle motoru da tekrarlayan kampanya gondericisi de
@@ -35,4 +35,17 @@ export function throttleReason(
   if (countSince(times, nowMs - WEEK_MS) >= config.weekly_cap) return 'weekly_cap';
   if (holdoutBucket(userId) < config.holdout_pct) return 'holdout';
   return null;
+}
+
+/**
+ * Yeni kullanici kampanya sessizligi: kayittan sonraki ilk 48 saatte kampanya (type='campaign') GITMEZ.
+ * Gunluk tavan 1 oldugu icin kampanya ilk gunun tek hakkini yiyip lifecycle'i (ilk aksam geri cagirma,
+ * eslesme bekliyor) bastiriyordu. Ilk 48 saat lifecycle'a ait. created_at bilinmiyorsa sessizlik yok.
+ */
+export const NEW_USER_CAMPAIGN_QUIET_MS = 2 * DAY_MS;
+
+export function inNewUserCampaignQuiet(createdAt: string | null | undefined, nowMs: number): boolean {
+  if (!createdAt) return false;
+  const createdMs = Date.parse(createdAt);
+  return Number.isFinite(createdMs) && nowMs - createdMs < NEW_USER_CAMPAIGN_QUIET_MS;
 }

@@ -268,6 +268,36 @@ describe('campaignRecurringService.dispatch', () => {
     expect(decideRecurringSkip({ ...base, clock: { ...clock, minuteOfDay: slot }, user: { ...u, notification_preferences: { campaigns: false } } })).toBe('pref_off');
   });
 
+  it('decideRecurringSkip (saf): kayittan 48 saatten yeni kullanici → new_user, tavandan ONCE (gunluk hak lifecycle\'a kalir)', async () => {
+    const { decideRecurringSkip } = await boot(tables());
+    const c = campaign() as unknown as import('../../src/services/campaign-recurring.service.js').RecurringCampaign;
+    const nowMs = Date.parse('2026-09-25T10:00:00Z');
+    const { sendMinuteFor } = await import('../../src/services/campaign-recurring.service.js');
+    const clock = { hour: 20, minuteOfDay: sendMinuteFor(c.id, '2026-09-25', 12, 21), date: '2026-09-25', isoWeekday: 5, dayIndex: 20721 };
+    const cfg = { daily_cap: 1, weekly_cap: 3, holdout_pct: 0 };
+    const withCreated = (ms: number | null) =>
+      ({ ...user({ id: 'A' }), created_at: ms == null ? null : new Date(nowMs - ms).toISOString() }) as unknown as import('../../src/services/segment.service.js').SegmentTarget;
+    const base = { campaign: c, clock, claimed: new Set<string>(), sendTimes: new Map<string, number[]>(), config: cfg, nowMs };
+    expect(decideRecurringSkip({ ...base, user: withCreated(10 * H) })).toBe('new_user');
+    expect(decideRecurringSkip({ ...base, user: withCreated(47 * H) })).toBe('new_user');
+    expect(decideRecurringSkip({ ...base, user: withCreated(49 * H) })).toBeNull();
+    expect(decideRecurringSkip({ ...base, user: withCreated(null) })).toBeNull();
+    // Tavan zaten doluyken bile sebep new_user (kampanya hic denenmez)
+    expect(decideRecurringSkip({ ...base, user: withCreated(10 * H), sendTimes: new Map([['A', [nowMs - 1000]]]) })).toBe('new_user');
+  });
+
+  it('dispatch: yeni kullaniciya gitmez (skipped.new_user), eskiye gider; yeni kullanicinin inbox\'i bos kalir', async () => {
+    const now = await atSlot('2026-09-25', 5);
+    const { fake, send, campaignRecurringService } = await boot(
+      tables({ users: [user({ id: 'A', created_at: new Date(now.getTime() - 10 * D).toISOString() }), user({ id: 'N', created_at: new Date(now.getTime() - 20 * H).toISOString() })] }),
+    );
+    const r = await campaignRecurringService.dispatch(now);
+    expect(r.sent).toBe(1);
+    expect(r.skipped.new_user).toBe(1);
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(fake.table('notifications').map((n) => n.user_id)).toEqual(['A']);
+  });
+
   it('haftanin gunu listede degilse gitmez (not_day); kampanya tercihi kapaliysa inbox satiri bile yazilmaz (pref_off)', async () => {
     // 2026-09-25 Cuma = ISO 5
     const dayOff = tables({ campaigns: [campaign({ recurrence_days: [1, 3] })] });
