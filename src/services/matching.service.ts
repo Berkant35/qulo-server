@@ -19,6 +19,15 @@ const CANDIDATE_FETCH_LIMIT = 500;
 /** URL uzunlugu icin dislama listesi tavani; asilirsa kalani bellekte elenir. */
 const MAX_EXCLUDE_IDS = 1000;
 
+/**
+ * Discover sira grubu: 0 = aktif gercek, 1 = seed, 2 = uyuyan gercek.
+ * Seed'in kendi aktifligi bakilmaz (presence ritmi yapay); seed her zaman grup 1.
+ */
+function discoverGroupRank(isSeed: boolean, isDormant: boolean): number {
+  if (isSeed) return 1;
+  return isDormant ? 2 : 0;
+}
+
 /** `match_list_summaries` satiri (migration 070): mesajsiz eslesmede son mesaj alanlari NULL. */
 interface MatchListSummary {
   match_id: string;
@@ -408,22 +417,19 @@ export class MatchingService {
         score,
         questionCount: qCount,
         tier: c.distance_tier,
-        seedRank: c.is_seed_profile ? 1 : 0,
-        dormantRank: isDormant(c.last_seen_at) ? 1 : 0,
+        groupRank: discoverGroupRank(c.is_seed_profile === true, isDormant(c.last_seen_at)),
       };
     });
 
-    // 7. Once gercek kullanicilar (seed'ler EN SONA), sonra aktifler (uyuyanlar
-    // gercekler icinde sona), sonra tier artan, sonra tier icinde skor azalan.
-    // Uyuyan yakin aday, aktif uzak adayin arkasindadir: yanit vermeyecek biriyle
-    // eslesmek, hic eslesmemekten kotu bir ilk deneyim. Seed profiller yalnizca gercek adaylar tukenince
-    // gelir — uzak bir gercek kullanici bile yakin bir seed'in onundedir.
+    // 7. Grup (aktif gercek -> seed -> uyuyan gercek), sonra tier artan, sonra tier icinde skor azalan.
+    // Aktif gercek kullanici her zaman en onde: uzak bir aktif aday bile yakin bir seed'in onundedir.
+    // Seed'ler (yanit veren AI profiller) uyuyan gercek kullanicilarin ONUNDE: yanit vermeyecek
+    // biriyle eslesmek ilk gunu oldurur (29 Eyl-3 Eki: 15 eslesmenin 2'sinde yanit, 12/15 kullanici
+    // eslesmeden 5 dk sonra ayrildi). Uyuyanlar sert filtrelenmez, listenin sonunda kalir.
     // Boost (+50) tier'i asamaz: boostlu uzak aday yakinlarin onune gecmez,
     // kendi tier'inin icinde yukselir. Bilincli — boost gorunurluk satar,
     // mesafe algisini bozmaz.
-    scored.sort(
-      (a, b) => a.seedRank - b.seedRank || a.dormantRank - b.dormantRank || a.tier - b.tier || b.score - a.score,
-    );
+    scored.sort((a, b) => a.groupRank - b.groupRank || a.tier - b.tier || b.score - a.score);
 
     // 8. Paginate
     const start = (page - 1) * PAGE_SIZE;

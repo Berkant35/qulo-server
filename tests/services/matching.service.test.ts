@@ -414,11 +414,31 @@ describe("discover — uyuyan hesaplar sona (prod 29 Eyl-3 Eki: yanitsiz eslesme
     expect(sira).toContain(BOS);
   });
 
-  it("uyuyan gercek aday yine de seed profillerin ONUNDE", async () => {
+  // Bilincli davranis degisikligi (3 Eki): yanit veren seed, yanit vermeyecek uyuyan gercek adayin onunde.
+  // Sira: aktif gercek -> seed -> uyuyan gercek.
+  it("seed profil uyuyan gercek adayin ONUNDE, aktif gercek adayin ARKASINDA", async () => {
     const SEED = uid(45);
     const service = await loadService(tablolar([candidateRow(SEED, 1, { is_seed_profile: true, is_test_account: true })]));
     const res = await service.discover(VIEWER_ID, 1);
-    expect(res.cards.map((c) => c.user_id)).toEqual([AKTIF_UZAK, UYUYAN_YAKIN, SEED]);
+    expect(res.cards.map((c) => c.user_id)).toEqual([AKTIF_UZAK, SEED, UYUYAN_YAKIN]);
+  });
+
+  it("seed'in kendi last_seen_at'i eski olsa da seed grubunda kalir (uyuyanlarla karismaz)", async () => {
+    const SEED_ESKI = uid(46);
+    const service = await loadService(
+      tablolar([candidateRow(SEED_ESKI, 200, { is_seed_profile: true, is_test_account: true, last_seen_at: gunOnce(90) })]),
+    );
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual([AKTIF_UZAK, SEED_ESKI, UYUYAN_YAKIN]);
+  });
+
+  it("esik 0 (uyuyan siralamasi kapali) ise gercekler yine seed'lerin onunde", async () => {
+    const SEED = uid(47);
+    const service = await loadService(tablolar([candidateRow(SEED, 1, { is_seed_profile: true, is_test_account: true })]), {
+      dormantDays: 0,
+    });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual([UYUYAN_YAKIN, AKTIF_UZAK, SEED]);
   });
 });
 
@@ -777,6 +797,8 @@ describe("discover — seed profiller en sonda", () => {
     // last_seen_at ile siralansaydi 500 seed tavani doldurur, gercek kullanici
     // hic cekilmezdi. Birincil anahtar is_seed_profile oldugu icin gercek
     // kullanici, en eski last_seen_at ile bile listeye girer.
+    // Iddia sorgu tavani hakkinda; uyuyan siralamasi (3 Eki: uyuyan gercek seed'lerin
+    // arkasinda) ayri testte — burada kapatilir ki ilk kart sorguya girisi kanitlasin.
     const seedler = Array.from({ length: 500 }, (_, i) => uid(1000 + i));
     const eskiTarih = "2026-01-01T00:00:00Z";
     const service = await loadService({
@@ -788,7 +810,7 @@ describe("discover — seed profiller en sonda", () => {
       swipes: [],
       matches: [],
       questions: questionsFor([...seedler, "gercek-eski"]),
-    });
+    }, { dormantDays: 0 });
 
     const res = await service.discover(VIEWER_ID, 1);
     expect(res.cards[0].user_id).toBe("gercek-eski");
