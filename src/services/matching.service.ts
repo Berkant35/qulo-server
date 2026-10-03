@@ -190,9 +190,12 @@ export class MatchingService {
       query = query.not("id", "in", excludeFilter);
     }
 
-    // Hide test accounts unless viewer is a test admin (TikTok seed users etc.)
+    // Seed profiller (`is_seed_profile`) HERKESE gorunur — soguk baslangic havuzu.
+    // Diger test hesaplari (tester_*, magaza inceleme hesaplari) yalniz test admin'e.
+    // Seed'in `is_test_account` bayragi yerinde kalir: botun yazma kapisi iki bayragi
+    // birden ister (`botYazabilir`), o yuzden gorunurluk burada ayrica acilir.
     if (!user.is_test_admin) {
-      query = query.eq("is_test_account", false);
+      query = query.or("is_test_account.eq.false,is_seed_profile.eq.true");
     }
 
     // Age filter

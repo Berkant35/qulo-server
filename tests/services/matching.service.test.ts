@@ -556,9 +556,43 @@ describe("discover — buyuk aday havuzu (canli olay 2026-09-17)", () => {
   });
 });
 
+describe("discover — test hesabi gorunurlugu", () => {
+  // Uretimdeki bayraklar: seed = is_seed_profile + is_test_account; diger test hesaplari
+  // (tester_*, magaza inceleme) yalniz is_test_account.
+  const tablolar = (izleyici: Record<string, unknown>) => ({
+    users: [
+      viewerRow(izleyici),
+      candidateRow("gercek", 5),
+      candidateRow("seed", 6, { is_seed_profile: true, is_test_account: true }),
+      candidateRow("tester", 7, { is_seed_profile: false, is_test_account: true }),
+    ],
+    swipes: [],
+    matches: [],
+    questions: questionsFor(["gercek", "seed", "tester"]),
+  });
+
+  it("test admin OLMAYAN izleyici seed profili gorur", async () => {
+    const service = await loadService(tablolar({ is_test_admin: false }));
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual(["gercek", "seed"]);
+  });
+
+  it("test admin olmayan izleyici seed OLMAYAN test hesabini gormez", async () => {
+    const service = await loadService(tablolar({ is_test_admin: false }));
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).not.toContain("tester");
+  });
+
+  it("test admin hepsini gorur (seed en sonda)", async () => {
+    const service = await loadService(tablolar({ is_test_admin: true }));
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual(["gercek", "tester", "seed"]);
+  });
+});
+
 describe("discover — seed profiller en sonda", () => {
-  // Seed profiller (416 test hesabi) herkese gorunur (is_test_admin varsayilani
-  // true). Gercek kullanicilar tukenmeden seed gosterilmemeli: uzak bir gercek
+  // Seed profiller (416 test hesabi) herkese gorunur (bkz. "test hesabi gorunurlugu").
+  // Gercek kullanicilar tukenmeden seed gosterilmemeli: uzak bir gercek
   // aday bile yakin bir seed'in onundedir; tier/skor ancak seed olmayanlar
   // arasinda ve seed'ler arasinda ayri ayri siralar.
   it("yakin ve yuksek skorlu seed, uzak gercek adayin ARKASINDA kalir", async () => {

@@ -186,7 +186,11 @@ function splitTopLevel(expression: string): string[] {
 /** `column.op.value` -> Filter. Deger nokta icerebilir (UUID, tarih). */
 function parseFilterExpression(part: string): Filter {
   const [column, op, ...rest] = part.split('.');
-  return { op: op as FilterOp, column, value: rest.join('.') };
+  const raw = rest.join('.');
+  // PostgREST `true`/`false`/`null` sabitlerini kolon tipine cevirir; metin birakilirsa
+  // boolean kolonla `===` hic tutmaz ve filtre sessizce hicbir satiri eslemez.
+  const SABIT: Record<string, unknown> = { true: true, false: false, null: null };
+  return { op: op as FilterOp, column, value: raw in SABIT ? SABIT[raw] : raw };
 }
 
 function matches(row: Row, filters: Filter[]): boolean {

@@ -5,8 +5,9 @@
  *        zenginleştirme: bio/meslek/ilgi/kişilik/evcil/sigara/alkol) + Stage 1 fotoğrafı (bytes + manifest meta).
  * Çıktı: users (+ photo_prompt klonu) + user_details + user_languages (RPC) + 3 soru + Storage `photos/seed/…`.
  *
- * Görünürlük: is_test_account=true → discover'da yalnız is_test_admin görür (matching.service.ts);
- * is_seed_profile=true → toplu silme işareti (057) ve login reddi (auth.service.ts).
+ * Görünürlük: is_seed_profile=true → discover'da HERKES görür (matching.service.ts); is_test_account=true
+ * tek başına (seed olmayan test hesabı) yalnız is_test_admin'e görünür. is_seed_profile ayrıca toplu silme
+ * işareti (057) ve login reddi (auth.service.ts); botun yazma kapısı iki bayrağı birden ister.
  * users.city ilçe taşır (gerçek kullanıcılarda da ters geocode ilçe verir: Esenyurt, Konak…);
  * prompt'taki "Location: <ilçe>, <il>, Türkiye." cümlesi ile birebir aynı ilçe.
  * Tüm rastgele seçimler seed_id'den türetilir: aynı kayıt tekrar basılırsa aynı kişi çıkar.
