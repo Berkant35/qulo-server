@@ -13,6 +13,8 @@ function viewerRow(overrides: Record<string, unknown> = {}) {
   return {
     id: VIEWER_ID,
     gender_pref: "BOTH",
+    // Kurulumu bitmis izleyici: tercih SECILMIS (discover set_at bos iken deste kurmaz).
+    gender_pref_set_at: "2026-09-01T00:00:00Z",
     age_pref_min: 18,
     age_pref_max: 99,
     match_radius_km: 50,
@@ -304,6 +306,44 @@ describe("discover — aday sorgusu", () => {
     const res = await service.discover(VIEWER_ID, 3);
     expect(res.cards).toHaveLength(0);
     expect(res.empty_reason).toBeUndefined();
+  });
+});
+
+describe("discover — cinsiyet tercihi (prod 29 Eyl-3 Eki: erkege erkek kart)", () => {
+  // Mobil complete-profile'dan hemen sonra discover'i onceden cekiyor; tercih adimi
+  // sonra geliyor. O anda gender_pref DB varsayilani 'BOTH' ve set_at bos — filtresiz
+  // deste donuyor, tercih secildikten sonra da yenilenmiyordu.
+  const tablolar = (izleyici: Record<string, unknown>): Tables => ({
+    users: [
+      viewerRow(izleyici),
+      candidateRow(uid(30), 3, { gender: "WOMAN" }),
+      candidateRow(uid(31), 4, { gender: "MAN" }),
+    ],
+    swipes: [],
+    matches: [],
+    questions: questionsFor([uid(30), uid(31)]),
+  });
+
+  it("tercih secilmemisse (varsayilan BOTH, set_at bos) deste kurulmaz: PROFILE_INCOMPLETE", async () => {
+    const service = await loadService(tablolar({ gender_pref: "BOTH", gender_pref_set_at: null }));
+
+    await expect(service.discover(VIEWER_ID, 1)).rejects.toMatchObject({ code: "PROFILE_INCOMPLETE" });
+    // Aday sorgusu hic atilmaz: yalniz izleyici satiri okunur.
+    const kullaniciOkumalari = sonFake.queries.filter((q) => q.table === "users" && q.op === "select");
+    expect(kullaniciOkumalari).toHaveLength(1);
+    expect(sonFake.queries.some((q) => q.table === "questions")).toBe(false);
+  });
+
+  it("tercih WOMAN secilmisse yalniz kadin adaylar doner", async () => {
+    const service = await loadService(tablolar({ gender_pref: "WOMAN" }));
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual([uid(30)]);
+  });
+
+  it("bilerek BOTH secilmisse (set_at dolu) iki cinsiyet de doner", async () => {
+    const service = await loadService(tablolar({ gender_pref: "BOTH" }));
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id).sort()).toEqual([uid(30), uid(31)]);
   });
 });
 

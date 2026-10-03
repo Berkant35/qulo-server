@@ -93,7 +93,7 @@ export class MatchingService {
       supabase
         .from("users")
         .select(
-          "id, gender_pref, age_pref_min, age_pref_max, match_radius_km, lat, lng, passport_lat, passport_lng, preferred_languages, locale, is_test_admin",
+          "id, gender_pref, gender_pref_set_at, age_pref_min, age_pref_max, match_radius_km, lat, lng, passport_lat, passport_lng, preferred_languages, locale, is_test_admin",
         )
         .eq("id", userId)
         .eq("is_deleted", false)
@@ -116,6 +116,16 @@ export class MatchingService {
 
     const { data: user, error: userError } = userResult;
     if (userError || !user) throw Errors.USER_NOT_FOUND();
+
+    // Tercih SECILMEDEN deste kurulmaz. `gender_pref` DB varsayilani 'BOTH'
+    // (legacy/001) — set_at bos iken bu bir secim degil, "henuz sorulmadi"dir.
+    // Mobil complete-profile'dan hemen sonra discover'i onceden ceker, tercih
+    // adimi (PATCH /me) SONRA gelir ve deste yenilenmez: prod 29 Eyl-3 Eki,
+    // tercihi WOMAN olan 9 erkek bu filtresiz desteden 55 erkek kart kaydirdi.
+    // Mobil kurulum kapisi da tercihi zorunlu sayar (`setupComplete` →
+    // `hasGenderPref`); hata, onceden cekmeyi bozar ve Discover acilinca deste
+    // dogru filtreyle yeniden cekilir.
+    if (!user.gender_pref_set_at) throw Errors.PROFILE_INCOMPLETE();
 
     // Get user's language preferences for filtering
     const userLanguages = await userLanguageService.getUserLanguages(userId);
