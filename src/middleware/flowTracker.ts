@@ -241,15 +241,20 @@ export function flowTracker(req: Request, res: Response, next: NextFunction): vo
   }
 
   const startTime = Date.now();
+  // Tam yol SIMDI alinir: alt router (`app.use("/api/v1/matches", ...)`) req.url'den
+  // kendi onekini soyar ve cevap gonderildiginde geri koymaz — "finish" aninda req.path
+  // "/swipe" olur. Eskiden boyle okununca endpoint alani alt router'a gore yaziliyor
+  // ("POST /" = presence), ENDPOINT_TO_FLOW hic eslesmiyor, kategori "other" dusuyordu.
+  const fullPath = req.path;
 
   // Hook into response finish
   res.on("finish", () => {
     try {
       const responseTime = Date.now() - startTime;
-      const normalizedPath = normalizePath(req.path);
+      const normalizedPath = normalizePath(fullPath);
       const endpointKey = `${req.method} ${normalizedPath}`;
       const flowName = ENDPOINT_TO_FLOW[endpointKey] || endpointKey;
-      const category = getEventCategory(req.path);
+      const category = getEventCategory(fullPath);
       const userId = req.user?.userId || null;
 
       // Extract session from header
