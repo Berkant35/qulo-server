@@ -16,8 +16,11 @@ function satir(ek: Record<string, unknown> = {}) {
   };
 }
 
-async function setup(opts: { failOn?: FailureSpec[]; holdRead?: FakeSupabaseOptions['holdRead'] } = {}) {
-  const fake = createFakeSupabase({ app_config: [satir()] }, opts);
+async function setup(
+  opts: { failOn?: FailureSpec[]; holdRead?: FakeSupabaseOptions['holdRead']; satirEk?: Record<string, unknown> } = {},
+) {
+  const { satirEk, ...fakeOpts } = opts;
+  const fake = createFakeSupabase({ app_config: [satir(satirEk)] }, fakeOpts);
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
   const { appConfigService } = await import('../../src/services/app-config.service.js');
   const okumalar = () => fake.queries.filter((q) => q.table === 'app_config' && q.op === 'select').length;
@@ -57,5 +60,60 @@ describe('appConfigService.getRow onbellegi', () => {
     expect((await surenOkuma)?.seed_reply_enabled).toBe(true);   // o okuma eskiyi gorur
 
     expect((await appConfigService.getRow())?.seed_reply_enabled).toBe(false);
+  });
+});
+
+describe('appConfigService.getDiscoverDormantDays (migration 074)', () => {
+  it('kolondaki degeri doner ve onbellekler: ardisik cagrilar tek okuma', async () => {
+    const { appConfigService, okumalar } = await setup({ satirEk: { discover_dormant_days: 21 } });
+    expect(await appConfigService.getDiscoverDormantDays()).toBe(21);
+    expect(await appConfigService.getDiscoverDormantDays()).toBe(21);
+    expect(okumalar()).toBe(1);
+  });
+
+  it('0 (kapali) gecerli bir degerdir, varsayilana dusmez', async () => {
+    const { appConfigService } = await setup({ satirEk: { discover_dormant_days: 0 } });
+    expect(await appConfigService.getDiscoverDormantDays()).toBe(0);
+  });
+
+  it('kolon yoksa (074 uygulanmadan deploy) varsayilan 14 doner; varsayilan da onbelleklenir, uyari bir kez', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const { appConfigService, okumalar } = await setup();   // satirda kolon yok
+    const { DEFAULT_DISCOVER_DORMANT_DAYS } = await import('../../src/services/app-config.service.js');
+    expect(await appConfigService.getDiscoverDormantDays()).toBe(DEFAULT_DISCOVER_DORMANT_DAYS);
+    expect(await appConfigService.getDiscoverDormantDays()).toBe(14);
+    expect(okumalar()).toBe(1);
+    expect(warn).toHaveBeenCalledTimes(1);
+    warn.mockRestore();
+  });
+
+  it('kolon yok hatasi (42703) varsayilani onbellekler', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const { appConfigService, okumalar } = await setup({
+      failOn: [{ table: 'app_config', op: 'select', error: { message: 'column does not exist', code: '42703' } }],
+    });
+    expect(await appConfigService.getDiscoverDormantDays()).toBe(14);
+    expect(await appConfigService.getDiscoverDormantDays()).toBe(14);
+    expect(okumalar()).toBe(1);
+    warn.mockRestore();
+  });
+
+  it('gecici okuma hatasi: o cagri varsayilani kullanir (discover patlamaz) ama ONBELLEKLENMEZ — admin 0 degeri geri gelir', async () => {
+    const err = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { appConfigService, okumalar } = await setup({
+      satirEk: { discover_dormant_days: 0 },
+      failOn: [{ table: 'app_config', op: 'select', error: { message: 'timeout', code: '57014' }, times: 1 }],
+    });
+    expect(await appConfigService.getDiscoverDormantDays()).toBe(14);
+    expect(await appConfigService.getDiscoverDormantDays()).toBe(0);
+    expect(okumalar()).toBe(2);
+    err.mockRestore();
+  });
+
+  it('admin guncellemesi esik onbellegini de temizler', async () => {
+    const { appConfigService } = await setup({ satirEk: { discover_dormant_days: 14 } });
+    expect(await appConfigService.getDiscoverDormantDays()).toBe(14);
+    await appConfigService.updateConfig({ discover_dormant_days: 30 });
+    expect(await appConfigService.getDiscoverDormantDays()).toBe(30);
   });
 });

@@ -50,3 +50,26 @@ describe('updateAppConfig — seed AI kill-switch alanlari', () => {
     expect(patch()).toMatchObject({ seed_reply_enabled: false, seed_reply_fast_mode: false });
   });
 });
+
+describe('updateAppConfig — discover_dormant_days (migration 074)', () => {
+  it('gecerli deger sayi olarak yazilir', async () => {
+    const { patch } = await setup({ discover_dormant_days: '21' });
+    expect(patch()).toMatchObject({ discover_dormant_days: 21 });
+  });
+
+  it('0 (kapali) kabul edilir', async () => {
+    const { patch } = await setup({ discover_dormant_days: '0' });
+    expect(patch()).toMatchObject({ discover_dormant_days: 0 });
+  });
+
+  it('alan gelmezse (074 oncesi form) patch\'e hic girmez', async () => {
+    const { patch } = await setup({});
+    expect(patch()).not.toHaveProperty('discover_dormant_days');
+  });
+
+  it.each(['-1', '366', '1.5', 'abc', ''])('gecersiz deger (%s) reddedilir, config yazilmaz', async (deger) => {
+    const { updateConfig, res } = await setup({ discover_dormant_days: deger });
+    expect(updateConfig).not.toHaveBeenCalled();
+    expect(res.redirectedTo).toContain('error=');
+  });
+});

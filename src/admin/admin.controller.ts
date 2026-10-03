@@ -280,6 +280,7 @@ class AdminController {
       is_force_update_enabled,
       seed_reply_enabled, seed_reply_fast_mode,
       photo_moderation_enabled,
+      discover_dormant_days,
     } = req.body;
 
     const versionFields: Record<string, string> = { min_version_ios, min_version_android, latest_version_ios, latest_version_android };
@@ -289,8 +290,20 @@ class AdminController {
       }
     }
 
+    // Discover uyuyan-aday esigi (migration 074). Form alani yalniz kolon varken render edilir;
+    // alan gelmediyse dokunulmaz (074 oncesi kayit, olmayan kolona yazmaya calisip patlamasin).
+    let dormantDays: number | undefined;
+    if (discover_dormant_days !== undefined) {
+      const raw = String(discover_dormant_days).trim();
+      dormantDays = Number(raw);
+      if (!/^\d{1,3}$/.test(raw) || dormantDays > 365) {
+        return res.redirect("/admin/app-config?error=" + encodeURIComponent("discover_dormant_days: 0-365 arasi tam sayi olmali"));
+      }
+    }
+
     try {
       await appConfigService.updateConfig({
+        ...(dormantDays !== undefined ? { discover_dormant_days: dormantDays } : {}),
         min_version_ios,
         min_version_android,
         latest_version_ios,

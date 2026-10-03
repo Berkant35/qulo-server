@@ -109,6 +109,18 @@
     </div>
   </div>
 
+  <% if (config && config.discover_dormant_days !== undefined && config.discover_dormant_days !== null) { %>
+  <!-- Discover siralamasi (migration 074) -->
+  <div class="card">
+    <h3 style="margin-bottom: 16px;">Discover Sıralaması</h3>
+    <div>
+      <label style="display:block; font-size:14px; margin-bottom:6px;">Uyuyan hesap eşiği (gün)</label>
+      <input type="number" name="discover_dormant_days" min="0" max="365" step="1" value="<%= config.discover_dormant_days %>" style="width:120px;">
+      <p style="font-size:12px; color:#999; margin-top:4px;">Bu kadar gündür görülmeyen (<code>last_seen_at</code>) adaylar Discover'da aktif gerçek adayların arkasına sıralanır; listeden çıkarılmaz. 0 = kapalı. Varsayılan 14.</p>
+    </div>
+  </div>
+  <% } %>
+
   <div style="text-align: right;">
     <button type="submit" class="btn btn-primary" style="padding: 10px 32px; font-size: 15px;">Save Configuration</button>
   </div>

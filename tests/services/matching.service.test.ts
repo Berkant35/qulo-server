@@ -75,7 +75,13 @@ let sonFake: FakeSupabase;
 
 async function loadService(
   tables: Tables,
-  opts: { userLanguages?: string[]; failOn?: Array<Record<string, unknown>>; rpc?: FakeSupabaseOptions["rpc"] } = {},
+  opts: {
+    userLanguages?: string[];
+    failOn?: Array<Record<string, unknown>>;
+    rpc?: FakeSupabaseOptions["rpc"];
+    /** app_config.discover_dormant_days (migration 074); varsayilan 14. */
+    dormantDays?: number;
+  } = {},
 ) {
   vi.resetModules();
   const fake = createFakeSupabase(tables, {
@@ -89,6 +95,9 @@ async function loadService(
   }));
   vi.doMock("../../src/services/user-language.service.js", () => ({
     userLanguageService: { getUserLanguages: async () => opts.userLanguages ?? ["tr"] },
+  }));
+  vi.doMock("../../src/services/app-config.service.js", () => ({
+    appConfigService: { getDiscoverDormantDays: async () => opts.dormantDays ?? 14 },
   }));
   vi.doMock("../../src/services/subscription.service.js", () => ({
     subscriptionService: {
@@ -344,6 +353,72 @@ describe("discover — cinsiyet tercihi (prod 29 Eyl-3 Eki: erkege erkek kart)",
     const service = await loadService(tablolar({ gender_pref: "BOTH" }));
     const res = await service.discover(VIEWER_ID, 1);
     expect(res.cards.map((c) => c.user_id).sort()).toEqual([uid(30), uid(31)]);
+  });
+});
+
+describe("discover — uyuyan hesaplar sona (prod 29 Eyl-3 Eki: yanitsiz eslesmeler)", () => {
+  const gunOnce = (gun: number) => new Date(Date.now() - gun * 24 * 60 * 60 * 1000).toISOString();
+  const UYUYAN_YAKIN = uid(40);
+  const AKTIF_UZAK = uid(41);
+  const tablolar = (ek: Array<Record<string, unknown>> = []): Tables => ({
+    users: [
+      viewerRow(),
+      // Yakin (tier 0) ama 60 gundur gorulmuyor.
+      candidateRow(UYUYAN_YAKIN, 2, { last_seen_at: gunOnce(60) }),
+      // Uzak (radius 50 km disi, tier >= 1) ama dun gorulmus.
+      candidateRow(AKTIF_UZAK, 120, { last_seen_at: gunOnce(1) }),
+      ...ek,
+    ],
+    swipes: [],
+    matches: [],
+    questions: questionsFor([UYUYAN_YAKIN, AKTIF_UZAK, ...ek.map((r) => r.id as string)]),
+  });
+
+  it("esikten uzun suredir gorulmeyen yakin aday, aktif uzak adayin ARKASINDA kalir", async () => {
+    const service = await loadService(tablolar());
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual([AKTIF_UZAK, UYUYAN_YAKIN]);
+  });
+
+  it("esik 0 ise siralama kapali: yakin aday once (eski davranis)", async () => {
+    const service = await loadService(tablolar(), { dormantDays: 0 });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual([UYUYAN_YAKIN, AKTIF_UZAK]);
+  });
+
+  it("esik config'ten gelir: 90 gun esikte 60 gunluk aday uyuyan sayilmaz", async () => {
+    const service = await loadService(tablolar(), { dormantDays: 90 });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual([UYUYAN_YAKIN, AKTIF_UZAK]);
+  });
+
+  it("havuzda yalniz uyuyanlar varsa Discover BOSALMAZ — sert filtre degil", async () => {
+    const ids = [uid(42), uid(43)];
+    const service = await loadService({
+      users: [viewerRow(), ...ids.map((id, i) => candidateRow(id, 3 + i, { last_seen_at: gunOnce(100) }))],
+      swipes: [],
+      matches: [],
+      questions: questionsFor(ids),
+    });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual(ids);
+    expect(res.empty_reason).toBeUndefined();
+  });
+
+  it("last_seen_at bos aday uyuyan sayilir ama listede kalir", async () => {
+    const BOS = uid(44);
+    const service = await loadService(tablolar([candidateRow(BOS, 1, { last_seen_at: null })]));
+    const res = await service.discover(VIEWER_ID, 1);
+    const sira = res.cards.map((c) => c.user_id);
+    expect(sira[0]).toBe(AKTIF_UZAK);
+    expect(sira).toContain(BOS);
+  });
+
+  it("uyuyan gercek aday yine de seed profillerin ONUNDE", async () => {
+    const SEED = uid(45);
+    const service = await loadService(tablolar([candidateRow(SEED, 1, { is_seed_profile: true, is_test_account: true })]));
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual([AKTIF_UZAK, UYUYAN_YAKIN, SEED]);
   });
 });
 

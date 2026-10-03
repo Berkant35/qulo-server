@@ -7,6 +7,7 @@ import { Errors } from "../utils/errors.js";
 import { resolveDistanceTier } from "../utils/distance-tier.js";
 import { haversineDistance } from "../utils/math.js";
 import { assertUuid, isUuid } from "../utils/validation.js";
+import { appConfigService } from "./app-config.service.js";
 import { blockService } from "./block.service.js";
 import { scoringService } from "./scoring.service.js";
 import { subscriptionService } from "./subscription.service.js";
@@ -127,8 +128,11 @@ export class MatchingService {
     // dogru filtreyle yeniden cekilir.
     if (!user.gender_pref_set_at) throw Errors.PROFILE_INCOMPLETE();
 
-    // Get user's language preferences for filtering
-    const userLanguages = await userLanguageService.getUserLanguages(userId);
+    // Dil tercihleri + uyuyan-aday esigi (app_config, 60 sn onbellekli — istek basina DB yok)
+    const [userLanguages, dormantDays] = await Promise.all([
+      userLanguageService.getUserLanguages(userId),
+      appConfigService.getDiscoverDormantDays(),
+    ]);
 
     // Determine location (passport overrides real)
     const myLat = (user.passport_lat as number | null) ?? user.lat;
@@ -368,6 +372,13 @@ export class MatchingService {
 
     // 6. Score each candidate
     const now = new Date();
+    // Uyuyan aday: son `dormantDays` gundur gorulmemis (last_seen_at — presence heartbeat'i
+    // yazar; last_active_at yalniz resume'da yazildigi icin guvenilmez). Prod 29 Eyl-3 Eki:
+    // 15 eslesmenin 2'sinde yanit geldi, kohort disi 8 karsi tarafin 7'si Haziran-Eylul'den
+    // beri gorulmuyordu. Sert filtre DEGIL: havuz kucuk, uyuyanlar listenin sonunda kalir.
+    const dormantCutoff = dormantDays > 0 ? now.getTime() - dormantDays * 24 * 60 * 60 * 1000 : null;
+    const isDormant = (lastSeenAt: string | null): boolean =>
+      dormantCutoff != null && (lastSeenAt == null || new Date(lastSeenAt).getTime() < dormantCutoff);
     const isBoostActive = (boostUntil: string | null): boolean =>
       boostUntil != null && new Date(boostUntil) > now;
 
@@ -398,16 +409,21 @@ export class MatchingService {
         questionCount: qCount,
         tier: c.distance_tier,
         seedRank: c.is_seed_profile ? 1 : 0,
+        dormantRank: isDormant(c.last_seen_at) ? 1 : 0,
       };
     });
 
-    // 7. Once gercek kullanicilar (seed'ler EN SONA), sonra tier artan, sonra
-    // tier icinde skor azalan. Seed profiller yalnizca gercek adaylar tukenince
+    // 7. Once gercek kullanicilar (seed'ler EN SONA), sonra aktifler (uyuyanlar
+    // gercekler icinde sona), sonra tier artan, sonra tier icinde skor azalan.
+    // Uyuyan yakin aday, aktif uzak adayin arkasindadir: yanit vermeyecek biriyle
+    // eslesmek, hic eslesmemekten kotu bir ilk deneyim. Seed profiller yalnizca gercek adaylar tukenince
     // gelir — uzak bir gercek kullanici bile yakin bir seed'in onundedir.
     // Boost (+50) tier'i asamaz: boostlu uzak aday yakinlarin onune gecmez,
     // kendi tier'inin icinde yukselir. Bilincli — boost gorunurluk satar,
     // mesafe algisini bozmaz.
-    scored.sort((a, b) => a.seedRank - b.seedRank || a.tier - b.tier || b.score - a.score);
+    scored.sort(
+      (a, b) => a.seedRank - b.seedRank || a.dormantRank - b.dormantRank || a.tier - b.tier || b.score - a.score,
+    );
 
     // 8. Paginate
     const start = (page - 1) * PAGE_SIZE;
