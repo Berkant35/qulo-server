@@ -20,6 +20,20 @@ export const ECONOMY_BOUNDARIES = {
   rainbowMonthlyRedeemCap: { min: 20, max: 500 },
   rainbowMinAccountAgeDays: { min: 0, max: 90 },
   rainbowSuggestedUsd: { min: 0.005, max: 0.07 },
+  /** Yeni kayıtta verilen mor (tek sefer). 0 = verilmez. */
+  starterPurple: { min: 0, max: 50 },
+  /** Quiz soru başı süre toleransı (ağ gecikmesi + istemci saati kayması). */
+  questionToleranceSeconds: { min: 3, max: 30 },
+  /** Soru geçişi (geri bildirim animasyonu + soru çekme) için sunucu tamponu. */
+  transitionGraceSeconds: { min: 10, max: 120 },
+  /** Yetersiz elmas → paywall açıkken soru başına BİR KEZ verilen ek süre. */
+  paywallGraceSeconds: { min: 30, max: 600 },
+  /** Yanlış cevaptan sonra kurtarma/vazgeç kararı için pencere (süre artık önemsiz). */
+  rescueWindowSeconds: { min: 60, max: 900 },
+  /** Kullanıcı başına ücretsiz ikinci şans sayısı (0 = kapalı). */
+  freeSecondChances: { min: 0, max: 3 },
+  /** Ücretsiz ikinci şansın geçerli olduğu ilk K quiz oturumu. */
+  freeSecondChanceSessionWindow: { min: 1, max: 10 },
   // Subscription tier boundaries
   free: {
     dailyDiscovers: { min: 10, max: 200 },
@@ -113,13 +127,72 @@ const rewardsSchema = z.object({
   referralPurple: z.number().int().min(B.referralPurple.min).max(B.referralPurple.max),
   maxCompletedReferrals: z.number().int().min(B.maxCompletedReferrals.min).max(B.maxCompletedReferrals.max),
   starterPowers: starterPowersSchema,
+  /**
+   * Yeni kayıtta tek seferlik mor (karar 2026-10-04, ilk gün tutma planı #4). Alan yoksa
+   * `resolveStarterPurple` canlı fiyatlardan türetir: en ucuz quiz gücünün 2 katı — "ikinci güç
+   * kullanımı doğrudan paywall" duvarını iki kullanım ileri iter. 0 = kapalı.
+   */
+  starterPurple: z.number().int().min(B.starterPurple.min).max(B.starterPurple.max).optional(),
 });
+
+/** Quiz'de kullanılan güçler — POWER_BLOCK/UNBLOCK sohbet içindir, başlangıç moru hesabına girmez. */
+const QUIZ_POWERS = ["ORACLE", "HALF", "SKIP", "SKIP_ALL", "TIME_EXTEND", "HINT"] as const;
+
+/** Başlangıç moru: config'te açıkça yazılıysa o, değilse en ucuz quiz gücünün iki kullanımı. */
+export function resolveStarterPurple(config: Pick<EconomyConfig, "rewards" | "powerCosts">): number {
+  const explicit = config.rewards.starterPurple;
+  if (explicit !== undefined) return explicit;
+  const cheapest = Math.min(...QUIZ_POWERS.map((name) => config.powerCosts[name].purpleCost));
+  return Math.min(2 * cheapest, B.starterPurple.max);
+}
+
+/** Quiz süre kuralları (2026-10-04): soru başına süre — eski "toplam süre + 10 sn" paywall'da tükeniyordu. */
+export const DEFAULT_QUIZ_TIMING = {
+  questionToleranceSeconds: 10,
+  transitionGraceSeconds: 30,
+  paywallGraceSeconds: 180,
+  rescueWindowSeconds: 300,
+} as const;
 
 const timingSchema = z.object({
   questionTimeSeconds: z.number().int().min(B.questionTimeSeconds.min).max(B.questionTimeSeconds.max),
   timeExtendSeconds: z.number().int().min(B.timeExtendSeconds.min).max(B.timeExtendSeconds.max),
   timePresets: z.array(z.number().int().min(5).max(300)),
+  questionToleranceSeconds: z.number().int()
+    .min(B.questionToleranceSeconds.min).max(B.questionToleranceSeconds.max)
+    .default(DEFAULT_QUIZ_TIMING.questionToleranceSeconds),
+  transitionGraceSeconds: z.number().int()
+    .min(B.transitionGraceSeconds.min).max(B.transitionGraceSeconds.max)
+    .default(DEFAULT_QUIZ_TIMING.transitionGraceSeconds),
+  paywallGraceSeconds: z.number().int()
+    .min(B.paywallGraceSeconds.min).max(B.paywallGraceSeconds.max)
+    .default(DEFAULT_QUIZ_TIMING.paywallGraceSeconds),
+  rescueWindowSeconds: z.number().int()
+    .min(B.rescueWindowSeconds.min).max(B.rescueWindowSeconds.max)
+    .default(DEFAULT_QUIZ_TIMING.rescueWindowSeconds),
 });
+
+/**
+ * İlk quiz ikinci şansı (karar 2026-10-04): yeni kullanıcıda 55 quiz'in 39'u ilk yanlışta bitti.
+ * Kullanıcının ilk `sessionWindow` quiz oturumunda, ilk yanlış cevaptan sonraki SKIP kurtarması
+ * bedava (envanter/elmas düşmez, hedefe ödül yok); kullanıcı başına toplam `freeSecondChances`,
+ * oturum başına en fazla bir. Eski config'lerde blok yoksa bu varsayılanlar.
+ */
+export const DEFAULT_QUIZ_ONBOARDING = {
+  freeSecondChances: 1,
+  freeSecondChanceSessionWindow: 3,
+} as const;
+
+const quizOnboardingSchema = z
+  .object({
+    freeSecondChances: z.number().int()
+      .min(B.freeSecondChances.min).max(B.freeSecondChances.max)
+      .default(DEFAULT_QUIZ_ONBOARDING.freeSecondChances),
+    freeSecondChanceSessionWindow: z.number().int()
+      .min(B.freeSecondChanceSessionWindow.min).max(B.freeSecondChanceSessionWindow.max)
+      .default(DEFAULT_QUIZ_ONBOARDING.freeSecondChanceSessionWindow),
+  })
+  .default({ ...DEFAULT_QUIZ_ONBOARDING });
 
 // Hesap silme retention teklifi (win-back). Mevcut config'lerde alan yoksa
 // default değerler uygulanır — eski config versiyonlarıyla geriye uyumlu.
@@ -184,6 +257,7 @@ export const economyConfigSchema = z.object({
   powerCosts: powerCostsSchema,
   retention: retentionSchema,
   rainbow: rainbowSchema,
+  quizOnboarding: quizOnboardingSchema,
 });
 
 // ── TypeScript types (inferred from Zod) ──
@@ -196,6 +270,7 @@ export type TimingConfig = z.infer<typeof timingSchema>;
 export type PowerCostsConfig = z.infer<typeof powerCostsSchema>;
 export type RetentionConfig = z.infer<typeof retentionSchema>;
 export type RainbowConfig = z.infer<typeof rainbowSchema>;
+export type QuizOnboardingConfig = z.infer<typeof quizOnboardingSchema>;
 
 export interface EconomyConfigVersion {
   id: string;

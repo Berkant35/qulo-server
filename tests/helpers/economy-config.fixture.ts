@@ -1,4 +1,4 @@
-import { DEFAULT_STARTER_POWERS, type EconomyConfig } from '../../src/types/economy-config.schema.js';
+import { DEFAULT_QUIZ_ONBOARDING, DEFAULT_QUIZ_TIMING, DEFAULT_STARTER_POWERS, type EconomyConfig } from '../../src/types/economy-config.schema.js';
 
 /**
  * economyConfigSchema'yı geçen geçerli bir config.
@@ -38,6 +38,7 @@ export const economyConfigFixture: EconomyConfig = {
     questionTimeSeconds: 30,
     timeExtendSeconds: 15,
     timePresets: [15, 30, 60],
+    ...DEFAULT_QUIZ_TIMING,
   },
   powerCosts: {
     ORACLE: { greenCost: 45, purpleCost: 15 },
@@ -62,6 +63,7 @@ export const economyConfigFixture: EconomyConfig = {
     minAccountAgeDays: 30,
     suggestedUsdPerRainbow: 0.03,
   },
+  quizOnboarding: { ...DEFAULT_QUIZ_ONBOARDING },
 };
 
 /** `economy_config_versions` tablosuna seed edilebilir satır. */

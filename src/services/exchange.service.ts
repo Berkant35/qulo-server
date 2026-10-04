@@ -3,8 +3,11 @@ import { diamondService } from "../services/diamond.service.js";
 import { Errors } from "../utils/errors.js";
 import { economyConfigService } from "./economy-config.service.js";
 import { rainbowAccessService } from "./rainbow-access.service.js";
-import type { RewardsConfig } from "../types/economy-config.schema.js";
+import { resolveStarterPurple, type EconomyConfig } from "../types/economy-config.schema.js";
 import type { ClientPlatform } from "../utils/client-meta.js";
+
+/** Baslangic moru ledger sebebi; `reference_id` = `STARTER_PURPLE:<userId>` (tek seferlik). */
+export const STARTER_PURPLE_REASON = "STARTER_PURPLE";
 
 class ExchangeService {
   // ── Convert green diamonds to purple (dynamic ratio) ──────────────
@@ -131,21 +134,22 @@ class ExchangeService {
    * 2026-09-25 oncesi auth.service'te sabit 2× ORACLE vardi: 90 kullanicinin 85'inde hic
    * kullanilmadan duruyordu, quiz denemelerinin %95'i basarisizdi. Karar: her gucten 1
    * ("ilk tadim"); adetler yeni config versiyonuyla deploy'suz degistirilir.
+   * 2026-10-04: pakete tek seferlik mor eklendi (`rewards.starterPurple`, bkz. `grantStarterPurple`).
    *
    * Fail-open: config okunamazsa ya da bir guc yazilamazsa kayit bozulmaz; gucler bagimsiz
    * denenir (biri patlarsa digerleri verilir). Cagiran `void` ile ateşler — her dal yakalanir,
    * unhandled rejection uretmez.
    */
   async grantStarterPack(userId: string): Promise<void> {
-    let starter: RewardsConfig["starterPowers"];
+    let config: EconomyConfig;
     try {
-      starter = (await economyConfigService.getConfig()).rewards.starterPowers;
+      config = await economyConfigService.getConfig();
     } catch (err) {
       console.error(`[exchange] Starter pack config unavailable (user ${userId}):`, err);
       return;
     }
-    await Promise.all(
-      Object.entries(starter).map(async ([name, quantity]) => {
+    await Promise.all([
+      ...Object.entries(config.rewards.starterPowers).map(async ([name, quantity]) => {
         if (!quantity) return;
         try {
           await this.grantPower(userId, name, quantity);
@@ -153,7 +157,24 @@ class ExchangeService {
           console.error(`[exchange] Starter power grant failed (${name}, user ${userId}):`, err);
         }
       }),
-    );
+      this.grantStarterPurple(userId, resolveStarterPurple(config)),
+    ]);
+  }
+
+  /**
+   * Baslangic moru (2026-10-04, ilk gun tutma plani #4): bakiye 0 iken ikinci guc kullanimi
+   * dogrudan paywall'di. Tek seferlik + idempotent: kullaniciya ozel `reference_id`
+   * `addPurple`'in duplicate guard'ina takilir (ayni kullaniciya ikinci kez yazilmaz).
+   * Ucretsiz mor (`paid_amount` 0) → harcandiginda hedefe RAINBOW uretmez.
+   * Ciftcilik: cagiran (`authService`) purge edilip yeniden kaydolan hesapta paketi hic cagirmaz.
+   */
+  private async grantStarterPurple(userId: string, amount: number): Promise<void> {
+    if (amount <= 0) return;
+    try {
+      await diamondService.addPurple(userId, amount, STARTER_PURPLE_REASON, `${STARTER_PURPLE_REASON}:${userId}`);
+    } catch (err) {
+      console.error(`[exchange] Starter purple grant failed (user ${userId}):`, err);
+    }
   }
 
   /**

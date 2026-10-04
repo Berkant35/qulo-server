@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createFakeSupabase, type Tables, type FakeSupabaseOptions } from '../helpers/fake-supabase.js';
 import { activeConfigRow } from '../helpers/economy-config.fixture.js';
-import { DEFAULT_STARTER_POWERS } from '../../src/types/economy-config.schema.js';
+import { DEFAULT_STARTER_POWERS, resolveStarterPurple } from '../../src/types/economy-config.schema.js';
 
 /**
  * Exchange, elmasın gerçekten harcandığı yer: yeşil→mor dönüşümü ve güç satın alma.
@@ -380,6 +380,79 @@ describe('ExchangeService.grantStarterPack', () => {
     expect(fake.table('user_power_inventory')).toHaveLength(0);
     expect(quiet).toHaveBeenCalledWith(expect.stringContaining('Starter pack config unavailable'), expect.anything());
     quiet.mockRestore();
+  });
+});
+
+/**
+ * Başlangıç moru (2026-10-04): bakiye 0 iken ikinci güç doğrudan paywall'dı. Fixture'da en ucuz
+ * quiz gücü TIME_EXTEND (5 mor) → türetilen varsayılan 10. Tek seferlik: kullanıcıya özel referans.
+ */
+describe('ExchangeService.grantStarterPack — başlangıç moru', () => {
+  it('config\'te alan yoksa en ucuz quiz gücünün iki katını ücretsiz mor olarak yazar', async () => {
+    const { fake, exchangeService } = await setup({ users: [user({ purple_diamonds: 0, purple_paid: 0 })] });
+
+    await exchangeService.grantStarterPack('u1');
+
+    expect(fake.table('users')[0].purple_diamonds).toBe(10);
+    // Ücretsiz mor: ödenmiş pay artmaz (harcanınca hedefe rainbow üretmez).
+    expect(fake.table('users')[0].purple_paid).toBe(0);
+    expect(fake.table('diamond_transactions')).toEqual([
+      expect.objectContaining({
+        user_id: 'u1', type: 'PURPLE', amount: 10, reason: 'STARTER_PURPLE', reference_id: 'STARTER_PURPLE:u1',
+      }),
+    ]);
+  });
+
+  it('ikinci çağrı mor yazmaz — idempotent (yalnız tek ledger satırı)', async () => {
+    const { fake, exchangeService } = await setup({ users: [user({ purple_diamonds: 0 })] });
+
+    await exchangeService.grantStarterPack('u1');
+    await exchangeService.grantStarterPack('u1');
+
+    expect(fake.table('users')[0].purple_diamonds).toBe(10);
+    expect(fake.table('diamond_transactions').filter((t) => t.reason === 'STARTER_PURPLE')).toHaveLength(1);
+  });
+
+  it('config\'teki açık değer türetmeyi ezer; 0 = kapalı', async () => {
+    const rewards = (starterPurple: number) => activeConfigRow({
+      rewards: { ...activeConfigRow().config.rewards, starterPurple },
+    });
+
+    const seven = await setup({ users: [user({ purple_diamonds: 0 })], economy_config_versions: [rewards(7)] });
+    await seven.exchangeService.grantStarterPack('u1');
+    expect(seven.fake.table('users')[0].purple_diamonds).toBe(7);
+
+    vi.resetModules();
+    const off = await setup({ users: [user({ purple_diamonds: 0 })], economy_config_versions: [rewards(0)] });
+    await off.exchangeService.grantStarterPack('u1');
+    expect(off.fake.table('users')[0].purple_diamonds).toBe(0);
+    expect(off.fake.table('diamond_transactions')).toHaveLength(0);
+    // Güç paketi mordan bağımsız verilir.
+    expect(off.fake.table('user_power_inventory').length).toBeGreaterThan(0);
+  });
+
+  it('mor yazımı patlarsa fırlatmaz ve güç paketi yine verilir (fail-open)', async () => {
+    const quiet = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { fake, exchangeService } = await setup(
+      { users: [user({ purple_diamonds: 0 })] },
+      { failOn: [{ table: 'diamond_transactions', op: 'insert' }] },
+    );
+
+    await expect(exchangeService.grantStarterPack('u1')).resolves.toBeUndefined();
+    expect(fake.table('users')[0].purple_diamonds).toBe(0);
+    expect(fake.table('user_power_inventory')).toHaveLength(Object.keys(DEFAULT_STARTER_POWERS).length);
+    expect(quiet).toHaveBeenCalledWith(expect.stringContaining('Starter purple grant failed'), expect.anything());
+    quiet.mockRestore();
+  });
+});
+
+describe('resolveStarterPurple', () => {
+  it('türetilen değer şema tavanını (50) aşmaz', () => {
+    const config = activeConfigRow().config;
+    const pricey = Object.fromEntries(
+      Object.entries(config.powerCosts).map(([k, v]) => [k, { ...v, purpleCost: 400 }]),
+    ) as typeof config.powerCosts;
+    expect(resolveStarterPurple({ rewards: config.rewards, powerCosts: pricey })).toBe(50);
   });
 });
 
