@@ -135,7 +135,7 @@ describe('yanlış cevap — free_second_chance bayrağı', () => {
   it('config\'te 0 ise kapalı', async () => {
     const { quizService } = await setup({
       economy_config_versions: [activeConfigRow({
-        quizOnboarding: { freeSecondChances: 0, freeSecondChanceSessionWindow: 3 },
+        quizOnboarding: { freeSecondChances: 0, freeSecondChanceSessionWindow: 3, failedRetryDays: 7 },
       })],
     });
 
@@ -221,7 +221,7 @@ describe('rescueWithSkip — ücretsiz ikinci şans', () => {
 });
 
 describe('rescueWithSkip — ücretli kurtarmada talep-önce-ücret', () => {
-  const noChance = () => activeConfigRow({ quizOnboarding: { freeSecondChances: 0, freeSecondChanceSessionWindow: 3 } });
+  const noChance = () => activeConfigRow({ quizOnboarding: { freeSecondChances: 0, freeSecondChanceSessionWindow: 3, failedRetryDays: 7 } });
 
   it('eş zamanlı iki ücretli kurtarma yalnız BİR kez ücret alır', async () => {
     const { fake, quizService } = await setup({ economy_config_versions: [noChance()] });

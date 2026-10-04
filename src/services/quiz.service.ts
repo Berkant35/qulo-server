@@ -6,6 +6,7 @@ import { calculatePowerCost, calculateGreenReward, shuffleArray, pickOracleSugge
 import { diamondService } from "./diamond.service.js";
 import { exchangeService } from "./exchange.service.js";
 import { economyConfigService } from "./economy-config.service.js";
+import { evaluateRetry, LOCKED_VERDICTS, quizRetryService } from "./quiz-retry.service.js";
 import { NotificationService } from "./notification.service.js";
 import { matchEmailService } from "./match-email.service.js";
 import { userLanguageService } from "./user-language.service.js";
@@ -185,7 +186,7 @@ export class QuizService {
     // 1. Fetch target's questions with locale
     const { data: allQuestions, error: qErr } = await supabase
       .from("questions")
-      .select("id, time_limit, locale")
+      .select("id, time_limit, locale, created_at")
       .eq("user_id", targetId)
       .order("order_num", { ascending: true });
 
@@ -202,37 +203,42 @@ export class QuizService {
 
     const totalQuestions = filteredQuestions.length;
 
-    // 2. Check no active IN_PROGRESS session for this solver+target pair
-    const { data: existing, error: existErr } = await supabase
-      .from("quiz_sessions")
-      .select("id")
-      .eq("solver_id", solverId)
-      .eq("target_id", targetId)
-      .eq("status", "IN_PROGRESS")
-      .maybeSingle();
+    // 2. Bu ciftin oturumlari — TEK sorgu: suren oturum devam ettirilir, suresi gecmis olan
+    // kapatilir, gecmis tekrar kapisina (quiz-retry.service) gider. Son oturum COMPLETED ise kapi yok.
+    const pairSessions = await quizRetryService.loadPairHistory(solverId, targetId);
+    const now = new Date();
+    const live = pairSessions.find(
+      (s) => s.status === "IN_PROGRESS" && (s.expires_at == null || new Date(s.expires_at) >= now),
+    );
+    if (live) {
+      return {
+        session_id: live.id,
+        total_questions: totalQuestions,
+        power_costs: await this.sessionPowerCosts(totalQuestions),
+      };
+    }
 
-    if (existErr) throw Errors.SERVER_ERROR();
-
-    if (existing) {
-      // Check if existing session is expired — if so, mark as failed and create new one
-      const { data: existSession } = await supabase
+    // Suresi gecmis yarim oturum = basarisiz. Bitis zamani son an (expires_at): "simdi" yazilsaydi
+    // reddedilen bu istek tekrar beklemesini uzatirdi.
+    for (const s of pairSessions) {
+      if (s.status !== "IN_PROGRESS") continue;
+      await supabase
         .from("quiz_sessions")
-        .select("expires_at")
-        .eq("id", existing.id)
-        .single();
+        .update({ status: "FAILED", completed_at: s.expires_at ?? now.toISOString() })
+        .eq("id", s.id)
+        .eq("status", "IN_PROGRESS");
+    }
 
-      if (existSession && new Date(existSession.expires_at) < new Date()) {
-        await supabase
-          .from("quiz_sessions")
-          .update({ status: "FAILED", completed_at: new Date().toISOString() })
-          .eq("id", existing.id);
-        // Fall through to create new session
-      } else {
-        return {
-          session_id: existing.id as string,
-          total_questions: totalQuestions,
-          power_costs: await this.sessionPowerCosts(totalQuestions),
-        };
+    // Tekrar kapisi: Discover ile AYNI kural (geri donen profil burada reddedilmez, beklemedeki/
+    // hakki bitmis hedef API'den de baslatilamaz — cevaplari deneme-yanilma ile ezberleme yolu).
+    if (pairSessions.length > 0) {
+      const retry = evaluateRetry(pairSessions, {
+        retryDays: await quizRetryService.getRetryDays(),
+        now,
+        questionCreatedAts: filteredQuestions.map((q: any) => (q.created_at as string | null) ?? null),
+      });
+      if (LOCKED_VERDICTS.has(retry.verdict)) {
+        throw Errors.QUIZ_RETRY_LOCKED(retry.verdict as "cooldown" | "exhausted" | "disabled", retry.retryAt);
       }
     }
 
@@ -621,7 +627,12 @@ export class QuizService {
       total_questions: session.total_questions,
       expires_at: session.expires_at,
       completed_at: session.completed_at,
-      answers: answers ?? [],
+      // Ezber korumasi (2026-10-04, basarisiz quiz'e tekrar hakki): eslesmeyle bitmeyen oturumda
+      // `selected_answer` donmez — SKIP kurtarmasi oraya DOGRU cevabi yazar, tekrar denemede ayni
+      // soru ayni `index` ile gelir. Mobil bu alani kullanmiyor.
+      answers: session.status === "COMPLETED"
+        ? (answers ?? [])
+        : (answers ?? []).map(({ selected_answer: _hidden, ...rest }: Record<string, unknown>) => rest),
     };
   }
 
@@ -643,10 +654,13 @@ export class QuizService {
 
     // Check expiry
     if (new Date(s.expires_at) < new Date()) {
+      // Bitis = son an (expires_at), "simdi" degil: saatler sonra acilan bayat oturum tekrar
+      // beklemesini (quiz-retry) ileri itmesin — startSession ile ayni kural.
       await supabase
         .from("quiz_sessions")
-        .update({ status: "FAILED", completed_at: new Date().toISOString() })
-        .eq("id", sessionId);
+        .update({ status: "FAILED", completed_at: s.expires_at })
+        .eq("id", sessionId)
+        .eq("status", "IN_PROGRESS");
 
       throw Errors.TIME_UP();
     }

@@ -96,7 +96,7 @@ describe('QuizService — güç ödülü bölme', () => {
 
 describe('QuizService.rescueWithSkip — ödül bölme', () => {
   // Ücretli kurtarma sınanıyor: ilk quiz ikinci şansı (2026-10-04) bu oturumda SKIP'i bedava yapardı.
-  const paidRescueConfig = [activeConfigRow({ quizOnboarding: { freeSecondChances: 0, freeSecondChanceSessionWindow: 3 } })];
+  const paidRescueConfig = [activeConfigRow({ quizOnboarding: { freeSecondChances: 0, freeSecondChanceSessionWindow: 3, failedRetryDays: 7 } })];
 
   it('ödenmiş morla kurtarma: ödül hedefte rainbow', async () => {
     const { fake, quizService } = await setup({

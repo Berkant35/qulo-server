@@ -9,6 +9,7 @@ import { haversineDistance } from "../utils/math.js";
 import { assertUuid, isUuid } from "../utils/validation.js";
 import { appConfigService } from "./app-config.service.js";
 import { blockService } from "./block.service.js";
+import { evaluateRetry, quizRetryService, type RetrySessionRow } from "./quiz-retry.service.js";
 import { scoringService } from "./scoring.service.js";
 import { subscriptionService } from "./subscription.service.js";
 import { userLanguageService } from "./user-language.service.js";
@@ -98,8 +99,8 @@ export class MatchingService {
     empty_reason?: 'language' | 'no_candidates';
   }> {
     assertUuid(userId, "userId");
-    // 1. Get current user + already-swiped IDs in parallel
-    const [userResult, swipedResult, matchResult] = await Promise.all([
+    // 1. Get current user + already-swiped IDs + basarisiz quiz gecmisi in parallel
+    const [userResult, swipedResult, matchResult, retryHistory, retryDays] = await Promise.all([
       supabase
         .from("users")
         .select(
@@ -110,7 +111,7 @@ export class MatchingService {
         .maybeSingle(),
       supabase
         .from("swipes")
-        .select("target_id")
+        .select("target_id, action, created_at")
         .eq("swiper_id", userId)
         // Siralamasiz kesme, duzeltilen aday sorgusu bug'inin ayni sinifi:
         // tavan asilirsa rastgele bir alt kume gelir ve swipe edilmis
@@ -119,9 +120,15 @@ export class MatchingService {
         .limit(5000),
       supabase
         .from("matches")
-        .select("user1_id, user2_id")
+        // Pasif eslesme de okunur: aktif olan dislanir (eskisi gibi), pasif olan yalniz tekrar
+        // hakkini kapatir (eslesip ayrilmis biri "basarisiz quiz" diye geri donmesin).
+        .select("user1_id, user2_id, is_active")
         .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)
-        .eq("is_active", true),
+        .order("matched_at", { ascending: false })
+        .limit(5000),
+      // Basarisiz quiz'in hedefine tek tekrar (quiz-retry.service). Tek hafif sorgu, paralel.
+      quizRetryService.loadSolverHistory(userId),
+      quizRetryService.getRetryDays(),
     ]);
 
     const { data: user, error: userError } = userResult;
@@ -162,18 +169,42 @@ export class MatchingService {
       blockService.getBlockerIds(userId),
     ]);
 
-    const excludedIds = new Set<string>([userId, ...blockedIds, ...blockerIds]);
-    if (swipedRows) {
-      for (const row of swipedRows) {
-        excludedIds.add(row.target_id as string);
+    const matchedEverIds = new Set<string>();
+    const activeMatchIds = new Set<string>();
+    for (const m of matchRows ?? []) {
+      const otherId = m.user1_id === userId ? (m.user2_id as string) : (m.user1_id as string);
+      matchedEverIds.add(otherId);
+      if (m.is_active) activeMatchIds.add(otherId);
+    }
+
+    // Basarisiz quiz gecmisi: tekrar adayi (bekleme dolmus ya da soru degisikligiyle dolabilecek)
+    // swipe dislamasindan muaf tutulur; kesin karar soru zamanlari okununca (adim 5.7). Hakki
+    // bitmis / ozellik kapali hedef swipe satiri olmasa da (undo) dislanir — sunucu quiz'i reddeder.
+    const retryPending = new Map<string, { sessions: RetrySessionRow[]; lastFailedAt: Date }>();
+    const historyExcluded = new Set<string>();
+    for (const [targetId, sessions] of retryHistory ?? []) {
+      if (matchedEverIds.has(targetId)) continue;
+      const { verdict, lastFailedAt } = evaluateRetry(sessions, { retryDays, now: new Date() });
+      if ((verdict === "eligible" || verdict === "cooldown") && lastFailedAt) {
+        retryPending.set(targetId, { sessions, lastFailedAt });
+      } else if (verdict === "exhausted" || verdict === "disabled") {
+        historyExcluded.add(targetId);
       }
     }
-    // Exclude already-matched users
-    if (matchRows) {
-      for (const m of matchRows) {
-        const otherId = m.user1_id === userId ? (m.user2_id as string) : (m.user1_id as string);
-        excludedIds.add(otherId);
-      }
+
+    const excludedIds = new Set<string>([userId, ...blockedIds, ...blockerIds, ...activeMatchIds, ...historyExcluded]);
+    for (const row of swipedRows ?? []) {
+      const targetId = row.target_id as string;
+      // Yalniz basarisizliktan ONCE atilmis LIKE muaf: quiz LIKE'tan sonra baslar; REJECT kalici kalir.
+      // Yenilenmis LIKE (tekrar hakki kullanildi, quiz baslamadi) ilk LIKE gibi desteden cikar.
+      const pending = retryPending.get(targetId);
+      const likedBeforeFailure =
+        pending != null && Date.parse(row.created_at as string) < pending.lastFailedAt.getTime();
+      if (row.action === "LIKE" && likedBeforeFailure) continue;
+      excludedIds.add(targetId);
+    }
+    for (const targetId of retryPending.keys()) {
+      if (excludedIds.has(targetId)) retryPending.delete(targetId);
     }
 
     // 3. Query candidates
@@ -275,6 +306,7 @@ export class MatchingService {
     const questionCountMap = new Map<string, number>();
     const questionInfoMap = new Map<string, QuestionInfo>();
     const questionLocalesByUser = new Map<string, string[]>();
+    const rowsByUser = new Map<string, any[]>();
 
     if (candidateIds.length > 0) {
       // PostgREST sorgusu URL'de gider: 486 aday icin tek `.in()` ~18 KB olur ve istek
@@ -287,7 +319,7 @@ export class MatchingService {
       for (let i = 0; i < candidateIds.length; i += ID_PARCA) {
         const { data: parca, error: parcaError } = await supabase
           .from('questions')
-          .select('user_id, category, stats_correct, stats_wrong, locale')
+          .select('user_id, category, stats_correct, stats_wrong, locale, created_at')
           .in('user_id', candidateIds.slice(i, i + ID_PARCA));
         if (parcaError) {
           // Sessizce bos donmek "aday yok" gibi gorunur; bu yanlis sonuc, hatadan beterdir.
@@ -299,7 +331,6 @@ export class MatchingService {
 
       // Tek gecisde indeksle. Onceki kod her aday icin questionStats'i bastan
       // filtreliyordu (O(aday x soru)); limit 50 -> 500 ile bu yuk kabul edilemez.
-      const rowsByUser = new Map<string, any[]>();
       for (const row of questionStats) {
         const uid = row.user_id as string;
         const rows = rowsByUser.get(uid);
@@ -381,6 +412,24 @@ export class MatchingService {
       return matchingCount >= 2;
     });
 
+    // 5.7 — Tekrar adayinin kesin karari: bekleme dolmadiysa hedef izleyicinin dilinde YENI soru
+    // eklemis olmali (son basarisizliktan sonra olusturulmus). Kalan beklemedekiler elenir.
+    const retryIds = new Set<string>();
+    if (retryPending.size > 0) {
+      const retryNow = new Date();
+      discoverableFiltered = discoverableFiltered.filter((c) => {
+        const sessions = retryPending.get(c.id)?.sessions;
+        if (!sessions) return true;
+        const questionCreatedAts = (rowsByUser.get(c.id) ?? [])
+          .filter((q: any) => langPrefs.includes(questionLocale(q.locale)))
+          .map((q: any) => (q.created_at as string | null) ?? null);
+        const { verdict } = evaluateRetry(sessions, { retryDays, now: retryNow, questionCreatedAts });
+        if (verdict !== "eligible") return false;
+        retryIds.add(c.id);
+        return true;
+      });
+    }
+
     // 6. Score each candidate
     const now = new Date();
     // Uyuyan aday: son `dormantDays` gundur gorulmemis (last_seen_at — presence heartbeat'i
@@ -420,6 +469,7 @@ export class MatchingService {
         questionCount: qCount,
         tier: c.distance_tier,
         groupRank: discoverGroupRank(c.is_seed_profile === true, isDormant(c.last_seen_at)),
+        retry: retryIds.has(c.id) ? 1 : 0,
       };
     });
 
@@ -431,7 +481,11 @@ export class MatchingService {
     // Boost (+50) tier'i asamaz: boostlu uzak aday yakinlarin onune gecmez,
     // kendi tier'inin icinde yukselir. Bilincli — boost gorunurluk satar,
     // mesafe algisini bozmaz.
-    scored.sort((a, b) => a.groupRank - b.groupRank || a.tier - b.tier || b.score - a.score);
+    // Tekrar profili (basarisiz quiz'in hedefi, adim 5.7) KENDI grubunun sonunda: grup sirasi yanit
+    // olasiligini kodlar (asil tutma kaldiraci), o yuzden tekrar edilen aktif gercek kisi yeni bir
+    // seed'in onunde kalir; grup icinde ise gorulmemis profiller once gelir.
+    scored.sort((a, b) =>
+      a.groupRank - b.groupRank || a.retry - b.retry || a.tier - b.tier || b.score - a.score);
 
     // 8. Paginate
     const start = (page - 1) * PAGE_SIZE;
@@ -489,12 +543,17 @@ export class MatchingService {
     // Check for existing swipe (idempotent — fire-and-forget safe)
     const { data: existing } = await supabase
       .from("swipes")
-      .select("id")
+      .select("id, action, created_at")
       .eq("swiper_id", swiperId)
       .eq("target_id", targetId)
       .maybeSingle();
 
     if (existing) {
+      // Basarisiz quiz'in hedefi Discover'a geri donduyse (quiz-retry) ikinci LIKE yeni satir
+      // acamaz (UNIQUE swiper+target) — mevcut satir yenilenir, gunluk hak bir kez daha harcanir.
+      if (existing.action === "LIKE" && action === "LIKE") {
+        await quizRetryService.renewLike(swiperId, targetId, existing.id as string, existing.created_at as string);
+      }
       return { matched: false };
     }
 
@@ -531,6 +590,10 @@ export class MatchingService {
    */
   async undoSwipe(userId: string, targetId: string): Promise<ProfileCard> {
     assertUuid(targetId, "targetId");
+
+    // Basarisiz quiz'in kilitli hedefi geri getirilmez: undo eskiden bedava tekrar yoluydu, simdi
+    // quiz'i baslatilamayan bir kart icin undo hakki harcatirdi (quiz-retry).
+    await quizRetryService.assertNotLocked(userId, targetId);
 
     // Check daily undo limit
     await subscriptionService.incrementDailyUndos(userId);

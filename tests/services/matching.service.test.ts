@@ -81,6 +81,10 @@ async function loadService(
     rpc?: FakeSupabaseOptions["rpc"];
     /** app_config.discover_dormant_days (migration 074); varsayilan 14. */
     dormantDays?: number;
+    /** economy.quizOnboarding.failedRetryDays; varsayilan 7. */
+    retryDays?: number;
+    incrementDailySwipes?: () => Promise<void>;
+    incrementDailyUndos?: () => Promise<void>;
   } = {},
 ) {
   vi.resetModules();
@@ -99,10 +103,13 @@ async function loadService(
   vi.doMock("../../src/services/app-config.service.js", () => ({
     appConfigService: { getDiscoverDormantDays: async () => opts.dormantDays ?? 14 },
   }));
+  vi.doMock("../../src/services/economy-config.service.js", () => ({
+    economyConfigService: { getConfig: async () => ({ quizOnboarding: { failedRetryDays: opts.retryDays ?? 7 } }) },
+  }));
   vi.doMock("../../src/services/subscription.service.js", () => ({
     subscriptionService: {
-      incrementDailyUndos: async () => undefined,
-      incrementDailySwipes: async () => undefined,
+      incrementDailyUndos: opts.incrementDailyUndos ?? (async () => undefined),
+      incrementDailySwipes: opts.incrementDailySwipes ?? (async () => undefined),
     },
   }));
   const mod = await import("../../src/services/matching.service.js");
@@ -829,5 +836,199 @@ describe("discover — seed profiller en sonda", () => {
 
     const res = await service.discover(VIEWER_ID, 1);
     expect(res.cards[0].user_id).toBe("gercek-eski");
+  });
+});
+
+describe("discover — basarisiz quiz'in hedefi bir kez geri doner (2026-10-04)", () => {
+  const FRESH = uid(70);
+  const RETRY = uid(71);
+  const SEED = uid(72);
+  const DAY = 86_400_000;
+  const daysAgo = (d: number) => new Date(Date.now() - d * DAY).toISOString();
+  const failedSession = (target: string, d: number, over: Record<string, unknown> = {}) => ({
+    id: `s-${target}-${d}`, solver_id: VIEWER_ID, target_id: target, status: "FAILED",
+    started_at: daysAgo(d), completed_at: daysAgo(d), expires_at: daysAgo(d), ...over,
+  });
+  const like = (target: string, d = 10) => ({ swiper_id: VIEWER_ID, target_id: target, action: "LIKE", created_at: daysAgo(d) });
+
+  function tables(over: Partial<Tables> = {}): Tables {
+    return {
+      users: [viewerRow(), candidateRow(RETRY, 1), candidateRow(FRESH, 40)],
+      swipes: [like(RETRY)],
+      matches: [],
+      quiz_sessions: [failedSession(RETRY, 8)],
+      questions: questionsFor([RETRY, FRESH]),
+      ...over,
+    };
+  }
+  const ids = (r: { cards: { user_id: string }[] }) => r.cards.map((c) => c.user_id);
+
+  it("bekleme dolunca geri doner — yakin olsa da gorulmemis profilin ARKASINDA", async () => {
+    const svc = await loadService(tables());
+    expect(ids(await svc.discover(VIEWER_ID))).toEqual([FRESH, RETRY]);
+  });
+
+  it("tekrar edilen aktif gercek kisi yeni seed'in ONUNDE (grup sirasi bozulmaz)", async () => {
+    const t = tables();
+    t.users!.push(candidateRow(SEED, 1, { is_seed_profile: true, is_test_account: true }));
+    t.questions = questionsFor([RETRY, FRESH, SEED]);
+    const svc = await loadService(t);
+    expect(ids(await svc.discover(VIEWER_ID))).toEqual([FRESH, RETRY, SEED]);
+  });
+
+  it("bekleme dolmadiysa donmez", async () => {
+    const svc = await loadService(tables({ quiz_sessions: [failedSession(RETRY, 3)] }));
+    expect(ids(await svc.discover(VIEWER_ID))).toEqual([FRESH]);
+  });
+
+  it("bekleme dolmadi ama hedef izleyicinin dilinde YENI soru ekledi → doner", async () => {
+    const q = questionsFor([RETRY, FRESH]).map((r) => ({ ...r, created_at: daysAgo(60) }));
+    q.push({ user_id: RETRY, category: "life", stats_correct: 0, stats_wrong: 0, locale: "tr", created_at: daysAgo(1) } as never);
+    const svc = await loadService(tables({ quiz_sessions: [failedSession(RETRY, 3)], questions: q }));
+    expect(ids(await svc.discover(VIEWER_ID))).toEqual([FRESH, RETRY]);
+  });
+
+  it("yeni soru izleyicinin OKUYAMADIGI dildeyse bekleme atlanmaz", async () => {
+    const q = questionsFor([RETRY, FRESH]).map((r) => ({ ...r, created_at: daysAgo(60) }));
+    q.push({ user_id: RETRY, category: "life", stats_correct: 0, stats_wrong: 0, locale: "en", created_at: daysAgo(1) } as never);
+    const svc = await loadService(tables({ quiz_sessions: [failedSession(RETRY, 3)], questions: q }));
+    expect(ids(await svc.discover(VIEWER_ID))).toEqual([FRESH]);
+  });
+
+  it("ikinci basarisizliktan sonra kalici gider (hedef basina tek tekrar)", async () => {
+    const svc = await loadService(tables({ quiz_sessions: [failedSession(RETRY, 30), failedSession(RETRY, 10)] }));
+    expect(ids(await svc.discover(VIEWER_ID))).toEqual([FRESH]);
+  });
+
+  it("ozellik kapaliyken (0) donmez — eski davranis", async () => {
+    const svc = await loadService(tables(), { retryDays: 0 });
+    expect(ids(await svc.discover(VIEWER_ID))).toEqual([FRESH]);
+  });
+
+  it("yarida birakilan (suresi gecmis IN_PROGRESS) quiz de basarisizlik sayilir", async () => {
+    const svc = await loadService(tables({
+      quiz_sessions: [failedSession(RETRY, 9, { status: "IN_PROGRESS", completed_at: null, expires_at: daysAgo(8) })],
+    }));
+    expect(ids(await svc.discover(VIEWER_ID))).toEqual([FRESH, RETRY]);
+  });
+
+  it("pasif eslesme (eslesip ayrilmis) geri donmez", async () => {
+    const svc = await loadService(tables({
+      matches: [{ id: "m1", user1_id: VIEWER_ID, user2_id: RETRY, is_active: false }],
+    }));
+    expect(ids(await svc.discover(VIEWER_ID))).toEqual([FRESH]);
+  });
+
+  it("REJECT edilmis hedef basarisiz gecmisi olsa da donmez", async () => {
+    const svc = await loadService(tables({ swipes: [{ ...like(RETRY), action: "REJECT" }] }));
+    expect(ids(await svc.discover(VIEWER_ID))).toEqual([FRESH]);
+  });
+
+  it("yenilenmis LIKE (tekrar hakki kullanildi, quiz baslamadi) desteden cikar — ilk LIKE gibi", async () => {
+    const svc = await loadService(tables({ swipes: [like(RETRY, 1)] }));
+    expect(ids(await svc.discover(VIEWER_ID))).toEqual([FRESH]);
+  });
+
+  it("hakki bitmis hedef swipe satiri silinmis olsa da (undo) dislanir", async () => {
+    const svc = await loadService(tables({ swipes: [], quiz_sessions: [failedSession(RETRY, 30), failedSession(RETRY, 10)] }));
+    expect(ids(await svc.discover(VIEWER_ID))).toEqual([FRESH]);
+  });
+
+  it("gecmis sorgusu patlarsa Discover dusmez, eski davranisa doner (tekrar yok)", async () => {
+    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const svc = await loadService(tables(), { failOn: [{ table: "quiz_sessions", op: "select" }] });
+    expect(ids(await svc.discover(VIEWER_ID))).toEqual([FRESH]);
+    expect(errSpy).toHaveBeenCalledWith(expect.stringContaining("[quiz-retry]"), expect.anything(), expect.anything());
+  });
+
+  it("quiz_sessions discover basina TEK kez okunur (maliyet)", async () => {
+    const svc = await loadService(tables());
+    await svc.discover(VIEWER_ID);
+    expect(sonFake.queries.filter((q) => q.table === "quiz_sessions")).toHaveLength(1);
+  });
+});
+
+describe("swipe — tekrar denemesinde LIKE yenilenir (UNIQUE swipe)", () => {
+  const TARGET = uid(80);
+  const DAY = 86_400_000;
+  const daysAgo = (d: number) => new Date(Date.now() - d * DAY).toISOString();
+  const base = (over: Partial<Tables> = {}): Tables => ({
+    users: [viewerRow(), candidateRow(TARGET, 1)],
+    swipes: [{ id: "sw1", swiper_id: VIEWER_ID, target_id: TARGET, action: "LIKE", created_at: daysAgo(10) }],
+    quiz_sessions: [{
+      id: "s1", solver_id: VIEWER_ID, target_id: TARGET, status: "FAILED",
+      started_at: daysAgo(8), completed_at: daysAgo(8), expires_at: daysAgo(8),
+    }],
+    ...over,
+  });
+
+  it("geri donen hedefe ikinci LIKE: satir yenilenir, gunluk hak BIR kez duser; tekrar cagri dusurmez", async () => {
+    const consume = vi.fn(async () => undefined);
+    const svc = await loadService(base(), { incrementDailySwipes: consume });
+
+    expect(await svc.swipe(VIEWER_ID, TARGET, "LIKE")).toEqual({ matched: false });
+    expect(await svc.swipe(VIEWER_ID, TARGET, "LIKE")).toEqual({ matched: false });
+
+    expect(consume).toHaveBeenCalledTimes(1);
+    expect(sonFake.table("swipes")).toHaveLength(1);
+    expect(Date.parse(sonFake.table("swipes")[0].created_at)).toBeGreaterThan(Date.parse(daysAgo(1)));
+  });
+
+  it("gunluk hak doluysa yenileme geri alinir ve DAILY_LIMIT_EXCEEDED doner (sonra tekrar denenebilir)", async () => {
+    const limit = Object.assign(new Error("limit"), { code: "DAILY_LIMIT_EXCEEDED" });
+    const seed = base();
+    const likedAt = seed.swipes![0].created_at;
+    const svc = await loadService(seed, { incrementDailySwipes: async () => { throw limit; } });
+
+    await expect(svc.swipe(VIEWER_ID, TARGET, "LIKE")).rejects.toBe(limit);
+    expect(sonFake.table("swipes")[0].created_at).toBe(likedAt);
+  });
+
+  it("basarisiz gecmisi olmayan mevcut LIKE eskisi gibi idempotent: hak dusmez", async () => {
+    const consume = vi.fn(async () => undefined);
+    const svc = await loadService(base({ quiz_sessions: [] }), { incrementDailySwipes: consume });
+    await svc.swipe(VIEWER_ID, TARGET, "LIKE");
+    expect(consume).not.toHaveBeenCalled();
+  });
+
+  it("hakki bitmis hedefe LIKE: QUIZ_RETRY_LOCKED, hak dusmez", async () => {
+    const consume = vi.fn(async () => undefined);
+    const two = base().quiz_sessions!.concat([{
+      id: "s0", solver_id: VIEWER_ID, target_id: TARGET, status: "FAILED",
+      started_at: daysAgo(20), completed_at: daysAgo(20), expires_at: daysAgo(20),
+    }]);
+    const svc = await loadService(base({ quiz_sessions: two }), { incrementDailySwipes: consume });
+    await expect(svc.swipe(VIEWER_ID, TARGET, "LIKE")).rejects.toMatchObject({ code: "QUIZ_RETRY_LOCKED", params: { reason: "exhausted" } });
+    expect(consume).not.toHaveBeenCalled();
+  });
+
+  it("bekleme surerken LIKE: hak dusmez, satir yenilenmez; hedef yeni soru eklediyse yenilenir", async () => {
+    const consume = vi.fn(async () => undefined);
+    const cooldown = [{
+      id: "s1", solver_id: VIEWER_ID, target_id: TARGET, status: "FAILED",
+      started_at: daysAgo(3), completed_at: daysAgo(3), expires_at: daysAgo(3),
+    }];
+    const seed = base({ quiz_sessions: cooldown, questions: [{ user_id: TARGET, created_at: daysAgo(30) }] });
+    const likedAt = seed.swipes![0].created_at;
+    let svc = await loadService(seed, { incrementDailySwipes: consume });
+    await expect(svc.swipe(VIEWER_ID, TARGET, "LIKE")).rejects.toMatchObject({ params: { reason: "cooldown" } });
+    expect(consume).not.toHaveBeenCalled();
+    expect(sonFake.table("swipes")[0].created_at).toBe(likedAt);
+
+    svc = await loadService(base({ quiz_sessions: cooldown, questions: [{ user_id: TARGET, created_at: daysAgo(1) }] }), { incrementDailySwipes: consume });
+    await svc.swipe(VIEWER_ID, TARGET, "LIKE");
+    expect(consume).toHaveBeenCalledTimes(1);
+  });
+
+  it("undo: kilitli hedef geri getirilmez, undo hakki dusmez (eskiden bedava tekrar yoluydu)", async () => {
+    const undo = vi.fn(async () => undefined);
+    const cooldown = [{
+      id: "s1", solver_id: VIEWER_ID, target_id: TARGET, status: "FAILED",
+      started_at: daysAgo(1), completed_at: daysAgo(1), expires_at: daysAgo(1),
+    }];
+    const svc = await loadService(base({ quiz_sessions: cooldown, questions: [] }), { incrementDailyUndos: undo });
+    await expect(svc.undoSwipe(VIEWER_ID, TARGET)).rejects.toMatchObject({ code: "QUIZ_RETRY_LOCKED" });
+    expect(undo).not.toHaveBeenCalled();
+    expect(sonFake.table("swipes")).toHaveLength(1);
   });
 });

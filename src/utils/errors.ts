@@ -72,6 +72,13 @@ export const Errors = {
   NO_QUESTIONS: () =>
     new AppError("NO_QUESTIONS", 400, "No questions available"),
 
+  /** Basarisiz quiz'in hedefine tekrar kapali (quiz-retry.service): bekleme suruyor / hak bitti / ozellik kapali. */
+  QUIZ_RETRY_LOCKED: (reason: "cooldown" | "exhausted" | "disabled", retryAt: Date | null) =>
+    new AppError("QUIZ_RETRY_LOCKED", 409, "Quiz retry not available for this profile", {
+      reason,
+      retry_at: retryAt ? retryAt.toISOString() : null,
+    }),
+
   SELF_SWIPE: () =>
     new AppError("SELF_SWIPE", 400, "Cannot swipe yourself"),
 

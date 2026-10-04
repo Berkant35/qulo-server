@@ -34,6 +34,8 @@ export const ECONOMY_BOUNDARIES = {
   freeSecondChances: { min: 0, max: 3 },
   /** Ücretsiz ikinci şansın geçerli olduğu ilk K quiz oturumu. */
   freeSecondChanceSessionWindow: { min: 1, max: 10 },
+  /** Başarısız quiz sonrası hedefin Discover'a tek seferlik dönüş beklemesi (gün; 0 = kapalı). */
+  failedRetryDays: { min: 0, max: 90 },
   // Subscription tier boundaries
   free: {
     dailyDiscovers: { min: 10, max: 200 },
@@ -181,6 +183,11 @@ const timingSchema = z.object({
 export const DEFAULT_QUIZ_ONBOARDING = {
   freeSecondChances: 1,
   freeSecondChanceSessionWindow: 3,
+  /**
+   * Başarısız quiz'in hedefi bu kadar gün sonra Discover'a BİR KEZ geri döner (kullanıcı kararı
+   * 2026-10-04). 0 = kapalı: başarısız hedef kalıcı gider ve sunucu tekrar quiz'i reddeder.
+   */
+  failedRetryDays: 7,
 } as const;
 
 const quizOnboardingSchema = z
@@ -191,6 +198,9 @@ const quizOnboardingSchema = z
     freeSecondChanceSessionWindow: z.number().int()
       .min(B.freeSecondChanceSessionWindow.min).max(B.freeSecondChanceSessionWindow.max)
       .default(DEFAULT_QUIZ_ONBOARDING.freeSecondChanceSessionWindow),
+    failedRetryDays: z.number().int()
+      .min(B.failedRetryDays.min).max(B.failedRetryDays.max)
+      .default(DEFAULT_QUIZ_ONBOARDING.failedRetryDays),
   })
   .default({ ...DEFAULT_QUIZ_ONBOARDING });
 
