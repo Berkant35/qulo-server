@@ -1,7 +1,7 @@
 import { supabase } from "../config/supabase.js";
 import { resolveLocale } from '../utils/locales.js';
 import { questionLocale } from "../constants/locales.js";
-import { AppError, Errors } from "../utils/errors.js";
+import { Errors } from "../utils/errors.js";
 import { calculatePowerCost, calculateGreenReward, shuffleArray, pickOracleSuggestion, powerReward } from "../utils/math.js";
 import { diamondService } from "./diamond.service.js";
 import { exchangeService } from "./exchange.service.js";
@@ -9,31 +9,12 @@ import { economyConfigService } from "./economy-config.service.js";
 import { NotificationService } from "./notification.service.js";
 import { matchEmailService } from "./match-email.service.js";
 import { userLanguageService } from "./user-language.service.js";
+import { quizSecondChanceService, FREE_SECOND_CHANCE } from "./quiz-second-chance.service.js";
+import { DEFAULT_QUESTION_SECONDS, quizDeadlineService, remainingSeconds, visiblePowers } from "./quiz-deadline.service.js";
 import type { PowerName } from "../types/index.js";
 
 /** questions.answer_1..answer_4 — cevap indeksleri 1 tabanli. */
 const QUIZ_ANSWER_INDICES: readonly number[] = [1, 2, 3, 4];
-
-/** `questions.time_limit` bos ise (eski satirlar). */
-const DEFAULT_QUESTION_SECONDS = 30;
-/** Sure bilinemezse (eski oturum / okuma hatasi) — `question.validator` ust siniri; sunum anı daraltir. */
-const MAX_QUESTION_SECONDS = 300;
-
-/**
- * `current_q_powers`'a yazilan ic isaret: paywall ek suresi soru basina BIR KEZ verilir.
- * Atomiklik guc isaretlemesiyle ayni RPC'den (037); soru gecisinde dizi sifirlaninca hak yenilenir.
- * Istemciye `used_powers` icinde DONMEZ.
- */
-const PAYWALL_GRACE_MARKER = "__PAYWALL_GRACE";
-
-const secondsFromNow = (seconds: number): string => new Date(Date.now() + seconds * 1000).toISOString();
-
-const remainingSeconds = (expiresAt: string): number =>
-  Math.max(0, Math.ceil((new Date(expiresAt).getTime() - Date.now()) / 1000));
-
-/** Istemciye donen kullanilmis gucler — ic isaretler haric. */
-const visiblePowers = (powers: string[] | null): string[] =>
-  (powers ?? []).filter((p) => p !== PAYWALL_GRACE_MARKER);
 
 interface SessionRow {
   id: string;
@@ -255,14 +236,9 @@ export class QuizService {
       }
     }
 
-    // 3. Create session — SORU BASINA sure (2026-10-04). Eski kural "tum sorularin toplami + 10 sn"
-    // paywall, guc sayfasi ve soru gecis animasyonu sirasinda da isliyordu: istemci sayaci dururken
-    // sunucu suresi bitiyor, kullanici TIME_UP aliyordu. Simdi `expires_at` yalniz o anki sorunun
-    // son anini tutar: burada ilk soru + gecis tamponu, soru sunulunca (getCurrentQuestion)
-    // "sure + tolerans"a daralir. Ayrinti: `armQuestionDeadline`.
-    const { timing } = await economyConfigService.getConfig();
-    const firstLimit = (filteredQuestions[0] as any).time_limit ?? DEFAULT_QUESTION_SECONDS;
-    const expiresAt = secondsFromNow(firstLimit + timing.questionToleranceSeconds + timing.transitionGraceSeconds);
+    // 3. Create session — SORU BASINA sure (2026-10-04; eski kural "toplam sure + 10 sn" paywall ve
+    // gecis animasyonunda tukeniyordu). Kurallar: `quizDeadlineService`.
+    const expiresAt = await quizDeadlineService.initial((filteredQuestions[0] as { time_limit?: number | null }).time_limit);
 
     const questionIds = filteredQuestions.map((q: any) => q.id as string);
 
@@ -326,8 +302,8 @@ export class QuizService {
       { index: 4, text: q.answer_4 as string },
     ];
     const shuffledAnswers = shuffleArray(answers);
-    const timeLimit = ((q as any).time_limit as number | null) ?? DEFAULT_QUESTION_SECONDS;
-    const expiresAt = await this.armQuestionDeadline(session, timeLimit);
+    const timeLimit = (q.time_limit as number | null) ?? DEFAULT_QUESTION_SECONDS;
+    const expiresAt = await quizDeadlineService.arm(session, timeLimit);
 
     return {
       session_id: sessionId,
@@ -441,7 +417,7 @@ export class QuizService {
         // Odeme basarisiz (ornegin INSUFFICIENT_DIAMONDS) — isareti geri al ki
         // kullanici elmas aldiktan sonra ayni gucu tekrar deneyebilsin.
         await this.unmarkPowerUsed(session, powerUsed);
-        await this.grantPaywallGrace(session, err);
+        await quizDeadlineService.grantPaywallGrace(session, err);
         throw err;
       }
 
@@ -559,7 +535,7 @@ export class QuizService {
           // Eskiden yalniz istemci sayaci uzuyordu (sabit 15); sunucu son ani yerinde kaliyordu —
           // uzatilan surede verilen cevap TIME_UP aliyordu. Sure config'ten, iki taraf ayni degeri gorur.
           const { timing } = await economyConfigService.getConfig();
-          await this.extendDeadline(session, timing.timeExtendSeconds);
+          await quizDeadlineService.extend(session, timing.timeExtendSeconds);
           return {
             power_result: { extra_seconds: timing.timeExtendSeconds },
             awaiting_answer: true,
@@ -596,11 +572,14 @@ export class QuizService {
     if (!isCorrect) {
       // Session'ı hemen FAILED yapma — client'a SKIP kurtulma şansı ver. Cevap kaydedildi,
       // artik sure avantaji yok: kurtarma/vazgec karari (paywall dahil) icin pencere ac.
-      await this.openRescueWindow(session);
+      await quizDeadlineService.openRescueWindow(session);
       return {
         is_correct: false,
         session_status: "IN_PROGRESS",
         can_rescue: true,
+        // true → SKIP kurtarmasi bu sefer bedava (mobil "ikinci sans" karti). Eski istemci yok sayar;
+        // yine de SKIP kurtarmasi sunucuda bedava islenir (`rescueWithSkip`).
+        free_second_chance: await quizSecondChanceService.isEligible(session),
       };
     }
 
@@ -897,12 +876,7 @@ export class QuizService {
    * rescue yolunun gectigi TEK ilerletme noktasi.
    */
   private async incrementCurrentQ(session: SessionRow) {
-    // Sonraki sorunun son ani: sure + tolerans + gecis tamponu (geri bildirim animasyonu + soru
-    // cekme). Soru sunulunca `armQuestionDeadline` tamponu keser.
-    const [{ timing }, nextLimit] = await Promise.all([
-      economyConfigService.getConfig(),
-      this.questionTimeLimit(session.question_ids?.[session.current_q]),
-    ]);
+    const expiresAt = await quizDeadlineService.transition(session.question_ids?.[session.current_q]);
     const { error } = await supabase
       .from("quiz_sessions")
       .update({
@@ -910,96 +884,11 @@ export class QuizService {
         current_q_powers: [],
         current_q_eliminated: [],
         current_q_oracle: null,
-        expires_at: secondsFromNow(nextLimit + timing.questionToleranceSeconds + timing.transitionGraceSeconds),
+        expires_at: expiresAt,
       })
       .eq("id", session.id);
 
     if (error) throw Errors.SERVER_ERROR();
-  }
-
-  /** Sorunun suresi; bilinemezse ust sinir (sunum ani daraltir — fazla cömert taraf guvenli). */
-  private async questionTimeLimit(questionId: string | undefined): Promise<number> {
-    if (!questionId) return MAX_QUESTION_SECONDS;
-    const { data, error } = await supabase
-      .from("questions")
-      .select("time_limit")
-      .eq("id", questionId)
-      .maybeSingle();
-    if (error || !data) return MAX_QUESTION_SECONDS;
-    return (data.time_limit as number | null) ?? DEFAULT_QUESTION_SECONDS;
-  }
-
-  /**
-   * Soru sunuldu: son ani "simdi + sure + tolerans"a DARALT (asla uzatma). Kosullu yazim
-   * (`expires_at > yeni`) sayesinde ayni soruyu tekrar cekmek (yeniden acilis, cift istek) sureyi
-   * sifirlamaz — sure kazanma yolu yok. TIME_EXTEND / paywall ile uzamis son an da yeni sunumda
-   * kalan surenin otesine tasinmaz. Yazim hatasi akisi bozmaz (mevcut son an gecerli kalir).
-   */
-  private async armQuestionDeadline(session: SessionRow, timeLimit: number): Promise<string> {
-    const { timing } = await economyConfigService.getConfig();
-    const deadline = secondsFromNow(timeLimit + timing.questionToleranceSeconds);
-    if (new Date(deadline).getTime() >= new Date(session.expires_at).getTime()) return session.expires_at;
-
-    const { data, error } = await supabase
-      .from("quiz_sessions")
-      .update({ expires_at: deadline })
-      .eq("id", session.id)
-      .eq("current_q", session.current_q)
-      .gt("expires_at", deadline)
-      .select("expires_at")
-      .maybeSingle();
-    if (error) {
-      console.error("[quiz] deadline arm failed:", error, { sessionId: session.id });
-      return session.expires_at;
-    }
-    return (data?.expires_at as string | undefined) ?? session.expires_at;
-  }
-
-  /** Su anki sorunun son anini `seconds` kadar ileri al (TIME_EXTEND, paywall ek suresi). */
-  private async extendDeadline(session: SessionRow, seconds: number): Promise<void> {
-    const extended = new Date(new Date(session.expires_at).getTime() + seconds * 1000).toISOString();
-    const { error } = await supabase
-      .from("quiz_sessions")
-      .update({ expires_at: extended })
-      .eq("id", session.id)
-      .eq("current_q", session.current_q);
-    if (error) console.error("[quiz] deadline extend failed:", error, { sessionId: session.id, seconds });
-  }
-
-  /**
-   * Yanlis cevap kaydedildi: kurtarma (SKIP/SKIP_ALL, gerekirse paywall) ya da vazgec karari icin
-   * pencere. Yalniz uzatir; cevap zaten yazildigi icin ek sure avantaj saglamaz.
-   */
-  private async openRescueWindow(session: SessionRow): Promise<void> {
-    const { timing } = await economyConfigService.getConfig();
-    const deadline = secondsFromNow(timing.rescueWindowSeconds);
-    const { error } = await supabase
-      .from("quiz_sessions")
-      .update({ expires_at: deadline })
-      .eq("id", session.id)
-      .eq("current_q", session.current_q)
-      .lt("expires_at", deadline);
-    if (error) console.error("[quiz] rescue window failed:", error, { sessionId: session.id });
-  }
-
-  /**
-   * Yetersiz elmas → istemci paywall acar ve sayacini durdurur; sunucu son ani da soru basina
-   * BIR KEZ `paywallGraceSeconds` uzar (isaret 037 RPC'si ile atomik — es zamanli iki istek iki kez
-   * uzatamaz). Baska hatalarda hicbir sey yapmaz; kendi hatasini yutar (asil hata firlatilmaya devam eder).
-   */
-  private async grantPaywallGrace(session: SessionRow, cause: unknown): Promise<void> {
-    if (!(cause instanceof AppError) || cause.code !== "INSUFFICIENT_DIAMONDS") return;
-    try {
-      const { data, error } = await supabase.rpc("quiz_session_mark_power", {
-        p_session_id: session.id,
-        p_power: PAYWALL_GRACE_MARKER,
-      });
-      if (error || data !== true) return;
-      const { timing } = await economyConfigService.getConfig();
-      await this.extendDeadline(session, timing.paywallGraceSeconds);
-    } catch (err) {
-      console.error("[quiz] paywall grace failed:", err, { sessionId: session.id });
-    }
   }
   // ─── Rescue with SKIP or SKIP_ALL (after wrong answer) ──────
   async rescueWithSkip(sessionId: string, solverId: string, powerType: "SKIP" | "SKIP_ALL" = "SKIP") {
@@ -1028,24 +917,33 @@ export class QuizService {
 
     if (powerErr || !power) throw Errors.SERVER_ERROR();
 
-    const usedFromInventory = await exchangeService.tryUseInventory(solverId, powerType);
+    // Ilk quiz ikinci sansi: yalniz SKIP kurtarmasi bedava (envanter/elmas dusmez, hedefe odul yok).
+    const free = powerType === "SKIP" && (await quizSecondChanceService.isEligible(session));
 
-    if (!usedFromInventory) {
-      // TEK DOGRU KAYNAK — eskiden burasi `powers.base_cost`, normal guc kullanimi ise
-      // `config.powerCosts` okuyordu (bkz. sessionPowerCosts).
-      const { costs, ratio } = await this.sessionPowerPricing(session.total_questions);
-      const cost = costs[powerType].purple;
+    // ONCE TALEP, SONRA UCRET (markPowerUsed ile ayni desen): yanlis cevabi kosullu yazimla dogruya
+    // cevir. Eskiden ucret once aliniyor, cevap kosulsuz yaziliyordu — ayni cevaba gelen iki es
+    // zamanli kurtarma IKI KEZ ucret aliyordu; ucretsiz hak da iki kez kullanilabilirdi.
+    await this.claimWrongAnswer(lastAnswer.id as string, free ? FREE_SECOND_CHANCE : powerType);
 
-      const { paidUsed } = await diamondService.spendPurple(solverId, cost, `POWER_USED:${powerType}_RESCUE`, sessionId);
-      const reward = powerReward(cost, paidUsed, ratio);
-      await diamondService.creditReward(session.target_id, reward, `POWER_REWARD:${powerType}_RESCUE`, sessionId);
+    if (!free) {
+      const charge = { spent: false };
+      try {
+        await this.chargeRescue(session, solverId, powerType, charge);
+      } catch (err) {
+        if (charge.spent) {
+          // Kullanici odedi, yalniz hedefin odulu yazilamadi: kurtarmayi tamamla (talebi geri
+          // vermek "odedi ama kurtarilmadi + tekrar denerse yine oder" demekti).
+          console.error("[quiz] rescue reward credit failed after spend:", err, { sessionId, solverId, powerType });
+        } else {
+          // Odeme olmadi (ornegin INSUFFICIENT_DIAMONDS) — talebi geri ver ki kullanici elmas
+          // aldiktan sonra tekrar kurtarabilsin.
+          await this.releaseWrongAnswer(lastAnswer.id as string);
+          await quizDeadlineService.grantPaywallGrace(session, err);
+          throw err;
+        }
+      }
     }
-
-    // Yanlış cevabı override et
-    await supabase
-      .from("quiz_answers")
-      .update({ is_correct: true, power_used: powerType })
-      .eq("id", lastAnswer.id);
+    const rescueMeta = { free_second_chance_used: free };
 
     // Soru stats güncelle
     const { data: qStats } = await supabase
@@ -1118,16 +1016,66 @@ export class QuizService {
         }
       }
 
-      return await this.completeSession(session);
+      return { ...(await this.completeSession(session)), ...rescueMeta };
     }
 
     // SKIP → son soru muydu?
     if (session.current_q >= session.total_questions) {
-      return await this.completeSession(session);
+      return { ...(await this.completeSession(session)), ...rescueMeta };
     }
 
     await this.incrementCurrentQ(session);
-    return { is_correct: true, next_question: session.current_q + 1, session_status: "IN_PROGRESS" };
+    return { is_correct: true, next_question: session.current_q + 1, session_status: "IN_PROGRESS", ...rescueMeta };
+  }
+
+  /** Kurtarma ucreti: once envanter, yoksa mor (odenmis payi hedefte RAINBOW olur). */
+  /** `progress.spent`: envanter ya da mor dustu mu — sonraki adim patlarsa cagiran talebi geri vermez. */
+  private async chargeRescue(
+    session: SessionRow,
+    solverId: string,
+    powerType: "SKIP" | "SKIP_ALL",
+    progress: { spent: boolean },
+  ) {
+    const usedFromInventory = await exchangeService.tryUseInventory(solverId, powerType);
+    if (usedFromInventory) {
+      progress.spent = true;
+      return;
+    }
+
+    // TEK DOGRU KAYNAK — eskiden burasi `powers.base_cost`, normal guc kullanimi ise
+    // `config.powerCosts` okuyordu (bkz. sessionPowerCosts).
+    const { costs, ratio } = await this.sessionPowerPricing(session.total_questions);
+    const cost = costs[powerType].purple;
+
+    const { paidUsed } = await diamondService.spendPurple(solverId, cost, `POWER_USED:${powerType}_RESCUE`, session.id);
+    progress.spent = true;
+    const reward = powerReward(cost, paidUsed, ratio);
+    await diamondService.creditReward(session.target_id, reward, `POWER_REWARD:${powerType}_RESCUE`, session.id);
+  }
+
+  /**
+   * Yanlis cevabi kurtarma icin ATOMIK talep et: yalniz hala yanlissa dogruya cevrilir. Satir
+   * donmezse es zamanli baska bir kurtarma kazandi — bu istek hicbir sey odemeden reddedilir.
+   */
+  private async claimWrongAnswer(answerId: string, powerUsed: string): Promise<void> {
+    const { data, error } = await supabase
+      .from("quiz_answers")
+      .update({ is_correct: true, power_used: powerUsed })
+      .eq("id", answerId)
+      .eq("is_correct", false)
+      .select("id")
+      .maybeSingle();
+    if (error) throw Errors.SERVER_ERROR();
+    if (!data) throw Errors.VALIDATION_ERROR({ rescue: "No wrong answer to rescue" });
+  }
+
+  /** Ucret alinamadi: talebi geri ver. Hata loglanir; asil hata cagirana firlatilmaya devam eder. */
+  private async releaseWrongAnswer(answerId: string): Promise<void> {
+    const { error } = await supabase
+      .from("quiz_answers")
+      .update({ is_correct: false, power_used: null })
+      .eq("id", answerId);
+    if (error) console.error("[quiz] rescue claim release failed:", error, { answerId });
   }
 
   // ─── Fail Session (user declined rescue) ────────────────────

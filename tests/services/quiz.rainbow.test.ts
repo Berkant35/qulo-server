@@ -95,8 +95,12 @@ describe('QuizService — güç ödülü bölme', () => {
 });
 
 describe('QuizService.rescueWithSkip — ödül bölme', () => {
+  // Ücretli kurtarma sınanıyor: ilk quiz ikinci şansı (2026-10-04) bu oturumda SKIP'i bedava yapardı.
+  const paidRescueConfig = [activeConfigRow({ quizOnboarding: { freeSecondChances: 0, freeSecondChanceSessionWindow: 3 } })];
+
   it('ödenmiş morla kurtarma: ödül hedefte rainbow', async () => {
     const { fake, quizService } = await setup({
+      economy_config_versions: paidRescueConfig,
       users: [user(SOLVER, { purple_paid: 50 }), user(TARGET)],
       powers: [power('ORACLE'), power('HALF'), power('SKIP')],
       quiz_answers: [{ id: 'a1', session_id: SESSION, question_id: Q1, is_correct: false, power_used: null }],
@@ -110,6 +114,7 @@ describe('QuizService.rescueWithSkip — ödül bölme', () => {
 
   it('bedava morla kurtarma: bugünkü gibi yeşil', async () => {
     const { fake, quizService } = await setup({
+      economy_config_versions: paidRescueConfig,
       powers: [power('ORACLE'), power('HALF'), power('SKIP')],
       quiz_answers: [{ id: 'a1', session_id: SESSION, question_id: Q1, is_correct: false, power_used: null }],
     });

@@ -233,6 +233,73 @@ describe('yanlış cevap — kurtarma penceresi', () => {
   });
 });
 
+describe('ek süre tekrar çekmeyle "taze süre"ye dönmez (server-review M1/L1)', () => {
+  it('paywall ek süresinden sonra soruyu tekrar çekmek son anı değiştirmez', async () => {
+    const { fake, quizService } = await setup({
+      users: [
+        { id: SOLVER, purple_diamonds: 0, purple_paid: 0, green_diamonds: 0 },
+        { id: TARGET, purple_diamonds: 0, purple_paid: 0, green_diamonds: 0 },
+      ],
+    });
+    await quizService.getCurrentQuestion(SESSION, SOLVER); // 30 sn
+    vi.setSystemTime(new Date(NOW.getTime() + 25_000)); // 5 sn kaldı
+    await expect(quizService.answerQuestion(SESSION, SOLVER, undefined, 'HALF')).rejects.toBeTruthy();
+    expect(secondsLeft(row(fake).expires_at)).toBe(185); // 5 + 180
+
+    vi.setSystemTime(new Date(NOW.getTime() + 200_000)); // paywall'dan 175 sn sonra dön
+    const again = await quizService.getCurrentQuestion(SESSION, SOLVER);
+
+    // Daraltma olsaydı "şimdi + 30" taze süre verirdi; kalan 10 sn korunur.
+    expect(again.remaining_seconds).toBe(10);
+  });
+
+  it('TIME_EXTEND sonrası tekrar çekmek ödenmiş süreyi geri almaz', async () => {
+    const { fake, quizService } = await setup();
+    await quizService.getCurrentQuestion(SESSION, SOLVER); // 30
+    await quizService.answerQuestion(SESSION, SOLVER, undefined, 'TIME_EXTEND'); // 45
+
+    vi.setSystemTime(new Date(NOW.getTime() + 2_000));
+    await quizService.getCurrentQuestion(SESSION, SOLVER);
+
+    expect(secondsLeft(row(fake).expires_at)).toBe(43);
+  });
+
+  it('kurtarma penceresi açıkken soruyu tekrar çekmek pencereyi daraltmaz', async () => {
+    const { fake, quizService } = await setup();
+    await quizService.answerQuestion(SESSION, SOLVER, 1); // yanlış → 300 sn
+
+    const again = await quizService.getCurrentQuestion(SESSION, SOLVER);
+
+    expect(secondsLeft(row(fake).expires_at)).toBe(300);
+    expect(again.remaining_seconds).toBe(300);
+    expect(again.used_powers).toEqual([]);
+  });
+});
+
+describe('eş zamanlı yazımlar (server-review M2/M3)', () => {
+  it('daraltma yarışı kaybedilirse eski anlık görüntü değil taze son an döner', async () => {
+    const { quizService } = await setup({}, {
+      // getCurrentQuestion okuduktan sonra başka bir GET son anı 25 sn'ye daraltmış olsun.
+      interleave: [{ table: 'quiz_sessions', op: 'update', mutate: (rows) => { rows[0].expires_at = at(25); } }],
+    });
+
+    const reply = await quizService.getCurrentQuestion(SESSION, SOLVER);
+
+    expect(reply.remaining_seconds).toBe(25); // snapshot olsaydı 60
+  });
+
+  it('uzatma, araya giren yazımı ezmez — taze değerin üstüne ekler', async () => {
+    const { fake, quizService } = await setup({ quiz_sessions: [session({ expires_at: at(30) })] }, {
+      // TIME_EXTEND okuduktan sonra son an 40 sn'ye taşınmış olsun (ör. başka bir uzatma).
+      interleave: [{ table: 'quiz_sessions', op: 'update', mutate: (rows) => { rows[0].expires_at = at(40); } }],
+    });
+
+    await quizService.answerQuestion(SESSION, SOLVER, undefined, 'TIME_EXTEND');
+
+    expect(secondsLeft(row(fake).expires_at)).toBe(55); // 40 + 15 (eski kod 30 + 15 yazardı)
+  });
+});
+
 describe('süre dolunca', () => {
   it('son an geçmişse TIME_UP ve oturum FAILED (kural değişmedi)', async () => {
     const { fake, quizService } = await setup({ quiz_sessions: [session({ expires_at: at(-1) })] });
