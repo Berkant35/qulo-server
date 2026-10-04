@@ -24,7 +24,6 @@ export interface EngineUser {
   created_at: string;
   question_count: number | null;
   photos: string[] | null;
-  email_verified: boolean | null;
   notification_preferences: Record<string, boolean> | null;
   is_deleted: boolean | null;
   is_banned: boolean | null;
@@ -90,7 +89,7 @@ export interface EngineContext {
 }
 
 const USER_COLUMNS =
-  'id, name, locale, lng, push_token, last_active_at, last_seen_at, created_at, question_count, photos, email_verified, ' +
+  'id, name, locale, lng, push_token, last_active_at, last_seen_at, created_at, question_count, photos, ' +
   'notification_preferences, is_deleted, is_banned, is_test_account, is_seed_profile';
 /** "Gunde tek karar" penceresi (engine.ts DECISION_WINDOW_MS ile ayni). */
 export const DECISION_WINDOW_MS = 20 * 60 * 60 * 1000;
@@ -128,7 +127,8 @@ export function isEligibleUser(u: EligibilityFields): boolean {
 }
 
 export function isVisibleProfile(u: EngineUser): boolean {
-  return !!u.email_verified && (u.question_count ?? 0) >= 2 && (u.photos?.length ?? 0) >= 1;
+  // Discover kuraliyla ayni (matching.service): e-posta dogrulamasi gorunurluk sarti degil (2026-10-04).
+  return (u.question_count ?? 0) >= 2 && (u.photos?.length ?? 0) >= 1;
 }
 
 interface PushLogRow {

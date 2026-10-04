@@ -8,8 +8,19 @@ export interface SocialAuthPayload {
   provider: "google" | "apple";
   providerId: string;
   email: string;
+  /**
+   * Sağlayıcı e-postayı doğrulamış mı (`email_verified` claim'i). Claim yoksa doğrulanmış sayılır
+   * (Apple her zaman doğrular; eski davranış), yalnız açıkça `false`/`"false"` doğrulanmamıştır.
+   * E-posta hesabına bağlama ve `users.email_verified` bu bayrağa bağlı (2026-10-04).
+   */
+  emailVerified: boolean;
   name?: string;
   surname?: string;
+}
+
+/** Google boolean, Apple string ("true"/"false") ya da boolean döndürür. */
+function claimVerified(claim: unknown): boolean {
+  return claim !== false && claim !== "false";
 }
 
 // ─── Google ───
@@ -48,6 +59,7 @@ export async function verifyGoogleToken(idToken: string): Promise<SocialAuthPayl
     provider: "google",
     providerId: payload.sub,
     email: payload.email,
+    emailVerified: claimVerified(payload.email_verified),
     name: payload.given_name ?? undefined,
     surname: payload.family_name ?? undefined,
   };
@@ -63,6 +75,7 @@ interface AppleJwtPayload {
   sub: string;
   nonce?: string;
   email?: string;
+  email_verified?: boolean | string;
 }
 
 // Apple public keys cache
@@ -153,5 +166,6 @@ export async function verifyAppleToken(
     provider: "apple",
     providerId: decoded.sub,
     email: decoded.email ?? "",
+    emailVerified: claimVerified(decoded.email_verified),
   };
 }

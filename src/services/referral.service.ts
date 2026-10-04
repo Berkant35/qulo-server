@@ -85,6 +85,16 @@ export class ReferralService {
   async checkAndReward(userId: string, profileCompletion: number) {
     if (profileCompletion < 60) return;
 
+    // Giriş doğrulamasız (2026-10-04): tek kullanımlık e-postalarla davet ödülü çiftçiliği olmasın.
+    // Doğrulama anında yeniden çağrılır (emailVerificationService.verify).
+    const { data: referee, error: refereeErr } = await supabase
+      .from("users")
+      .select("email_verified")
+      .eq("id", userId)
+      .maybeSingle();
+    if (refereeErr) throw Errors.SERVER_ERROR();
+    if (referee?.email_verified !== true) return;
+
     // Find pending referral where this user is the referee
     const { data: referral } = await supabase
       .from("referrals")

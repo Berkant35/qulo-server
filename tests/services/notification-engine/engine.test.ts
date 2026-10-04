@@ -23,7 +23,6 @@ function user(overrides: Row & { id: string }): Row {
     created_at: ago(60 * D),
     question_count: 2,
     photos: ['p.jpg'],
-    email_verified: true,
     notification_preferences: null,
     is_deleted: false,
     is_banned: false,

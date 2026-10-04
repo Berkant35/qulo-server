@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { LIFECYCLE_RULES_BY_KEY, LIFECYCLE_RULES } from '../../../src/services/notification-engine/rules.js';
-import type { EngineContext, EngineUser } from '../../../src/services/notification-engine/context.js';
+import { isVisibleProfile, type EngineContext, type EngineUser } from '../../../src/services/notification-engine/context.js';
 
 const NOW = new Date('2026-09-07T16:00:00.000Z');
 const H = 3600 * 1000;
@@ -18,7 +18,6 @@ function user(overrides: Partial<EngineUser> & { id: string }): EngineUser {
     created_at: ago(60 * D),
     question_count: 2,
     photos: ['p.jpg'],
-    email_verified: true,
     notification_preferences: null,
     is_deleted: false,
     is_banned: false,
@@ -263,5 +262,18 @@ describe('lifecycle_day1_return (ilk gun geri cagirma, 3 Eki)', () => {
   it('tek gonderim: dizi bos, aktiflik diziyi sifirlamaz', () => {
     expect(rule.defaultScheduleDays).toEqual([]);
     expect(rule.resetOnActivity).toBe(false);
+  });
+});
+
+// Discover kuraliyla ayni (2026-10-04): e-posta dogrulamasi gorunurluk sarti degil —
+// lifecycle_new_people sayaci dogrulanmamis yeni kullanicilari da sayar.
+describe('isVisibleProfile', () => {
+  it('2+ soru ve 1+ foto yeter; e-posta dogrulamasi aranmaz', () => {
+    expect(isVisibleProfile(user({ id: 'A', question_count: 2, photos: ['p.jpg'] }))).toBe(true);
+  });
+
+  it('soru ya da foto eksikse gorunmez', () => {
+    expect(isVisibleProfile(user({ id: 'A', question_count: 1 }))).toBe(false);
+    expect(isVisibleProfile(user({ id: 'A', photos: [] }))).toBe(false);
   });
 });

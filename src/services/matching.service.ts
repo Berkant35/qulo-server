@@ -194,7 +194,9 @@ export class MatchingService {
       )
       .eq("is_deleted", false)
       .eq("is_banned", false)
-      .eq("email_verified", true)
+      // email_verified filtresi YOK (2026-10-04): doğrulanmamış kullanıcı da havuzda görünür
+      // (havuz küçük, giriş artık doğrulamasız). Kötüye kullanım kapısı yazmada: eşleşmeye
+      // mesaj/medya/soru göndermek doğrulama ister (middleware/emailVerifiedGuard).
       .not("lat", "is", null)
       .not("lng", "is", null)
       // Gercek kullanicilar ONCE cekilir: seed'ler (416 profil) surekli "cevrimici"

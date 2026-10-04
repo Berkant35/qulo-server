@@ -12,6 +12,7 @@ import { consentService } from "./consent.service.js";
 import { accountPurgeService } from "./account-purge.service.js";
 import { exchangeService } from "./exchange.service.js";
 import { verifyGoogleToken, verifyAppleToken, type SocialAuthPayload } from "../utils/social-auth.js";
+import { issueVerifyToken } from "./email-verification.service.js";
 
 export class AuthService {
   async register(data: RegisterInput, client: ClientMeta = {}) {
@@ -41,13 +42,10 @@ export class AuthService {
     const purged = existing?.is_deleted === true;
 
     const passwordHash = await hashPassword(data.password);
-    const verifyToken = generateToken();
-    const verifyTokenHash = hashToken(verifyToken);
+    const { token: verifyToken, hash: verifyTokenHash, expiresAt: tokenExpiresAt } = issueVerifyToken();
     const referralCode = await referralService.generateUniqueCode();
     // Uygulama dili = eslesme tercihinin ana degeri; iki alan ayni kaynaktan turer.
     const locale = resolveLocale(data.locale);
-
-    const tokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24 hours
 
     const { data: user, error } = await supabase
       .from("users")
@@ -114,37 +112,10 @@ export class AuthService {
       console.error('[auth] Failed to send verification email:', err instanceof Error ? err.message : err);
     });
 
-    return { userId: user.id, email: user.email };
-  }
-
-  async verifyEmail(token: string) {
-    const tokenHash = hashToken(token);
-
-    const { data: user, error } = await supabase
-      .from("users")
-      .select("id, token_expires_at")
-      .eq("verify_token", tokenHash)
-      .eq("email_verified", false)
-      .maybeSingle();
-
-    if (error || !user) {
-      throw Errors.INVALID_TOKEN();
-    }
-
-    if (user.token_expires_at && new Date(user.token_expires_at) < new Date()) {
-      throw Errors.TOKEN_EXPIRED();
-    }
-
-    const { error: updateError } = await supabase
-      .from("users")
-      .update({ email_verified: true, verify_token: null, token_expires_at: null })
-      .eq("id", user.id);
-
-    if (updateError) {
-      throw Errors.SERVER_ERROR();
-    }
-
-    return { userId: user.id };
+    // "Önce içeri al": kayıt oturumu da açar — doğrulama yalnız eşleşmeye ilk yazımda istenir
+    // (emailVerifiedGuard). Eski istemciler token alanlarını yok sayar, login'e gider; o da artık açık.
+    const session = await this.createSession(user.id, user.email);
+    return { userId: user.id, email: user.email, accessToken: session.accessToken, refreshToken: session.refreshToken, emailVerified: false };
   }
 
   async login(rawEmail: string, password: string) {
@@ -181,29 +152,10 @@ export class AuthService {
       throw Errors.INVALID_CREDENTIALS();
     }
 
-    if (!user.email_verified) {
-      throw Errors.EMAIL_NOT_VERIFIED();
-    }
-
-    const payload = { userId: user.id, email: user.email };
-    const accessToken = signAccessToken(payload);
-    const refreshToken = signRefreshToken(payload);
-    const refreshTokenHash = hashToken(refreshToken);
-
-    // Store refresh token + update last_seen in parallel
-    await Promise.all([
-      supabase.from("refresh_tokens").insert({
-        user_id: user.id,
-        token_hash: refreshTokenHash,
-        expires_at: getRefreshTokenExpiry(),
-      }),
-      supabase
-        .from("users")
-        .update({ last_seen_at: new Date().toISOString(), is_online: true })
-        .eq("id", user.id),
-    ]);
-
-    return { accessToken, refreshToken, userId: user.id };
+    // Doğrulanmamış e-posta girişi ENGELLEMEZ (2026-10-04): yeni kullanıcıların ~%25'i doğrulama
+    // duvarında kayboluyordu. Kapı eşleşmeye ilk yazımda (emailVerifiedGuard); istemci bayrağı görür.
+    const session = await this.createSession(user.id, user.email);
+    return { ...session, userId: user.id, emailVerified: user.email_verified === true };
   }
 
   async refresh(refreshToken: string) {
@@ -313,10 +265,13 @@ export class AuthService {
 
     const passwordHash = await hashPassword(password);
 
-    await supabase
+    const { error: updateError } = await supabase
       .from("users")
-      .update({ password_hash: passwordHash, verify_token: null, token_expires_at: null })
+      // Sıfırlama bağlantısı e-postaya gitti: kutunun sahibi olduğu kanıtlandı → doğrulanmış say.
+      .update({ password_hash: passwordHash, verify_token: null, token_expires_at: null, email_verified: true })
       .eq("id", user.id);
+    // Yazım düştüyse "başarılı" deyip oturumları silmek kullanıcıyı eski şifresiyle dışarıda bırakırdı.
+    if (updateError) throw Errors.SERVER_ERROR();
 
     // Delete all refresh tokens for this user
     await supabase
@@ -357,7 +312,7 @@ export class AuthService {
     // 2. Case A: provider_id match → login
     const { data: existingByProvider } = await supabase
       .from("users")
-      .select("id, email, is_deleted, is_banned, age, name, surname")
+      .select("id, email, is_deleted, is_banned, age, name, surname, email_verified")
       .eq("provider_id", providerId)
       .maybeSingle();
 
@@ -375,13 +330,24 @@ export class AuthService {
       } else {
         // Backfill name/surname if missing and provider gave them this round (e.g. first sign-in
         // saved an empty name due to a client bug — recover next time Apple/Google sends them).
-        const backfill: Record<string, string> = {};
+        const backfill: Record<string, string | boolean> = {};
         if (!existingByProvider.name && name) backfill.name = name;
         if (!existingByProvider.surname && surname) backfill.surname = surname;
+        // E-postayla açılıp doğrulanmadan sosyal hesaba bağlanmış eski hesaplar: sağlayıcı aynı
+        // e-postayı kanıtladı, mesaj kapısında (emailVerifiedGuard) takılmasınlar.
+        // Yalnız sağlayıcı AYNI e-postayı doğrulamışsa.
+        const providerProvesEmail = socialPayload.emailVerified && !!email && email === existingByProvider.email;
+        if (existingByProvider.email_verified !== true && providerProvesEmail) backfill.email_verified = true;
         if (Object.keys(backfill).length > 0) {
-          await supabase.from("users").update(backfill).eq("id", existingByProvider.id);
+          const { error: backfillError } = await supabase.from("users").update(backfill).eq("id", existingByProvider.id);
+          if (backfillError) throw Errors.SERVER_ERROR();
         }
-        return this.createSocialSession(existingByProvider.id, existingByProvider.email, existingByProvider.age);
+        return this.createSocialSession(
+          existingByProvider.id,
+          existingByProvider.email,
+          existingByProvider.age,
+          existingByProvider.email_verified === true || backfill.email_verified === true,
+        );
       }
     }
 
@@ -389,7 +355,7 @@ export class AuthService {
     if (email) {
       const { data: existingByEmail } = await supabase
         .from("users")
-        .select("id, email, is_deleted, is_banned, age, provider_id, name, surname")
+        .select("id, email, is_deleted, is_banned, age, provider_id, name, surname, email_verified")
         .eq("email", email)
         .maybeSingle();
 
@@ -399,17 +365,31 @@ export class AuthService {
           await accountPurgeService.hardDeleteUser(existingByEmail.id);
           purged = true;
         } else {
-          const linkUpdate: Record<string, string> = {};
+          // Bağlama e-posta sahipliğine dayanır: sağlayıcı e-postayı doğrulamadıysa (Google'da
+          // doğrulanmamış adresle hesap açılabilir) başkasının hesabına girmenin yolu olurdu.
+          if (!socialPayload.emailVerified) throw Errors.EMAIL_ALREADY_EXISTS();
+          const linkUpdate: Record<string, string | boolean | null> = {};
           if (!existingByEmail.provider_id) {
             linkUpdate.provider_id = providerId;
             linkUpdate.auth_provider = data.provider;
           }
           if (!existingByEmail.name && name) linkUpdate.name = name;
           if (!existingByEmail.surname && surname) linkUpdate.surname = surname;
-          if (Object.keys(linkUpdate).length > 0) {
-            await supabase.from("users").update(linkUpdate).eq("id", existingByEmail.id);
+          // Sağlayıcı bu e-postayı kanıtladı: doğrulanmamış e-posta hesabı burada doğrulanmış olur.
+          if (existingByEmail.email_verified !== true) {
+            linkUpdate.email_verified = true;
+            // Ön-hesap ele geçirme savunması: giriş artık doğrulamasız olduğundan biri bu e-postayla
+            // kendi şifresiyle kayıt olmuş olabilir. Gerçek sahip sağlayıcıyla kanıtladı → doğrulanmamış
+            // dönemin kimlik bilgileri (şifre + açık oturumlar) düşer; şifreye "şifremi unuttum" ile döner.
+            linkUpdate.password_hash = null;
+            const { error: revokeError } = await supabase.from("refresh_tokens").delete().eq("user_id", existingByEmail.id);
+            if (revokeError) throw Errors.SERVER_ERROR();
           }
-          return this.createSocialSession(existingByEmail.id, existingByEmail.email, existingByEmail.age);
+          if (Object.keys(linkUpdate).length > 0) {
+            const { error: linkError } = await supabase.from("users").update(linkUpdate).eq("id", existingByEmail.id);
+            if (linkError) throw Errors.SERVER_ERROR();
+          }
+          return this.createSocialSession(existingByEmail.id, existingByEmail.email, existingByEmail.age, true);
         }
       }
     }
@@ -428,7 +408,8 @@ export class AuthService {
         surname,
         auth_provider: data.provider,
         provider_id: providerId,
-        email_verified: true,
+        // Sağlayıcı doğruladıysa (pratikte her zaman); açıkça doğrulanmamış Google adresi mesaj kapısına takılır.
+        email_verified: socialPayload.emailVerified,
         referral_code: referralCode,
         locale,
         preferred_languages: [locale],
@@ -461,10 +442,16 @@ export class AuthService {
       console.error("[social-login] Failed to sync languages:", err);
     }
 
-    return this.createSocialSession(newUser.id, newUser.email, newUser.age);
+    return this.createSocialSession(newUser.id, newUser.email, newUser.age, socialPayload.emailVerified);
   }
 
-  private async createSocialSession(userId: string, email: string, age: number | null) {
+  private async createSocialSession(userId: string, email: string, age: number | null, emailVerified: boolean) {
+    const session = await this.createSession(userId, email);
+    return { ...session, userId, profileIncomplete: age == null, emailVerified };
+  }
+
+  /** Token çifti üretir, refresh token'ı saklar, kullanıcıyı çevrimiçi işaretler (kayıt/giriş/sosyal ortak). */
+  private async createSession(userId: string, email: string) {
     const payload = { userId, email };
     const accessToken = signAccessToken(payload);
     const refreshToken = signRefreshToken(payload);
@@ -482,7 +469,7 @@ export class AuthService {
         .eq("id", userId),
     ]);
 
-    return { accessToken, refreshToken, userId, profileIncomplete: age == null };
+    return { accessToken, refreshToken };
   }
 }
 

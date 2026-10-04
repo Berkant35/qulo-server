@@ -24,7 +24,7 @@ async function serve(seed: Tables, opts: { fakeAuth: boolean }) {
     users: [{
       id: 'u1', country: 'TH', created_at: '2026-08-01T00:00:00Z', green_diamonds: 0, purple_diamonds: 0,
       purple_paid: 0, rainbow_diamonds: 200, is_test_admin: false, is_seed_profile: false, is_test_account: false,
-      is_banned: false,
+      is_banned: false, email_verified: true,
     }],
     ...seed,
   });
@@ -112,7 +112,7 @@ describe('/api/v1/rewards — kablolama', () => {
       users: [{
         id: 'u1', country: 'TH', created_at: '2026-08-01T00:00:00Z', green_diamonds: 0, purple_diamonds: 0,
         purple_paid: 0, rainbow_diamonds: 200, is_test_admin: true, is_seed_profile: false, is_test_account: false,
-        is_banned: false,
+        is_banned: false, email_verified: true,
       }],
     }, { fakeAuth: true });
 
@@ -152,6 +152,24 @@ describe('/api/v1/rewards — kablolama', () => {
     expect(body.redemption.status).toBe('PENDING');
     expect(body.balance).toBe(149);
     expect(fake.table('reward_redemptions')).toHaveLength(1);
+  });
+
+  // 2026-10-04: giriş doğrulamasız; gerçek değer çıkışı e-posta doğrulaması ister.
+  it('POST /redeem doğrulanmamış e-postada 403 EMAIL_VERIFICATION_REQUIRED, talep ve harcama yok', async () => {
+    const { base, fake } = await serve({}, { fakeAuth: true });
+    fake.table('users')[0].email_verified = false;
+    const res = await fetch(`${base}/redeem`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-app-platform': 'android' },
+      body: JSON.stringify({
+        item_id: '3f1c9a52-7d7e-4b8e-9d6a-1b2c3d4e5f60',
+        idempotency_key: '11111111-1111-4111-8111-111111111111',
+      }),
+    });
+    expect(res.status).toBe(403);
+    expect((await res.json()).error.code).toBe('EMAIL_VERIFICATION_REQUIRED');
+    expect(fake.table('reward_redemptions')).toHaveLength(0);
+    expect(fake.table('users')[0].rainbow_diamonds).toBe(200);
   });
 
   it('GET /redemptions limit 50 üstü 400; geçerli sorgu 200', async () => {

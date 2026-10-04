@@ -17,8 +17,10 @@ const UID2 = '22222222-2222-4222-8222-222222222222';
 
 const sentVerification: Array<{ email: string; token: string }> = [];
 const sentReset: Array<{ email: string; token: string }> = [];
-let socialPayload: { email: string; providerId: string; name?: string; surname?: string } | Error =
-  { email: 'social@qulo.test', providerId: 'google-123', name: 'Ada', surname: 'Lovelace' };
+const sentVerificationLocales: Array<string | undefined> = [];
+let verificationSendError: Error | null = null;
+let socialPayload: { email: string; providerId: string; emailVerified: boolean; name?: string; surname?: string } | Error =
+  { email: 'social@qulo.test', providerId: 'google-123', emailVerified: true, name: 'Ada', surname: 'Lovelace' };
 
 async function setup(seed: Tables = {}, options?: FakeSupabaseOptions) {
   const fake = createFakeSupabase(
@@ -28,8 +30,10 @@ async function setup(seed: Tables = {}, options?: FakeSupabaseOptions) {
 
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
   vi.doMock('../../src/utils/email.js', () => ({
-    sendVerificationEmail: async (email: string, token: string) => {
+    sendVerificationEmail: async (email: string, token: string, locale?: string) => {
+      if (verificationSendError) throw verificationSendError;
       sentVerification.push({ email, token });
+      sentVerificationLocales.push(locale);
     },
     sendPasswordResetEmail: async (email: string, token: string) => {
       sentReset.push({ email, token });
@@ -47,7 +51,8 @@ async function setup(seed: Tables = {}, options?: FakeSupabaseOptions) {
   }));
 
   const { authService } = await import('../../src/services/auth.service.js');
-  return { fake, authService };
+  const { emailVerificationService: verification } = await import('../../src/services/email-verification.service.js');
+  return { fake, authService, verification };
 }
 
 type RegisterInput = Parameters<Awaited<ReturnType<typeof setup>>['authService']['register']>[0];
@@ -71,7 +76,9 @@ beforeEach(() => {
   vi.setSystemTime(NOW);
   sentVerification.length = 0;
   sentReset.length = 0;
-  socialPayload = { email: 'social@qulo.test', providerId: 'google-123', name: 'Ada', surname: 'Lovelace' };
+  sentVerificationLocales.length = 0;
+  verificationSendError = null;
+  socialPayload = { email: 'social@qulo.test', providerId: 'google-123', emailVerified: true, name: 'Ada', surname: 'Lovelace' };
 });
 
 afterEach(() => {
@@ -88,6 +95,22 @@ describe('register', () => {
     expect(fake.table('users')[0]).toMatchObject({
       email: 'yeni@qulo.test', name: 'Ada', age: 28, email_verified: false,
     });
+  });
+
+  /** "Önce içeri al" (2026-10-04): kayıt oturum açar, doğrulama ilk mesajda istenir. */
+  it('kayıt oturum açar: token çifti döner, refresh token yeni kullanıcıya saklanır, emailVerified=false', async () => {
+    const { fake, authService } = await setup({ users: [] });
+
+    const result = await authService.register(registerInput());
+
+    const userId = fake.table('users')[0].id;
+    expect(result).toMatchObject({ userId, email: 'yeni@qulo.test', emailVerified: false });
+    expect(result.accessToken).toBeTruthy();
+    expect(fake.table('refresh_tokens')).toEqual([
+      expect.objectContaining({ user_id: userId, token_hash: hashToken(result.refreshToken) }),
+    ]);
+    // Doğrulama e-postası yine gider — giriş açık, mesaj kapısı doğrulama ister.
+    await vi.waitFor(() => expect(sentVerification).toHaveLength(1));
   });
 
   /** Şifre asla düz metin saklanmamalı. */
@@ -143,7 +166,8 @@ describe('register', () => {
     expect(rows[0].email_verified).toBe(false);
     // Eski hesabın izleri temizlenmeli.
     expect(fake.table('questions')).toHaveLength(0);
-    expect(fake.table('refresh_tokens')).toHaveLength(0);
+    // Eski hesabın oturumu silinir; kalan tek token yeni hesabın kayıt oturumu (2026-10-04).
+    expect(fake.table('refresh_tokens').map((t) => t.user_id)).toEqual([rows[0].id]);
     expect(fake.storageFiles('photos')).toHaveLength(0);
   });
 
@@ -305,7 +329,7 @@ describe('register', () => {
   });
 });
 
-describe('verifyEmail', () => {
+describe('emailVerificationService.verify', () => {
   const token = 'dogrulama-token';
   const verifiable = (over: Record<string, unknown> = {}) => ({
     id: UID, email: 'a@qulo.test', email_verified: false,
@@ -315,31 +339,46 @@ describe('verifyEmail', () => {
   });
 
   it('geçerli token e-postayı doğrular ve token\'ı temizler', async () => {
-    const { fake, authService } = await setup({ users: [verifiable()] });
+    const { fake, verification } = await setup({ users: [verifiable()] });
 
-    await expect(authService.verifyEmail(token)).resolves.toEqual({ userId: UID });
+    await expect(verification.verify(token)).resolves.toEqual({ userId: UID });
     expect(fake.table('users')[0]).toMatchObject({
       email_verified: true, verify_token: null, token_expires_at: null,
     });
   });
 
+  it('doğrulama bekleyen davet ödülünü verir (profil zaten %60+)', async () => {
+    const { fake, verification } = await setup({
+      users: [
+        verifiable({ profile_completion: 80, purple_diamonds: 0, green_diamonds: 0 }),
+        { id: UID2, email: 'davet@qulo.test', email_verified: true, purple_diamonds: 0, green_diamonds: 0, is_deleted: false },
+      ],
+      referrals: [{ id: 'r1', referrer_id: UID2, referee_id: UID, status: 'pending' }],
+    });
+
+    await verification.verify(token);
+
+    expect(fake.table('referrals')[0].status).toBe('completed');
+    expect(fake.table('users').find((u) => u.id === UID)!.purple_diamonds).toBeGreaterThan(0);
+  });
+
   it('geçersiz token reddedilir', async () => {
-    const { authService } = await setup({ users: [verifiable()] });
-    await expect(authService.verifyEmail('sahte')).rejects.toMatchObject({ code: 'INVALID_TOKEN' });
+    const { verification } = await setup({ users: [verifiable()] });
+    await expect(verification.verify('sahte')).rejects.toMatchObject({ code: 'INVALID_TOKEN' });
   });
 
   it('süresi geçmiş token reddedilir', async () => {
-    const { fake, authService } = await setup({
+    const { fake, verification } = await setup({
       users: [verifiable({ token_expires_at: new Date(NOW.getTime() - 1000).toISOString() })],
     });
 
-    await expect(authService.verifyEmail(token)).rejects.toMatchObject({ code: 'TOKEN_EXPIRED' });
+    await expect(verification.verify(token)).rejects.toMatchObject({ code: 'TOKEN_EXPIRED' });
     expect(fake.table('users')[0].email_verified).toBe(false);
   });
 
   it('zaten doğrulanmış hesapta token ikinci kez çalışmaz', async () => {
-    const { authService } = await setup({ users: [verifiable({ email_verified: true })] });
-    await expect(authService.verifyEmail(token)).rejects.toMatchObject({ code: 'INVALID_TOKEN' });
+    const { verification } = await setup({ users: [verifiable({ email_verified: true })] });
+    await expect(verification.verify(token)).rejects.toMatchObject({ code: 'INVALID_TOKEN' });
   });
 });
 
@@ -418,11 +457,26 @@ describe('login', () => {
     });
   });
 
-  it('doğrulanmamış e-posta ile giriş yapılamaz', async () => {
-    const { authService } = await setup({ users: [account({ email_verified: false })] });
-    await expect(authService.login('a@qulo.test', PASSWORD)).rejects.toMatchObject({
-      code: 'EMAIL_NOT_VERIFIED', statusCode: 403,
-    });
+  // 2026-10-04: eskiden EMAIL_NOT_VERIFIED (403) — yeni kullanıcıların ~%25'i bu duvarda kayboluyordu.
+  // Artık giriş açık; kapı eşleşmeye ilk yazımda (emailVerifiedGuard).
+  it('doğrulanmamış e-posta ile giriş yapılır ve emailVerified=false döner', async () => {
+    const { fake, authService } = await setup({ users: [account({ email_verified: false })] });
+
+    const result = await authService.login('a@qulo.test', PASSWORD);
+
+    expect(result).toMatchObject({ userId: UID, emailVerified: false });
+    expect(fake.table('refresh_tokens')[0]).toMatchObject({ user_id: UID });
+  });
+
+  it('doğrulanmış hesapta emailVerified=true döner', async () => {
+    const { authService } = await setup({ users: [account()] });
+    await expect(authService.login('a@qulo.test', PASSWORD)).resolves.toMatchObject({ emailVerified: true });
+  });
+
+  it('doğrulanmamış hesapta da yanlış şifre aynı hatayı verir (giriş kapısı gevşemedi)', async () => {
+    const { fake, authService } = await setup({ users: [account({ email_verified: false })] });
+    await expect(authService.login('a@qulo.test', 'YanlisSifre1!')).rejects.toMatchObject({ code: 'INVALID_CREDENTIALS' });
+    expect(fake.table('refresh_tokens')).toHaveLength(0);
   });
 
   it('sosyal giriş kullanıcısı şifreyle giremez', async () => {
@@ -565,6 +619,66 @@ describe('forgotPassword', () => {
   });
 });
 
+describe('emailVerificationService.resend', () => {
+  const OLD_TOKEN_HASH = hashToken('eski-token');
+  const pending = (over: Record<string, unknown> = {}) => ({
+    id: UID, email: 'a@qulo.test', locale: 'de', email_verified: false, is_deleted: false,
+    verify_token: OLD_TOKEN_HASH,
+    token_expires_at: new Date(NOW.getTime() + 3600_000).toISOString(),
+    ...over,
+  });
+
+  it('doğrulanmamış hesaba yeni bağlantı gönderir: token yenilenir, 24 saat geçerli, kullanıcı dilinde', async () => {
+    const { fake, verification } = await setup({ users: [pending()] });
+
+    await expect(verification.resend(UID)).resolves.toEqual({ emailVerified: false, sent: true });
+
+    const row = fake.table('users')[0];
+    expect(sentVerification).toHaveLength(1);
+    expect(sentVerification[0].email).toBe('a@qulo.test');
+    expect(sentVerificationLocales[0]).toBe('de');
+    // Hash'li saklanır, e-postadaki düz token'ın hash'i; eski bağlantı geçersiz.
+    expect(row.verify_token).toBe(hashToken(sentVerification[0].token));
+    expect(row.verify_token).not.toBe(OLD_TOKEN_HASH);
+    expect(row.token_expires_at).toBe(new Date(NOW.getTime() + 24 * 3600_000).toISOString());
+  });
+
+  it('yeni bağlantı verifyEmail ile hesabı doğrular, eski bağlantı artık çalışmaz', async () => {
+    const { fake, verification } = await setup({ users: [pending()] });
+    await verification.resend(UID);
+
+    await expect(verification.verify('eski-token')).rejects.toMatchObject({ code: 'INVALID_TOKEN' });
+    await expect(verification.verify(sentVerification[0].token)).resolves.toEqual({ userId: UID });
+    expect(fake.table('users')[0].email_verified).toBe(true);
+  });
+
+  it('zaten doğrulanmış hesapta e-posta göndermez, token\'a dokunmaz', async () => {
+    const { fake, verification } = await setup({ users: [pending({ email_verified: true })] });
+
+    await expect(verification.resend(UID)).resolves.toEqual({ emailVerified: true, sent: false });
+    expect(sentVerification).toHaveLength(0);
+    expect(fake.table('users')[0].verify_token).toBe(OLD_TOKEN_HASH);
+  });
+
+  it('silinmiş hesap USER_NOT_FOUND alır, e-posta gitmez', async () => {
+    const { verification } = await setup({ users: [pending({ is_deleted: true })] });
+    await expect(verification.resend(UID)).rejects.toMatchObject({ code: 'USER_NOT_FOUND' });
+    expect(sentVerification).toHaveLength(0);
+  });
+
+  it('gönderim hatası yutulmaz: SERVER_ERROR (istemci yeniden deneyebilsin)', async () => {
+    verificationSendError = new Error('gmail down');
+    const { verification } = await setup({ users: [pending()] });
+    await expect(verification.resend(UID)).rejects.toMatchObject({ code: 'SERVER_ERROR', statusCode: 500 });
+  });
+
+  it('token yazımı patlarsa e-posta gönderilmez', async () => {
+    const { verification } = await setup({ users: [pending()] }, { failOn: [{ table: 'users', op: 'update' }] });
+    await expect(verification.resend(UID)).rejects.toMatchObject({ code: 'SERVER_ERROR' });
+    expect(sentVerification).toHaveLength(0);
+  });
+});
+
 describe('resetPassword', () => {
   const token = 'sifirlama-token';
   const resettable = (over: Record<string, unknown> = {}) => ({
@@ -583,6 +697,21 @@ describe('resetPassword', () => {
     const row = fake.table('users')[0];
     expect(row.password_hash).not.toBe('eski-hash');
     expect(row.verify_token).toBeNull();
+  });
+
+  it('şifre yazımı patlarsa SERVER_ERROR; oturumlar silinmez, "başarılı" denmez', async () => {
+    const { fake, authService } = await setup(
+      { users: [resettable()], refresh_tokens: [{ id: 'rt1', user_id: UID }] },
+      { failOn: [{ table: 'users', op: 'update' }] },
+    );
+    await expect(authService.resetPassword(token, 'YeniSifre1!')).rejects.toMatchObject({ code: 'SERVER_ERROR' });
+    expect(fake.table('refresh_tokens')).toHaveLength(1);
+  });
+
+  it('sıfırlama doğrulanmamış hesabı doğrulanmış yapar (bağlantı e-posta kutusuna gitti)', async () => {
+    const { fake, authService } = await setup({ users: [resettable({ email_verified: false })] });
+    await authService.resetPassword(token, 'YeniSifre1!');
+    expect(fake.table('users')[0].email_verified).toBe(true);
   });
 
   it('yeni şifreyle giriş yapılabilir', async () => {
@@ -654,7 +783,7 @@ describe('socialLogin', () => {
   });
 
   it('Case C — Apple sagalayicisi (hide-my-email relay) is_test_admin=false yazar', async () => {
-    socialPayload = { email: 'abcd@privaterelay.appleid.com', providerId: 'apple.001.xyz', name: 'A', surname: 'B' };
+    socialPayload = { email: 'abcd@privaterelay.appleid.com', providerId: 'apple.001.xyz', emailVerified: true, name: 'A', surname: 'B' };
     const { fake, authService } = await setup({ users: [] });
     await authService.socialLogin({ provider: 'apple', id_token: 't', name: 'A', surname: 'B' });
     const row = fake.table('users')[0];
@@ -778,6 +907,99 @@ describe('socialLogin', () => {
     expect(fake.table('users')).toHaveLength(1);
   });
 
+  /**
+   * Ön-hesap ele geçirme (2026-10-04 review): giriş doğrulamasız olunca biri kurbanın e-postasıyla
+   * kendi şifresiyle kayıt olup oturum tutabilir. Gerçek sahip sağlayıcıyla gelince doğrulanmamış
+   * dönemin şifresi ve oturumları düşmeli; yoksa saldırgan doğrulanmış hesapla mesajlaşırdı.
+   */
+  it('Case B — doğrulanmamış e-posta hesabı bağlanınca doğrulanır, eski şifre ve oturumlar düşer', async () => {
+    const { fake, authService } = await setup({
+      users: [{
+        id: UID, email: 'social@qulo.test', provider_id: null, email_verified: false, password_hash: 'saldirgan-hash',
+        is_deleted: false, is_banned: false, age: 25, name: 'Ada', surname: 'L',
+      }],
+      refresh_tokens: [{ id: 'rt-saldirgan', user_id: UID, token_hash: 'x' }, { id: 'rt-baska', user_id: UID2, token_hash: 'y' }],
+    });
+
+    const result = await authService.socialLogin(provider);
+
+    expect(result).toMatchObject({ userId: UID, emailVerified: true });
+    expect(fake.table('users')[0]).toMatchObject({ email_verified: true, provider_id: 'google-123', password_hash: null });
+    // Yalnız yeni sosyal oturum + başka kullanıcının token'ı kalır.
+    expect(fake.table('refresh_tokens').map((t) => t.id)).not.toContain('rt-saldirgan');
+    expect(fake.table('refresh_tokens').find((t) => t.id === 'rt-baska')).toBeTruthy();
+    expect(fake.table('refresh_tokens').filter((t) => t.user_id === UID)).toEqual([
+      expect.objectContaining({ token_hash: hashToken(result.refreshToken) }),
+    ]);
+  });
+
+  it('Case B — doğrulanmış hesapta şifre korunur (yalnız bağlanır)', async () => {
+    const { fake, authService } = await setup({
+      users: [{
+        id: UID, email: 'social@qulo.test', provider_id: null, email_verified: true, password_hash: 'kendi-hash',
+        is_deleted: false, is_banned: false, age: 25, name: 'Ada', surname: 'L',
+      }],
+    });
+    await authService.socialLogin(provider);
+    expect(fake.table('users')[0].password_hash).toBe('kendi-hash');
+  });
+
+  it('Case B — sağlayıcı e-postayı doğrulamadıysa (Google claim false) hesaba bağlamaz', async () => {
+    socialPayload = { email: 'social@qulo.test', providerId: 'google-123', emailVerified: false, name: 'Ada', surname: 'L' };
+    const { fake, authService } = await setup({
+      users: [{
+        id: UID, email: 'social@qulo.test', provider_id: null, email_verified: true, password_hash: 'kendi-hash',
+        is_deleted: false, is_banned: false, age: 25, name: 'Ada', surname: 'L',
+      }],
+    });
+
+    await expect(authService.socialLogin(provider)).rejects.toMatchObject({ code: 'EMAIL_ALREADY_EXISTS' });
+    expect(fake.table('users')[0]).toMatchObject({ provider_id: null, password_hash: 'kendi-hash' });
+    expect(fake.table('refresh_tokens')).toHaveLength(0);
+  });
+
+  it('Case B — bağlama yazımı patlarsa SERVER_ERROR, oturum açılmaz', async () => {
+    const { fake, authService } = await setup({
+      users: [{
+        id: UID, email: 'social@qulo.test', provider_id: null, email_verified: true,
+        is_deleted: false, is_banned: false, age: 25, name: 'Ada', surname: 'L',
+      }],
+    }, { failOn: [{ table: 'users', op: 'update' }] });
+    await expect(authService.socialLogin(provider)).rejects.toMatchObject({ code: 'SERVER_ERROR' });
+    expect(fake.table('refresh_tokens')).toHaveLength(0);
+  });
+
+  it('Case C — sağlayıcı e-postayı doğrulamadıysa hesap doğrulanmamış açılır', async () => {
+    socialPayload = { email: 'yeni-social@qulo.test', providerId: 'google-777', emailVerified: false };
+    const { fake, authService } = await setup({ users: [] });
+    await expect(authService.socialLogin(provider)).resolves.toMatchObject({ emailVerified: false });
+    expect(fake.table('users')[0].email_verified).toBe(false);
+  });
+
+  it('Case A — sağlayıcı e-postayı doğrulamadıysa doğrulanmamış hesap öyle kalır', async () => {
+    socialPayload = { email: 'social@qulo.test', providerId: 'google-123', emailVerified: false };
+    const { fake, authService } = await setup({
+      users: [{
+        id: UID, email: 'social@qulo.test', provider_id: 'google-123', email_verified: false,
+        is_deleted: false, is_banned: false, age: 30, name: 'Ada', surname: 'L',
+      }],
+    });
+    await expect(authService.socialLogin(provider)).resolves.toMatchObject({ emailVerified: false });
+    expect(fake.table('users')[0].email_verified).toBe(false);
+  });
+
+  it('Case A — daha önce doğrulanmadan bağlanmış hesap girişte doğrulanmış olur', async () => {
+    const { fake, authService } = await setup({
+      users: [{
+        id: UID, email: 'social@qulo.test', provider_id: 'google-123', email_verified: false,
+        is_deleted: false, is_banned: false, age: 30, name: 'Ada', surname: 'L',
+      }],
+    });
+
+    await expect(authService.socialLogin(provider)).resolves.toMatchObject({ emailVerified: true });
+    expect(fake.table('users')[0].email_verified).toBe(true);
+  });
+
   it('Case B — banlı hesap reddedilir', async () => {
     const { authService } = await setup({
       users: [{
@@ -882,7 +1104,7 @@ describe('socialLogin', () => {
   });
 
   it('e-posta vermeyen sağlayıcı için yer tutucu e-posta üretir', async () => {
-    socialPayload = { email: '', providerId: 'apple-999' };
+    socialPayload = { email: '', providerId: 'apple-999', emailVerified: true };
     const { fake, authService } = await setup({ users: [] });
 
     await authService.socialLogin({ provider: 'apple', id_token: 'tok' });

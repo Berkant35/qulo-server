@@ -135,6 +135,29 @@ export const forgotPasswordLimiter = rateLimit({
   message: rateLimitResponse,
 });
 
+/**
+ * Doğrulama e-postası yeniden gönderimi: e-posta yalnız hesabın kendi adresine gider, ama biri
+ * başkasının adresiyle kayıt olup "yeniden gönder"e basarak o kutuyu doldurmasın. Kullanıcı
+ * anahtarlı iki katman: kısa pencere (çift dokunma) + günlük tavan. Süreç içi sayaç (tek instance).
+ */
+export const resendVerificationLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 3,
+  keyGenerator: userKey,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitResponse,
+});
+
+export const resendVerificationDailyLimiter = rateLimit({
+  windowMs: 24 * 60 * 60 * 1000,
+  limit: 8,
+  keyGenerator: userKey,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitResponse,
+});
+
 export const socialAuthLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   limit: 5, // 5 req/min/IP

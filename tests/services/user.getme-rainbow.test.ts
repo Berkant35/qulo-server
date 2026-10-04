@@ -37,6 +37,16 @@ describe('userService.getMe — rainbow', () => {
     await expect(userService.getMe('u1', 'ios')).resolves.toMatchObject({ rainbow_enabled: false, rainbow_diamonds: 3 });
   });
 
+  // Mobil sözleşmesi (2026-10-04): giriş doğrulamasız; istemci "e-postanı doğrula" bandını bu alanla
+  // gösterir. İç bayraklar gibi ayıklanmamalı.
+  it('email_verified istemciye döner (false da, true da)', async () => {
+    const { userService } = await setup({ users: [user({ email_verified: false })] });
+    await expect(userService.getMe('u1', 'android')).resolves.toMatchObject({ email_verified: false });
+    vi.resetModules();
+    const again = await setup({ users: [user({ email_verified: true })] });
+    await expect(again.userService.getMe('u1', 'android')).resolves.toMatchObject({ email_verified: true });
+  });
+
   it('iç bayraklar yanıta sızmaz', async () => {
     const { userService } = await setup({ users: [user({ is_test_admin: true })] });
     const me = await userService.getMe('u1', 'android') as Record<string, unknown>;

@@ -22,7 +22,7 @@ const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
 const user = (over: Record<string, unknown> = {}) => ({
   id: 'u1', name: 'Ada', green_diamonds: 0, purple_diamonds: 0,
-  referral_code: 'AAAA2222', is_deleted: false, ...over,
+  referral_code: 'AAAA2222', is_deleted: false, email_verified: true, ...over,
 });
 
 beforeEach(() => {
@@ -183,6 +183,19 @@ describe('checkAndReward', () => {
     expect(fake.table('referrals')[0]).toMatchObject({
       status: 'completed', referee_rewarded: true, referrer_rewarded: true,
     });
+  });
+
+  // 2026-10-04: giriş doğrulamasız → tek kullanımlık e-postalarla ödül çiftçiliği kapısı.
+  it('davet edilenin e-postası doğrulanmamışsa ödül vermez, davet bekler', async () => {
+    const { fake, referralService } = await setup({
+      users: [user({ id: 'ref' }), user({ id: 'yeni', referral_code: 'BBBB3333', email_verified: false })],
+      referrals: [{ ...pending }],
+    });
+
+    await referralService.checkAndReward('yeni', 100);
+
+    expect(fake.table('referrals')[0].status).toBe('pending');
+    expect(fake.table('diamond_transactions')).toHaveLength(0);
   });
 
   it('bekleyen davet yoksa hiçbir şey yapmaz', async () => {

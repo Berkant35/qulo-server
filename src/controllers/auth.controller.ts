@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { authService } from "../services/auth.service.js";
+import { emailVerificationService } from "../services/email-verification.service.js";
 import { env } from "../config/env.js";
 import { localeFromRequestHeaders, webLocale } from "../utils/locales.js";
 import type { SupportedLocale } from "../constants/locales.js";
@@ -26,7 +27,7 @@ export async function registerHandler(req: Request, res: Response, next: NextFun
 export async function verifyEmailHandler(req: Request, res: Response, next: NextFunction) {
   try {
     const { token } = req.query as { token: string };
-    await authService.verifyEmail(token);
+    await emailVerificationService.verify(token);
 
     // Web'de olmayan dil Ingilizce sayfaya (404 yerine); bugun 18 = 18, liste constants/locales.ts.
     const locale = webLocale(detectLocale(req));
@@ -35,6 +36,15 @@ export async function verifyEmailHandler(req: Request, res: Response, next: Next
     const locale = webLocale(detectLocale(req));
     const status = isTokenExpiredError(err) ? "expired" : "error";
     res.redirect(302, `${env.WEB_URL}/${locale}/email-verified?status=${status}`);
+  }
+}
+
+export async function resendVerificationHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const result = await emailVerificationService.resend(req.user!.userId);
+    res.json(result);
+  } catch (err) {
+    next(err);
   }
 }
 

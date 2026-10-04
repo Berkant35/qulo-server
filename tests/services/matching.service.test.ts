@@ -302,6 +302,21 @@ describe("discover — aday sorgusu", () => {
     expect(res.cards).toHaveLength(2);
   });
 
+  // 2026-10-04 "once iceri al": giris dogrulamasiz, havuz kucuk → dogrulanmamis kullanici da
+  // gorunur. Kotuye kullanim kapisi yazmada (emailVerifiedGuard), gorunurlukte degil.
+  it("e-postasi dogrulanmamis aday da havuzda gorunur", async () => {
+    const ids = [uid(30), uid(31)];
+    const service = await loadService({
+      users: [viewerRow(), candidateRow(ids[0], 3), candidateRow(ids[1], 4, { email_verified: false })],
+      swipes: [],
+      matches: [],
+      questions: questionsFor(ids),
+    });
+
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id).sort()).toEqual([...ids].sort());
+  });
+
   it("sayfa sonuna gelmek empty_reason uretmez", async () => {
     // Havuz dolu ama istenen sayfa bos: bu bir HAVUZ sebebi degil.
     const ids = [uid(20), uid(21)];

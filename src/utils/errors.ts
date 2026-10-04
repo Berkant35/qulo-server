@@ -21,8 +21,12 @@ export const Errors = {
   INVALID_CREDENTIALS: () =>
     new AppError("INVALID_CREDENTIALS", 401, "Invalid credentials"),
 
-  EMAIL_NOT_VERIFIED: () =>
-    new AppError("EMAIL_NOT_VERIFIED", 403, "Email not verified"),
+  /**
+   * E-posta doğrulanmadan yalnız eşleşmeye YAZMA kapalı (mesaj, medya, sohbet sorusu).
+   * Giriş, profil, Discover, quiz serbest: "önce içeri al, doğrulamayı ilk mesajdan önce iste".
+   */
+  EMAIL_VERIFICATION_REQUIRED: () =>
+    new AppError("EMAIL_VERIFICATION_REQUIRED", 403, "Email verification required to send messages"),
 
   EMAIL_ALREADY_EXISTS: () =>
     new AppError("EMAIL_ALREADY_EXISTS", 409, "Email already exists"),
