@@ -22,6 +22,11 @@ export interface SupabaseError {
   code?: string;
 }
 
+export interface RpcResponse {
+  data?: unknown;
+  error?: SupabaseError;
+}
+
 /** Hangi tablo+operasyonun hata döneceği — hata dallarını test etmek için. */
 export interface FailureSpec {
   table: string;
@@ -66,8 +71,12 @@ export interface FakeSupabaseOptions {
    * Claim-then-send desenleri boyle sinanir.
    */
   unique?: Record<string, string[]>;
-  /** rpc(name, args) çağrılarına verilecek cevaplar. */
-  rpc?: Record<string, { data?: unknown; error?: SupabaseError }>;
+  /**
+   * rpc(name, args) çağrılarına verilecek cevaplar. Sabit cevap ya da fonksiyon: fonksiyon
+   * argümanları ve tablo erişimini alır — SQL fonksiyonunun etkisini (ör. `quiz_session_mark_power`
+   * dizi ekleme + "zaten varsa false") depoda modellemek için.
+   */
+  rpc?: Record<string, RpcResponse | ((args: any, table: (name: string) => Row[]) => RpcResponse)>;
   /** Başlangıçtaki depolama dosyaları: `{ photos: ['user-id/a.jpg'] }`. */
   storage?: Record<string, string[]>;
   /** Depolama hata enjeksiyonu (bkz. `StorageFailureSpec`). */
@@ -702,7 +711,8 @@ export function createFakeSupabase(
     },
     async rpc(name: string, args?: unknown) {
       rpcCalls.push({ name, args });
-      const configured = options.rpc?.[name];
+      const entry = options.rpc?.[name];
+      const configured = typeof entry === 'function' ? entry(args, (t: string) => (store[t] ??= [])) : entry;
       return { data: configured?.data ?? null, error: configured?.error ?? null };
     },
   };
