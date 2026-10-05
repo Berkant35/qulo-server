@@ -9,6 +9,7 @@ import { haversineDistance } from "../utils/math.js";
 import { assertUuid, isUuid } from "../utils/validation.js";
 import { appConfigService } from "./app-config.service.js";
 import { blockService } from "./block.service.js";
+import { bucketOf, candidatePrefFilter, wantsOf } from "./compatibility.js";
 import { evaluateRetry, quizRetryService, type RetrySessionRow } from "./quiz-retry.service.js";
 import { scoringService } from "./scoring.service.js";
 import { subscriptionService } from "./subscription.service.js";
@@ -104,7 +105,7 @@ export class MatchingService {
       supabase
         .from("users")
         .select(
-          "id, gender_pref, gender_pref_set_at, age_pref_min, age_pref_max, match_radius_km, lat, lng, passport_lat, passport_lng, preferred_languages, locale, is_test_admin",
+          "id, gender, gender_pref, gender_pref_set_at, pref_consent_status, age_pref_min, age_pref_max, match_radius_km, lat, lng, passport_lat, passport_lng, preferred_languages, locale, is_test_admin",
         )
         .eq("id", userId)
         .eq("is_deleted", false)
@@ -142,13 +143,18 @@ export class MatchingService {
     // Mobil kurulum kapisi da tercihi zorunlu sayar (`setupComplete` →
     // `hasGenderPref`); hata, onceden cekmeyi bozar ve Discover acilinca deste
     // dogru filtreyle yeniden cekilir.
-    if (!user.gender_pref_set_at) throw Errors.PROFILE_INCOMPLETE();
+    // Rızasını reddeden kullanıcının tercihi saklanmaz (KVKK m.6, migration 075) — "Herkes"
+    // modunda deste kurulur; set_at boş olsa da bu bir seçimdir.
+    if (!user.gender_pref_set_at && user.pref_consent_status !== "DECLINED") throw Errors.PROFILE_INCOMPLETE();
 
     // Dil tercihleri + uyuyan-aday esigi (app_config, 60 sn onbellekli — istek basina DB yok)
-    const [userLanguages, dormantDays] = await Promise.all([
+    const [userLanguages, dormantDays, mutualMatch] = await Promise.all([
       userLanguageService.getUserLanguages(userId),
       appConfigService.getDiscoverDormantDays(),
+      appConfigService.getMutualMatchEnabled(),
     ]);
+    const viewerBucket = bucketOf(user);
+    if (mutualMatch && !viewerBucket) throw Errors.PROFILE_INCOMPLETE();
 
     // Determine location (passport overrides real)
     const myLat = (user.passport_lat as number | null) ?? user.lat;
@@ -262,8 +268,12 @@ export class MatchingService {
       query = query.lte("age", user.age_pref_max);
     }
 
-    // Gender pref filter
-    if (user.gender_pref && user.gender_pref !== "BOTH") {
+    // Cinsiyet tercihi. Karşılıklı kural (compatibility.ts): aday benim istediğim kovada
+    // VE adayın tercihi benim kovamı kapsıyor. Test hesabı `.or()`'u ile AND'lenir
+    // (PostgREST birden çok `or=` parametresini AND'ler).
+    if (mutualMatch && viewerBucket) {
+      query = query.in("gender", [...wantsOf(user)]).or(candidatePrefFilter(viewerBucket));
+    } else if (user.gender_pref && user.gender_pref !== "BOTH") {
       query = query.eq("gender", user.gender_pref);
     }
 

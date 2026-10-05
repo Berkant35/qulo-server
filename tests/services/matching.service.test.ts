@@ -12,9 +12,11 @@ function uid(n: number): string {
 function viewerRow(overrides: Record<string, unknown> = {}) {
   return {
     id: VIEWER_ID,
+    gender: "MAN",
     gender_pref: "BOTH",
     // Kurulumu bitmis izleyici: tercih SECILMIS (discover set_at bos iken deste kurmaz).
     gender_pref_set_at: "2026-09-01T00:00:00Z",
+    pref_consent_status: null,
     age_pref_min: 18,
     age_pref_max: 99,
     match_radius_km: 50,
@@ -42,7 +44,7 @@ function candidateRow(id: string, kmAway: number, overrides: Record<string, unkn
     name: `user-${id}`,
     bio: "bio",
     age: 30,
-    gender: "FEMALE",
+    gender: "WOMAN",
     city: "Istanbul",
     lat: 41.0 + kmAway / 111,
     lng: 29.0,
@@ -81,6 +83,8 @@ async function loadService(
     rpc?: FakeSupabaseOptions["rpc"];
     /** app_config.discover_dormant_days (migration 074); varsayilan 14. */
     dormantDays?: number;
+    /** app_config.mutual_match_enabled (migration 075); varsayilan kapali. */
+    mutual?: boolean;
     /** economy.quizOnboarding.failedRetryDays; varsayilan 7. */
     retryDays?: number;
     incrementDailySwipes?: () => Promise<void>;
@@ -101,7 +105,10 @@ async function loadService(
     userLanguageService: { getUserLanguages: async () => opts.userLanguages ?? ["tr"] },
   }));
   vi.doMock("../../src/services/app-config.service.js", () => ({
-    appConfigService: { getDiscoverDormantDays: async () => opts.dormantDays ?? 14 },
+    appConfigService: {
+      getDiscoverDormantDays: async () => opts.dormantDays ?? 14,
+      getMutualMatchEnabled: async () => opts.mutual ?? false,
+    },
   }));
   vi.doMock("../../src/services/economy-config.service.js", () => ({
     economyConfigService: { getConfig: async () => ({ quizOnboarding: { failedRetryDays: opts.retryDays ?? 7 } }) },
@@ -375,6 +382,74 @@ describe("discover — cinsiyet tercihi (prod 29 Eyl-3 Eki: erkege erkek kart)",
     const service = await loadService(tablolar({ gender_pref: "BOTH" }));
     const res = await service.discover(VIEWER_ID, 1);
     expect(res.cards.map((c) => c.user_id).sort()).toEqual([uid(30), uid(31)]);
+  });
+});
+
+describe("discover — karşılıklı eşleşme (mutual_match_enabled, spec 2026-10-05)", () => {
+  const HETERO_MAN = uid(60), GAY_MAN = uid(61), BI_MAN = uid(62), HETERO_WOMAN = uid(63),
+    LESBIAN = uid(64), DECLINED_WOMAN = uid(65), OTHER_ALL = uid(66), SEED_HETERO_MAN = uid(67), SEED_GAY_MAN = uid(68);
+  const ids = [HETERO_MAN, GAY_MAN, BI_MAN, HETERO_WOMAN, LESBIAN, DECLINED_WOMAN, OTHER_ALL, SEED_HETERO_MAN, SEED_GAY_MAN];
+  const seed = { is_seed_profile: true, is_test_account: true };
+  const tablolar = (izleyici: Record<string, unknown>): Tables => ({
+    users: [
+      viewerRow(izleyici),
+      candidateRow(HETERO_MAN, 1, { gender: "MAN", gender_pref: "WOMAN" }),
+      candidateRow(GAY_MAN, 2, { gender: "MAN", gender_pref: "MAN" }),
+      candidateRow(BI_MAN, 3, { gender: "MAN", gender_pref: "BOTH" }),
+      candidateRow(HETERO_WOMAN, 4, { gender: "WOMAN", gender_pref: "MAN" }),
+      candidateRow(LESBIAN, 5, { gender: "WOMAN", gender_pref: "WOMAN" }),
+      candidateRow(DECLINED_WOMAN, 6, { gender: "WOMAN", gender_pref: null }),
+      candidateRow(OTHER_ALL, 7, { gender: "OTHER", gender_pref: "BOTH" }),
+      candidateRow(SEED_HETERO_MAN, 8, { gender: "MAN", gender_pref: "WOMAN", ...seed }),
+      candidateRow(SEED_GAY_MAN, 9, { gender: "MAN", gender_pref: "MAN", ...seed }),
+    ],
+    swipes: [],
+    matches: [],
+    questions: questionsFor(ids),
+  });
+  const kartlar = async (izleyici: Record<string, unknown>, mutual = true) => {
+    const service = await loadService(tablolar(izleyici), { mutual });
+    return (await service.discover(VIEWER_ID, 1)).cards.map((c) => c.user_id).sort();
+  };
+
+  it("hetero kadın: erkek arayan erkekleri görmez (gey erkek + gey seed dışarıda)", async () => {
+    expect(await kartlar({ gender: "WOMAN", gender_pref: "MAN" }))
+      .toEqual([HETERO_MAN, BI_MAN, SEED_HETERO_MAN].sort());
+  });
+
+  it("test admin olmayan gey erkek: gey seed'i görür, hetero seed'i görmez (iki .or grubu birlikte)", async () => {
+    expect(await kartlar({ gender: "MAN", gender_pref: "MAN", is_test_admin: false }))
+      .toEqual([GAY_MAN, BI_MAN, SEED_GAY_MAN].sort());
+  });
+
+  it("lezbiyen: yalnız kadın arayan ya da herkesi arayan kadınlar", async () => {
+    expect(await kartlar({ gender: "WOMAN", gender_pref: "WOMAN" }))
+      .toEqual([LESBIAN, DECLINED_WOMAN].sort());
+  });
+
+  it("rızasını reddetmiş erkek (tercih NULL, set_at NULL) kapıyı geçer, kendisini kabul eden herkesi görür", async () => {
+    expect(await kartlar({ gender: "MAN", gender_pref: null, gender_pref_set_at: null, pref_consent_status: "DECLINED" }))
+      .toEqual([GAY_MAN, BI_MAN, HETERO_WOMAN, DECLINED_WOMAN, OTHER_ALL, SEED_GAY_MAN].sort());
+  });
+
+  it("OTHER izleyici (herkes): yalnız herkesi arayanlar", async () => {
+    expect(await kartlar({ gender: "OTHER", gender_pref: "BOTH" }))
+      .toEqual([BI_MAN, DECLINED_WOMAN, OTHER_ALL].sort());
+  });
+
+  it("cinsiyeti NULL izleyici: PROFILE_INCOMPLETE", async () => {
+    const service = await loadService(tablolar({ gender: null, gender_pref: "BOTH" }), { mutual: true });
+    await expect(service.discover(VIEWER_ID, 1)).rejects.toMatchObject({ code: "PROFILE_INCOMPLETE" });
+  });
+
+  it("anahtar kapalı: eski tek yönlü davranış (hetero kadın gey erkeği de görür)", async () => {
+    expect(await kartlar({ gender: "WOMAN", gender_pref: "MAN" }, false))
+      .toEqual([HETERO_MAN, GAY_MAN, BI_MAN, SEED_HETERO_MAN, SEED_GAY_MAN].sort());
+  });
+
+  it("anahtar kapalıyken de DECLINED izleyici kapıyı geçer (tercih NULL = BOTH)", async () => {
+    const cards = await kartlar({ gender: "MAN", gender_pref: null, gender_pref_set_at: null, pref_consent_status: "DECLINED" }, false);
+    expect(cards).toHaveLength(ids.length);
   });
 });
 
