@@ -194,7 +194,8 @@
     <h3 style="margin-bottom: 12px;">Eşleşme tercihi (destek talebi)</h3>
     <form method="POST" action="/admin/users/<%= user.id %>/gender-pref" style="display:flex; gap:8px; align-items:center;">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-      <select name="gender_pref">
+      <select name="gender_pref" required>
+        <option value="" disabled <%= user.gender_pref ? '' : 'selected' %>>— seç —</option>
         <option value="MAN" <%= user.gender_pref === 'MAN' ? 'selected' : '' %>>Erkek</option>
         <option value="WOMAN" <%= user.gender_pref === 'WOMAN' ? 'selected' : '' %>>Kadın</option>
         <option value="BOTH" <%= user.gender_pref === 'BOTH' ? 'selected' : '' %>>Herkes</option>
