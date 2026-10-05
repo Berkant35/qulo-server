@@ -20,6 +20,12 @@ const APP_CONFIG_KOLONLARI = "id, min_version_ios, min_version_android, latest_v
  */
 export const DEFAULT_DISCOVER_DORMANT_DAYS = 14;
 
+/**
+ * Karşılıklı eşleşme kuralı (spec 2026-10-05) — `app_config.mutual_match_enabled` (migration 075).
+ * Kolon yoksa / okunamazsa KAPALI: kural bugünkü tek yönlü filtreye düşer.
+ */
+export const DEFAULT_MUTUAL_MATCH_ENABLED = false;
+
 export interface AppConfigRow {
   id: string;
   min_version_ios: string;
@@ -43,6 +49,7 @@ export interface AppConfigRow {
 class AppConfigService {
   private readonly onbellek = new TtlCache<"satir", Readonly<AppConfigRow>>(APP_CONFIG_TTL_MS);
   private readonly dormantOnbellek = new TtlCache<"gun", number>(APP_CONFIG_TTL_MS);
+  private readonly mutualOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
   private dormantUyariVerildi = false;
 
   /**
@@ -78,6 +85,27 @@ class AppConfigService {
       return deger;
     });
     return gun ?? DEFAULT_DISCOVER_DORMANT_DAYS;
+  }
+
+  /**
+   * Karşılıklı eşleşme anahtarı. `getRow` kolon listesinden AYRI okunur (075 öncesi deploy
+   * `getRow`'u bozmasın). Geçici okuma hatası önbelleklenmez; kolon yoksa kapalı önbelleklenir.
+   */
+  async getMutualMatchEnabled(): Promise<boolean> {
+    const acik = await this.mutualOnbellek.getOrLoad("acik", async () => {
+      const { data, error } = await supabase
+        .from("app_config")
+        .select("mutual_match_enabled")
+        .limit(1)
+        .maybeSingle();
+      if (error && error.code !== "42703") {
+        console.error("[app-config] mutual_match_enabled okuma hatasi:", error.message);
+        return undefined;
+      }
+      const deger = (data as { mutual_match_enabled?: unknown } | null)?.mutual_match_enabled;
+      return typeof deger === "boolean" ? deger : DEFAULT_MUTUAL_MATCH_ENABLED;
+    });
+    return acik ?? DEFAULT_MUTUAL_MATCH_ENABLED;
   }
 
   /**
@@ -131,7 +159,10 @@ class AppConfigService {
   }
 
   async updateConfig(
-    updates: Partial<Omit<AppConfigRow, "id" | "updated_at">> & { discover_dormant_days?: number },
+    updates: Partial<Omit<AppConfigRow, "id" | "updated_at">> & {
+      discover_dormant_days?: number;
+      mutual_match_enabled?: boolean;
+    },
   ) {
     const { data: existing, error: fetchError } = await supabase
       .from("app_config")
@@ -153,6 +184,7 @@ class AppConfigService {
     // Hata olsa bile temizle: yazımın gidip gitmediği belirsizse eski değeri sunmak daha kötü.
     this.onbellek.clear();
     this.dormantOnbellek.clear();
+    this.mutualOnbellek.clear();
     if (error) throw error;
     return data;
   }

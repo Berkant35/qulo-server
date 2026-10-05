@@ -117,3 +117,32 @@ describe('appConfigService.getDiscoverDormantDays (migration 074)', () => {
     expect(await appConfigService.getDiscoverDormantDays()).toBe(30);
   });
 });
+
+describe('appConfigService.getMutualMatchEnabled (migration 075)', () => {
+  it('true okunur ve önbelleğe alınır (ardışık çağrı tek okuma)', async () => {
+    const { appConfigService, okumalar } = await setup({ satirEk: { mutual_match_enabled: true } });
+    expect(await appConfigService.getMutualMatchEnabled()).toBe(true);
+    expect(await appConfigService.getMutualMatchEnabled()).toBe(true);
+    expect(okumalar()).toBe(1);
+  });
+
+  it('kolon yoksa (075 uygulanmamış) kapalı sayılır', async () => {
+    const { appConfigService } = await setup();
+    expect(await appConfigService.getMutualMatchEnabled()).toBe(false);
+  });
+
+  it('okuma hatasında kapalı döner ve önbelleğe YAZILMAZ', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { appConfigService, okumalar } = await setup({ failOn: [{ table: 'app_config', op: 'select' }] });
+    expect(await appConfigService.getMutualMatchEnabled()).toBe(false);
+    expect(await appConfigService.getMutualMatchEnabled()).toBe(false);
+    expect(okumalar()).toBe(2);
+  });
+
+  it('updateConfig önbelleği temizler: yeni değer hemen görünür', async () => {
+    const { appConfigService } = await setup({ satirEk: { mutual_match_enabled: false } });
+    expect(await appConfigService.getMutualMatchEnabled()).toBe(false);
+    await appConfigService.updateConfig({ mutual_match_enabled: true });
+    expect(await appConfigService.getMutualMatchEnabled()).toBe(true);
+  });
+});

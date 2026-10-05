@@ -281,6 +281,7 @@ class AdminController {
       seed_reply_enabled, seed_reply_fast_mode,
       photo_moderation_enabled,
       discover_dormant_days,
+      mutual_match_enabled, mutual_match_field,
     } = req.body;
 
     const versionFields: Record<string, string> = { min_version_ios, min_version_android, latest_version_ios, latest_version_android };
@@ -303,6 +304,9 @@ class AdminController {
 
     try {
       await appConfigService.updateConfig({
+        // Karşılıklı eşleşme kill-switch (migration 075). Form alanı yalnız kolon varken render
+        // edilir (gizli `mutual_match_field` işareti); işaret yoksa dokunulmaz.
+        ...(mutual_match_field !== undefined ? { mutual_match_enabled: mutual_match_enabled === "on" } : {}),
         ...(dormantDays !== undefined ? { discover_dormant_days: dormantDays } : {}),
         min_version_ios,
         min_version_android,

@@ -121,6 +121,21 @@
   </div>
   <% } %>
 
+  <% if (config && config.mutual_match_enabled !== undefined && config.mutual_match_enabled !== null) { %>
+  <!-- Karşılıklı eşleşme (migration 075) -->
+  <div class="card">
+    <h3 style="margin-bottom: 16px;">Karşılıklı Eşleşme</h3>
+    <div>
+      <input type="hidden" name="mutual_match_field" value="1">
+      <label style="display:flex; align-items:center; gap:8px; font-size:14px; cursor:pointer;">
+        <input type="checkbox" name="mutual_match_enabled" <%= config.mutual_match_enabled ? 'checked' : '' %>>
+        <span>Discover, beğeni ve quiz'de karşılıklı cinsiyet tercihi kuralı aktif</span>
+      </label>
+      <p style="font-size:12px; color:#999; margin-top:4px;">Açıkken iki kişi yalnız birbirinin aradığı cinsiyetteyse birbirini görür (<code>compatibility.ts</code>). Kapalıyken eski tek yönlü filtre çalışır. Sorun olursa buradan kapat — 60 sn içinde tüm sunucularda geçerli.</p>
+    </div>
+  </div>
+  <% } %>
+
   <div style="text-align: right;">
     <button type="submit" class="btn btn-primary" style="padding: 10px 32px; font-size: 15px;">Save Configuration</button>
   </div>

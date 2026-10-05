@@ -73,3 +73,20 @@ describe('updateAppConfig — discover_dormant_days (migration 074)', () => {
     expect(res.redirectedTo).toContain('error=');
   });
 });
+
+describe('updateAppConfig — mutual_match_enabled (migration 075)', () => {
+  it('form alanı varken işaretliyse true yazar', async () => {
+    const { patch } = await setup({ mutual_match_field: '1', mutual_match_enabled: 'on' });
+    expect(patch()).toMatchObject({ mutual_match_enabled: true });
+  });
+
+  it('form alanı varken işaretsizse false yazar — panelden KAPATILABİLİR', async () => {
+    const { patch } = await setup({ mutual_match_field: '1' });
+    expect(patch()).toMatchObject({ mutual_match_enabled: false });
+  });
+
+  it('form alanı yoksa (075 öncesi panel) dokunulmaz', async () => {
+    const { patch } = await setup({});
+    expect(patch()).not.toHaveProperty('mutual_match_enabled');
+  });
+});
