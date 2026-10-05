@@ -189,6 +189,12 @@ describe('userService.getMe — question_locales', () => {
     expect(me.question_locales).toEqual({});
   });
 
+  it('pref_consent_status yalnız kullanıcının kendisine döner', async () => {
+    const { userService } = await setup({ users: [meRow({ pref_consent_status: 'DECLINED' })], questions: [] });
+    const me = await userService.getMe(ME);
+    expect(me.pref_consent_status).toBe('DECLINED');
+  });
+
   it('baska kullanicinin sorulari sayima girmez', async () => {
     const { userService } = await setup({
       users: [meRow({ question_count: 1 })],
@@ -367,5 +373,41 @@ describe('userService.updateLocation — country', () => {
     await userService.updateLocation(ME, { lat: 52.3, lng: 4.9, city: 'Amsterdam' });
 
     expect(fake.table('users')[0]).toMatchObject({ city: 'Amsterdam', country: 'TR' });
+  });
+});
+
+describe('userService.updateProfile — tercih kilidi sunucuda (spec 2026-10-05 §6)', () => {
+  const me = (over: Record<string, unknown> = {}) =>
+    user(ME, { locale: 'tr', preferred_languages: ['tr'], gender_pref: null, gender_pref_set_at: null, pref_consent_status: null, ...over });
+
+  it('ilk seçim (set_at boş) yazılır ve set_at damgalanır', async () => {
+    const { fake, userService } = await setup({ users: [me()] });
+    await userService.updateProfile(ME, { gender_pref: 'WOMAN' });
+    expect(fake.table('users')[0].gender_pref).toBe('WOMAN');
+    expect(fake.table('users')[0].gender_pref_set_at).toEqual(expect.any(String));
+  });
+
+  it('tercih zaten seçilmişse GENDER_PREF_LOCKED; aynı istekteki bio da yazılmaz', async () => {
+    const { fake, userService } = await setup({ users: [me({ gender_pref: 'WOMAN', gender_pref_set_at: '2026-09-01T00:00:00Z', bio: 'eski' })] });
+    await expect(userService.updateProfile(ME, { gender_pref: 'MAN', bio: 'yeni' }))
+      .rejects.toMatchObject({ code: 'GENDER_PREF_LOCKED', statusCode: 409 });
+    expect(fake.table('users')[0]).toMatchObject({ gender_pref: 'WOMAN', bio: 'eski' });
+  });
+
+  it('rıza reddedilmişse (DECLINED) tercih PATCH ile yazılamaz', async () => {
+    const { fake, userService } = await setup({ users: [me({ pref_consent_status: 'DECLINED' })] });
+    await expect(userService.updateProfile(ME, { gender_pref: 'MAN' })).rejects.toMatchObject({ code: 'GENDER_PREF_LOCKED' });
+    expect(fake.table('users')[0].gender_pref).toBeNull();
+  });
+
+  it('tercih seçilmiş kullanıcının tercihsiz güncellemesi etkilenmez', async () => {
+    const { fake, userService } = await setup({ users: [me({ gender_pref: 'WOMAN', gender_pref_set_at: '2026-09-01T00:00:00Z' })] });
+    await userService.updateProfile(ME, { bio: 'yeni' });
+    expect(fake.table('users')[0]).toMatchObject({ bio: 'yeni', gender_pref: 'WOMAN' });
+  });
+
+  it('kullanıcı yoksa USER_NOT_FOUND (kilitle karışmaz)', async () => {
+    const { userService } = await setup({ users: [] });
+    await expect(userService.updateProfile(ME, { gender_pref: 'MAN' })).rejects.toMatchObject({ code: 'USER_NOT_FOUND' });
   });
 });
