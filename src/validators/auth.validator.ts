@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { SUPPORTED_LOCALES } from "../constants/locales.js";
 
-export const registerSchema = z.object({
+const registerObjectSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
   name: z.string().trim().min(1),
@@ -19,6 +19,20 @@ export const registerSchema = z.object({
   tos_accepted: z.literal(true, {
     errorMap: () => ({ message: "Terms of Service must be accepted" }),
   }),
+  /** Eşleşme tercihi açık rızası (KVKK m.6). Eski istemciler göndermez — tercih yine yazılır. */
+  pref_consent: z.object({
+    status: z.enum(["GRANTED", "DECLINED"]),
+    version: z.string().trim().min(1).max(20),
+  }).optional(),
+});
+
+export const registerSchema = registerObjectSchema.superRefine((d, ctx) => {
+  if (d.pref_consent?.status === "GRANTED" && !d.gender_pref) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["gender_pref"], message: "gender_pref required with consent" });
+  }
+  if (d.pref_consent?.status === "DECLINED" && d.gender_pref) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["gender_pref"], message: "gender_pref not allowed without consent" });
+  }
 });
 
 export const loginSchema = z.object({

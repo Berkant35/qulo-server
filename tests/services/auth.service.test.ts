@@ -214,6 +214,33 @@ describe('register', () => {
     });
   });
 
+  it('pref_consent GRANTED: tercih + rıza durumu yazılır, match_preference ispatı kaydedilir', async () => {
+    const { fake, authService } = await setup({ users: [] });
+    await authService.register(registerInput({ gender_pref: 'MAN', pref_consent: { status: 'GRANTED', version: '2026-10-v1' } }));
+    expect(fake.table('users')[0]).toMatchObject({
+      gender_pref: 'MAN', gender_pref_set_at: NOW.toISOString(),
+      pref_consent_status: 'GRANTED', pref_consent_at: NOW.toISOString(),
+    });
+    await vi.waitFor(() => expect(fake.table('user_consents')).toContainEqual(
+      expect.objectContaining({ consent_type: 'match_preference', version: '2026-10-v1' }),
+    ));
+  });
+
+  it('pref_consent DECLINED: tercih yazılmaz, durum DECLINED', async () => {
+    const { fake, authService } = await setup({ users: [] });
+    await authService.register(registerInput({ pref_consent: { status: 'DECLINED', version: '2026-10-v1' } }));
+    expect(fake.table('users')[0]).toMatchObject({ pref_consent_status: 'DECLINED', pref_consent_at: NOW.toISOString() });
+    expect(fake.table('users')[0].gender_pref).toBeUndefined();
+    expect(fake.table('users')[0].gender_pref_set_at).toBeUndefined();
+  });
+
+  it('pref_consent yok (2.0.14 istemcisi): tercih eskisi gibi yazılır, rıza durumu boş', async () => {
+    const { fake, authService } = await setup({ users: [] });
+    await authService.register(registerInput({ gender_pref: 'WOMAN' }));
+    expect(fake.table('users')[0]).toMatchObject({ gender_pref: 'WOMAN' });
+    expect(fake.table('users')[0].pref_consent_status).toBeUndefined();
+  });
+
   it('gender_pref yoksa alanlar hiç yazılmaz', async () => {
     const { fake, authService } = await setup({ users: [] });
     await authService.register(registerInput());

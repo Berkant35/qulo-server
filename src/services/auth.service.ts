@@ -46,6 +46,8 @@ export class AuthService {
     const referralCode = await referralService.generateUniqueCode();
     // Uygulama dili = eslesme tercihinin ana degeri; iki alan ayni kaynaktan turer.
     const locale = resolveLocale(data.locale);
+    const nowIso = new Date().toISOString();
+    const prefConsent = data.pref_consent;
 
     const { data: user, error } = await supabase
       .from("users")
@@ -69,9 +71,10 @@ export class AuthService {
         email_verified: false,
         referral_code: referralCode,
         ...(data.lat != null && data.lng != null ? { lat: data.lat, lng: data.lng } : {}),
-        ...(data.gender_pref
-          ? { gender_pref: data.gender_pref, gender_pref_set_at: new Date().toISOString() }
+        ...(data.gender_pref && prefConsent?.status !== "DECLINED"
+          ? { gender_pref: data.gender_pref, gender_pref_set_at: nowIso }
           : {}),
+        ...(prefConsent ? { pref_consent_status: prefConsent.status, pref_consent_at: nowIso } : {}),
       })
       .select("id, email")
       .single();
@@ -85,6 +88,14 @@ export class AuthService {
     consentService.recordRegistrationConsents(user.id, client).catch((err) => {
       console.error("[auth] Failed to record consents:", err);
     });
+
+    // Eşleşme tercihi rızasının ispatı — kayıt rızalarıyla aynı politika (fire-and-forget, hata loglanır).
+    if (prefConsent?.status === "GRANTED") {
+      consentService.recordConsent({
+        userId: user.id, consentType: "match_preference", version: prefConsent.version,
+        appVersion: client.appVersion, platform: client.platform,
+      }).catch((err) => console.error("[auth] Failed to record match_preference consent:", err));
+    }
 
     // Baslangic paketi yalniz ILK hesaba: silip ayni e-postayla yeniden kaydolan tekrar almaz —
     // aksi halde "kaydol → bedava SKIP_ALL → eslesme → sil → kaydol" dongusu sinirsiz bedava quiz olur.

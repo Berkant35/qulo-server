@@ -182,3 +182,27 @@ describe('socialLoginSchema — locale', () => {
     expect(socialLoginSchema.safeParse({ ...validSocial, locale: 'x'.repeat(35) }).success).toBe(true);
   });
 });
+
+describe('registerSchema — pref_consent', () => {
+  const consent = (status: string) => ({ status, version: '2026-10-v1' });
+
+  it('GRANTED + gender_pref geçer', () => {
+    expect(parse({ gender_pref: 'MAN', pref_consent: consent('GRANTED') }).success).toBe(true);
+  });
+  it('GRANTED + gender_pref yok reddedilir', () => {
+    expect(parse({ pref_consent: consent('GRANTED') }).success).toBe(false);
+  });
+  it('DECLINED + gender_pref reddedilir', () => {
+    expect(parse({ gender_pref: 'MAN', pref_consent: consent('DECLINED') }).success).toBe(false);
+  });
+  it('DECLINED + gender_pref yok geçer', () => {
+    expect(parse({ pref_consent: consent('DECLINED') }).success).toBe(true);
+  });
+  it('pref_consent yok (eski istemci) + gender_pref geçer', () => {
+    expect(parse({ gender_pref: 'WOMAN' }).success).toBe(true);
+  });
+  it('geçersiz status / boş version reddedilir', () => {
+    expect(parse({ gender_pref: 'MAN', pref_consent: consent('MAYBE') }).success).toBe(false);
+    expect(parse({ gender_pref: 'MAN', pref_consent: { status: 'GRANTED', version: '' } }).success).toBe(false);
+  });
+});
