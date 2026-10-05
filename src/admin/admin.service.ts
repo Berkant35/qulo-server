@@ -864,13 +864,22 @@ class AdminService {
   async updateGenderPref(userId: string, genderPref: "MAN" | "WOMAN" | "BOTH", adminEmail: string): Promise<void> {
     const { error } = await supabase
       .from("users")
-      .update({ gender_pref: genderPref })
+      .update({
+        gender_pref: genderPref,
+        // Damgasız tercih Discover'da PROFILE_INCOMPLETE verirdi.
+        gender_pref_set_at: new Date().toISOString(),
+        // Rızayı admin veremez: NULL'a çekilir, kullanıcı sonraki açılışta bir kerelik
+        // rıza sayfasını görür (mobil `needsPrefConsent`); reddederse tercih silinir.
+        pref_consent_status: null,
+        pref_consent_at: null,
+      })
       .eq("id", userId)
       .eq("is_deleted", false);
 
     if (error) throw new Error(`gender_pref update failed: ${error.message}`);
 
-    console.log(`[ADMIN] gender_pref updated: user=${userId} newPref=${genderPref} by=${adminEmail}`);
+    // İşlem logu (KVKK 2018/10) — tercih DEĞERİ özel nitelikli veri, log'a yazılmaz.
+    console.log(`[ADMIN] gender_pref changed: user=${userId} by=${adminEmail} (consent will be re-asked)`);
   }
 }
 

@@ -10,6 +10,7 @@
       <dt>Email</dt><dd><%= user.email %></dd>
       <dt>Age</dt><dd><%= user.age %></dd>
       <dt>Gender</dt><dd><%= user.gender %></dd>
+      <dt>Match pref</dt><dd><%= user.gender_pref || '—' %> · rıza: <%= user.pref_consent_status || 'sorulmadı' %></dd>
       <dt>City</dt><dd><%= user.city || '-' %></dd>
       <dt>Bio</dt><dd><%= user.bio || '-' %></dd>
       <dt>Online</dt><dd><span class="badge <%= user.is_online ? 'badge-online' : 'badge-offline' %>"><%= user.is_online ? 'Yes' : 'No' %></span></dd>
@@ -187,6 +188,20 @@
         <button type="submit" class="btn btn-primary btn-sm">Grant</button>
       </div>
     </form>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom: 12px;">Eşleşme tercihi (destek talebi)</h3>
+    <form method="POST" action="/admin/users/<%= user.id %>/gender-pref" style="display:flex; gap:8px; align-items:center;">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <select name="gender_pref">
+        <option value="MAN" <%= user.gender_pref === 'MAN' ? 'selected' : '' %>>Erkek</option>
+        <option value="WOMAN" <%= user.gender_pref === 'WOMAN' ? 'selected' : '' %>>Kadın</option>
+        <option value="BOTH" <%= user.gender_pref === 'BOTH' ? 'selected' : '' %>>Herkes</option>
+      </select>
+      <button type="submit" class="btn btn-primary btn-sm">Değiştir</button>
+    </form>
+    <p style="font-size:12px; color:#999; margin-top:6px;">Yalnız kullanıcının destek talebi üzerine. Kaydedince rıza sıfırlanır; kullanıcı uygulamayı açınca yeni tercihe onay verir ya da reddeder.</p>
   </div>
 </div>
 
