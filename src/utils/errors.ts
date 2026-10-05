@@ -103,6 +103,10 @@ export const Errors = {
   CONSENT_RELOCK: () =>
     new AppError("CONSENT_RELOCK", 409, "Consent was withdrawn; contact support to set a preference"),
 
+  /** Cinsiyet yalnız ilk profil tamamlamada yazılır; değer mesajda geçmez. */
+  GENDER_LOCKED: () =>
+    new AppError("GENDER_LOCKED", 409, "Gender can only be changed via support"),
+
   GENDER_PREF_REQUIRED: () =>
     new AppError("GENDER_PREF_REQUIRED", 400, "gender_pref is required with first consent"),
 

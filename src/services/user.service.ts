@@ -699,7 +699,7 @@ export class UserService {
       throw Errors.VALIDATION_ERROR({ birthday: "Invalid date of birth" });
     }
 
-    const updateData: Record<string, unknown> = { age, gender: data.gender };
+    const updateData: Record<string, unknown> = { age };
     if (data.lat != null && data.lng != null) {
       updateData.lat = data.lat;
       updateData.lng = data.lng;
@@ -707,13 +707,43 @@ export class UserService {
     if (data.name) updateData.name = data.name;
     if (data.surname) updateData.surname = data.surname;
 
-    const { error } = await supabase.from("users").update(updateData).eq("id", userId);
+    // Cinsiyet yalnız ilk tamamlamada yazılır (NULL iken). Sonradan değişebilseydi karşılıklı
+    // eşleşmede tercih kilidi dolanılır ve NOT_COMPATIBLE yanıtı başkalarının tercihini sızdırırdı.
+    if (await this.updateWhereGender(userId, { ...updateData, gender: data.gender }, null)) {
+      return { age, gender: data.gender };
+    }
+
+    const { data: current, error: readError } = await supabase
+      .from("users")
+      .select("gender")
+      .eq("id", userId)
+      .eq("is_deleted", false)
+      .maybeSingle();
+    if (readError) {
+      console.error("[completeProfile] Read failed:", readError.message);
+      throw Errors.SERVER_ERROR();
+    }
+    if (!current) throw Errors.USER_NOT_FOUND();
+    // Yanıtı kaybolan isteğin aynı cinsiyetle tekrarı başarı sayılır; farklı cinsiyet kilitli.
+    if (current.gender !== data.gender) throw Errors.GENDER_LOCKED();
+    if (!(await this.updateWhereGender(userId, updateData, data.gender))) {
+      throw Errors.GENDER_LOCKED();
+    }
+    return { age, gender: data.gender };
+  }
+
+  /** completeProfile yazımı, cinsiyet `expectedGender` iken (NULL dahil). Satır güncellendiyse true. */
+  private async updateWhereGender(userId: string, updateData: Record<string, unknown>, expectedGender: string | null) {
+    const query = supabase.from("users").update(updateData).eq("id", userId).eq("is_deleted", false);
+    const { data, error } = await (expectedGender === null
+      ? query.is("gender", null)
+      : query.eq("gender", expectedGender)
+    ).select("id");
     if (error) {
       console.error("[completeProfile] Update failed:", error.message);
       throw Errors.SERVER_ERROR();
     }
-
-    return { age, gender: data.gender };
+    return (data?.length ?? 0) > 0;
   }
 }
 

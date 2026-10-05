@@ -411,3 +411,46 @@ describe('userService.updateProfile — tercih kilidi sunucuda (spec 2026-10-05 
     await expect(userService.updateProfile(ME, { gender_pref: 'MAN' })).rejects.toMatchObject({ code: 'USER_NOT_FOUND' });
   });
 });
+
+describe('userService.completeProfile — cinsiyet yalnız ilk tamamlamada yazılır (karşılıklı eşleşme)', () => {
+  const BIRTHDAY = '1995-05-05';
+  const fresh = (over: Record<string, unknown> = {}) => user(ME, { age: null, gender: null, ...over });
+
+  it('ilk tamamlama cinsiyet, yaş ve diğer alanları yazar', async () => {
+    const { fake, userService } = await setup({ users: [fresh()] });
+    await expect(userService.completeProfile(ME, { birthday: BIRTHDAY, gender: 'WOMAN', lat: 40, lng: 30, name: 'Ece' }))
+      .resolves.toMatchObject({ gender: 'WOMAN' });
+    expect(fake.table('users')[0]).toMatchObject({ gender: 'WOMAN', lat: 40, lng: 30, name: 'Ece' });
+    expect(fake.table('users')[0].age).toBeGreaterThanOrEqual(30);
+  });
+
+  it('cinsiyet doluyken farklı cinsiyet: GENDER_LOCKED (409), hiçbir alan değişmez, mesaj değeri içermez', async () => {
+    const { fake, userService } = await setup({ users: [fresh({ gender: 'MAN', age: 30, name: 'Ali' })] });
+    const err = await userService.completeProfile(ME, { birthday: BIRTHDAY, gender: 'WOMAN', name: 'Ayşe' }).catch((e) => e);
+    expect(err).toMatchObject({ code: 'GENDER_LOCKED', statusCode: 409 });
+    expect(err.message).not.toMatch(/MAN|WOMAN/);
+    expect(fake.table('users')[0]).toMatchObject({ gender: 'MAN', age: 30, name: 'Ali' });
+  });
+
+  it('aynı cinsiyetle tekrar (yanıtı kaybolan istek): başarı, alanlar yazılır', async () => {
+    const { fake, userService } = await setup({ users: [fresh({ gender: 'WOMAN' })] });
+    await expect(userService.completeProfile(ME, { birthday: BIRTHDAY, gender: 'WOMAN', name: 'Ece' }))
+      .resolves.toMatchObject({ gender: 'WOMAN' });
+    expect(fake.table('users')[0]).toMatchObject({ gender: 'WOMAN', name: 'Ece' });
+  });
+
+  it('yarış: ilk yazım ile tekrar yazım arasında cinsiyet değişirse GENDER_LOCKED', async () => {
+    // İlk (NULL koşullu) update kaçar, okuma WOMAN görür; ikinci update anında cinsiyet MAN olur.
+    let updates = 0;
+    const { fake, userService } = await setup({ users: [fresh({ gender: 'WOMAN' })] }, {
+      interleave: [{ table: 'users', times: 2, mutate: (rows) => { if (++updates === 2) rows[0].gender = 'MAN'; } }],
+    });
+    await expect(userService.completeProfile(ME, { birthday: BIRTHDAY, gender: 'WOMAN' })).rejects.toMatchObject({ code: 'GENDER_LOCKED' });
+    expect(fake.table('users')[0].gender).toBe('MAN');
+  });
+
+  it('kullanıcı yoksa USER_NOT_FOUND', async () => {
+    const { userService } = await setup({ users: [] });
+    await expect(userService.completeProfile(ME, { birthday: BIRTHDAY, gender: 'MAN' })).rejects.toMatchObject({ code: 'USER_NOT_FOUND' });
+  });
+});
