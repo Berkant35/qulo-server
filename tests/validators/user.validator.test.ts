@@ -47,3 +47,19 @@ describe('updateLocationSchema country', () => {
     expect(updateProfileSchema.safeParse({ country: 'Türkiye' }).success).toBe(false);
   });
 });
+
+describe('prefConsentSchema', () => {
+  it('GRANTED + tercih + sürüm geçer', async () => {
+    const { prefConsentSchema } = await import('../../src/validators/user.validator.js');
+    expect(prefConsentSchema.safeParse({ status: 'GRANTED', version: '2026-10-v1', gender_pref: 'MAN' }).success).toBe(true);
+  });
+  it('DECLINED + tercih reddedilir (rızasız tercih yazılmaz)', async () => {
+    const { prefConsentSchema } = await import('../../src/validators/user.validator.js');
+    expect(prefConsentSchema.safeParse({ status: 'DECLINED', version: '2026-10-v1', gender_pref: 'MAN' }).success).toBe(false);
+  });
+  it('sürüm zorunlu, bilinmeyen durum reddedilir', async () => {
+    const { prefConsentSchema } = await import('../../src/validators/user.validator.js');
+    expect(prefConsentSchema.safeParse({ status: 'GRANTED' }).success).toBe(false);
+    expect(prefConsentSchema.safeParse({ status: 'MAYBE', version: 'x' }).success).toBe(false);
+  });
+});

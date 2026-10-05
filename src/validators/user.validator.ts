@@ -111,3 +111,18 @@ export const setInterestsSchema = z.object({
 });
 
 export type SetInterestsInput = z.infer<typeof setInterestsSchema>;
+
+/**
+ * Eşleşme tercihi açık rızası (KVKK m.6, migration 075). Tercih yalnız GRANTED ile gelir;
+ * DECLINED tercihi siler. Sürüm = onaylanan aydınlatma metni (mobil `PrefConsent.version`).
+ */
+export const prefConsentSchema = z.object({
+  status: z.enum(["GRANTED", "DECLINED"]),
+  version: z.string().trim().min(1).max(20),
+  gender_pref: z.enum(["MAN", "WOMAN", "BOTH"]).optional(),
+}).refine(
+  (d) => d.status === "GRANTED" || d.gender_pref === undefined,
+  { message: "gender_pref is only allowed with GRANTED", path: ["gender_pref"] },
+);
+
+export type PrefConsentInput = z.infer<typeof prefConsentSchema>;

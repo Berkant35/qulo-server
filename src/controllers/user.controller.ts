@@ -4,6 +4,7 @@ import { badgeService } from "../services/badge.service.js";
 import { userLanguageService } from "../services/user-language.service.js";
 import { userInterestsService } from "../services/user-interests.service.js";
 import { questionService } from "../services/question.service.js";
+import { prefConsentService } from "../services/pref-consent.service.js";
 import { clientMetaFromHeaders } from "../utils/client-meta.js";
 import type {
   UpdateProfileInput,
@@ -13,6 +14,7 @@ import type {
   NotificationPreferencesInput,
   SetInterestsInput,
   DeleteAccountInput,
+  PrefConsentInput,
 } from "../validators/user.validator.js";
 import { AppError, Errors } from "../utils/errors.js";
 
@@ -30,6 +32,19 @@ export async function updateProfileHandler(req: Request, res: Response, next: Ne
   try {
     const data = req.body as UpdateProfileInput;
     const result = await userService.updateProfile(req.user!.userId, data);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function setPrefConsentHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const result = await prefConsentService.setConsent(
+      req.user!.userId,
+      req.body as PrefConsentInput,
+      clientMetaFromHeaders(req.headers),
+    );
     res.json(result);
   } catch (err) {
     next(err);
