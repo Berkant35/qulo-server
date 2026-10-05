@@ -563,6 +563,9 @@ export class MatchingService {
       // Basarisiz quiz'in hedefi Discover'a geri donduyse (quiz-retry) ikinci LIKE yeni satir
       // acamaz (UNIQUE swiper+target) — mevcut satir yenilenir, gunluk hak bir kez daha harcanir.
       if (existing.action === "LIKE" && action === "LIKE") {
+        // Yenileme de günlük hak harcar: uyumsuz çifte (ör. anahtar açılmadan önceki eski LIKE)
+        // hak yakılmaz, beğeni yenilenmez.
+        await pairCompatibilityService.assertCompatible(swiperId, targetId);
         await quizRetryService.renewLike(swiperId, targetId, existing.id as string, existing.created_at as string);
       }
       return { matched: false };

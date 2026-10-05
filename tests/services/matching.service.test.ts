@@ -1133,6 +1133,24 @@ describe("swipe — karşılıklı eşleşme guard'ı", () => {
     expect(sonFake.table("swipes")).toHaveLength(1);
   });
 
+  it("uyumsuz hedefe eski LIKE varken tekrar LIKE: NOT_COMPATIBLE, satır yenilenmez, günlük hak harcanmaz", async () => {
+    const incrementDailySwipes = vi.fn(async () => undefined);
+    const eski = new Date(Date.now() - 10 * 86_400_000).toISOString();
+    // Başarısız quiz geçmişi: guard olmasa renewLike satırı yenileyip hak harcardı.
+    const seed: Tables = {
+      ...tablolar(),
+      swipes: [{ id: "sw1", swiper_id: VIEWER_ID, target_id: HETERO, action: "LIKE", created_at: eski }],
+      quiz_sessions: [{
+        id: "s1", solver_id: VIEWER_ID, target_id: HETERO, status: "FAILED",
+        started_at: eski, completed_at: eski, expires_at: eski,
+      }],
+    };
+    const service = await loadService(seed, { mutual: true, incrementDailySwipes });
+    await expect(service.swipe(VIEWER_ID, HETERO, "LIKE")).rejects.toMatchObject({ code: "NOT_COMPATIBLE" });
+    expect(incrementDailySwipes).not.toHaveBeenCalled();
+    expect(sonFake.table("swipes")[0].created_at).toBe(eski);
+  });
+
   it("REJECT kontrol edilmez (zararsız; eski desteden kalan kart reddedilebilir)", async () => {
     const service = await loadService(tablolar(), { mutual: true });
     await service.swipe(VIEWER_ID, HETERO, "REJECT");
