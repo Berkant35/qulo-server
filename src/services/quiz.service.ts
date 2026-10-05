@@ -13,6 +13,7 @@ import { userLanguageService } from "./user-language.service.js";
 import { quizSecondChanceService, FREE_SECOND_CHANCE } from "./quiz-second-chance.service.js";
 import { DEFAULT_QUESTION_SECONDS, quizDeadlineService, remainingSeconds, visiblePowers } from "./quiz-deadline.service.js";
 import type { PowerName } from "../types/index.js";
+import { pairCompatibilityService } from "./pair-compatibility.service.js";
 
 /** questions.answer_1..answer_4 — cevap indeksleri 1 tabanli. */
 const QUIZ_ANSWER_INDICES: readonly number[] = [1, 2, 3, 4];
@@ -182,6 +183,9 @@ export class QuizService {
       .maybeSingle();
     if (targetErr) throw Errors.SERVER_ERROR();
     if (!target) throw Errors.USER_NOT_FOUND();
+
+    // Karşılıklı eşleşme (anahtar açıkken) — swipe guard'ıyla aynı kural.
+    await pairCompatibilityService.assertCompatible(solverId, targetId);
 
     // 1. Fetch target's questions with locale
     const { data: allQuestions, error: qErr } = await supabase

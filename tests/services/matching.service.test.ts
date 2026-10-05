@@ -1107,3 +1107,35 @@ describe("swipe — tekrar denemesinde LIKE yenilenir (UNIQUE swipe)", () => {
     expect(sonFake.table("swipes")).toHaveLength(1);
   });
 });
+
+describe("swipe — karşılıklı eşleşme guard'ı", () => {
+  const GAY = uid(70), HETERO = uid(71);
+  const tablolar = (): Tables => ({
+    users: [
+      viewerRow({ gender: "MAN", gender_pref: "MAN" }),
+      candidateRow(GAY, 1, { gender: "MAN", gender_pref: "MAN" }),
+      candidateRow(HETERO, 2, { gender: "MAN", gender_pref: "WOMAN" }),
+    ],
+    swipes: [], matches: [], questions: [],
+  });
+
+  it("anahtar açıkken uyumsuz hedefe LIKE: NOT_COMPATIBLE, swipe yazılmaz, günlük hak harcanmaz", async () => {
+    const incrementDailySwipes = vi.fn(async () => undefined);
+    const service = await loadService(tablolar(), { mutual: true, incrementDailySwipes });
+    await expect(service.swipe(VIEWER_ID, HETERO, "LIKE")).rejects.toMatchObject({ code: "NOT_COMPATIBLE" });
+    expect(sonFake.table("swipes")).toHaveLength(0);
+    expect(incrementDailySwipes).not.toHaveBeenCalled();
+  });
+
+  it("uyumlu hedefe LIKE yazılır", async () => {
+    const service = await loadService(tablolar(), { mutual: true });
+    await service.swipe(VIEWER_ID, GAY, "LIKE");
+    expect(sonFake.table("swipes")).toHaveLength(1);
+  });
+
+  it("REJECT kontrol edilmez (zararsız; eski desteden kalan kart reddedilebilir)", async () => {
+    const service = await loadService(tablolar(), { mutual: true });
+    await service.swipe(VIEWER_ID, HETERO, "REJECT");
+    expect(sonFake.table("swipes")).toHaveLength(1);
+  });
+});

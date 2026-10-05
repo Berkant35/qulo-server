@@ -14,6 +14,7 @@ import { evaluateRetry, quizRetryService, type RetrySessionRow } from "./quiz-re
 import { scoringService } from "./scoring.service.js";
 import { subscriptionService } from "./subscription.service.js";
 import { userLanguageService } from "./user-language.service.js";
+import { pairCompatibilityService } from "./pair-compatibility.service.js";
 
 const PAGE_SIZE = 10;
 /** Tek seferde cekilen aday tavani. Havuz ~72; 500 rahat bir ust sinir. */
@@ -566,6 +567,10 @@ export class MatchingService {
       }
       return { matched: false };
     }
+
+    // Karşılıklı eşleşme (anahtar açıkken): Discover'ın göstermediği birine doğrudan API ile
+    // beğeni atılamaz. REJECT zararsız, kontrol edilmez. Günlük hak bu kontrolden SONRA harcanır.
+    if (action === "LIKE") await pairCompatibilityService.assertCompatible(swiperId, targetId);
 
     // Daily swipe limit check + increment
     await subscriptionService.incrementDailySwipes(swiperId);

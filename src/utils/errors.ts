@@ -91,6 +91,21 @@ export const Errors = {
   PROFILE_INCOMPLETE: () =>
     new AppError("PROFILE_INCOMPLETE", 400, "Profile is incomplete"),
 
+  /** Karşılıklı eşleşme kuralı (compatibility.ts). Mesaj sebep söylemez — tercih sızmasın. */
+  NOT_COMPATIBLE: () =>
+    new AppError("NOT_COMPATIBLE", 403, "Profile not available"),
+
+  /** Tercih yalnız ilk seçimde yazılır; sonrası destek talebi + backoffice (spec §6). */
+  GENDER_PREF_LOCKED: () =>
+    new AppError("GENDER_PREF_LOCKED", 409, "Gender preference can only be changed via support"),
+
+  /** Geri alınmış rıza uygulamadan yeniden verilemez — kilit dolanma yolu olurdu. */
+  CONSENT_RELOCK: () =>
+    new AppError("CONSENT_RELOCK", 409, "Consent was withdrawn; contact support to set a preference"),
+
+  GENDER_PREF_REQUIRED: () =>
+    new AppError("GENDER_PREF_REQUIRED", 400, "gender_pref is required with first consent"),
+
   MAX_PHOTOS_REACHED: () =>
     new AppError("MAX_PHOTOS_REACHED", 400, "Maximum photos reached"),
 
