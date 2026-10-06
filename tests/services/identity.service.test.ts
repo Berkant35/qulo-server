@@ -6,7 +6,7 @@ const ME = "11111111-1111-4111-8111-111111111111";
 const HER = "22222222-2222-4222-8222-222222222222";
 
 async function setup(seed: Tables = {}, options?: FakeSupabaseOptions) {
-  const fake = createFakeSupabase({ user_identity: [], user_consents: [], ...seed }, options);
+  const fake = createFakeSupabase({ users: [{ id: ME, is_deleted: false }], user_identity: [], user_consents: [], ...seed }, options);
   vi.doMock("../../src/config/supabase.js", () => ({ supabase: fake.client }));
   const { identityService } = await import("../../src/services/identity.service.js");
   return { fake, identityService };
@@ -45,6 +45,28 @@ describe("identityService.save", () => {
       .rejects.toMatchObject({ code: "IDENTITY_CONSENT_REQUIRED", statusCode: 400 });
     expect(fake.table("user_identity")).toHaveLength(0);
     expect(fake.table("user_consents")).toHaveLength(0);
+  });
+
+  it("silinmiş hesap (süren erişim jetonu): USER_NOT_FOUND, ne rıza ne etiket yazılır", async () => {
+    const { fake, identityService } = await setup({ users: [{ id: ME, is_deleted: true }] });
+    await expect(identityService.save(ME, input())).rejects.toMatchObject({ code: "USER_NOT_FOUND" });
+    expect(fake.table("user_identity")).toHaveLength(0);
+    expect(fake.table("user_consents")).toHaveLength(0);
+  });
+
+  it("olmayan kullanıcı: USER_NOT_FOUND", async () => {
+    const { fake, identityService } = await setup({ users: [] });
+    await expect(identityService.save(ME, input())).rejects.toMatchObject({ code: "USER_NOT_FOUND" });
+    expect(fake.table("user_identity")).toHaveLength(0);
+  });
+
+  it("silinmiş hesap boş listelerle (silme yolu) yine temizleyebilir", async () => {
+    const { fake, identityService } = await setup({
+      users: [{ id: ME, is_deleted: true }],
+      user_identity: [{ user_id: ME, gender_labels: [], orientation_labels: ["gay"], show_gender_labels: false, show_orientation_labels: false }],
+    });
+    await identityService.save(ME, input({ orientation_labels: [], consent: undefined }));
+    expect(fake.table("user_identity")).toHaveLength(0);
   });
 
   it("ispat yazılamazsa etiket yazılmaz", async () => {
@@ -132,6 +154,30 @@ describe("identityService — hata günlüğü yalnız kod taşır", () => {
     expect(log).toHaveBeenCalledWith(`[identity] ${op} failed:`, "XX000");
     expect(JSON.stringify(log.mock.calls)).not.toContain(SIR);
     log.mockRestore();
+  });
+});
+
+describe("identityService.visibleForSafe — süs arama akışı bozmaz", () => {
+  const SIR = "gizli-etiket-degeri";
+
+  it("hata: boş Map döner, atmaz; günlükte yalnız kod", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const { identityService } = await setup({}, {
+      failOn: [{ table: "user_identity", op: "select", error: { code: "XX000", message: `leaks ${SIR}` } }],
+    });
+    const map = await identityService.visibleForSafe([ME]);
+    expect(map.size).toBe(0);
+    expect(log).toHaveBeenCalledWith("[identity] visibleFor failed:", "XX000"); // kaynak hata (DB kodu)
+    expect(log).toHaveBeenCalledWith("[identity] visible lookup failed:", "SERVER_ERROR"); // sarmal (AppError kodu)
+    expect(JSON.stringify(log.mock.calls)).not.toContain(SIR);
+    log.mockRestore();
+  });
+
+  it("başarı: visibleFor ile aynı sonuç", async () => {
+    const { identityService } = await setup({
+      user_identity: [{ user_id: ME, gender_labels: [], orientation_labels: ["gay"], show_gender_labels: false, show_orientation_labels: true }],
+    });
+    expect((await identityService.visibleForSafe([ME])).get(ME)).toEqual({ orientation_labels: ["gay"] });
   });
 });
 

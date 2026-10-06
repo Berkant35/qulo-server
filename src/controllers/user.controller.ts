@@ -53,7 +53,7 @@ export async function setPrefConsentHandler(req: Request, res: Response, next: N
   }
 }
 
-export async function getIdentityHandler(req: Request, res: Response, next: NextFunction) {
+export async function getIdentityHandler(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     res.json(await identityService.getMine(req.user!.userId));
   } catch (err) {
@@ -61,7 +61,7 @@ export async function getIdentityHandler(req: Request, res: Response, next: Next
   }
 }
 
-export async function saveIdentityHandler(req: Request, res: Response, next: NextFunction) {
+export async function saveIdentityHandler(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const result = await identityService.save(
       req.user!.userId,

@@ -7,6 +7,7 @@ import { NotificationService, type PushType } from "../services/notification.ser
 import { economyConfigService } from "../services/economy-config.service.js";
 import { economyConfigSchema, ECONOMY_BOUNDARIES } from "../types/economy-config.schema.js";
 import { supabase } from "../config/supabase.js";
+import { isUuid } from "../utils/validation.js";
 import { rewardsQueueService } from "../services/rewards-queue.service.js";
 import {
   pushTemplateParamsSchema,
@@ -463,8 +464,12 @@ class AdminController {
     }
   }
 
-  async updateUserGender(req: Request, res: Response) {
+  async updateUserGender(req: Request, res: Response): Promise<void> {
     const id = req.params.id as string;
+    if (!isUuid(id)) {
+      // Geçersiz id URL'ye yansıtılmaz.
+      return res.redirect(`/admin/users?error=${encodeURIComponent("Invalid user id")}`);
+    }
     try {
       const gender = String(req.body.gender ?? "");
       if (!["MAN", "WOMAN"].includes(gender)) {

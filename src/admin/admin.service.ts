@@ -887,13 +887,15 @@ class AdminService {
    * Kullanıcı tarafında complete-profile cinsiyet kilidi (GENDER_LOCKED) aynen kalır.
    */
   async updateGender(userId: string, gender: "MAN" | "WOMAN", adminEmail: string): Promise<void> {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("users")
       .update({ gender })
       .eq("id", userId)
-      .eq("is_deleted", false);
+      .eq("is_deleted", false)
+      .select("id");
 
     if (error) throw new Error(`gender update failed: ${error.message}`);
+    if (!data || data.length === 0) throw new Error("user not found or deleted");
 
     // İşlem logu — değer log'a yazılmaz.
     console.log(`[ADMIN] gender changed: user=${userId} by=${adminEmail}`);

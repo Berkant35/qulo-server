@@ -529,17 +529,8 @@ export class MatchingService {
       relationship_goal: s.candidate.relationship_goal,
     }));
 
-    // 11. Görünür kimlik/yönelim etiketleri — sayfadaki ≤10 kart için tek sorgu.
-    // Süs bilgi: arama düşerse discover etiketsiz kartlarla devam eder (değer/ayrıntı loglanmaz).
-    try {
-      const identities = await identityService.visibleFor(cards.map((c) => c.user_id));
-      for (const card of cards) {
-        const identity = identities.get(card.user_id);
-        if (identity) card.identity = identity;
-      }
-    } catch (err) {
-      console.error("[matching] identity lookup failed", (err as { code?: string }).code);
-    }
+    // 11. Görünür kimlik/yönelim etiketleri — sayfadaki ≤10 kart için tek sorgu (süs bilgi: düşerse etiketsiz).
+    await this.attachIdentities(cards);
 
     // empty_reason HAVUZUN neden bos oldugunu anlatir; sayfa sonuna gelmek
     // havuz sebebi degildir (has_more=false zaten onu soyluyor). Bu yuzden
@@ -621,6 +612,15 @@ export class MatchingService {
   /**
    * Undo the last swipe (delete the swipe record and return the card).
    */
+  /** Kartlara görünür kimlik etiketlerini ekler (yerinde). Arama düşerse kartlar etiketsiz kalır. */
+  private async attachIdentities(cards: ProfileCard[]): Promise<void> {
+    const identities = await identityService.visibleForSafe(cards.map((c) => c.user_id));
+    for (const card of cards) {
+      const identity = identities.get(card.user_id);
+      if (identity) card.identity = identity;
+    }
+  }
+
   async undoSwipe(userId: string, targetId: string): Promise<ProfileCard> {
     assertUuid(targetId, "targetId");
 
@@ -716,7 +716,7 @@ export class MatchingService {
       relationship_goal: user.relationship_goal,
     };
 
-    const identity = (await identityService.visibleFor([targetId])).get(targetId);
+    const identity = (await identityService.visibleForSafe([targetId])).get(targetId);
     return identity ? { ...card, identity } : card;
   }
 

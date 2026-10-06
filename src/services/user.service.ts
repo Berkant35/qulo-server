@@ -520,7 +520,7 @@ export class UserService {
       };
     }
 
-    const identity = (await identityService.visibleFor([targetId])).get(targetId);
+    const identity = (await identityService.visibleForSafe([targetId])).get(targetId);
 
     return {
       user_id: user.id,

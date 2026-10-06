@@ -18,9 +18,9 @@ async function setup() {
   return { updateGender, adminController };
 }
 
-const cagir = async (c: any, gender: unknown) => {
+const cagir = async (c: any, gender: unknown, id: string = U) => {
   const res = fakeRes();
-  await c.updateUserGender({ params: { id: U }, body: { gender }, session: { adminEmail: 'admin@qulo.test' } } as never, res);
+  await c.updateUserGender({ params: { id }, body: { gender }, session: { adminEmail: 'admin@qulo.test' } } as never, res);
   return res;
 };
 
@@ -39,5 +39,12 @@ describe('adminController.updateUserGender — allow-list', () => {
     const res = await cagir(adminController, value);
     expect(updateGender).toHaveBeenCalledWith(U, value, 'admin@qulo.test');
     expect(res.redirectedTo).toBe(`/admin/users/${U}?success=${encodeURIComponent('Gender updated')}`);
+  });
+
+  it.each(['abc', "1' or '1'='1", '../x', ''])('geçersiz :id %j reddedilir: genel hata, servis çağrılmaz, id URL\'ye yansımaz', async (badId) => {
+    const { updateGender, adminController } = await setup();
+    const res = await cagir(adminController, 'MAN', badId);
+    expect(res.redirectedTo).toBe(`/admin/users?error=${encodeURIComponent('Invalid user id')}`);
+    expect(updateGender).not.toHaveBeenCalled();
   });
 });

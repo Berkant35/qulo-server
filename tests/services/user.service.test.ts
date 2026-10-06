@@ -466,6 +466,17 @@ describe('userService.getPublicProfile — görünür etiketler', () => {
     expect(profile).not.toHaveProperty('gender_pref');
   });
 
+  it('etiket sorgusu patlarsa profil yine döner (identity olmadan)', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { userService } = await setup({
+      users: [user(ME), user(HER)],
+      user_identity: [{ user_id: HER, gender_labels: ['non_binary'], orientation_labels: [], show_gender_labels: true, show_orientation_labels: false }],
+    }, { failOn: [{ table: 'user_identity', op: 'select', error: { code: 'XX000', message: 'non_binary leaks' } }] });
+    const profile = await userService.getPublicProfile(ME, HER) as Record<string, unknown>;
+    expect(profile).toMatchObject({ user_id: HER, name: 'Ada' });
+    expect(profile).not.toHaveProperty('identity');
+  });
+
   it('etiket yoksa identity alanı yok', async () => {
     const { userService } = await setup({ users: [user(ME), user(HER)], user_identity: [] });
     expect(await userService.getPublicProfile(ME, HER)).not.toHaveProperty('identity');
@@ -481,5 +492,16 @@ describe('userService.deleteAccount — etiketler silinir (KVKK)', () => {
     await userService.deleteAccount(ME);
     expect(fake.table('user_identity')).toHaveLength(0);
     expect(fake.table('users')[0].is_deleted).toBe(true);
+  });
+
+  it('etiket silme düşerse deleteAccount reddeder ve hesap soft-delete EDİLMEZ (KVKK: özel nitelikli veri önce)', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { fake, userService } = await setup({
+      users: [user(ME)], refresh_tokens: [],
+      user_identity: [{ user_id: ME, gender_labels: [], orientation_labels: ['gay'], show_gender_labels: false, show_orientation_labels: true }],
+    }, { failOn: [{ table: 'user_identity', op: 'delete', error: { code: 'XX000', message: 'boom' } }] });
+    await expect(userService.deleteAccount(ME)).rejects.toMatchObject({ code: 'SERVER_ERROR' });
+    expect(fake.table('users')[0].is_deleted).toBe(false);
+    expect(fake.table('user_identity')).toHaveLength(1);
   });
 });

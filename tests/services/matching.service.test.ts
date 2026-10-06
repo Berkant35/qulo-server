@@ -874,11 +874,14 @@ describe("discover — seed profiller en sonda", () => {
     // 12 gercek + 3 seed: sayfa 1 = 10 gercek, sayfa 2 = 2 gercek + 3 seed.
     const gercekler = Array.from({ length: 12 }, (_, i) => uid(200 + i));
     const seedler = Array.from({ length: 3 }, (_, i) => uid(300 + i));
+    // Tek sabit zaman damgasi: satir basina `new Date()` ms farki yaratir, esit seed'lerin
+    // recency skoru ayrisir ve siralari makine yukunde degisirdi (test zamana bagliydi).
+    const simdi = new Date().toISOString();
     const service = await loadService({
       users: [
         viewerRow(),
-        ...seedler.map((id) => candidateRow(id, 1, { is_seed_profile: true })),
-        ...gercekler.map((id, i) => candidateRow(id, 100 + i, { is_seed_profile: false })),
+        ...seedler.map((id) => candidateRow(id, 1, { is_seed_profile: true, last_seen_at: simdi })),
+        ...gercekler.map((id, i) => candidateRow(id, 100 + i, { is_seed_profile: false, last_seen_at: simdi })),
       ],
       swipes: [],
       matches: [],
@@ -1188,7 +1191,7 @@ describe("discover — görünür kimlik/yönelim etiketleri (spec 2026-10-06)",
     const cards = (await service.discover(VIEWER_ID, 1)).cards;
     expect(cards).toHaveLength(3);
     for (const c of cards) expect(c).not.toHaveProperty("identity");
-    expect(log.mock.calls.some((c) => String(c[0]).includes("[matching] identity lookup failed"))).toBe(true);
+    expect(log.mock.calls.some((c) => String(c[0]).includes("[identity] visible lookup failed"))).toBe(true);
     expect(JSON.stringify(log.mock.calls)).not.toMatch(/bisexual|lesbian/);
   });
 
@@ -1225,6 +1228,19 @@ describe("undoSwipe — görünür kimlik/yönelim etiketleri", () => {
     const service = await loadService(tablolar());
     const card = await service.undoSwipe(VIEWER_ID, HIDDEN);
     expect(card).not.toHaveProperty("identity");
+  });
+
+  it("etiket sorgusu patlarsa undo yine kartı döner (identity olmadan), swipe silinir", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const service = await loadService(tablolar(), {
+      failOn: [{ table: "user_identity", op: "select", error: { code: "XX000", message: "genderfluid leaks" } }],
+    });
+    const card = await service.undoSwipe(VIEWER_ID, SHOWN);
+    expect(card).toMatchObject({ user_id: SHOWN });
+    expect(card).not.toHaveProperty("identity");
+    expect(sonFake.table("swipes").some((s) => s.target_id === SHOWN)).toBe(false);
+    expect(JSON.stringify(log.mock.calls)).not.toMatch(/genderfluid/);
+    log.mockRestore();
   });
 });
 

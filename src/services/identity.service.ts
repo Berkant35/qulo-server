@@ -52,6 +52,16 @@ class IdentityService {
     }
     if (input.consent !== true) throw Errors.IDENTITY_CONSENT_REQUIRED();
 
+    // authMiddleware is_deleted bakmaz: hesap silindikten sonra süren jeton özel nitelikli veriyi
+    // geri yazamasın. Silme yolu (boş listeler) yukarıda, bu kontrolden önce — serbest.
+    const { data: owner, error: ownerError } = await supabase
+      .from("users").select("id").eq("id", userId).eq("is_deleted", false).maybeSingle();
+    if (ownerError) {
+      console.error("[identity] owner check failed:", ownerError.code);
+      throw Errors.SERVER_ERROR();
+    }
+    if (!owner) throw Errors.USER_NOT_FOUND();
+
     // İspat önce: kayıt düşerse etiket yazılmaz (rızasız işleme olmasın).
     await consentService.recordConsent({
       userId, consentType: "identity_labels", version: input.version ?? IDENTITY_CONSENT_VERSION,
@@ -86,6 +96,19 @@ class IdentityService {
     if (error) {
       console.error("[identity] removeFor failed:", error.code);
       throw Errors.SERVER_ERROR();
+    }
+  }
+
+  /**
+   * Süs bilgi için hata-yutan sarmal (Discover, undo, profil detayı): arama düşerse akış etiketsiz
+   * devam eder. Günlüğe yalnız hata kodu (değer asla).
+   */
+  async visibleForSafe(userIds: string[]): Promise<Map<string, VisibleIdentity>> {
+    try {
+      return await this.visibleFor(userIds);
+    } catch (err) {
+      console.error("[identity] visible lookup failed:", (err as { code?: string }).code);
+      return new Map();
     }
   }
 

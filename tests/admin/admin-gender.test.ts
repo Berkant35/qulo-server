@@ -22,9 +22,24 @@ describe('adminService.updateGender — destek talebiyle cinsiyet değişikliği
     log.mockRestore();
   });
 
-  it('silinmiş kullanıcıya dokunmaz', async () => {
+  it('silinmiş kullanıcıya dokunmaz ve hata verir (sessiz başarı yok)', async () => {
     const { fake, adminService } = await setup({ gender: 'MAN', is_deleted: true });
-    await adminService.updateGender(U, 'WOMAN', 'admin@qulo.test');
+    await expect(adminService.updateGender(U, 'WOMAN', 'admin@qulo.test')).rejects.toThrow('user not found or deleted');
+    expect(fake.table('users')[0].gender).toBe('MAN');
+  });
+
+  it('bilinmeyen id: hata', async () => {
+    const { adminService } = await setup({ gender: 'MAN' });
+    await expect(adminService.updateGender('99999999-9999-4999-8999-999999999999', 'WOMAN', 'admin@qulo.test'))
+      .rejects.toThrow('user not found or deleted');
+  });
+
+  it('supabase hatası: "gender update failed" ile reddeder', async () => {
+    const fake = createFakeSupabase({ users: [{ id: U, is_deleted: false, gender: 'MAN' }] },
+      { failOn: [{ table: 'users', op: 'update', error: { code: 'XX000', message: 'boom' } }] });
+    vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
+    const { adminService } = await import('../../src/admin/admin.service.js');
+    await expect(adminService.updateGender(U, 'WOMAN', 'admin@qulo.test')).rejects.toThrow('gender update failed');
     expect(fake.table('users')[0].gender).toBe('MAN');
   });
 });

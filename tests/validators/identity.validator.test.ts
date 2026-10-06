@@ -31,4 +31,16 @@ describe("identitySchema", () => {
   it("show_* boolean zorunlu", () => {
     expect(identitySchema.safeParse({ gender_labels: [], orientation_labels: [] }).success).toBe(false);
   });
+  it.each(["show_gender_labels", "show_orientation_labels"])("%s tek başına eksikse reddedilir", (key) => {
+    const { [key as keyof typeof base]: _omit, ...rest } = base;
+    expect(identitySchema.safeParse(rest).success).toBe(false);
+  });
+  it.each(["show_gender_labels", "show_orientation_labels"])("%s boolean değilse reddedilir", (key) => {
+    for (const bad of ["true", 1, null]) {
+      expect(identitySchema.safeParse({ ...base, [key]: bad }).success).toBe(false);
+    }
+  });
+  it('consent: "yes" (boolean değil) reddedilir', () => {
+    expect(identitySchema.safeParse({ ...base, orientation_labels: ["gay"], consent: "yes" }).success).toBe(false);
+  });
 });
