@@ -36,12 +36,16 @@ class IdentityService {
       .select(STATE_COLUMNS)
       .eq("user_id", userId)
       .maybeSingle();
-    if (error) throw Errors.SERVER_ERROR();
+    if (error) {
+      console.error("[identity] getMine failed:", error.code);
+      throw Errors.SERVER_ERROR();
+    }
     return (data as IdentityState | null) ?? { ...EMPTY };
   }
 
   async save(userId: string, input: IdentityInput, client: ClientMeta = {}): Promise<IdentityState> {
-    // İki liste boş = etiketleri sil = rızayı geri al (satır kalmaz, görünürlük anlamsız).
+    // İki liste boş = etiketleri sil = rızayı geri al: satır silinir (işleme durur, görünürlük anlamsız);
+    // user_consents'teki verilmiş-rıza kaydı KVKK ispatı olarak kalır (defter yalnız-ekleme, grant-only).
     if (input.gender_labels.length === 0 && input.orientation_labels.length === 0) {
       await this.removeFor(userId);
       return { ...EMPTY };
@@ -69,14 +73,20 @@ class IdentityService {
       )
       .select(STATE_COLUMNS)
       .single();
-    if (error || !data) throw Errors.SERVER_ERROR();
+    if (error || !data) {
+      console.error("[identity] save failed:", error?.code);
+      throw Errors.SERVER_ERROR();
+    }
     return data as IdentityState;
   }
 
   /** Hesap silme ve "etiketlerimi sil" — satırı kaldırır. */
   async removeFor(userId: string): Promise<void> {
     const { error } = await supabase.from("user_identity").delete().eq("user_id", userId);
-    if (error) throw Errors.SERVER_ERROR();
+    if (error) {
+      console.error("[identity] removeFor failed:", error.code);
+      throw Errors.SERVER_ERROR();
+    }
   }
 
   /** Discover / profil detayı: yalnız `show_*` true ve dolu gruplar. `.in()` ≤ 100 id. */
@@ -89,7 +99,10 @@ class IdentityService {
         .select(`user_id, ${STATE_COLUMNS}`)
         .in("user_id", part)
         .or("show_gender_labels.eq.true,show_orientation_labels.eq.true");
-      if (error) throw Errors.SERVER_ERROR();
+      if (error) {
+        console.error("[identity] visibleFor failed:", error.code);
+        throw Errors.SERVER_ERROR();
+      }
       for (const row of (data ?? []) as Array<IdentityState & { user_id: string }>) {
         const visible: VisibleIdentity = {};
         if (row.show_gender_labels && row.gender_labels.length > 0) visible.gender_labels = row.gender_labels;

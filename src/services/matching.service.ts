@@ -530,10 +530,15 @@ export class MatchingService {
     }));
 
     // 11. Görünür kimlik/yönelim etiketleri — sayfadaki ≤10 kart için tek sorgu.
-    const identities = await identityService.visibleFor(cards.map((c) => c.user_id));
-    for (const card of cards) {
-      const identity = identities.get(card.user_id);
-      if (identity) card.identity = identity;
+    // Süs bilgi: arama düşerse discover etiketsiz kartlarla devam eder (değer/ayrıntı loglanmaz).
+    try {
+      const identities = await identityService.visibleFor(cards.map((c) => c.user_id));
+      for (const card of cards) {
+        const identity = identities.get(card.user_id);
+        if (identity) card.identity = identity;
+      }
+    } catch (err) {
+      console.error("[matching] identity lookup failed", (err as { code?: string }).code);
     }
 
     // empty_reason HAVUZUN neden bos oldugunu anlatir; sayfa sonuna gelmek

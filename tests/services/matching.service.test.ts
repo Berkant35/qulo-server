@@ -1180,6 +1180,18 @@ describe("discover — görünür kimlik/yönelim etiketleri (spec 2026-10-06)",
     expect(byId.get(NONE)).not.toHaveProperty("identity");
   });
 
+  it("etiket sorgusu patlarsa discover yine kartları döner (identity alanları olmadan), değer loglanmaz", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const service = await loadService(tablolar(), {
+      failOn: [{ table: "user_identity", op: "select", error: { code: "XX000", message: "bisexual leaks" } }],
+    });
+    const cards = (await service.discover(VIEWER_ID, 1)).cards;
+    expect(cards).toHaveLength(3);
+    for (const c of cards) expect(c).not.toHaveProperty("identity");
+    expect(log.mock.calls.some((c) => String(c[0]).includes("[matching] identity lookup failed"))).toBe(true);
+    expect(JSON.stringify(log.mock.calls)).not.toMatch(/bisexual|lesbian/);
+  });
+
   it("kartta tercih alanı yok", async () => {
     const service = await loadService(tablolar());
     const cards = (await service.discover(VIEWER_ID, 1)).cards;

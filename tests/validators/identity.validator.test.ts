@@ -19,6 +19,15 @@ describe("identitySchema", () => {
   it("tekrar reddedilir", () => {
     expect(identitySchema.safeParse({ ...base, orientation_labels: ["gay", "gay"] }).success).toBe(false);
   });
+  it("bilinmeyen rıza sürümü reddedilir (ispat defterine keyfi metin yazılmaz)", () => {
+    const withVersion = (version: string) => identitySchema.safeParse({ ...base, orientation_labels: ["gay"], consent: true, version });
+    expect(withVersion("2026-10-v2").success).toBe(false);
+    expect(withVersion("whatever").success).toBe(false);
+    expect(withVersion("2026-10-v1").success).toBe(true);
+  });
+  it("sürüm gönderilmeyebilir (sunucu varsayılanı kullanır)", () => {
+    expect(identitySchema.safeParse({ ...base, orientation_labels: ["gay"], consent: true }).success).toBe(true);
+  });
   it("show_* boolean zorunlu", () => {
     expect(identitySchema.safeParse({ gender_labels: [], orientation_labels: [] }).success).toBe(false);
   });

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { GENDER_LABELS, ORIENTATION_LABELS, MAX_LABELS_PER_GROUP } from "../constants/identity-labels.js";
+import { GENDER_LABELS, ORIENTATION_LABELS, MAX_LABELS_PER_GROUP, IDENTITY_CONSENT_VERSIONS } from "../constants/identity-labels.js";
 
 const unique = (labels: string[]) => new Set(labels).size === labels.length;
 
@@ -10,7 +10,7 @@ export const identitySchema = z.object({
   show_gender_labels: z.boolean(),
   show_orientation_labels: z.boolean(),
   consent: z.boolean().optional(),
-  version: z.string().trim().min(1).max(20).optional(),
+  version: z.enum(IDENTITY_CONSENT_VERSIONS).optional(),
 });
 
 export type IdentityInput = z.infer<typeof identitySchema>;

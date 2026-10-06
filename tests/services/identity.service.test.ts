@@ -94,6 +94,47 @@ describe("identityService.visibleFor", () => {
   });
 });
 
+describe("identityService.visibleFor — 100'lük parçalar", () => {
+  const uuid = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
+
+  it("101 id: iki sorgu, sonuçlar birleşir (her `.in()` ≤100 id)", async () => {
+    const ids = Array.from({ length: 101 }, (_, i) => uuid(i + 1));
+    const row = (id: string) => ({ user_id: id, gender_labels: [], orientation_labels: ["gay"], show_gender_labels: false, show_orientation_labels: true });
+    const { fake, identityService } = await setup({ user_identity: [row(ids[0]), row(ids[100])] });
+    const map = await identityService.visibleFor(ids);
+    expect(fake.queries.filter((q) => q.table === "user_identity")).toHaveLength(2);
+    // İlk parçadan (id #1) ve ikinci parçadan (id #101, parça sınırının ötesi) satır geldi.
+    expect([...map.keys()].sort()).toEqual([ids[0], ids[100]].sort());
+  });
+
+  it("100 id: tek sorgu", async () => {
+    const ids = Array.from({ length: 100 }, (_, i) => uuid(i + 1));
+    const { fake, identityService } = await setup();
+    await identityService.visibleFor(ids);
+    expect(fake.queries.filter((q) => q.table === "user_identity")).toHaveLength(1);
+  });
+});
+
+describe("identityService — hata günlüğü yalnız kod taşır", () => {
+  const SIR = "gizli-etiket-degeri";
+  const error = { code: "XX000", message: `leaks ${SIR}` };
+
+  it.each([
+    ["getMine", "select", (s: any) => s.getMine(ME)],
+    ["removeFor", "delete", (s: any) => s.removeFor(ME)],
+    ["visibleFor", "select", (s: any) => s.visibleFor([ME])],
+    ["save", "insert", (s: any) => s.save(ME, input({ orientation_labels: ["gay"] }))],
+  ] as const)("%s: SERVER_ERROR, günlükte yalnız hata kodu (%s hatası)", async (op, failOp, run) => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    // save: ispat (user_consents.insert) geçer, user_identity upsert (insert) patlar.
+    const { identityService } = await setup({}, { failOn: [{ table: "user_identity", op: failOp, error }] });
+    await expect(run(identityService)).rejects.toMatchObject({ code: "SERVER_ERROR" });
+    expect(log).toHaveBeenCalledWith(`[identity] ${op} failed:`, "XX000");
+    expect(JSON.stringify(log.mock.calls)).not.toContain(SIR);
+    log.mockRestore();
+  });
+});
+
 describe("identityService.removeFor", () => {
   it("kullanıcının satırını siler", async () => {
     const { fake, identityService } = await setup({

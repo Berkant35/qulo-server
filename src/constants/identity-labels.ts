@@ -17,3 +17,6 @@ export const MAX_LABELS_PER_GROUP = 3;
 
 /** Etiket açık rızası metin sürümü (mobil `IdentityConsent.version`). */
 export const IDENTITY_CONSENT_VERSION = "2026-10-v1";
+
+/** Kabul edilen rıza sürümleri (ispat defterine keyfi metin yazılmasın). Yeni metin sürümü: buraya ekle. */
+export const IDENTITY_CONSENT_VERSIONS = [IDENTITY_CONSENT_VERSION] as const;
