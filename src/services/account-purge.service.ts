@@ -88,6 +88,7 @@ class AccountPurgeService {
       { table: "referrals", column: "referee_id" },
       { table: "user_languages", column: "user_id" },
       { table: "user_details", column: "user_id" },
+      { table: "user_identity", column: "user_id" },
       { table: "user_consents", column: "user_id" },
       { table: "refresh_tokens", column: "user_id" },
     ];

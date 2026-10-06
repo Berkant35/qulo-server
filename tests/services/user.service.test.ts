@@ -454,3 +454,32 @@ describe('userService.completeProfile — cinsiyet yalnız ilk tamamlamada yazı
     await expect(userService.completeProfile(ME, { birthday: BIRTHDAY, gender: 'MAN' })).rejects.toMatchObject({ code: 'USER_NOT_FOUND' });
   });
 });
+
+describe('userService.getPublicProfile — görünür etiketler', () => {
+  it('görünür grup döner, gizli grup ve gender_pref dönmez', async () => {
+    const { userService } = await setup({
+      users: [user(ME), user(HER, { gender_pref: 'WOMAN' })],
+      user_identity: [{ user_id: HER, gender_labels: ['non_binary'], orientation_labels: ['queer'], show_gender_labels: true, show_orientation_labels: false }],
+    });
+    const profile = await userService.getPublicProfile(ME, HER) as Record<string, unknown>;
+    expect(profile.identity).toEqual({ gender_labels: ['non_binary'] });
+    expect(profile).not.toHaveProperty('gender_pref');
+  });
+
+  it('etiket yoksa identity alanı yok', async () => {
+    const { userService } = await setup({ users: [user(ME), user(HER)], user_identity: [] });
+    expect(await userService.getPublicProfile(ME, HER)).not.toHaveProperty('identity');
+  });
+});
+
+describe('userService.deleteAccount — etiketler silinir (KVKK)', () => {
+  it('soft-delete anında user_identity satırı silinir', async () => {
+    const { fake, userService } = await setup({
+      users: [user(ME)], refresh_tokens: [],
+      user_identity: [{ user_id: ME, gender_labels: [], orientation_labels: ['gay'], show_gender_labels: false, show_orientation_labels: true }],
+    });
+    await userService.deleteAccount(ME);
+    expect(fake.table('user_identity')).toHaveLength(0);
+    expect(fake.table('users')[0].is_deleted).toBe(true);
+  });
+});

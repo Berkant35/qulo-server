@@ -15,6 +15,7 @@ import { scoringService } from "./scoring.service.js";
 import { subscriptionService } from "./subscription.service.js";
 import { userLanguageService } from "./user-language.service.js";
 import { pairCompatibilityService } from "./pair-compatibility.service.js";
+import { identityService, type VisibleIdentity } from "./identity.service.js";
 
 const PAGE_SIZE = 10;
 /** Tek seferde cekilen aday tavani. Havuz ~72; 500 rahat bir ust sinir. */
@@ -85,6 +86,8 @@ interface ProfileCard {
   is_boosted: boolean;
   question_info: QuestionInfo;
   relationship_goal: string | null;
+  /** Yalnız sahibinin görünür yaptığı etiketler (spec 2026-10-06); yoksa alan yok. */
+  identity?: VisibleIdentity;
 }
 
 export class MatchingService {
@@ -526,6 +529,13 @@ export class MatchingService {
       relationship_goal: s.candidate.relationship_goal,
     }));
 
+    // 11. Görünür kimlik/yönelim etiketleri — sayfadaki ≤10 kart için tek sorgu.
+    const identities = await identityService.visibleFor(cards.map((c) => c.user_id));
+    for (const card of cards) {
+      const identity = identities.get(card.user_id);
+      if (identity) card.identity = identity;
+    }
+
     // empty_reason HAVUZUN neden bos oldugunu anlatir; sayfa sonuna gelmek
     // havuz sebebi degildir (has_more=false zaten onu soyluyor). Bu yuzden
     // `scored` doluyken sebep gonderilmez — aksi halde page=3 istegi, dil
@@ -680,7 +690,7 @@ export class MatchingService {
     const now = new Date();
     const isBoostActive = user.boost_until != null && new Date(user.boost_until) > now;
 
-    return {
+    const card: ProfileCard = {
       user_id: user.id,
       name: user.name,
       age: user.age,
@@ -695,6 +705,9 @@ export class MatchingService {
       question_info: { count: userQuestions.length, categories, avg_difficulty: difficulty, languages },
       relationship_goal: user.relationship_goal,
     };
+
+    const identity = (await identityService.visibleFor([targetId])).get(targetId);
+    return identity ? { ...card, identity } : card;
   }
 
   /**

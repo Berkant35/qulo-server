@@ -8,6 +8,7 @@ import { economyConfigService } from "./economy-config.service.js";
 import { userLanguageService } from "./user-language.service.js";
 import { moderateUploadedPhoto } from "./photo-moderation.service.js";
 import { rainbowAccessService } from "./rainbow-access.service.js";
+import { identityService } from "./identity.service.js";
 import { Errors } from "../utils/errors.js";
 import { assertUuid } from "../utils/validation.js";
 import { haversineDistance } from "../utils/math.js";
@@ -286,6 +287,9 @@ export class UserService {
       }
     }
 
+    // Özel nitelikli etiketler hesap silinince hemen gider (soft-delete'i beklemez).
+    await identityService.removeFor(userId);
+
     const { error } = await supabase
       .from("users")
       .update({ is_deleted: true, is_online: false })
@@ -516,6 +520,8 @@ export class UserService {
       };
     }
 
+    const identity = (await identityService.visibleFor([targetId])).get(targetId);
+
     return {
       user_id: user.id,
       name: user.name,
@@ -532,6 +538,7 @@ export class UserService {
       is_boosted: user.boost_until ? new Date(user.boost_until) > new Date() : false,
       details: details ?? null,
       question_info: questionInfo,
+      ...(identity ? { identity } : {}),
     };
   }
 

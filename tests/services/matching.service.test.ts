@@ -1157,3 +1157,59 @@ describe("swipe — karşılıklı eşleşme guard'ı", () => {
     expect(sonFake.table("swipes")).toHaveLength(1);
   });
 });
+
+describe("discover — görünür kimlik/yönelim etiketleri (spec 2026-10-06)", () => {
+  const SHOWN = uid(80), HIDDEN = uid(81), NONE = uid(82);
+  const tablolar = (): Tables => ({
+    users: [viewerRow(), candidateRow(SHOWN, 1), candidateRow(HIDDEN, 2), candidateRow(NONE, 3)],
+    swipes: [], matches: [], questions: questionsFor([SHOWN, HIDDEN, NONE]),
+    user_identity: [
+      { user_id: SHOWN, gender_labels: ["trans_woman"], orientation_labels: ["bisexual"], show_gender_labels: false, show_orientation_labels: true },
+      { user_id: HIDDEN, gender_labels: [], orientation_labels: ["lesbian"], show_gender_labels: false, show_orientation_labels: false },
+    ],
+  });
+
+  it("yalnız görünür grup karta eklenir; gizli/etiketsiz kartta identity alanı yok", async () => {
+    const service = await loadService(tablolar());
+    const cards = (await service.discover(VIEWER_ID, 1)).cards;
+    const byId = new Map(cards.map((c) => [c.user_id, c as unknown as Record<string, unknown>]));
+    expect(byId.get(SHOWN)?.identity).toEqual({ orientation_labels: ["bisexual"] });
+    expect(byId.get(HIDDEN)).not.toHaveProperty("identity");
+    expect(byId.get(NONE)).not.toHaveProperty("identity");
+  });
+
+  it("kartta tercih alanı yok", async () => {
+    const service = await loadService(tablolar());
+    const cards = (await service.discover(VIEWER_ID, 1)).cards;
+    expect(cards).toHaveLength(3);
+    for (const c of cards) expect(c).not.toHaveProperty("gender_pref");
+  });
+});
+
+describe("undoSwipe — görünür kimlik/yönelim etiketleri", () => {
+  const SHOWN = uid(83), HIDDEN = uid(84);
+  const tablolar = (): Tables => ({
+    users: [viewerRow(), candidateRow(SHOWN, 1), candidateRow(HIDDEN, 2)],
+    swipes: [
+      { id: "sw-a", swiper_id: VIEWER_ID, target_id: SHOWN, action: "REJECT", created_at: new Date().toISOString() },
+      { id: "sw-b", swiper_id: VIEWER_ID, target_id: HIDDEN, action: "REJECT", created_at: new Date().toISOString() },
+    ],
+    matches: [], questions: questionsFor([SHOWN, HIDDEN]),
+    user_identity: [
+      { user_id: SHOWN, gender_labels: ["genderfluid"], orientation_labels: [], show_gender_labels: true, show_orientation_labels: false },
+      { user_id: HIDDEN, gender_labels: ["agender"], orientation_labels: ["asexual"], show_gender_labels: false, show_orientation_labels: false },
+    ],
+  });
+
+  it("görünür etiket undo kartında döner", async () => {
+    const service = await loadService(tablolar());
+    const card = await service.undoSwipe(VIEWER_ID, SHOWN) as unknown as Record<string, unknown>;
+    expect(card.identity).toEqual({ gender_labels: ["genderfluid"] });
+  });
+
+  it("gizli etiket undo kartında dönmez", async () => {
+    const service = await loadService(tablolar());
+    const card = await service.undoSwipe(VIEWER_ID, HIDDEN);
+    expect(card).not.toHaveProperty("identity");
+  });
+});
