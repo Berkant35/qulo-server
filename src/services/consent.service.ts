@@ -1,7 +1,7 @@
 import { supabase } from "../config/supabase.js";
 import type { ClientMeta, ClientPlatform } from "../utils/client-meta.js";
 
-type ConsentType = "terms_of_service" | "privacy_policy" | "kvkk_explicit" | "match_preference";
+type ConsentType = "terms_of_service" | "privacy_policy" | "kvkk_explicit" | "match_preference" | "identity_labels";
 
 interface RecordConsentInput {
   userId: string;

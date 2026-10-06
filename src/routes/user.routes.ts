@@ -19,11 +19,14 @@ import {
   getRetentionEligibilityHandler,
   claimRetentionHandler,
 } from "../controllers/retention.controller.js";
+import { identitySchema } from "../validators/identity.validator.js";
 import { setUserLanguagesSchema } from "../validators/user-language.validator.js";
 import {
   getMeHandler,
   updateProfileHandler,
   setPrefConsentHandler,
+  getIdentityHandler,
+  saveIdentityHandler,
   updateDetailsHandler,
   updateLocationHandler,
   updatePushTokenHandler,
@@ -66,6 +69,8 @@ router.post("/me/complete-profile", validate(completeProfileSchema), completePro
 router.get("/me", getMeHandler);
 router.patch("/me", validate(updateProfileSchema), updateProfileHandler);
 router.put("/me/pref-consent", validate(prefConsentSchema), setPrefConsentHandler);
+router.get("/me/identity", getIdentityHandler);
+router.put("/me/identity", validate(identitySchema), saveIdentityHandler);
 router.patch("/me/details", validate(updateDetailsSchema), updateDetailsHandler);
 router.patch("/me/location", validate(updateLocationSchema), updateLocationHandler);
 router.patch("/me/push-token", validate(updatePushTokenSchema), updatePushTokenHandler);

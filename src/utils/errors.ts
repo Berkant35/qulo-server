@@ -107,6 +107,10 @@ export const Errors = {
   GENDER_LOCKED: () =>
     new AppError("GENDER_LOCKED", 409, "Gender can only be changed via support"),
 
+  /** Etiketler özel nitelikli veri — açık rıza kutusu işaretlenmeden saklanmaz (spec 2026-10-06 §3). */
+  IDENTITY_CONSENT_REQUIRED: () =>
+    new AppError("IDENTITY_CONSENT_REQUIRED", 400, "Explicit consent is required to save identity labels"),
+
   GENDER_PREF_REQUIRED: () =>
     new AppError("GENDER_PREF_REQUIRED", 400, "gender_pref is required with first consent"),
 

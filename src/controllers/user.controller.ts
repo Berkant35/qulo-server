@@ -5,6 +5,8 @@ import { userLanguageService } from "../services/user-language.service.js";
 import { userInterestsService } from "../services/user-interests.service.js";
 import { questionService } from "../services/question.service.js";
 import { prefConsentService } from "../services/pref-consent.service.js";
+import { identityService } from "../services/identity.service.js";
+import type { IdentityInput } from "../validators/identity.validator.js";
 import { clientMetaFromHeaders } from "../utils/client-meta.js";
 import type {
   UpdateProfileInput,
@@ -43,6 +45,27 @@ export async function setPrefConsentHandler(req: Request, res: Response, next: N
     const result = await prefConsentService.setConsent(
       req.user!.userId,
       req.body as PrefConsentInput,
+      clientMetaFromHeaders(req.headers),
+    );
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getIdentityHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    res.json(await identityService.getMine(req.user!.userId));
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function saveIdentityHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const result = await identityService.save(
+      req.user!.userId,
+      req.body as IdentityInput,
       clientMetaFromHeaders(req.headers),
     );
     res.json(result);
