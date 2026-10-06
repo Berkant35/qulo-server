@@ -623,6 +623,20 @@ export class MatchingService {
     // quiz'i baslatilamayan bir kart icin undo hakki harcatirdi (quiz-retry).
     await quizRetryService.assertNotLocked(userId, targetId);
 
+    // Engelli / silinmis hedefin karti (kimlik etiketleri dahil) donmez. Kontrol, swipe satiri
+    // silinmeden ve undo hakki dusmeden ONCE: reddedilen undo hicbir yan etki birakmaz.
+    if (await blockService.isBlocked(userId, targetId)) throw Errors.USER_NOT_FOUND();
+
+    // Fetch the target user's card data to return
+    const { data: user, error: userError } = await supabase
+      .from("users")
+      .select("id, name, age, city, bio, photos, lat, lng, profile_completion, boost_until, relationship_goal")
+      .eq("id", targetId)
+      .eq("is_deleted", false)
+      .maybeSingle();
+
+    if (userError || !user) throw Errors.USER_NOT_FOUND();
+
     // Check daily undo limit
     await subscriptionService.incrementDailyUndos(userId);
 
@@ -638,15 +652,6 @@ export class MatchingService {
       throw Errors.SERVER_ERROR();
     }
     if (count === 0) throw Errors.SESSION_NOT_FOUND();
-
-    // Fetch the target user's card data to return
-    const { data: user, error: userError } = await supabase
-      .from("users")
-      .select("id, name, age, city, bio, photos, lat, lng, profile_completion, boost_until, relationship_goal")
-      .eq("id", targetId)
-      .single();
-
-    if (userError || !user) throw Errors.USER_NOT_FOUND();
 
     // Get question info
     const { data: questions } = await supabase

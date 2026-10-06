@@ -89,6 +89,8 @@ async function loadService(
     retryDays?: number;
     incrementDailySwipes?: () => Promise<void>;
     incrementDailyUndos?: () => Promise<void>;
+    /** blockService.isBlocked sonucu (undoSwipe); varsayilan engel yok. */
+    blocked?: boolean;
   } = {},
 ) {
   vi.resetModules();
@@ -99,7 +101,7 @@ async function loadService(
   sonFake = fake;
   vi.doMock("../../src/config/supabase.js", () => ({ supabase: fake.client }));
   vi.doMock("../../src/services/block.service.js", () => ({
-    blockService: { getBlockedIds: async () => [], getBlockerIds: async () => [] },
+    blockService: { getBlockedIds: async () => [], getBlockerIds: async () => [], isBlocked: async () => opts.blocked ?? false },
   }));
   vi.doMock("../../src/services/user-language.service.js", () => ({
     userLanguageService: { getUserLanguages: async () => opts.userLanguages ?? ["tr"] },
@@ -1211,5 +1213,42 @@ describe("undoSwipe — görünür kimlik/yönelim etiketleri", () => {
     const service = await loadService(tablolar());
     const card = await service.undoSwipe(VIEWER_ID, HIDDEN);
     expect(card).not.toHaveProperty("identity");
+  });
+});
+
+describe("undoSwipe — engelli / silinmiş hedef (kimlik etiketi sızıntısı)", () => {
+  const TARGET_ID = uid(90);
+  const tablolar = (hedef: Record<string, unknown>): Tables => ({
+    users: [viewerRow(), hedef],
+    swipes: [{ id: "sw-x", swiper_id: VIEWER_ID, target_id: TARGET_ID, action: "REJECT", created_at: new Date().toISOString() }],
+    matches: [], questions: questionsFor([TARGET_ID]),
+    user_identity: [
+      { user_id: TARGET_ID, gender_labels: ["agender"], orientation_labels: [], show_gender_labels: true, show_orientation_labels: false },
+    ],
+  });
+
+  it("engelli hedef: USER_NOT_FOUND, swipe satırı yerinde, undo hakkı düşmez", async () => {
+    const undo = vi.fn(async () => undefined);
+    const service = await loadService(tablolar(candidateRow(TARGET_ID, 1)), { blocked: true, incrementDailyUndos: undo });
+    await expect(service.undoSwipe(VIEWER_ID, TARGET_ID)).rejects.toMatchObject({ code: "USER_NOT_FOUND" });
+    expect(sonFake.table("swipes")).toHaveLength(1);
+    expect(undo).not.toHaveBeenCalled();
+  });
+
+  it("silinmiş hedef: USER_NOT_FOUND, swipe satırı yerinde, undo hakkı düşmez", async () => {
+    const undo = vi.fn(async () => undefined);
+    const service = await loadService(tablolar(candidateRow(TARGET_ID, 1, { is_deleted: true })), { incrementDailyUndos: undo });
+    await expect(service.undoSwipe(VIEWER_ID, TARGET_ID)).rejects.toMatchObject({ code: "USER_NOT_FOUND" });
+    expect(sonFake.table("swipes")).toHaveLength(1);
+    expect(undo).not.toHaveBeenCalled();
+  });
+
+  it("normal hedef: kart döner, swipe silinir, undo hakkı bir kez düşer", async () => {
+    const undo = vi.fn(async () => undefined);
+    const service = await loadService(tablolar(candidateRow(TARGET_ID, 1)), { incrementDailyUndos: undo });
+    const card = await service.undoSwipe(VIEWER_ID, TARGET_ID);
+    expect(card.user_id).toBe(TARGET_ID);
+    expect(sonFake.table("swipes")).toHaveLength(0);
+    expect(undo).toHaveBeenCalledTimes(1);
   });
 });
