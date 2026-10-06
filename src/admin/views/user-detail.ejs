@@ -204,6 +204,20 @@
     </form>
     <p style="font-size:12px; color:#999; margin-top:6px;">Yalnız kullanıcının destek talebi üzerine. Kaydedince rıza sıfırlanır; kullanıcı uygulamayı açınca yeni tercihe onay verir ya da reddeder.</p>
   </div>
+
+  <div class="card">
+    <h3 style="margin-bottom: 12px;">Cinsiyet (destek talebi)</h3>
+    <form method="POST" action="/admin/users/<%= user.id %>/gender" style="display:flex; gap:8px; align-items:center;">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <select name="gender" required>
+        <option value="" disabled selected>— seç —</option>
+        <option value="WOMAN">Kadın</option>
+        <option value="MAN">Erkek</option>
+      </select>
+      <button type="submit" class="btn btn-primary btn-sm">Değiştir</button>
+    </form>
+    <p style="font-size:12px; color:#999; margin-top:6px;">Yalnız kullanıcının cinsiyet değişikliği talebi üzerine. Eşleşme kovası değişir; tercih ve etiketlere dokunulmaz.</p>
+  </div>
 </div>
 
 <% if (user.photos && user.photos.length > 0) { %>

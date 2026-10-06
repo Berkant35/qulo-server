@@ -463,6 +463,20 @@ class AdminController {
     }
   }
 
+  async updateUserGender(req: Request, res: Response) {
+    const id = req.params.id as string;
+    try {
+      const gender = String(req.body.gender ?? "");
+      if (!["MAN", "WOMAN"].includes(gender)) {
+        return res.redirect(`/admin/users/${id}?error=${encodeURIComponent("Invalid gender value")}`);
+      }
+      await adminService.updateGender(id, gender as "MAN" | "WOMAN", req.session.adminEmail!);
+      res.redirect(`/admin/users/${id}?success=${encodeURIComponent("Gender updated")}`);
+    } catch (err: any) {
+      res.redirect(`/admin/users/${id}?error=${encodeURIComponent(err.message)}`);
+    }
+  }
+
   // ── Ticket management ──────────────────────────────────────────
   async tickets(req: Request, res: Response) {
     try {

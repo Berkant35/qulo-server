@@ -881,6 +881,23 @@ class AdminService {
     // İşlem logu (KVKK 2018/10) — tercih DEĞERİ özel nitelikli veri, log'a yazılmaz.
     console.log(`[ADMIN] gender_pref changed: user=${userId} by=${adminEmail} (consent will be re-asked)`);
   }
+
+  /**
+   * Cinsiyet (eşleşme kovası) değişikliği — yalnız kullanıcının destek talebi üzerine (spec 2026-10-06 §4).
+   * Kullanıcı tarafında complete-profile cinsiyet kilidi (GENDER_LOCKED) aynen kalır.
+   */
+  async updateGender(userId: string, gender: "MAN" | "WOMAN", adminEmail: string): Promise<void> {
+    const { error } = await supabase
+      .from("users")
+      .update({ gender })
+      .eq("id", userId)
+      .eq("is_deleted", false);
+
+    if (error) throw new Error(`gender update failed: ${error.message}`);
+
+    // İşlem logu — değer log'a yazılmaz.
+    console.log(`[ADMIN] gender changed: user=${userId} by=${adminEmail}`);
+  }
 }
 
 export const adminService = new AdminService();
