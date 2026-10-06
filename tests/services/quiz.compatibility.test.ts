@@ -38,10 +38,10 @@ beforeEach(() => vi.resetModules());
 afterEach(() => vi.restoreAllMocks());
 
 describe('startSession — karşılıklı eşleşme guard\'ı', () => {
-  it('anahtar açık + uyumsuz (gey → hetero erkek): NOT_COMPATIBLE, oturum açılmaz', async () => {
+  it('anahtar açık + uyumsuz (gey → hetero erkek): USER_NOT_FOUND 404 (kehanet yok), oturum açılmaz', async () => {
     const { fake, quizService } = await setup('MAN', 'WOMAN', true);
     const err = await quizService.startSession(SOLVER, TARGET).catch((e) => e);
-    expect(err.code).toBe('NOT_COMPATIBLE');
+    expect(err).toMatchObject({ code: 'USER_NOT_FOUND', statusCode: 404 });
     expect(fake.table('quiz_sessions')).toHaveLength(0);
   });
 

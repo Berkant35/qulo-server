@@ -283,6 +283,7 @@ class AdminController {
       photo_moderation_enabled,
       discover_dormant_days,
       mutual_match_enabled, mutual_match_field,
+      served_gate_enabled, served_gate_field,
     } = req.body;
 
     const versionFields: Record<string, string> = { min_version_ios, min_version_android, latest_version_ios, latest_version_android };
@@ -308,6 +309,8 @@ class AdminController {
         // Karşılıklı eşleşme kill-switch (migration 075). Form alanı yalnız kolon varken render
         // edilir (gizli `mutual_match_field` işareti); işaret yoksa dokunulmaz.
         ...(mutual_match_field !== undefined ? { mutual_match_enabled: mutual_match_enabled === "on" } : {}),
+        // Gösterim kapısı (migration 077) — aynı gizli işaret deseni.
+        ...(served_gate_field !== undefined ? { served_gate_enabled: served_gate_enabled === "on" } : {}),
         ...(dormantDays !== undefined ? { discover_dormant_days: dormantDays } : {}),
         min_version_ios,
         min_version_android,

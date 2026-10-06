@@ -136,6 +136,21 @@
   </div>
   <% } %>
 
+  <% if (config && config.served_gate_enabled !== undefined && config.served_gate_enabled !== null) { %>
+  <!-- Gösterim kapısı (migration 077) -->
+  <div class="card">
+    <h3 style="margin-bottom: 16px;">Gösterim Kapısı</h3>
+    <div>
+      <input type="hidden" name="served_gate_field" value="1">
+      <label style="display:flex; align-items:center; gap:8px; font-size:14px; cursor:pointer;">
+        <input type="checkbox" name="served_gate_enabled" <%= config.served_gate_enabled ? 'checked' : '' %>>
+        <span>Beğeni ve quiz yalnız Discover'da gösterilmiş (ya da önceden etkileşilmiş) profillere açık</span>
+      </label>
+      <p style="font-size:12px; color:#999; margin-top:4px;">Açıkken son 30 günde Discover'da gösterilmemiş, beğenilmemiş, eşleşilmemiş ya da quiz'i çözülmemiş bir profile beğeni/quiz isteği "kullanıcı bulunamadı" döner (bilinen UUID ile tercih öğrenme açığı). Deploy'dan ~30 dk sonra aç: önceki Discover sayfalarının gösterim kaydı yok. Sorun olursa kapat — 60 sn içinde tüm sunucularda geçerli.</p>
+    </div>
+  </div>
+  <% } %>
+
   <div style="text-align: right;">
     <button type="submit" class="btn btn-primary" style="padding: 10px 32px; font-size: 15px;">Save Configuration</button>
   </div>

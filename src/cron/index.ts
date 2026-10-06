@@ -7,6 +7,7 @@ import { webQuizPurgeCron } from "./web-quiz.cron.js";
 import { seedReplyCron } from "./seed-reply.cron.js";
 import { seedPresenceCron } from "./seed-presence.cron.js";
 import { photoModerationCron } from "./photo-moderation.cron.js";
+import { discoverServedPurgeCron } from "./discover-served.cron.js";
 
 export interface CronJob {
   name: string;
@@ -17,7 +18,7 @@ export interface CronJob {
   stop(): void;
 }
 
-const jobs: CronJob[] = [presenceCron, analyticsAggregateCron, analyticsCleanupCron, campaignDispatchCron, notificationEngineCron, webQuizPurgeCron, seedReplyCron, seedPresenceCron, photoModerationCron];
+const jobs: CronJob[] = [presenceCron, analyticsAggregateCron, analyticsCleanupCron, campaignDispatchCron, notificationEngineCron, webQuizPurgeCron, seedReplyCron, seedPresenceCron, photoModerationCron, discoverServedPurgeCron];
 
 /**
  * Cron'lar yalniz uretim sunucusunda kendiliginden baslar. Yerel `npm run dev` ayni prod

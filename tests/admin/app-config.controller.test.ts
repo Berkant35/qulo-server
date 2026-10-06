@@ -90,3 +90,20 @@ describe('updateAppConfig — mutual_match_enabled (migration 075)', () => {
     expect(patch()).not.toHaveProperty('mutual_match_enabled');
   });
 });
+
+describe('updateAppConfig — served_gate_enabled (migration 077)', () => {
+  it('form alanı varken işaretliyse true yazar', async () => {
+    const { patch } = await setup({ served_gate_field: '1', served_gate_enabled: 'on' });
+    expect(patch()).toMatchObject({ served_gate_enabled: true });
+  });
+
+  it('form alanı varken işaretsizse false yazar — panelden KAPATILABİLİR', async () => {
+    const { patch } = await setup({ served_gate_field: '1' });
+    expect(patch()).toMatchObject({ served_gate_enabled: false });
+  });
+
+  it('form alanı yoksa (077 öncesi panel) dokunulmaz', async () => {
+    const { patch } = await setup({});
+    expect(patch()).not.toHaveProperty('served_gate_enabled');
+  });
+});

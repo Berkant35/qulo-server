@@ -6,6 +6,10 @@ import { isMutuallyCompatible } from "./compatibility.js";
 /**
  * Discover filtresinin yazma yollarındaki karşılığı: doğrudan API ile uyumsuz birine beğeni
  * ya da quiz başlatılamaz. Kural compatibility.ts'te; anahtar kapalıyken hiç sorgu atılmaz.
+ *
+ * Uyumsuzluk var olmayan hedefle AYNI yanıtı (404 USER_NOT_FOUND) verir — eskiden 403
+ * NOT_COMPATIBLE dönüyordu ve bilinen UUID'nin cinsiyet tercihi bu farktan okunuyordu
+ * (spec 2026-10-06 kehanet açığı). `Errors.NOT_COMPATIBLE` eski istemci eşlemesi için duruyor.
  */
 class PairCompatibilityService {
   async assertCompatible(viewerId: string, targetId: string): Promise<void> {
@@ -18,8 +22,7 @@ class PairCompatibilityService {
     if (error) throw Errors.SERVER_ERROR();
     const viewer = data?.find((row) => row.id === viewerId);
     const target = data?.find((row) => row.id === targetId);
-    if (!viewer || !target) throw Errors.USER_NOT_FOUND();
-    if (!isMutuallyCompatible(viewer, target)) throw Errors.NOT_COMPATIBLE();
+    if (!viewer || !target || !isMutuallyCompatible(viewer, target)) throw Errors.USER_NOT_FOUND();
   }
 }
 

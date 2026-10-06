@@ -85,6 +85,8 @@ async function loadService(
     dormantDays?: number;
     /** app_config.mutual_match_enabled (migration 075); varsayilan kapali. */
     mutual?: boolean;
+    /** app_config.served_gate_enabled (migration 077); varsayilan kapali. */
+    servedGate?: boolean;
     /** economy.quizOnboarding.failedRetryDays; varsayilan 7. */
     retryDays?: number;
     incrementDailySwipes?: () => Promise<void>;
@@ -110,6 +112,7 @@ async function loadService(
     appConfigService: {
       getDiscoverDormantDays: async () => opts.dormantDays ?? 14,
       getMutualMatchEnabled: async () => opts.mutual ?? false,
+      getServedGateEnabled: async () => opts.servedGate ?? false,
     },
   }));
   vi.doMock("../../src/services/economy-config.service.js", () => ({
@@ -1124,10 +1127,10 @@ describe("swipe — karşılıklı eşleşme guard'ı", () => {
     swipes: [], matches: [], questions: [],
   });
 
-  it("anahtar açıkken uyumsuz hedefe LIKE: NOT_COMPATIBLE, swipe yazılmaz, günlük hak harcanmaz", async () => {
+  it("anahtar açıkken uyumsuz hedefe LIKE: USER_NOT_FOUND 404 (kehanet yok), swipe yazılmaz, günlük hak harcanmaz", async () => {
     const incrementDailySwipes = vi.fn(async () => undefined);
     const service = await loadService(tablolar(), { mutual: true, incrementDailySwipes });
-    await expect(service.swipe(VIEWER_ID, HETERO, "LIKE")).rejects.toMatchObject({ code: "NOT_COMPATIBLE" });
+    await expect(service.swipe(VIEWER_ID, HETERO, "LIKE")).rejects.toMatchObject({ code: "USER_NOT_FOUND", statusCode: 404 });
     expect(sonFake.table("swipes")).toHaveLength(0);
     expect(incrementDailySwipes).not.toHaveBeenCalled();
   });
@@ -1138,7 +1141,7 @@ describe("swipe — karşılıklı eşleşme guard'ı", () => {
     expect(sonFake.table("swipes")).toHaveLength(1);
   });
 
-  it("uyumsuz hedefe eski LIKE varken tekrar LIKE: NOT_COMPATIBLE, satır yenilenmez, günlük hak harcanmaz", async () => {
+  it("uyumsuz hedefe eski LIKE varken tekrar LIKE: USER_NOT_FOUND, satır yenilenmez, günlük hak harcanmaz", async () => {
     const incrementDailySwipes = vi.fn(async () => undefined);
     const eski = new Date(Date.now() - 10 * 86_400_000).toISOString();
     // Başarısız quiz geçmişi: guard olmasa renewLike satırı yenileyip hak harcardı.
@@ -1151,7 +1154,7 @@ describe("swipe — karşılıklı eşleşme guard'ı", () => {
       }],
     };
     const service = await loadService(seed, { mutual: true, incrementDailySwipes });
-    await expect(service.swipe(VIEWER_ID, HETERO, "LIKE")).rejects.toMatchObject({ code: "NOT_COMPATIBLE" });
+    await expect(service.swipe(VIEWER_ID, HETERO, "LIKE")).rejects.toMatchObject({ code: "USER_NOT_FOUND" });
     expect(incrementDailySwipes).not.toHaveBeenCalled();
     expect(sonFake.table("swipes")[0].created_at).toBe(eski);
   });
@@ -1278,5 +1281,125 @@ describe("undoSwipe — engelli / silinmiş hedef (kimlik etiketi sızıntısı)
     expect(card.user_id).toBe(TARGET_ID);
     expect(sonFake.table("swipes")).toHaveLength(0);
     expect(undo).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("swipe — gösterim kapısı (spec 2026-10-06 kehanet açığı)", () => {
+  const TARGET = uid(60);
+  const DAY = 86_400_000;
+  const daysAgo = (d: number) => new Date(Date.now() - d * DAY).toISOString();
+  const tablolar = (over: Partial<Tables> = {}): Tables => ({
+    users: [viewerRow(), candidateRow(TARGET, 1)],
+    swipes: [], matches: [], questions: [], quiz_sessions: [], discover_served: [],
+    ...over,
+  });
+  const served = () => [{ viewer_id: VIEWER_ID, target_id: TARGET, served_at: daysAgo(1) }];
+  const likeRpc = () => sonFake.rpcCalls.filter((c) => c.name === "increment_like_received");
+
+  it("anahtar açık + gösterilmemiş hedefe LIKE: USER_NOT_FOUND 404; swipe satırı, günlük hak, beğeni sayacı yok", async () => {
+    const incrementDailySwipes = vi.fn(async () => undefined);
+    const service = await loadService(tablolar(), { servedGate: true, incrementDailySwipes });
+    await expect(service.swipe(VIEWER_ID, TARGET, "LIKE")).rejects.toMatchObject({ code: "USER_NOT_FOUND", statusCode: 404 });
+    expect(sonFake.table("swipes")).toHaveLength(0);
+    expect(incrementDailySwipes).not.toHaveBeenCalled();
+    expect(likeRpc()).toHaveLength(0);
+  });
+
+  it("anahtar açık + Discover'da gösterilmiş hedefe LIKE yazılır", async () => {
+    const service = await loadService(tablolar({ discover_served: served() }), { servedGate: true });
+    expect(await service.swipe(VIEWER_ID, TARGET, "LIKE")).toEqual({ matched: false });
+    expect(sonFake.table("swipes")).toEqual([expect.objectContaining({ swiper_id: VIEWER_ID, target_id: TARGET, action: "LIKE" })]);
+  });
+
+  it("gösterilmiş ama uyumsuz hedef: 404 — gösterilmemiş hedefle AYNI yanıt (403 yok)", async () => {
+    const gay = viewerRow({ gender: "MAN", gender_pref: "MAN" });
+    const hetero = candidateRow(TARGET, 1, { gender: "MAN", gender_pref: "WOMAN" });
+    const service = await loadService(tablolar({ users: [gay, hetero], discover_served: served() }), { servedGate: true, mutual: true });
+    const uyumsuz = await service.swipe(VIEWER_ID, TARGET, "LIKE").catch((e) => e);
+    const service2 = await loadService(tablolar({ users: [gay, hetero] }), { servedGate: true, mutual: true });
+    const gosterilmemis = await service2.swipe(VIEWER_ID, TARGET, "LIKE").catch((e) => e);
+    expect({ code: uyumsuz.code, status: uyumsuz.statusCode, msg: uyumsuz.message })
+      .toEqual({ code: gosterilmemis.code, status: gosterilmemis.statusCode, msg: gosterilmemis.message });
+    expect(uyumsuz.code).toBe("USER_NOT_FOUND");
+  });
+
+  it("engelli hedefe LIKE (anahtar kapalı da): USER_NOT_FOUND, yan etki yok", async () => {
+    const incrementDailySwipes = vi.fn(async () => undefined);
+    const service = await loadService(tablolar({ discover_served: served() }), { blocked: true, incrementDailySwipes });
+    await expect(service.swipe(VIEWER_ID, TARGET, "LIKE")).rejects.toMatchObject({ code: "USER_NOT_FOUND" });
+    expect(sonFake.table("swipes")).toHaveLength(0);
+    expect(incrementDailySwipes).not.toHaveBeenCalled();
+  });
+
+  it("REJECT kapıdan geçmez: gösterilmemiş hedef de reddedilebilir", async () => {
+    const service = await loadService(tablolar(), { servedGate: true });
+    await service.swipe(VIEWER_ID, TARGET, "REJECT");
+    expect(sonFake.table("swipes")).toEqual([expect.objectContaining({ action: "REJECT" })]);
+  });
+
+  it("REJECT edilmiş ama gösterilmemiş hedefe LIKE: 404 (REJECT satırı kapıyı açmaz)", async () => {
+    const service = await loadService(
+      tablolar({ swipes: [{ id: "r", swiper_id: VIEWER_ID, target_id: TARGET, action: "REJECT", created_at: daysAgo(1) }] }),
+      { servedGate: true },
+    );
+    await expect(service.swipe(VIEWER_ID, TARGET, "LIKE")).rejects.toMatchObject({ code: "USER_NOT_FOUND" });
+  });
+
+  it("yenileme yolu: eski LIKE'ı olan (gösterim kaydı düşmüş) hedef kapıdan geçer, satır yenilenir", async () => {
+    const incrementDailySwipes = vi.fn(async () => undefined);
+    const service = await loadService(tablolar({
+      swipes: [{ id: "sw1", swiper_id: VIEWER_ID, target_id: TARGET, action: "LIKE", created_at: daysAgo(10) }],
+      quiz_sessions: [{ id: "s1", solver_id: VIEWER_ID, target_id: TARGET, status: "FAILED", started_at: daysAgo(8), completed_at: daysAgo(8), expires_at: daysAgo(8) }],
+    }), { servedGate: true, incrementDailySwipes });
+    await service.swipe(VIEWER_ID, TARGET, "LIKE");
+    expect(incrementDailySwipes).toHaveBeenCalledTimes(1);
+  });
+
+  it("yenileme yolu: engelli hedef 404, satır yenilenmez, günlük hak harcanmaz", async () => {
+    const incrementDailySwipes = vi.fn(async () => undefined);
+    const likedAt = daysAgo(10);
+    const service = await loadService(tablolar({
+      swipes: [{ id: "sw1", swiper_id: VIEWER_ID, target_id: TARGET, action: "LIKE", created_at: likedAt }],
+      quiz_sessions: [{ id: "s1", solver_id: VIEWER_ID, target_id: TARGET, status: "FAILED", started_at: daysAgo(8), completed_at: daysAgo(8), expires_at: daysAgo(8) }],
+    }), { servedGate: true, blocked: true, incrementDailySwipes });
+    await expect(service.swipe(VIEWER_ID, TARGET, "LIKE")).rejects.toMatchObject({ code: "USER_NOT_FOUND" });
+    expect(incrementDailySwipes).not.toHaveBeenCalled();
+    expect(sonFake.table("swipes")[0].created_at).toBe(likedAt);
+  });
+
+  it("SELF_SWIPE kapıdan önce döner (değişmedi)", async () => {
+    const service = await loadService(tablolar(), { servedGate: true });
+    await expect(service.swipe(VIEWER_ID, VIEWER_ID, "LIKE")).rejects.toMatchObject({ code: "SELF_SWIPE" });
+  });
+});
+
+describe("discover — gösterim kaydı (spec 2026-10-06 kehanet açığı)", () => {
+  const A = uid(50), B = uid(51);
+  const tablolar = (): Tables => ({
+    users: [viewerRow(), candidateRow(A, 1), candidateRow(B, 2)],
+    swipes: [], matches: [], questions: questionsFor([A, B]), discover_served: [],
+  });
+
+  it("dönen sayfanın kartları discover_served'a TEK upsert ile yazılır", async () => {
+    const service = await loadService(tablolar());
+    const { cards } = await service.discover(VIEWER_ID);
+    expect(cards.map((c) => c.user_id).sort()).toEqual([A, B].sort());
+    expect(sonFake.queries.filter((q) => q.table === "discover_served")).toEqual([{ table: "discover_served", op: "upsert" }]);
+    expect(sonFake.table("discover_served").map((r) => [r.viewer_id, r.target_id]).sort())
+      .toEqual([[VIEWER_ID, A], [VIEWER_ID, B]].sort());
+  });
+
+  it("gösterim yazımı patlarsa sayfa yine döner", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const service = await loadService(tablolar(), { failOn: [{ table: "discover_served", op: "insert" }] });
+    const { cards } = await service.discover(VIEWER_ID);
+    expect(cards).toHaveLength(2);
+    expect(sonFake.table("discover_served")).toHaveLength(0);
+  });
+
+  it("boş sayfa: gösterim yazımı yok", async () => {
+    const service = await loadService({ ...tablolar(), users: [viewerRow()] });
+    await service.discover(VIEWER_ID);
+    expect(sonFake.queries.filter((q) => q.table === "discover_served")).toHaveLength(0);
   });
 });

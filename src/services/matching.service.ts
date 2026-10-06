@@ -16,6 +16,7 @@ import { subscriptionService } from "./subscription.service.js";
 import { userLanguageService } from "./user-language.service.js";
 import { pairCompatibilityService } from "./pair-compatibility.service.js";
 import { identityService, type VisibleIdentity } from "./identity.service.js";
+import { servedGate } from "./served-gate.service.js";
 
 const PAGE_SIZE = 10;
 /** Tek seferde cekilen aday tavani. Havuz ~72; 500 rahat bir ust sinir. */
@@ -506,10 +507,14 @@ export class MatchingService {
     const pageItems = scored.slice(start, start + PAGE_SIZE);
     const hasMore = start + PAGE_SIZE < scored.length;
 
-    // 9. Increment times_shown_count for returned users
+    // 9. Increment times_shown_count + gösterim kaydı (LIKE / quiz/start kapısı, served-gate) —
+    // ikisi paralel; gösterim yazımı hata fırlatmaz, Discover'ı bozmaz.
     if (pageItems.length > 0) {
       const shownIds = pageItems.map((s) => s.candidate.id);
-      await supabase.rpc("increment_times_shown", { user_ids: shownIds });
+      await Promise.all([
+        supabase.rpc("increment_times_shown", { user_ids: shownIds }),
+        servedGate.recordServed(userId, shownIds),
+      ]);
     }
 
     // 10. Build profile cards
@@ -556,6 +561,11 @@ export class MatchingService {
     if (swiperId === targetId) {
       throw Errors.SELF_SWIPE();
     }
+
+    // Gösterim kapısı + engel (kehanet açığı): her yan etkiden (yenileme, günlük hak, satır) ÖNCE.
+    // Discover'ın göstermediği bilinen bir UUID'ye LIKE var olmayan hedefle aynı 404'ü alır.
+    // REJECT kapısız (yan etkisiz, sızıntısız).
+    if (action === "LIKE") await servedGate.assertReachable(swiperId, targetId);
 
     // Check for existing swipe (idempotent — fire-and-forget safe)
     const { data: existing } = await supabase

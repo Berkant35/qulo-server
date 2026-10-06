@@ -14,6 +14,7 @@ import { quizSecondChanceService, FREE_SECOND_CHANCE } from "./quiz-second-chanc
 import { DEFAULT_QUESTION_SECONDS, quizDeadlineService, remainingSeconds, visiblePowers } from "./quiz-deadline.service.js";
 import type { PowerName } from "../types/index.js";
 import { pairCompatibilityService } from "./pair-compatibility.service.js";
+import { servedGate } from "./served-gate.service.js";
 
 /** questions.answer_1..answer_4 — cevap indeksleri 1 tabanli. */
 const QUIZ_ANSWER_INDICES: readonly number[] = [1, 2, 3, 4];
@@ -174,6 +175,10 @@ export class QuizService {
   async startSession(solverId: string, targetId: string) {
     // 0. Defensive checks — fail fast on invalid pairs.
     if (solverId === targetId) throw Errors.SELF_SWIPE();
+
+    // Gösterim kapısı + engel (kehanet açığı): Discover'ın göstermediği / etkileşilmemiş bilinen
+    // UUID'ye quiz başlatılamaz; var olmayan hedefle aynı 404. Her okuma/yazımdan ÖNCE.
+    await servedGate.assertReachable(solverId, targetId);
 
     const { data: target, error: targetErr } = await supabase
       .from("users")

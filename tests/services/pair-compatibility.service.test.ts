@@ -30,14 +30,17 @@ describe("pairCompatibilityService.assertCompatible", () => {
     await expect(pairCompatibilityService.assertCompatible(A, B)).resolves.toBeUndefined();
   });
 
-  it("anahtar açık + uyumsuz (gey × hetero erkek): NOT_COMPATIBLE 403", async () => {
+  // Kehanet açığı (spec 2026-10-06): uyumsuzluk var olmayan hedefle AYNI yanıtı verir; 403/404
+  // farkından hedefin cinsiyet tercihi okunamaz.
+  it("anahtar açık + uyumsuz (gey × hetero erkek): USER_NOT_FOUND 404 (NOT_COMPATIBLE değil)", async () => {
     const { pairCompatibilityService } = await setup([u(A, "MAN", "MAN"), u(B, "MAN", "WOMAN")], true);
     await expect(pairCompatibilityService.assertCompatible(A, B))
-      .rejects.toMatchObject({ code: "NOT_COMPATIBLE", statusCode: 403 });
+      .rejects.toMatchObject({ code: "USER_NOT_FOUND", statusCode: 404 });
   });
 
-  it("hedef silinmiş/yok: USER_NOT_FOUND", async () => {
+  it("hedef silinmiş/yok: USER_NOT_FOUND 404", async () => {
     const { pairCompatibilityService } = await setup([u(A, "MAN", "MAN"), { ...u(B, "MAN", "MAN"), is_deleted: true }], true);
-    await expect(pairCompatibilityService.assertCompatible(A, B)).rejects.toMatchObject({ code: "USER_NOT_FOUND" });
+    await expect(pairCompatibilityService.assertCompatible(A, B))
+      .rejects.toMatchObject({ code: "USER_NOT_FOUND", statusCode: 404 });
   });
 });

@@ -146,3 +146,38 @@ describe('appConfigService.getMutualMatchEnabled (migration 075)', () => {
     expect(await appConfigService.getMutualMatchEnabled()).toBe(true);
   });
 });
+
+describe('appConfigService.getServedGateEnabled (migration 077)', () => {
+  it('true okunur ve önbelleğe alınır (ardışık çağrı tek okuma)', async () => {
+    const { appConfigService, okumalar } = await setup({ satirEk: { served_gate_enabled: true } });
+    expect(await appConfigService.getServedGateEnabled()).toBe(true);
+    expect(await appConfigService.getServedGateEnabled()).toBe(true);
+    expect(okumalar()).toBe(1);
+  });
+
+  it('kolon yoksa (077 uygulanmamış) kapalı sayılır', async () => {
+    const { appConfigService } = await setup();
+    expect(await appConfigService.getServedGateEnabled()).toBe(false);
+  });
+
+  it('okuma hatasında kapalı döner ve önbelleğe YAZILMAZ', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { appConfigService, okumalar } = await setup({ failOn: [{ table: 'app_config', op: 'select' }] });
+    expect(await appConfigService.getServedGateEnabled()).toBe(false);
+    expect(await appConfigService.getServedGateEnabled()).toBe(false);
+    expect(okumalar()).toBe(2);
+  });
+
+  it('mutual anahtarından bağımsız önbellek: biri diğerinin değerini döndürmez', async () => {
+    const { appConfigService } = await setup({ satirEk: { served_gate_enabled: true, mutual_match_enabled: false } });
+    expect(await appConfigService.getMutualMatchEnabled()).toBe(false);
+    expect(await appConfigService.getServedGateEnabled()).toBe(true);
+  });
+
+  it('updateConfig önbelleği temizler: yeni değer hemen görünür', async () => {
+    const { appConfigService } = await setup({ satirEk: { served_gate_enabled: false } });
+    expect(await appConfigService.getServedGateEnabled()).toBe(false);
+    await appConfigService.updateConfig({ served_gate_enabled: true });
+    expect(await appConfigService.getServedGateEnabled()).toBe(true);
+  });
+});

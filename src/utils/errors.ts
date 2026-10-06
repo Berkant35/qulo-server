@@ -91,7 +91,10 @@ export const Errors = {
   PROFILE_INCOMPLETE: () =>
     new AppError("PROFILE_INCOMPLETE", 400, "Profile is incomplete"),
 
-  /** Karşılıklı eşleşme kuralı (compatibility.ts). Mesaj sebep söylemez — tercih sızmasın. */
+  /**
+   * Artık hiçbir yoldan dönmez: uyumsuzluk 404 USER_NOT_FOUND verir (403/404 farkı tercihi sızdırıyordu,
+   * spec 2026-10-06 kehanet açığı). Tanım, eski yanıtı eşleyen mobil sürümler için duruyor.
+   */
   NOT_COMPATIBLE: () =>
     new AppError("NOT_COMPATIBLE", 403, "Profile not available"),
 
