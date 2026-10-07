@@ -1,7 +1,8 @@
 import { supabase } from "../config/supabase.js";
 import { env } from "../config/env.js";
 import { LlmError } from "./llm.common.js";
-import { NIM_VISION_CONFIRM_MODEL, NIM_VISION_MODEL, VISION_VERIFY_PROMPT, nimVisionModerate } from "./nim.service.js";
+import { NIM_VISION_CONFIRM_MODEL, NIM_VISION_MODEL, VISION_VERIFY_PROMPT, nimVisionModerate, type VisionModerationResult } from "./nim.service.js";
+import { GEMINI_VISION_MODEL, geminiVisionAvailable, geminiVisionModerate } from "./gemini-vision.service.js";
 import { banService } from "./ban.service.js";
 
 export type Verdict = "safe" | "explicit" | "review" | "error";
@@ -28,7 +29,7 @@ const FETCH_TIMEOUT_MS = 15_000;
 /** Onay modeli (Gemma 4) ucretsiz kuyrukta 90 sn'yi asabiliyor (canli: tam da explicit fotograflarda); yol asenkron, bekleyebiliriz. */
 export const CONFIRM_TIMEOUT_MS = 180_000;
 /** Ban gerekcesi (users.ban_reason, admin panelinde gorunur). */
-export const BAN_REASON_TEXT = "photo_moderation: sexual content (NIM vision, confirmed)";
+export const BAN_REASON_TEXT = "photo_moderation: sexual content (vision, confirmed)";
 
 /**
  * 11B'nin `explicit=false` deyip gerekcede ciplaklik yazdigi goruldu (2026-09-25 tarama, 3/99).
@@ -106,9 +107,28 @@ async function fotografiIndir(url: string): Promise<{ dataUrl: string } | { hata
 
 export interface Classification { verdict: Verdict; reason: string; model: string }
 
+interface OnayAdimi { etiket: string; model: string; cagir: () => Promise<VisionModerationResult> }
+
 /**
- * Iki asama: 11B tarar. "Evet" derse onay modeli (Gemma 4) sorulur: evet -> explicit (ban),
- * hayir -> review, hata/timeout -> error (cron 1 saat sonra yeniden dener, 3 denemede review).
+ * Onay zinciri (ilk cevap veren karar verir): Gemini Flash-Lite (anahtar varsa) -> Gemma 4 (NIM) ->
+ * 11B'nin kendisi farkli istemle. Gemini one alindi: Gemma gercek musteh cen fotografta hic cevap
+ * vermiyor, 11B yedek onayi ise gercek cinsel organ fotografina "yok" dedi (2026-10-07, iki haftada
+ * 0 ban). Gemini ayni fotograflarda 9/9 dogru, 1-10 sn (gemini-vision.service).
+ */
+function onayZinciri(dataUrl: string): OnayAdimi[] {
+  const gemini: OnayAdimi[] = geminiVisionAvailable()
+    ? [{ etiket: "onay", model: GEMINI_VISION_MODEL, cagir: () => geminiVisionModerate(dataUrl) }]
+    : [];
+  return [
+    ...gemini,
+    { etiket: "onay-nim", model: NIM_VISION_CONFIRM_MODEL, cagir: () => nimVisionModerate(dataUrl, { model: NIM_VISION_CONFIRM_MODEL, timeoutMs: CONFIRM_TIMEOUT_MS }) },
+    { etiket: "yedek-onay", model: `${NIM_VISION_MODEL}#verify`, cagir: () => nimVisionModerate(dataUrl, { model: NIM_VISION_MODEL, prompt: VISION_VERIFY_PROMPT }) },
+  ];
+}
+
+/**
+ * Iki asama: 11B tarar. "Evet" derse onay zinciri sorulur: evet -> explicit (ban), hayir -> review,
+ * hepsi hata/timeout -> error (cron 1 saat sonra yeniden dener, 3 denemede review).
  * 11B "hayir" derse onay cagrilmaz (ban zaten imkansiz): gerekce supheliyse review, degilse safe.
  * Belirsizlikte ASLA ban yok (fail-open), ama kayit dusulur.
  */
@@ -126,16 +146,11 @@ export async function classifyPhoto(url: string): Promise<Classification> {
     return { verdict: supheliGerekce(birinci.reason) ? "review" : "safe", reason: birinci.reason, model: NIM_VISION_MODEL };
   }
 
-  // Onay 1: farkli aile (Gemma 4). Onay 2 (yedek): Gemma kuyrukta cevap vermezse 11B, farkli istemle.
-  // Canli 13:17-13:55Z: Gemma tam da explicit fotograflarda 90-180 sn timeout verdi, ban hic dusmedi.
-  const onaylar: { model: string; opts: Parameters<typeof nimVisionModerate>[1]; etiket: string }[] = [
-    { model: NIM_VISION_CONFIRM_MODEL, opts: { model: NIM_VISION_CONFIRM_MODEL, timeoutMs: CONFIRM_TIMEOUT_MS }, etiket: "onay" },
-    { model: `${NIM_VISION_MODEL}#verify`, opts: { model: NIM_VISION_MODEL, prompt: VISION_VERIFY_PROMPT }, etiket: "yedek-onay" },
-  ];
+  const onaylar = onayZinciri(indirme.dataUrl);
   const hatalar: string[] = [];
   for (const onay of onaylar) {
     try {
-      const ikinci = await nimVisionModerate(indirme.dataUrl, onay.opts);
+      const ikinci = await onay.cagir();
       return {
         verdict: ikinci.explicit ? "explicit" : "review",
         reason: `tarama(true): ${birinci.reason} | ${onay.etiket}(${ikinci.explicit}): ${ikinci.reason}${hatalar.length ? ` | ${hatalar.join("; ")}` : ""}`,
@@ -145,7 +160,7 @@ export async function classifyPhoto(url: string): Promise<Classification> {
       hatalar.push(`${onay.etiket} hata: ${hataMetni(err)}`);
     }
   }
-  return { verdict: "error", reason: `tarama(true): ${birinci.reason} | ${hatalar.join("; ")}`, model: NIM_VISION_CONFIRM_MODEL };
+  return { verdict: "error", reason: `tarama(true): ${birinci.reason} | ${hatalar.join("; ")}`, model: onaylar[0]!.model };
 }
 
 async function kaydet(p: PendingPhoto, c: Classification): Promise<void> {
@@ -221,4 +236,64 @@ export async function moderatePendingPhotos(budget: number): Promise<ModerationS
     }
   }
   return ozet;
+}
+
+// ---- Backoffice: review kuyrugu (insan gozu) ----
+
+export interface AdminCheckRow {
+  id: string; user_id: string; photo_url: string; verdict: Verdict; reason: string | null;
+  model: string | null; attempts: number; checked_at: string;
+  email: string | null; name: string | null; is_banned: boolean; hala_profilde: boolean;
+}
+interface AdminUserRow { id: string; email: string | null; name: string | null; is_banned: boolean; photos: string[] | null }
+
+/**
+ * Admin listesi: verdict'e gore sayfalanmis kayitlar + sahibi. `review` satirlari 2026-09-25'ten
+ * 10-07'ye kadar hic goruntulenmedi (sayfa yoktu; 21 satir birikti, biri gercek cinsel icerik).
+ */
+export async function listChecksForAdmin(verdict: Verdict | "all", page: number, limit: number): Promise<{ rows: AdminCheckRow[]; total: number }> {
+  let q = supabase
+    .from("photo_moderation_checks")
+    .select("id, user_id, photo_url, verdict, reason, model, attempts, checked_at", { count: "exact" })
+    .order("checked_at", { ascending: false })
+    .range((page - 1) * limit, page * limit - 1);
+  if (verdict !== "all") q = q.eq("verdict", verdict);
+  const { data, count, error } = await q;
+  if (error) throw new Error(`moderation list failed: ${error.message}`);
+  const checks = (data ?? []) as Omit<AdminCheckRow, "email" | "name" | "is_banned" | "hala_profilde">[];
+  const ids = [...new Set(checks.map((c) => c.user_id))];
+  const kullanicilar = new Map<string, AdminUserRow>();
+  for (const parca of parcala(ids, IN_CHUNK)) {
+    const { data: users, error: uErr } = await supabase.from("users").select("id, email, name, is_banned, photos").in("id", parca);
+    if (uErr) throw new Error(`moderation users failed: ${uErr.message}`);
+    for (const u of (users ?? []) as AdminUserRow[]) kullanicilar.set(u.id, u);
+  }
+  const rows = checks.map((c) => {
+    const u = kullanicilar.get(c.user_id);
+    return {
+      ...c, attempts: c.attempts ?? 1, email: u?.email ?? null, name: u?.name ?? null,
+      is_banned: u?.is_banned ?? false, hala_profilde: (u?.photos ?? []).includes(c.photo_url),
+    };
+  });
+  return { rows, total: count ?? 0 };
+}
+
+export type AdminCheckAction = "ban" | "safe";
+
+/**
+ * Insan karari: `ban` -> banService (e-posta + itiraz) ve satir `explicit`; `safe` -> satir `safe`.
+ * Satir yoksa false. Ban idempotent (zaten banliysa yalniz satir guncellenir).
+ */
+export async function resolveCheck(checkId: string, action: AdminCheckAction): Promise<boolean> {
+  const { data, error: okumaHatasi } = await supabase.from("photo_moderation_checks").select("id, user_id").eq("id", checkId).maybeSingle();
+  if (okumaHatasi) throw new Error(`moderation lookup failed: ${okumaHatasi.message}`);
+  const satir = data as { id: string; user_id: string } | null;
+  if (!satir) return false;
+  if (action === "ban") await banService.banUser(satir.user_id, "sexual_content", `${BAN_REASON_TEXT} (admin review)`);
+  const { error } = await supabase
+    .from("photo_moderation_checks")
+    .update({ verdict: action === "ban" ? "explicit" : "safe", model: "admin", checked_at: new Date().toISOString() })
+    .eq("id", checkId);
+  if (error) throw new Error(`moderation resolve failed: ${error.message}`);
+  return true;
 }

@@ -174,10 +174,18 @@ export async function nimVisionModerate(
       ],
     }],
   }, opts.timeoutMs ?? VISION_TIMEOUT_MS);
-  const raw = (json.choices?.[0]?.message?.content ?? '').trim();
+  const sonuc = parseVisionVerdict((json.choices?.[0]?.message?.content ?? '').trim(), 'NIM');
+  console.log(`[Llm] provider=nvidia model=${model} vision explicit=${sonuc.explicit}`);
+  return sonuc;
+}
+
+/**
+ * Gorsel moderasyon cevabi `{"explicit": bool, "reason": "..."}` — NIM ve Gemini ayni semayi doner.
+ * JSON karari yoksa `empty` hatasi: belirsizlik guvenli SAYILMAZ, karar cagirana ait.
+ */
+export function parseVisionVerdict(raw: string, saglayici: string): VisionModerationResult {
   const karar = /"explicit"\s*:\s*(true|false)/i.exec(raw);
-  if (!karar) throw new LlmError('empty', `NIM gorsel moderasyon cevabi cozulemedi: ${raw.slice(0, 80)}`);
+  if (!karar) throw new LlmError('empty', `${saglayici} gorsel moderasyon cevabi cozulemedi: ${raw.slice(0, 80)}`);
   const gerekce = /"reason"\s*:\s*"([^"]*)"/i.exec(raw);
-  console.log(`[Llm] provider=nvidia model=${model} vision explicit=${karar[1]!.toLowerCase()}`);
   return { explicit: karar[1]!.toLowerCase() === 'true', reason: (gerekce?.[1] ?? '').trim(), raw };
 }

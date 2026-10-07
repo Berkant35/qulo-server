@@ -6,6 +6,7 @@ import { analyticsController } from "./analytics.controller.js";
 import { pageMessageAdminController } from "./page-message.admin.controller.js";
 import { acquisitionAdminController } from "./acquisition.admin.controller.js";
 import { deletionFeedbackAdminController } from "./deletion-feedback.admin.controller.js";
+import { photoModerationAdminController } from "./photo-moderation.admin.controller.js";
 import { notificationEngineAdminController } from "./notification-engine.admin.controller.js";
 import { adminAuth, superAdminOnly, ipWhitelist, csrfGenerate, csrfValidate } from "./admin.middleware.js";
 import { assetAdminController } from "./asset.admin.controller.js";
@@ -50,6 +51,10 @@ router.post("/users/:id/send-notification", csrfValidate, (req, res) => adminCon
 router.post("/users/:id/test-push", csrfValidate, (req, res) => adminController.testPush(req, res));
 
 router.get("/deletion-feedback", (req, res) => deletionFeedbackAdminController.page(req, res));
+
+// Fotograf moderasyonu review kuyrugu (modelin kesinlestiremedigi fotograflar; Ban = e-posta + itiraz)
+router.get("/photo-moderation", (req, res) => photoModerationAdminController.page(req, res));
+router.post("/photo-moderation/:id/action", csrfValidate, (req, res) => photoModerationAdminController.action(req, res));
 
 router.get("/reports", (req, res) => adminController.reports(req, res));
 router.get("/reports/:id", (req, res) => adminController.reportDetail(req, res));

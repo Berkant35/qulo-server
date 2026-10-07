@@ -2,8 +2,8 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createFakeSupabase } from '../helpers/fake-supabase.js';
 
 /**
- * Fotograf moderasyonu: 11B tarar, supheli/explicit ise onay modeli (Gemma 4) dogrular, yalniz ikisi de
- * explicit derse ban. Belirsizlikte ban YOK (fail-open) ama kayit dusulur.
+ * Fotograf moderasyonu: 11B tarar, explicit ise onay zinciri dogrular (Gemini -> Gemma -> 11B verify),
+ * yalniz ikisi de explicit derse ban. Belirsizlikte ban YOK (fail-open) ama kayit dusulur.
  */
 type Karar = { explicit: boolean; reason: string };
 
@@ -17,8 +17,13 @@ async function setup(opts: {
   users?: Record<string, unknown>[];
   checks?: Record<string, unknown>[];
   birinci?: Karar | Error;
+  /** Onay 1: Gemini (varsayilan: hayir). */
   ikinci?: Karar | Error;
-  /** Yedek onay (11B, verify istemi) — Gemma hata verince. */
+  /** Gemini anahtari var mi (yoksa zincir Gemma'dan baslar). */
+  gemini?: boolean;
+  /** Onay 2: Gemma (NIM) — Gemini hata verince (varsayilan: hata). */
+  gemma?: Karar | Error;
+  /** Yedek onay (11B, verify istemi) — Gemini ve Gemma hata verince. */
   yedek?: Karar | Error;
   fetchCevap?: unknown;
   enabled?: boolean;
@@ -33,22 +38,25 @@ async function setup(opts: {
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
   vi.doMock('../../src/config/env.js', () => ({ env: { NVIDIA_API_KEY: opts.key ?? 'nv-key' } }));
 
-  const nimVisionModerate = vi.fn(async (_url: string, o?: { model?: string; prompt?: string }) => {
-    const k = o?.model === 'confirm-model' ? (opts.ikinci ?? { explicit: false, reason: 'clean' })
+  const cevapla = (k: Karar | Error) => { if (k instanceof Error) throw k; return { ...k, raw: JSON.stringify(k) }; };
+  const nimVisionModerate = vi.fn(async (_url: string, o?: { model?: string; prompt?: string }) => cevapla(
+    o?.model === 'confirm-model' ? (opts.gemma ?? new Error('gemma tanimsiz'))
       : o?.prompt === 'VERIFY' ? (opts.yedek ?? new Error('yedek tanimsiz'))
-      : (opts.birinci ?? { explicit: false, reason: 'clean' });
-    if (k instanceof Error) throw k;
-    return { ...k, raw: JSON.stringify(k) };
-  });
+      : (opts.birinci ?? { explicit: false, reason: 'clean' }),
+  ));
   vi.doMock('../../src/services/nim.service.js', () => ({
     nimVisionModerate, NIM_VISION_MODEL: 'primary-model', NIM_VISION_CONFIRM_MODEL: 'confirm-model', VISION_VERIFY_PROMPT: 'VERIFY',
+  }));
+  const geminiVisionModerate = vi.fn(async () => cevapla(opts.ikinci ?? { explicit: false, reason: 'clean' }));
+  vi.doMock('../../src/services/gemini-vision.service.js', () => ({
+    geminiVisionModerate, geminiVisionAvailable: () => opts.gemini ?? true, GEMINI_VISION_MODEL: 'gemini-model',
   }));
   const banUser = vi.fn(async () => true);
   vi.doMock('../../src/services/ban.service.js', () => ({ banService: { banUser } }));
   vi.stubGlobal('fetch', vi.fn(async () => opts.fetchCevap ?? gorsel()));
 
   const mod = await import('../../src/services/photo-moderation.service.js');
-  return { mod, fake, nimVisionModerate, banUser };
+  return { mod, fake, nimVisionModerate, geminiVisionModerate, banUser };
 }
 
 beforeEach(() => vi.resetModules());
@@ -105,11 +113,21 @@ describe('moderatePendingPhotos', () => {
     expect(banUser).not.toHaveBeenCalled();
   });
 
-  it('tarama explicit + onay explicit -> ban (sexual_content) ve explicit kaydi; onay uzun timeout ile', async () => {
-    const { mod, fake, banUser, nimVisionModerate } = await setup({ birinci: { explicit: true, reason: 'exposed genitals' }, ikinci: { explicit: true, reason: 'nudity' } });
+  it('tarama explicit + onay (Gemini) explicit -> ban (sexual_content) ve explicit kaydi; NIM onayi hic cagrilmaz', async () => {
+    const { mod, fake, banUser, nimVisionModerate, geminiVisionModerate } = await setup({ birinci: { explicit: true, reason: 'exposed genitals' }, ikinci: { explicit: true, reason: 'nudity' } });
     const ozet = await mod.moderatePendingPhotos(10);
     expect(ozet.banned).toBe(1);
     expect(banUser).toHaveBeenCalledWith('u1', 'sexual_content', mod.BAN_REASON_TEXT);
+    expect(fake.table('photo_moderation_checks')[0]).toMatchObject({ verdict: 'explicit', model: 'gemini-model', reason: 'tarama(true): exposed genitals | onay(true): nudity' });
+    expect(geminiVisionModerate).toHaveBeenCalledTimes(1);
+    expect(nimVisionModerate).toHaveBeenCalledTimes(1); // yalniz tarama
+  });
+
+  it('Gemini anahtari yoksa zincir Gemma ile baslar: Gemma evet -> ban, uzun timeout ile', async () => {
+    const { mod, fake, banUser, nimVisionModerate, geminiVisionModerate } = await setup({ gemini: false, birinci: { explicit: true, reason: 'exposed genitals' }, gemma: { explicit: true, reason: 'nudity' } });
+    await mod.moderatePendingPhotos(10);
+    expect(geminiVisionModerate).not.toHaveBeenCalled();
+    expect(banUser).toHaveBeenCalledTimes(1);
     expect(fake.table('photo_moderation_checks')[0]).toMatchObject({ verdict: 'explicit', model: 'confirm-model' });
     expect(nimVisionModerate).toHaveBeenLastCalledWith(expect.any(String), { model: 'confirm-model', timeoutMs: mod.CONFIRM_TIMEOUT_MS });
   });
@@ -160,7 +178,16 @@ describe('moderatePendingPhotos', () => {
     expect(ozet.banned).toBe(0);
   });
 
-  it('onay (Gemma) timeout + yedek onay (11B verify istemi) evet -> ban; model etiketi yedek', async () => {
+  it('Gemini hata + Gemma evet -> ban; 11B yedek hic cagrilmaz', async () => {
+    const { mod, fake, banUser, nimVisionModerate } = await setup({ birinci: { explicit: true, reason: 'exposed genitals' }, ikinci: new Error('429'), gemma: { explicit: true, reason: 'nudity' } });
+    await mod.moderatePendingPhotos(10);
+    expect(banUser).toHaveBeenCalledTimes(1);
+    expect(fake.table('photo_moderation_checks')[0]).toMatchObject({ verdict: 'explicit', model: 'confirm-model' });
+    expect(nimVisionModerate).toHaveBeenCalledTimes(2); // tarama + Gemma
+    expect(fake.table('photo_moderation_checks')[0].reason).toContain('onay hata: Error: 429');
+  });
+
+  it('onay (Gemini) ve Gemma timeout + yedek onay (11B verify istemi) evet -> ban; model etiketi yedek', async () => {
     const { mod, fake, banUser, nimVisionModerate } = await setup({ birinci: { explicit: true, reason: 'exposed genitals' }, ikinci: new Error('timeout'), yedek: { explicit: true, reason: 'clearly exposed genitals' } });
     const ozet = await mod.moderatePendingPhotos(10);
     expect(nimVisionModerate).toHaveBeenCalledTimes(3);
@@ -183,13 +210,13 @@ describe('moderatePendingPhotos', () => {
     const ozet = await mod.moderatePendingPhotos(10);
     expect(banUser).not.toHaveBeenCalled();
     expect(ozet.errors).toBe(1);
-    expect(fake.table('photo_moderation_checks')[0]).toMatchObject({ verdict: 'error', model: 'confirm-model' });
+    expect(fake.table('photo_moderation_checks')[0]).toMatchObject({ verdict: 'error', model: 'gemini-model' });
   });
 
-  it('onay (Gemma) cevap verirse yedek hic cagrilmaz', async () => {
+  it('onay (Gemini) cevap verirse Gemma ve yedek hic cagrilmaz', async () => {
     const { mod, nimVisionModerate } = await setup({ birinci: { explicit: true, reason: 'x' }, ikinci: { explicit: false, reason: 'swimsuit' } });
     await mod.moderatePendingPhotos(10);
-    expect(nimVisionModerate).toHaveBeenCalledTimes(2);
+    expect(nimVisionModerate).toHaveBeenCalledTimes(1);
   });
 
   it('11B hata verirse error kaydi (yeniden denenir), ban YOK', async () => {
@@ -225,7 +252,7 @@ describe('moderatePendingPhotos', () => {
     const ozet = await mod.moderatePendingPhotos(10);
     expect(banUser).toHaveBeenCalledTimes(1);
     expect(ozet.checked).toBe(1);
-    expect(nimVisionModerate).toHaveBeenCalledTimes(2);
+    expect(nimVisionModerate).toHaveBeenCalledTimes(1);
   });
 });
 
