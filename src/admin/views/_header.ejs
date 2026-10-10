@@ -117,6 +117,8 @@
 
     /* ── Existing component styles ── */
     .card { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    /* Chart.js responsive + maintainAspectRatio:false yuksekligi ebeveynden alir; ebeveyn sabit olmazsa grafik buyuyup sayfayi asagi iter */
+    .chart-box { position: relative; width: 100%; }
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
     .stat-card { background: #fff; border-radius: 8px; padding: 20px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
     .stat-card .value { font-size: 32px; font-weight: bold; color: #1a1a2e; }
