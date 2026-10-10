@@ -103,7 +103,7 @@ export interface FakeSupabaseOptions {
   maxRows?: number;
 }
 
-type FilterOp = 'eq' | 'neq' | 'gte' | 'lte' | 'gt' | 'lt' | 'in' | 'is' | 'notIs' | 'notIn' | 'like' | 'ilike';
+type FilterOp = 'eq' | 'neq' | 'gte' | 'lte' | 'gt' | 'lt' | 'in' | 'is' | 'notIs' | 'notIn' | 'notIlike' | 'like' | 'ilike';
 
 /**
  * PostgREST LIKE deseni → RegExp: `%` = herhangi dizi, `_` = tek karakter, `\` (Postgres'in
@@ -235,6 +235,9 @@ function matches(row: Row, filters: Filter[]): boolean {
         return typeof actual === 'string' && likeToRegExp(String(f.value), false).test(actual);
       case 'ilike':
         return typeof actual === 'string' && likeToRegExp(String(f.value), true).test(actual);
+      case 'notIlike':
+        // Postgres'te `NULL NOT ILIKE x` NULL'dur — satir duser; yalniz metin degerler eslesir.
+        return typeof actual === 'string' && !likeToRegExp(String(f.value), true).test(actual);
     }
   });
 }
@@ -298,7 +301,7 @@ class QueryBuilder implements PromiseLike<Result<any>> {
    * gercek PostgREST parse hatasi doner — bu yuzden fake de diziyi REDDEDER,
    * aksi halde test uretimde patlayan bir sorguyu yesil gosterir.
    */
-  not(column: string, op: 'is' | 'in' | 'eq', value: any) {
+  not(column: string, op: 'is' | 'in' | 'eq' | 'ilike', value: any) {
     if (op === 'in') {
       if (!isPostgrestInList(value)) {
         throw new Error(
@@ -308,6 +311,7 @@ class QueryBuilder implements PromiseLike<Result<any>> {
       return this.addFilter('notIn', column, parsePostgrestInList(value));
     }
     if (op === 'eq') return this.addFilter('neq', column, value);
+    if (op === 'ilike') return this.addFilter('notIlike', column, value);
     return this.addFilter('notIs', column, value);
   }
 

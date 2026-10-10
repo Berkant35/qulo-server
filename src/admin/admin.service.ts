@@ -60,12 +60,20 @@ class AdminService {
 
     const [
       { count: totalUsers },
+      { count: realUsers },
       { count: activeUsers },
       { count: todayRegistrations },
       { count: totalMatches },
       { count: pendingReports },
     ] = await Promise.all([
       supabase.from("users").select("*", { count: "exact", head: true }).eq("is_deleted", false),
+      // Seed botlari ve sahibin kendi hesaplari ("berkant" gecen e-postalar) haric
+      supabase
+        .from("users")
+        .select("*", { count: "exact", head: true })
+        .eq("is_deleted", false)
+        .eq("is_seed_profile", false)
+        .not("email", "ilike", "%berkant%"),
       supabase.from("users").select("*", { count: "exact", head: true }).eq("is_deleted", false).gte("last_seen_at", sevenDaysAgo),
       supabase.from("users").select("*", { count: "exact", head: true }).gte("created_at", todayStart),
       supabase.from("matches").select("*", { count: "exact", head: true }),
@@ -89,6 +97,7 @@ class AdminService {
 
     return {
       totalUsers: totalUsers ?? 0,
+      realUsers: realUsers ?? 0,
       activeUsers: activeUsers ?? 0,
       todayRegistrations: todayRegistrations ?? 0,
       totalMatches: totalMatches ?? 0,
