@@ -38,7 +38,7 @@ async function medyaGecistirmesiYaz(row: QueueRow, seed: SeedSatiri): Promise<vo
   // gecistirme YAZILMAZ. Metin satiri bu sebeple iptal edilmis olsa bile medya
   // istegi AYRI bir tetikleyicidir (farkli id) ve iptal filtresine takilmaz —
   // kapi bu yolda ayrica kurulmali.
-  if (yasAltiBeyani(baglam.sonInsanMetni, baglam.paket) || krizSinyali(baglam.sonInsanMetni, baglam.paket)) {
+  if (yasAltiBeyani(baglam.sonInsanMetni) || krizSinyali(baglam.sonInsanMetni)) {
     console.warn(`[SeedReply] medya gecistirmesi yazilmadi (yas/kriz kapisi) match=${row.match_id}`);
     return;
   }

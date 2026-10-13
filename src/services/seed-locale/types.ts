@@ -61,6 +61,10 @@ export interface SeedLocalePack {
   mesafeHavuzu: { kadin: readonly Mesafe[]; diger: readonly Mesafe[] };
   /** responderTypeFor'un tanidigi kisilik etiketleri (user_details.personality serbest metin). */
   kisilik: { disaDonuk: readonly string[]; iceDonuk: readonly string[] };
+  /**
+   * Ham desenler. Kriz ve yas alti kapilari TUM paketlerin birlesimiyle + normalize ifadelerle
+   * calisir (guvenlik.ts) — bir paketin deseni yalniz o dilin seed'ine uygulanmaz.
+   */
   guvenlik: {
     /** Kendine zarar / intihar: rol birakilir, LLM'siz sabit cevap gider. */
     kriz: RegExp;
@@ -74,11 +78,11 @@ export interface SeedLocalePack {
   /** Bot medyayi goremez: medya/soru mesajlari LLM'e bu etiketlerle girer. */
   etiket: { sesli: string; foto: string; soruKarti: string; medyaIstegi: string };
   guard: {
-    /** Iletisim: yerel telefon bicimleri (e-posta/hesap/URL dilden bagimsiz, guard'da ortak). */
+    /** Iletisim: yerel telefon bicimleri — guard TUM paketlerinkini uygular (capraz numara). */
     telefon: RegExp;
     /**
-     * Ele veren kelimeler (yapay zeka, model adlari...). Dizi: buyuk/kucuk harf duyarli bir
-     * desen gerekebilir (Italyancada "ai" edat, yalniz buyuk "AI" yasak).
+     * Ele veren kelimeler (yapay zeka, model adlari...) — guard TUM paketlerinkini uygular. Dizi:
+     * buyuk/kucuk harf duyarli bir desen gerekebilir (Italyancada "ai" edat, yalniz buyuk "AI" yasak).
      */
     yasak: readonly RegExp[];
     /** Yabanci dil isareti: bu desenden en az 2 eslesme cevabi eler (sebep `ingilizce`). */

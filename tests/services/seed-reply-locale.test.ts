@@ -126,10 +126,17 @@ describe('processRow — Italyanca seed', () => {
     expect(turns).toEqual(['(ha mandato una foto)', '(domanda a quiz)']);
   });
 
-  it('locale alani olmayan seed TR paketiyle calisir (geri donus): Turkce kart, Italyanca kriz tetiklemez', async () => {
-    const { svc, generateSeedReply } = await setup({ mesajlar: [mesaj('voglio morire')] });
+  it('locale alani olmayan seed TR paketiyle calisir (geri donus): Turkce kart', async () => {
+    const { svc, generateSeedReply } = await setup({ mesajlar: [mesaj('nasılsın')] });
     expect(await svc.processRow(row() as never)).toBe('sent');
     expect(generateSeedReply.mock.calls[0]![0].system).toContain('Adın Giulia. 29 yaşında');
+  });
+
+  it('locale alani olmayan seed + Italyanca kriz: kapi yine kapanir (fail-closed), cevap Italyanca', async () => {
+    const { svc, generateSeedReply, sendMessage } = await setup({ mesajlar: [mesaj('voglio morire')] });
+    expect(await svc.processRow(row() as never)).toBe('sent');
+    expect(generateSeedReply).not.toHaveBeenCalled();
+    expect(sendMessage.mock.calls[0]![2]).toContain('Telefono Amico');
   });
 });
 

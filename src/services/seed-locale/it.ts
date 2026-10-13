@@ -198,7 +198,8 @@ export const IT_PAKETI: SeedLocalePack = {
       // Yalniz buyuk harf: kucuk "ai" Italyancada edat ("ai miei amici").
       /\b(?:AI|IA)\b/,
     ],
-    yabanciDil: /\b(the|and|you|your|i am|i'm|sorry|cannot|can't|as an|assistant|language|please|here is|of course|i can)\b/i,
+    // Ingilizce kelimeler + Turkceye ozgu harfler (Italyancada yok): IT seed Turkce cumle kuramaz.
+    yabanciDil: /\b(the|and|you|your|i am|i'm|sorry|cannot|can't|as an|assistant|language|please|here is|of course|i can)\b|[ışğİŞĞ]/i,
   },
 
   uyariProbe: '\n\n# ATTENZIONE\nLa tua risposta precedente ha violato le regole. Scrivi molto corto, non dare contatti, niente elenchi.',

@@ -1,5 +1,7 @@
 import { sendMessageSchema } from '../validators/chat.validator.js';
 import { TR_PAKETI, type SeedLocalePack } from './seed-locale/index.js';
+import { TUM_PAKETLER } from './seed-locale/paketler.js';
+import { GORUNMEZ } from './seed-locale/guvenlik.js';
 
 export type GuardReason =
   | 'bos' | 'schema' | 'uzunluk' | 'iletisim' | 'platform' | 'yasak_kelime' | 'liste' | 'ingilizce' | 'sizinti';
@@ -9,8 +11,11 @@ export type GuardResult = { ok: true; text: string } | { ok: false; reason: Guar
 /** Bir insan mesaji bu uzunlugu asmaz; asan cikti LLM'i ele verir. */
 const MAX_KARAKTER = 300;
 
-// Dilden bagimsiz desenler. Telefon bicimi, ele veren kelimeler ve yabanci dil isareti dil
-// paketinde (seed-locale): TR'de 5xx mobil, Italyada 3xx mobil / 0x sabit.
+// Iletisim ve ele veren kelime desenleri TUM paketlerin birlesimi (inceleme 2026-10-13): Italyan
+// seed Turk numarasi, TR seed +39 numara yazamamali. Yabanci dil isareti ve buyuk/kucuk harf
+// kurallari seed'in kendi paketinden (TR seed'de "İngilizce", IT seed'de Ingilizce + Turkce harf).
+const TELEFONLAR: readonly RegExp[] = TUM_PAKETLER.map((p) => p.guard.telefon);
+const YASAKLAR: readonly RegExp[] = TUM_PAKETLER.flatMap((p) => p.guard.yasak);
 const HESAP = /@[A-Za-z0-9._]{3,}|https?:\/\/|www\.|\b[\w.-]+@[\w.-]+\.\w{2,}\b/;
 // Turkce eklemeli bir dil: "telegramdan", "whatsapptan" gibi ekli hallerde kapanis \b
 // siniri eslesmiyor ve filtre bos geciriyordu. Uzun govdeler serbest ek alir; `wp` ve
@@ -40,15 +45,16 @@ function eslesmeSayisi(text: string, desen: RegExp): number {
  * ve testler); `ingilizce` sebebi "paketin yabanci dil isareti" anlamindadir (log uyumu).
  */
 export function validateReply(raw: string, systemPrompt: string, paket: SeedLocalePack = TR_PAKETI): GuardResult {
-  const text = raw.trim();
-  const g = paket.guard;
+  // Gorunmez karakter ("333\u200B1234567") cikti metninden atilir: insana giden metinde islevi yok,
+  // desenleri bozar.
+  const text = raw.replace(GORUNMEZ, '').trim();
   if (!text) return { ok: false, reason: 'bos' };
   if (text.length > MAX_KARAKTER) return { ok: false, reason: 'uzunluk' };
-  if (g.telefon.test(text) || HESAP.test(text)) return { ok: false, reason: 'iletisim' };
+  if (TELEFONLAR.some((desen) => desen.test(text)) || HESAP.test(text)) return { ok: false, reason: 'iletisim' };
   if (PLATFORM.test(text)) return { ok: false, reason: 'platform' };
-  if (g.yasak.some((desen) => desen.test(text))) return { ok: false, reason: 'yasak_kelime' };
+  if (YASAKLAR.some((desen) => desen.test(text))) return { ok: false, reason: 'yasak_kelime' };
   if (LISTE.test(text)) return { ok: false, reason: 'liste' };
-  if (eslesmeSayisi(text, g.yabanciDil) >= 2) return { ok: false, reason: 'ingilizce' };
+  if (eslesmeSayisi(text, paket.guard.yabanciDil) >= 2) return { ok: false, reason: 'ingilizce' };
   if (sizintiVar(text, systemPrompt, paket.buyukKucukHarf)) return { ok: false, reason: 'sizinti' };
 
   // Son kapi: gercek gonderim yolunun kullandigi sema (1-2000 karakter + HTML reddi).

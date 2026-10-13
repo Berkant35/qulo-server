@@ -8,6 +8,7 @@ import { generateSeedReply } from './seed-llm.service.js';
 import { chatQuestionService } from './chat-question.service.js';
 import { createChatQuestionSchema } from '../validators/chat-question.validator.js';
 import { seedLocalePack, TR_PAKETI, type SeedLocalePack } from './seed-locale/index.js';
+import { krizCevabi, krizSinyali, yasAltiBeyani } from './seed-locale/guvenlik.js';
 
 // Tarama ayri modulde (seed-reply-scan.service.ts); cron ve testler tek giris noktasindan alir.
 export { fazFor } from './seed-reply-timing.js';
@@ -146,22 +147,14 @@ export async function recoverStale(olderThanMs = 5 * 60_000): Promise<number> {
 
 // --- processRow: orkestrasyon (Task 7) -------------------------------------
 
-// Guvenlik kapilari seed'in dil paketinde (seed-locale/<dil>.ts): kriz, 18 yas alti, kapanis.
-// Insan seed'e seed'in dilinde yazar (Discover dil kapisi); paket = seed'in `users.locale`'i.
+// Guvenlik kapilari (kriz, 18 yas alti) DILDEN BAGIMSIZ ve fail-closed: tum paketlerin
+// birlesimi + normalize metin (seed-locale/guvenlik.ts). Insan seed'e her zaman seed'in dilinde
+// yazmaz; kapiyi seed'in diline baglamak capraz dilde mesaji kacirir (inceleme 2026-10-13).
+export { krizSinyali, yasAltiBeyani } from './seed-locale/guvenlik.js';
 
-/** Kendine zarar / intihar sinyali: rol birakilir, sabit (LLM'siz) kriz cevabi gider. */
-export function krizSinyali(text: string, paket: SeedLocalePack = TR_PAKETI): boolean {
-  return paket.guvenlik.kriz.test(text);
-}
-
-/** Karsi taraf konusmayi kapatiyor mu (uyuyacak, isi var, "gorusuruz"). */
+/** Karsi taraf konusmayi kapatiyor mu (uyuyacak, isi var, "gorusuruz"). Guvenlik degil: paket ozel. */
 export function kapanisSinyali(text: string, paket: SeedLocalePack = TR_PAKETI): boolean {
   return paket.guvenlik.kapanis.test(text);
-}
-
-/** 18 yas alti beyani: bot o tetikleyiciye yazmaz (satir iptal). */
-export function yasAltiBeyani(text: string, paket: SeedLocalePack = TR_PAKETI): boolean {
-  return paket.guvenlik.yasAlti.test(text);
 }
 
 const GECMIS_LIMIT = 20;
@@ -284,15 +277,15 @@ export async function processRow(row: QueueRow): Promise<IslemSonucu> {
 
   const { sistem, turns, sonInsanMetni, paket } = await seedBaglami(row, seed);
 
-  if (yasAltiBeyani(sonInsanMetni, paket)) {
+  if (yasAltiBeyani(sonInsanMetni)) {
     await markCancelled(row.id, '18 yas alti beyani');
     return 'cancelled';
   }
 
   let metin: string | null = null;
 
-  if (krizSinyali(sonInsanMetni, paket)) {
-    metin = paket.guvenlik.krizCevabi; // Rolu birak; bu cevap LLM'den GECMEZ.
+  if (krizSinyali(sonInsanMetni)) {
+    metin = krizCevabi(sonInsanMetni, paket); // Rolu birak; bu cevap LLM'den GECMEZ.
   } else {
     for (let deneme = 0; deneme < 2 && metin === null; deneme += 1) {
       const sistemProbe = deneme === 0 ? sistem : `${sistem}${paket.uyariProbe}`;

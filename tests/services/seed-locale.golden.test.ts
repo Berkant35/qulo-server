@@ -51,16 +51,32 @@ describe('TR altin test — persona karti bayt bayt ayni', () => {
   });
 });
 
+/**
+ * Altin dosyadan BILINCLI sapmalar (guvenlik incelemesi 2026-10-13): kriz / yas alti kapilari
+ * dilden bagimsiz + normalize, giden guard'da telefon/yasak kelime tum paketlerin birlesimi.
+ * Yalniz false → true (daha siki) yonunde; TR metinlerinden yalniz bitisik/ters sirali yas
+ * beyani sertlesti. Liste disinda tek karar degisirse test kirmizi.
+ */
+const BILINCLI_SAPMALAR: Record<string, Partial<{ kriz: boolean; yasAlti: boolean; guard: string }>> = {
+  '15yaş': { yasAlti: true },                                   // bitisik yazim (normalize)
+  'yaşım 16': { yasAlti: true },                                // ters sira (normalize TR ifadesi)
+  'voglio morire': { kriz: true },                              // capraz dil: TR seed'e Italyanca kriz
+  'ho 16 anni': { yasAlti: true },                              // capraz dil
+  'sono minorenne': { yasAlti: true },                          // capraz dil
+  'il mio numero è 333 123 4567': { guard: 'iletisim' },        // TR seed +39 numara yazamaz
+  "sono un'intelligenza artificiale": { guard: 'yasak_kelime' }, // tum paketlerin yasak kelimeleri
+};
+
 describe('TR altin test — guvenlik + cikti denetimi kararlari ayni', () => {
   it.each(GUVENLIK_KORPUSU.map((t) => [t]))('%s', async (metin) => {
-    const { buildPersonaCard, validateReply, svc, TR_PAKETI } = await yukle();
-    const beklenen = ALTIN.guvenlik[metin]!;
+    const { buildPersonaCard, validateReply, svc } = await yukle();
+    const beklenen = { ...ALTIN.guvenlik[metin]!, ...BILINCLI_SAPMALAR[metin] };
     const sys = buildPersonaCard(personaKartVakalari()[0]![1]);
     const r = validateReply(metin, sys);
     expect({
-      kriz: svc.krizSinyali(metin, TR_PAKETI),
+      kriz: svc.krizSinyali(metin),
       kapanis: svc.kapanisSinyali(metin),
-      yasAlti: svc.yasAltiBeyani(metin, TR_PAKETI),
+      yasAlti: svc.yasAltiBeyani(metin),
       guard: r.ok ? 'ok' : r.reason,
     }).toEqual(beklenen);
   });
