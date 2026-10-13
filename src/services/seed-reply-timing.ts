@@ -1,7 +1,10 @@
 import type { SeedPersona, ResponderType } from '../types/seed-persona.js';
 
-/** Turkiye 2016'dan beri kalici UTC+3 uygular; yaz saati gecisi yoktur. */
-const TR_OFFSET_MIN = 180;
+/**
+ * Persona saat dilimi yoksa (417 TR seed'in persona'si `tz` alani olmadan turetildi) Istanbul.
+ * Turkiye 2016'dan beri kalici UTC+3: eski sabit +180 dk hesabiyla ayni sonuc.
+ */
+export const VARSAYILAN_TZ = 'Europe/Istanbul';
 const GUN = 24 * 60;
 
 export interface TimingInput {
@@ -14,15 +17,42 @@ export interface TimingInput {
   rand: () => number;
 }
 
-export function istanbulMinutes(now: Date): number {
-  return (now.getUTCHours() * 60 + now.getUTCMinutes() + TR_OFFSET_MIN) % GUN;
+const HAFTA_GUNU: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+
+/**
+ * IANA dilimi basina tek bicimleyici (kurulumu pahali; presence tiki 417 seed x 2-3 cagri).
+ * Gecersiz ad (yanlis yazilmis `tz`) RangeError atar: tum tarama dusmesin diye Istanbul'a duser.
+ */
+const bicimleyiciler = new Map<string, Intl.DateTimeFormat>();
+function bicimleyici(tz: string): Intl.DateTimeFormat {
+  let f = bicimleyiciler.get(tz);
+  if (!f) {
+    try {
+      f = new Intl.DateTimeFormat('en-US', {
+        timeZone: tz, hourCycle: 'h23', weekday: 'short', hour: '2-digit', minute: '2-digit',
+      });
+    } catch {
+      console.warn(`[SeedTiming] gecersiz saat dilimi "${tz}", ${VARSAYILAN_TZ} kullaniliyor`);
+      f = bicimleyici(VARSAYILAN_TZ);
+    }
+    bicimleyiciler.set(tz, f);
+  }
+  return f;
 }
 
-/** 0=Pazar ... 6=Cumartesi, Istanbul yereline gore. */
-function istanbulDay(now: Date): number {
-  const asildi = now.getUTCHours() * 60 + now.getUTCMinutes() + TR_OFFSET_MIN >= GUN ? 1 : 0;
-  return (now.getUTCDay() + asildi) % 7;
+/** Persona'nin yerel saati: dakika (0-1439) ve hafta gunu (0=Pazar). Yaz saati Intl'den. */
+export function yerelZaman(now: Date, tz: string | null | undefined): { dakika: number; gun: number } {
+  const parcalar = bicimleyici(tz || VARSAYILAN_TZ).formatToParts(now);
+  const al = (tip: Intl.DateTimeFormatPartTypes) => parcalar.find((p) => p.type === tip)?.value ?? '';
+  return { dakika: Number(al('hour')) * 60 + Number(al('minute')), gun: HAFTA_GUNU[al('weekday')] ?? 0 };
 }
+
+/** Geriye uyumlu: Istanbul yerel dakikasi (testler ve eski cagiranlar). */
+export function istanbulMinutes(now: Date): number {
+  return yerelZaman(now, VARSAYILAN_TZ).dakika;
+}
+
+const personaTz = (persona: SeedPersona) => persona.tz ?? VARSAYILAN_TZ;
 
 function pencereIcinde(dakika: number, start: number, end: number): boolean {
   return start <= end ? dakika >= start && dakika < end : dakika >= start || dakika < end;
@@ -30,12 +60,11 @@ function pencereIcinde(dakika: number, start: number, end: number): boolean {
 
 export function isSleeping(persona: SeedPersona, now: Date): boolean {
   const { start_min, end_min } = persona.sleep_window;
-  return pencereIcinde(istanbulMinutes(now), start_min, end_min);
+  return pencereIcinde(yerelZaman(now, personaTz(persona)).dakika, start_min, end_min);
 }
 
 export function isBusy(persona: SeedPersona, now: Date): boolean {
-  const dk = istanbulMinutes(now);
-  const gun = istanbulDay(now);
+  const { dakika: dk, gun } = yerelZaman(now, personaTz(persona));
   const haftaIci = gun >= 1 && gun <= 5;
   switch (persona.work_pattern) {
     case 'ofis': return haftaIci && pencereIcinde(dk, 9 * 60, 18 * 60);
@@ -83,7 +112,7 @@ export function computeReplyDelayMs(i: TimingInput): number {
   // Uyku penceresine dusuyorsa uyanma anina otele (+0-40 dk).
   const varis = new Date(i.now.getTime() + hedefMs);
   if (isSleeping(i.persona, varis)) {
-    const varisDk = istanbulMinutes(varis);
+    const varisDk = yerelZaman(varis, personaTz(i.persona)).dakika;
     const uyanis = i.persona.sleep_window.end_min;
     const kalanDk = (uyanis - varisDk + GUN) % GUN;
     hedefMs += kalanDk * 60_000 + Math.round(i.rand() * 40 * 60_000);

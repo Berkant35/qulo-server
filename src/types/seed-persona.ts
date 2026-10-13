@@ -13,8 +13,14 @@ export interface SeedStyle {
 export interface SeedPersona {
   responder_type: ResponderType;
   work_pattern: WorkPattern;
-  /** Europe/Istanbul yerel dakikasi (0-1439). Gece yarisini asabilir: start 30, end 450. */
+  /** `tz` yerel dakikasi (0-1439). Gece yarisini asabilir: start 30, end 450. */
   sleep_window: { start_min: number; end_min: number };
+  /**
+   * IANA saat dilimi (ör. 'Europe/Rome'); uyku/mesai/cevrimici ritmi bu yerel saate gore,
+   * yaz saati dahil. Yoksa 'Europe/Istanbul' (mevcut TR seed'ler alansiz turetildi).
+   * Paket varsayilani: seedLocalePack(locale).varsayilanTz.
+   */
+  tz?: string;
   style: SeedStyle;
   derived_at: string;
   model: string;

@@ -50,6 +50,14 @@ describe('presenceFor', () => {
     expect(a).toEqual(b);
   });
 
+  it('persona tz (Europe/Rome): ritim Roma saatine gore — 07:00 Roma uykuda, ayni an Istanbul 08:00 uyanik', async () => {
+    const an = new Date('2026-10-14T05:00:00Z');
+    const roma = Array.from({ length: 60 }, (_, i) => presenceFor(persona({ tz: 'Europe/Rome' }), `seed_${i}`, an));
+    expect(roma.every((p) => !p.online && p.gorulmeDk >= 180)).toBe(true);   // hepsi uyku dalinda
+    const ist = Array.from({ length: 60 }, (_, i) => presenceFor(persona(), `seed_${i}`, an));
+    expect(ist.some((p) => p.online || p.gorulmeDk < 180)).toBe(true);       // Istanbul'da uyku bitti
+  });
+
   it('son gorulme 5 dakikanin katina yuvarlanir (toplu guncelleme icin)', async () => {
     for (let i = 0; i < 40; i++) {
       const p = presenceFor(persona(), `seed_${i}`, trSaat(20));
