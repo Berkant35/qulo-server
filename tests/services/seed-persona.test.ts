@@ -128,6 +128,16 @@ describe('buildPersonaCard', () => {
     expect(buildPersonaCard(input({ name: 'Emre' }))).toContain("Sen Emre'sin");
   });
 
+  it("son unlusu 'a' olan isim kalin ek alir (eski kod 'sin yaziyordu); 'al' + ince l istisnasi", () => {
+    expect(buildPersonaCard(input({ name: 'Nisa' }))).toContain("Sen Nisa'sın");
+    expect(buildPersonaCard(input({ name: 'Derya' }))).toContain("Sen Derya'sın");
+    expect(buildPersonaCard(input({ name: 'Burak' }))).toContain("Sen Burak'sın");
+    expect(buildPersonaCard(input({ name: 'Ilgın' }))).toContain("Sen Ilgın'sın");
+    expect(buildPersonaCard(input({ name: 'Hilal' }))).toContain("Sen Hilal'sin");
+    expect(buildPersonaCard(input({ name: 'Kemal' }))).toContain("Sen Kemal'sin");
+    expect(buildPersonaCard(input({ name: 'Alp' }))).toContain("Sen Alp'sin");
+  });
+
   it('faz 1 metni mesafe ile CELISMEZ', () => {
     // v1'de faz 1 "ilgilisin ve meraklisin" diyordu, mesafe blogu tersini; model
     // celiskili talimat aliyordu.

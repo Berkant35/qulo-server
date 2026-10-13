@@ -8,12 +8,17 @@ import type { SeedLocalePack } from './types.js';
  * Bir metni degistirmek TR botunun davranisini degistirir; altin dosya bilerek yenilenir.
  */
 
-/** Turkce ikinci tekil eki: "Cansu'sun", "Nisa'sin", "Emre'sin", "Burcu'sun". */
+/**
+ * Turkce ikinci tekil eki (buyuk unlu uyumu): "Emre'sin", "Nisa'sın", "Cansu'sun", "Gökçe'sin".
+ * 2026-10-13 duzeltme: son unlu 'a' ince dala dusuyordu ("Nisa'sin", "Burak'sin" — canli 417
+ * seed'in 154'u). Istisna: 'a'dan hemen sonra ince "l" gelen isimler ince ek alir (TDK: alp -pi,
+ * hilal -li): "Alp'sin", "Hilal'sin", "Kemal'sin".
+ */
 function sensinEki(ad: string): string {
-  const harfler = ad.toLocaleLowerCase('tr').split('').reverse();
-  const sonUnlu = harfler.find((h) => 'aeıioöuü'.includes(h)) ?? 'e';
-  if ('ae'.includes(sonUnlu)) return "'sin";
-  if ('ıa'.includes(sonUnlu)) return "'sın";
+  const kucuk = ad.toLocaleLowerCase('tr');
+  const sonUnlu = kucuk.split('').reverse().find((h) => 'aeıioöuü'.includes(h)) ?? 'e';
+  if ('ei'.includes(sonUnlu) || /al[^aeıioöuü]*$/.test(kucuk)) return "'sin";
+  if ('aı'.includes(sonUnlu)) return "'sın";
   if ('ou'.includes(sonUnlu)) return "'sun";
   if ('öü'.includes(sonUnlu)) return "'sün";
   return "'sin";
