@@ -996,11 +996,23 @@ describe("discover — seed dil on-filtresi (global seed dalgasi, 2026-10-13)", 
   });
 
   it("seedLanguageFilter: PostgREST bicimi, tekrar eden ve desteklenmeyen kodlar ayiklanir", async () => {
-    const { seedLanguageFilter } = await import("../../src/services/matching.service.js");
+    const { seedLanguageFilter } = await import("../../src/utils/discover-language.js");
     expect(seedLanguageFilter(["tr"])).toBe("is_seed_profile.eq.false,locale.in.(tr)");
     expect(seedLanguageFilter(["it", "en", "it"])).toBe("is_seed_profile.eq.false,locale.in.(it,en)");
     expect(seedLanguageFilter(["xx", "a,b"])).toBeNull();
     expect(seedLanguageFilter([])).toBeNull();
+  });
+
+  it("bilincli sinir: izleyicinin dilinde kimse yoksa baska dildeki seed'ler 'language' sebebine sayilmaz", async () => {
+    // Seed'ler artik SQL'de eleniyor; dil kapisina (5.6) hic ulasmazlar. Gercek kullanici yokken
+    // Italyan izleyici TR seed'lerle dolu havuzda 'no_candidates' alir ("dil ekle" degil) — TR AI
+    // profillerini gormek icin Turkce eklemesini onermek dogru olmaz.
+    const t = havuz({ preferred_languages: ["it"] });
+    t.users = t.users!.filter((u) => u.id === VIEWER_ID || trSeedler.includes(u.id as string));
+    const service = await loadService(t);
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards).toHaveLength(0);
+    expect(res.empty_reason).toBe("no_candidates");
   });
 
   it("gecersiz dil kodu filtreye ham girmez (PostgREST sozdizimi bozulmaz), seed'ler yine dil kapisindan gecer", async () => {

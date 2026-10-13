@@ -1,7 +1,6 @@
 import { supabase } from "../config/supabase.js";
-import { resolveLocale } from "../utils/locales.js";
 import { localeText } from "../utils/server-locales.js";
-import { questionLocale, SUPPORTED_LOCALES } from "../constants/locales.js";
+import { questionLocale } from "../constants/locales.js";
 import type { SupportedLocale } from "../constants/locales.js";
 import { Errors } from "../utils/errors.js";
 import { resolveDistanceTier } from "../utils/distance-tier.js";
@@ -17,6 +16,7 @@ import { userLanguageService } from "./user-language.service.js";
 import { pairCompatibilityService } from "./pair-compatibility.service.js";
 import { identityService, type VisibleIdentity } from "./identity.service.js";
 import { servedGate } from "./served-gate.service.js";
+import { izleyiciDilleri, seedLanguageFilter } from "../utils/discover-language.js";
 
 const PAGE_SIZE = 10;
 /**
@@ -34,18 +34,6 @@ const MAX_EXCLUDE_IDS = 1000;
 function discoverGroupRank(isSeed: boolean, isDormant: boolean): number {
   if (isSeed) return 1;
   return isDormant ? 2 : 0;
-}
-
-/**
- * Seed'leri izleyicinin dillerine indiren PostgREST `.or()` ifadesi (gercek kullanici serbest).
- * Degerler URL'e HAM gider (postgrest-js kacislamaz): yalniz desteklenen dil kodlari girer,
- * yoksa `)` / `,` iceren bir deger filtreyi genisletebilirdi. Gecerli kod kalmazsa on-filtre
- * yok (eski davranis) — dil kapisi (5.6) zaten eler.
- */
-export function seedLanguageFilter(langs: readonly string[]): string | null {
-  const gecerli = [...new Set(langs)].filter((l) => (SUPPORTED_LOCALES as readonly string[]).includes(l));
-  if (gecerli.length === 0) return null;
-  return `is_seed_profile.eq.false,locale.in.(${gecerli.join(",")})`;
 }
 
 /** `match_list_summaries` satiri (migration 070): mesajsiz eslesmede son mesaj alanlari NULL. */
@@ -233,16 +221,10 @@ export class MatchingService {
       if (excludedIds.has(targetId)) retryPending.delete(targetId);
     }
 
-    // Izleyicinin dilleri. Kaynak users.preferred_languages (054 sonrasi tek kaynak). Eski
-    // satirlar icin user_languages'a, o da bossa uygulama diline duser — hicbir yol "filtresiz"e
-    // dusmez (bos liste = kullanici okuyamadigi dilde profiller gorur). Adim 3 (seed on-filtresi)
-    // ve adim 5.6 (dil kapisi) ayni listeyi kullanir.
-    const prefColumn = (user.preferred_languages as string[] | null) ?? [];
-    const langPrefs = prefColumn.length > 0
-      ? prefColumn
-      : userLanguages.length > 0
-        ? userLanguages
-        : [resolveLocale(user.locale as string | null)];
+    // Izleyicinin dilleri: adim 3 (seed on-filtresi) ve adim 5.6 (dil kapisi) ayni liste.
+    const langPrefs = izleyiciDilleri(
+      user.preferred_languages as string[] | null, userLanguages, user.locale as string | null,
+    );
 
     // 3. Query candidates
     // Dislama sorguya tasindi: eskiden 50 satir SIRALAMASIZ cekilip dislama
