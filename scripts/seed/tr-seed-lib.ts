@@ -1,15 +1,17 @@
 /**
- * TR seed (test) profilleri — Stage 2 çekirdeği. CLI'lar: seed-tr-test-profiles.ts, delete-tr-test-profiles.ts
+ * Seed (test) profilleri — Stage 2 çekirdeği. CLI'lar: seed-tr-test-profiles.ts, delete-tr-test-profiles.ts (`--locale`).
  *
- * Girdi: seed-profiles/tr-selection.json kaydı (tools/seed_prepare.py çıktısı: ilçe/il, final prompt + sha1,
+ * Locale: her fonksiyon `cfg: SeedLocale` alır (locales.ts; seed-profiles/locales/<locale>.json), verilmezse TR — TR çıktıları
+ * (e-posta, storage yolu, referral, isim/soru seçimi) genelleştirme öncesiyle birebir aynı.
+ * Girdi: <prefix>-selection.json kaydı (tools/seed_prepare.py çıktısı: ilçe/il, final prompt + sha1,
  *        zenginleştirme: bio/meslek/ilgi/kişilik/evcil/sigara/alkol) + Stage 1 fotoğrafı (bytes + manifest meta).
  * Çıktı: users (+ photo_prompt klonu) + user_details + user_languages (RPC) + 3 soru + Storage `photos/seed/…`.
  *
  * Görünürlük: is_seed_profile=true → discover'da HERKES görür (matching.service.ts); is_test_account=true
  * tek başına (seed olmayan test hesabı) yalnız is_test_admin'e görünür. is_seed_profile ayrıca toplu silme
  * işareti (057) ve login reddi (auth.service.ts); botun yazma kapısı iki bayrağı birden ister.
- * users.city ilçe taşır (gerçek kullanıcılarda da ters geocode ilçe verir: Esenyurt, Konak…);
- * prompt'taki "Location: <ilçe>, <il>, Türkiye." cümlesi ile birebir aynı ilçe.
+ * users.city: TR ilçe (gerçek kullanıcılarda da ters geocode ilçe verir: Esenyurt, Konak…), IT comune (cfg.userCityFrom);
+ * prompt'taki "Location: <ilçe>, <il>, <ülke>." cümlesiyle birebir aynı yer.
  * Tüm rastgele seçimler seed_id'den türetilir: aynı kayıt tekrar basılırsa aynı kişi çıkar.
  */
 
@@ -17,75 +19,101 @@ import { createHash } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { INTEREST_POOL } from "../../src/constants/interest-pool.js";
-import { FEMALE_NAMES, MALE_NAMES, SURNAMES, ZODIACS } from "./data/tr-names.js";
+import { fetchAll } from "../../src/utils/fetch-all.js";
+import { ZODIACS } from "./data/tr-names.js";
+import {
+  SEED_EMAIL_DOMAIN,
+  TR_SEED_LOCALE,
+  formatLocation,
+  parseSeedEmail,
+  personalityLabels,
+  seedEmailLike,
+  seedRngKey,
+  type SeedLocale,
+} from "./locales.js";
+
+export { SEED_EMAIL_DOMAIN };
 
 /** Kullanılan yüzey; gerçek `createClient` sonucu ve tests/helpers/fake-supabase ikisi de uyar. */
 export type SeedClient = Pick<SupabaseClient, "from" | "storage" | "rpc">;
 
-export const SEED_EMAIL_DOMAIN = "@qulo.seed";
 export const PHOTO_BUCKET = "photos";
 export const SEED_STORAGE_PREFIX = "seed";
 export const SEED_PHOTO_CONTENT_TYPE = "image/jpeg";
-export const LOCALE = "tr";
 export const QUESTIONS_PER_PROFILE = 3;
-export const PERSONALITIES = ["İçe dönük", "Dışa dönük", "Ambivert"] as const;
 export const FREQUENCIES = ["YES", "NO", "SOMETIMES"] as const;
-const COUNTRY = "TR"; // ISO 3166-1 alpha-2 (migration 062) — updateLocation ve FormatManager aynı biçim
-/** Türkiye sınır kutusu (kabaca) — ilçe koordinatları bunun içinde olmalı. */
-const TR_BBOX = { latMin: 35.8, latMax: 42.2, lngMin: 25.6, lngMax: 45.0 };
+const TR = TR_SEED_LOCALE;
+/** PostgREST `.in()` URL sınırı: 416 id tek sorguya konmaz (HeadersOverflowError) → parçalı. */
+const ID_CHUNK = 100;
 const REFERRAL_LENGTH = 8; // users.referral_code VARCHAR(8)
 const BASE36 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 const HOURS_72_MS = 72 * 3600 * 1000;
 const AGE_PREF_CAP = 60;
 const STORAGE_PAGE = 100;
 const HTTP_OK = 200;
-/** Silinecek dosya adı deseni — gerçek kullanıcı yolları `<uuid>/<ts>.jpg`, bu desene asla uymaz. */
-const SEED_FILE_RE = /^tr_\d{4}(?:_[a-z0-9]{1,32})?\.jpg$/;
+/** Seed dosya adı deseni (her locale: `<prefix>_NNNN[_tag].jpg`) — gerçek kullanıcı yolları `<uuid>/<ts>.jpg`, bu desene asla uymaz. */
+const SEED_FILE_RE = /^[a-z]{2}_(\d{4})(?:_[a-z0-9]{1,32})?\.jpg$/;
 const PUBLIC_PATH_MARK = `/storage/v1/object/public/${PHOTO_BUCKET}/`;
 
 export const sha1 = (text: string) => createHash("sha1").update(text, "utf8").digest("hex");
-/** tools/seed_prepare.py `location_sentence` ile birebir aynı biçim. */
-export const locationSentence = (district: string, province: string) => `Location: ${district}, ${province}, Türkiye.`;
+/** tools/seed_prepare.py `location_sentence` ile birebir aynı biçim (TR: "Location: Kadıköy, İstanbul, Türkiye."). */
+export const locationSentence = (district: string, province: string, cfg: SeedLocale = TR) => formatLocation(cfg, district, province);
+
+function chunks<T>(arr: readonly T[], size = ID_CHUNK): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+  return out;
+}
+
+const errMessage = (err: unknown) => (err as { message?: string })?.message ?? String(err);
 
 // --- girdi şemaları ---------------------------------------------------------------------
 
 const frequency = z.enum(FREQUENCIES);
 
-export const selectionEntrySchema = z
-  .object({
-    seed_id: z.string().regex(/^seed_\d{4}$/),
-    gender: z.enum(["WOMAN", "MAN"]),
-    age: z.number().int().min(18).max(55),
-    prompt: z.string().min(1),
-    prompt_sha1: z.string().regex(/^[0-9a-f]{40}$/),
-    relationship_goal: z.enum(["SERIOUS", "FRIENDSHIP", "NOT_SURE"]),
-    bio: z.string().trim().min(20).max(300),
-    interests: z.array(z.enum(INTEREST_POOL)).min(3).max(5), // tools/seed_prepare.py sözleşmesiyle aynı
-    height: z.number().int().min(140).max(210).nullable(),
-    province: z.string().trim().min(1),
-    district: z.string().trim().min(1),
-    lat: z.number().min(TR_BBOX.latMin).max(TR_BBOX.latMax), // ters (lng, lat) yazımı yakalanır
-    lng: z.number().min(TR_BBOX.lngMin).max(TR_BBOX.lngMax),
-    job: z.string().trim().min(2).max(40),
-    personality: z.enum(PERSONALITIES),
-    pets: z.string().trim().min(1).max(40).nullable().optional(),
-    music_type: z.string().trim().min(1).max(40).nullable().optional(),
-    smoking: frequency,
-    alcohol: frequency,
-    selected: z.literal(true),
-  })
-  .superRefine((e, ctx) => {
-    // Kontrol listesi (spec): prompt'taki bölge = profildeki bölge, yaş birebir, klon sha1 tutarlı.
-    if (!e.prompt.includes(locationSentence(e.district, e.province))) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["prompt"], message: "konum cümlesi ilçe/il ile eşleşmiyor" });
-    }
-    if (!e.prompt.includes(`${e.age}-year-old`)) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["prompt"], message: "yaş etiketi profil yaşıyla eşleşmiyor" });
-    }
-    if (sha1(e.prompt) !== e.prompt_sha1) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["prompt_sha1"], message: "prompt_sha1 prompt ile eşleşmiyor" });
-    }
-  });
+/** Seçim kaydı şeması — ülke kutusu, kişilik etiketleri ve konum cümlesi locale'den (şema fabrikası). */
+export function makeSelectionEntrySchema(cfg: SeedLocale) {
+  const box = cfg.bbox;
+  return z
+    .object({
+      seed_id: z.string().regex(/^seed_\d{4}$/),
+      gender: z.enum(["WOMAN", "MAN"]),
+      age: z.number().int().min(18).max(55),
+      prompt: z.string().min(1),
+      prompt_sha1: z.string().regex(/^[0-9a-f]{40}$/),
+      relationship_goal: z.enum(["SERIOUS", "FRIENDSHIP", "NOT_SURE"]),
+      bio: z.string().trim().min(20).max(300),
+      interests: z.array(z.enum(INTEREST_POOL)).min(3).max(5), // tools/seed_prepare.py sözleşmesiyle aynı
+      height: z.number().int().min(140).max(210).nullable(),
+      province: z.string().trim().min(1),
+      district: z.string().trim().min(1),
+      lat: z.number().min(box.latMin).max(box.latMax), // ters (lng, lat) yazımı yakalanır (ülke kutusu)
+      lng: z.number().min(box.lngMin).max(box.lngMax),
+      job: z.string().trim().min(2).max(40),
+      personality: z.string().trim().min(1), // etiket kümesi + cinsiyet formu aşağıda (İtalyanca cinsiyetli)
+      pets: z.string().trim().min(1).max(40).nullable().optional(),
+      music_type: z.string().trim().min(1).max(40).nullable().optional(),
+      smoking: frequency,
+      alcohol: frequency,
+      selected: z.literal(true),
+    })
+    .superRefine((e, ctx) => {
+      // Kontrol listesi (spec): prompt'taki bölge = profildeki bölge, yaş birebir, klon sha1 tutarlı.
+      if (!personalityLabels(cfg, e.gender).includes(e.personality)) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["personality"], message: `kişilik etiketi geçersiz (${cfg.locale}, ${e.gender})` });
+      }
+      if (!e.prompt.includes(locationSentence(e.district, e.province, cfg))) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["prompt"], message: "konum cümlesi ilçe/il ile eşleşmiyor" });
+      }
+      if (!e.prompt.includes(`${e.age}-year-old`)) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["prompt"], message: "yaş etiketi profil yaşıyla eşleşmiyor" });
+      }
+      if (sha1(e.prompt) !== e.prompt_sha1) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["prompt_sha1"], message: "prompt_sha1 prompt ile eşleşmiyor" });
+      }
+    });
+}
+export const selectionEntrySchema = makeSelectionEntrySchema(TR);
 export type SelectionEntry = z.infer<typeof selectionEntrySchema>;
 
 export const bankQuestionSchema = z.object({
@@ -97,14 +125,15 @@ export const bankQuestionSchema = z.object({
 });
 export type BankQuestion = z.infer<typeof bankQuestionSchema>;
 
-/** tr-selection.json → yalnız `selected=true` ve şemaya uyan kayıtlar; uymayanlar seed_id + ilk hata ile raporlanır. */
-export function parseSelection(raw: unknown): { entries: SelectionEntry[]; invalid: { seed_id: string; reason: string }[] } {
+/** <prefix>-selection.json → yalnız `selected=true` ve şemaya uyan kayıtlar; uymayanlar seed_id + ilk hata ile raporlanır. */
+export function parseSelection(raw: unknown, cfg: SeedLocale = TR): { entries: SelectionEntry[]; invalid: { seed_id: string; reason: string }[] } {
+  const schema = makeSelectionEntrySchema(cfg);
   const profiles = z.object({ profiles: z.array(z.record(z.unknown())) }).parse(raw).profiles;
   const entries: SelectionEntry[] = [];
   const invalid: { seed_id: string; reason: string }[] = [];
   for (const p of profiles) {
     if (p.selected !== true) continue;
-    const parsed = selectionEntrySchema.safeParse(p);
+    const parsed = schema.safeParse(p);
     if (parsed.success) entries.push(parsed.data);
     else {
       const first = parsed.error.issues[0];
@@ -223,13 +252,14 @@ function shuffle<T>(rng: () => number, arr: readonly T[]): T[] {
 
 const seedNumber = (seedId: string) => seedId.replace(/^seed_/, "");
 
-export function seedEmail(seedId: string): string {
-  return `seed-tr_${seedNumber(seedId)}${SEED_EMAIL_DOMAIN}`;
+/** `seed-<prefix>_NNNN@qulo.seed` (TR seed-tr_0001, IT seed-it_0001) — locale'ler aynı seed_NNNN'i paylaşsa da çakışmaz. */
+export function seedEmail(seedId: string, cfg: SeedLocale = TR): string {
+  return `seed-${cfg.keyPrefix}_${seedNumber(seedId)}${SEED_EMAIL_DOMAIN}`;
 }
 
 /** `tag` = görsel kimliği (replicate_id'den): aynı profilde yeni görsel yeni yol alır → önbellekte eski görsel kalmaz. */
-export function storagePath(seedId: string, tag?: string): string {
-  return `${SEED_STORAGE_PREFIX}/tr_${seedNumber(seedId)}${tag ? `_${tag}` : ""}.jpg`;
+export function storagePath(seedId: string, tag?: string, cfg: SeedLocale = TR): string {
+  return `${SEED_STORAGE_PREFIX}/${cfg.keyPrefix}_${seedNumber(seedId)}${tag ? `_${tag}` : ""}.jpg`;
 }
 
 /** replicate_id → yol etiketi (küçük harf alfanümerik, en fazla 12). */
@@ -238,9 +268,10 @@ export function photoTag(replicateId: string | null | undefined): string | undef
   return tag || undefined;
 }
 
-/** 'S' + 7 base36 karakter, seed_id'den türetilir (8 karakter, kolon sınırı). */
-export function referralCode(seedId: string): string {
-  const rng = makeRng("referral:" + seedId);
+/** 'S' + 7 base36 karakter, seed_id'den türetilir (8 karakter, kolon sınırı). TR tohumu `referral:seed_NNNN` (değişmedi),
+ * diğer locale'ler `referral:<ns>:seed_NNNN` — users.referral_code UNIQUE, aynı seed_NNNN iki locale'de çakışmasın. */
+export function referralCode(seedId: string, cfg: SeedLocale = TR): string {
+  const rng = makeRng(seedRngKey(cfg, "referral", seedId));
   let code = "S";
   while (code.length < REFERRAL_LENGTH) code += BASE36[Math.floor(rng() * BASE36.length)];
   return code;
@@ -268,25 +299,26 @@ export function buildPhotoPrompt(entry: SelectionEntry, meta: PhotoMeta, referen
 
 export function buildUserRow(
   entry: SelectionEntry, photoUrl: string, photoMeta: PhotoMeta, passwordHash: string, now: Date, referencePath: string | null = null,
+  cfg: SeedLocale = TR,
 ) {
-  const rng = makeRng("user:" + entry.seed_id);
+  const rng = makeRng(seedRngKey(cfg, "user", entry.seed_id));
   const isWoman = entry.gender === "WOMAN";
   const prefMin = Math.max(18, entry.age - randInt(rng, 3, 6));
   const prefMax = Math.max(entry.age + 1, Math.min(AGE_PREF_CAP, entry.age + randInt(rng, 3, 8)));
   return {
-    email: seedEmail(entry.seed_id),
+    email: seedEmail(entry.seed_id, cfg),
     password_hash: passwordHash,
-    name: pick(rng, isWoman ? FEMALE_NAMES : MALE_NAMES),
-    surname: pick(rng, SURNAMES),
+    name: pick(rng, isWoman ? cfg.names.female : cfg.names.male),
+    surname: pick(rng, cfg.names.surname),
     age: entry.age,
     gender: entry.gender,
     gender_pref: isWoman ? "MAN" : "WOMAN",
     bio: entry.bio,
-    city: entry.district,
-    country: COUNTRY,
+    city: cfg.userCityFrom === "province" ? entry.province : entry.district,
+    country: cfg.countryIso2, // ISO 3166-1 alpha-2 (migration 062) — updateLocation ve FormatManager aynı biçim
     lat: entry.lat,
     lng: entry.lng,
-    locale: LOCALE,
+    locale: cfg.locale,
     match_radius_km: randInt(rng, 25, 100),
     age_pref_min: prefMin,
     age_pref_max: prefMax,
@@ -295,19 +327,19 @@ export function buildUserRow(
     is_online: false,
     profile_completion: randInt(rng, 78, 92),
     green_diamonds: randInt(rng, 10, 40),
-    preferred_languages: [LOCALE],
+    preferred_languages: [cfg.locale],
     interests: entry.interests,
     photos: [photoUrl],
     photo_prompt: buildPhotoPrompt(entry, photoMeta, referencePath),
-    referral_code: referralCode(entry.seed_id),
+    referral_code: referralCode(entry.seed_id, cfg),
     last_seen_at: new Date(now.getTime() - Math.floor(rng() * HOURS_72_MS)).toISOString(),
     is_test_account: true,
     is_seed_profile: true,
   };
 }
 
-export function buildDetailsRow(entry: SelectionEntry, userId: string) {
-  const rng = makeRng("details:" + entry.seed_id);
+export function buildDetailsRow(entry: SelectionEntry, userId: string, cfg: SeedLocale = TR) {
+  const rng = makeRng(seedRngKey(cfg, "details", entry.seed_id));
   const [hMin, hMax] = entry.gender === "WOMAN" ? [155, 178] : [168, 192];
   return {
     user_id: userId,
@@ -322,9 +354,10 @@ export function buildDetailsRow(entry: SelectionEntry, userId: string) {
   };
 }
 
-/** Bankadan cinsiyete uygun (target_gender boş ya da eşleşen) 3 farklı soru; banka kısa ise daha az döner. */
-export function pickQuestions(bank: BankQuestion[], entry: SelectionEntry, userId: string) {
-  const rng = makeRng("questions:" + entry.seed_id);
+/** Bankadan cinsiyete uygun (target_gender boş ya da eşleşen) 3 farklı soru; banka kısa ise daha az döner.
+ * Banka çağıran tarafından `cfg.questionLocale` ile çekilir (CLI: ai_question_bank.locale). */
+export function pickQuestions(bank: BankQuestion[], entry: SelectionEntry, userId: string, cfg: SeedLocale = TR) {
+  const rng = makeRng(seedRngKey(cfg, "questions", entry.seed_id));
   const target = entry.gender === "WOMAN" ? "female" : "male";
   // DB select sırası tanımsız → metne göre sırala ki aynı seed hep aynı 3 soruyu alsın (determinizm sözü)
   const eligible = bank.filter((q) => !q.target_gender || q.target_gender === target)
@@ -341,7 +374,7 @@ export function pickQuestions(bank: BankQuestion[], entry: SelectionEntry, userI
     hint_text: q.hint,
     category: q.category,
     time_limit: 30,
-    locale: LOCALE,
+    locale: cfg.questionLocale,
   }));
 }
 
@@ -349,12 +382,12 @@ export function pickQuestions(bank: BankQuestion[], entry: SelectionEntry, userI
 
 /** Düzenlenmiş görselin referansını etiketli yola yükler; `meta.edit` yoksa null. Referans baytı yoksa hata metni döner. */
 async function uploadReference(
-  bucket: ReturnType<SeedClient["storage"]["from"]>, entry: SelectionEntry, photo: SeedPhoto,
+  bucket: ReturnType<SeedClient["storage"]["from"]>, entry: SelectionEntry, photo: SeedPhoto, cfg: SeedLocale,
 ): Promise<{ path: string | null; error?: string }> {
   const edit = photo.meta.edit;
   if (!edit) return { path: null };
   if (!photo.reference) return { path: null, error: "düzenlenmiş görselin referansı yok (zincir korunamaz)" };
-  const path = storagePath(entry.seed_id, photoTag(edit.reference_replicate_id));
+  const path = storagePath(entry.seed_id, photoTag(edit.reference_replicate_id), cfg);
   const { error } = await bucket.upload(path, photo.reference.bytes, { contentType: photo.reference.contentType, upsert: true });
   return error ? { path: null, error: `referans yüklenemedi: ${error.message}` } : { path };
 }
@@ -370,9 +403,10 @@ export async function seedProfile(
   entry: SelectionEntry,
   photo: SeedPhoto,
   bank: BankQuestion[],
-  opts: { passwordHash: string; now?: Date },
+  opts: { passwordHash: string; now?: Date; locale?: SeedLocale },
 ): Promise<SeedResult> {
-  const email = seedEmail(entry.seed_id);
+  const cfg = opts.locale ?? TR;
+  const email = seedEmail(entry.seed_id, cfg);
   if (photo.meta.prompt_sha1 !== entry.prompt_sha1) {
     // Fotoğraf eski prompt'tan üretilmiş: klon alanı fotoğrafı üreten prompt olmaz → basma.
     return { status: "error", email, step: "photo", message: `fotoğraf prompt sha1 ${photo.meta.prompt_sha1.slice(0, 8)} ≠ seçim ${entry.prompt_sha1.slice(0, 8)}` };
@@ -385,28 +419,28 @@ export async function seedProfile(
   if (existsError) return { status: "error", email, step: "exists", message: existsError.message };
   if (existing) return { status: "skipped", email, id: existing.id };
 
-  const path = storagePath(entry.seed_id, photoTag(photo.meta.replicate_id));
+  const path = storagePath(entry.seed_id, photoTag(photo.meta.replicate_id), cfg);
   const bucket = client.storage.from(PHOTO_BUCKET);
   // upsert: yarım koşudan kalan aynı görsel (aynı etiket) engel olmasın.
   const { error: uploadError } = await bucket.upload(path, photo.bytes, { contentType: photo.contentType, upsert: true });
   if (uploadError) return { status: "error", email, step: "upload", message: uploadError.message };
   const photoUrl: string = bucket.getPublicUrl(path).data.publicUrl;
-  const ref = await uploadReference(bucket, entry, photo);
+  const ref = await uploadReference(bucket, entry, photo, cfg);
   if (ref.error) return { status: "error", email, step: "upload", message: ref.error };
 
-  const userRow = buildUserRow(entry, photoUrl, photo.meta, opts.passwordHash, opts.now ?? new Date(), ref.path);
+  const userRow = buildUserRow(entry, photoUrl, photo.meta, opts.passwordHash, opts.now ?? new Date(), ref.path, cfg);
   const { data: inserted, error: userError } = await client.from("users").insert(userRow).select("id").single();
   if (userError || !inserted) return { status: "error", email, step: "users", message: userError?.message ?? "insert boş döndü" };
 
   const warnings: string[] = [];
-  const { error: detailsError } = await client.from("user_details").insert(buildDetailsRow(entry, inserted.id));
+  const { error: detailsError } = await client.from("user_details").insert(buildDetailsRow(entry, inserted.id, cfg));
   if (detailsError) warnings.push(`user_details: ${detailsError.message}`);
 
   // user_languages'a doğrudan yazma: 054 sonrası tek kaynak users.preferred_languages, türev tablo RPC ile.
-  const { error: langError } = await client.rpc("set_user_languages", { p_user_id: inserted.id, p_languages: [LOCALE] });
+  const { error: langError } = await client.rpc("set_user_languages", { p_user_id: inserted.id, p_languages: [cfg.locale] });
   if (langError) warnings.push(`set_user_languages: ${langError.message}`);
 
-  const questions = pickQuestions(bank, entry, inserted.id);
+  const questions = pickQuestions(bank, entry, inserted.id, cfg);
   if (questions.length < QUESTIONS_PER_PROFILE) warnings.push(`soru bankası yetersiz: ${questions.length}`);
   if (questions.length > 0) {
     const { error: qError } = await client.from("questions").insert(questions);
@@ -435,8 +469,10 @@ function storagePathFromUrl(url: string | undefined): string | null {
  * Kullanıcı satırı SİLİNMEZ: id, eşleşmeler, swipe'lar korunur. Yeni görsel yeni yola yüklenir, `photos` ve
  * `photo_prompt` klonu birlikte güncellenir, eski seed dosyası kaldırılır. Klondaki replicate_id zaten aynıysa `unchanged`.
  */
-export async function replaceSeedPhoto(client: SeedClient, entry: SelectionEntry, photo: SeedPhoto): Promise<ReplaceResult> {
-  const email = seedEmail(entry.seed_id);
+export async function replaceSeedPhoto(
+  client: SeedClient, entry: SelectionEntry, photo: SeedPhoto, cfg: SeedLocale = TR,
+): Promise<ReplaceResult> {
+  const email = seedEmail(entry.seed_id, cfg);
   if (photo.meta.prompt_sha1 !== entry.prompt_sha1) {
     return { status: "error", email, step: "photo", message: `fotoğraf prompt sha1 ${photo.meta.prompt_sha1.slice(0, 8)} ≠ seçim ${entry.prompt_sha1.slice(0, 8)}` };
   }
@@ -457,7 +493,7 @@ export async function replaceSeedPhoto(client: SeedClient, entry: SelectionEntry
   const bucket = client.storage.from(PHOTO_BUCKET);
   const oldPath = storagePathFromUrl(user.photos?.[0]);
   const oldName = oldPath?.startsWith(`${SEED_STORAGE_PREFIX}/`) ? oldPath.slice(SEED_STORAGE_PREFIX.length + 1) : null;
-  const ownFile = !!oldName && SEED_FILE_RE.test(oldName) && oldName.startsWith(`tr_${seedNumber(entry.seed_id)}`);
+  const ownFile = !!oldName && SEED_FILE_RE.test(oldName) && oldName.startsWith(`${cfg.keyPrefix}_${seedNumber(entry.seed_id)}`);
   // Düzenleme, DB'deki mevcut görselin (bu profilin kendi seed dosyası) üzerine yapıldıysa: mevcut dosya referanstır →
   // yerinde kalır, yolu klona girer. Aksi hâlde referans baytları yüklenir.
   const keepOldAsRef = !!photo.meta.edit && photo.meta.edit.reference_replicate_id === currentId && ownFile;
@@ -469,13 +505,13 @@ export async function replaceSeedPhoto(client: SeedClient, entry: SelectionEntry
     if (keepOldAsRef) {
       referencePath = oldPath;
     } else {
-      const ref = await uploadReference(bucket, entry, photo);
+      const ref = await uploadReference(bucket, entry, photo, cfg);
       if (ref.error) return { status: "error", email, step: "upload", message: ref.error };
       referencePath = ref.path;
     }
   }
 
-  const path = storagePath(entry.seed_id, photoTag(photo.meta.replicate_id));
+  const path = storagePath(entry.seed_id, photoTag(photo.meta.replicate_id), cfg);
   const { error: uploadError } = await bucket.upload(path, photo.bytes, { contentType: photo.contentType, upsert: true });
   if (uploadError) return { status: "error", email, step: "upload", message: uploadError.message };
   const photoUrl: string = bucket.getPublicUrl(path).data.publicUrl;
@@ -515,9 +551,10 @@ export async function verifySeedProfile(
   client: SeedClient,
   entry: SelectionEntry,
   head: HeadFn,
-  expected?: { replicate_id?: string | null },
+  opts?: { replicate_id?: string | null; locale?: SeedLocale },
 ): Promise<VerifyReport> {
-  const email = seedEmail(entry.seed_id);
+  const cfg = opts?.locale ?? TR;
+  const email = seedEmail(entry.seed_id, cfg);
   const checks: VerifyCheck[] = [];
   const add = (name: string, ok: boolean, detail?: string) => checks.push(detail === undefined ? { name, ok } : { name, ok, detail });
 
@@ -528,7 +565,8 @@ export async function verifySeedProfile(
   }
   add("kayit_var", true);
   add("is_seed", user.is_seed_profile === true && user.is_test_account === true, `is_seed_profile=${user.is_seed_profile} is_test_account=${user.is_test_account}`);
-  add("ilce_il", user.city === entry.district, `city=${user.city} beklenen=${entry.district}`);
+  const expectedCity = cfg.userCityFrom === "province" ? entry.province : entry.district;
+  add("ilce_il", user.city === expectedCity, `city=${user.city} beklenen=${expectedCity}`);
   add("yas_cinsiyet", user.age === entry.age && user.gender === entry.gender, `${user.gender} ${user.age}`);
   add("bio_ilgi", user.bio === entry.bio && JSON.stringify(user.interests) === JSON.stringify(entry.interests),
     user.bio === entry.bio ? `interests=${JSON.stringify(user.interests)}` : "bio farklı");
@@ -543,11 +581,11 @@ export async function verifySeedProfile(
   const clone = user.photo_prompt as { prompt?: string; prompt_sha1?: string } | null;
   add("prompt_klonu", clone?.prompt === entry.prompt && clone?.prompt_sha1 === entry.prompt_sha1,
     clone ? `sha1 ${clone.prompt_sha1?.slice(0, 8)}` : "photo_prompt boş");
-  if (expected?.replicate_id) { // manifestteki (QA'dan geçmiş) görsel DB'deki görsel mi?
+  if (opts?.replicate_id) { // manifestteki (QA'dan geçmiş) görsel DB'deki görsel mi?
     const cloneId = (user.photo_prompt as { replicate_id?: string | null } | null)?.replicate_id ?? null;
-    add("foto_kimligi", cloneId === expected.replicate_id, `db=${cloneId ?? "(yok)"} beklenen=${expected.replicate_id}`);
+    add("foto_kimligi", cloneId === opts.replicate_id, `db=${cloneId ?? "(yok)"} beklenen=${opts.replicate_id}`);
   }
-  add("dil_tr", Array.isArray(user.preferred_languages) && user.preferred_languages.includes(LOCALE));
+  add(`dil_${cfg.locale}`, Array.isArray(user.preferred_languages) && user.preferred_languages.includes(cfg.locale));
 
   const { data: qs, error: qErr } = await client.from("questions").select("id").eq("user_id", user.id);
   add("soru_3", !qErr && (qs?.length ?? 0) === QUESTIONS_PER_PROFILE, qErr ? qErr.message : `${qs?.length ?? 0} soru`);
@@ -562,30 +600,48 @@ export async function verifySeedProfile(
 
 export interface OrphanReport { dryRun: boolean; files: number; referenced: number; orphans: string[]; removed: number; warnings: string[] }
 
+interface PhotoRefRow { id: string; photos: string[] | null; photo_prompt: unknown }
+
 /**
- * `photos/seed/` altında hiçbir seed profilinin fotoğrafı ya da düzenleme referansı (`photo_prompt.edit.reference_path`)
- * olmayan tr_NNNN* dosyalarını bulur; `confirm` ile siler. Fotoğraf değişimleri (yerinde değiştirme) sonrası kalan eski
- * görseller için. Yalnız seed deseni (`SEED_FILE_RE`) listelenir — gerçek kullanıcı dosyası kapsam dışı.
+ * `*@qulo.seed` hesaplarının (bayrağa BAKILMAKSIZIN: seed'likten çıkarılmış ya da desen dışı e-postalı satır da canlı
+ * fotoğraf taşıyabilir) kullandığı storage yolları — fotoğraf + düzenleme referansı. 1.000'lik sayfalarla: sayfasız okuma
+ * 1.000 seed'i aşınca kırpılıyor, kırpılan profillerin CANLI fotoğrafları "yetim" sanılıp siliniyordu (2026-10-13).
  */
-export async function cleanupSeedOrphans(client: SeedClient, opts: { confirm: boolean }): Promise<OrphanReport> {
-  const { data: users, error } = await client
-    .from("users").select("photos, photo_prompt").eq("is_seed_profile", true).like("email", `%${SEED_EMAIL_DOMAIN}`);
-  if (error) throw new Error(`users select: ${error.message}`);
-  const referenced = new Set<string>();
-  for (const u of users ?? []) {
-    for (const url of (u.photos as string[] | null) ?? []) {
+async function loadSeedPhotoRefs(client: SeedClient): Promise<PhotoRefRow[]> {
+  try {
+    return await fetchAll<PhotoRefRow>((from, to) =>
+      client.from("users").select("id, photos, photo_prompt").like("email", `%${SEED_EMAIL_DOMAIN}`).order("id").range(from, to));
+  } catch (err) {
+    throw new Error(`users select: ${errMessage(err)}`);
+  }
+}
+
+function referencedPaths(rows: readonly PhotoRefRow[]): Set<string> {
+  const out = new Set<string>();
+  for (const u of rows) {
+    for (const url of u.photos ?? []) {
       const path = storagePathFromUrl(url);
-      if (path) referenced.add(path);
+      if (path) out.add(path);
     }
     const ref = (u.photo_prompt as { edit?: { reference_path?: string | null } | null } | null)?.edit?.reference_path;
-    if (ref) referenced.add(ref);
+    if (ref) out.add(ref);
   }
-  const files = await listSeedFiles(client);
+  return out;
+}
+
+/**
+ * `photos/seed/` altında hiçbir seed hesabının fotoğrafı ya da düzenleme referansı olmayan `<prefix>_NNNN*` dosyalarını
+ * bulur; `confirm` ile siler (yerinde fotoğraf değişimlerinden kalan eski görseller). Aday yalnız seed deseni (`SEED_FILE_RE`)
+ * ve yalnız `locale` öneki; kullanılan küme TÜM locale'lerden — gerçek kullanıcı dosyası (`<uuid>/<ts>.jpg`) kapsam dışı.
+ */
+export async function cleanupSeedOrphans(client: SeedClient, opts: { confirm: boolean; locale?: SeedLocale }): Promise<OrphanReport> {
+  const cfg = opts.locale ?? TR;
+  const referenced = referencedPaths(await loadSeedPhotoRefs(client));
+  const files = await listSeedFiles(client, cfg.keyPrefix);
   const orphans = files.filter((f) => !referenced.has(f));
   const report: OrphanReport = { dryRun: !opts.confirm, files: files.length, referenced: referenced.size, orphans, removed: 0, warnings: [] };
   if (!opts.confirm || !orphans.length) return report;
-  for (let i = 0; i < orphans.length; i += STORAGE_PAGE) {
-    const chunk = orphans.slice(i, i + STORAGE_PAGE);
+  for (const chunk of chunks(orphans, STORAGE_PAGE)) {
     const { error: rmError } = await client.storage.from(PHOTO_BUCKET).remove(chunk);
     if (rmError) report.warnings.push(`storage remove (${chunk[0]}…): ${rmError.message}`);
     else report.removed += chunk.length;
@@ -604,42 +660,70 @@ export interface DeleteReport {
   warnings: string[];
 }
 
-async function listSeedFiles(client: SeedClient): Promise<string[]> {
+/** `seed/` altındaki seed dosyaları; `prefix` verilirse yalnız o locale'inkiler (`it_0001…`). */
+async function listSeedFiles(client: SeedClient, prefix?: string): Promise<string[]> {
   const bucket = client.storage.from(PHOTO_BUCKET);
   const all: string[] = [];
   for (let offset = 0; ; offset += STORAGE_PAGE) {
     const { data, error } = await bucket.list(SEED_STORAGE_PREFIX, { limit: STORAGE_PAGE, offset });
     if (error) throw new Error(`storage list: ${error.message}`);
     const page = data ?? [];
-    all.push(...page.filter((f) => SEED_FILE_RE.test(f.name)).map((f) => `${SEED_STORAGE_PREFIX}/${f.name}`));
+    all.push(...page.filter((f) => SEED_FILE_RE.test(f.name) && (!prefix || f.name.startsWith(`${prefix}_`)))
+      .map((f) => `${SEED_STORAGE_PREFIX}/${f.name}`));
     if (page.length < STORAGE_PAGE) return all;
   }
 }
 
+/** Bu locale'in seed kullanıcıları (id + e-posta): `only` → o seed_id'ler, yoksa e-posta deseni; 1.000'lik sayfa + parçalı `.in()`. */
+async function selectSeedUsers(client: SeedClient, cfg: SeedLocale, only?: string[]): Promise<{ id: string; email: string }[]> {
+  const rows: { id: string; email: string }[] = [];
+  try {
+    if (only) {
+      for (const part of chunks(only.map((s) => seedEmail(s, cfg)))) {
+        const { data, error } = await client.from("users").select("id, email").eq("is_seed_profile", true).in("email", part);
+        if (error) throw error;
+        rows.push(...((data ?? []) as { id: string; email: string }[]));
+      }
+    } else {
+      rows.push(...await fetchAll<{ id: string; email: string }>((from, to) =>
+        client.from("users").select("id, email").eq("is_seed_profile", true).like("email", seedEmailLike(cfg)).order("id").range(from, to)));
+    }
+  } catch (err) {
+    throw new Error(`users select: ${errMessage(err)}`);
+  }
+  // LIKE'a ek güvence: yalnız tam `seed-<prefix>_NNNN@qulo.seed` (başka locale ya da elle açılmış hesap asla hedef değil).
+  return rows.filter((u) => parseSeedEmail(u.email)?.prefix === cfg.keyPrefix);
+}
+
 /**
- * is_seed_profile=true AND *@qulo.seed kullanıcılarını siler (bağlı tablolar FK CASCADE)
- * ve `photos/seed/tr_NNNN.jpg` dosyalarını kaldırır. `confirm=false` yalnız sayar.
+ * is_seed_profile=true VE bu locale'in e-posta desenine (`seed-<prefix>_NNNN@qulo.seed`) uyan kullanıcıları siler (bağlı
+ * tablolar FK CASCADE) ve `photos/seed/<prefix>_NNNN*.jpg` dosyalarını kaldırır. `confirm=false` yalnız sayar. Varsayılan
+ * locale TR: başka locale'in seed'leri (ör. `seed-it_…`) TR silmesinde asla kapsama girmez. Silme id parçalarıyla yapılır.
  */
-export async function deleteSeedProfiles(client: SeedClient, opts: { confirm: boolean; only?: string[] }): Promise<DeleteReport> {
-  // `only`: yalnız verilen seed_id'ler (görsel QA reddi → sil + yeniden bas); yoksa tümü.
-  const onlyEmails = opts.only?.map(seedEmail);
+export async function deleteSeedProfiles(
+  client: SeedClient, opts: { confirm: boolean; only?: string[]; locale?: SeedLocale },
+): Promise<DeleteReport> {
+  const cfg = opts.locale ?? TR;
+  // `only`: yalnız verilen seed_id'ler (görsel QA reddi → sil + yeniden bas); yoksa locale'in tümü.
+  const users = await selectSeedUsers(client, cfg, opts.only);
   // etiketli adlar da (tr_0015.jpg, tr_0015_<tag>.jpg) → numaraya göre eşle; map(storagePath) index'i etiket sanıyordu
   const onlyNums = opts.only ? new Set(opts.only.map(seedNumber)) : null;
-  const seedNumOf = (f: string) => /^seed\/tr_(\d{4})(?:_[a-z0-9]+)?\.jpg$/.exec(f)?.[1];
-  const selectQ = client.from("users").select("id").eq("is_seed_profile", true);
-  const { data: users, error } = await (onlyEmails ? selectQ.in("email", onlyEmails) : selectQ.like("email", `%${SEED_EMAIL_DOMAIN}`));
-  if (error) throw new Error(`users select: ${error.message}`);
-  const files = (await listSeedFiles(client)).filter((f) => !onlyNums || onlyNums.has(seedNumOf(f) ?? ""));
-  const report: DeleteReport = { dryRun: !opts.confirm, users: users?.length ?? 0, files: files.length, deletedUsers: 0, removedFiles: 0, warnings: [] };
+  const seedNumOf = (f: string) => SEED_FILE_RE.exec(f.slice(SEED_STORAGE_PREFIX.length + 1))?.[1]; // f = `seed/<ad>`
+  // Silinmeyecek bir hesabın (desen dışı e-posta, seed bayrağı kaldırılmış) hâlâ kullandığı dosya korunur — canlı profil kırılmasın.
+  const doomed = new Set(users.map((u) => u.id));
+  const keep = referencedPaths((await loadSeedPhotoRefs(client)).filter((r) => !doomed.has(r.id)));
+  const files = (await listSeedFiles(client, cfg.keyPrefix))
+    .filter((f) => (!onlyNums || onlyNums.has(seedNumOf(f) ?? "")) && !keep.has(f));
+  const report: DeleteReport = { dryRun: !opts.confirm, users: users.length, files: files.length, deletedUsers: 0, removedFiles: 0, warnings: [] };
   if (!opts.confirm) return report;
 
-  const deleteQ = client.from("users").delete({ count: "exact" }).eq("is_seed_profile", true);
-  const { count, error: delError } = await (onlyEmails ? deleteQ.in("email", onlyEmails) : deleteQ.like("email", `%${SEED_EMAIL_DOMAIN}`));
-  if (delError) throw new Error(`users delete: ${delError.message}`);
-  report.deletedUsers = count ?? 0;
+  for (const part of chunks(users.map((u) => u.id))) {
+    const { count, error: delError } = await client.from("users").delete({ count: "exact" }).eq("is_seed_profile", true).in("id", part);
+    if (delError) throw new Error(`users delete: ${delError.message}`);
+    report.deletedUsers += count ?? 0;
+  }
 
-  for (let i = 0; i < files.length; i += STORAGE_PAGE) {
-    const chunk = files.slice(i, i + STORAGE_PAGE);
+  for (const chunk of chunks(files, STORAGE_PAGE)) {
     const { error: rmError } = await client.storage.from(PHOTO_BUCKET).remove(chunk);
     if (rmError) report.warnings.push(`storage remove (${chunk[0]}…): ${rmError.message}`);
     else report.removedFiles += chunk.length;

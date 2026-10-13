@@ -1,11 +1,15 @@
 /**
  * LGBT havuzu (spec 2026-10-05 §5): mevcut hetero seed'lerin bir kısmı gey/lezbiyen
- * tercihine ayrılır. Karşılıklı kural açılınca gey erkek / lezbiyen kadın destesi
+ * tercihine ayrılır (locale başına: split-lgbt-seeds.ts --locale it). Karşılıklı kural açılınca gey erkek / lezbiyen kadın destesi
  * boşalmasın diye. Yalnız sohbeti, eşleşmesi ve gelen beğenisi olmayan seed'ler;
  * biyografi/soru metninde cinsiyet atfı olanlar dışarıda (manuel kontrol dry-run'da).
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { fetchAll } from "../../src/utils/fetch-all.js";
+import { parseSeedEmail, seedEmailLike, type SeedLocale } from "./locales.js";
+
+/** Kullanılan yüzey (gerçek istemci ve fake-supabase ikisi de uyar). */
+type SplitClient = Pick<SupabaseClient, "from">;
 
 export interface SeedCandidate {
   id: string;
@@ -27,26 +31,36 @@ export interface SplitSelection {
 }
 
 /**
- * Ek alan Türkçe kökler (kadınlar, kızım, erkekler, hanımlar...) — önek eşleşmesi.
- * Yanlış pozitif ("kızgın") zararsız: yalnız o seed ayrılmaz; dry-run'da göz kontrolü var.
+ * Cinsiyet atfı sözlüğü (locale başına): önek eşleşen kökler + yalnız tam eşleşen kısa kelimeler. İngilizce her locale'de
+ * geçerli (bio'larda karışık kullanım). Yanlış pozitif ("kızgın", "principale") zararsız: yalnız o seed ayrılmaz; dry-run'da
+ * göz kontrolü var. Kısa kelimeler tam eşleşme: "bey" ≠ "beyaz", "man" ≠ "manzara", "uomo" ≠ "uomini" (ayrıca listede).
  */
-const PREFIX_STEMS = [
-  "kadın", "kadin", "kız", "kiz", "erkek", "bayan", "hanım", "hanim", "beyefendi", "yakışıklı", "yakisikli",
-  "prenses", "girlfriend", "boyfriend", "husband", "wife", "gentlem",
-];
-/** Kısa kelimeler — yalnız tam eşleşme ("bey" ≠ "beyaz", "man" ≠ "manzara"). */
-const EXACT_WORDS = new Set([
-  "adam", "adamı", "koca", "kocam", "karım", "karim", "bey",
-  "man", "men", "guy", "guys", "girl", "girls", "woman", "women", "lady", "ladies",
-]);
+const EN_STEMS = ["girlfriend", "boyfriend", "husband", "wife", "gentlem"];
+const EN_WORDS = ["man", "men", "guy", "guys", "girl", "girls", "woman", "women", "lady", "ladies"];
+const GENDER_WORDS: Record<string, { stems: readonly string[]; words: ReadonlySet<string> }> = {
+  tr: {
+    stems: ["kadın", "kadin", "kız", "kiz", "erkek", "bayan", "hanım", "hanim", "beyefendi", "yakışıklı", "yakisikli", "prenses", ...EN_STEMS],
+    words: new Set(["adam", "adamı", "koca", "kocam", "karım", "karim", "bey", ...EN_WORDS]),
+  },
+  it: {
+    // "tipo" (dolgu kelime), "bellissimo" (eşya için de) bilerek yok: her bio'yu elerdi.
+    stems: ["donn", "ragazz", "femmin", "masch", "marit", "mogli", "fidanzat", "signor", "principess", ...EN_STEMS],
+    words: new Set(["uomo", "uomini", "lui", "lei", "moroso", "morosa", ...EN_WORDS]),
+  },
+};
+const LOWER_LOCALE: Record<string, string> = { tr: "tr-TR", it: "it-IT" };
 
-export function mentionsGender(text: string): boolean {
-  const tokens = text.toLocaleLowerCase("tr-TR").split(/[^\p{L}]+/u).filter(Boolean);
-  return tokens.some((t) => EXACT_WORDS.has(t) || PREFIX_STEMS.some((stem) => t.startsWith(stem)));
+export function mentionsGender(text: string, locale = "tr"): boolean {
+  const dict = GENDER_WORDS[locale];
+  // Sözlüğü olmayan locale'de TR'ye düşmek, cinsiyetli bio'ları "uygun" sayıp tercihlerini değiştirirdi → dur.
+  if (!dict) throw new Error(`cinsiyet sözlüğü yok: ${locale} (lgbt-seed-split-lib.ts GENDER_WORDS)`);
+  // tr-TR küçültmesi "I"yı "ı" yapar — İtalyanca metinde "Il/Io" bozulmasın diye locale'in kendi kuralı.
+  const tokens = text.toLocaleLowerCase(LOWER_LOCALE[locale] ?? "en-US").split(/[^\p{L}]+/u).filter(Boolean);
+  return tokens.some((t) => dict.words.has(t) || dict.stems.some((stem) => t.startsWith(stem)));
 }
 
-function eligible(c: SeedCandidate): boolean {
-  return !c.hasMatch && !c.hasIncomingLike && !c.texts.some(mentionsGender);
+function eligible(c: SeedCandidate, locale: string): boolean {
+  return !c.hasMatch && !c.hasIncomingLike && !c.texts.some((t) => mentionsGender(t, locale));
 }
 
 function ageBand(age: number | null): string {
@@ -76,10 +90,12 @@ function roundRobin(cands: SeedCandidate[], need: number): SeedCandidate[] {
   return picked;
 }
 
-export function selectSeedsForSplit(cands: SeedCandidate[], target: { men: number; women: number }): SplitSelection {
+export function selectSeedsForSplit(
+  cands: SeedCandidate[], target: { men: number; women: number }, locale = "tr",
+): SplitSelection {
   const alreadyMen = cands.filter((c) => c.gender === "MAN" && c.gender_pref === "MAN").length;
   const alreadyWomen = cands.filter((c) => c.gender === "WOMAN" && c.gender_pref === "WOMAN").length;
-  const pool = (g: "MAN" | "WOMAN", hetero: string) => cands.filter((c) => c.gender === g && c.gender_pref === hetero && eligible(c));
+  const pool = (g: "MAN" | "WOMAN", hetero: string) => cands.filter((c) => c.gender === g && c.gender_pref === hetero && eligible(c, locale));
   return {
     men: roundRobin(pool("MAN", "WOMAN"), Math.max(0, target.men - alreadyMen)),
     women: roundRobin(pool("WOMAN", "MAN"), Math.max(0, target.women - alreadyWomen)),
@@ -95,19 +111,24 @@ function chunks<T>(arr: T[]): T[][] {
   return out;
 }
 
-interface SeedRow { id: string; gender: string; gender_pref: string | null; age: number | null; city: string | null; bio: string | null }
+interface SeedRow { id: string; email?: string | null; gender: string; gender_pref: string | null; age: number | null; city: string | null; bio: string | null }
 interface QuestionRow { user_id: string; question_text: string | null; answer_1: string | null; answer_2: string | null; answer_3: string | null; answer_4: string | null }
 
 /**
  * Tüm okumalar `fetchAll` + sabit `.order("id")` ile sayfalanır: PostgREST 1000 satırda sessizce
  * kırpar; kırpılmış swipes cevabı bir seed'i, gerçek kullanıcı beğenmişken "uygun" gösterirdi.
+ * `locale` verilirse yalnız o locale'in seed'leri (`seed-<prefix>_NNNN@qulo.seed`); verilmezse tüm seed'ler.
  */
-export async function loadSeedCandidates(client: SupabaseClient): Promise<SeedCandidate[]> {
+export async function loadSeedCandidates(client: SplitClient, opts: { locale?: SeedLocale } = {}): Promise<SeedCandidate[]> {
   let seeds: SeedRow[];
   try {
-    seeds = await fetchAll<SeedRow>((from, to) =>
-      client.from("users").select("id, gender, gender_pref, age, city, bio")
-        .eq("is_seed_profile", true).eq("is_deleted", false).order("id").range(from, to));
+    seeds = await fetchAll<SeedRow>((from, to) => {
+      const q = client.from("users").select("id, email, gender, gender_pref, age, city, bio").eq("is_seed_profile", true).eq("is_deleted", false);
+      return (opts.locale ? q.like("email", seedEmailLike(opts.locale)) : q).order("id").range(from, to);
+    });
+    // LIKE'a ek: yalnız tam `seed-<prefix>_NNNN` (elle açılmış `seed-it_elle` gibi satırlar kapsam dışı)
+    const scope = opts.locale;
+    if (scope) seeds = seeds.filter((s) => parseSeedEmail(s.email)?.prefix === scope.keyPrefix);
   } catch (err) {
     throw new Error(`seed okuma: ${(err as { message?: string }).message ?? err}`);
   }
@@ -159,7 +180,7 @@ export async function loadSeedCandidates(client: SupabaseClient): Promise<SeedCa
     }));
 }
 
-export async function applySplit(client: SupabaseClient, sel: SplitSelection): Promise<{ men: number; women: number }> {
+export async function applySplit(client: SplitClient, sel: SplitSelection): Promise<{ men: number; women: number }> {
   // Bayat seçim satırı ezmesin: yalnız hâlâ seed ve hâlâ hetero tercihte olanlar güncellenir.
   const write = async (rows: SeedCandidate[], pref: "MAN" | "WOMAN", hetero: "MAN" | "WOMAN") => {
     let n = 0;

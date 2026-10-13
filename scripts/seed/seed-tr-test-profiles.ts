@@ -1,8 +1,9 @@
 /**
- * TR seed (test) profillerini Supabase'e basar ve DOĞRULAR — Stage 2.
+ * Seed (test) profillerini Supabase'e basar ve DOĞRULAR — Stage 2. Locale: `--locale tr|it` (varsayılan tr;
+ * seed-profiles/locales/<locale>.json → e-posta/storage öneki, ülke, dil, soru dili, users.city kaynağı).
  *
- * Önkoşul: tools/seed_selection.py → tools/seed_prepare.py (--merge) → seed-profiles/tr-selection.json
- *          tools/seed_photos.py → seed-profiles/photos-manifest.json + seed-photos-cache/
+ * Önkoşul: tools/seed_selection.py → tools/seed_prepare.py (--merge) → <veri kökü>/<prefix>-selection.json
+ *          tools/seed_photos.py → <veri kökü>/photos-manifest.json + seed-photos-cache/  (TR veri kökü seed-profiles/)
  * Profil profil koşu (kontrol listesi + foto + DB + doğrulama): tools/seed_run.py — bu CLI'ı `--only … --json` ile çağırır.
  *
  * Kullanım (qulo-server/ içinde):
@@ -10,7 +11,8 @@
  *   npx tsx scripts/seed/seed-tr-test-profiles.ts --only seed_0015 [--json]
  *   npx tsx scripts/seed/seed-tr-test-profiles.ts --limit 50 [--gender WOMAN|MAN]
  *   npx tsx scripts/seed/seed-tr-test-profiles.ts --verify-only [--only …]   # yalnız canlı kaydı kontrol eder
- * Silme: npx tsx scripts/seed/delete-tr-test-profiles.ts --confirm
+ *   npx tsx scripts/seed/seed-tr-test-profiles.ts --locale it --dry-run       # İtalya seçimi (seed-profiles/it/)
+ * Silme: npx tsx scripts/seed/delete-tr-test-profiles.ts [--locale it] --confirm
  *
  * İdempotent: e-postası olan profil atlanır (ama yine doğrulanır). Fotoğrafı manifestte olmayan profil atlanır.
  * Şifre koşu başına rastgeledir ve hiçbir yere yazılmaz; seed hesapları zaten login'de reddedilir.
@@ -19,12 +21,13 @@
 
 import { randomBytes } from "node:crypto";
 import { readFileSync, realpathSync } from "node:fs";
-import { dirname, resolve, sep } from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { resolve, sep } from "node:path";
+import { pathToFileURL } from "node:url";
 import bcrypt from "bcryptjs";
+import { parseFlags } from "./cli-args.js";
 import { createSeedClient } from "./cli-env.js";
+import { REPO_ROOT, resolveSeedLocale, seedDataPaths } from "./locales.js";
 import {
-  LOCALE,
   QUESTIONS_PER_PROFILE,
   SEED_PHOTO_CONTENT_TYPE,
   parseBank,
@@ -40,48 +43,44 @@ import {
   type VerifyReport,
 } from "./tr-seed-lib.js";
 
-const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
-const SELECTION = resolve(REPO_ROOT, "seed-profiles/tr-selection.json");
-const MANIFEST = resolve(REPO_ROOT, "seed-profiles/photos-manifest.json");
 const CACHE_DIR = resolve(REPO_ROOT, "qulo-server/seed-photos-cache");
 const BANK_LIMIT = 1000;
 const GENDERS = ["WOMAN", "MAN"] as const;
+const DEFAULT_LOCALE = "tr";
 const EXIT_VERIFY_FAILED = 2;
 const HEAD_TIMEOUT_MS = 15_000;
 
 interface ManifestEntry { file?: string; error?: string; [k: string]: unknown }
-export interface Args { dryRun: boolean; verifyOnly: boolean; json: boolean; replacePhoto: boolean; only: Set<string>; gender?: SelectionEntry["gender"]; limit: number }
+export interface Args {
+  dryRun: boolean; verifyOnly: boolean; json: boolean; replacePhoto: boolean; only: Set<string>; gender?: SelectionEntry["gender"]; limit: number;
+  /** seed-profiles/locales/<locale>.json — varsayılan tr. */
+  locale: string;
+}
 
-/** `--limit 0` = sınırsız. Dışa açık: testte doğrudan çağrılır (main import'ta koşmaz). */
-const KNOWN_FLAGS = new Set(["--dry-run", "--verify-only", "--json", "--replace-photo", "--only", "--gender", "--limit"]);
-const VALUE_FLAGS = new Set(["--only", "--gender", "--limit"]);
-
+/** `--limit 0` = sınırsız. Dışa açık: testte doğrudan çağrılır (main import'ta koşmaz). Katı: bilinmeyen/değersiz bayrak hata. */
 export function parseArgs(argv: string[]): Args {
-  for (let i = 0; i < argv.length; i++) {
-    const a = argv[i];
-    if (!KNOWN_FLAGS.has(a)) throw new Error(`bilinmeyen argüman: ${a} (izinli: ${[...KNOWN_FLAGS].join(" ")})`); // yazım hatası gerçek koşuya dönüşmesin
-    if (VALUE_FLAGS.has(a)) {
-      const v = argv[i + 1];
-      if (v === undefined || v.startsWith("--")) throw new Error(`${a} değer ister`);
-      i++;
-    }
-  }
-  const get = (flag: string) => { const i = argv.indexOf(flag); return i >= 0 ? argv[i + 1] : undefined; };
-  const gender = get("--gender");
+  const f = parseFlags(argv, {
+    bool: ["--dry-run", "--verify-only", "--json", "--replace-photo"],
+    value: ["--only", "--gender", "--limit", "--locale"],
+  });
+  const gender = f.get("--gender");
   if (gender !== undefined && !GENDERS.includes(gender as SelectionEntry["gender"])) {
     throw new Error(`--gender ${GENDERS.join("|")} olmalı, verilen: ${gender}`);
   }
-  const rawLimit = get("--limit");
+  const rawLimit = f.get("--limit");
   const limit = rawLimit === undefined ? 0 : Number(rawLimit);
   if (!Number.isInteger(limit) || limit < 0) throw new Error(`--limit 0 (sınırsız) ya da pozitif tam sayı olmalı, verilen: ${rawLimit}`);
+  const locale = f.get("--locale") ?? DEFAULT_LOCALE;
+  if (!/^[a-z]{2}$/.test(locale)) throw new Error(`--locale iki küçük harf olmalı (tr, it…), verilen: ${locale}`);
   return {
-    dryRun: argv.includes("--dry-run"),
-    verifyOnly: argv.includes("--verify-only"),
-    json: argv.includes("--json"),
-    replacePhoto: argv.includes("--replace-photo"),
-    only: new Set((get("--only") ?? "").split(",").filter(Boolean)),
+    dryRun: f.has("--dry-run"),
+    verifyOnly: f.has("--verify-only"),
+    json: f.has("--json"),
+    replacePhoto: f.has("--replace-photo"),
+    only: new Set((f.get("--only") ?? "").split(",").filter(Boolean)),
     gender: gender as SelectionEntry["gender"] | undefined,
     limit,
+    locale,
   };
 }
 
@@ -111,7 +110,9 @@ function printResult(args: Args, e: SelectionEntry, res: RunResult | null, verif
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  const { entries: selected, invalid } = parseSelection(JSON.parse(readFileSync(SELECTION, "utf8")));
+  const cfg = resolveSeedLocale(args.locale);
+  const { selection: SELECTION, manifest: MANIFEST } = seedDataPaths(cfg);
+  const { entries: selected, invalid } = parseSelection(JSON.parse(readFileSync(SELECTION, "utf8")), cfg);
   if (invalid.length) {
     console.warn(`⚠️ şemaya uymayan ${invalid.length} kayıt atlandı: ${invalid.slice(0, 5).map((x) => `${x.seed_id} (${x.reason})`).join("; ")}`);
   }
@@ -130,9 +131,9 @@ async function main() {
   if (args.gender) entries = entries.filter((e) => e.gender === args.gender);
   const withPhoto = args.verifyOnly ? entries : entries.filter((e) => manifest[e.seed_id]?.file);
   entries = args.limit ? withPhoto.slice(0, args.limit) : withPhoto;
-  if (!args.json) console.log(`seçili: ${selected.length} · fotoğrafı hazır: ${withPhoto.length} · bu koşuda: ${entries.length}`);
+  if (!args.json) console.log(`locale: ${cfg.locale} · seçili: ${selected.length} · fotoğrafı hazır: ${withPhoto.length} · bu koşuda: ${entries.length}`);
   for (const m of onlyMissing) { // sessiz no-op yerine sürücünün okuyacağı hata satırı (dry-run dahil)
-    const res: SeedResult = { status: "error", email: seedEmail(m.seed_id), step: "exists", message: m.message };
+    const res: SeedResult = { status: "error", email: seedEmail(m.seed_id, cfg), step: "exists", message: m.message };
     if (args.json) console.log(`RESULT ${JSON.stringify({ seed_id: m.seed_id, result: res, verify: null })}`);
     else console.error(`⚠️ ${m.seed_id}: ${m.message}`);
   }
@@ -150,7 +151,7 @@ async function main() {
     const { data: bankRows, error: bankError } = await client
       .from("ai_question_bank")
       .select("question_text, answers, category, hint, target_gender")
-      .eq("locale", LOCALE)
+      .eq("locale", cfg.questionLocale)
       .eq("is_active", true)
       .limit(BANK_LIMIT);
     if (bankError) throw new Error(`ai_question_bank: ${bankError.message}`);
@@ -178,18 +179,18 @@ async function main() {
           bytes: readFileSync(cachedPhotoPath(m.file!)), contentType: SEED_PHOTO_CONTENT_TYPE, meta,
           reference: refFile ? { bytes: readFileSync(cachedPhotoPath(refFile)), contentType: SEED_PHOTO_CONTENT_TYPE } : null,
         };
-        res = await seedProfile(client, e, photo, bank, { passwordHash });
+        res = await seedProfile(client, e, photo, bank, { passwordHash, locale: cfg });
         // basılmış profil + manifestte farklı (QA'dan geçmiş) görsel → yerinde değiştir
-        if (res.status === "skipped" && args.replacePhoto) res = await replaceSeedPhoto(client, e, photo);
+        if (res.status === "skipped" && args.replacePhoto) res = await replaceSeedPhoto(client, e, photo, cfg);
       } catch (err) {
-        res = { status: "error", email: seedEmail(e.seed_id), step: "photo", message: err instanceof Error ? err.message : String(err) };
+        res = { status: "error", email: seedEmail(e.seed_id, cfg), step: "photo", message: err instanceof Error ? err.message : String(err) };
       }
       tally[res.status]++;
     }
     let verify: VerifyReport | null = null;
     if (!res || res.status !== "error") {
       const expectedId = typeof manifest[e.seed_id]?.replicate_id === "string" ? (manifest[e.seed_id].replicate_id as string) : null;
-      verify = await verifySeedProfile(client, e, headStatus, { replicate_id: expectedId });
+      verify = await verifySeedProfile(client, e, headStatus, { replicate_id: expectedId, locale: cfg });
       tally[verify.ok ? "verified" : "verify_failed"]++;
     }
     printResult(args, e, res, verify, `${i + 1}/${entries.length}`);

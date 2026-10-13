@@ -679,9 +679,14 @@ describe("tr-seed-lib — deleteSeedProfiles", () => {
 
 describe("seed-tr-test-profiles CLI — parseArgs", () => {
   it("varsayılanlar ve bayraklar", () => {
-    expect(parseArgs([])).toEqual({ dryRun: false, verifyOnly: false, json: false, replacePhoto: false, only: new Set(), gender: undefined, limit: 0 });
-    expect(parseArgs(["--only", "seed_0001,seed_0002", "--gender", "MAN", "--limit", "5", "--dry-run", "--json", "--verify-only", "--replace-photo"]))
-      .toEqual({ dryRun: true, verifyOnly: true, json: true, replacePhoto: true, only: new Set(["seed_0001", "seed_0002"]), gender: "MAN", limit: 5 });
+    expect(parseArgs([])).toEqual({ dryRun: false, verifyOnly: false, json: false, replacePhoto: false, only: new Set(), gender: undefined, limit: 0, locale: "tr" });
+    expect(parseArgs(["--only", "seed_0001,seed_0002", "--gender", "MAN", "--limit", "5", "--dry-run", "--json", "--verify-only", "--replace-photo", "--locale", "it"]))
+      .toEqual({ dryRun: true, verifyOnly: true, json: true, replacePhoto: true, only: new Set(["seed_0001", "seed_0002"]), gender: "MAN", limit: 5, locale: "it" });
+  });
+
+  it("--locale iki küçük harf ister ve değersiz bırakılamaz", () => {
+    expect(() => parseArgs(["--locale", "ITA"])).toThrow(/iki küçük harf/);
+    expect(() => parseArgs(["--locale"])).toThrow(/--locale değer ister/);
   });
 
   it("geçersiz cinsiyet ve limit net mesajla reddedilir; 0 = sınırsız", () => {
