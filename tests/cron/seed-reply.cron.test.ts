@@ -19,13 +19,15 @@ async function setup(enabled: boolean, satirlar: Satir[] = [], failOn?: FailureS
     respondMediaRequest: vi.fn(async () => 'sent' as const),
   };
   const markCancelled = vi.fn(async () => undefined);
+  const backoffVeyaBitir = vi.fn(async () => 'deferred' as const);
+  const hataKodu = (err: unknown) => (err instanceof Error ? err.message : String(err));
   const { respondMediaRequest, ...servisIsleyicileri } = isleyiciler;
   vi.doMock('../../src/services/seed-reply.service.js', () => ({
-    scanAndEnqueue, claimDue, recoverStale, markCancelled, ...servisIsleyicileri,
+    scanAndEnqueue, claimDue, recoverStale, markCancelled, backoffVeyaBitir, hataKodu, ...servisIsleyicileri,
   }));
   vi.doMock('../../src/services/seed-reply-media.service.js', () => ({ respondMediaRequest }));
   const mod = await import('../../src/cron/seed-reply.cron.js');
-  return { mod, fake, scanAndEnqueue, claimDue, recoverStale, markCancelled, ...isleyiciler };
+  return { mod, fake, scanAndEnqueue, claimDue, recoverStale, markCancelled, backoffVeyaBitir, ...isleyiciler };
 }
 
 const configOkumalari = (fake: { queries: Array<{ table: string; op: string }> }) =>
@@ -48,6 +50,18 @@ describe('seedReplyTick', () => {
     await mod.seedReplyTick();
     expect(scanAndEnqueue).not.toHaveBeenCalled();
     expect(claimDue).not.toHaveBeenCalled();
+    log.mockRestore();
+  });
+
+  it('bir satirin isleyicisi firlatirsa tikin kalani DURMAZ; o satir backoff ile geri birakilir', async () => {
+    const log = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { mod, processRow, askQuestion, backoffVeyaBitir } = await setup(true, [
+      { id: 'r1', kind: 'message' }, { id: 'r2', kind: 'question' },
+    ]);
+    processRow.mockRejectedValueOnce(new Error('gecmis okunamadi'));
+    await mod.seedReplyTick();
+    expect(backoffVeyaBitir).toHaveBeenCalledWith(expect.objectContaining({ id: 'r1' }), expect.stringContaining('gecmis okunamadi'));
+    expect(askQuestion).toHaveBeenCalledWith(expect.objectContaining({ id: 'r2' }));
     log.mockRestore();
   });
 

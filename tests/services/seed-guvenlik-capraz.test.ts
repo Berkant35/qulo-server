@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createFakeSupabase } from '../helpers/fake-supabase.js';
-import { krizSinyali, yasAltiBeyani, krizCevabi, guvenlikVaryantlari, GUVENLIK_IFADE_DILLERI } from '../../src/services/seed-locale/guvenlik.js';
-import { PAKETLER } from '../../src/services/seed-locale/paketler.js';
+import { krizSinyali, yasAltiBeyani, krizCevabi, guvenlikVaryantlari } from '../../src/services/seed-locale/guvenlik.js';
+import { TUM_PAKETLER } from '../../src/services/seed-locale/paketler.js';
 import { IT_PAKETI, TR_PAKETI } from '../../src/services/seed-locale/index.js';
 import { validateReply } from '../../src/services/seed-reply-guard.js';
 
@@ -14,8 +14,20 @@ import { validateReply } from '../../src/services/seed-reply-guard.js';
  */
 
 describe('kapilar dilden bagimsiz (birlesim)', () => {
-  it('her dil paketinin normalize kriz/yas ifadeleri var (yeni paket guvenlik.ts\'e eklenmeden acilamaz)', () => {
-    for (const dil of Object.keys(PAKETLER)) expect(GUVENLIK_IFADE_DILLERI).toContain(dil);
+  it('her dil paketi kriz + yas alti ifadeleri ve kriz cevabi tasir (paketsiz guvenlik yok)', () => {
+    for (const p of TUM_PAKETLER) {
+      expect(p.guvenlik.krizIfadeleri.length, p.locale).toBeGreaterThan(0);
+      expect(p.guvenlik.yasAltiDesenleri.length, p.locale).toBeGreaterThan(0);
+      expect(p.guvenlik.krizCevabi, p.locale).toMatch(/112/);
+    }
+  });
+
+  it('hicbir paket deseni g/y bayragi tasimaz (.test() durum tutup araliksiz kacirirdi)', () => {
+    const desenler = TUM_PAKETLER.flatMap((p) => [
+      p.kapanis, p.guard.telefon, p.guard.yabanciDil, ...p.guard.yasak,
+      ...(p.guvenlik.ham ? [p.guvenlik.ham.kriz, p.guvenlik.ham.yasAlti] : []),
+    ]);
+    for (const d of desenler) expect(d.flags, d.source.slice(0, 40)).not.toMatch(/[gy]/);
   });
 
   it.each([
@@ -84,7 +96,7 @@ describe('giden mesaj guard: telefon ve yasak kelime tum paketlerle', () => {
     return r.ok ? 'ok' : r.reason;
   };
   it.each([
-    '+39 333 123 4567', '0039 333-123-4567', '333 123 4567', '347.123.4567', '02 2327 2327', '333\u200B1234567',
+    '+39 333 123 4567', '0039 333-123-4567', '333 123 4567', '347.123.4567', '02 1234 5678', '333\u200B1234567',
   ])('TR seed Italyan numara yazamaz: %s', (t) => expect(sonuc(t)).toBe('iletisim'));
 
   it.each(['0532 111 22 33', '+90 532 111 22 33', '0532.111.22.33', '5321112233', '+90 (532) 111-22-33'])(
@@ -156,5 +168,58 @@ describe('processRow uc uca — capraz dil', () => {
     expect(await svc.processRow(row as never)).toBe('sent');
     expect(generateSeedReply).not.toHaveBeenCalled();
     expect(sendMessage.mock.calls[0]![2]).toBe(IT_PAKETI.guvenlik.krizCevabi);
+  });
+});
+
+describe('inceleme sertlestirmesi (2026-10-13): yas / kriz ifadeleri', () => {
+  it.each([
+    '16 anni e tu?', 'ne ho 16', 'ho compiuto 16 anni', 'ho 16 anni in realtà', 'ho 16 anni di età', 'ho 16 anni da poco',
+    'sedicenne', 'sono minorenne', 'minorenne', 'ho diciasette anni', "ho diciassett'anni",
+    '16yım', 'ben 16yım', '16 yaşımdayım', '13üm', "15'im",
+    'under 18', "i'm a minor", 'im not 18', 'sono del 2010', 'classe 2011', '2009 doğumluyum', 'born in 2012',
+    'ho １６ anni',
+  ])('yas alti: %s', (metin) => expect(yasAltiBeyani(metin, new Date('2026-10-13T00:00:00Z'))).toBe(true));
+
+  it.each([
+    'sono del 1995', '1998 doğumluyum', 'born in 2001', 'ho 15 anni di esperienza', 'non sono minorenne', 'ho 22 anni',
+  ])('yas alti DEGIL: %s', (metin) => expect(yasAltiBeyani(metin, new Date('2026-10-13T00:00:00Z'))).toBe(false));
+
+  it.each([
+    'mi uccido', 'mi voglio uccidere', 'mi tolgo la vita', 'la faccio finita', 'non voglio vivere più', 'mi ammazzo stasera',
+    'ölmek istiyom', 'yaşamak istemiyom', 'kendimi asacağım', 'kendimi kesiyorum', 'keşke ölsem',
+    "i don't want to live", 'kms', 'unalive myself', 'i want to end it all', 'ｉｎｔｉｈａｒ',
+  ])('kriz: %s', (metin) => expect(krizSinyali(metin)).toBe(true));
+
+  it.each(['mi ammazzo dal ridere', 'mi ammazzo di lavoro', 'abito a 5 kms da qui', 'mi taglio i capelli'])(
+    'kriz DEGIL: %s', (metin) => expect(krizSinyali(metin)).toBe(false),
+  );
+});
+
+describe('inceleme sertlestirmesi: giden guard', () => {
+  const sonuc = (t: string, paket = IT_PAKETI) => {
+    const r = validateReply(t, 'Ti chiami Giulia.', paket);
+    return r.ok ? 'ok' : r.reason;
+  };
+  it.each([
+    '３３３１２３４５６７', '𝟑𝟑𝟑𝟏𝟐𝟑𝟒𝟓𝟔𝟕', '3\uFE0F\u20E33\uFE0F\u20E33\uFE0F\u20E31\uFE0F\u20E32\uFE0F\u20E33\uFE0F\u20E34\uFE0F\u20E35\uFE0F\u20E36\uFE0F\u20E37\uFE0F\u20E3', '333/1234567', '333,123,4567', 'scrivimi su t.me/giulia', 'ig: giulia.grafica',
+  ])('iletisim: %s', (t) => expect(sonuc(t)).toBe('iletisim'));
+
+  it('yardim hatti (Telefono Amico) iletisim sayilmaz: kriz kapisi kacsa da yardim engellenmez', () => {
+    expect(sonuc('per favore chiama Telefono Amico allo 02 2327 2327 o il 112')).toBe('ok');
+    expect(sonuc('chiama il 02 2327 2327', TR_PAKETI)).toBe('ok');
+    // Yardim hatti yaninda baska bir numara yine yakalanir.
+    expect(sonuc('02 2327 2327 oppure il mio 333 123 4567')).toBe('iletisim');
+  });
+
+  it.each(['sono un modello', 'sono un assistente', 'sono una I.A. lo ammetto'])('IT yasak: %s', (t) => expect(sonuc(t)).toBe('yasak_kelime'));
+  it("TR yasak: 'ben bir botum'", () => expect(sonuc('ben bir botum', TR_PAKETI)).toBe('yasak_kelime'));
+  it("meslek olarak asistan serbest: \"sono un'assistente di volo\"", () => expect(sonuc("sono un'assistente di volo")).toBe('ok'));
+  it('karsi tarafin Turkce adi (Işıl) tek basina yabanci dil sayilmaz; Turkce cumle sayilir', () => {
+    expect(sonuc('ciao Işıl, tutto bene?')).toBe('ok');
+    expect(sonuc('bugün çok yoğundu ışık')).toBe('ingilizce');
+  });
+  it('gonderilen metin degismez (emoji varyasyon secicisi korunur)', () => {
+    const r = validateReply('ciao ❤\uFE0F', 'x', IT_PAKETI);
+    expect(r.ok && r.text).toBe('ciao ❤\uFE0F');
   });
 });

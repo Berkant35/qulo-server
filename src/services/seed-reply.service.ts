@@ -7,8 +7,9 @@ import { validateReply } from './seed-reply-guard.js';
 import { generateSeedReply } from './seed-llm.service.js';
 import { chatQuestionService } from './chat-question.service.js';
 import { createChatQuestionSchema } from '../validators/chat-question.validator.js';
-import { seedLocalePack, TR_PAKETI, type SeedLocalePack } from './seed-locale/index.js';
-import { krizCevabi, krizSinyali, yasAltiBeyani } from './seed-locale/guvenlik.js';
+import {
+  krizCevabi, PAKETSIZ_DIL, seedLocalePack, seedPaketiKesin, TR_PAKETI, yasAltiBeyani, type SeedLocalePack,
+} from './seed-locale/index.js';
 
 // Tarama ayri modulde (seed-reply-scan.service.ts); cron ve testler tek giris noktasindan alir.
 export { fazFor } from './seed-reply-timing.js';
@@ -147,17 +148,54 @@ export async function recoverStale(olderThanMs = 5 * 60_000): Promise<number> {
 
 // --- processRow: orkestrasyon (Task 7) -------------------------------------
 
-// Guvenlik kapilari (kriz, 18 yas alti) DILDEN BAGIMSIZ ve fail-closed: tum paketlerin
-// birlesimi + normalize metin (seed-locale/guvenlik.ts). Insan seed'e her zaman seed'in dilinde
-// yazmaz; kapiyi seed'in diline baglamak capraz dilde mesaji kacirir (inceleme 2026-10-13).
-export { krizSinyali, yasAltiBeyani } from './seed-locale/guvenlik.js';
+// Guvenlik kapilari (kriz, 18 yas alti) DILDEN BAGIMSIZ ve fail-closed: tum paketlerin birlesimi +
+// normalize metin (seed-locale/guvenlik.ts). Insan seed'e her zaman seed'in dilinde yazmaz.
 
 /** Karsi taraf konusmayi kapatiyor mu (uyuyacak, isi var, "gorusuruz"). Guvenlik degil: paket ozel. */
 export function kapanisSinyali(text: string, paket: SeedLocalePack = TR_PAKETI): boolean {
-  return paket.guvenlik.kapanis.test(text);
+  return paket.kapanis.test(text);
 }
 
 const GECMIS_LIMIT = 20;
+
+/** `last_error` degeri; ayni zamanda eslesmenin KALICI yas alti isareti (bkz. yasAltiIsaretli). */
+export const YAS_ALTI_SEBEBI = '18 yas alti beyani';
+
+interface GecmisMesaji extends MesajSatiri { sender_id?: unknown }
+
+/**
+ * Gecmisteki HERHANGI bir insan mesaji 18 yas alti beyani mi. Yalniz son mesaj sinanirken
+ * "ho 16 anni" + "e tu?" ya da sustuktan sonra "ciao?" botu yeniden konusturuyordu (inceleme 2026-10-13).
+ */
+export function gecmisteYasAlti(gecmis: readonly GecmisMesaji[], seedUserId: string, paket: SeedLocalePack): boolean {
+  return gecmis.some((m) => m.sender_id !== seedUserId && yasAltiBeyani(mesajMetni(m, paket)));
+}
+
+/**
+ * Eslesmede daha once yas alti beyani yakalanmis mi: iptal edilmis kuyruk satiri kalici isarettir
+ * (beyan GECMIS_LIMIT'in disina kaysa da bot susmaya devam eder). Okuma hatasi FIRLATILIR — bilinmeyen
+ * durum "yaz" demek olmasin (fail-closed); cron satiri geri birakir.
+ */
+async function yasAltiIsaretli(matchId: string): Promise<boolean> {
+  const { count, error } = await supabase
+    .from('seed_reply_queue').select('id', { count: 'exact', head: true })
+    .eq('match_id', matchId).eq('status', 'cancelled').eq('last_error', YAS_ALTI_SEBEBI);
+  if (error) throw error;
+  return (count ?? 0) > 0;
+}
+
+/** Soru yollari (seedBaglami kullanmayan) icin: kalici isaret + son gecmis. */
+async function yasAltiDurumu(row: QueueRow, paket: SeedLocalePack): Promise<boolean> {
+  const [isaretli, gecmisSonuc] = await Promise.all([
+    yasAltiIsaretli(row.match_id),
+    supabase.from('messages')
+      .select('sender_id, content, is_image, audio_url')
+      .eq('match_id', row.match_id).is('deleted_at', null)
+      .order('created_at', { ascending: false }).limit(GECMIS_LIMIT),
+  ]);
+  if (gecmisSonuc.error) throw gecmisSonuc.error;
+  return isaretli || gecmisteYasAlti(gecmisSonuc.data ?? [], row.seed_user_id, paket);
+}
 
 /**
  * Bot bir sey yazdi: cevrimici bayragi ve son gorulme BIRLIKTE tazelenir.
@@ -179,9 +217,11 @@ export type SeedSatiri = SeedProfilSatiri & { seed_persona?: unknown };
 export interface SeedBaglami {
   sistem: string;
   turns: Array<{ role: 'model' | 'user'; text: string }>;
-  /** Son INSAN mesajinin LLM'e giden hali; yas ve kriz kapilari bunun uzerinde calisir. */
+  /** Son INSAN mesajinin LLM'e giden hali; kriz kapisi bunun uzerinde calisir. */
   sonInsanMetni: string;
-  /** Seed'in dil paketi — guvenlik kapilari ve cikti denetimi AYNI paketle calisir. */
+  /** Eslesmede yas alti beyani var (kalici isaret ya da gecmisteki herhangi bir insan mesaji). */
+  yasAlti: boolean;
+  /** Seed'in dil paketi — kart, etiketler ve cikti denetimi AYNI paketle calisir. */
   paket: SeedLocalePack;
 }
 
@@ -193,9 +233,10 @@ export interface SeedBaglami {
 export async function seedBaglami(
   row: QueueRow,
   seed: SeedSatiri,
+  paket: SeedLocalePack,
   opts: { mediaAsk?: boolean } = {},
 ): Promise<SeedBaglami> {
-  const [detaySonuc, sayim, gecmisSonuc] = await Promise.all([
+  const [detaySonuc, sayim, gecmisSonuc, isaretli] = await Promise.all([
     supabase.from('user_details')
       .select('job, personality, pets, music_type, smoking, alcohol')
       .eq('user_id', row.seed_user_id).maybeSingle(),
@@ -207,12 +248,12 @@ export async function seedBaglami(
       .select('sender_id, content, is_image, audio_url')
       .eq('match_id', row.match_id).is('deleted_at', null)
       .order('created_at', { ascending: false }).limit(GECMIS_LIMIT),
+    yasAltiIsaretli(row.match_id),
   ]);
 
   // Gecmis sessizce bos donerse model SIFIR baglamla yazar ve o cevap gonderilir.
   if (gecmisSonuc.error) throw gecmisSonuc.error;
 
-  const paket = seedLocalePack(seed.locale);
   const gecmis = (gecmisSonuc.data ?? []).slice().reverse();
   const sonInsan = [...gecmis].reverse().find((m) => m.sender_id !== row.seed_user_id);
   // Medya etiketli: yas/kriz/kapanis desenleri bir storage URL'sinde aranmaz.
@@ -235,7 +276,8 @@ export async function seedBaglami(
   // Medya istegi bir mesaj degil, bir eylem: gecmise `mesajMetni` ile ayni dilde girer.
   if (opts.mediaAsk) turns.push({ role: 'user' as const, text: paket.etiket.medyaIstegi });
 
-  return { sistem, turns, sonInsanMetni, paket };
+  const yasAlti = isaretli || gecmisteYasAlti(gecmis, row.seed_user_id, paket);
+  return { sistem, turns, sonInsanMetni, yasAlti, paket };
 }
 
 /**
@@ -260,13 +302,20 @@ export function hataKodu(err: unknown): string {
  * yazmasidir, bu yuzden gonderimden ONCE `botYazabilir` ile tekrar dogrulanir.
  */
 export async function processRow(row: QueueRow): Promise<IslemSonucu> {
-  const { data: seed } = await supabase
+  const { data: seed, error: seedHata } = await supabase
     .from('users')
     .select('id, name, age, city, bio, gender, interests, relationship_goal, locale, is_seed_profile, is_test_account, seed_persona')
     .eq('id', row.seed_user_id)
     .maybeSingle();
+  // Gecici okuma hatasi kimlik kapisina dusup satiri kalici iptal etmesin.
+  if (seedHata) return backoffVeyaBitir(row, `seed okunamadi: ${seedHata.message}`);
   if (!botYazabilir(seed)) {
     await markCancelled(row.id, KAPI_HATASI);
+    return 'cancelled';
+  }
+  const paket = seedPaketiKesin(seed.locale);
+  if (!paket) {
+    await markCancelled(row.id, `${PAKETSIZ_DIL}: ${String(seed.locale)}`);
     return 'cancelled';
   }
 
@@ -275,18 +324,17 @@ export async function processRow(row: QueueRow): Promise<IslemSonucu> {
     return 'deferred';
   }
 
-  const { sistem, turns, sonInsanMetni, paket } = await seedBaglami(row, seed);
+  const { sistem, turns, sonInsanMetni, yasAlti } = await seedBaglami(row, seed, paket);
 
-  if (yasAltiBeyani(sonInsanMetni)) {
-    await markCancelled(row.id, '18 yas alti beyani');
+  if (yasAlti) {
+    await markCancelled(row.id, YAS_ALTI_SEBEBI);
     return 'cancelled';
   }
 
-  let metin: string | null = null;
+  // Rolu birak: kriz cevabi sabit ve LLM'den GECMEZ (dil: eslesen dil, yoksa seed'in dili).
+  let metin: string | null = krizCevabi(sonInsanMetni, paket);
 
-  if (krizSinyali(sonInsanMetni)) {
-    metin = krizCevabi(sonInsanMetni, paket); // Rolu birak; bu cevap LLM'den GECMEZ.
-  } else {
+  if (metin === null) {
     for (let deneme = 0; deneme < 2 && metin === null; deneme += 1) {
       const sistemProbe = deneme === 0 ? sistem : `${sistem}${paket.uyariProbe}`;
       let ham: string;
@@ -335,11 +383,22 @@ const SIKLAR = ['A', 'B', 'C', 'D'] as const;
 const DOGRU_OLASILIGI = 0.65;
 
 export async function askQuestion(row: QueueRow): Promise<IslemSonucu> {
-  const { data: seed } = await supabase
+  const { data: seed, error: seedHata } = await supabase
     .from('users').select('id, name, age, city, bio, locale, is_seed_profile, is_test_account, seed_persona')
     .eq('id', row.seed_user_id).maybeSingle();
+  if (seedHata) return backoffVeyaBitir(row, `seed okunamadi: ${seedHata.message}`);
   if (!botYazabilir(seed)) {
     await markCancelled(row.id, KAPI_HATASI);
+    return 'cancelled';
+  }
+  // Soru, son insan mesajina metin cevabinin YERINE gecer: o mesaj yas beyani olabilir.
+  const paket = seedPaketiKesin(seed.locale);
+  if (!paket) {
+    await markCancelled(row.id, `${PAKETSIZ_DIL}: ${String(seed.locale)}`);
+    return 'cancelled';
+  }
+  if (await yasAltiDurumu(row, paket)) {
+    await markCancelled(row.id, YAS_ALTI_SEBEBI);
     return 'cancelled';
   }
 
@@ -352,7 +411,6 @@ export async function askQuestion(row: QueueRow): Promise<IslemSonucu> {
     .from('user_details').select('job, personality, pets, music_type').eq('user_id', row.seed_user_id).maybeSingle();
 
   // Soru seed'in dilinde uretilir: eslesen insan o dili okur (Discover dil kapisi).
-  const paket = seedLocalePack(seed.locale);
   const talimat = paket.soruTalimati({
     name: String(seed.name), job: (detay?.job as string | null | undefined) ?? null, bio: (seed.bio as string | null) ?? null,
   });
@@ -402,10 +460,16 @@ export async function answerQuestionRow(row: QueueRow): Promise<IslemSonucu> {
   // Kimlik cift kontrolu — processRow/askQuestion ile AYNI kapi. Soru cevabi da bir yazma
   // yoludur (soruyu SORANA yesil elmas kazandirir); bu feature'in en yuksek sonuclu hata
   // modu botun gercek bir kullanici hesabindan yazmasidir, yani her yazma yolu dogrular.
-  const { data: seed } = await supabase
-    .from('users').select('id, is_seed_profile, is_test_account').eq('id', row.seed_user_id).maybeSingle();
+  const { data: seed, error: seedHata } = await supabase
+    .from('users').select('id, locale, is_seed_profile, is_test_account').eq('id', row.seed_user_id).maybeSingle();
+  if (seedHata) return backoffVeyaBitir(row, `seed okunamadi: ${seedHata.message}`);
   if (!botYazabilir(seed)) {
     await markCancelled(row.id, KAPI_HATASI);
+    return 'cancelled';
+  }
+  // Cevap da etkilesimdir: yas alti beyani olan eslesmede bot soruyu da cevaplamaz.
+  if (await yasAltiDurumu(row, seedLocalePack(seed.locale))) {
+    await markCancelled(row.id, YAS_ALTI_SEBEBI);
     return 'cancelled';
   }
 

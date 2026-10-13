@@ -52,8 +52,9 @@ export interface SeedLocalePack {
   /** `toLocaleLowerCase` dili: Turkcede noktali/noktasiz i ayrimi, Italyancada standart. */
   buyukKucukHarf: string;
   /**
-   * derive-seed-persona'nin `seed_persona.tz` icin yazacagi IANA saat dilimi. Zamanlama tek
-   * kural kullanir: `persona.tz ?? 'Europe/Istanbul'` (bkz. seed-reply-timing).
+   * derive-seed-persona'nin `seed_persona.tz` icin YAZMASI GEREKEN IANA saat dilimi. Zamanlama tek
+   * kural kullanir: `persona.tz ?? TR_PAKETI.varsayilanTz` (seed-reply-timing) — tz'siz IT seed
+   * Istanbul saatiyle calisir, derive hatti bu alani yazmali.
    */
   varsayilanTz: string;
   kart: PersonaKartMetni;
@@ -61,19 +62,35 @@ export interface SeedLocalePack {
   mesafeHavuzu: { kadin: readonly Mesafe[]; diger: readonly Mesafe[] };
   /** responderTypeFor'un tanidigi kisilik etiketleri (user_details.personality serbest metin). */
   kisilik: { disaDonuk: readonly string[]; iceDonuk: readonly string[] };
+  /** Karsi taraf konusmayi kapatiyor (uyuyacak, isi var): kapanis yazilir, soru sorulmaz. Guvenlik degil. */
+  kapanis: RegExp;
   /**
-   * Ham desenler. Kriz ve yas alti kapilari TUM paketlerin birlesimiyle + normalize ifadelerle
-   * calisir (guvenlik.ts) — bir paketin deseni yalniz o dilin seed'ine uygulanmaz.
+   * Guvenlik kapilarinin bu dile ait parcasi. Kapilar (guvenlik.ts) TUM paketlerin parcalarini +
+   * temel Ingilizceyi BIRLIKTE uygular: bir dilin deseni yalniz o dilin seed'ine uygulanmaz.
+   * Ifade/desenler NORMALIZE metin icindir: kucuk harf, aksansiz (ş→s, ı→i, à→a), noktalama →
+   * bosluk, yaziyla sayilar rakama cevrilmis (`sayiKelimeleri`).
    */
   guvenlik: {
-    /** Kendine zarar / intihar: rol birakilir, LLM'siz sabit cevap gider. */
-    kriz: RegExp;
-    /** 18 yas alti beyani: satir iptal, bot susar. */
-    yasAlti: RegExp;
-    /** Karsi taraf konusmayi kapatiyor: kapanis yazilir, soru sorulmaz. */
-    kapanis: RegExp;
+    /**
+     * Kendine zarar / intihar ifadeleri (regex kaynagi). Duz bosluk `\s*` olur (bitisik yazim da
+     * tutar); karmasik ifade regex sozdizimi kullanabilir (bosluksuz yazilmali).
+     */
+    krizIfadeleri: readonly string[];
+    /** 18 yas alti beyani desenleri (regex kaynagi, normalize metin). */
+    yasAltiDesenleri: readonly string[];
+    /** Dogum yili beyani (tek yakalama grubu = yil); yil >= bu yil - 18 ise yas alti sayilir. */
+    dogumYiliDesenleri: readonly string[];
+    /** Yaziyla sayi → rakam: [regex kaynagi, rakam] (normalize metinde, bilesikler once). */
+    sayiKelimeleri: ReadonlyArray<readonly [string, string]>;
+    /**
+     * 2026-10-13 oncesi ham desenler (ham metinde). Yalniz TR: eski her "true" true kalsin diye
+     * (altin test). Yeni diller yalniz normalize ifadelerle calisir.
+     */
+    ham?: { kriz: RegExp; yasAlti: RegExp };
     /** LLM'den GECMEYEN kriz cevabi. */
     krizCevabi: string;
+    /** Kartta / kriz cevabinda verilen yardim hatlari: giden guard bunlari "iletisim" saymaz. */
+    yardimHatlari: readonly string[];
   };
   /** Bot medyayi goremez: medya/soru mesajlari LLM'e bu etiketlerle girer. */
   etiket: { sesli: string; foto: string; soruKarti: string; medyaIstegi: string };

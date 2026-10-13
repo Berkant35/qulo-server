@@ -23,8 +23,8 @@ async function yukle() {
   const persona = await import('../../src/services/seed-persona.js');
   const guard = await import('../../src/services/seed-reply-guard.js');
   const svc = await import('../../src/services/seed-reply.service.js');
-  const { TR_PAKETI } = await import('../../src/services/seed-locale/index.js');
-  return { ...persona, ...guard, svc, TR_PAKETI };
+  const locale = await import('../../src/services/seed-locale/index.js');
+  return { ...persona, ...guard, svc, locale };
 }
 
 describe('TR altin test — persona karti bayt bayt ayni', () => {
@@ -69,14 +69,14 @@ const BILINCLI_SAPMALAR: Record<string, Partial<{ kriz: boolean; yasAlti: boolea
 
 describe('TR altin test — guvenlik + cikti denetimi kararlari ayni', () => {
   it.each(GUVENLIK_KORPUSU.map((t) => [t]))('%s', async (metin) => {
-    const { buildPersonaCard, validateReply, svc } = await yukle();
+    const { buildPersonaCard, validateReply, svc, locale } = await yukle();
     const beklenen = { ...ALTIN.guvenlik[metin]!, ...BILINCLI_SAPMALAR[metin] };
     const sys = buildPersonaCard(personaKartVakalari()[0]![1]);
     const r = validateReply(metin, sys);
     expect({
-      kriz: svc.krizSinyali(metin),
+      kriz: locale.krizSinyali(metin),
       kapanis: svc.kapanisSinyali(metin),
-      yasAlti: svc.yasAltiBeyani(metin),
+      yasAlti: locale.yasAltiBeyani(metin),
       guard: r.ok ? 'ok' : r.reason,
     }).toEqual(beklenen);
   });

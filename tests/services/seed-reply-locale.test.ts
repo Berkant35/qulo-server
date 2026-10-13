@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { createFakeSupabase, type Tables } from '../helpers/fake-supabase.js';
+import { createFakeSupabase, type Tables, type FailureSpec } from '../helpers/fake-supabase.js';
 
 /**
  * Seed botu uc uca dil paketiyle calisir (2026-10-13): `users.locale = 'it'` olan seed'in kart,
@@ -22,7 +22,7 @@ const mesaj = (content: string, over: Record<string, unknown> = {}) => ({
   id: 'm1', match_id: MATCH, sender_id: INSAN, content, deleted_at: null, created_at: '2026-10-13T10:00:00Z', ...over,
 });
 
-interface Kurulum { locale?: string | null; mesajlar?: Record<string, unknown>[]; llm?: string[]; seed?: Tables }
+interface Kurulum { locale?: string | null; mesajlar?: Record<string, unknown>[]; llm?: string[]; seed?: Tables; failOn?: FailureSpec[] }
 
 async function setup(opts: Kurulum = {}) {
   const fake = createFakeSupabase({
@@ -42,7 +42,7 @@ async function setup(opts: Kurulum = {}) {
     app_config: [{ id: 'cfg', seed_reply_enabled: true, seed_reply_fast_mode: false }],
     seed_reply_queue: [row()],
     ...opts.seed,
-  });
+  }, opts.failOn ? { failOn: opts.failOn } : {});
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
 
   const cevaplar = [...(opts.llm ?? ['tutto ok dai, tu?'])];
@@ -183,5 +183,84 @@ describe('previewSeedReply — Italyanca seed', () => {
     expect(r.profil.locale).toBe('it');
     expect(r.kart).toContain('Ti chiami Giulia.');
     expect(r.elendi).toBe('iletisim');
+  });
+});
+
+describe('18 yas alti kapisi gecmis boyunca ve kalici (inceleme 2026-10-13)', () => {
+  const ikiMesaj = (ilk: string, son: string) => [
+    mesaj(ilk, { id: 'm0', created_at: '2026-10-13T09:59:00Z' }),
+    mesaj(son),
+  ];
+
+  it('"ho 16 anni" + "e tu?": son mesaj temiz olsa da iptal (gecmisteki beyan)', async () => {
+    const { svc, sendMessage, generateSeedReply } = await setup({ locale: 'it', mesajlar: ikiMesaj('ho 16 anni', 'e tu?') });
+    expect(await svc.processRow(row() as never)).toBe('cancelled');
+    expect(sendMessage).not.toHaveBeenCalled();
+    expect(generateSeedReply).not.toHaveBeenCalled();
+  });
+
+  it('kalici isaret: eslesmede onceki yas alti iptali varsa gecmis temiz olsa da bot susar', async () => {
+    const { svc, sendMessage } = await setup({
+      locale: 'it', mesajlar: [mesaj('ciao?')],
+      seed: { seed_reply_queue: [row(), { id: 'eski', match_id: MATCH, status: 'cancelled', last_error: '18 yas alti beyani' }] },
+    });
+    expect(await svc.processRow(row() as never)).toBe('cancelled');
+    expect(sendMessage).not.toHaveBeenCalled();
+  });
+
+  it('askQuestion: gecmiste yas beyani varsa soru URETILMEZ (soru metin cevabinin yerine gecer)', async () => {
+    const { svc, generateSeedReply, createQuestion } = await setup({ locale: 'tr', mesajlar: ikiMesaj('16 yaşındayım', 'naber') });
+    expect(await svc.askQuestion(row({ kind: 'question' }) as never)).toBe('cancelled');
+    expect(generateSeedReply).not.toHaveBeenCalled();
+    expect(createQuestion).not.toHaveBeenCalled();
+  });
+
+  it('answerQuestionRow: kalici isaret varsa soruyu da cevaplamaz', async () => {
+    const { svc, fake } = await setup({
+      mesajlar: [mesaj('soru')],
+      seed: {
+        seed_reply_queue: [row(), { id: 'eski', match_id: MATCH, status: 'cancelled', last_error: '18 yas alti beyani' }],
+        chat_questions: [{ id: 'soru-1', match_id: MATCH, sender_id: INSAN, correct_option: 'A', answered_option: null, is_abandoned: false, has_unmatch_risk: false, option_count: 4 }],
+      },
+    });
+    expect(await svc.answerQuestionRow(row({ kind: 'question_answer', question_id: 'soru-1' }) as never)).toBe('cancelled');
+    expect(fake.table('seed_reply_queue')[0]!.last_error).toBe('18 yas alti beyani');
+  });
+
+  it('kalici isaret okunamazsa YAZILMAZ (fail-closed: hata firlar, cron satiri geri birakir)', async () => {
+    const { svc, sendMessage } = await setup({
+      locale: 'it', failOn: [{ table: 'seed_reply_queue', op: 'select' }],
+    });
+    await expect(svc.processRow(row() as never)).rejects.toBeTruthy();
+    expect(sendMessage).not.toHaveBeenCalled();
+  });
+});
+
+describe('paketi olmayan dil ve okuma hatalari', () => {
+  it("paketi olmayan locale (es): bot YAZMAZ, satir iptal ('seed dil paketi yok')", async () => {
+    const { svc, fake, generateSeedReply, sendMessage } = await setup({ locale: 'es' });
+    expect(await svc.processRow(row() as never)).toBe('cancelled');
+    expect(generateSeedReply).not.toHaveBeenCalled();
+    expect(sendMessage).not.toHaveBeenCalled();
+    expect(fake.table('seed_reply_queue')[0]!.last_error).toBe('seed dil paketi yok: es');
+  });
+
+  it('paketi olmayan locale: medya istegi YINE reddedilir (kilitlenme acilir), gecistirme yazilmaz', async () => {
+    const { medya, fake, sendMessage } = await setup({ locale: 'es' });
+    expect(await medya.respondMediaRequest(row({ kind: 'media_request', media_request_id: ISTEK, trigger_message_id: null }) as never)).toBe('sent');
+    expect(fake.table('media_requests')[0]!.status).toBe('rejected');
+    expect(sendMessage).not.toHaveBeenCalled();
+  });
+
+  it('paketi olmayan locale: admin onizlemesi acik hata verir', async () => {
+    const { onizleme } = await setup({ locale: 'es' });
+    await expect(onizleme.previewSeedReply({ seedUserId: SEED, turns: [{ kim: 'insan', text: 'hola' }] }))
+      .rejects.toThrow(/dil paketi yok/);
+  });
+
+  it('seed satiri okunamazsa satir kalici IPTAL edilmez, geri birakilir (backoff)', async () => {
+    const { svc, fake } = await setup({ locale: 'it', failOn: [{ table: 'users', op: 'select', times: 1 }] });
+    expect(await svc.processRow(row() as never)).toBe('deferred');
+    expect(fake.table('seed_reply_queue')[0]!.status).toBe('pending');
   });
 });

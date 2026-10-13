@@ -138,6 +138,12 @@ describe('buildPersonaCard', () => {
     expect(buildPersonaCard(input({ name: 'Alp' }))).toContain("Sen Alp'sin");
   });
 
+  it('soru uretim talimati da ayni eki kullanir (kart "Nisa\'sın" derken talimat "Nisa\'sin" demesin)', async () => {
+    const { TR_PAKETI } = await import('../../src/services/seed-locale/index.js');
+    expect(TR_PAKETI.soruTalimati({ name: 'Nisa', job: null, bio: null })).toContain("Sen Nisa'sın.");
+    expect(TR_PAKETI.soruTalimati({ name: 'Elif', job: null, bio: null })).toContain("Sen Elif'sin.");
+  });
+
   it('faz 1 metni mesafe ile CELISMEZ', () => {
     // v1'de faz 1 "ilgilisin ve meraklisin" diyordu, mesafe blogu tersini; model
     // celiskili talimat aliyordu.

@@ -3,8 +3,9 @@ import { chatService } from './chat.service.js';
 import { generateSeedReply } from './seed-llm.service.js';
 import { validateReply } from './seed-reply-guard.js';
 import { mediaService } from './media.service.js';
+import { krizSinyali, seedPaketiKesin, type SeedLocalePack } from './seed-locale/index.js';
 import {
-  seedBaglami, hataKodu, botYazabilir, KAPI_HATASI, krizSinyali, yasAltiBeyani,
+  seedBaglami, hataKodu, botYazabilir, KAPI_HATASI,
   markCancelled, markSent, deferRow, withinRateLimits, backoffVeyaBitir, aktifIsaretle,
   type QueueRow, type IslemSonucu, type SeedSatiri, type SeedBaglami,
 } from './seed-reply.service.js';
@@ -25,10 +26,10 @@ import {
  * CHAT_LOCKED dahil gonderim hatalari da yutulur — yeniden denemek reddi
  * tekrarlamak demek olurdu ve kullanici reddi zaten arayuzde gorur.
  */
-async function medyaGecistirmesiYaz(row: QueueRow, seed: SeedSatiri): Promise<void> {
+async function medyaGecistirmesiYaz(row: QueueRow, seed: SeedSatiri, paket: SeedLocalePack): Promise<void> {
   let baglam: SeedBaglami;
   try {
-    baglam = await seedBaglami(row, seed, { mediaAsk: true });
+    baglam = await seedBaglami(row, seed, paket, { mediaAsk: true });
   } catch (err) {
     console.warn('[SeedReply] medya baglami kurulamadi:', hataKodu(err));
     return;
@@ -38,7 +39,7 @@ async function medyaGecistirmesiYaz(row: QueueRow, seed: SeedSatiri): Promise<vo
   // gecistirme YAZILMAZ. Metin satiri bu sebeple iptal edilmis olsa bile medya
   // istegi AYRI bir tetikleyicidir (farkli id) ve iptal filtresine takilmaz —
   // kapi bu yolda ayrica kurulmali.
-  if (yasAltiBeyani(baglam.sonInsanMetni) || krizSinyali(baglam.sonInsanMetni)) {
+  if (baglam.yasAlti || krizSinyali(baglam.sonInsanMetni)) {
     console.warn(`[SeedReply] medya gecistirmesi yazilmadi (yas/kriz kapisi) match=${row.match_id}`);
     return;
   }
@@ -80,10 +81,11 @@ async function medyaGecistirmesiYaz(row: QueueRow, seed: SeedSatiri): Promise<vo
  */
 export async function respondMediaRequest(row: QueueRow): Promise<IslemSonucu> {
   // Kimlik cift kontrolu — diger yazma yollariyla AYNI kapi.
-  const { data: seed } = await supabase
+  const { data: seed, error: seedHata } = await supabase
     .from('users')
     .select('id, name, age, city, bio, gender, interests, relationship_goal, locale, is_seed_profile, is_test_account, seed_persona')
     .eq('id', row.seed_user_id).maybeSingle();
+  if (seedHata) return backoffVeyaBitir(row, `seed okunamadi: ${seedHata.message}`);
   if (!botYazabilir(seed)) {
     await markCancelled(row.id, KAPI_HATASI);
     return 'cancelled';
@@ -123,7 +125,9 @@ export async function respondMediaRequest(row: QueueRow): Promise<IslemSonucu> {
   }
 
   await aktifIsaretle(row.seed_user_id);
-  await medyaGecistirmesiYaz(row, seed);
+  // Ret her durumda yapildi (kilitlenme acildi); paketi olmayan dilde gecistirme YAZILMAZ.
+  const paket = seedPaketiKesin(seed.locale);
+  if (paket) await medyaGecistirmesiYaz(row, seed, paket);
   await markSent(row.id);
   return 'sent';
 }

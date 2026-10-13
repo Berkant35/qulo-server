@@ -2,7 +2,7 @@ import cron from "node-cron";
 import { appConfigService } from "../services/app-config.service.js";
 import {
   scanAndEnqueue, claimDue, recoverStale,
-  processRow, askQuestion, answerQuestionRow, markCancelled,
+  processRow, askQuestion, answerQuestionRow, markCancelled, backoffVeyaBitir, hataKodu,
   type QueueRow, type IslemSonucu,
 } from "../services/seed-reply.service.js";
 import { respondMediaRequest } from "../services/seed-reply-media.service.js";
@@ -74,7 +74,19 @@ export async function seedReplyTick(): Promise<void> {
         await markCancelled(row.id, `bilinmeyen kind: ${row.kind}`);
         continue;
       }
-      const sonuc = await isleyici(row);
+      // Tek satirin istisnasi (gecmis okuma hatasi, bozuk persona, yas isareti okunamadi) tikin
+      // kalanini durdurmaz; satir backoff ile geri birakilir (claimed'da 5 dk kalmaz).
+      let sonuc: IslemSonucu;
+      try {
+        sonuc = await isleyici(row);
+      } catch (err) {
+        console.error(`[SeedReplyCron] satir isleyici hatasi match=${row.match_id} kind=${row.kind}:`, hataKodu(err));
+        try {
+          sonuc = await backoffVeyaBitir(row, `isleyici: ${hataKodu(err)}`);
+        } catch {
+          continue;   // durum yazilamadi: recoverStale satiri geri alir
+        }
+      }
       if (sonuc === "failed") {
         console.warn(`[SeedReplyCron] satir basarisiz match=${row.match_id} kind=${row.kind}`);
       }

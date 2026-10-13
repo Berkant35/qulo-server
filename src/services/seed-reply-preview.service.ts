@@ -3,7 +3,7 @@ import { buildPersonaCard, personaGirdisi } from './seed-persona.js';
 import { generateSeedReply, type LlmTurn } from './seed-llm.service.js';
 import { validateReply } from './seed-reply-guard.js';
 import { isBusy, VARSAYILAN_PERSONA } from './seed-reply-timing.js';
-import { seedLocalePack } from './seed-locale/index.js';
+import { seedPaketiKesin } from './seed-locale/index.js';
 import type { SeedPersona } from '../types/seed-persona.js';
 
 /**
@@ -38,13 +38,16 @@ export interface DenemeSonucu {
 export class DenemeHatasi extends Error {}
 
 export async function previewSeedReply(istek: DenemeIstegi): Promise<DenemeSonucu> {
-  const { data: seed } = await supabase
+  const { data: seed, error: seedHata } = await supabase
     .from('users')
     .select('id, name, age, city, bio, gender, relationship_goal, locale, is_seed_profile, seed_persona')
     .eq('id', istek.seedUserId)
     .maybeSingle();
+  if (seedHata) throw new DenemeHatasi('Profil okunamadi — tekrar deneyin');
   if (!seed) throw new DenemeHatasi('Profil bulunamadi');
   if (!seed.is_seed_profile) throw new DenemeHatasi('Bu profil seed degil — deneme yalniz seed profillerde calisir');
+  const paket = seedPaketiKesin(seed.locale);
+  if (!paket) throw new DenemeHatasi(`Bu seed'in dili (${String(seed.locale)}) icin bot dil paketi yok`);
 
   const { data: detay } = await supabase
     .from('user_details').select('job, personality, pets, music_type, smoking, alcohol')
@@ -65,7 +68,6 @@ export async function previewSeedReply(istek: DenemeIstegi): Promise<DenemeSonuc
   }));
 
   const cevap = await generateSeedReply({ system: kart, turns });
-  const paket = seedLocalePack(seed.locale);
   const denetim = validateReply(cevap.text, kart, paket);
 
   return {

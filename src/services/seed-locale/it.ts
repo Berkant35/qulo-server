@@ -1,5 +1,6 @@
 import type { PersonaCardInput } from '../../types/seed-persona.js';
 import { SORU_JSON_SEMASI } from './ortak.js';
+import { TR_KISILIK } from './tr.js';
 import type { SeedLocalePack } from './types.js';
 
 /**
@@ -20,9 +21,9 @@ const ALCOL: Record<string, string> = { YES: 'bevi alcolici', NO: 'non bevi alco
 
 /** user_details.personality serbest metin; TR hattinin kanonik etiketleri gelirse cevrilir. */
 const KISILIK: Record<string, readonly [string, string]> = {
-  'Dışa dönük': ['estroverso', 'estroversa'],
-  'İçe dönük': ['introverso', 'introversa'],
-  Ambivert: ['ambiverso', 'ambiversa'],
+  [TR_KISILIK.disaDonuk]: ['estroverso', 'estroversa'],
+  [TR_KISILIK.iceDonuk]: ['introverso', 'introversa'],
+  [TR_KISILIK.ambivert]: ['ambiverso', 'ambiversa'],
 };
 
 function kisilikEtiketi(deger: string, gender: PersonaCardInput['gender']): string {
@@ -45,13 +46,14 @@ function olgular(i: PersonaCardInput): string[] {
 }
 
 /** Bosluk/nokta/tire/parantezle ayrilmis rakamlar (+39 / 0039 onekli de). */
+const AYIRICI = String.raw`[\s.\-/,_()]`;
 const TELEFONO = new RegExp([
-  // cep: 3xx xxx xxx(x)
-  String.raw`(?<!\d)(?:(?:\+|00)\s*39[\s.\-()]*)?3\d{2}[\s.\-()]*\d{3}[\s.\-()]*\d{3,4}(?!\d)`,
+  // cep: 3xx xxx xxx(x) — "333/1234567", "333,123,4567" dahil
+  String.raw`(?<!\d)(?:(?:\+|00)\s*39${AYIRICI}*)?3\d{2}${AYIRICI}*\d{3}${AYIRICI}*\d{3,4}(?!\d)`,
   // sabit hat: 0 + alan kodu + numara (02 2327 2327, 06/1234567)
-  String.raw`(?<!\d)(?:(?:\+|00)\s*39[\s.\-()]*)?0\d{1,3}[\s.\-/()]*\d{3,4}[\s.\-]*\d{3,4}(?!\d)`,
+  String.raw`(?<!\d)(?:(?:\+|00)\s*39${AYIRICI}*)?0\d{1,3}${AYIRICI}*\d{3,4}${AYIRICI}*\d{3,4}(?!\d)`,
   // ayrilmis ya da bitisik 9+ rakam (yabanci numaralar, TR bicimi dahil)
-  String.raw`(?<!\d)(?:\d[\s.\-()]?){9,}(?!\d)`,
+  String.raw`(?<!\d)(?:\d${AYIRICI}?){9,}(?!\d)`,
 ].join('|'));
 
 export const IT_PAKETI: SeedLocalePack = {
@@ -159,29 +161,48 @@ export const IT_PAKETI: SeedLocalePack = {
     iceDonuk: ['Introverso', 'Introversa', 'Introverso/a'],
   },
 
+  kapanis: /\b(buona\s*notte|notte notte|vado a dormire|vado a letto|me ne vado a letto|sto andando a dormire|vado a nanna|crollo dal sonno|sto crollando|a domani|ci sentiamo|ti scrivo (?:dopo|domani|più tardi|piu tardi)|ne parliamo dopo|devo andare|devo scappare|scappo|ora vado|adesso vado|vado ora|buona serata|buona giornata|a dopo|ciao ciao)\b/i,
+
   guvenlik: {
     /**
-     * Birinci tekil, aksanli ve aksansiz ("più"/"piu"). Yanlis pozitif kabul (nazik kriz cevabi);
-     * asil risk yanlis negatif. Gunluk deyimler disarida: "mi ammazzo dal ridere" (gulmekten
-     * olmek), "mi taglio i capelli" (sac kestirmek).
+     * Normalize metin (aksansiz: "più" → "piu"). Yanlis pozitif kabul (nazik kriz cevabi); asil risk
+     * yanlis negatif. Gunluk deyimler disarida: "mi ammazzo dal ridere" (gulmekten olmek),
+     * "mi taglio i capelli" (sac kestirmek).
      */
-    kriz: /(voglio morire|vorrei morire|farla finita|non voglio (?:più|piu) vivere|non ce la faccio (?:più|piu) a vivere|non ha (?:più |piu )?senso vivere|stanc[oa] di vivere|togliermi la vita|suicid|uccidermi|ammazzarmi|farmi del male|mi faccio del male|autolesion|tagliarmi (?:le vene|i polsi)|mi taglio (?:le vene|i polsi)|meglio se muoio|meglio mort[oa])/i,
+    krizIfadeleri: [
+      'voglio morire', 'vorrei morire', 'farla finita', 'la faccio finita', 'non voglio piu vivere',
+      'non voglio vivere', 'non ce la faccio piu a vivere', 'non ha piu senso vivere', 'non ha senso vivere',
+      'stanc[oa] di vivere', 'togliermi la vita', 'mi tolgo la vita', 'suicid', 'uccidermi', 'mi uccido',
+      'mi voglio uccidere', 'voglio uccidermi', 'ammazzarmi', String.raw`mi ammazzo(?!\s+(?:dal|dalle|di)\s+(?:ridere|risate|lavoro))`,
+      'farmi del male', 'mi faccio del male', 'autolesion', 'tagliarmi (?:le vene|i polsi)', 'mi taglio (?:le vene|i polsi)',
+      'meglio se muoio', 'meglio mort[oa]',
+    ],
     /**
-     * "ho 16 anni" ("ho 15 anni di esperienza" degil — Italyancada "anni" hem yas hem sure),
-     * yaziyla sayilar, "16enne", "sono minorenne" ("non sono minorenne" degil), "compio 18 anni"
-     * (18'e giriyor = 17), mesajin tamami "16 anni".
+     * "ho 16 anni", "ne ho 16", "ho compiuto 16 anni", "16 anni e tu?", "16enne", "sedicenne",
+     * "minorenne" ("non sono minorenne" degil), "compio 18 anni" (= 17). Italyancada "anni" hem yas
+     * hem sure: yalniz "di <isim>" (ör. "di esperienza"; "di eta" haric) ve "in piu"/"piu di" disarida.
      */
-    yasAlti: new RegExp([
-      String.raw`\bho\s+(?:solo\s+|appena\s+|quasi\s+)?(?:1[0-7]|[1-9]|dieci|undici|dodici|tredici|quattordici|quindici|sedici|diciassette)\s*anni\b(?!\s+(?:di|da|che|fa|in)\b)`,
-      String.raw`\bho\s+quasi\s+(?:18|diciotto)\s*anni\b`,
-      String.raw`\b(?:compio|faccio)\s+(?:1[0-8]|quattordici|quindici|sedici|diciassette|diciotto)\s*anni\b(?!\s+(?:di|da|che|fa|in)\b)`,
+    yasAltiDesenleri: [
+      String.raw`\b(?:ne\s*)?ho\s*(?:solo\s+|appena\s+|quasi\s+|compiuto\s+|gia\s+)?(?:1[0-7]|[1-9])\s*anni\b(?!\s+(?:di\s+(?!eta\b)|in\s+piu\b|piu\s+di\b))`,
+      String.raw`\bne\s*ho\s*(?:solo\s+|quasi\s+|appena\s+)?1[0-7]\b`,
+      String.raw`\bho\s+quasi\s+18\s*anni\b`,
+      String.raw`\b(?:compio|faccio)\s*1[0-8]\s*anni\b(?!\s+di\s+(?!eta\b))`,
       String.raw`\b1[0-7]\s*enne\b`,
-      String.raw`(?<!\bnon\s)\bsono\s+(?:ancora\s+)?(?:una?\s+)?minorenne\b`,
-      String.raw`^\s*1[0-7]\s*anni\s*[.!?]*\s*$`,
-    ].join('|'), 'i'),
-    kapanis: /\b(buona\s*notte|notte notte|vado a dormire|vado a letto|me ne vado a letto|sto andando a dormire|vado a nanna|crollo dal sonno|sto crollando|a domani|ci sentiamo|ti scrivo (?:dopo|domani|più tardi|piu tardi)|ne parliamo dopo|devo andare|devo scappare|scappo|ora vado|adesso vado|vado ora|buona serata|buona giornata|a dopo|ciao ciao)\b/i,
+      String.raw`\b(?:decenne|undicenne|dodicenne|tredicenne|quattordicenne|quindicenne|sedicenne|diciassettenne)\b`,
+      String.raw`(?<!\bnon\s(?:sono\s)?(?:piu\s)?)\bminorenn[ei]\b`,
+      String.raw`^1[0-7]\s*anni\b`,
+    ],
+    dogumYiliDesenleri: [
+      String.raw`\bsono\s+del\s+(20\d\d)\b`, String.raw`\bclasse\s+(20\d\d)\b`, String.raw`\bnat[oa]\s+nel\s+(20\d\d)\b`,
+    ],
+    sayiKelimeleri: [
+      [String.raw`\bdieci\b`, '10'], [String.raw`\bundici\b`, '11'], [String.raw`\bdodici\b`, '12'],
+      [String.raw`\btredici\b`, '13'], [String.raw`\bquattordici\b`, '14'], [String.raw`\bquindici\b`, '15'],
+      [String.raw`\bsedici\b`, '16'], [String.raw`\bdicias+et+e?\b`, '17'], [String.raw`\bdiciotto\b`, '18'],
+    ],
     krizCevabi:
       'mi si è stretto il cuore a leggerti. sul serio, non tenerti tutto dentro — se sei in pericolo chiama il 112, oppure Telefono Amico allo 02 2327 2327, o parlane con qualcuno vicino a te. io ci sono, ma per questo hai davvero bisogno di aiuto.',
+    yardimHatlari: ['112', '02 2327 2327'],
   },
 
   etiket: {
@@ -194,12 +215,13 @@ export const IT_PAKETI: SeedLocalePack = {
   guard: {
     telefon: TELEFONO,
     yasak: [
-      /intelligenza\s*artificiale|modell[oi]\s+(?:linguistic|di\s+linguaggio)|\bun\s+(?:ro)?bot\b|chatbot|assistente\s+(?:virtuale|digitale)|istruzion|\bprompt\b|\bGPT\b|Gemini|Gemma|Nemotron|NVIDIA|OpenAI|algoritm|sono\s+(?:stat[oa]\s+)?programmat[oa]/i,
-      // Yalniz buyuk harf: kucuk "ai" Italyancada edat ("ai miei amici").
-      /\b(?:AI|IA)\b/,
+      /intelligenza\s*artificiale|modell[oi]\s+(?:linguistic|di\s+linguaggio)|\bsono\s+un\s+modello\b|\bun\s+(?:ro)?bot\b|chatbot|assistente\s+(?:virtuale|digitale)|\bsono\s+un[a']?\s*assistente\b(?!\s+(?:di|del|della|dell|sociale|al|alla)\b)|istruzion|\bprompt\b|\bGPT\b|Gemini|Gemma|Nemotron|NVIDIA|OpenAI|algoritm|sono\s+(?:stat[oa]\s+)?programmat[oa]/i,
+      // Yalniz buyuk harf: kucuk "ai" Italyancada edat ("ai miei amici"). "I.A." noktali yazim da.
+      /\b(?:AI|IA)\b|\bI\.\s?A\./,
     ],
-    // Ingilizce kelimeler + Turkceye ozgu harfler (Italyancada yok): IT seed Turkce cumle kuramaz.
-    yabanciDil: /\b(the|and|you|your|i am|i'm|sorry|cannot|can't|as an|assistant|language|please|here is|of course|i can)\b|[ışğİŞĞ]/i,
+    // Ingilizce kelimeler + Turkceye ozgu harf iceren KELIMELER (Italyancada yok): IT seed Turkce cumle
+    // kuramaz. Kelime basina tek sayim — karsi tarafin adi ("Işıl") tek basina cevabi elemesin.
+    yabanciDil: /\b(the|and|you|your|i am|i'm|sorry|cannot|can't|as an|assistant|language|please|here is|of course|i can)\b|\S*[ışğİŞĞ]\S*/i,
   },
 
   uyariProbe: '\n\n# ATTENZIONE\nLa tua risposta precedente ha violato le regole. Scrivi molto corto, non dare contatti, niente elenchi.',

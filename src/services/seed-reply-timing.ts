@@ -1,10 +1,11 @@
 import type { SeedPersona, ResponderType } from '../types/seed-persona.js';
+import { TR_PAKETI } from './seed-locale/tr.js';
 
 /**
  * Persona saat dilimi yoksa (417 TR seed'in persona'si `tz` alani olmadan turetildi) Istanbul.
  * Turkiye 2016'dan beri kalici UTC+3: eski sabit +180 dk hesabiyla ayni sonuc.
  */
-export const VARSAYILAN_TZ = 'Europe/Istanbul';
+export const VARSAYILAN_TZ = TR_PAKETI.varsayilanTz;
 const GUN = 24 * 60;
 
 export interface TimingInput {

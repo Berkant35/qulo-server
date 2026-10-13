@@ -24,6 +24,9 @@ function sensinEki(ad: string): string {
   return "'sin";
 }
 
+/** TR hattinin (scripts/seed) kanonik kisilik etiketleri; baska paketler bunlari cevirir. */
+export const TR_KISILIK = { disaDonuk: 'Dışa dönük', iceDonuk: 'İçe dönük', ambivert: 'Ambivert' } as const;
+
 const HEDEF: Record<string, string> = {
   SERIOUS: 'ciddi bir ilişki', FRIENDSHIP: 'önce arkadaşlık', CASUAL: 'rahat bir şeyler',
 };
@@ -152,19 +155,42 @@ export const TR_PAKETI: SeedLocalePack = {
     kadin: ['mesafeli', 'mesafeli', 'mesafeli', 'olculu', 'olculu', 'sicak'],
     diger: ['mesafeli', 'olculu', 'olculu', 'olculu', 'sicak', 'sicak'],
   },
-  kisilik: { disaDonuk: ['Dışa dönük'], iceDonuk: ['İçe dönük'] },
+  kisilik: { disaDonuk: [TR_KISILIK.disaDonuk], iceDonuk: [TR_KISILIK.iceDonuk] },
+
+  /**
+   * Turkce ekler yuzunden kok bitislerinde `\b` YOK (platform regex'inde ayni tuzaga
+   * dusulmustu: "telegramdan" filtreden kaciyordu). Canli kusur: "uyuyayim ben biraz" ->
+   * bot "dinlen uykunu al, gunun nasil gecti peki".
+   */
+  kapanis: /\b(iyi geceler|görüşürüz|gorusuruz|hoşça ?kal|hoscakal|kapatıyorum|uyuyay|uyuyorum|uyuycam|uyucam|yatıyorum|yatıyom|yatacağım|yatcam|sonra konuşuruz|sonra yazarım|ben kaçtım|kaçtım ben|çıkmam lazım|gitmem lazım)/i,
 
   guvenlik: {
-    kriz: /(yaşamak istemiyorum|intihar|kendime zarar|canıma kıy|ölmek istiyorum|yaşamaktan bıktım)/i,
-    yasAlti: /\b(1[0-7])\s*yaş(ında|ındayım)?\b/i,
-    /**
-     * Turkce ekler yuzunden kok bitislerinde `\b` YOK (platform regex'inde ayni tuzaga
-     * dusulmustu: "telegramdan" filtreden kaciyordu). Canli kusur: "uyuyayim ben biraz" ->
-     * bot "dinlen uykunu al, gunun nasil gecti peki".
-     */
-    kapanis: /\b(iyi geceler|görüşürüz|gorusuruz|hoşça ?kal|hoscakal|kapatıyorum|uyuyay|uyuyorum|uyuycam|uyucam|yatıyorum|yatıyom|yatacağım|yatcam|sonra konuşuruz|sonra yazarım|ben kaçtım|kaçtım ben|çıkmam lazım|gitmem lazım)/i,
+    // Normalize metin (aksansiz): "ölmek istiyom" → "olmek istiyom". Konusma dili bicimleri dahil.
+    krizIfadeleri: [
+      'yasamak istemiyo(?:rum|m)', 'intihar', 'kendime zarar', 'canima kiy', 'olmek istiyo(?:rum|m)',
+      'yasamaktan biktim', 'kendimi oldur', 'hayatima son ver', 'kendimi asaca', 'kendimi asica',
+      'kendimi kes', 'keske olsem', 'olsem de kurtul',
+    ],
+    // "16 yaşındayım", "15yaş", "yaşım 16", "16'yım" / "13'üm" / "10'um", "reşit değilim".
+    yasAltiDesenleri: [
+      String.raw`\b1[0-7]\s*yas(?:inda|indayim|indaydim|im|imda|imdayim)?\b`,
+      String.raw`\byasim\s*1[0-7]\b`,
+      String.raw`\b1[0-7]\s*y?[iu]m\b`,
+      String.raw`\bresit\s*degil`,
+    ],
+    dogumYiliDesenleri: [String.raw`\b(20\d\d)\s*dogumlu`, String.raw`\b(20\d\d)\s*l[iu]\s*y?[iu]m\b`],
+    sayiKelimeleri: [
+      [String.raw`\bon\s*bir\b`, '11'], [String.raw`\bon\s*iki\b`, '12'], [String.raw`\bon\s*uc\b`, '13'],
+      [String.raw`\bon\s*dort\b`, '14'], [String.raw`\bon\s*bes\b`, '15'], [String.raw`\bon\s*alti\b`, '16'],
+      [String.raw`\bon\s*yedi\b`, '17'], [String.raw`\bon\s*sekiz\b`, '18'], [String.raw`\bon(?=\s*yas)`, '10'],
+    ],
+    ham: {
+      kriz: /(yaşamak istemiyorum|intihar|kendime zarar|canıma kıy|ölmek istiyorum|yaşamaktan bıktım)/i,
+      yasAlti: /\b(1[0-7])\s*yaş(ında|ındayım)?\b/i,
+    },
     krizCevabi:
       'ya böyle yazınca içim cız etti. ciddiyim, bunu tek başına taşıma — 112\'yi arayabilirsin ya da yakınındaki birine söyle. ben buradayım ama bu konuda gerçekten yardım alman lazım.',
+    yardimHatlari: ['112'],
   },
 
   etiket: {
@@ -177,14 +203,18 @@ export const TR_PAKETI: SeedLocalePack = {
   guard: {
     // Ayirici olarak nokta ve parantez de kullaniliyor: "0532.111.22.33", "(0532) 111 22 33".
     telefon: /(?<!\d)(?:\+?9?0?[\s.\-()]*)?5\d{2}[\s.\-()]*\d{3}[\s.\-()]*\d{2}[\s.\-()]*\d{2}(?!\d)|\b\d{10,}\b/,
-    yasak: [/yapay\s*zek|dil\s*model|\bbir\s+bot\b|chatbot|asistan|talimat|sistem\s*prompt|\bprompt\b|\bGPT\b|Gemini|Gemma|Nemotron|NVIDIA|OpenAI|algoritma|programlan/i],
+    yasak: [
+      /yapay\s*zek|dil\s*model|\bbir\s+bot\b|chatbot|asistan|talimat|sistem\s*prompt|\bprompt\b|\bGPT\b|Gemini|Gemma|Nemotron|NVIDIA|OpenAI|algoritma|programlan/i,
+      // Ekli hali (2026-10-13 inceleme): "ben bir botum" ilk desenin `\b`'sinden kaciyordu.
+      /\bbir\s+bot(?:um|tum|uz|sun|tur)\b/i,
+    ],
     yabanciDil: /\b(the|and|you|your|i am|i'm|sorry|cannot|can't|as an|assistant|language|please|here is|of course|i can)\b/i,
   },
 
   uyariProbe: '\n\n# UYARI\nBir onceki cevabin kurallari cignedi. Cok kisa yaz, iletisim bilgisi verme, liste yapma.',
 
   soruTalimati: (i) => [
-    `Sen ${i.name}'sin. Meslegin: ${i.job ?? 'bilinmiyor'}. Profil metnin: "${i.bio ?? ''}".`,
+    `Sen ${i.name}${sensinEki(i.name)}. Meslegin: ${i.job ?? 'bilinmiyor'}. Profil metnin: "${i.bio ?? ''}".`,
     'Eslestigin kisiye KENDIN hakkinda 4 sikli bir tahmin sorusu hazirla. Dogru sik GERCEKTEN dogru olmali.',
     'Yalniz JSON dondur, baska hicbir sey yazma:',
     SORU_JSON_SEMASI,

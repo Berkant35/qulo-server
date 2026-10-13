@@ -6,45 +6,83 @@ import type { SeedLocalePack } from './types.js';
  *
  * Neden (guvenlik incelemesi, 2026-10-13): kapilar yalniz seed'in dil paketiyle calisinca
  * Italyan seed'e Turkce yazilan kriz mesaji ve TR seed'e Italyanca yazilan yas beyani kaciyordu.
- * Insan seed'e her zaman seed'in dilinde yazmaz. Kural: her mesaj TUM paketlerin ham desenleri
- * (ham metinde) + asagidaki normalize ifadeler (TR + IT + temel Ingilizce, normalize metinde)
- * ile sinanir; biri tutarsa kapi kapanir. Bilinmeyen/bos locale de ayni birlesimden gecer.
- * Yanlis pozitif kabul edilir (bot susar ya da nazik kriz cevabi yazar); yanlis negatif edilmez.
- *
- * Kapanis sinyali guvenlik degil — paket ozel kalir (seed-reply.service `kapanisSinyali`).
+ * Insan seed'e her zaman seed'in dilinde yazmaz. Kural: her mesaj TUM paketlerin ifadeleri +
+ * temel Ingilizce ile, normalize metin uzerinde sinanir; TR'nin 2026-10-13 oncesi ham desenleri de
+ * ham metinde calisir (eski her "true" true kalir). Biri tutarsa kapi kapanir. Bilinmeyen/bos
+ * locale de ayni birlesimden gecer. Yanlis pozitif kabul (bot susar ya da nazik kriz cevabi yazar);
+ * yanlis negatif edilmez. Kapanis sinyali guvenlik degil — paket ozel (`SeedLocalePack.kapanis`).
  */
 
-type IfadeDili = 'tr' | 'it' | 'en';
+/** Sifir genislikli / yon / yumusak tire karakterleri (denetim kopyasindan atilir): "i\u200Bntihar" kacmasin. */
+export const GORUNMEZ = /[\u00AD\u034F\u061C\u115F\u1160\u17B4\u17B5\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2064\u206A-\u206F\uFEFF]/g;
 
-/** Sifir genislikli / yon / yumusak tire karakterleri: "i\u200Bntihar" desenden kacmasin. */
-export const GORUNMEZ = /[\u00AD\u200B-\u200F\u202A-\u202E\u2060-\u2064\uFEFF]/g;
+/** Varyasyon secici + tus kapagi ("3\uFE0F\u20E3"): yalniz DENETIM kopyasindan atilir (emoji gorunumu bozulmasin). */
+export const VARYASYON = /[\uFE00-\uFE0F\u20E3]/g;
 
-/** Yaziyla sayilar → rakam (normalize metinde, aksansiz). Bilesik TR sayilar once. */
-const SAYI_KELIMELERI: ReadonlyArray<readonly [RegExp, string]> = [
-  [/\bon\s*bir\b/g, '11'], [/\bon\s*iki\b/g, '12'], [/\bon\s*uc\b/g, '13'], [/\bon\s*dort\b/g, '14'],
-  [/\bon\s*bes\b/g, '15'], [/\bon\s*alti\b/g, '16'], [/\bon\s*yedi\b/g, '17'], [/\bon\s*sekiz\b/g, '18'],
-  [/\bon(?=\s*yas)/g, '10'],
-  [/\bdieci\b/g, '10'], [/\bundici\b/g, '11'], [/\bdodici\b/g, '12'], [/\btredici\b/g, '13'],
-  [/\bquattordici\b/g, '14'], [/\bquindici\b/g, '15'], [/\bsedici\b/g, '16'], [/\bdiciassette\b/g, '17'],
-  [/\bdiciotto\b/g, '18'],
-  [/\bten\b/g, '10'], [/\beleven\b/g, '11'], [/\btwelve\b/g, '12'], [/\bthirteen\b/g, '13'],
-  [/\bfourteen\b/g, '14'], [/\bfifteen\b/g, '15'], [/\bsixteen\b/g, '16'], [/\bseventeen\b/g, '17'],
-  [/\beighteen\b/g, '18'],
+/** Paketi olmayan ama her mesajda uygulanan temel Ingilizce (turist / karisik dil). */
+const INGILIZCE = {
+  krizIfadeleri: [
+    'kill myself', 'killing myself', 'want to die', 'wanna die', 'end my life', 'end it all', 'self harm',
+    'hurt myself', 'cut myself', 'suicid', 'unalive', 'don ?t want to live', String.raw`(?<!\d\s?)\bkms\b`,
+  ],
+  yasAltiDesenleri: [
+    String.raw`\bi\s*a?m\s+(?:only\s+|just\s+)?1[0-7]\b(?!\s*(?:mins?|minutes?|hours?|days?|km|kg|cm|euros?|dollars?|percent|th|st|nd|rd)\b)`,
+    String.raw`\b1[0-7]\s*(?:years?\s*old|yrs?\s*old|yo)\b`,
+    String.raw`\bunder\s*(?:age|18)\b`,
+    // "i m a minor" harf birlestirmesiyle "ima minor" olur.
+    String.raw`\bi\s*a?m\s*a?\s*minor\b`,
+    String.raw`\b(?:i\s*a?m\s+)?not\s+18\b`,
+  ],
+  dogumYiliDesenleri: [String.raw`\bborn\s+in\s+(20\d\d)\b`],
+  sayiKelimeleri: [
+    [String.raw`\bten\b`, '10'], [String.raw`\beleven\b`, '11'], [String.raw`\btwelve\b`, '12'],
+    [String.raw`\bthirteen\b`, '13'], [String.raw`\bfourteen\b`, '14'], [String.raw`\bfifteen\b`, '15'],
+    [String.raw`\bsixteen\b`, '16'], [String.raw`\bseventeen\b`, '17'], [String.raw`\beighteen\b`, '18'],
+  ] as ReadonlyArray<readonly [string, string]>,
+};
+
+interface DilDesenleri { dil: string; kriz: RegExp; yasAlti: RegExp; dogumYili: RegExp[]; hamKriz?: RegExp; hamYasAlti?: RegExp }
+
+/** Ifade → desen: duz bosluk `\s*` olur ("vogliomorire" bitisik yazimi da tutar). */
+function ifadeDeseni(ifadeler: readonly string[]): RegExp {
+  return new RegExp(`(?:${ifadeler.map((i) => `(?:${i.replace(/ /g, String.raw`\s*`)})`).join('|')})`);
+}
+
+const DIL_DESENLERI: readonly DilDesenleri[] = [
+  ...TUM_PAKETLER.map((p) => ({
+    dil: p.locale,
+    kriz: new RegExp(String.raw`\b` + ifadeDeseni(p.guvenlik.krizIfadeleri).source),
+    yasAlti: new RegExp(p.guvenlik.yasAltiDesenleri.join('|')),
+    dogumYili: p.guvenlik.dogumYiliDesenleri.map((d) => new RegExp(d)),
+    hamKriz: p.guvenlik.ham?.kriz,
+    hamYasAlti: p.guvenlik.ham?.yasAlti,
+  })),
+  {
+    dil: 'en',
+    kriz: new RegExp(String.raw`\b` + ifadeDeseni(INGILIZCE.krizIfadeleri).source),
+    yasAlti: new RegExp(INGILIZCE.yasAltiDesenleri.join('|')),
+    dogumYili: INGILIZCE.dogumYiliDesenleri.map((d) => new RegExp(d)),
+  },
 ];
 
+/** Yaziyla sayilar → rakam; tum dillerin listesi her mesaja uygulanir (bilesik TR sayilar once). */
+const SAYI_KELIMELERI: ReadonlyArray<readonly [RegExp, string]> = [
+  ...TUM_PAKETLER.flatMap((p) => p.guvenlik.sayiKelimeleri),
+  ...INGILIZCE.sayiKelimeleri,
+].map(([desen, rakam]) => [new RegExp(desen, 'g'), rakam] as const);
+
 /**
- * Normalize varyantlar: gorunmez karakter temizligi, kucuk harf (yerel ayarsiz + TR İ/I/ı → i),
- * NFD ile aksan/sapka sokme (ş→s, à→a), noktalama → bosluk, bosluk sikistirma, harf harf ayrik
- * yazimin birlestirilmesi, yaziyla sayi →
- * rakam, ayrik rakam birlestirme ("1 6" → "16"). Uc+ tekrar eden harf iki varyantla:
- * "annnni" → "anni" (ikiye), "morireeee" → "morire" (bire).
+ * Normalize varyantlar: gorunmez karakter temizligi, NFKD (tam genislik "１６" → "16", aksan
+ * ayrisir) + aksan sokme, kucuk harf (yerel ayarsiz + TR İ/I/ı → i), noktalama → bosluk, bosluk
+ * sikistirma, harf harf ayrik yazimin birlestirilmesi ("m o r i r e"), yaziyla sayi → rakam,
+ * ayrik rakam birlestirme ("1 6" → "16"). Uc+ tekrar eden harf iki varyantla: "annnni" → "anni"
+ * (ikiye), "morireeee" → "morire" (bire).
  */
 export function guvenlikVaryantlari(text: string): string[] {
-  let s = text.replace(GORUNMEZ, '');
-  s = s.replace(/[İI]/g, 'i').toLowerCase().replace(/ı/g, 'i');
-  s = s.normalize('NFD').replace(/\p{M}/gu, '');
+  let s = text.replace(GORUNMEZ, '').replace(VARYASYON, '');
+  s = s.replace(/[İI]/g, 'i').replace(/ı/g, 'i');
+  s = s.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase();
   s = s.replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
-  // Harf harf ayrik yazim ("m o r i r e", "h o 1 6 anni"): ardisik tek harfli kelimeler birlestirilir.
   s = s.replace(/(?<![\p{L}\p{N}])\p{L}(?: \p{L}(?![\p{L}\p{N}]))+/gu, (m) => m.replace(/ /g, ''));
   for (const [desen, rakam] of SAYI_KELIMELERI) s = s.replace(desen, rakam);
   s = s.replace(/(\d)\s+(?=\d)/g, '$1');
@@ -53,89 +91,47 @@ export function guvenlikVaryantlari(text: string): string[] {
   return iki === bir ? [iki] : [iki, bir];
 }
 
-/** Ifade listesi → desen: kelime araliklari bitisik yazimi da tutar ("vogliomorire"). */
-function ifadeDeseni(ifadeler: readonly string[]): RegExp {
-  const kacis = (k: string) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return new RegExp(`\\b(?:${ifadeler.map((i) => i.split(' ').map(kacis).join('\\s*')).join('|')})`);
+/** Dogum yili beyani: yil >= (bu yil - 18) → yas alti sayilir (sinirda olan da; fail-closed). */
+function dogumYiliYasAlti(varyant: string, desenler: readonly RegExp[], simdi: Date): boolean {
+  const esik = simdi.getUTCFullYear() - 18;
+  return desenler.some((d) => {
+    const yil = Number(d.exec(varyant)?.[1]);
+    return Number.isFinite(yil) && yil >= esik && yil <= simdi.getUTCFullYear();
+  });
 }
 
-/** Normalize metin uzerinde (aksansiz, kucuk harf) kriz ifadeleri. */
-const KRIZ_NORMAL: Record<IfadeDili, RegExp> = {
-  tr: ifadeDeseni([
-    'yasamak istemiyorum', 'intihar', 'kendime zarar', 'canima kiy', 'olmek istiyorum', 'yasamaktan biktim',
-    'kendimi oldur', 'hayatima son ver',
-  ]),
-  it: ifadeDeseni([
-    'voglio morire', 'vorrei morire', 'farla finita', 'non voglio piu vivere', 'non ce la faccio piu a vivere',
-    'non ha piu senso vivere', 'non ha senso vivere', 'stanco di vivere', 'stanca di vivere', 'togliermi la vita',
-    'suicid', 'uccidermi', 'ammazzarmi', 'farmi del male', 'mi faccio del male', 'autolesion',
-    'tagliarmi le vene', 'tagliarmi i polsi', 'mi taglio le vene', 'mi taglio i polsi', 'meglio se muoio',
-    'meglio morto', 'meglio morta',
-  ]),
-  en: ifadeDeseni([
-    'kill myself', 'killing myself', 'want to die', 'wanna die', 'end my life', 'self harm', 'hurt myself',
-    'cut myself', 'suicid',
-  ]),
-};
-
-/** Normalize metin uzerinde 18 yas alti beyanlari (yaziyla sayilar rakama cevrilmis). */
-const YAS_NORMAL: Record<IfadeDili, RegExp> = {
-  tr: new RegExp([
-    String.raw`\b1[0-7]\s*yas(?:inda|indayim|indaydim|im)?\b`,
-    String.raw`\byasim\s*1[0-7]\b`,
-    String.raw`\bresit\s*degil(?:im)?\b`,
-  ].join('|')),
-  it: new RegExp([
-    String.raw`\bho\s*(?:solo\s+|appena\s+|quasi\s+)?(?:1[0-7]|[1-9])\s*anni\b(?!\s+(?:di|da|che|fa|in|piu)\b)`,
-    String.raw`\bho\s+quasi\s+18\s*anni\b`,
-    String.raw`\b(?:compio|faccio)\s*1[0-8]\s*anni\b(?!\s+(?:di|da|che|fa|in)\b)`,
-    String.raw`\b1[0-7]\s*enne\b`,
-    String.raw`(?<!\bnon\s)\bsono\s+(?:ancora\s+)?(?:una?\s+)?minorenne\b`,
-    String.raw`^1[0-7]\s*anni$`,
-  ].join('|')),
-  en: new RegExp([
-    String.raw`\bi\s*a?m\s+(?:only\s+|just\s+)?1[0-7]\b(?!\s*(?:mins?|minutes?|hours?|days?|km|kg|cm|euros?|dollars?|percent|th|st|nd|rd)\b)`,
-    String.raw`\b1[0-7]\s*(?:years?\s*old|yrs?\s*old|yo)\b`,
-    String.raw`\bunder\s*age\b`,
-  ].join('|')),
-};
-
-const IFADE_DILLERI = Object.keys(KRIZ_NORMAL) as IfadeDili[];
-
-/** Mesajin hangi dillerin desenine takildigi: paket ham desenleri + normalize ifadeler. */
-function eslesenDiller(
-  text: string,
-  ham: (p: SeedLocalePack) => RegExp,
-  normal: Record<IfadeDili, RegExp>,
-): Set<string> {
-  const diller = new Set<string>();
-  for (const p of TUM_PAKETLER) if (ham(p).test(text)) diller.add(p.locale);
+/** Kriz sinyalinin yakalandigi diller (paket dilleri + 'en'). Bos = kriz yok. */
+export function krizDilleri(text: string): Set<string> {
   const varyantlar = guvenlikVaryantlari(text);
-  for (const dil of IFADE_DILLERI) if (varyantlar.some((v) => normal[dil].test(v))) diller.add(dil);
+  const diller = new Set<string>();
+  for (const d of DIL_DESENLERI) {
+    if (d.hamKriz?.test(text) || varyantlar.some((v) => d.kriz.test(v))) diller.add(d.dil);
+  }
   return diller;
 }
 
 /** Kendine zarar / intihar sinyali — hangi dilde yazilmis olursa olsun. */
 export function krizSinyali(text: string): boolean {
-  return eslesenDiller(text, (p) => p.guvenlik.kriz, KRIZ_NORMAL).size > 0;
+  return krizDilleri(text).size > 0;
 }
 
-/** 18 yas alti beyani — hangi dilde yazilmis olursa olsun. */
-export function yasAltiBeyani(text: string): boolean {
-  return eslesenDiller(text, (p) => p.guvenlik.yasAlti, YAS_NORMAL).size > 0;
+/** 18 yas alti beyani — hangi dilde yazilmis olursa olsun (dogum yili dahil). */
+export function yasAltiBeyani(text: string, simdi: Date = new Date()): boolean {
+  const varyantlar = guvenlikVaryantlari(text);
+  return DIL_DESENLERI.some((d) =>
+    d.hamYasAlti?.test(text) ||
+    varyantlar.some((v) => d.yasAlti.test(v) || dogumYiliYasAlti(v, d.dogumYili, simdi)));
 }
 
 /**
- * Kriz cevabi (LLM'siz, sabit): mesaj seed'in dilinde (ya da yalniz Ingilizce desenle)
- * yakalandiysa seed'in dilinde; baska bir paketin dilinde yakalandiysa O dilde — Italyan seed'e
- * Turkce yazan biri buyuk olasilikla Turkiye'dedir ve Turkiye'nin acil numarasini gormeli.
+ * Kriz varsa sabit (LLM'siz) cevap, yoksa null. Mesaj seed'in dilinde (ya da yalniz Ingilizce
+ * desenle) yakalandiysa seed'in dilinde; baska bir paketin dilinde yakalandiysa O dilde —
+ * Italyan seed'e Turkce yazan biri buyuk olasilikla Turkiye'dedir, Turkiye'nin acil numarasini gormeli.
  */
-export function krizCevabi(text: string, seedPaketi: SeedLocalePack): string {
-  const diller = eslesenDiller(text, (p) => p.guvenlik.kriz, KRIZ_NORMAL);
+export function krizCevabi(text: string, seedPaketi: SeedLocalePack): string | null {
+  const diller = krizDilleri(text);
+  if (diller.size === 0) return null;
   if (diller.has(seedPaketi.locale)) return seedPaketi.guvenlik.krizCevabi;
   const baska = TUM_PAKETLER.find((p) => diller.has(p.locale));
   return (baska ?? seedPaketi).guvenlik.krizCevabi;
 }
-
-/** Normalize ifadesi olan diller — her paketin dili burada olmali (test: yeni paket unutulmasin). */
-export const GUVENLIK_IFADE_DILLERI: readonly string[] = IFADE_DILLERI;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { IT_PAKETI, TR_PAKETI, seedLocalePack, SEED_LOCALES } from '../../src/services/seed-locale/index.js';
+import { IT_PAKETI, TR_PAKETI, seedLocalePack, SEED_LOCALES, krizSinyali, yasAltiBeyani } from '../../src/services/seed-locale/index.js';
 import { buildPersonaCard, responderTypeFor, mesafeFor } from '../../src/services/seed-persona.js';
 import { validateReply } from '../../src/services/seed-reply-guard.js';
 import { personaKartVakalari } from '../helpers/seed-persona-cases.js';
@@ -98,7 +98,7 @@ describe('IT persona karti', () => {
 });
 
 describe('IT kriz deseni', () => {
-  const kriz = (t: string) => IT_PAKETI.guvenlik.kriz.test(t);
+  const kriz = (t: string) => krizSinyali(t);
   it.each([
     'voglio morire', 'Vorrei morire stasera', 'voglio farla finita', 'non voglio più vivere', 'non voglio piu vivere',
     'non ce la faccio più a vivere', 'non ha più senso vivere', 'sono stanca di vivere', 'sono stanco di vivere',
@@ -121,7 +121,7 @@ describe('IT kriz deseni', () => {
 });
 
 describe('IT 18 yas alti deseni', () => {
-  const yas = (t: string) => IT_PAKETI.guvenlik.yasAlti.test(t);
+  const yas = (t: string) => yasAltiBeyani(t);
   it.each([
     'ho 16 anni', 'Ho 17 anni', 'ho 16anni', 'ho solo 15 anni', 'ho quasi 18 anni', 'ho sedici anni', 'ho diciassette anni',
     'sono minorenne', 'Sono ancora minorenne', 'sono una minorenne', 'compio 18 anni a dicembre', 'faccio 17 anni domani',
@@ -136,7 +136,7 @@ describe('IT 18 yas alti deseni', () => {
 });
 
 describe('IT kapanis deseni', () => {
-  const kapanis = (t: string) => IT_PAKETI.guvenlik.kapanis.test(t);
+  const kapanis = (t: string) => IT_PAKETI.kapanis.test(t);
   it.each([
     'buonanotte', 'Buona notte!', 'notte notte', 'vado a dormire', 'vado a letto ora', 'a domani', 'ci sentiamo dopo',
     'devo andare', 'devo scappare', 'scappo, ciao', 'buona serata', 'ti scrivo più tardi', 'ti scrivo piu tardi',
@@ -158,7 +158,8 @@ describe('IT cikti denetimi (guard)', () => {
 
   it.each([
     '333 123 4567', 'scrivimi al 3331234567', '+39 333 123 4567', '0039 333-123-4567', '(+39) 347.123.4567',
-    'chiamami allo 02 2327 2327', 'fisso 06/1234567', '(02) 2327 2327', 'numero turco 0532 111 22 33',
+    'chiamami allo 02 1234 5678', 'fisso 06/1234567', '(02) 1234 5678', 'numero turco 0532 111 22 33',
+    '333/1234567', '333,123,4567', '333_123_4567',
   ])('telefon: %s -> iletisim', (t) => expect(sonuc(t)).toBe('iletisim'));
 
   it.each([
