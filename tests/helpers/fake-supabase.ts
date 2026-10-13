@@ -196,6 +196,12 @@ function splitTopLevel(expression: string): string[] {
 function parseFilterExpression(part: string): Filter {
   const [column, op, ...rest] = part.split('.');
   const raw = rest.join('.');
+  // `col.in.(a,b)` `.or()` icinde de gecerli PostgREST (ör. discover seed dil on-filtresi).
+  // Parantezsiz liste gercekte parse hatasi verir; fake de reddeder (bkz. `not()`).
+  if (op === 'in') {
+    if (!isPostgrestInList(raw)) throw new Error(`or() icinde '${part}': in degeri parantezli liste olmali`);
+    return { op: 'in', column, value: parsePostgrestInList(raw) };
+  }
   // PostgREST `true`/`false`/`null` sabitlerini kolon tipine cevirir; metin birakilirsa
   // boolean kolonla `===` hic tutmaz ve filtre sessizce hicbir satiri eslemez.
   const SABIT: Record<string, unknown> = { true: true, false: false, null: null };

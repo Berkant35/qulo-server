@@ -60,6 +60,10 @@ function candidateRow(id: string, kmAway: number, overrides: Record<string, unkn
     is_banned: false,
     email_verified: true,
     is_test_account: false,
+    // DB varsayilanlari (NOT NULL): fake depo varsayilan uygulamaz, seed dil on-filtresi
+    // (`is_seed_profile.eq.false` / `locale.in.(..)`) bu alanlari okur.
+    is_seed_profile: false,
+    locale: "tr",
     ...overrides,
   };
 }
@@ -919,6 +923,90 @@ describe("discover — seed profiller en sonda", () => {
 
     const res = await service.discover(VIEWER_ID, 1);
     expect(res.cards[0].user_id).toBe("gercek-eski");
+  });
+});
+
+describe("discover — seed dil on-filtresi (global seed dalgasi, 2026-10-13)", () => {
+  // 500 aday kesimi dil filtresinden ONCE: 416 TR seed taze `last_seen_at` ile tavani
+  // doldururken Italyan izleyicinin goreceği IT seed'ler sorgudan hic donmuyordu. Seed'ler
+  // SQL'de izleyicinin dilleriyle (`users.locale`) on-filtrelenir; gercek kullanici filtresiz.
+  const simdi = new Date();
+  const eski = new Date(simdi.getTime() - 60 * 60_000).toISOString();
+  const trSeedler = Array.from({ length: 416 }, (_, i) => uid(10_000 + i));
+  const itSeedler = Array.from({ length: 50 }, (_, i) => uid(20_000 + i));
+  const gercekler = Array.from({ length: 100 }, (_, i) => uid(30_000 + i));
+
+  const havuz = (izleyici: Record<string, unknown>): Tables => ({
+    users: [
+      viewerRow({ match_radius_km: 500, ...izleyici }),
+      ...gercekler.map((id) => candidateRow(id, 5)),
+      // TR seed'ler daha taze: salt last_seen_at kesiminde IT seed'lerin onune gecerler.
+      ...trSeedler.map((id) => candidateRow(id, 5, { is_seed_profile: true, is_test_account: true, locale: "tr" })),
+      ...itSeedler.map((id) => candidateRow(id, 5, {
+        is_seed_profile: true, is_test_account: true, locale: "it", last_seen_at: eski,
+      })),
+    ],
+    swipes: [],
+    matches: [],
+    questions: [...questionsFor([...gercekler, ...trSeedler], "tr"), ...questionsFor(itSeedler, "it")],
+  });
+
+  async function tumSayfalar(service: Awaited<ReturnType<typeof loadService>>): Promise<string[]> {
+    const gorulen: string[] = [];
+    for (let page = 1; page <= 60; page++) {
+      const res = await service.discover(VIEWER_ID, page);
+      gorulen.push(...res.cards.map((c) => c.user_id));
+      if (!res.has_more) break;
+    }
+    return gorulen;
+  }
+
+  it("416 TR + 50 IT seed: Italyan izleyici IT seed'lerin HEPSINI gorur", async () => {
+    const service = await loadService(havuz({ preferred_languages: ["it"], locale: "it" }), { userLanguages: ["it"] });
+    const gorulen = await tumSayfalar(service);
+    expect(new Set(gorulen)).toEqual(new Set(itSeedler));
+  });
+
+  it("TR izleyici: once gercekler, sonra TR seed'ler; IT seed hic gelmez (TR davranisi aynen)", async () => {
+    const service = await loadService(havuz({}));
+    const ilk = await service.discover(VIEWER_ID, 1);
+    expect(ilk.cards.every((c) => gercekler.includes(c.user_id))).toBe(true);
+
+    const gorulen = await tumSayfalar(service);
+    expect(gorulen.some((id) => itSeedler.includes(id))).toBe(false);
+    expect(gorulen.filter((id) => trSeedler.includes(id)).length).toBeGreaterThan(0);
+  });
+
+  it("iki dilli izleyici (tr+it) iki dilin seed'lerini de alir", async () => {
+    // Tavanin altinda bir havuz: on-filtre iki dili de gecirir. (Tavan asilirsa iki dilli izleyicide
+    // seed'ler yine last_seen_at ile yarisir — presence ritmi 5 dk'da bir doner; bilincli sinir.)
+    const kucuk = havuz({ preferred_languages: ["tr", "it"] });
+    kucuk.users = kucuk.users!.filter((u) =>
+      u.id === VIEWER_ID || trSeedler.slice(0, 10).includes(u.id as string) || itSeedler.slice(0, 10).includes(u.id as string));
+    const service = await loadService(kucuk);
+    const gorulen = await tumSayfalar(service);
+    expect(new Set(gorulen)).toEqual(new Set([...trSeedler.slice(0, 10), ...itSeedler.slice(0, 10)]));
+  });
+
+  it("on-filtre ek sorgu getirmez: aday icin tek users okumasi", async () => {
+    const service = await loadService(havuz({ preferred_languages: ["it"] }));
+    await service.discover(VIEWER_ID, 1);
+    // 1 izleyici okumasi + 1 aday sorgusu.
+    expect(sonFake.queries.filter((q) => q.table === "users" && q.op === "select")).toHaveLength(2);
+  });
+
+  it("seedLanguageFilter: PostgREST bicimi, tekrar eden ve desteklenmeyen kodlar ayiklanir", async () => {
+    const { seedLanguageFilter } = await import("../../src/services/matching.service.js");
+    expect(seedLanguageFilter(["tr"])).toBe("is_seed_profile.eq.false,locale.in.(tr)");
+    expect(seedLanguageFilter(["it", "en", "it"])).toBe("is_seed_profile.eq.false,locale.in.(it,en)");
+    expect(seedLanguageFilter(["xx", "a,b"])).toBeNull();
+    expect(seedLanguageFilter([])).toBeNull();
+  });
+
+  it("gecersiz dil kodu filtreye ham girmez (PostgREST sozdizimi bozulmaz), seed'ler yine dil kapisindan gecer", async () => {
+    const service = await loadService(havuz({ preferred_languages: ["it", "tr),is_seed_profile.eq.true,locale.in.(xx"] }));
+    const gorulen = await tumSayfalar(service);
+    expect(new Set(gorulen)).toEqual(new Set(itSeedler));
   });
 });
 

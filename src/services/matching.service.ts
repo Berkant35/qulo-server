@@ -1,7 +1,7 @@
 import { supabase } from "../config/supabase.js";
 import { resolveLocale } from "../utils/locales.js";
 import { localeText } from "../utils/server-locales.js";
-import { questionLocale } from "../constants/locales.js";
+import { questionLocale, SUPPORTED_LOCALES } from "../constants/locales.js";
 import type { SupportedLocale } from "../constants/locales.js";
 import { Errors } from "../utils/errors.js";
 import { resolveDistanceTier } from "../utils/distance-tier.js";
@@ -19,7 +19,10 @@ import { identityService, type VisibleIdentity } from "./identity.service.js";
 import { servedGate } from "./served-gate.service.js";
 
 const PAGE_SIZE = 10;
-/** Tek seferde cekilen aday tavani. Havuz ~72; 500 rahat bir ust sinir. */
+/**
+ * Tek seferde cekilen aday tavani. Havuz (2026-10-13) ~180 gercek + 417 seed = tavandan buyuk:
+ * siralama gercekleri once alir, seed'ler izleyicinin diline on-filtrelenir (seedLanguageFilter).
+ */
 const CANDIDATE_FETCH_LIMIT = 500;
 /** URL uzunlugu icin dislama listesi tavani; asilirsa kalani bellekte elenir. */
 const MAX_EXCLUDE_IDS = 1000;
@@ -31,6 +34,18 @@ const MAX_EXCLUDE_IDS = 1000;
 function discoverGroupRank(isSeed: boolean, isDormant: boolean): number {
   if (isSeed) return 1;
   return isDormant ? 2 : 0;
+}
+
+/**
+ * Seed'leri izleyicinin dillerine indiren PostgREST `.or()` ifadesi (gercek kullanici serbest).
+ * Degerler URL'e HAM gider (postgrest-js kacislamaz): yalniz desteklenen dil kodlari girer,
+ * yoksa `)` / `,` iceren bir deger filtreyi genisletebilirdi. Gecerli kod kalmazsa on-filtre
+ * yok (eski davranis) — dil kapisi (5.6) zaten eler.
+ */
+export function seedLanguageFilter(langs: readonly string[]): string | null {
+  const gecerli = [...new Set(langs)].filter((l) => (SUPPORTED_LOCALES as readonly string[]).includes(l));
+  if (gecerli.length === 0) return null;
+  return `is_seed_profile.eq.false,locale.in.(${gecerli.join(",")})`;
 }
 
 /** `match_list_summaries` satiri (migration 070): mesajsiz eslesmede son mesaj alanlari NULL. */
@@ -218,6 +233,17 @@ export class MatchingService {
       if (excludedIds.has(targetId)) retryPending.delete(targetId);
     }
 
+    // Izleyicinin dilleri. Kaynak users.preferred_languages (054 sonrasi tek kaynak). Eski
+    // satirlar icin user_languages'a, o da bossa uygulama diline duser — hicbir yol "filtresiz"e
+    // dusmez (bos liste = kullanici okuyamadigi dilde profiller gorur). Adim 3 (seed on-filtresi)
+    // ve adim 5.6 (dil kapisi) ayni listeyi kullanir.
+    const prefColumn = (user.preferred_languages as string[] | null) ?? [];
+    const langPrefs = prefColumn.length > 0
+      ? prefColumn
+      : userLanguages.length > 0
+        ? userLanguages
+        : [resolveLocale(user.locale as string | null)];
+
     // 3. Query candidates
     // Dislama sorguya tasindi: eskiden 50 satir SIRALAMASIZ cekilip dislama
     // sonrasinda bellekte yapiliyordu, yani havuzun bir kismi hicbir izleyiciye
@@ -264,6 +290,13 @@ export class MatchingService {
     if (!user.is_test_admin) {
       query = query.or("is_test_account.eq.false,is_seed_profile.eq.true");
     }
+
+    // Seed dil on-filtresi: 500 tavani dil kapisindan (5.6) ONCE kesiyor. 416 TR seed taze
+    // presence ritmiyle tavani doldurunca baska dildeki seed'ler (ilk dalga: it) sorgudan hic
+    // donmuyordu. Seed'in dili `users.locale` — botun dil paketi de ayni alandan secilir
+    // (seed-locale). Gercek kullanici filtrelenmez; kesin karar yine 5.6'daki soru dili.
+    const seedLangFilter = seedLanguageFilter(langPrefs);
+    if (seedLangFilter) query = query.or(seedLangFilter);
 
     // Age filter
     if (user.age_pref_min != null) {
@@ -403,17 +436,8 @@ export class MatchingService {
       return photoCount >= 1;
     });
 
-    // 5.6 — Language filter: candidate must have 2+ questions in user's languages.
-    // Kaynak users.preferred_languages (054 sonrasi tek kaynak). Eski satirlar icin
-    // user_languages'a, o da bossa uygulama diline duser — hicbir yol "filtresiz"e dusmez
-    // (bos liste = kullanici okuyamadigi dilde profiller gorur).
-    const prefColumn = (user.preferred_languages as string[] | null) ?? [];
-    const langPrefs = prefColumn.length > 0
-      ? prefColumn
-      : userLanguages.length > 0
-        ? userLanguages
-        : [resolveLocale(user.locale as string | null)];
-
+    // 5.6 — Language filter: candidate must have 2+ questions in user's languages
+    // (dil listesi adim 3'te, seed on-filtresi icin sorgudan once kurulur).
     // Dil kapisi tek eleyen mi, yoksa zaten aday mi yoktu? Bos ekranda dogru
     // metni gosterebilmek icin dil oncesi sayiyi tut.
     const beforeLanguageCount = discoverableFiltered.length;
