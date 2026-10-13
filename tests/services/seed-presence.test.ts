@@ -200,6 +200,29 @@ describe('refreshSeedPresence', () => {
     expect(fake.table('users')[0].last_seen_at).toBe('2026-09-12T10:00:00Z');
   });
 
+  it('1.000 satir siniri: 1.250 seed\'in HEPSI tazelenir (sayfali okuma, global seed dalgalari)', async () => {
+    // Bayat (tohumlanacak) seed'ler: her biri bu tikte bir UPDATE grubuna girer.
+    const seedler = Array.from({ length: 1250 }, (_, i) => ({
+      id: `s${String(i).padStart(4, '0')}`, is_seed_profile: true, is_test_account: true, seed_persona: persona(),
+      is_online: false, last_seen_at: '2026-09-01T10:00:00Z',
+    }));
+    const fake = createFakeSupabase({ users: seedler }, { maxRows: 1000 });
+    vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
+    const { refreshSeedPresence } = await import('../../src/services/seed-presence.service.js');
+
+    expect(await refreshSeedPresence(trSaat(20))).toBe(1250);
+    expect(fake.table('users').every((u: Record<string, unknown>) => u.last_seen_at !== '2026-09-01T10:00:00Z')).toBe(true);
+    // 417 seed bugun tek sayfa: istek sayisi artmaz (1.250'de 2 okuma).
+    expect(fake.queries.filter((q) => q.table === 'users' && q.op === 'select')).toHaveLength(2);
+  });
+
+  it('okuma hatasi yutulmaz (bos donus "seed yok" gibi gorunurdu)', async () => {
+    const fake = createFakeSupabase({ users: [] }, { failOn: [{ table: 'users', op: 'select' }] });
+    vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
+    const { refreshSeedPresence } = await import('../../src/services/seed-presence.service.js');
+    await expect(refreshSeedPresence(trSaat(20))).rejects.toBeTruthy();
+  });
+
   it('seed yoksa no-op', async () => {
     const fake = createFakeSupabase({ users: [{ id: 'g', is_seed_profile: false }] });
     vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));

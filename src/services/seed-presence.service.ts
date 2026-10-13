@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { supabase } from '../config/supabase.js';
+import { fetchAll } from '../utils/fetch-all.js';
 import { isBusy, isSleeping, VARSAYILAN_PERSONA } from './seed-reply-timing.js';
 import type { SeedPersona } from '../types/seed-persona.js';
 
@@ -87,16 +88,21 @@ async function topluYaz(idler: string[], patch: Record<string, unknown>): Promis
  * son gorulmesi sabittir, bos yere UPDATE yemez.
  */
 export async function refreshSeedPresence(now: Date = new Date()): Promise<number> {
-  const { data: seedler, error } = await supabase
-    .from('users')
-    .select('id, seed_persona, is_online, last_seen_at')
-    // Yazma kapisiyla AYNI iki bayrak (`botYazabilir`): `is_test_account=false` yapilan
-    // bir seed profil gercek kullanicilara acilir, o profile uydurma bir cevrimici
-    // ritmi yazmak gercek bir kullaniciya sahte sinyal vermek olurdu.
-    .eq('is_seed_profile', true)
-    .eq('is_test_account', true);
-  if (error) throw error;
-  if (!seedler?.length) return 0;
+  // Sayfali: PostgREST max-rows 1000. Global seed dalgalariyla (417 TR + it/es/...) havuz 1000'i
+  // gecince sayfasiz select kalanini sessizce birakir — o profiller "5 gun once goruldu"de donardi.
+  const seedler = await fetchAll<{ id: unknown; seed_persona: unknown; is_online: unknown; last_seen_at: unknown }>(
+    (from, to) => supabase
+      .from('users')
+      .select('id, seed_persona, is_online, last_seen_at')
+      // Yazma kapisiyla AYNI iki bayrak (`botYazabilir`): `is_test_account=false` yapilan
+      // bir seed profil gercek kullanicilara acilir, o profile uydurma bir cevrimici
+      // ritmi yazmak gercek bir kullaniciya sahte sinyal vermek olurdu.
+      .eq('is_seed_profile', true)
+      .eq('is_test_account', true)
+      .order('id', { ascending: true })   // sirasiz range sayfalamasi satir atlar/tekrarlar
+      .range(from, to),
+  );
+  if (!seedler.length) return 0;
 
   const cevrimici: string[] = [];
   const dusenler: string[] = [];
