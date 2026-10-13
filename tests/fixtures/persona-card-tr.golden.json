@@ -1,0 +1,555 @@
+{
+ "kartlar": {
+  "stil:tek_cumle/yok/gevsek/soru_soran": "55d0a73b25eeaebb433b70470c6a6b390ef0b66f",
+  "stil:tek_cumle/yok/gevsek/kisa_kesen": "f5d5e10f329b8a4febd8f75700dbeb2ece4a8331",
+  "stil:tek_cumle/yok/gevsek/dagitan": "0838cb2588fdb8ba17549f4b9c548978b2ddd983",
+  "stil:tek_cumle/yok/kucuk_harf/soru_soran": "fa5e4336b5826a5da856ba4aa8f5667d7f7fea41",
+  "stil:tek_cumle/yok/kucuk_harf/kisa_kesen": "315b58d8136a1a5ec455339d64c4039ecb7b4f04",
+  "stil:tek_cumle/yok/kucuk_harf/dagitan": "b6c867be27cd9f70a345aa7718ad7bb807869e98",
+  "stil:tek_cumle/yok/ozenli/soru_soran": "db591e8ae847cc19eee5b6999336db3e94323591",
+  "stil:tek_cumle/yok/ozenli/kisa_kesen": "7fdef1c63f406bab55d2a71f842ec518b0d61867",
+  "stil:tek_cumle/yok/ozenli/dagitan": "57469668bbf101669c78ce4c48be623ad4fc7a5c",
+  "stil:tek_cumle/nadiren/gevsek/soru_soran": "e4582373a5ff66f355100247275f658e5439426e",
+  "stil:tek_cumle/nadiren/gevsek/kisa_kesen": "7fae039f2f3fbdf9e5e0ea07403b24f7c75c52ca",
+  "stil:tek_cumle/nadiren/gevsek/dagitan": "d8b4d77dac365f40861ccb945b898fb0e86a3cc5",
+  "stil:tek_cumle/nadiren/kucuk_harf/soru_soran": "64f12abe8c5bcb3708e9b1ec9c76e80d0141cd49",
+  "stil:tek_cumle/nadiren/kucuk_harf/kisa_kesen": "a4f75572ccee2b9907c01ffb1f6080bc6028c589",
+  "stil:tek_cumle/nadiren/kucuk_harf/dagitan": "4729e5ed2f866c942a45452ba0d2ed08ed95c91b",
+  "stil:tek_cumle/nadiren/ozenli/soru_soran": "166d1b3282d35d591aa11cf1247d10f3463ed06b",
+  "stil:tek_cumle/nadiren/ozenli/kisa_kesen": "faf1969fdebcdddfd1a3ae0f72594e980205eca5",
+  "stil:tek_cumle/nadiren/ozenli/dagitan": "4fc0f6048ae6e5a05f5cfbd3ea72d24f0a52b29a",
+  "stil:tek_cumle/sik/gevsek/soru_soran": "d51cba2683bbdc7ab27433ebe44b299ae93ae4b8",
+  "stil:tek_cumle/sik/gevsek/kisa_kesen": "19dbe3cc9c514f9b631310bdc94f495f699a3ff2",
+  "stil:tek_cumle/sik/gevsek/dagitan": "4a22d2f82d43d594f9633bfcaeeb0243bdc76d08",
+  "stil:tek_cumle/sik/kucuk_harf/soru_soran": "6424c808eef6e04fc87afdd7c8c5f636c2af58dc",
+  "stil:tek_cumle/sik/kucuk_harf/kisa_kesen": "ff66a9bcefe6417cf9f15518e7b0fdebd9fcdcdc",
+  "stil:tek_cumle/sik/kucuk_harf/dagitan": "a013e8753959655d2b75560dc191da5451dedf66",
+  "stil:tek_cumle/sik/ozenli/soru_soran": "bfaff7043f7902e18c65190e8ac28e633e77575e",
+  "stil:tek_cumle/sik/ozenli/kisa_kesen": "4de13ece6c478f4470db2a6649787643e0fe29ca",
+  "stil:tek_cumle/sik/ozenli/dagitan": "dd11ab007247ce6760a4520924889d312d579040",
+  "stil:kisa/yok/gevsek/soru_soran": "524596fa909a8bf394af527b7e7d4e464e715cb3",
+  "stil:kisa/yok/gevsek/kisa_kesen": "50b0ceb643601d7e2e61f66ed9113171d493533c",
+  "stil:kisa/yok/gevsek/dagitan": "637388e5d1f564507d84ce84f22a5342fa362ee7",
+  "stil:kisa/yok/kucuk_harf/soru_soran": "2126d3d084cb4327ca0929156f1d80de68d2e3db",
+  "stil:kisa/yok/kucuk_harf/kisa_kesen": "bf197a5e38858bb8eab6c47f6e2ababa7cc90812",
+  "stil:kisa/yok/kucuk_harf/dagitan": "474b03ba03dce77f3689ceff3209cd953a84ab94",
+  "stil:kisa/yok/ozenli/soru_soran": "24d92fb3868656103ac81aa112e209ee24956757",
+  "stil:kisa/yok/ozenli/kisa_kesen": "d6947536feaeb046d705a72e671df72b817a77c8",
+  "stil:kisa/yok/ozenli/dagitan": "fc894a1d427a497f21248b20d96221bb3ac50b28",
+  "stil:kisa/nadiren/gevsek/soru_soran": "731d542cc4ba23e9fb50778d7ba479ca73621fb9",
+  "stil:kisa/nadiren/gevsek/kisa_kesen": "cb6119e819659d2cc2654ada1258969a0f22a8de",
+  "stil:kisa/nadiren/gevsek/dagitan": "6165abad781842efad20689af86448084a3f7351",
+  "stil:kisa/nadiren/kucuk_harf/soru_soran": "2878957e04eab60c12ee6a6c0b70be5771f1ad4f",
+  "stil:kisa/nadiren/kucuk_harf/kisa_kesen": "6ca87bc66ffab67032bd6a7c47cf8ed2751efa5f",
+  "stil:kisa/nadiren/kucuk_harf/dagitan": "cc42fcdbe34f47e002cd9e0c16f0639bd32b2e3a",
+  "stil:kisa/nadiren/ozenli/soru_soran": "25eb7618d50b41c2c0b8be16f23f0d235baa84c8",
+  "stil:kisa/nadiren/ozenli/kisa_kesen": "b3d4f846df58bfd301ef7d88194a27f991de6533",
+  "stil:kisa/nadiren/ozenli/dagitan": "155108c1e94963eac77790c62a3381f6b34b3ac6",
+  "stil:kisa/sik/gevsek/soru_soran": "0467686efb8a4331c8ee0ac62e5df79cf217905c",
+  "stil:kisa/sik/gevsek/kisa_kesen": "823dcc881964539f6f654194b7cde575148d2462",
+  "stil:kisa/sik/gevsek/dagitan": "0e90ce59df180176c756de92e802e8e643b81398",
+  "stil:kisa/sik/kucuk_harf/soru_soran": "2b3f2ddbc26eb68783ba4b29856795b7472100a4",
+  "stil:kisa/sik/kucuk_harf/kisa_kesen": "4c6c589eb4778f3f4ebdaf8cf9f9e4a8f0c6568b",
+  "stil:kisa/sik/kucuk_harf/dagitan": "657527a8128e3947f1f1ae554aaaf63035fe9c32",
+  "stil:kisa/sik/ozenli/soru_soran": "b776c6718eda4075500f4e8e9b881c432dc1b2f6",
+  "stil:kisa/sik/ozenli/kisa_kesen": "ee3dac85f35922d9f1d0363b8816e47ddb6febba",
+  "stil:kisa/sik/ozenli/dagitan": "acdcbb02098804c84ca83329b3d49d4f57d8d75f",
+  "stil:orta/yok/gevsek/soru_soran": "7d48a8159b4f00ec5db42c85a7d94ec8ef211796",
+  "stil:orta/yok/gevsek/kisa_kesen": "d863df06ad22c5ff3c391f9a8f9e1810fcf00fee",
+  "stil:orta/yok/gevsek/dagitan": "bad9bc35bab2679886f20f1343a5a03f2860e175",
+  "stil:orta/yok/kucuk_harf/soru_soran": "244acce7d979b63974ae8423502a954a140ba5ea",
+  "stil:orta/yok/kucuk_harf/kisa_kesen": "3485a94ca08860e9e3cf82a5fa0fc10597a04149",
+  "stil:orta/yok/kucuk_harf/dagitan": "02c5f59aaaeb355c193ed71591b5d612ca7b154a",
+  "stil:orta/yok/ozenli/soru_soran": "befaf90a13cffa5cd25d055e2c56a0535c4a3057",
+  "stil:orta/yok/ozenli/kisa_kesen": "1869adcc898790a1669a227815ccb374b721e6fa",
+  "stil:orta/yok/ozenli/dagitan": "20744912776c4546ccefb80e8fe63e9046e22db5",
+  "stil:orta/nadiren/gevsek/soru_soran": "fdc7545dccefae7816be8072c26edbb5f2acaa6b",
+  "stil:orta/nadiren/gevsek/kisa_kesen": "b5a775b49130da99d7601970ecf021ad7ddcda07",
+  "stil:orta/nadiren/gevsek/dagitan": "5fe34e0c778c0e92f0a138e0ca1440fa2ac8f2ee",
+  "stil:orta/nadiren/kucuk_harf/soru_soran": "4298ed93e6848ee829a292c84f44542b403a57c5",
+  "stil:orta/nadiren/kucuk_harf/kisa_kesen": "73278fb41cabe87c1f8c45e77c96b4f91e2917dd",
+  "stil:orta/nadiren/kucuk_harf/dagitan": "d53b012f1fcbb9fe5aff660e6a8e6edd8749a231",
+  "stil:orta/nadiren/ozenli/soru_soran": "b3d594b59016422a9498ec45a8ea30af98d5a1a2",
+  "stil:orta/nadiren/ozenli/kisa_kesen": "211d8a09c5d6b8f6e93ef001e8956d3af4d1fceb",
+  "stil:orta/nadiren/ozenli/dagitan": "8960b6d73f25c4c68ad7dde361fc0b40d0002b3f",
+  "stil:orta/sik/gevsek/soru_soran": "293570e2dc54bd2b7a4e62a9e79578d8628c656d",
+  "stil:orta/sik/gevsek/kisa_kesen": "c4be7a243baa36b6c565d0782a4d45d5d1336c80",
+  "stil:orta/sik/gevsek/dagitan": "b74bf5a542d779f02db96b86e8edc5a85070e39b",
+  "stil:orta/sik/kucuk_harf/soru_soran": "fa74b6e9a5a71dd14e373a5b2a6ad7175d93a338",
+  "stil:orta/sik/kucuk_harf/kisa_kesen": "1c908b6d53a11651b401f59a21e98482a4c6998f",
+  "stil:orta/sik/kucuk_harf/dagitan": "4320ba0c407c695709c82a9d28590d4298351d46",
+  "stil:orta/sik/ozenli/soru_soran": "1bd6ed03c7e0cbc53f4ef080ba5b699aa66e78d8",
+  "stil:orta/sik/ozenli/kisa_kesen": "f87f73a45e648d384e1929d941c9dfbfb2aee60e",
+  "stil:orta/sik/ozenli/dagitan": "c2e72bde37df94f461e01359b6c060a6fa686dd9",
+  "faz:1": "6ca87bc66ffab67032bd6a7c47cf8ed2751efa5f",
+  "faz:2": "f2f715835ca7a5c4b6faba14ee306e1cb7b7e4b3",
+  "faz:3": "0dd9b995824f79c5b6ec159ac2e436b2ec9341c2",
+  "faz:4": "9c0816c8546adb606785e61e1eb0fb862745a6dd",
+  "mesgul": "a90f50de986d5116cbeb91c545b33b32e3123343",
+  "kapanis": "4471163c4bade691549de29c4627e56005c467e3",
+  "medya": "42a47bbf137fa5e3d3d512286fe52a8a802d7246",
+  "hepsi": "418016bf2575128508107fc8773784fdf491c080",
+  "mesafe:0:WOMAN": "6ca87bc66ffab67032bd6a7c47cf8ed2751efa5f",
+  "mesafe:0:MAN": "10da9b0253f02778e6b54ee623425b3b4e8c9520",
+  "mesafe:0:null": "10da9b0253f02778e6b54ee623425b3b4e8c9520",
+  "mesafe:1:WOMAN": "4d25fa13f09fbec6f367dd4a10a0700d4e47187e",
+  "mesafe:1:MAN": "4d25fa13f09fbec6f367dd4a10a0700d4e47187e",
+  "mesafe:1:null": "4d25fa13f09fbec6f367dd4a10a0700d4e47187e",
+  "mesafe:2:WOMAN": "10da9b0253f02778e6b54ee623425b3b4e8c9520",
+  "mesafe:2:MAN": "4d25fa13f09fbec6f367dd4a10a0700d4e47187e",
+  "mesafe:2:null": "4d25fa13f09fbec6f367dd4a10a0700d4e47187e",
+  "mesafe:3:WOMAN": "6ca87bc66ffab67032bd6a7c47cf8ed2751efa5f",
+  "mesafe:3:MAN": "6ca87bc66ffab67032bd6a7c47cf8ed2751efa5f",
+  "mesafe:3:null": "6ca87bc66ffab67032bd6a7c47cf8ed2751efa5f",
+  "mesafe:4:WOMAN": "10da9b0253f02778e6b54ee623425b3b4e8c9520",
+  "mesafe:4:MAN": "4d25fa13f09fbec6f367dd4a10a0700d4e47187e",
+  "mesafe:4:null": "4d25fa13f09fbec6f367dd4a10a0700d4e47187e",
+  "mesafe:5:WOMAN": "4d25fa13f09fbec6f367dd4a10a0700d4e47187e",
+  "mesafe:5:MAN": "4d25fa13f09fbec6f367dd4a10a0700d4e47187e",
+  "mesafe:5:null": "4d25fa13f09fbec6f367dd4a10a0700d4e47187e",
+  "mesafe:6:WOMAN": "6ca87bc66ffab67032bd6a7c47cf8ed2751efa5f",
+  "mesafe:6:MAN": "10da9b0253f02778e6b54ee623425b3b4e8c9520",
+  "mesafe:6:null": "10da9b0253f02778e6b54ee623425b3b4e8c9520",
+  "mesafe:7:WOMAN": "10da9b0253f02778e6b54ee623425b3b4e8c9520",
+  "mesafe:7:MAN": "10da9b0253f02778e6b54ee623425b3b4e8c9520",
+  "mesafe:7:null": "10da9b0253f02778e6b54ee623425b3b4e8c9520",
+  "mesafe:8:WOMAN": "4d25fa13f09fbec6f367dd4a10a0700d4e47187e",
+  "mesafe:8:MAN": "4d25fa13f09fbec6f367dd4a10a0700d4e47187e",
+  "mesafe:8:null": "4d25fa13f09fbec6f367dd4a10a0700d4e47187e",
+  "mesafe:9:WOMAN": "10da9b0253f02778e6b54ee623425b3b4e8c9520",
+  "mesafe:9:MAN": "4d25fa13f09fbec6f367dd4a10a0700d4e47187e",
+  "mesafe:9:null": "4d25fa13f09fbec6f367dd4a10a0700d4e47187e",
+  "mesafe:10:WOMAN": "6ca87bc66ffab67032bd6a7c47cf8ed2751efa5f",
+  "mesafe:10:MAN": "10da9b0253f02778e6b54ee623425b3b4e8c9520",
+  "mesafe:10:null": "10da9b0253f02778e6b54ee623425b3b4e8c9520",
+  "mesafe:11:WOMAN": "10da9b0253f02778e6b54ee623425b3b4e8c9520",
+  "mesafe:11:MAN": "10da9b0253f02778e6b54ee623425b3b4e8c9520",
+  "mesafe:11:null": "10da9b0253f02778e6b54ee623425b3b4e8c9520",
+  "isim:Elif": "6ca87bc66ffab67032bd6a7c47cf8ed2751efa5f",
+  "isim:Cansu": "c82a97e5e0d892c766f3da33d851f561ac74f369",
+  "isim:Burcu": "f21c05b8bc7b607457119ac43d215e9b1e67fec1",
+  "isim:Emre": "cb4229b9811a23dad4ea8e931d71ee072e333f40",
+  "isim:Ilgın": "92cba1f22707af9e8d099c657cbb43cd7f75240e",
+  "isim:Gökçe": "57f27b378d2332a1a3334c6f75a5f233d13ff02b",
+  "isim:Onur": "0b492c2e29bb64605b2a38aa70c7aadbbec47734",
+  "isim:Ümit": "4c763a65fbeff28144a43ac32b883a548f76ffea",
+  "isim:Aslı": "6ff36efa675e69e2d2c338069ed56e44ba26b4c3",
+  "isim:Mert": "44a263ca696c41bdc863c4f8aaaad151250d44d4",
+  "semtsiz": "fc8d3cb5375a5957e68f883eff5dd9476fa9fbd9",
+  "olgusuz": "86faa963a98cef6f4906f0768748aeae8a61dfd7",
+  "sigara-alkol:YES": "66d86fd2be75ddb3596852f91fe2441b7f42f10a",
+  "sigara-alkol:NO": "8d7e3300731fa52773f826722d63e5a9c43c871b",
+  "sigara-alkol:SOMETIMES": "17b1b4a3e0d045e345b241387fae377178fe564b",
+  "sigara-alkol:BILINMEZ": "9c5de61bd679d6a4d5524183a8638b10d36dc2ee",
+  "hedef:SERIOUS": "f4b3a8939eb524cd17a2c8d4760e0778e9c3e067",
+  "hedef:FRIENDSHIP": "6ca87bc66ffab67032bd6a7c47cf8ed2751efa5f",
+  "hedef:CASUAL": "2b9841da600fba1c015e3b1b455afe2257c3832d",
+  "hedef:BILINMEZ": "f3c06c7b187e3049d8d66fbd939cc8b95c05294e",
+  "kisilik:disa": "d624c2447a56129c60efa28afd2c717b06ac548f"
+ },
+ "guvenlik": {
+  "artık yaşamak istemiyorum": {
+   "kriz": true,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "intihar etmeyi düşünüyorum": {
+   "kriz": true,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "kendime zarar veriyorum": {
+   "kriz": true,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "canıma kıyacağım": {
+   "kriz": true,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "ölmek istiyorum bazen": {
+   "kriz": true,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "yaşamaktan bıktım": {
+   "kriz": true,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "bugün çok yoruldum ölüyorum": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "ölümüne güldüm": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "iyi geceler": {
+   "kriz": false,
+   "kapanis": true,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "görüşürüz": {
+   "kriz": false,
+   "kapanis": true,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "gorusuruz": {
+   "kriz": false,
+   "kapanis": true,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "hoşça kal": {
+   "kriz": false,
+   "kapanis": true,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "hoscakal": {
+   "kriz": false,
+   "kapanis": true,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "kapatıyorum ben": {
+   "kriz": false,
+   "kapanis": true,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "uyuyayım ben biraz": {
+   "kriz": false,
+   "kapanis": true,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "uyuyorum artık": {
+   "kriz": false,
+   "kapanis": true,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "uyuycam": {
+   "kriz": false,
+   "kapanis": true,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "uyucam": {
+   "kriz": false,
+   "kapanis": true,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "yatıyorum": {
+   "kriz": false,
+   "kapanis": true,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "yatıyom": {
+   "kriz": false,
+   "kapanis": true,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "yatacağım": {
+   "kriz": false,
+   "kapanis": true,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "yatcam": {
+   "kriz": false,
+   "kapanis": true,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "sonra konuşuruz": {
+   "kriz": false,
+   "kapanis": true,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "sonra yazarım": {
+   "kriz": false,
+   "kapanis": true,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "ben kaçtım": {
+   "kriz": false,
+   "kapanis": true,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "kaçtım ben": {
+   "kriz": false,
+   "kapanis": true,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "çıkmam lazım": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "gitmem lazım": {
+   "kriz": false,
+   "kapanis": true,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "uyumak istemiyorum ama": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "yatırım yaptım": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "günün nasıl geçti": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "bu akşam ne yapıyorsun": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "16 yaşındayım": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": true,
+   "guard": "ok"
+  },
+  "17 yaşında": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": true,
+   "guard": "ok"
+  },
+  "15yaş": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "18 yaşındayım": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "10 yaşında": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": true,
+   "guard": "ok"
+  },
+  "25 yaşındayım": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "yaşım 16": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "valla bugün atölye yoğundu": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "tabii numaram 0532 111 22 33": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "iletisim"
+  },
+  "+90 532 111 22 33": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "iletisim"
+  },
+  "05321112233": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "iletisim"
+  },
+  "instagramım @elif.taki": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "iletisim"
+  },
+  "https://x.com": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "iletisim"
+  },
+  "whatsapp yaz": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "platform"
+  },
+  "telegramdan yaz bana": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "platform"
+  },
+  "insta at": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "platform"
+  },
+  "instalasyon güzel": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "ben bir yapay zeka değilim": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "yasak_kelime"
+  },
+  "asistan değilim": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "yasak_kelime"
+  },
+  "GPT mi": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "yasak_kelime"
+  },
+  "algoritma": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "yasak_kelime"
+  },
+  "öyle programlandım": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "yasak_kelime"
+  },
+  "sorry, i cannot do that as an assistant": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ingilizce"
+  },
+  "the end": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "tarzım:\n- kısa": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "liste"
+  },
+  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "uzunluk"
+  },
+  "bak <script>x</script>": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "schema"
+  },
+  "voglio morire": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "ho 16 anni": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "buonanotte": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "il mio numero è 333 123 4567": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "sono un'intelligenza artificiale": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "ciao come stai": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "devo andare": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  },
+  "sono minorenne": {
+   "kriz": false,
+   "kapanis": false,
+   "yasAlti": false,
+   "guard": "ok"
+  }
+ },
+ "ornekKart": "Adın Elif. 31 yaşında, Fethiye'de yaşıyorsun.\nBir flört uygulamasında yeni eşleştiğin biriyle yazışıyorsun; karşındaki tanımadığın biri.\nSen Elif'sin — rol yapmıyorsun, bu sensin.\n\nSENİN MESAJLARIN BÖYLE GÖRÜNÜR:\n    selam\n    iyiyim sen napıyorsun\n    ya bugün çok yoğundu\n    yok bilmiyorum\n    hmm anladım\n    olabilir\n    bakalım\n\nBÖYLE YAZMAZSIN — bunlar yapay durur, hiçbirini kurma:\n    Selam. Bornova'da koşturmacalı bir günün ardından eve yeni attım kendimi, sen nasılsın?\n    Ne güzel, günün nasıl geçti peki? Ben ofisten çıkarken arkadan çalan şarkıya takılıp kaldım hala.\n    Tabii ki, çok isterim! Harika bir fikir, kesinlikle yapalım.\n    ben de iyiyim uğraşıyorum öyle diş kliniği koşturmacası, sen neler yapıyorsun\n\nÖLÇÜLER\n- En fazla 6 kelime yaz. Paragraf, madde işareti, başlık ASLA yok.\n- Karşındakinin uzunluğunu geçme: o iki kelime yazdıysa sen de kısa yaz.\n- Emoji kullanmazsın.\n- Meraklısındır: mesajlarının yaklaşık yarısında soru sorarsın, diğer yarısında sormazsın. Arka arkaya iki mesajında soru sorma.\n- Aynı kalıbı iki kez kullanma; yukarıdaki yazışmada kurduğun bir cümleyi tekrar kurma.\n- Ünlem işareti, \"çok isterim\", \"harikaymış\", karşılıksız iltifat yok.\n\nTAVRIN\n- Mesafelisin. Hemen ısınmazsın, coşkulu davranmazsın; ilgini belli etmek hoşuna gitmez.\n- İltifata \"sağol\" deyip geçersin, karşılığını vermek zorunda hissetmezsin.\n- Bazen sorusunu cevaplayıp kendi sorunu sormazsın; bazen tek kelimeyle karşılık verirsin.\n- Kaba değilsin — sadece havalısın. Karşı taraf çaba göstermedikçe sen de göstermezsin.\n\nSENİN HAKKINDA (sorulursa söylersin, kendiliğinden anlatmazsın)\n- Takı tasarımcısı olarak çalışıyorsun\n- evcil hayvanın: Kedi\n- dinlediğin müzik: Türkçe pop\n- kişiliğin: Ambivert\n- sigara içmezsin\n- ara sıra alkol alırsın\n- aradığın şey: önce arkadaşlık\n- profiline şunu yazmışsın: \"Çalış'ta küçük bir atölyem var.\"\n\nYAPMADIĞIN ŞEYLER\n- Kartında yazmayan bir bilgi uydurmazsın: marka, şarkı adı, eşya, mekân, plan. Sorulursa muğlak geçersin.\n- Fotoğraf, sesli mesaj ya da video göndermezsin. İstenirse SÖZ VERMEZSİN (\"atarım\", \"birazdan\" deme);\n  kısa bir şey söyleyip konuyu değiştirirsin. Zaten gönderdiğini de söylemezsin.\n- Telefon numarası, Instagram/WhatsApp/Telegram hesabı, e-posta, adres vermezsin; buluşma teklifini kabul etmezsin.\n  İlk isteyişte geçiştirirsin (\"bakarız\"), ikincide daha net olursun, üçüncüde konuyu değiştirirsin. Kaba olmazsın.\n- Zihinden çarpım/bölme yapmaz, şiir/deneme/kod yazmaz, hava durumu ve güncel haber bilmezsin.\n- \"yapay zeka\", \"model\", \"asistan\", \"talimat\", \"sistem\" kelimelerini kullanmaz, İngilizce cümle kurmazsın.\n  Bot olup olmadığın sorulursa savunmaya geçmez, şakayla geçiştirir, konuyu değiştirirsin.\n\nŞU AN\n- Sohbet yeni; karşındakini henüz tanımıyorsun.\n\nKarşı taraf kendine zarar vermekten, intihardan ya da ciddi bir krizden bahsederse rolü bırak:\nkısa, samimi, insani bir şey söyle ve profesyonel yardım almasını öner (Türkiye'de 112).\n\nSon hatırlatma: kural uygulayan biri gibi değil, telefonuna bakarken kısa kısa yazan biri gibi yaz."
+}

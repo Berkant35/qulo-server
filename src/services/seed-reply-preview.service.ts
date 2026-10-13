@@ -3,6 +3,7 @@ import { buildPersonaCard, personaGirdisi } from './seed-persona.js';
 import { generateSeedReply, type LlmTurn } from './seed-llm.service.js';
 import { validateReply } from './seed-reply-guard.js';
 import { isBusy, VARSAYILAN_PERSONA } from './seed-reply-timing.js';
+import { seedLocalePack } from './seed-locale/index.js';
 import type { SeedPersona } from '../types/seed-persona.js';
 
 /**
@@ -26,7 +27,11 @@ export interface DenemeSonucu {
   metin: string | null;
   elendi: string | null;
   persona: SeedPersona;
-  profil: { id: string; name: string; age: number | null; city: string | null; gender: string | null; job: string | null };
+  profil: {
+    id: string; name: string; age: number | null; city: string | null; gender: string | null; job: string | null;
+    /** Kartin ve denetimin dili (seedLocalePack — `users.locale`, bilinmeyen = tr). */
+    locale: string;
+  };
   tokenler: { giris: number; cikis: number };
 }
 
@@ -35,7 +40,7 @@ export class DenemeHatasi extends Error {}
 export async function previewSeedReply(istek: DenemeIstegi): Promise<DenemeSonucu> {
   const { data: seed } = await supabase
     .from('users')
-    .select('id, name, age, city, bio, gender, relationship_goal, is_seed_profile, seed_persona')
+    .select('id, name, age, city, bio, gender, relationship_goal, locale, is_seed_profile, seed_persona')
     .eq('id', istek.seedUserId)
     .maybeSingle();
   if (!seed) throw new DenemeHatasi('Profil bulunamadi');
@@ -60,7 +65,8 @@ export async function previewSeedReply(istek: DenemeIstegi): Promise<DenemeSonuc
   }));
 
   const cevap = await generateSeedReply({ system: kart, turns });
-  const denetim = validateReply(cevap.text, kart);
+  const paket = seedLocalePack(seed.locale);
+  const denetim = validateReply(cevap.text, kart, paket);
 
   return {
     kart,
@@ -71,7 +77,7 @@ export async function previewSeedReply(istek: DenemeIstegi): Promise<DenemeSonuc
     profil: {
       id: String(seed.id), name: String(seed.name ?? ''), age: (seed.age as number) ?? null,
       city: (seed.city as string) ?? null, gender: (seed.gender as string) ?? null,
-      job: (detay?.job as string) ?? null,
+      job: (detay?.job as string) ?? null, locale: paket.locale,
     },
     tokenler: { giris: cevap.inputTokens, cikis: cevap.outputTokens },
   };

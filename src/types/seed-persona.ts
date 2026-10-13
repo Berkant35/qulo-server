@@ -39,6 +39,8 @@ export interface PersonaCardInput {
   smoking: string | null;
   alcohol: string | null;
   relationshipGoal: string | null;
+  /** `users.locale` — persona kartinin dili (seedLocalePack; bos/bilinmeyen = tr). */
+  locale?: string | null;
   persona: SeedPersona;
   /** Sohbet fazi (1-4) ve mesguliyet baglami prompt'a eklenir. */
   phase: 1 | 2 | 3 | 4;

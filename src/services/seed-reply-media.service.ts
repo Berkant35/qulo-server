@@ -4,7 +4,7 @@ import { generateSeedReply } from './seed-llm.service.js';
 import { validateReply } from './seed-reply-guard.js';
 import { mediaService } from './media.service.js';
 import {
-  seedBaglami, hataKodu, botYazabilir, KAPI_HATASI, KRIZ, YAS_ALTI,
+  seedBaglami, hataKodu, botYazabilir, KAPI_HATASI, krizSinyali, yasAltiBeyani,
   markCancelled, markSent, deferRow, withinRateLimits, backoffVeyaBitir, aktifIsaretle,
   type QueueRow, type IslemSonucu, type SeedSatiri, type SeedBaglami,
 } from './seed-reply.service.js';
@@ -38,7 +38,7 @@ async function medyaGecistirmesiYaz(row: QueueRow, seed: SeedSatiri): Promise<vo
   // gecistirme YAZILMAZ. Metin satiri bu sebeple iptal edilmis olsa bile medya
   // istegi AYRI bir tetikleyicidir (farkli id) ve iptal filtresine takilmaz —
   // kapi bu yolda ayrica kurulmali.
-  if (YAS_ALTI.test(baglam.sonInsanMetni) || KRIZ.test(baglam.sonInsanMetni)) {
+  if (yasAltiBeyani(baglam.sonInsanMetni, baglam.paket) || krizSinyali(baglam.sonInsanMetni, baglam.paket)) {
     console.warn(`[SeedReply] medya gecistirmesi yazilmadi (yas/kriz kapisi) match=${row.match_id}`);
     return;
   }
@@ -51,7 +51,7 @@ async function medyaGecistirmesiYaz(row: QueueRow, seed: SeedSatiri): Promise<vo
     return;
   }
 
-  const denetim = validateReply(ham, baglam.sistem);
+  const denetim = validateReply(ham, baglam.sistem, baglam.paket);
   if (!denetim.ok) {
     console.warn(`[SeedReply] medya gecistirmesi elendi (${denetim.reason}) match=${row.match_id}`);
     return;
@@ -82,7 +82,7 @@ export async function respondMediaRequest(row: QueueRow): Promise<IslemSonucu> {
   // Kimlik cift kontrolu — diger yazma yollariyla AYNI kapi.
   const { data: seed } = await supabase
     .from('users')
-    .select('id, name, age, city, bio, gender, interests, relationship_goal, is_seed_profile, is_test_account, seed_persona')
+    .select('id, name, age, city, bio, gender, interests, relationship_goal, locale, is_seed_profile, is_test_account, seed_persona')
     .eq('id', row.seed_user_id).maybeSingle();
   if (!botYazabilir(seed)) {
     await markCancelled(row.id, KAPI_HATASI);
