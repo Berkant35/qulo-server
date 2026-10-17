@@ -32,8 +32,15 @@ export const DEFAULT_MUTUAL_MATCH_ENABLED = false;
  */
 export const DEFAULT_SERVED_GATE_ENABLED = false;
 
+/**
+ * Onboarding güç demosu uzaktan kapatma anahtarı (spec 2026-10-17 §7.1) — `app_config.power_demo_enabled`
+ * (migration 078). Diğer anahtarların TERSİNE kolon yoksa / okunamazsa AÇIK: demo varsayılan akıştır,
+ * mobil de alan yoksa aynı şekilde demoyu gösterir; kapatmak bilinçli bir admin kararıdır.
+ */
+export const DEFAULT_POWER_DEMO_ENABLED = true;
+
 /** `getRow` kolon listesinden AYRI okunan anahtarlar (migration'ı deploy'dan sonra gelebilir). */
-type BooleanFlagColumn = "mutual_match_enabled" | "served_gate_enabled";
+type BooleanFlagColumn = "mutual_match_enabled" | "served_gate_enabled" | "power_demo_enabled";
 
 export interface AppConfigRow {
   id: string;
@@ -60,6 +67,7 @@ class AppConfigService {
   private readonly dormantOnbellek = new TtlCache<"gun", number>(APP_CONFIG_TTL_MS);
   private readonly mutualOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
   private readonly servedGateOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
+  private readonly powerDemoOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
   private dormantUyariVerildi = false;
 
   /**
@@ -105,6 +113,11 @@ class AppConfigService {
   /** Gösterim kapısı anahtarı (migration 077). */
   async getServedGateEnabled(): Promise<boolean> {
     return this.readBooleanFlag("served_gate_enabled", this.servedGateOnbellek, DEFAULT_SERVED_GATE_ENABLED);
+  }
+
+  /** Güç demosu anahtarı (migration 078) — kolon yoksa AÇIK. */
+  async getPowerDemoEnabled(): Promise<boolean> {
+    return this.readBooleanFlag("power_demo_enabled", this.powerDemoOnbellek, DEFAULT_POWER_DEMO_ENABLED);
   }
 
   /**
@@ -164,11 +177,15 @@ class AppConfigService {
         isMaintenance: false,
         maintenanceMessage: null,
         isForceUpdateEnabled: false,
+        // Satır okunamadıysa anahtar da bilinmez: sözleşme alanı yine de hep döner.
+        powerDemoEnabled: DEFAULT_POWER_DEMO_ENABLED,
       };
     }
 
     const isIos = platform === "ios";
     const lang = locale.startsWith("tr") ? "tr" : "en";
+    // `getRow` kolon listesinden AYRI okunur (078 deploy'dan sonra gelebilir); 60 sn önbellekli.
+    const powerDemoEnabled = await this.getPowerDemoEnabled();
 
     return {
       minVersion: isIos ? row.min_version_ios : row.min_version_android,
@@ -179,6 +196,7 @@ class AppConfigService {
         ? (lang === "tr" ? row.maintenance_message_tr : row.maintenance_message_en)
         : null,
       isForceUpdateEnabled: row.is_force_update_enabled,
+      powerDemoEnabled,
     };
   }
 
@@ -187,6 +205,7 @@ class AppConfigService {
       discover_dormant_days?: number;
       mutual_match_enabled?: boolean;
       served_gate_enabled?: boolean;
+      power_demo_enabled?: boolean;
     },
   ) {
     const { data: existing, error: fetchError } = await supabase
@@ -211,6 +230,7 @@ class AppConfigService {
     this.dormantOnbellek.clear();
     this.mutualOnbellek.clear();
     this.servedGateOnbellek.clear();
+    this.powerDemoOnbellek.clear();
     if (error) throw error;
     return data;
   }

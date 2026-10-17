@@ -284,6 +284,7 @@ class AdminController {
       discover_dormant_days,
       mutual_match_enabled, mutual_match_field,
       served_gate_enabled, served_gate_field,
+      power_demo_enabled, power_demo_enabled_field,
     } = req.body;
 
     const versionFields: Record<string, string> = { min_version_ios, min_version_android, latest_version_ios, latest_version_android };
@@ -311,6 +312,8 @@ class AdminController {
         ...(mutual_match_field !== undefined ? { mutual_match_enabled: mutual_match_enabled === "on" } : {}),
         // Gösterim kapısı (migration 077) — aynı gizli işaret deseni.
         ...(served_gate_field !== undefined ? { served_gate_enabled: served_gate_enabled === "on" } : {}),
+        // Güç demosu uzaktan kapatma anahtarı (migration 078) — aynı gizli işaret deseni.
+        ...(power_demo_enabled_field !== undefined ? { power_demo_enabled: power_demo_enabled === "on" } : {}),
         ...(dormantDays !== undefined ? { discover_dormant_days: dormantDays } : {}),
         min_version_ios,
         min_version_android,

@@ -107,3 +107,20 @@ describe('updateAppConfig — served_gate_enabled (migration 077)', () => {
     expect(patch()).not.toHaveProperty('served_gate_enabled');
   });
 });
+
+describe('updateAppConfig — power_demo_enabled (migration 078)', () => {
+  it('form alanı varken işaretliyse true yazar', async () => {
+    const { patch } = await setup({ power_demo_enabled_field: '1', power_demo_enabled: 'on' });
+    expect(patch()).toMatchObject({ power_demo_enabled: true });
+  });
+
+  it('form işaretsiz + power_demo_enabled_field gönderilirse false yazılır — panelden KAPATILABİLİR', async () => {
+    const { patch } = await setup({ power_demo_enabled_field: '1' });
+    expect(patch()).toMatchObject({ power_demo_enabled: false });
+  });
+
+  it('form alanı yoksa (078 öncesi panel) dokunulmaz', async () => {
+    const { patch } = await setup({});
+    expect(patch()).not.toHaveProperty('power_demo_enabled');
+  });
+});

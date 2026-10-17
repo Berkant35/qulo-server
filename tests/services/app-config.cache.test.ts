@@ -34,7 +34,9 @@ describe('appConfigService.getRow onbellegi', () => {
     const { appConfigService, okumalar } = await setup();
     expect((await appConfigService.getConfig('ios', 'tr')).latestVersion).toBe('2.0.14');
     expect((await appConfigService.getRow())?.seed_reply_enabled).toBe(true);
-    expect(okumalar()).toBe(1);
+    // 1 satir okumasi + 1 power_demo_enabled kolon okumasi (078, getRow listesinden AYRI okunur).
+    // Satir onbellegi paylasilmasaydi 3 olurdu.
+    expect(okumalar()).toBe(2);
   });
 
   it('okuma hatasi null doner (getConfig varsayilanlari) ve onbellege YAZILMAZ', async () => {
@@ -179,5 +181,63 @@ describe('appConfigService.getServedGateEnabled (migration 077)', () => {
     expect(await appConfigService.getServedGateEnabled()).toBe(false);
     await appConfigService.updateConfig({ served_gate_enabled: true });
     expect(await appConfigService.getServedGateEnabled()).toBe(true);
+  });
+});
+
+describe('appConfigService.getPowerDemoEnabled (migration 078)', () => {
+  it('false okunur ve önbelleğe alınır (ardışık çağrı tek okuma)', async () => {
+    const { appConfigService, okumalar } = await setup({ satirEk: { power_demo_enabled: false } });
+    expect(await appConfigService.getPowerDemoEnabled()).toBe(false);
+    expect(await appConfigService.getPowerDemoEnabled()).toBe(false);
+    expect(okumalar()).toBe(1);
+  });
+
+  it('kolon yoksa (078 uygulanmamış) AÇIK sayılır — diğer anahtarların tersine varsayılan true', async () => {
+    const { appConfigService } = await setup();
+    expect(await appConfigService.getPowerDemoEnabled()).toBe(true);
+  });
+
+  it('kolon yok hatası (42703) varsayılanı (true) önbellekler', async () => {
+    const { appConfigService, okumalar } = await setup({
+      failOn: [{ table: 'app_config', op: 'select', error: { message: 'column does not exist', code: '42703' } }],
+    });
+    expect(await appConfigService.getPowerDemoEnabled()).toBe(true);
+    expect(await appConfigService.getPowerDemoEnabled()).toBe(true);
+    expect(okumalar()).toBe(1);
+  });
+
+  it('geçici okuma hatasında true döner ve önbelleğe YAZILMAZ — admin false değeri geri gelir', async () => {
+    const err = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { appConfigService, okumalar } = await setup({
+      satirEk: { power_demo_enabled: false },
+      failOn: [{ table: 'app_config', op: 'select', error: { message: 'timeout', code: '57014' }, times: 1 }],
+    });
+    expect(await appConfigService.getPowerDemoEnabled()).toBe(true);
+    expect(await appConfigService.getPowerDemoEnabled()).toBe(false);
+    expect(okumalar()).toBe(2);
+    err.mockRestore();
+  });
+
+  it('diğer anahtarlardan bağımsız önbellek: biri diğerinin değerini döndürmez', async () => {
+    const { appConfigService } = await setup({
+      satirEk: { power_demo_enabled: false, served_gate_enabled: true, mutual_match_enabled: true },
+    });
+    expect(await appConfigService.getServedGateEnabled()).toBe(true);
+    expect(await appConfigService.getMutualMatchEnabled()).toBe(true);
+    expect(await appConfigService.getPowerDemoEnabled()).toBe(false);
+  });
+
+  it('60 sn önbellek: iki getConfig\'te kolon tek kez okunur (satır 1 + kolon 1)', async () => {
+    const { appConfigService, okumalar } = await setup({ satirEk: { power_demo_enabled: false } });
+    expect((await appConfigService.getConfig('ios', 'tr')).powerDemoEnabled).toBe(false);
+    expect((await appConfigService.getConfig('android', 'en')).powerDemoEnabled).toBe(false);
+    expect(okumalar()).toBe(2);
+  });
+
+  it('updateConfig power_demo_enabled önbelleğini temizler: yeni değer hemen görünür', async () => {
+    const { appConfigService } = await setup({ satirEk: { power_demo_enabled: true } });
+    expect(await appConfigService.getPowerDemoEnabled()).toBe(true);
+    await appConfigService.updateConfig({ power_demo_enabled: false });
+    expect(await appConfigService.getPowerDemoEnabled()).toBe(false);
   });
 });

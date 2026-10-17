@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { FailureSpec } from "../helpers/fake-supabase.js";
 
 /**
  * app-config platform dikisi. Zorunlu guncelleme esigi ve magaza linki platforma
@@ -132,5 +133,76 @@ describe("getEconomyConfigHandler — herkese açık görünüm", () => {
     const body = await economyBodyFor([{ name: "ORACLE", accuracy_rate: bozuk }]);
 
     expect(body.oracleAccuracy).toBe(0.7);
+  });
+});
+
+/** Gerçek app-config servisi + sahte Supabase ile `GET /app/config` gövdesi. */
+async function configBodyFor(
+  row: Record<string, unknown>,
+  failOn: FailureSpec[] = [],
+) {
+  // Üstteki blokların servis mock'ları (doMock) resetModules'tan sağ çıkar — gerçek servis gerekli.
+  vi.doUnmock("../../src/services/app-config.service.js");
+  vi.doUnmock("../../src/services/economy-config.service.js");
+  const { createFakeSupabase } = await import("../helpers/fake-supabase.js");
+  const fake = createFakeSupabase({ app_config: [row] }, { failOn });
+  vi.doMock("../../src/config/supabase.js", () => ({ supabase: fake.client }));
+  const { getAppConfigHandler } = await import("../../src/controllers/app.controller.js");
+  const res: any = { json: vi.fn() };
+  const next = vi.fn();
+
+  await getAppConfigHandler({ headers: { "x-app-platform": "ios" } } as any, res, next);
+
+  expect(next).not.toHaveBeenCalled();
+  return res.json.mock.calls[0][0];
+}
+
+const CONFIG_SATIRI = {
+  id: "cfg", min_version_ios: "2.0.0", min_version_android: "2.0.0",
+  latest_version_ios: "2.0.15", latest_version_android: "2.0.15",
+  store_url_ios: "ios-url", store_url_android: "android-url", is_maintenance: false,
+  maintenance_message_tr: null, maintenance_message_en: null, is_force_update_enabled: false,
+  seed_reply_enabled: true, seed_reply_fast_mode: false, photo_moderation_enabled: true,
+  updated_at: "2026-10-17T00:00:00Z",
+};
+
+/**
+ * Mobil splash'te çekilen auth'suz uç: güç demosu uzaktan kapatma anahtarı (spec 2026-10-17 §7.1).
+ * Anahtar yoksa / okunamazsa demo AÇIK kalır (çevrimdışı ilk açılışta demo görünür).
+ */
+describe("getAppConfigHandler — powerDemoEnabled (migration 078)", () => {
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
+  it("powerDemoEnabled varsayılan true (kolon yok → 42703)", async () => {
+    // Yalnız kolon okuması 42703 verir (ilk select = satır başarılı): migration deploy'dan sonra gelirse.
+    const body = await configBodyFor(CONFIG_SATIRI, [
+      { table: "app_config", op: "select", failAfter: 1, error: { message: "column does not exist", code: "42703" } },
+    ]);
+
+    expect(body.powerDemoEnabled).toBe(true);
+    expect(body.latestVersion).toBe("2.0.15");   // kolon yokluğu geri kalan config'i bozmaz
+  });
+
+  it("satırda power_demo_enabled=false ise false", async () => {
+    const body = await configBodyFor({ ...CONFIG_SATIRI, power_demo_enabled: false });
+
+    expect(body.powerDemoEnabled).toBe(false);
+  });
+
+  it("satırda power_demo_enabled=true ise true; mevcut alanlar yerinde", async () => {
+    const body = await configBodyFor({ ...CONFIG_SATIRI, power_demo_enabled: true });
+
+    expect(body.powerDemoEnabled).toBe(true);
+    expect(body).toMatchObject({ minVersion: "2.0.0", storeUrl: "ios-url", isMaintenance: false });
+  });
+
+  it("app_config okunamıyorsa (varsayılan yanıt) powerDemoEnabled yine true — sözleşme alanı hep var", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const body = await configBodyFor(CONFIG_SATIRI, [{ table: "app_config", op: "select" }]);
+
+    expect(body.minVersion).toBe("0.0.0");
+    expect(body.powerDemoEnabled).toBe(true);
   });
 });
