@@ -1,4 +1,6 @@
 import { supabase } from "../config/supabase.js";
+import { ORACLE_DEFAULT_ACCURACY } from "../constants/oracle.js";
+import { TtlCache } from "../utils/ttl-cache.js";
 import {
   economyConfigSchema,
   type EconomyConfig,
@@ -24,6 +26,8 @@ class EconomyConfigService {
   private cachedConfig: { version: number; config: EconomyConfig } | null = null;
   private cacheExpiry = 0;
   private readonly CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+  /** Kâhin doğruluğu (`powers.accuracy_rate`) — config ile aynı TTL; `invalidateCache()` ikisini de temizler. */
+  private readonly oracleAccuracyCache = new TtlCache<"oran", number>(this.CACHE_TTL_MS);
 
   async getActiveConfig(): Promise<{ version: number; config: EconomyConfig }> {
     if (this.cachedConfig && Date.now() < this.cacheExpiry) {
@@ -49,6 +53,31 @@ class EconomyConfigService {
     this.cacheExpiry = Date.now() + this.CACHE_TTL_MS;
 
     return this.cachedConfig;
+  }
+
+  /**
+   * Kâhin gücünün doğruluk oranı, [0,1]'e sıkıştırılmış. Herkese açık `GET /app/economy` yanıtında
+   * `oracleAccuracy` olarak döner (auth öncesi güç demosu); config şemasının parçası DEĞİL — oran
+   * `powers` tablosunda yaşıyor ve şemaya eklemek aktif satırı parse edilemez kılıp sohbet akışını bozardı.
+   *
+   * Satır yok / sayıya çevrilemeyen değer → `ORACLE_DEFAULT_ACCURACY` (cevap önbelleğe girer).
+   * Okuma hatası → yine varsayılan, ama önbelleğe YAZILMAZ: geçici hata 5 dk boyunca yanlış sayıyı sabitlemesin.
+   */
+  async getOracleAccuracy(): Promise<number> {
+    const oran = await this.oracleAccuracyCache.getOrLoad("oran", async () => {
+      const { data, error } = await supabase
+        .from("powers")
+        .select("accuracy_rate")
+        .eq("name", "ORACLE")
+        .maybeSingle();
+      if (error) return undefined;
+
+      // numeric kolon PostgREST'ten metin ("0.70") gelebilir; null Number(null)=0 olmasın diye ayrı ele alınır.
+      const ham = data?.accuracy_rate;
+      const sayi = ham == null ? Number.NaN : Number(ham);
+      return Number.isFinite(sayi) ? Math.min(1, Math.max(0, sayi)) : ORACLE_DEFAULT_ACCURACY;
+    });
+    return oran ?? ORACLE_DEFAULT_ACCURACY;
   }
 
   async getConfig(): Promise<EconomyConfig> {
@@ -157,6 +186,7 @@ class EconomyConfigService {
   invalidateCache(): void {
     this.cachedConfig = null;
     this.cacheExpiry = 0;
+    this.oracleAccuracyCache.clear();
   }
 }
 

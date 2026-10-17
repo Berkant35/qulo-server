@@ -1,6 +1,7 @@
 import { supabase } from "../config/supabase.js";
 import { resolveLocale } from '../utils/locales.js';
 import { questionLocale } from "../constants/locales.js";
+import { ORACLE_DEFAULT_ACCURACY } from "../constants/oracle.js";
 import { Errors } from "../utils/errors.js";
 import { calculatePowerCost, calculateGreenReward, shuffleArray, pickOracleSuggestion, powerReward } from "../utils/math.js";
 import { diamondService } from "./diamond.service.js";
@@ -513,7 +514,7 @@ export class QuizService {
         }
 
         case "ORACLE": {
-          const accuracyRate = (powerData as unknown as { accuracy_rate?: number }).accuracy_rate ?? 0.7;
+          const accuracyRate = (powerData as unknown as { accuracy_rate?: number }).accuracy_rate ?? ORACLE_DEFAULT_ACCURACY;
           const isAccurate = Math.random() < accuracyRate;
           // Yanlis dali HALF'in eledigi indeksleri DISLAR (pickOracleSuggestion).
           const suggestedIndex = pickOracleSuggestion(

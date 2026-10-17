@@ -19,9 +19,13 @@ export async function getAppConfigHandler(req: Request, res: Response, next: Nex
 
 export async function getEconomyConfigHandler(req: Request, res: Response, next: NextFunction) {
   try {
-    // Herkese açık uç: rainbow bloğu (iç ekonomi kararları) yanıta girmez.
-    const { version, config } = await economyConfigService.getActiveConfig();
-    res.json({ version, config: toPublicEconomyConfig(config) });
+    // Herkese açık uç: rainbow bloğu (iç ekonomi kararları) yanıta girmez. `oracleAccuracy` config'in
+    // içinde değil, üst seviyede: mobil auth öncesi güç demosunda Kâhin doğruluğunu buradan okur.
+    const [{ version, config }, oracleAccuracy] = await Promise.all([
+      economyConfigService.getActiveConfig(),
+      economyConfigService.getOracleAccuracy(),
+    ]);
+    res.json({ version, config: toPublicEconomyConfig(config), oracleAccuracy });
   } catch (err) {
     next(err);
   }

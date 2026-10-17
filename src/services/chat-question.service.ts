@@ -1,4 +1,5 @@
 import { supabase } from "../config/supabase.js";
+import { ORACLE_DEFAULT_ACCURACY } from "../constants/oracle.js";
 import { Errors } from "../utils/errors.js";
 import { assertUuid } from "../utils/validation.js";
 import { diamondService } from "./diamond.service.js";
@@ -741,7 +742,7 @@ export class ChatQuestionService {
       case "ORACLE": {
         // accuracy_rate (varsayilan %70) olasilikla dogru sik; yanlis dali HALF'in
         // eledigi siklari DISLAR (pickOracleSuggestion).
-        const accuracyRate = power.accuracy_rate ?? 0.7;
+        const accuracyRate = power.accuracy_rate ?? ORACLE_DEFAULT_ACCURACY;
         const isAccurate = Math.random() < accuracyRate;
         const suggested = pickOracleSuggestion(
           allOptions,

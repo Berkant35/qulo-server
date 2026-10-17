@@ -369,6 +369,93 @@ describe('starterPowers (başlangıç paketi)', () => {
 });
 
 /**
+ * Güç demosu (2026-10-17): herkese açık `GET /app/economy` Kâhin doğruluğunu da döner. Değer
+ * `powers` tablosundan okunur, config şemasına GİRMEZ (aktif satır parse edilemezse sohbet akışı 500 verir).
+ */
+describe('getOracleAccuracy', () => {
+  const powersQueries = (fake: { queries: Array<{ table: string }> }) =>
+    fake.queries.filter((q) => q.table === 'powers').length;
+
+  it('powers tablosundaki ORACLE accuracy_rate\'ini sayı olarak döner', async () => {
+    const { economyConfigService } = await setup({
+      powers: [{ name: 'HALF', accuracy_rate: null }, { name: 'ORACLE', accuracy_rate: '0.85' }],
+    });
+
+    await expect(economyConfigService.getOracleAccuracy()).resolves.toBe(0.85);
+  });
+
+  it('getOracleAccuracy önbellekli: iki çağrıda powers tek kez okunur', async () => {
+    const { fake, economyConfigService } = await setup({
+      powers: [{ name: 'ORACLE', accuracy_rate: '0.85' }],
+    });
+
+    await economyConfigService.getOracleAccuracy();
+    await economyConfigService.getOracleAccuracy();
+
+    expect(powersQueries(fake)).toBe(1);
+  });
+
+  it('TTL (5 dk) dolunca yeniden okur', async () => {
+    const { fake, economyConfigService } = await setup({
+      powers: [{ name: 'ORACLE', accuracy_rate: '0.85' }],
+    });
+    await economyConfigService.getOracleAccuracy();
+
+    fake.table('powers')[0].accuracy_rate = '0.6';
+    vi.setSystemTime(new Date(NOW.getTime() + 6 * 60 * 1000));
+
+    await expect(economyConfigService.getOracleAccuracy()).resolves.toBe(0.6);
+    expect(powersQueries(fake)).toBe(2);
+  });
+
+  it('invalidateCache config önbelleğiyle birlikte oracle önbelleğini de temizler', async () => {
+    const { fake, economyConfigService } = await setup({
+      powers: [{ name: 'ORACLE', accuracy_rate: '0.85' }],
+    });
+    await economyConfigService.getOracleAccuracy();
+
+    fake.table('powers')[0].accuracy_rate = '0.6';
+    economyConfigService.invalidateCache();
+
+    await expect(economyConfigService.getOracleAccuracy()).resolves.toBe(0.6);
+  });
+
+  it('ORACLE satırı yoksa varsayılan (ORACLE_DEFAULT_ACCURACY) döner ve bu cevap da önbelleğe girer', async () => {
+    const { ORACLE_DEFAULT_ACCURACY } = await import('../../src/constants/oracle.js');
+    const { fake, economyConfigService } = await setup({ powers: [] });
+
+    await expect(economyConfigService.getOracleAccuracy()).resolves.toBe(ORACLE_DEFAULT_ACCURACY);
+    await economyConfigService.getOracleAccuracy();
+
+    expect(powersQueries(fake)).toBe(1);
+  });
+
+  it('okuma hatasında varsayılan döner (fırlatmaz) ve hata ÖNBELLEĞE yazılmaz', async () => {
+    const { ORACLE_DEFAULT_ACCURACY } = await import('../../src/constants/oracle.js');
+    const { fake, economyConfigService } = await setup(
+      { powers: [{ name: 'ORACLE', accuracy_rate: '0.85' }] },
+      { failOn: [{ table: 'powers', op: 'select', times: 1 }] },
+    );
+
+    await expect(economyConfigService.getOracleAccuracy()).resolves.toBe(ORACLE_DEFAULT_ACCURACY);
+    // Geçici hata 5 dk boyunca yanlış değeri sabitlememeli: ikinci çağrı gerçek değeri okur.
+    await expect(economyConfigService.getOracleAccuracy()).resolves.toBe(0.85);
+    expect(powersQueries(fake)).toBe(2);
+  });
+
+  it('aktif config oracleAccuracy alanı olmadan parse edilir', async () => {
+    const { economyConfigService } = await setup({
+      powers: [{ name: 'ORACLE', accuracy_rate: '0.85' }],
+    });
+
+    // activeConfigRow() değişmeden: şemada oracleAccuracy yok, aktif satır yine geçerli.
+    const { config } = await economyConfigService.getActiveConfig();
+    expect(config).not.toHaveProperty('oracleAccuracy');
+    expect(config.core.greenToPurpleRatio).toBe(3);
+  });
+});
+
+/**
  * GET /api/v1/app/economy herkese açık: `rainbow` bloğu (abonelik ödenmiş payları, anti-fraud
  * hesap yaşı eşiği, itfa tavanı, maliyet tabanı) dışarı sızmamalı. Admin editörü tam config'i kullanır.
  */
