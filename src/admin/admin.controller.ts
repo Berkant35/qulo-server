@@ -285,6 +285,7 @@ class AdminController {
       mutual_match_enabled, mutual_match_field,
       served_gate_enabled, served_gate_field,
       power_demo_enabled, power_demo_enabled_field,
+      ads_enabled, ads_enabled_field,
     } = req.body;
 
     const versionFields: Record<string, string> = { min_version_ios, min_version_android, latest_version_ios, latest_version_android };
@@ -314,6 +315,8 @@ class AdminController {
         ...(served_gate_field !== undefined ? { served_gate_enabled: served_gate_enabled === "on" } : {}),
         // Güç demosu uzaktan kapatma anahtarı (migration 078) — aynı gizli işaret deseni.
         ...(power_demo_enabled_field !== undefined ? { power_demo_enabled: power_demo_enabled === "on" } : {}),
+        // Reklam anahtarı (migration 079) — aynı gizli işaret deseni.
+        ...(ads_enabled_field !== undefined ? { ads_enabled: ads_enabled === "on" } : {}),
         ...(dormantDays !== undefined ? { discover_dormant_days: dormantDays } : {}),
         min_version_ios,
         min_version_android,

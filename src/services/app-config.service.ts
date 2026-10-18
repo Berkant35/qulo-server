@@ -39,8 +39,14 @@ export const DEFAULT_SERVED_GATE_ENABLED = false;
  */
 export const DEFAULT_POWER_DEMO_ENABLED = true;
 
+/**
+ * Reklam (AdMob) uzaktan açma anahtarı — `app_config.ads_enabled` (migration 079). Güç demosunun TERSİNE
+ * fail-closed: kolon yoksa / okunamazsa KAPALI; gerçek AdMob kimlikleri girilip bilinçli açılana dek reklam yok.
+ */
+export const DEFAULT_ADS_ENABLED = false;
+
 /** `getRow` kolon listesinden AYRI okunan anahtarlar (migration'ı deploy'dan sonra gelebilir). */
-type BooleanFlagColumn = "mutual_match_enabled" | "served_gate_enabled" | "power_demo_enabled";
+type BooleanFlagColumn = "mutual_match_enabled" | "served_gate_enabled" | "power_demo_enabled" | "ads_enabled";
 
 export interface AppConfigRow {
   id: string;
@@ -68,6 +74,7 @@ class AppConfigService {
   private readonly mutualOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
   private readonly servedGateOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
   private readonly powerDemoOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
+  private readonly adsOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
   private dormantUyariVerildi = false;
 
   /**
@@ -118,6 +125,11 @@ class AppConfigService {
   /** Güç demosu anahtarı (migration 078) — kolon yoksa AÇIK. */
   async getPowerDemoEnabled(): Promise<boolean> {
     return this.readBooleanFlag("power_demo_enabled", this.powerDemoOnbellek, DEFAULT_POWER_DEMO_ENABLED);
+  }
+
+  /** Reklam anahtarı (migration 079) — kolon yoksa KAPALI. */
+  async getAdsEnabled(): Promise<boolean> {
+    return this.readBooleanFlag("ads_enabled", this.adsOnbellek, DEFAULT_ADS_ENABLED);
   }
 
   /**
@@ -179,6 +191,7 @@ class AppConfigService {
         isForceUpdateEnabled: false,
         // Satır okunamadıysa anahtar da bilinmez: sözleşme alanı yine de hep döner.
         powerDemoEnabled: DEFAULT_POWER_DEMO_ENABLED,
+        adsEnabled: DEFAULT_ADS_ENABLED,
       };
     }
 
@@ -186,6 +199,7 @@ class AppConfigService {
     const lang = locale.startsWith("tr") ? "tr" : "en";
     // `getRow` kolon listesinden AYRI okunur (078 deploy'dan sonra gelebilir); 60 sn önbellekli.
     const powerDemoEnabled = await this.getPowerDemoEnabled();
+    const adsEnabled = await this.getAdsEnabled();
 
     return {
       minVersion: isIos ? row.min_version_ios : row.min_version_android,
@@ -197,6 +211,7 @@ class AppConfigService {
         : null,
       isForceUpdateEnabled: row.is_force_update_enabled,
       powerDemoEnabled,
+      adsEnabled,
     };
   }
 
@@ -206,6 +221,7 @@ class AppConfigService {
       mutual_match_enabled?: boolean;
       served_gate_enabled?: boolean;
       power_demo_enabled?: boolean;
+      ads_enabled?: boolean;
     },
   ) {
     const { data: existing, error: fetchError } = await supabase
@@ -231,6 +247,7 @@ class AppConfigService {
     this.mutualOnbellek.clear();
     this.servedGateOnbellek.clear();
     this.powerDemoOnbellek.clear();
+    this.adsOnbellek.clear();
     if (error) throw error;
     return data;
   }

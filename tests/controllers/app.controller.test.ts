@@ -206,3 +206,46 @@ describe("getAppConfigHandler — powerDemoEnabled (migration 078)", () => {
     expect(body.powerDemoEnabled).toBe(true);
   });
 });
+
+/** Reklam uzaktan açma anahtarı (migration 079) — güç demosunun TERSİ: fail-closed (varsayılan false). */
+describe("getAppConfigHandler — adsEnabled (migration 079)", () => {
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
+  it("alan yok (kolon satırda yok) → false", async () => {
+    const body = await configBodyFor(CONFIG_SATIRI);
+
+    expect(body.adsEnabled).toBe(false);
+  });
+
+  it("kolon yok hatası (42703) → false; geri kalan config bozulmaz", async () => {
+    const body = await configBodyFor(CONFIG_SATIRI, [
+      { table: "app_config", op: "select", failAfter: 2, error: { message: "column does not exist", code: "42703" } },
+    ]);
+
+    expect(body.adsEnabled).toBe(false);
+    expect(body.latestVersion).toBe("2.0.15");
+  });
+
+  it("satırda ads_enabled=false ise false", async () => {
+    const body = await configBodyFor({ ...CONFIG_SATIRI, ads_enabled: false });
+
+    expect(body.adsEnabled).toBe(false);
+  });
+
+  it("satırda ads_enabled=true ise true; mevcut alanlar yerinde", async () => {
+    const body = await configBodyFor({ ...CONFIG_SATIRI, ads_enabled: true });
+
+    expect(body.adsEnabled).toBe(true);
+    expect(body).toMatchObject({ minVersion: "2.0.0", storeUrl: "ios-url", isMaintenance: false });
+  });
+
+  it("app_config okunamıyorsa (varsayılan yanıt) adsEnabled yine false — sözleşme alanı hep var", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const body = await configBodyFor(CONFIG_SATIRI, [{ table: "app_config", op: "select" }]);
+
+    expect(body.minVersion).toBe("0.0.0");
+    expect(body.adsEnabled).toBe(false);
+  });
+});

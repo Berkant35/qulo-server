@@ -34,9 +34,9 @@ describe('appConfigService.getRow onbellegi', () => {
     const { appConfigService, okumalar } = await setup();
     expect((await appConfigService.getConfig('ios', 'tr')).latestVersion).toBe('2.0.14');
     expect((await appConfigService.getRow())?.seed_reply_enabled).toBe(true);
-    // 1 satir okumasi + 1 power_demo_enabled kolon okumasi (078, getRow listesinden AYRI okunur).
-    // Satir onbellegi paylasilmasaydi 3 olurdu.
-    expect(okumalar()).toBe(2);
+    // 1 satir okumasi + power_demo_enabled (078) + ads_enabled (079) kolon okumalari (getRow listesinden AYRI).
+    // Satir onbellegi paylasilmasaydi 4 olurdu.
+    expect(okumalar()).toBe(3);
   });
 
   it('okuma hatasi null doner (getConfig varsayilanlari) ve onbellege YAZILMAZ', async () => {
@@ -231,7 +231,7 @@ describe('appConfigService.getPowerDemoEnabled (migration 078)', () => {
     const { appConfigService, okumalar } = await setup({ satirEk: { power_demo_enabled: false } });
     expect((await appConfigService.getConfig('ios', 'tr')).powerDemoEnabled).toBe(false);
     expect((await appConfigService.getConfig('android', 'en')).powerDemoEnabled).toBe(false);
-    expect(okumalar()).toBe(2);
+    expect(okumalar()).toBe(3);
   });
 
   it('updateConfig power_demo_enabled önbelleğini temizler: yeni değer hemen görünür', async () => {
@@ -239,5 +239,47 @@ describe('appConfigService.getPowerDemoEnabled (migration 078)', () => {
     expect(await appConfigService.getPowerDemoEnabled()).toBe(true);
     await appConfigService.updateConfig({ power_demo_enabled: false });
     expect(await appConfigService.getPowerDemoEnabled()).toBe(false);
+  });
+});
+
+describe('appConfigService.getAdsEnabled (migration 079)', () => {
+  it('true okunur ve önbelleğe alınır (ardışık çağrı tek okuma)', async () => {
+    const { appConfigService, okumalar } = await setup({ satirEk: { ads_enabled: true } });
+    expect(await appConfigService.getAdsEnabled()).toBe(true);
+    expect(await appConfigService.getAdsEnabled()).toBe(true);
+    expect(okumalar()).toBe(1);
+  });
+
+  it('kolon yoksa (079 uygulanmamış) KAPALI sayılır — fail-closed', async () => {
+    const { appConfigService } = await setup();
+    expect(await appConfigService.getAdsEnabled()).toBe(false);
+  });
+
+  it('kolon yok hatası (42703) varsayılanı (false) önbellekler', async () => {
+    const { appConfigService, okumalar } = await setup({
+      failOn: [{ table: 'app_config', op: 'select', error: { message: 'column does not exist', code: '42703' } }],
+    });
+    expect(await appConfigService.getAdsEnabled()).toBe(false);
+    expect(await appConfigService.getAdsEnabled()).toBe(false);
+    expect(okumalar()).toBe(1);
+  });
+
+  it('geçici okuma hatasında false döner ve önbelleğe YAZILMAZ — admin true değeri geri gelir', async () => {
+    const err = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { appConfigService, okumalar } = await setup({
+      satirEk: { ads_enabled: true },
+      failOn: [{ table: 'app_config', op: 'select', error: { message: 'timeout', code: '57014' }, times: 1 }],
+    });
+    expect(await appConfigService.getAdsEnabled()).toBe(false);
+    expect(await appConfigService.getAdsEnabled()).toBe(true);
+    expect(okumalar()).toBe(2);
+    err.mockRestore();
+  });
+
+  it('updateConfig ads_enabled önbelleğini temizler: yeni değer hemen görünür', async () => {
+    const { appConfigService } = await setup({ satirEk: { ads_enabled: false } });
+    expect(await appConfigService.getAdsEnabled()).toBe(false);
+    await appConfigService.updateConfig({ ads_enabled: true });
+    expect(await appConfigService.getAdsEnabled()).toBe(true);
   });
 });

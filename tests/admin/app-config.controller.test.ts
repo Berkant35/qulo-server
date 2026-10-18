@@ -124,3 +124,20 @@ describe('updateAppConfig — power_demo_enabled (migration 078)', () => {
     expect(patch()).not.toHaveProperty('power_demo_enabled');
   });
 });
+
+describe('updateAppConfig — ads_enabled (migration 079)', () => {
+  it('form alanı varken işaretliyse true yazar', async () => {
+    const { patch } = await setup({ ads_enabled_field: '1', ads_enabled: 'on' });
+    expect(patch()).toMatchObject({ ads_enabled: true });
+  });
+
+  it('form işaretsiz + ads_enabled_field gönderilirse false yazılır — panelden KAPATILABİLİR', async () => {
+    const { patch } = await setup({ ads_enabled_field: '1' });
+    expect(patch()).toMatchObject({ ads_enabled: false });
+  });
+
+  it('form alanı yoksa (079 öncesi panel) dokunulmaz', async () => {
+    const { patch } = await setup({});
+    expect(patch()).not.toHaveProperty('ads_enabled');
+  });
+});

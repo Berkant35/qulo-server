@@ -166,6 +166,21 @@
   </div>
   <% } %>
 
+  <% if (config && config.ads_enabled !== undefined && config.ads_enabled !== null) { %>
+  <!-- Reklamlar (migration 079) -->
+  <div class="card">
+    <h3 style="margin-bottom: 16px;">Reklamlar</h3>
+    <div>
+      <input type="hidden" name="ads_enabled_field" value="1">
+      <label style="display:flex; align-items:center; gap:8px; font-size:14px; cursor:pointer;">
+        <input type="checkbox" name="ads_enabled" <%= config.ads_enabled ? 'checked' : '' %>>
+        <span>Uygulamada reklam gösterimi açık</span>
+      </label>
+      <p style="font-size:12px; color:#999; margin-top:4px;">Varsayılan KAPALI. Gerçek AdMob kimlikleri girilmeden açma. Sunucu önbelleği 60 sn içinde yenilenir; mobil değeri açılışta (/app/config) okur. Alan yoksa / okunamazsa reklam KAPALI kalır.</p>
+    </div>
+  </div>
+  <% } %>
+
   <div style="text-align: right;">
     <button type="submit" class="btn btn-primary" style="padding: 10px 32px; font-size: 15px;">Save Configuration</button>
   </div>
