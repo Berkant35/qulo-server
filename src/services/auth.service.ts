@@ -5,6 +5,7 @@ import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../utils/
 import { sendVerificationEmail, sendPasswordResetEmail } from "../utils/email.js";
 import type { RegisterInput } from "../validators/auth.validator.js";
 import { resolveLocale, localeFromTag } from "../utils/locales.js";
+import { initialPreferredLanguages } from "../constants/locales.js";
 import type { ClientMeta } from "../utils/client-meta.js";
 import { userLanguageService } from "./user-language.service.js";
 import { referralService } from "./referral.service.js";
@@ -46,6 +47,7 @@ export class AuthService {
     const referralCode = await referralService.generateUniqueCode();
     // Uygulama dili = eslesme tercihinin ana degeri; iki alan ayni kaynaktan turer.
     const locale = resolveLocale(data.locale);
+    const languages = initialPreferredLanguages(locale);
     const nowIso = new Date().toISOString();
     const prefConsent = data.pref_consent;
 
@@ -60,7 +62,8 @@ export class AuthService {
         gender: data.gender,
         locale,
         // Sutun satir dogarken dolu: RPC patlasa bile kullanici dilsiz kalmaz (054 DEFAULT '{}').
-        preferred_languages: [locale],
+        // Yeni hesap tum dillerle baslar (uygulama dili basta) — ilk Discover global havuz.
+        preferred_languages: languages,
         // is_test_admin sunucu-only: prod DB default'u bir donem `true`'ya drift etmisti
         // (bkz. migration 073). Insert'te acikca yazip DB default'una bagimliligi keseriz.
         is_test_admin: false,
@@ -114,7 +117,7 @@ export class AuthService {
     // consent/starter/referral ile ayni politika — aksi halde users satiri olusmus,
     // dogrulama e-postasi gitmemis, tekrar kayit 409 -> hesap kilitli kalirdi.
     try {
-      await userLanguageService.setUserLanguages(user.id, [locale]);
+      await userLanguageService.setUserLanguages(user.id, languages);
     } catch (err) {
       console.error("[auth] Failed to sync languages:", err);
     }
@@ -411,6 +414,7 @@ export class AuthService {
     // Locale.toString() ciktisi bolgeli olabilir (tr_TR gibi), localeFromTag alt etiketi
     // soyup dogru dile cozer; bilinmeyen -> en. Uygulama dili = eslesme tercihinin ana degeri.
     const locale = localeFromTag(data.locale);
+    const languages = initialPreferredLanguages(locale);
     const { data: newUser, error: insertError } = await supabase
       .from("users")
       .insert({
@@ -423,7 +427,8 @@ export class AuthService {
         email_verified: socialPayload.emailVerified,
         referral_code: referralCode,
         locale,
-        preferred_languages: [locale],
+        // Kayitla ayni kural: yeni hesap tum dillerle, uygulama dili basta.
+        preferred_languages: languages,
         // is_test_admin sunucu-only: sosyal kayit (Apple/Google) Case C insert'i alani
         // set etmedigi surece DB default'una bagimliydi; Haziran-Eylul 2026 drift'inde
         // (default `true`) 48 Apple relay + 51 Google hesabi yanlisligiyla test_admin
@@ -448,7 +453,7 @@ export class AuthService {
     if (!purged) void exchangeService.grantStarterPack(newUser.id);
     // Kayit ile ayni politika: sutun INSERT'te dolu, RPC turev tabloyu tamamlar, fail-open.
     try {
-      await userLanguageService.setUserLanguages(newUser.id, [locale]);
+      await userLanguageService.setUserLanguages(newUser.id, languages);
     } catch (err) {
       console.error("[social-login] Failed to sync languages:", err);
     }

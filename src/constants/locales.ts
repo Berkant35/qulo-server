@@ -6,6 +6,15 @@ export const SUPPORTED_LOCALES = [
 
 export type SupportedLocale = typeof SUPPORTED_LOCALES[number];
 
+/**
+ * Yeni hesabin baslangic dil tercihi: desteklenen TUM diller, uygulama dili basta (tekil).
+ * Kullanici ilk Discover'dan itibaren global havuzu gorur; daraltmak Edit Languages'in isi.
+ * Yalniz hesap DOGARKEN kullanilir — mevcut kullanicinin girisinde diller yazilmaz.
+ */
+export function initialPreferredLanguages(appLocale: SupportedLocale): SupportedLocale[] {
+  return [appLocale, ...SUPPORTED_LOCALES.filter((l) => l !== appLocale)];
+}
+
 // Display names for each locale (used in API responses)
 export const LOCALE_NAMES: Record<SupportedLocale, string> = {
   tr: 'Türkçe',

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { questionLocale, SUPPORTED_LOCALES } from '../../src/constants/locales.js';
+import { questionLocale, SUPPORTED_LOCALES, initialPreferredLanguages } from '../../src/constants/locales.js';
 
 /**
  * `questionLocale` alti ayri cagrı yerinin ortak invaryanti: kesif aday
@@ -64,5 +64,20 @@ describe('SUPPORTED_LOCALES ↔ AI soru bankasi tohumu paritesi', () => {
       const bad = rows.filter((r) => /[<>]/.test([r.question_text, ...r.answers, r.hint ?? ''].join(' ')));
       expect(bad.map((r) => r.question_text), `${l}`).toEqual([]);
     }
+  });
+});
+
+describe('initialPreferredLanguages (yeni hesabın başlangıç dil tercihi)', () => {
+  it.each(SUPPORTED_LOCALES.map((l) => [l]))('%s: tüm diller, uygulama dili başta, tekil', (appLocale) => {
+    const langs = initialPreferredLanguages(appLocale);
+    expect(langs[0]).toBe(appLocale);
+    expect(langs).toHaveLength(SUPPORTED_LOCALES.length);
+    expect(new Set(langs).size).toBe(langs.length);
+    expect([...langs].sort()).toEqual([...SUPPORTED_LOCALES].sort());
+  });
+
+  it('th ve id dahil 18 dil', () => {
+    expect(initialPreferredLanguages('tr')).toEqual(expect.arrayContaining(['th', 'id']));
+    expect(SUPPORTED_LOCALES).toHaveLength(18);
   });
 });

@@ -3,6 +3,7 @@ import { createFakeSupabase, type Tables, type FakeSupabaseOptions } from '../he
 import { activeConfigRow, economyConfigFixture, rewardsWithoutStarterPowers } from '../helpers/economy-config.fixture.js';
 import { DEFAULT_STARTER_POWERS } from '../../src/types/economy-config.schema.js';
 import { hashToken, hashPassword } from '../../src/utils/hash.js';
+import { SUPPORTED_LOCALES, initialPreferredLanguages } from '../../src/constants/locales.js';
 
 /**
  * Kimlik doğrulama — 536 satır, ürünün kapısı.
@@ -302,14 +303,22 @@ describe('register', () => {
    * Yabancı kullanıcı yalnız Türkçe sorulu profilleri görüyordu. Artık iki yer
    * tek RPC'de (migration 054) yazılır; tabloya doğrudan upsert yok.
    */
-  it('kayıtta uygulama dili tercih sütununa INSERT ile yazılır ve tek RPC tabloyu tamamlar', async () => {
+  /**
+   * 2026-10-29: yeni hesap TÜM dillerle başlar (uygulama dili başta) — ilk Discover global havuz,
+   * Edit Languages'a gitmek gerekmez. Liste hem INSERT'te hem RPC'de aynı.
+   */
+  it('kayıtta tüm diller (uygulama dili başta) INSERT ile yazılır ve tek RPC tabloyu tamamlar', async () => {
     const { fake, authService } = await setup({ users: [] });
     const { userId } = await authService.register(registerInput({ locale: 'de' }));
+    const langs = fake.table('users')[0].preferred_languages as string[];
     // Sütun satır doğarken dolu: RPC patlasa bile kullanıcı dilsiz kalmaz.
-    expect(fake.table('users')[0]).toMatchObject({ locale: 'de', preferred_languages: ['de'] });
+    expect(fake.table('users')[0].locale).toBe('de');
+    expect(langs[0]).toBe('de');
+    expect([...langs].sort()).toEqual([...SUPPORTED_LOCALES].sort());
+    expect(new Set(langs).size).toBe(langs.length);
     expect(fake.rpcCalls).toContainEqual({
       name: 'set_user_languages',
-      args: { p_user_id: userId, p_languages: ['de'] },
+      args: { p_user_id: userId, p_languages: langs },
     });
     // Tabloya doğrudan upsert yok (fake upsert'i uygular; eski addLanguage deseni dönerse kırılır).
     expect(fake.table('user_languages')).toHaveLength(0);
@@ -319,7 +328,8 @@ describe('register', () => {
     // HTTP yolundan gelemez (validator enum); savunma derinliği — iki alan aynı kaynaktan türer.
     const { fake, authService } = await setup({ users: [] });
     await authService.register(registerInput({ locale: 'xx' as never }));
-    expect(fake.table('users')[0]).toMatchObject({ locale: 'en', preferred_languages: ['en'] });
+    expect(fake.table('users')[0]).toMatchObject({ locale: 'en', preferred_languages: initialPreferredLanguages('en') });
+    expect((fake.table('users')[0].preferred_languages as string[])[0]).toBe('en');
   });
 
   it('dil RPC\'si patlarsa kayıt yine tamamlanır ve doğrulama e-postası gider (fail-open)', async () => {
@@ -331,7 +341,7 @@ describe('register', () => {
     const { userId } = await authService.register(registerInput({ locale: 'fr' }));
     expect(userId).toBeTruthy();
     expect(sentVerification).toHaveLength(1);
-    expect(fake.table('users')[0].preferred_languages).toEqual(['fr']);
+    expect(fake.table('users')[0].preferred_languages).toEqual(initialPreferredLanguages('fr'));
   });
 
   /** KVKK denetim izi: prod'daki 561 rıza satırının hiçbirinde platform/sürüm yoktu. */
@@ -432,6 +442,13 @@ describe('login', () => {
     expect(fake.table('refresh_tokens')[0]).toMatchObject({
       user_id: UID, token_hash: hashToken(result.refreshToken),
     });
+  });
+
+  it('mevcut kullanıcının e-posta girişinde dil tercihi değişmez', async () => {
+    const { fake, authService } = await setup({ users: [account({ preferred_languages: ['it'] })] });
+    await authService.login('a@qulo.test', PASSWORD);
+    expect(fake.table('users')[0].preferred_languages).toEqual(['it']);
+    expect(fake.rpcCalls.filter((c) => c.name === 'set_user_languages')).toHaveLength(0);
   });
 
   it('kullanıcıyı çevrimiçi işaretler', async () => {
@@ -827,14 +844,18 @@ describe('socialLogin', () => {
     });
   });
 
-  it('Case C — yeni sosyal kullanıcının uygulama dili INSERT + RPC ile tercihlere yazılır (fr_FR → fr)', async () => {
+  it('Case C — yeni sosyal kullanıcı tüm dillerle başlar, uygulama dili başta (fr_FR → fr)', async () => {
     const { fake, authService } = await setup({ users: [] });
     await authService.socialLogin({ ...provider, locale: 'fr_FR' });
     const userId = fake.table('users')[0].id;
-    expect(fake.table('users')[0]).toMatchObject({ locale: 'fr', preferred_languages: ['fr'] });
+    const langs = fake.table('users')[0].preferred_languages as string[];
+    expect(fake.table('users')[0].locale).toBe('fr');
+    expect(langs[0]).toBe('fr');
+    expect([...langs].sort()).toEqual([...SUPPORTED_LOCALES].sort());
+    expect(new Set(langs).size).toBe(langs.length);
     expect(fake.rpcCalls).toContainEqual({
       name: 'set_user_languages',
-      args: { p_user_id: userId, p_languages: ['fr'] },
+      args: { p_user_id: userId, p_languages: langs },
     });
     expect(fake.table('user_languages')).toHaveLength(0);
   });
@@ -845,7 +866,7 @@ describe('socialLogin', () => {
       { rpc: { set_user_languages: { error: { message: 'rpc down' } } } },
     );
     await expect(authService.socialLogin({ ...provider, locale: 'de' })).resolves.toMatchObject({ profileIncomplete: true });
-    expect(fake.table('users')[0].preferred_languages).toEqual(['de']);
+    expect(fake.table('users')[0].preferred_languages).toEqual(initialPreferredLanguages('de'));
   });
 
   it('Case C — yeni sosyal kullanıcıya da başlangıç paketi (her güçten 1) verilir', async () => {
@@ -932,6 +953,28 @@ describe('socialLogin', () => {
       provider_id: 'google-123', auth_provider: 'google',
     });
     expect(fake.table('users')).toHaveLength(1);
+  });
+
+  /**
+   * Tüm-diller varsayılanı yalnız hesap DOĞARKEN: mevcut kullanıcının sosyal girişi (Case A/B)
+   * kendi daralttığı dil listesine dokunmamalı.
+   */
+  it.each([
+    ['Case A', { provider_id: 'google-123' }],
+    ['Case B', { provider_id: null }],
+  ])('%s — mevcut kullanıcının girişinde dil tercihi değişmez', async (_case, over) => {
+    const { fake, authService } = await setup({
+      users: [{
+        id: UID, email: 'social@qulo.test', is_deleted: false, is_banned: false, age: 30,
+        name: 'Ada', surname: 'L', email_verified: true, locale: 'tr', preferred_languages: ['tr', 'en'], ...over,
+      }],
+      user_languages: [{ user_id: UID, language_code: 'tr' }, { user_id: UID, language_code: 'en' }],
+    });
+
+    await expect(authService.socialLogin({ ...provider, locale: 'de' })).resolves.toMatchObject({ userId: UID });
+    expect(fake.table('users')[0].preferred_languages).toEqual(['tr', 'en']);
+    expect(fake.table('user_languages')).toHaveLength(2);
+    expect(fake.rpcCalls.filter((c) => c.name === 'set_user_languages')).toHaveLength(0);
   });
 
   /**
@@ -1058,6 +1101,8 @@ describe('socialLogin', () => {
     expect(result.userId).not.toBe(UID);
     expect(fake.table('users')).toHaveLength(1);
     expect(fake.table('users')[0].is_deleted).toBeUndefined();
+    // Purge sonrası açılan hesap yeni hesaptır: tüm dillerle başlar (eski listenin kalıntısı yok).
+    expect([...(fake.table('users')[0].preferred_languages as string[])].sort()).toEqual([...SUPPORTED_LOCALES].sort());
   });
 
   it('Case B — silinmiş hesap temizlenip yeni hesap açılır', async () => {
