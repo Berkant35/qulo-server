@@ -18,7 +18,7 @@ ALTER TABLE public.app_config
   ADD COLUMN IF NOT EXISTS media_questions_enabled boolean NOT NULL DEFAULT false;
 
 -- Şikâyet, belirli bir soruya bağlanabilir; soru silinirse şikâyet kaydı kalır.
--- (reports.category prod'da var ama migration'ı yok — burada yalnız question_id eklenir.)
+-- (reports.category enum'u prod'da var ama migration'ı yok — yeni değer dosya sonunda eklenir.)
 ALTER TABLE public.reports
   ADD COLUMN IF NOT EXISTS question_id uuid REFERENCES public.questions(id) ON DELETE SET NULL;
 
@@ -26,3 +26,10 @@ ALTER TABLE public.reports
 ALTER TABLE public.photo_moderation_checks
   ADD COLUMN IF NOT EXISTS kind text NOT NULL DEFAULT 'profile'
     CONSTRAINT photo_moderation_checks_kind_check CHECK (kind IN ('profile', 'question'));
+
+-- Şikâyet kategorisi: prod'da reports.category Postgres enum'u `report_category` (migration'ı yok);
+-- validator 'INAPPROPRIATE_MEDIA' kabul ediyor ama enum'da değer yoksa INSERT 22P02 → 500 olur.
+-- KENDİ BAŞINA bir ifade olarak uygula: ALTER TYPE ... ADD VALUE eski PG'de (<12) transaction bloğu
+-- içinde çalışmaz, yenilerde de eklenen değer aynı transaction'da kullanılamaz. Çalıştırıcı dosyayı
+-- tek transaction'a sarıyorsa bu satırı ayrı çalıştır. IF NOT EXISTS: yeniden uygulama zararsız.
+ALTER TYPE public.report_category ADD VALUE IF NOT EXISTS 'INAPPROPRIATE_MEDIA';
