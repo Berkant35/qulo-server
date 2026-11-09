@@ -33,6 +33,7 @@ async function setup(env?: { NODE_ENV: string; CRON_ENABLED?: string }) {
     seedPresenceCron: sahteIs('seed-presence'),
     photoModerationCron: sahteIs('photo-moderation'),
     discoverServedPurgeCron: sahteIs('discover-served-purge'),
+    subscriptionExpiryCron: sahteIs('subscription-expiry'),
   };
 
   vi.doMock('../../src/cron/presence.cron.js', () => ({ presenceCron: isler.presenceCron }));
@@ -47,6 +48,7 @@ async function setup(env?: { NODE_ENV: string; CRON_ENABLED?: string }) {
   vi.doMock('../../src/cron/seed-presence.cron.js', () => ({ seedPresenceCron: isler.seedPresenceCron }));
   vi.doMock('../../src/cron/photo-moderation.cron.js', () => ({ photoModerationCron: isler.photoModerationCron }));
   vi.doMock('../../src/cron/discover-served.cron.js', () => ({ discoverServedPurgeCron: isler.discoverServedPurgeCron }));
+  vi.doMock('../../src/cron/subscription-expiry.cron.js', () => ({ subscriptionExpiryCron: isler.subscriptionExpiryCron }));
 
   const mod = await import('../../src/cron/index.js');
   return { mod, isler };
@@ -57,12 +59,12 @@ beforeEach(() => vi.resetModules());
 const URETIM = { NODE_ENV: 'production' } as const;
 
 describe('initCrons', () => {
-  it('uretimde kayitli on isin HEPSINI baslatir', async () => {
+  it('uretimde kayitli on bir isin HEPSINI baslatir (subscription-expiry 2.0.18)', async () => {
     const { mod, isler } = await setup();
     mod.initCrons(URETIM);
 
     const hepsi = Object.values(isler);
-    expect(hepsi).toHaveLength(10);
+    expect(hepsi).toHaveLength(11);
     for (const is of hepsi) expect(is.start).toHaveBeenCalledTimes(1);
   });
 

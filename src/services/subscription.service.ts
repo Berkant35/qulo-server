@@ -22,6 +22,13 @@ import type {
  * `new Date(expiration_at_ms).toISOString()` (`...:58.000Z`). Ham hâlde
  * birleştirilirse anahtarlar tutmaz ve bonus yine iki kez yatar.
  */
+/**
+ * Suresi dolmus ama `active`/`cancelled` kalmis satirlarin kapanma payi. Magaza yeniden deneme / ek sure
+ * sirasinda RENEWAL gec gelebilir: pay icinde satir acik kalir, pay sonrasi kapanir; gec RENEWAL yine de
+ * en yeni satiri yeniden acar (renewSubscription).
+ */
+export const SUBSCRIPTION_EXPIRY_GRACE_MS = 3 * 24 * 60 * 60 * 1000;
+
 function subscriptionPeriodRef(plan: SubscriptionPlan, expiresAt: string): string {
   const ms = Date.parse(expiresAt);
   const normalized = Number.isNaN(ms) ? expiresAt : new Date(ms).toISOString();
@@ -141,17 +148,23 @@ class SubscriptionService {
     expiresAt: string,
     paidEligible = false,
   ): Promise<void> {
-    await supabase
+    const renewal = {
+      plan,
+      status: 'active',
+      expires_at: expiresAt,
+      store_transaction_id: storeTransactionId,
+      updated_at: new Date().toISOString(),
+    };
+    const { data: renewed, error: renewError } = await supabase
       .from('user_subscriptions')
-      .update({
-        plan,
-        status: 'active',
-        expires_at: expiresAt,
-        store_transaction_id: storeTransactionId,
-        updated_at: new Date().toISOString(),
-      })
+      .update(renewal)
       .eq('user_id', userId)
-      .eq('status', 'active');
+      .eq('status', 'active')
+      .select('id');
+
+    // Fırlatılmaz (activateSubscription gerekçesi): erişimin kaynağı `users`, aşağıda yine yenilenir.
+    if (renewError) console.error('[subscription] renewal row update failed:', renewError.message);
+    else if ((renewed ?? []).length === 0) await this.reopenLatestRow(userId, renewal);
 
     await supabase
       .from('users')
@@ -159,6 +172,27 @@ class SubscriptionService {
       .eq('id', userId);
 
     await this.grantMonthlyBonus(userId, plan, expiresAt, paidEligible);
+  }
+
+  /**
+   * Acik satir yoksa (sure dolumu taramasi gec gelen RENEWAL'dan once kapattiysa) en yeni satir yeniden
+   * acilir — yoksa erisim `users`'ta yenilenir ama abonelik kaydi "expired" kalirdi. Hatalar loglanir.
+   */
+  private async reopenLatestRow(userId: string, renewal: Record<string, unknown>): Promise<void> {
+    const { data: latest, error } = await supabase
+      .from('user_subscriptions')
+      .select('id')
+      .eq('user_id', userId)
+      .order('expires_at', { ascending: false })
+      .limit(1);
+    if (error) {
+      console.error('[subscription] latest row lookup failed:', error.message);
+      return;
+    }
+    const latestId = (latest as Array<{ id: string }> | null)?.[0]?.id;
+    if (!latestId) return;
+    const { error: reopenError } = await supabase.from('user_subscriptions').update(renewal).eq('id', latestId);
+    if (reopenError) console.error('[subscription] latest row reopen failed:', reopenError.message);
   }
 
   async cancelSubscription(userId: string): Promise<void> {
@@ -210,6 +244,26 @@ class SubscriptionService {
         subscription_expires_at: null,
       })
       .eq('id', userId);
+  }
+
+  /**
+   * Suresi `SUBSCRIPTION_EXPIRY_GRACE_MS`ten fazla gecmis `active`/`cancelled` satirlari `expired` yapar.
+   * Neden: durum yalniz RevenueCat EXPIRATION webhook'uyla kapaniyordu; webhook'u hic gelmeyen
+   * (istemci /subscriptions/activate ile acilmis, sandbox/TestFlight) satirlar sonsuza dek `active`
+   * kaldi (prod 2026-11-09: 8 satir, en eskisi 07-15'te bitmis). Erisim etkilenmez — erisimin kaynagi
+   * users.subscription_expires_at (tarih karsilastirmasi); bu satirlar rapor/backoffice dogrulugu icin.
+   * Doner: kapatilan satir sayisi. Hata firlatilir (cron loglar).
+   */
+  async expireLapsedRows(now: Date = new Date()): Promise<number> {
+    const cutoff = new Date(now.getTime() - SUBSCRIPTION_EXPIRY_GRACE_MS).toISOString();
+    const { data, error } = await supabase
+      .from('user_subscriptions')
+      .update({ status: 'expired', updated_at: now.toISOString() })
+      .in('status', ['active', 'cancelled'])
+      .lt('expires_at', cutoff)
+      .select('id');
+    if (error) throw new Error(`user_subscriptions expiry sweep failed: ${error.message}`);
+    return data?.length ?? 0;
   }
 
   /**
