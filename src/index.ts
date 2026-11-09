@@ -26,6 +26,8 @@ import acquisitionRoutes from "./routes/acquisition.routes.js";
 import webQuizRoutes from "./routes/web-quiz.routes.js";
 import appRoutes from "./routes/app.routes.js";
 import presenceRoutes from "./routes/presence.routes.js";
+import realtimeRoutes from "./routes/realtime.routes.js";
+import { realtimeTokenService } from "./services/realtime-token.service.js";
 import supportTicketRoutes from "./routes/support-ticket.routes.js";
 import analyticsTrackRoutes from "./routes/analytics.routes.js";
 import unsubscribeRoutes from "./routes/unsubscribe.routes.js";
@@ -160,6 +162,7 @@ app.use("/api/v1/rewards", rewardsRoutes);
 app.use("/api/v1/referrals", referralRoutes);
 app.use("/api/v1/acquisition", acquisitionRoutes);
 app.use("/api/v1/users/me/presence", presenceRoutes);
+app.use("/api/v1/realtime", realtimeRoutes);
 app.use("/api/v1/support-tickets", supportTicketRoutes);
 app.use("/api/v1/analytics", analyticsTrackRoutes);
 
@@ -178,6 +181,12 @@ app.listen(env.PORT, () => {
   }
 
   ensureStorageBuckets().catch(console.error);
+
+  // Canlı doğrulama izi: env eklendi mi? (sır basılmaz, yalnız imzalayıcı türü)
+  console.log(
+    `[realtime-token] signer=${realtimeTokenService.kind}` +
+      (realtimeTokenService.disabledReason ? ` (${realtimeTokenService.disabledReason})` : ""),
+  );
 
   // Start cron jobs
   initCrons();

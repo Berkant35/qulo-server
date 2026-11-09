@@ -302,4 +302,8 @@ export const Errors = {
 
   PAYLOAD_TOO_LARGE: () =>
     new AppError("PAYLOAD_TOO_LARGE", 413, "Request body too large"),
+
+  /** Realtime JWT imzalayıcısı env'de yok ya da bozuk (realtime-token.service). İstemci anon bağlantıda kalır. */
+  REALTIME_TOKEN_UNAVAILABLE: () =>
+    new AppError("REALTIME_TOKEN_UNAVAILABLE", 503, "Realtime token signing is not configured"),
 } as const;

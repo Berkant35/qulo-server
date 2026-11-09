@@ -16,6 +16,13 @@ const envSchema = z.object({
   // Supabase
   SUPABASE_URL: z.string().url(),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+  /**
+   * Realtime kullanıcı JWT'si imzalayıcısı (services/realtime-token.service.ts). İkisi de opsiyonel;
+   * ikisi de boşsa POST /api/v1/realtime/token 503 döner. Tercih ES256 JWK'dır (projeye içe aktarılıp
+   * "current" yapılmış özel anahtar, `kid` dahil). Legacy HS256 secret yalnız yedektir.
+   */
+  SUPABASE_JWT_PRIVATE_JWK: z.string().default(''),
+  SUPABASE_JWT_SECRET: z.string().default(''),
 
   // JWT
   JWT_ACCESS_SECRET: z.string().min(1),

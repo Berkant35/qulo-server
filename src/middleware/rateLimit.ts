@@ -78,6 +78,20 @@ export const uploadLimiter = rateLimit({
   message: rateLimitResponse,
 });
 
+/**
+ * Realtime JWT (POST /api/v1/realtime/token): istemci saatte ~1 kez (süre dolmadan) ve uygulama öne gelince
+ * ister. İmzalama yereldir, Supabase isteği yoktur. Dakikada 10 kullanıcı başına bol bir tavandır,
+ * yenileme döngüsüne giren hatalı bir istemciyi keser. Kullanıcı anahtarlı (CGNAT).
+ */
+export const realtimeTokenLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 10,
+  keyGenerator: userKey,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitResponse,
+});
+
 export const quizLimiter = rateLimit({
   windowMs: 60 * 1000,
   limit: 30,
