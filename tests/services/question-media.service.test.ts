@@ -63,7 +63,7 @@ afterEach(() => {
 });
 
 describe('uploadVoice', () => {
-  it('yolu sunucu kimliklerinden kurar, satiri yazar, 600 sn imzali URL doner', async () => {
+  it('yolu sunucu kimliklerinden kurar, satiri yazar; yanit = guncel soru (GET /me ogesi sekli, ham yol yok)', async () => {
     const { fake, questionMediaService, row } = await setup();
 
     const media = await questionMediaService.uploadVoice(A, 1, M4A(), 'audio/m4a', 4200);
@@ -73,11 +73,22 @@ describe('uploadVoice', () => {
     expect(fake.storageUploads[0].opts).toMatchObject({ contentType: 'audio/m4a', upsert: false });
     expect(row(QA)).toMatchObject({ voice_path: path, voice_duration_ms: 4200 });
     expect(media).toEqual({
+      id: QA, user_id: A, order_num: 1, question_text: 'Soru 1',
       voice_url: fakeSignedUrl(BUCKET, path, 600),
       voice_duration_ms: 4200,
       image_url: null,
       image_status: null,
     });
+    expect(media).not.toHaveProperty('voice_path');
+    expect(media).not.toHaveProperty('image_path');
+  });
+
+  it('yanit, GET /questions/me (getMyQuestions) ogesiyle birebir ayni', async () => {
+    const { questionMediaService } = await setup();
+    const media = await questionMediaService.uploadVoice(A, 1, M4A(), 'audio/m4a', 4200);
+    const { questionService } = await import('../../src/services/question.service.js');
+    const [mine] = await questionService.getMyQuestions(A);
+    expect(media).toEqual(mine);
   });
 
   it('ADTS AAC (audio/aac) da kabul edilir', async () => {
@@ -199,6 +210,7 @@ describe('uploadImage', () => {
     expect((await sharp(yazilan.body as Buffer).metadata()).format).toBe('jpeg');
     expect(row(QA)).toMatchObject({ image_path: path, image_status: 'pending' });
     expect(media).toEqual({
+      id: QA, user_id: A, order_num: 1, question_text: 'Soru 1',
       voice_url: null, voice_duration_ms: null,
       image_url: fakeSignedUrl(BUCKET, path, 600), image_status: 'pending',
     });
@@ -219,7 +231,8 @@ describe('uploadImage', () => {
   it('moderasyon reddederse yanitta URL yok, image_status=rejected', async () => {
     const { questionMediaService } = await setup({}, undefined, 'rejected');
     const media = await questionMediaService.uploadImage(A, 1, await PNG(), 'image/png');
-    expect(media).toMatchObject({ image_url: null, image_status: 'rejected' });
+    expect(media).toMatchObject({ id: QA, order_num: 1, image_url: null, image_status: 'rejected' });
+    expect(media).not.toHaveProperty('image_path');
   });
 
   it('moderasyon onaylarsa yanit approved + imzali URL', async () => {
@@ -282,6 +295,39 @@ describe('removeMedia', () => {
 
     expect(row(QA)).toMatchObject({ image_path: null, image_status: null, voice_path: voice });
     expect(fake.storageFiles(BUCKET)).toEqual([voice]);
+  });
+
+  it('reddedilen gorsel (yol yok, durum rejected) kaldirilinca ret notu temizlenir', async () => {
+    const { questionMediaService, row } = await setup({ questions: [q(QA, A, 1, { image_status: 'rejected' })] });
+
+    await questionMediaService.removeMedia(A, 1, 'image');
+
+    expect(row(QA)).toMatchObject({ image_path: null, image_status: null });
+  });
+
+  it('sesi kaldirmak ret notuna dokunmaz', async () => {
+    const { questionMediaService, row } = await setup({ questions: [q(QA, A, 1, { image_status: 'rejected' })] });
+    await questionMediaService.removeMedia(A, 1, 'voice');
+    expect(row(QA).image_status).toBe('rejected');
+  });
+
+  it('ret notu temizligi CAS: okuma ile yazma arasinda yeni gorsel yuklendiyse ona dokunmaz', async () => {
+    const fresh = `${A}/${QA}/image-9.jpg`;
+    const { questionMediaService, row } = await setup({ questions: [q(QA, A, 1, { image_status: 'rejected' })] }, {
+      interleave: [{ table: 'questions', op: 'update', mutate: (rows) => {
+        Object.assign(rows.find((r) => r.id === QA)!, { image_path: fresh, image_status: 'pending' });
+      } }],
+    });
+
+    await expect(questionMediaService.removeMedia(A, 1, 'image')).resolves.toBeUndefined();
+    expect(row(QA)).toMatchObject({ image_path: fresh, image_status: 'pending' });
+  });
+
+  it('ret notu temizlenemezse (DB hatasi) SERVER_ERROR', async () => {
+    const { questionMediaService } = await setup({ questions: [q(QA, A, 1, { image_status: 'rejected' })] }, {
+      failOn: [{ table: 'questions', op: 'update' }],
+    });
+    expect(await codeOf(questionMediaService.removeMedia(A, 1, 'image'))).toBe('SERVER_ERROR');
   });
 
   it('medyasi olmayan soruda sorunsuz (idempotent)', async () => {

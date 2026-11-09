@@ -76,16 +76,23 @@ afterEach(async () => {
 });
 
 describe('POST /questions/me/:order/voice', () => {
-  it('yeni istemci + bayrak acik → 201, OwnerQuestionMedia doner, dosya yazilir', async () => {
+  it('yeni istemci + bayrak acik → 201, guncel soru (GET /me ogesi sekli) doner, dosya yazilir', async () => {
     const { base, fake } = await serve();
 
     const res = await send(`${base}/me/1/voice`, form(M4A(), 'audio/m4a', { duration_ms: '4200' }));
 
     expect(res.status).toBe(201);
     const body = await res.json() as Record<string, unknown>;
-    expect(body).toMatchObject({ voice_duration_ms: 4200, image_url: null, image_status: null });
+    // Sozlesme: mobil `QuestionModel.fromJson` `id` + `order_num` + `question_text` ister (2.0.19 C1).
+    expect(Object.keys(body).sort()).toEqual(
+      ['id', 'image_status', 'image_url', 'order_num', 'question_text', 'user_id', 'voice_duration_ms', 'voice_url'],
+    );
+    expect(body).toMatchObject({ id: QA, order_num: 1, question_text: 'Soru 1', voice_duration_ms: 4200, image_url: null, image_status: null });
     expect(String(body.voice_url)).toContain(`question-media/${A}/${QA}/voice-`);
     expect(fake.storageFiles('question-media')).toHaveLength(1);
+
+    const [mine] = await (await fetch(`${base}/me`, { headers: { 'x-test-user': A } })).json() as Array<Record<string, unknown>>;
+    expect(body).toEqual(mine);
   });
 
   it('bayrak kapali → 403 FEATURE_DISABLED, dosya yazilmaz', async () => {
@@ -193,6 +200,17 @@ describe('DELETE /questions/me/:order/media/:kind', () => {
     expect(res.status).toBe(200);
     expect(fake.storageFiles('question-media')).toEqual([]);
     expect(fake.table('questions')[0]).toMatchObject({ voice_path: null, voice_duration_ms: null });
+  });
+
+  it('reddedilen gorsel kaldirilinca image_status temizlenir (ret notu kalici olmaz)', async () => {
+    const { base, fake } = await serve({
+      seed: { questions: [{ id: QA, user_id: A, order_num: 1, question_text: 'Soru 1', voice_path: null, voice_duration_ms: null, image_path: null, image_status: 'rejected' }] },
+    });
+
+    const res = await fetch(`${base}/me/1/media/image`, { method: 'DELETE', headers: { 'x-test-user': A } });
+
+    expect(res.status).toBe(200);
+    expect(fake.table('questions')[0]).toMatchObject({ image_path: null, image_status: null });
   });
 
   it('gecersiz tur → 400 VALIDATION_ERROR', async () => {

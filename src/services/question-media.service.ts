@@ -17,7 +17,7 @@ import {
 
 export type QuestionImageStatus = QuestionImageModerationStatus;
 
-/** Sahibe (GET /questions/me, yukleme yaniti) donen medya alanlari; URL'ler imzali, ham yol donmez. */
+/** Sahibe (GET /questions/me ogeleri, yukleme yaniti) donen medya alanlari; URL'ler imzali, ham yol donmez. */
 export type OwnerQuestionMedia = {
   voice_url: string | null;
   voice_duration_ms: number | null;
@@ -79,6 +79,14 @@ export function mediaBadges(
 }
 
 type OwnedQuestion = QuestionMediaColumns & { id: string };
+/** Yazimdan donen tam soru satiri (`select("*")`): yukleme yaniti bundan kurulur. */
+type QuestionRow = OwnedQuestion & Record<string, unknown>;
+
+/**
+ * Yukleme yaniti = guncel soru: GET /questions/me ogesiyle AYNI sekil (tum soru kolonlari + sahip
+ * medya alanlari, ham yol yok). Mobil `QuestionModel.fromJson` bunu parse eder (`id`, `order_num`...).
+ */
+export type OwnerQuestion = Omit<QuestionRow, "voice_path" | "image_path"> & OwnerQuestionMedia;
 /** `select("*")` tipsiz (`any`) satir doner: `any` korunur (Omit onu index imzasina cevirirdi). */
 type WithOwnerMedia<T> = 0 extends 1 & T ? any : Omit<T, "voice_path" | "image_path"> & OwnerQuestionMedia;
 
@@ -108,7 +116,7 @@ function isAudioContainer(buf: Buffer): boolean {
  * Moderasyon sonucunu yazilmis satira uygular (yeniden okuma yok): ret yolu bosaltir, onay durumu yazar.
  * `pending` (zaman asimi ya da araya giren yeni yukleme) satiri oldugu gibi birakir.
  */
-function withModeration(row: OwnedQuestion, status: QuestionImageStatus): OwnedQuestion {
+function withModeration<T extends OwnedQuestion>(row: T, status: QuestionImageStatus): T {
   if (status === "rejected") return { ...row, image_path: null, image_status: "rejected" };
   if (status === "approved") return { ...row, image_status: "approved" };
   return row;
@@ -130,7 +138,7 @@ class QuestionMediaService {
     buf: Buffer,
     mime: string,
     durationMs: number,
-  ): Promise<OwnerQuestionMedia> {
+  ): Promise<OwnerQuestion> {
     if (!VOICE_MIME_TYPES.includes(mime)) throw Errors.INVALID_FILE_TYPE();
     if (!Number.isInteger(durationMs) || durationMs < 1 || durationMs > VOICE_MAX_DURATION_MS) {
       throw Errors.VALIDATION_ERROR({ duration_ms: `Must be an integer between 1 and ${VOICE_MAX_DURATION_MS}` });
@@ -140,10 +148,10 @@ class QuestionMediaService {
 
     const question = await this.findOwned(userId, orderNum);
     const row = await this.writeSlot(userId, question, "voice", buf, mime, { voice_duration_ms: durationMs });
-    return this.ownerMedia(row);
+    return this.ownerQuestion(row);
   }
 
-  async uploadImage(userId: string, orderNum: number, buf: Buffer, mime: string): Promise<OwnerQuestionMedia> {
+  async uploadImage(userId: string, orderNum: number, buf: Buffer, mime: string): Promise<OwnerQuestion> {
     if (!IMAGE_MIME_TYPES.includes(mime)) throw Errors.INVALID_FILE_TYPE();
     if (buf.length > IMAGE_MAX_BYTES) throw Errors.PAYLOAD_TOO_LARGE();
 
@@ -153,14 +161,17 @@ class QuestionMediaService {
     const row = await this.writeSlot(userId, question, "image", jpeg, NORMAL_GORSEL_MIME, { image_status: "pending" });
     // Satir 'pending' yazildi; senkron moderasyon (<= 8 sn). Hata/zaman asimi 'pending' doner, cron yeniden dener.
     const status = await moderateQuestionImage(row.id, { image: { path: row.image_path!, bytes: jpeg } });
-    return this.ownerMedia(withModeration(row, status));
+    return this.ownerQuestion(withModeration(row, status));
   }
 
   async removeMedia(userId: string, orderNum: number, kind: QuestionMediaKind): Promise<void> {
     const { pathColumn, cleared } = SLOT[kind];
     const question = await this.findOwned(userId, orderNum);
     const oldPath = question[pathColumn] ?? null;
-    if (!oldPath) return;
+    if (!oldPath) {
+      if (kind === "image" && question.image_status === "rejected") await this.clearRejectedNotice(userId, question.id);
+      return;
+    }
 
     const { data, error } = await supabase
       .from("questions")
@@ -176,6 +187,25 @@ class QuestionMediaService {
     if (!data || data.length === 0) throw Errors.QUESTION_MEDIA_CONFLICT();
 
     await this.removePaths([oldPath]);
+  }
+
+  /**
+   * Reddedilen gorselde yol zaten bos, yalniz `rejected` notu kalir; sahip gorseli kaldirinca not da
+   * kalkar. CAS: hala yol yok + hala `rejected` ise (araya giren yeni yuklemeye dokunmaz). Eslesme
+   * yoksa (yeni yukleme geldi) sessizce gecilir: silinecek bir sey kalmadi.
+   */
+  private async clearRejectedNotice(userId: string, questionId: string): Promise<void> {
+    const { error } = await supabase
+      .from("questions")
+      .update({ image_status: null })
+      .eq("id", questionId)
+      .eq("user_id", userId)
+      .is("image_path", null)
+      .eq("image_status", "rejected");
+    if (error) {
+      console.error("[question-media] remove: ret notu temizlenemedi:", error.message);
+      throw Errors.SERVER_ERROR();
+    }
   }
 
   /** Private bucket icin 600 sn imzali URL; yol yoksa ya da imzalanamazsa `null` (yanit patlamaz). */
@@ -269,7 +299,7 @@ class QuestionMediaService {
     body: Buffer,
     contentType: string,
     extra: Record<string, unknown>,
-  ): Promise<OwnedQuestion> {
+  ): Promise<QuestionRow> {
     const { pathColumn, extension } = SLOT[kind];
     const path = `${userId}/${question.id}/${kind}-${Date.now()}.${extension}`;
 
@@ -288,7 +318,8 @@ class QuestionMediaService {
       .eq("id", question.id)
       .eq("user_id", userId);
     const guarded = oldPath === null ? base.is(pathColumn, null) : base.eq(pathColumn, oldPath);
-    const { data, error } = await guarded.select(MEDIA_COLUMNS);
+    // Tam satir: yukleme yaniti GET /questions/me ogesiyle ayni sekilde doner.
+    const { data, error } = await guarded.select("*");
 
     if (error) {
       console.error("[question-media] satir guncellenemedi:", error.message);
@@ -302,12 +333,13 @@ class QuestionMediaService {
     }
 
     if (oldPath) await this.removePaths([oldPath]);
-    return data[0] as OwnedQuestion;
+    return data[0] as QuestionRow;
   }
 
-  private async ownerMedia(row: QuestionMediaColumns): Promise<OwnerQuestionMedia> {
-    const urls = await this.signMany([row.voice_path, row.image_path]);
-    return this.mediaFields(row, urls);
+  /** Tek satir icin `withOwnerMedia` — GET /questions/me ile ayni esleme (sekil sapamaz). */
+  private async ownerQuestion(row: QuestionRow): Promise<OwnerQuestion> {
+    const [question] = await this.withOwnerMedia([row]);
+    return question;
   }
 
   private mediaFields(row: QuestionMediaColumns, urls: Map<string, string>): OwnerQuestionMedia {
