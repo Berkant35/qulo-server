@@ -68,6 +68,8 @@ describe('photoModerationTick — soru gorselleri', () => {
 describe('photoModerationCron.start — acilis supurgesi', () => {
   it('start() ACILIS_GECIKMESI_MS sonra bir tik calistirir; stop() iptal eder', async () => {
     vi.useFakeTimers();
+    // Saat sabitlenir: "17 * * * *" cron'u 2 dk'lik acilis penceresinde (XX:16-XX:17) tetiklenmesin.
+    vi.setSystemTime(new Date('2026-01-01T10:00:00Z'));
     try {
       const { mod, moderatePendingPhotos } = await setup();
       mod.photoModerationCron.start();
@@ -77,6 +79,7 @@ describe('photoModerationCron.start — acilis supurgesi', () => {
       mod.photoModerationCron.stop();
 
       vi.resetModules();
+      vi.setSystemTime(new Date('2026-01-01T10:00:00Z'));
       const ikinci = await setup();
       ikinci.mod.photoModerationCron.start();
       ikinci.mod.photoModerationCron.stop();
