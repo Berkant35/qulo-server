@@ -34,9 +34,9 @@ describe('appConfigService.getRow onbellegi', () => {
     const { appConfigService, okumalar } = await setup();
     expect((await appConfigService.getConfig('ios', 'tr')).latestVersion).toBe('2.0.14');
     expect((await appConfigService.getRow())?.seed_reply_enabled).toBe(true);
-    // 1 satir okumasi + power_demo_enabled (078) + ads_enabled (079) kolon okumalari (getRow listesinden AYRI).
+    // 1 satir okumasi + power_demo_enabled (078) + ads_enabled (079) + media_questions_enabled (084) kolon okumalari (getRow listesinden AYRI).
     // Satir onbellegi paylasilmasaydi 4 olurdu.
-    expect(okumalar()).toBe(3);
+    expect(okumalar()).toBe(4);
   });
 
   it('okuma hatasi null doner (getConfig varsayilanlari) ve onbellege YAZILMAZ', async () => {
@@ -281,7 +281,7 @@ describe('appConfigService.getPowerDemoEnabled (migration 078)', () => {
     const { appConfigService, okumalar } = await setup({ satirEk: { power_demo_enabled: false } });
     expect((await appConfigService.getConfig('ios', 'tr')).powerDemoEnabled).toBe(false);
     expect((await appConfigService.getConfig('android', 'en')).powerDemoEnabled).toBe(false);
-    expect(okumalar()).toBe(3);
+    expect(okumalar()).toBe(4);
   });
 
   it('updateConfig power_demo_enabled önbelleğini temizler: yeni değer hemen görünür', async () => {

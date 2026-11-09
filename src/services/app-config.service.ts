@@ -260,6 +260,7 @@ class AppConfigService {
         // Satır okunamadıysa anahtar da bilinmez: sözleşme alanı yine de hep döner.
         powerDemoEnabled: DEFAULT_POWER_DEMO_ENABLED,
         adsEnabled: DEFAULT_ADS_ENABLED,
+        mediaQuestionsEnabled: DEFAULT_MEDIA_QUESTIONS_ENABLED,
       };
     }
 
@@ -268,6 +269,7 @@ class AppConfigService {
     // `getRow` kolon listesinden AYRI okunur (078 deploy'dan sonra gelebilir); 60 sn önbellekli.
     const powerDemoEnabled = await this.getPowerDemoEnabled();
     const adsEnabled = await this.getAdsEnabled();
+    const mediaQuestionsEnabled = await this.getMediaQuestionsEnabled();
 
     return {
       minVersion: isIos ? row.min_version_ios : row.min_version_android,
@@ -280,6 +282,7 @@ class AppConfigService {
       isForceUpdateEnabled: row.is_force_update_enabled,
       powerDemoEnabled,
       adsEnabled,
+      mediaQuestionsEnabled,
     };
   }
 
