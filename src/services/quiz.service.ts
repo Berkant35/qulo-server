@@ -12,7 +12,7 @@ import { NotificationService } from "./notification.service.js";
 import { matchEmailService } from "./match-email.service.js";
 import { userLanguageService } from "./user-language.service.js";
 import { quizSecondChanceService, FREE_SECOND_CHANCE } from "./quiz-second-chance.service.js";
-import { DEFAULT_QUESTION_SECONDS, mediaExtraSeconds, quizDeadlineService, remainingSeconds, visiblePowers } from "./quiz-deadline.service.js";
+import { clampTimeSpent, DEFAULT_QUESTION_SECONDS, mediaExtraSeconds, quizDeadlineService, remainingSeconds, visiblePowers } from "./quiz-deadline.service.js";
 import {
   questionMediaService,
   solverVisibleMedia,
@@ -392,6 +392,8 @@ export class QuizService {
     powerUsed?: PowerName,
     timeSpent?: number,
   ) {
+    // Yalniz istatistik: validator ust sinir koymaz (durust yavas cevap 400 almasin), burada kirpilir.
+    const spent = clampTimeSpent(timeSpent);
     const session = await this.getActiveSession(sessionId, solverId);
     const questionIndex = session.current_q - 1;
 
@@ -486,8 +488,8 @@ export class QuizService {
       switch (powerUsed) {
         case "SKIP": {
           // Mark correct, record answer, proceed — no selected_answer for SKIP
-          await this.recordAnswer(sessionId, currentQuestion.id, currentQuestion.correct_answer, true, powerUsed, timeSpent ?? null);
-          await this.updateQuestionStats(currentQuestion.id, true, powerUsed ?? null, timeSpent ?? null, currentQuestion.correct_answer);
+          await this.recordAnswer(sessionId, currentQuestion.id, currentQuestion.correct_answer, true, powerUsed, spent);
+          await this.updateQuestionStats(currentQuestion.id, true, powerUsed ?? null, spent, currentQuestion.correct_answer);
 
           if (session.current_q >= session.total_questions) {
             return await this.completeSession(session);
@@ -626,9 +628,9 @@ export class QuizService {
     const isCorrect = selectedAnswer === currentQuestion.correct_answer;
 
     // Record answer
-    await this.recordAnswer(sessionId, currentQuestion.id, selectedAnswer, isCorrect, powerUsed ?? null, timeSpent ?? null);
+    await this.recordAnswer(sessionId, currentQuestion.id, selectedAnswer, isCorrect, powerUsed ?? null, spent);
     // Update question stats
-    await this.updateQuestionStats(currentQuestion.id, isCorrect, powerUsed ?? null, timeSpent ?? null, selectedAnswer);
+    await this.updateQuestionStats(currentQuestion.id, isCorrect, powerUsed ?? null, spent, selectedAnswer);
 
     if (!isCorrect) {
       // Session'ı hemen FAILED yapma — client'a SKIP kurtulma şansı ver. Cevap kaydedildi,

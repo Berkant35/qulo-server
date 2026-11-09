@@ -1,6 +1,7 @@
 import { supabase } from "../config/supabase.js";
 import { AppError } from "../utils/errors.js";
 import { economyConfigService } from "./economy-config.service.js";
+import { ECONOMY_BOUNDARIES } from "../types/economy-config.schema.js";
 import { IMAGE_EXTRA_SECONDS, VOICE_EXTRA_BUFFER_SECONDS, VOICE_MAX_DURATION_MS } from "../constants/question-media.js";
 
 /** `questions.time_limit` bos ise (eski satirlar). */
@@ -50,6 +51,20 @@ export function mediaExtraSeconds(q: { voice_duration_ms: number | null; image_s
   return voice + (q.image_status === "approved" ? IMAGE_EXTRA_SECONDS : 0);
 }
 
+/**
+ * Durust bir cevabin en uzun suresi (sn): soru ust siniri + en buyuk medya ek suresi + TIME_EXTEND
+ * ve tolerans config ust sinirlari. `time_spent` yalniz istatistik — reddedilmez, buna kirpilir.
+ */
+export const MAX_TIME_SPENT_SECONDS =
+  MAX_QUESTION_SECONDS
+  + mediaExtraSeconds({ voice_duration_ms: VOICE_MAX_DURATION_MS, image_status: "approved" })
+  + ECONOMY_BOUNDARIES.timeExtendSeconds.max
+  + ECONOMY_BOUNDARIES.questionToleranceSeconds.max;
+
+/** Istemcinin bildirdigi cevap suresi → istatistige yazilacak deger (yoksa null). */
+export const clampTimeSpent = (seconds: number | null | undefined): number | null =>
+  seconds == null ? null : Math.min(Math.max(0, seconds), MAX_TIME_SPENT_SECONDS);
+
 /** Istemciye donen kullanilmis gucler — ic isaretler haric. */
 export const visiblePowers = (powers: string[] | null): string[] =>
   (powers ?? []).filter((p) => !INTERNAL_MARKERS.has(p));
@@ -96,6 +111,13 @@ class QuizDeadlineService {
    * Ilk sunum daraltsa da isaret yakilir: aksi halde "erken cek, gec tekrar cek" sureyi uzatirdi.
    * Sonraki sunumlar ek sureyi hesaba katarak yalniz daraltir (ek sure geri alinmaz, tekrar da
    * eklenmez). `mediaExtra` = 0 iken akis medya oncesiyle BIREBIR ayni (ek okuma/yazim yok).
+   *
+   * Yukseltme TAVANI `min(simdi + sure + ek + tolerans, okunan son an + ek)`: yukseltme okunan son
+   * ana en cok `ek` ekler, gecen sureyi asla geri vermez. Tavansiz iki yol vardi (review fix 1/2):
+   * - Surum basligi oyunu: kapi kapali GET (`2.0.18`) isaretsiz daraltir, sure akar, kapi acik GET
+   *   (`2.0.19`) isareti alip "simdi + ..."ya yukseltir → gecen sure geri gelirdi (en cok L + tol).
+   * - Isaret RPC'si hata verirse daraltma ek sureyi isaretsiz katar; sonraki basarili GET isareti
+   *   alip yukseltir. Tavanla bu yol en cok BIR ek `ek` kadar sure kazandirir (soru basina, sinirli).
    */
   async arm(session: DeadlineSession, timeLimit: number, mediaExtra = 0): Promise<string> {
     if ((session.current_q_powers ?? []).some((p) => NO_REARM.has(p))) return session.expires_at;
@@ -104,7 +126,7 @@ class QuizDeadlineService {
     const deadline = secondsFromNow(timeLimit + mediaExtra + timing.questionToleranceSeconds);
     const firstMediaArm = mediaExtra > 0 && (await this.claimMediaExtra(session));
     if (new Date(deadline).getTime() >= new Date(session.expires_at).getTime()) {
-      return firstMediaArm ? this.raise(session, deadline) : session.expires_at;
+      return firstMediaArm ? this.raise(session, deadline, mediaExtra) : session.expires_at;
     }
 
     const { data, error } = await supabase
@@ -130,14 +152,17 @@ class QuizDeadlineService {
   }
 
   /**
-   * Ilk medyali sunum: son ani `deadline`'a YUKSELT. Okunan degere kosullu yazim — araya giren
+   * Ilk medyali sunum: son ani `deadline`'a YUKSELT — en cok okunan son an + `mediaExtra` (tavan,
+   * bkz. `arm`). Okunan degere kosullu yazim — araya giren
    * yazim (TIME_EXTEND, es zamanli GET'in daraltmasi) ezilmez; yarisi kaybederse taze deger doner
    * (ek sure bu nadir yarista kaybolabilir; odenmis sure asla kaybolmaz).
    */
-  private async raise(session: DeadlineSession, deadline: string): Promise<string> {
+  private async raise(session: DeadlineSession, deadline: string, mediaExtra: number): Promise<string> {
+    const cap = new Date(session.expires_at).getTime() + mediaExtra * 1000;
+    const target = new Date(Math.min(new Date(deadline).getTime(), cap)).toISOString();
     const { data, error } = await supabase
       .from("quiz_sessions")
-      .update({ expires_at: deadline })
+      .update({ expires_at: target })
       .eq("id", session.id)
       .eq("current_q", session.current_q)
       .eq("expires_at", session.expires_at)

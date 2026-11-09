@@ -9,7 +9,9 @@ export const answerQuizSchema = z.object({
   power_used: z
     .enum(["ORACLE", "HALF", "SKIP", "SKIP_ALL", "TIME_EXTEND", "HINT"])
     .optional(),
-  time_spent: z.number().int().min(0).max(120).optional(),
+  // Ust sinir YOK: yalniz istatistik; sure 300 sn + medya ek suresi + TIME_EXTEND olabilir, durust
+  // yavas cevap 400 almasin. Servis `clampTimeSpent` ile kirpar (review fix 3).
+  time_spent: z.number().int().min(0).optional(),
 }).refine(
   (data) => data.selected_answer != null || data.power_used != null,
   { message: "Either selected_answer or power_used is required" }

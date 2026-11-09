@@ -365,9 +365,13 @@ describe('getCurrentQuestion — eski istemci (medya kapalı) birebir eski', () 
   for (const [label, media] of [['argümansız', undefined], ['active:false', { active: false }]] as const) {
     it(`${label}: yanıt anahtarları eski küme, son an eski hesap, imza/işaret yok`, async () => {
       const { fake, quizService } = await setup(mediaSeed(), mediaStorage);
+      const storageFrom = vi.spyOn(fake.client.storage, 'from');
 
       const reply = await quizService.getCurrentQuestion(SESSION, SOLVER, media);
 
+      // Doğrudan kanıt (review fix 4): işaret RPC'si yok, imza/depolama isteği yok.
+      expect(fake.rpcCalls).toEqual([]);
+      expect(storageFrom).not.toHaveBeenCalled();
       expect(Object.keys(reply).sort()).toEqual(LEGACY_KEYS);
       expect(secondsLeft(row(fake).expires_at)).toBe(30); // 20 + 10 — medya uzatması yok
       expect(reply.remaining_seconds).toBe(30);
@@ -441,6 +445,42 @@ describe('getCurrentQuestion — medya açık (2.0.19)', () => {
     expect(again.remaining_seconds).toBe(62);
   });
 
+  it('sürüm başlığı oyunu: kapalı GET daraltır, geç açık GET geçen süreyi geri alamaz (review fix 1)', async () => {
+    const { fake, quizService } = await setup(mediaSeed(), mediaStorage); // geçiş son anı 60
+    await quizService.getCurrentQuestion(SESSION, SOLVER, { active: false }); // t1 = 0 → 20 + 10 = 30
+
+    vi.setSystemTime(new Date(NOW.getTime() + 29_000)); // 1 sn kaldı, başlık 2.0.19'a çevrildi
+    const reply = await quizService.getCurrentQuestion(SESSION, SOLVER, ACTIVE);
+
+    // Tavan: t1 + L + tol + E = 0 + 20 + 10 + 19 = 49 (tavansız 29 + 49 = 78 olurdu).
+    expect(secondsLeft(row(fake).expires_at)).toBe(20); // şimdi = 29 → son an 49
+    expect(new Date(row(fake).expires_at).getTime() - NOW.getTime()).toBeLessThanOrEqual(49_000);
+    expect(reply.remaining_seconds).toBe(20);
+  });
+
+  it('işaret RPC hatası + başarılı tekrar GET: kazanç en çok bir ek E (review fix 2)', async () => {
+    let calls = 0;
+    const flakyMark = (args: { p_session_id: string; p_power: string }, table: (n: string) => Row[]) =>
+      (calls++ === 0 ? { data: null, error: { message: 'boom' } } : markPower(args, table));
+    const { fake, quizService } = await setup(mediaSeed(), {
+      ...mediaStorage,
+      rpc: { quiz_session_mark_power: flakyMark, quiz_session_unmark_power: unmarkPower },
+    });
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    await quizService.getCurrentQuestion(SESSION, SOLVER, ACTIVE); // t1 = 0, işaretsiz daraltma → 49
+
+    vi.setSystemTime(new Date(NOW.getTime() + 30_000)); // 19 sn kaldı
+    await quizService.getCurrentQuestion(SESSION, SOLVER, ACTIVE); // işaret alınır, yükseltme tavanlı
+
+    // Sınır: t1 + L + tol + 2E = 0 + 20 + 10 + 38 = 68 (tavansız 30 + 49 = 79 olurdu).
+    const bound = 68_000;
+    expect(new Date(row(fake).expires_at).getTime() - NOW.getTime()).toBe(bound);
+
+    vi.setSystemTime(new Date(NOW.getTime() + 40_000));
+    await quizService.getCurrentQuestion(SESSION, SOLVER, ACTIVE); // işaret var → üçüncü ek yok
+    expect(new Date(row(fake).expires_at).getTime() - NOW.getTime()).toBe(bound);
+  });
+
   it('iç medya işareti istemciye used_powers içinde dönmez', async () => {
     const { quizService } = await setup(mediaSeed(), mediaStorage);
     await quizService.getCurrentQuestion(SESSION, SOLVER, ACTIVE);
@@ -496,5 +536,35 @@ describe('getCurrentQuestion — medya açık (2.0.19)', () => {
     expect(reply.voice_url).toBeNull();
     expect(reply.image_url).toBeNull();
     expect(reply.media_extra_seconds).toBe(19);
+  });
+});
+
+describe('time_spent — reddedilmez, istatistik için kırpılır (review fix 3)', () => {
+  const slow = (over: Record<string, unknown> = {}) => question(Q1, { time_limit: 300, ...over });
+
+  it('300 sn soruda 250 sn cevap kabul edilir ve olduğu gibi yazılır', async () => {
+    const { fake, quizService } = await setup({
+      questions: [slow(), question(Q2, { order_num: 2, time_limit: 60 })],
+      quiz_sessions: [session({ expires_at: at(300) })],
+    });
+
+    await quizService.answerQuestion(SESSION, SOLVER, 2, undefined, 250);
+
+    expect(fake.table('quiz_answers')[0].time_spent).toBe(250);
+    expect(fake.table('questions')[0].stats_total_time_spent).toBe(250);
+  });
+
+  it('akıl dışı süre üst sınıra kırpılır — istatistik zehirlenmez', async () => {
+    const { fake, quizService } = await setup({
+      questions: [slow(), question(Q2, { order_num: 2, time_limit: 60 })],
+      quiz_sessions: [session({ expires_at: at(300) })],
+    });
+    const { MAX_TIME_SPENT_SECONDS } = await import('../../src/services/quiz-deadline.service.js');
+
+    await quizService.answerQuestion(SESSION, SOLVER, 2, undefined, 10_000_000);
+
+    expect(MAX_TIME_SPENT_SECONDS).toBeGreaterThanOrEqual(300 + 21 + 10); // soru + medya + tolerans
+    expect(fake.table('quiz_answers')[0].time_spent).toBe(MAX_TIME_SPENT_SECONDS);
+    expect(fake.table('questions')[0].stats_total_time_spent).toBe(MAX_TIME_SPENT_SECONDS);
   });
 });
