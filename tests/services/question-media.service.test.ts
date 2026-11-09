@@ -32,12 +32,19 @@ const q = (id: string, userId: string, orderNum: number, over: Record<string, un
   voice_path: null, voice_duration_ms: null, image_path: null, image_status: null, ...over,
 });
 
-async function setup(seed: Tables = {}, opts?: FakeSupabaseOptions) {
+async function setup(seed: Tables = {}, opts?: FakeSupabaseOptions, karar: 'pending' | 'approved' | 'rejected' = 'pending') {
   const fake = createFakeSupabase({ questions: [q(QA, A, 1), q(QB, B, 1)], ...seed }, opts);
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
+  // Senkron gorsel moderasyonu ayri test dosyasinda; burada yalniz cagri sozlesmesi ve yanit sinanir.
+  const satirOnModerasyon: Array<Record<string, unknown>> = [];
+  const moderateQuestionImage = vi.fn(async (questionId: string) => {
+    satirOnModerasyon.push({ ...fake.table('questions').find((r) => r.id === questionId) });
+    return karar;
+  });
+  vi.doMock('../../src/services/question-image-moderation.service.js', () => ({ moderateQuestionImage }));
   const { questionMediaService } = await import('../../src/services/question-media.service.js');
   const row = (id: string) => fake.table('questions').find((r) => r.id === id)!;
-  return { fake, questionMediaService, row };
+  return { fake, questionMediaService, row, moderateQuestionImage, satirOnModerasyon };
 }
 
 async function codeOf(p: Promise<unknown>): Promise<string | undefined> {
@@ -195,6 +202,30 @@ describe('uploadImage', () => {
       voice_url: null, voice_duration_ms: null,
       image_url: fakeSignedUrl(BUCKET, path, 600), image_status: 'pending',
     });
+  });
+
+  it('satir pending yazildiktan SONRA senkron moderasyon cagrilir; ses yuklemesinde cagrilmaz', async () => {
+    const { fake, questionMediaService, moderateQuestionImage, satirOnModerasyon } = await setup();
+    await questionMediaService.uploadImage(A, 1, await PNG(), 'image/png');
+    // Az once yazilan JPEG baytlari yoluyla birlikte gider: moderasyon depolamadan geri indirmez (egress yok).
+    expect(moderateQuestionImage).toHaveBeenCalledWith(QA, {
+      image: { path: `${A}/${QA}/image-${NOW}.jpg`, bytes: fake.storageUploads[0]!.body },
+    });
+    expect(satirOnModerasyon[0]).toMatchObject({ image_path: `${A}/${QA}/image-${NOW}.jpg`, image_status: 'pending' });
+    await questionMediaService.uploadVoice(A, 1, M4A(), 'audio/m4a', 3000);
+    expect(moderateQuestionImage).toHaveBeenCalledTimes(1);
+  });
+
+  it('moderasyon reddederse yanitta URL yok, image_status=rejected', async () => {
+    const { questionMediaService } = await setup({}, undefined, 'rejected');
+    const media = await questionMediaService.uploadImage(A, 1, await PNG(), 'image/png');
+    expect(media).toMatchObject({ image_url: null, image_status: 'rejected' });
+  });
+
+  it('moderasyon onaylarsa yanit approved + imzali URL', async () => {
+    const { questionMediaService } = await setup({}, undefined, 'approved');
+    const media = await questionMediaService.uploadImage(A, 1, await PNG(), 'image/png');
+    expect(media).toMatchObject({ image_url: fakeSignedUrl(BUCKET, `${A}/${QA}/image-${NOW}.jpg`, 600), image_status: 'approved' });
   });
 
   it('onayli gorsel degistirilince yenisi pending olur, eski dosya silinir', async () => {

@@ -2,6 +2,7 @@ import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
 import { normalizeUploadedImage, NORMAL_GORSEL_MIME } from "../utils/image-normalize.js";
 import { DEGISMEZ_DOSYA_CACHE_CONTROL } from "../constants/storage.js";
+import { moderateQuestionImage, type QuestionImageModerationStatus } from "./question-image-moderation.service.js";
 import {
   IMAGE_MAX_BYTES,
   IMAGE_MIME_TYPES,
@@ -13,7 +14,7 @@ import {
   type QuestionMediaKind,
 } from "../constants/question-media.js";
 
-export type QuestionImageStatus = "pending" | "approved" | "rejected";
+export type QuestionImageStatus = QuestionImageModerationStatus;
 
 /** Sahibe (GET /questions/me, yukleme yaniti) donen medya alanlari; URL'ler imzali, ham yol donmez. */
 export type OwnerQuestionMedia = {
@@ -58,6 +59,16 @@ function isAudioContainer(buf: Buffer): boolean {
 }
 
 /**
+ * Moderasyon sonucunu yazilmis satira uygular (yeniden okuma yok): ret yolu bosaltir, onay durumu yazar.
+ * `pending` (zaman asimi ya da araya giren yeni yukleme) satiri oldugu gibi birakir.
+ */
+function withModeration(row: OwnedQuestion, status: QuestionImageStatus): OwnedQuestion {
+  if (status === "rejected") return { ...row, image_path: null, image_status: "rejected" };
+  if (status === "approved") return { ...row, image_status: "approved" };
+  return row;
+}
+
+/**
  * Soru medyasi (sesli/gorselli soru, 2.0.19) — PRIVATE `question-media` bucket'i.
  *
  * - Yol yalniz sunucu kimliklerinden kurulur: `${userId}/${questionId}/${kind}-${ts}.(m4a|jpg)`;
@@ -94,8 +105,9 @@ class QuestionMediaService {
     const question = await this.findOwned(userId, orderNum);
     const jpeg = await normalizeUploadedImage(buf, "question-media");
     const row = await this.writeSlot(userId, question, "image", jpeg, NORMAL_GORSEL_MIME, { image_status: "pending" });
-    // Satir 'pending' yazildi; gorsel moderasyonu bu noktadan sonra devreye girer.
-    return this.ownerMedia(row);
+    // Satir 'pending' yazildi; senkron moderasyon (<= 8 sn). Hata/zaman asimi 'pending' doner, cron yeniden dener.
+    const status = await moderateQuestionImage(row.id, { image: { path: row.image_path!, bytes: jpeg } });
+    return this.ownerMedia(withModeration(row, status));
   }
 
   async removeMedia(userId: string, orderNum: number, kind: QuestionMediaKind): Promise<void> {

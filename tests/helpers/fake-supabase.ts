@@ -55,7 +55,7 @@ export interface FailureSpec {
 export interface StorageFailureSpec {
   bucket: string;
   /** `sign`: `createSignedUrl` + `createSignedUrls`. */
-  op: 'list' | 'remove' | 'upload' | 'sign';
+  op: 'list' | 'remove' | 'upload' | 'sign' | 'download';
   error?: SupabaseError;
   /** Kaç başarılı çağrıdan SONRA patlasın (varsayılan 0 = hemen). */
   failAfter?: number;
@@ -676,7 +676,7 @@ export function createFakeSupabase(
       };
     },
     /**
-     * Depolama — kod tabanının kullandığı `list`, `remove`, `upload`, `getPublicUrl`,
+     * Depolama — kod tabanının kullandığı `list`, `remove`, `upload`, `download`, `getPublicUrl`,
      * `createSignedUrl(s)`. Dosyalar `bucket → path` haritasında tutulur; `list(prefix)` o önekin
      * altındaki girdileri döner (Supabase `FileObject` gibi `{ name, id }`).
      * Gerçek Storage'a sadık üç kural:
@@ -737,6 +737,18 @@ export function createFakeSupabase(
               ? { path, signedUrl: fakeSignedUrl(bucket, path, expiresIn), error: null }
               : { path, signedUrl: '', error: 'Either the object does not exist or you do not have access to it' });
             return { data, error: null };
+          },
+          /**
+           * Service-role indirme (private bucket). Gövde: o yola yapılan son `upload` gövdesi; seed
+           * dosyasında `fake-file:<yol>` baytları. Dosya yoksa gerçek API gibi hata.
+           */
+          async download(path: string) {
+            const failure = storageFailureFor(bucket, 'download');
+            if (failure) return { data: null, error: failure };
+            if (!files().includes(path)) return { data: null, error: { message: 'Object not found', code: '404' } };
+            const son = [...storageUploads].reverse().find((u) => u.bucket === bucket && u.path === path);
+            const body = son?.body instanceof Buffer ? son.body : Buffer.from(`fake-file:${path}`);
+            return { data: new Blob([body]), error: null };
           },
           async remove(paths: string[]) {
             const failure = storageFailureFor(bucket, 'remove');

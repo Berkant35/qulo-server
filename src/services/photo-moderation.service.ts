@@ -4,8 +4,11 @@ import { LlmError } from "./llm.common.js";
 import { NIM_VISION_CONFIRM_MODEL, NIM_VISION_MODEL, VISION_VERIFY_PROMPT, nimVisionModerate, type VisionModerationResult } from "./nim.service.js";
 import { GEMINI_VISION_MODEL, geminiVisionAvailable, geminiVisionModerate } from "./gemini-vision.service.js";
 import { banService } from "./ban.service.js";
+import { QUESTION_MEDIA_BUCKET, QUESTION_MEDIA_SIGNED_URL_TTL_SEC } from "../constants/question-media.js";
 
 export type Verdict = "safe" | "explicit" | "review" | "error";
+/** 084: kuyruk profil fotografi + soru gorseli icin ortak. `question` satirinda `photo_url` = private bucket yolu. */
+export type CheckKind = "profile" | "question";
 
 interface CheckRow { user_id: string; photo_url: string; verdict: Verdict; checked_at: string; attempts: number | null }
 interface UserPhotosRow { id: string; photos: string[] | null }
@@ -198,11 +201,16 @@ export async function moderatePhoto(p: PendingPhoto): Promise<PhotoOutcome> {
   return { verdict: sonuc.verdict, banned };
 }
 
+/** Kalici kill-switch (app_config.photo_moderation_enabled); profil ve soru gorseli ortak. Okunamazsa kapali. */
+export async function moderationSwitchOn(): Promise<boolean> {
+  const { data: cfg } = await supabase.from("app_config").select("photo_moderation_enabled").limit(1).maybeSingle();
+  return Boolean(cfg?.photo_moderation_enabled);
+}
+
 /** Kill-switch + anahtar: yukleme yolu ve cron ayni kapidan gecer. */
 export async function moderationEnabled(): Promise<boolean> {
   if (!env.NVIDIA_API_KEY) return false;
-  const { data: cfg } = await supabase.from("app_config").select("photo_moderation_enabled").limit(1).maybeSingle();
-  return Boolean(cfg?.photo_moderation_enabled);
+  return moderationSwitchOn();
 }
 
 /**
@@ -241,9 +249,13 @@ export async function moderatePendingPhotos(budget: number): Promise<ModerationS
 // ---- Backoffice: review kuyrugu (insan gozu) ----
 
 export interface AdminCheckRow {
-  id: string; user_id: string; photo_url: string; verdict: Verdict; reason: string | null;
+  id: string; user_id: string; photo_url: string; kind: CheckKind; verdict: Verdict; reason: string | null;
   model: string | null; attempts: number; checked_at: string;
-  email: string | null; name: string | null; is_banned: boolean; hala_profilde: boolean;
+  email: string | null; name: string | null; is_banned: boolean;
+  /** Profil: fotograf hala profilde. Soru: gorsel hala o yolla soruda (ret/degisimde false). */
+  hala_profilde: boolean;
+  /** Onizleme: profil URL'si ya da soru gorselinin 600 sn imzali URL'si (dosya silindiyse null). */
+  preview_url: string | null;
 }
 interface AdminUserRow { id: string; email: string | null; name: string | null; is_banned: boolean; photos: string[] | null }
 
@@ -254,13 +266,13 @@ interface AdminUserRow { id: string; email: string | null; name: string | null; 
 export async function listChecksForAdmin(verdict: Verdict | "all", page: number, limit: number): Promise<{ rows: AdminCheckRow[]; total: number }> {
   let q = supabase
     .from("photo_moderation_checks")
-    .select("id, user_id, photo_url, verdict, reason, model, attempts, checked_at", { count: "exact" })
+    .select("id, user_id, photo_url, kind, verdict, reason, model, attempts, checked_at", { count: "exact" })
     .order("checked_at", { ascending: false })
     .range((page - 1) * limit, page * limit - 1);
   if (verdict !== "all") q = q.eq("verdict", verdict);
   const { data, count, error } = await q;
   if (error) throw new Error(`moderation list failed: ${error.message}`);
-  const checks = (data ?? []) as Omit<AdminCheckRow, "email" | "name" | "is_banned" | "hala_profilde">[];
+  const checks = (data ?? []) as Omit<AdminCheckRow, "email" | "name" | "is_banned" | "hala_profilde" | "preview_url">[];
   const ids = [...new Set(checks.map((c) => c.user_id))];
   const kullanicilar = new Map<string, AdminUserRow>();
   for (const parca of parcala(ids, IN_CHUNK)) {
@@ -268,27 +280,59 @@ export async function listChecksForAdmin(verdict: Verdict | "all", page: number,
     if (uErr) throw new Error(`moderation users failed: ${uErr.message}`);
     for (const u of (users ?? []) as AdminUserRow[]) kullanicilar.set(u.id, u);
   }
+  const soruYollari = checks.filter((c) => c.kind === "question").map((c) => c.photo_url);
+  const { soruda, imzalar } = await soruGorselDurumu(soruYollari);
   const rows = checks.map((c) => {
     const u = kullanicilar.get(c.user_id);
+    const soru = c.kind === "question";
     return {
-      ...c, attempts: c.attempts ?? 1, email: u?.email ?? null, name: u?.name ?? null,
-      is_banned: u?.is_banned ?? false, hala_profilde: (u?.photos ?? []).includes(c.photo_url),
+      ...c, kind: c.kind ?? "profile", attempts: c.attempts ?? 1, email: u?.email ?? null, name: u?.name ?? null,
+      is_banned: u?.is_banned ?? false,
+      hala_profilde: soru ? soruda.has(c.photo_url) : (u?.photos ?? []).includes(c.photo_url),
+      preview_url: soru ? imzalar.get(c.photo_url) ?? null : c.photo_url,
     };
   });
   return { rows, total: count ?? 0 };
 }
 
+/** Soru gorseli satirlari: hangi yollar hala soruda + private bucket onizleme imzalari (tek toplu istek). */
+async function soruGorselDurumu(yollar: string[]): Promise<{ soruda: Set<string>; imzalar: Map<string, string> }> {
+  const soruda = new Set<string>();
+  const imzalar = new Map<string, string>();
+  if (yollar.length === 0) return { soruda, imzalar };
+  for (const parca of parcala(yollar, IN_CHUNK)) {
+    const { data, error } = await supabase.from("questions").select("image_path").in("image_path", parca);
+    if (error) throw new Error(`moderation questions failed: ${error.message}`);
+    for (const q of (data ?? []) as { image_path: string }[]) soruda.add(q.image_path);
+  }
+  const { data: imzali, error: imzaHatasi } = await supabase.storage
+    .from(QUESTION_MEDIA_BUCKET)
+    .createSignedUrls(yollar, QUESTION_MEDIA_SIGNED_URL_TTL_SEC);
+  if (imzaHatasi) console.warn("[photo-moderation] admin onizleme imzalanamadi:", imzaHatasi.message);
+  for (const item of imzali ?? []) if (!item.error && item.path) imzalar.set(item.path, item.signedUrl);
+  return { soruda, imzalar };
+}
+
+/** Satirin turu (aksiyon yonlendirmesi icin); yoksa null. */
+export async function getCheckKind(checkId: string): Promise<CheckKind | null> {
+  const { data, error } = await supabase.from("photo_moderation_checks").select("kind").eq("id", checkId).maybeSingle();
+  if (error) throw new Error(`moderation lookup failed: ${error.message}`);
+  if (!data) return null;
+  return ((data as { kind?: CheckKind }).kind ?? "profile");
+}
+
 export type AdminCheckAction = "ban" | "safe";
 
 /**
- * Insan karari: `ban` -> banService (e-posta + itiraz) ve satir `explicit`; `safe` -> satir `safe`.
- * Satir yoksa false. Ban idempotent (zaten banliysa yalniz satir guncellenir).
+ * Insan karari (YALNIZ profil fotografi): `ban` -> banService (e-posta + itiraz) ve satir `explicit`;
+ * `safe` -> satir `safe`. Satir yoksa ya da soru gorseli satiriysa false — soru gorselinde tek tikla ban
+ * YOK (question-image-moderation.resolveQuestionImageCheck). Ban idempotent.
  */
 export async function resolveCheck(checkId: string, action: AdminCheckAction): Promise<boolean> {
-  const { data, error: okumaHatasi } = await supabase.from("photo_moderation_checks").select("id, user_id").eq("id", checkId).maybeSingle();
+  const { data, error: okumaHatasi } = await supabase.from("photo_moderation_checks").select("id, user_id, kind").eq("id", checkId).maybeSingle();
   if (okumaHatasi) throw new Error(`moderation lookup failed: ${okumaHatasi.message}`);
-  const satir = data as { id: string; user_id: string } | null;
-  if (!satir) return false;
+  const satir = data as { id: string; user_id: string; kind?: CheckKind } | null;
+  if (!satir || (satir.kind ?? "profile") !== "profile") return false;
   if (action === "ban") await banService.banUser(satir.user_id, "sexual_content", `${BAN_REASON_TEXT} (admin review)`);
   const { error } = await supabase
     .from("photo_moderation_checks")

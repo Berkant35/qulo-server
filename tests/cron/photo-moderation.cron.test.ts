@@ -5,8 +5,11 @@ async function setup(opts: { enabled?: boolean; key?: string; ozet?: unknown } =
   const moderatePendingPhotos = vi.fn(async () => opts.ozet ?? { checked: 0, banned: 0, review: 0, errors: 0 });
   const moderationEnabled = vi.fn(async () => opts.enabled ?? true);
   vi.doMock('../../src/services/photo-moderation.service.js', () => ({ moderatePendingPhotos, moderationEnabled }));
+  // Kapi (Gemini anahtari + kill-switch) servisin icinde: question-image-moderation.service.test.
+  const moderatePendingQuestionImages = vi.fn(async () => 0);
+  vi.doMock('../../src/services/question-image-moderation.service.js', () => ({ moderatePendingQuestionImages }));
   const mod = await import('../../src/cron/photo-moderation.cron.js');
-  return { mod, moderatePendingPhotos };
+  return { mod, moderatePendingPhotos, moderatePendingQuestionImages };
 }
 
 beforeEach(() => vi.resetModules());
@@ -36,6 +39,29 @@ describe('photoModerationTick', () => {
     await expect(mod.photoModerationTick()).resolves.toBeUndefined();
     await mod.photoModerationTick();
     expect(moderatePendingPhotos).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('photoModerationTick — soru gorselleri', () => {
+  it('bekleyen soru gorsellerini de tik butcesiyle isler (NVIDIA anahtari olmasa da: hakem Gemini)', async () => {
+    const { mod, moderatePendingPhotos, moderatePendingQuestionImages } = await setup({ key: '' });
+    await mod.photoModerationTick();
+    expect(moderatePendingPhotos).not.toHaveBeenCalled();
+    expect(moderatePendingQuestionImages).toHaveBeenCalledWith(mod.TIK_BUTCESI);
+  });
+
+  it('soru taramasi patlasa da tik dusmez; profil taramasi yine calisir', async () => {
+    const { mod, moderatePendingPhotos, moderatePendingQuestionImages } = await setup();
+    moderatePendingQuestionImages.mockRejectedValueOnce(new Error('questions down'));
+    await expect(mod.photoModerationTick()).resolves.toBeUndefined();
+    expect(moderatePendingPhotos).toHaveBeenCalledTimes(1);
+  });
+
+  it('profil taramasi patlasa da soru taramasi calisir', async () => {
+    const { mod, moderatePendingPhotos, moderatePendingQuestionImages } = await setup();
+    moderatePendingPhotos.mockRejectedValueOnce(new Error('patladi'));
+    await mod.photoModerationTick();
+    expect(moderatePendingQuestionImages).toHaveBeenCalledTimes(1);
   });
 });
 

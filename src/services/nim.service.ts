@@ -153,6 +153,30 @@ export const VISION_VERIFY_PROMPT =
   + 'Swimwear, underwear, cleavage, a shirtless man, or anything ambiguous is NOT explicit.';
 
 /**
+ * Soru gorseli istemi (sesli/gorselli soru, 2.0.19; question-image-moderation.service). Profil isteminden
+ * KATI: soru gorseli herkese gosterilir ve kisiyi degil soruyu anlatir, bu yuzden cinsel OBJELER, ic camasiri
+ * reklami, siddet, resit olmayan gorunumlu kisi ve kisisel veri de yasak. Baskasinin yuzu yasak DEGIL
+ * (unlu/arkadas fotografi soru konusu olabilir); yuz yalniz "ALLOWED" bolumunde gecer.
+ * Sema `parseVisionVerdict` ile ayni (`explicit` + `reason`); `category` ek ve opsiyonel.
+ */
+export const QUESTION_IMAGE_PROMPT =
+  'You are a strict content moderator for a dating app. This image is attached to a quiz question that every '
+  + 'other user will see. Reply ONLY with JSON: {"explicit": true|false, "category": '
+  + '"sexual_content"|"sexual_object"|"violence"|"minor"|"personal_data"|"none", "reason": "<short>"}. '
+  + 'FORBIDDEN (explicit=true): '
+  + 'sexual_content = nudity, exposed genitals, bare buttocks, exposed female nipples, or a sexual act; '
+  + 'sexual_object = a sex toy, fetish gear or fetish clothing, a condom or lubricant, lingerie or underwear shown '
+  + 'in a sexualized way (including lingerie ads), a sexualized pose, an obscene hand gesture, or an everyday object '
+  + 'used or arranged to suggest a sexual act; '
+  + 'violence = violence, blood, gore, injury, or a weapon aimed at someone; '
+  + 'minor = any person who appears to be a minor (under 18); '
+  + 'personal_data = an ID card, passport, credit or bank card, a readable license plate, or a document with '
+  + 'personal details. '
+  + 'ALLOWED (explicit=false, category "none"): faces of other people or celebrities, food, fruit and vegetables, '
+  + 'animals, places, objects and screenshots that are not used sexually. Judge what is actually shown, not shapes '
+  + 'that only resemble something: a cucumber in a salad or a banana in a fruit bowl is NOT a sexual object.';
+
+/**
  * Bir gorseli (data: URL, base64) cinsel icerik acisindan siniflandirir.
  * Model JSON dondurmezse `empty` hatasi — belirsizlik guvenli sayilmaz, karar cagirana ait.
  */
