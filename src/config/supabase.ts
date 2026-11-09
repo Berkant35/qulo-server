@@ -22,6 +22,15 @@ export async function ensureStorageBuckets() {
       },
     },
     {
+      // Soru medyası (sesli/görselli soru): PRIVATE — erişim yalnız sunucunun ürettiği imzalı URL ile.
+      id: "question-media",
+      options: {
+        public: false,
+        fileSizeLimit: 8 * 1024 * 1024,
+        allowedMimeTypes: ["image/jpeg", "image/png", "image/webp", "audio/m4a", "audio/mp4", "audio/aac"],
+      },
+    },
+    {
       // Backoffice üzerinden yönetilen statik varlıklar (mascot, banner, kampanya görselleri vb.)
       id: "assets",
       options: {
