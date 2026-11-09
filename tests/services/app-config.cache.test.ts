@@ -333,3 +333,31 @@ describe('appConfigService.getAdsEnabled (migration 079)', () => {
     expect(await appConfigService.getAdsEnabled()).toBe(true);
   });
 });
+
+describe('appConfigService.getMediaQuestionsEnabled (migration 084)', () => {
+  it('true okunur ve onbellege alinir', async () => {
+    const { appConfigService, okumalar } = await setup({ satirEk: { media_questions_enabled: true } });
+    expect(await appConfigService.getMediaQuestionsEnabled()).toBe(true);
+    expect(await appConfigService.getMediaQuestionsEnabled()).toBe(true);
+    expect(okumalar()).toBe(1);
+  });
+
+  it('kolon yoksa KAPALI (fail-closed)', async () => {
+    const { appConfigService } = await setup();
+    expect(await appConfigService.getMediaQuestionsEnabled()).toBe(false);
+  });
+
+  it('42703 hatasi false doner', async () => {
+    const { appConfigService } = await setup({
+      failOn: [{ table: 'app_config', op: 'select', error: { message: 'column does not exist', code: '42703' } }],
+    });
+    expect(await appConfigService.getMediaQuestionsEnabled()).toBe(false);
+  });
+
+  it('updateConfig onbellegi temizler', async () => {
+    const { appConfigService } = await setup({ satirEk: { media_questions_enabled: false } });
+    expect(await appConfigService.getMediaQuestionsEnabled()).toBe(false);
+    await appConfigService.updateConfig({ media_questions_enabled: true });
+    expect(await appConfigService.getMediaQuestionsEnabled()).toBe(true);
+  });
+});

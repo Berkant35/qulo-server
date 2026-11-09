@@ -289,6 +289,7 @@ class AdminController {
       served_gate_enabled, served_gate_field,
       power_demo_enabled, power_demo_enabled_field,
       ads_enabled, ads_enabled_field,
+      media_questions_enabled, media_questions_enabled_field,
     } = req.body;
 
     const versionFields: Record<string, string> = { min_version_ios, min_version_android, latest_version_ios, latest_version_android };
@@ -327,6 +328,8 @@ class AdminController {
         ...(power_demo_enabled_field !== undefined ? { power_demo_enabled: power_demo_enabled === "on" } : {}),
         // Reklam anahtarı (migration 079) — aynı gizli işaret deseni.
         ...(ads_enabled_field !== undefined ? { ads_enabled: ads_enabled === "on" } : {}),
+        // Sesli/görselli soru (migration 084) — aynı gizli işaret deseni; varsayılan KAPALI.
+        ...(media_questions_enabled_field !== undefined ? { media_questions_enabled: media_questions_enabled === "on" } : {}),
         // "Seni çözdüler" e-posta yedeği (migration 080) — aynı gizli işaret deseni; varsayılan KAPALI.
         ...(recall_email_enabled_field !== undefined ? { recall_email_enabled: recall_email_enabled === "on" } : {}),
         ...intUpdates,

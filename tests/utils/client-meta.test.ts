@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { clientMetaFromHeaders } from '../../src/utils/client-meta.js';
+import { clientMetaFromHeaders, isClientAtLeast, MEDIA_QUESTIONS_MIN_CLIENT } from '../../src/utils/client-meta.js';
 
 /**
  * Rıza kaydına (KVKK denetim izi) giden istemci başlıkları.
@@ -36,5 +36,27 @@ describe('clientMetaFromHeaders', () => {
     for (const value of ['<script>', 'v2.0.10', '2.0.10; DROP', 'latest', '', '1'.repeat(21)]) {
       expect(clientMetaFromHeaders({ 'x-app-version': value }).appVersion, value).toBeUndefined();
     }
+  });
+});
+
+describe('isClientAtLeast', () => {
+  it('build numarasi yok sayilir: 2.0.19+101 >= 2.0.19', () => {
+    expect(isClientAtLeast({ appVersion: '2.0.19+101' }, '2.0.19')).toBe(true);
+    expect(isClientAtLeast({ appVersion: '2.0.19' }, '2.0.19')).toBe(true);
+  });
+  it('eski surum reddedilir', () => {
+    expect(isClientAtLeast({ appVersion: '2.0.18+100' }, '2.0.19')).toBe(false);
+  });
+  it('sayisal karsilastirir (2.0.9 < 2.0.19, 2.1 > 2.0.19)', () => {
+    expect(isClientAtLeast({ appVersion: '2.0.9' }, '2.0.19')).toBe(false);
+    expect(isClientAtLeast({ appVersion: '2.1' }, '2.0.19')).toBe(true);
+    expect(isClientAtLeast({ appVersion: '10.0.0' }, '2.0.19')).toBe(true);
+  });
+  it('surum yoksa ya da bozuksa false', () => {
+    expect(isClientAtLeast({}, '2.0.19')).toBe(false);
+    expect(isClientAtLeast({ appVersion: 'abc' }, '2.0.19')).toBe(false);
+  });
+  it('medya soru esigi 2.0.19', () => {
+    expect(MEDIA_QUESTIONS_MIN_CLIENT).toBe('2.0.19');
   });
 });

@@ -65,12 +65,19 @@ export const DEFAULT_POWER_DEMO_ENABLED = true;
  */
 export const DEFAULT_ADS_ENABLED = false;
 
+/**
+ * Sesli/gorselli soru ozellik kapisi — `app_config.media_questions_enabled` (migration 084).
+ * Fail-closed: kolon yoksa / okunamazsa KAPALI. Istemci surum kapisi (>= 2.0.19) ayrica uygulanir.
+ */
+export const DEFAULT_MEDIA_QUESTIONS_ENABLED = false;
+
 /** `getRow` kolon listesinden AYRI okunan anahtarlar (migration'ı deploy'dan sonra gelebilir). */
 type BooleanFlagColumn =
   | "mutual_match_enabled"
   | "served_gate_enabled"
   | "power_demo_enabled"
   | "ads_enabled"
+  | "media_questions_enabled"
   | "recall_email_enabled";
 
 /** `getRow` kolon listesinden AYRI okunan tam sayi ayarlari (0 = kapali, negatif gecersiz). */
@@ -105,6 +112,7 @@ class AppConfigService {
   private readonly servedGateOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
   private readonly powerDemoOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
   private readonly adsOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
+  private readonly mediaQuestionsOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
   private readonly recallEmailOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
   /** Kolon yok / gecersiz deger uyarisi surec basina kolon basina bir kez. */
   private readonly uyariVerilenKolonlar = new Set<IntegerSettingColumn>();
@@ -180,6 +188,11 @@ class AppConfigService {
   /** Reklam anahtarı (migration 079) — kolon yoksa KAPALI. */
   async getAdsEnabled(): Promise<boolean> {
     return this.readBooleanFlag("ads_enabled", this.adsOnbellek, DEFAULT_ADS_ENABLED);
+  }
+
+  /** Sesli/gorselli soru anahtari (migration 084) — kolon yoksa KAPALI. */
+  async getMediaQuestionsEnabled(): Promise<boolean> {
+    return this.readBooleanFlag("media_questions_enabled", this.mediaQuestionsOnbellek, DEFAULT_MEDIA_QUESTIONS_ENABLED);
   }
 
   /** "Seni cozduler" e-posta yedegi anahtari (migration 080) — kolon yoksa KAPALI. */
@@ -280,6 +293,7 @@ class AppConfigService {
       served_gate_enabled?: boolean;
       power_demo_enabled?: boolean;
       ads_enabled?: boolean;
+      media_questions_enabled?: boolean;
     },
   ) {
     const { data: existing, error: fetchError } = await supabase
@@ -309,6 +323,7 @@ class AppConfigService {
     this.servedGateOnbellek.clear();
     this.powerDemoOnbellek.clear();
     this.adsOnbellek.clear();
+    this.mediaQuestionsOnbellek.clear();
     if (error) throw error;
     return data;
   }

@@ -42,3 +42,26 @@ export function clientMetaFromHeaders(headers: IncomingHttpHeaders): ClientMeta 
   }
   return meta;
 }
+
+/** Sesli/gorselli soru icin asgari istemci surumu. */
+export const MEDIA_QUESTIONS_MIN_CLIENT = "2.0.19";
+
+function numericParts(version: string): number[] | null {
+  const core = version.split("+")[0];
+  if (!/^\d+(\.\d+){0,3}$/.test(core)) return null;
+  return core.split(".").map(Number);
+}
+
+/** Istemci surumu >= min mi? Build numarasi (`+N`) yok sayilir; surum yok/bozuksa false. */
+export function isClientAtLeast(meta: ClientMeta, min: string): boolean {
+  const have = meta.appVersion ? numericParts(meta.appVersion) : null;
+  const need = numericParts(min);
+  if (!have || !need) return false;
+  const len = Math.max(have.length, need.length);
+  for (let i = 0; i < len; i++) {
+    const a = have[i] ?? 0;
+    const b = need[i] ?? 0;
+    if (a !== b) return a > b;
+  }
+  return true;
+}

@@ -175,3 +175,20 @@ describe('updateAppConfig — ads_enabled (migration 079)', () => {
     expect(patch()).not.toHaveProperty('ads_enabled');
   });
 });
+
+describe('updateAppConfig — media_questions_enabled (migration 084)', () => {
+  it('form alani varken isaretliyse true yazar', async () => {
+    const { patch } = await setup({ media_questions_enabled_field: '1', media_questions_enabled: 'on' });
+    expect(patch()).toMatchObject({ media_questions_enabled: true });
+  });
+
+  it('isaretsiz + alan gonderilirse false yazilir', async () => {
+    const { patch } = await setup({ media_questions_enabled_field: '1' });
+    expect(patch()).toMatchObject({ media_questions_enabled: false });
+  });
+
+  it('form alani yoksa dokunulmaz', async () => {
+    const { patch } = await setup({});
+    expect(patch()).not.toHaveProperty('media_questions_enabled');
+  });
+});

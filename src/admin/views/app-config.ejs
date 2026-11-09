@@ -210,6 +210,21 @@
   </div>
   <% } %>
 
+  <% if (config && config.media_questions_enabled !== undefined && config.media_questions_enabled !== null) { %>
+  <!-- Sesli/Görselli Soru (migration 084) -->
+  <div class="card">
+    <h3 style="margin-bottom: 16px;">Sesli/Görselli Soru</h3>
+    <div>
+      <input type="hidden" name="media_questions_enabled_field" value="1">
+      <label style="display:flex; align-items:center; gap:8px; font-size:14px; cursor:pointer;">
+        <input type="checkbox" name="media_questions_enabled" <%= config.media_questions_enabled ? 'checked' : '' %>>
+        <span>Sorulara ses ve görsel eklenebilir (2.0.19+ istemciler)</span>
+      </label>
+      <p style="font-size:12px; color:#999; margin-top:4px;">Varsayılan KAPALI. Yalnız x-app-version ≥ 2.0.19 istemcilerde etkindir; eski sürümler metin soruyu görmeye devam eder. Sunucu önbelleği 60 sn içinde yenilenir. Alan yoksa / okunamazsa KAPALI kalır.</p>
+    </div>
+  </div>
+  <% } %>
+
   <div style="text-align: right;">
     <button type="submit" class="btn btn-primary" style="padding: 10px 32px; font-size: 15px;">Save Configuration</button>
   </div>
