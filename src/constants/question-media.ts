@@ -16,3 +16,10 @@ export const IMAGE_MIME_TYPES: readonly string[] = ["image/jpeg", "image/png", "
 
 export const QUESTION_MEDIA_KINDS = ["voice", "image"] as const;
 export type QuestionMediaKind = (typeof QUESTION_MEDIA_KINDS)[number];
+
+/**
+ * Cozucuye ek sure (quiz son ani): ses varsa `ceil(sure) + VOICE_EXTRA_BUFFER_SECONDS`, onayli
+ * gorsel varsa `+ IMAGE_EXTRA_SECONDS`. Yalniz medya kapisi acikken (bkz. `mediaExtraSeconds`).
+ */
+export const VOICE_EXTRA_BUFFER_SECONDS = 3;
+export const IMAGE_EXTRA_SECONDS = 3;

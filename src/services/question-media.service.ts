@@ -32,6 +32,30 @@ export interface QuestionMediaColumns {
   image_status?: QuestionImageStatus | null;
 }
 
+/** Cozucuye (quiz) donen medya alanlari; moderasyon durumu ve ham yol donmez. */
+export type SolverQuestionMedia = Omit<OwnerQuestionMedia, "image_status">;
+
+/**
+ * Cozucunun gorebilecegi medya: ses yolu varsa ses; gorsel YALNIZ `approved` (bekleyen/reddedilen
+ * moderasyondan gecmedi → URL de ek sure de yok). Ek sure (quiz-deadline `mediaExtraSeconds`) ve
+ * URL'ler ayni filtreden beslenir; ikisi birbirinden sapamaz.
+ */
+export function solverVisibleMedia(row: QuestionMediaColumns): {
+  voice_path: string | null;
+  voice_duration_ms: number | null;
+  image_path: string | null;
+  image_status: QuestionImageStatus | null;
+} {
+  const voice = row.voice_path ? row.voice_path : null;
+  const image = row.image_path && row.image_status === "approved" ? row.image_path : null;
+  return {
+    voice_path: voice,
+    voice_duration_ms: voice ? row.voice_duration_ms ?? null : null,
+    image_path: image,
+    image_status: image ? "approved" : null,
+  };
+}
+
 type OwnedQuestion = QuestionMediaColumns & { id: string };
 /** `select("*")` tipsiz (`any`) satir doner: `any` korunur (Omit onu index imzasina cevirirdi). */
 type WithOwnerMedia<T> = 0 extends 1 & T ? any : Omit<T, "voice_path" | "image_path"> & OwnerQuestionMedia;
@@ -155,6 +179,14 @@ class QuestionMediaService {
       const { voice_path: _voice, image_path: _image, ...rest } = row;
       return { ...rest, ...this.mediaFields(row, urls) };
     });
+  }
+
+  /** Cozucu medyasi (`solverVisibleMedia` filtresiyle) — tek imza istegi; medyasiz soruda istek yok. */
+  async solverMedia(row: QuestionMediaColumns): Promise<SolverQuestionMedia> {
+    const visible = solverVisibleMedia(row);
+    const urls = await this.signMany([visible.voice_path, visible.image_path]);
+    const { image_status: _status, ...fields } = this.mediaFields(visible, urls);
+    return fields;
   }
 
   /** Soru satiri silindikten sonra dosyalari. Hata loglanir, firlatilmaz: satir zaten gitti. */

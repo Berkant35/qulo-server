@@ -308,3 +308,193 @@ describe('süre dolunca', () => {
     expect(row(fake).status).toBe('FAILED');
   });
 });
+
+/**
+ * Sesli/görselli soru (2.0.19): süre uzatması + imzalı medya URL'leri. Uzatma yalnız `active`
+ * (sürüm ≥ 2.0.19 + `media_questions_enabled`) iken; eski istemcide yanıt ve son an BİREBİR eski.
+ */
+const MEDIA_BUCKET = 'question-media';
+const VOICE = `${TARGET}/${Q1}/voice-1.m4a`;
+const IMAGE = `${TARGET}/${Q1}/image-1.jpg`;
+const mediaQ1 = (over: Record<string, unknown> = {}) => question(Q1, {
+  voice_path: VOICE, voice_duration_ms: 12_400, image_path: IMAGE, image_status: 'approved', ...over,
+});
+const mediaSeed = (sessionOver: Record<string, unknown> = {}, qOver: Record<string, unknown> = {}): Tables => ({
+  questions: [mediaQ1(qOver), question(Q2, { order_num: 2, time_limit: 60 })],
+  quiz_sessions: [session(sessionOver)],
+});
+const mediaStorage: FakeSupabaseOptions = { storage: { [MEDIA_BUCKET]: [VOICE, IMAGE] } };
+const ACTIVE = { active: true } as const;
+
+/** Medya özelliğinden önceki yanıt sözleşmesi — eski istemci (≤ 2.0.18) bunu alır. */
+const LEGACY_KEYS = [
+  'answers', 'expires_at', 'has_hint', 'question_id', 'question_number', 'question_text',
+  'remaining_seconds', 'session_id', 'time_limit_seconds', 'total_questions', 'used_powers',
+];
+
+describe('mediaExtraSeconds — saf hesap', () => {
+  async function load() {
+    await setup();
+    return (await import('../../src/services/quiz-deadline.service.js')).mediaExtraSeconds;
+  }
+
+  it('ses (yukarı yuvarlanır) + 3 sn, onaylı görsel + 3 sn', async () => {
+    const mediaExtraSeconds = await load();
+    expect(mediaExtraSeconds({ voice_duration_ms: 12_400, image_status: 'approved' })).toBe(19);
+  });
+
+  it('medyasız / bekleyen görsel → 0', async () => {
+    const mediaExtraSeconds = await load();
+    expect(mediaExtraSeconds({ voice_duration_ms: null, image_status: 'pending' })).toBe(0);
+    expect(mediaExtraSeconds({ voice_duration_ms: null, image_status: 'rejected' })).toBe(0);
+    expect(mediaExtraSeconds({ voice_duration_ms: null, image_status: null })).toBe(0);
+  });
+
+  it('yalnız ses → ceil + 3', async () => {
+    const mediaExtraSeconds = await load();
+    expect(mediaExtraSeconds({ voice_duration_ms: 8000, image_status: null })).toBe(11);
+  });
+
+  it('sınır dışı süre ses üst sınırına (15 sn) kırpılır — bozuk satır süreyi şişiremez', async () => {
+    const mediaExtraSeconds = await load();
+    expect(mediaExtraSeconds({ voice_duration_ms: 600_000, image_status: null })).toBe(18);
+  });
+});
+
+describe('getCurrentQuestion — eski istemci (medya kapalı) birebir eski', () => {
+  for (const [label, media] of [['argümansız', undefined], ['active:false', { active: false }]] as const) {
+    it(`${label}: yanıt anahtarları eski küme, son an eski hesap, imza/işaret yok`, async () => {
+      const { fake, quizService } = await setup(mediaSeed(), mediaStorage);
+
+      const reply = await quizService.getCurrentQuestion(SESSION, SOLVER, media);
+
+      expect(Object.keys(reply).sort()).toEqual(LEGACY_KEYS);
+      expect(secondsLeft(row(fake).expires_at)).toBe(30); // 20 + 10 — medya uzatması yok
+      expect(reply.remaining_seconds).toBe(30);
+      expect(reply.time_limit_seconds).toBe(20);
+      expect(row(fake).current_q_powers).toEqual([]);
+      expect(JSON.stringify(reply)).not.toContain('question-media');
+    });
+  }
+});
+
+describe('getCurrentQuestion — medya açık (2.0.19)', () => {
+  it('imzalı URL + süre; son an "şimdi + süre + uzatma + tolerans"a kurulur', async () => {
+    const { fake, quizService } = await setup(mediaSeed(), mediaStorage);
+
+    const reply = await quizService.getCurrentQuestion(SESSION, SOLVER, ACTIVE);
+
+    expect(reply.voice_url).toContain(`/sign/${MEDIA_BUCKET}/${VOICE}?expiresIn=600`);
+    expect(reply.image_url).toContain(`/sign/${MEDIA_BUCKET}/${IMAGE}?expiresIn=600`);
+    expect(reply.voice_duration_ms).toBe(12_400);
+    expect(reply.media_extra_seconds).toBe(19);
+    expect(reply.time_limit_seconds).toBe(20); // taban süre; istemci uzatmayı ayrıca okur
+    expect(secondsLeft(row(fake).expires_at)).toBe(49); // 20 + 19 + 10
+    expect(reply.remaining_seconds).toBe(49);
+    expect(reply.expires_at).toBe(row(fake).expires_at);
+    expect(JSON.stringify(reply)).not.toContain('"voice_path"');
+  });
+
+  it('uzatma geçiş tamponunu aşsa da ilk sunumda verilir (yalnız daraltan arm bunu kaçırırdı)', async () => {
+    // Geçişten sonra son an 30 sn'ye inmiş (geç gelen GET): 20 + 19 + 10 = 49 > 30.
+    const { fake, quizService } = await setup(mediaSeed({ expires_at: at(30) }), mediaStorage);
+
+    const reply = await quizService.getCurrentQuestion(SESSION, SOLVER, ACTIVE);
+
+    expect(secondsLeft(row(fake).expires_at)).toBe(49);
+    expect(reply.remaining_seconds).toBe(49);
+  });
+
+  it('tekrar çekmek uzatmayı yeniden eklemez (süre kazanma yolu yok)', async () => {
+    const { fake, quizService } = await setup(mediaSeed({ expires_at: at(30) }), mediaStorage);
+    await quizService.getCurrentQuestion(SESSION, SOLVER, ACTIVE); // 49
+    const armed = row(fake).expires_at;
+
+    vi.setSystemTime(new Date(NOW.getTime() + 15_000));
+    const again = await quizService.getCurrentQuestion(SESSION, SOLVER, ACTIVE);
+
+    expect(row(fake).expires_at).toBe(armed);
+    expect(again.remaining_seconds).toBe(34);
+    expect(again.media_extra_seconds).toBe(19);
+  });
+
+  it('ilk sunum daraltsa da ikinci sunum uzatamaz (önce erken çek, sonra geç çek)', async () => {
+    const { quizService } = await setup(mediaSeed(), mediaStorage); // son an 60
+    await quizService.getCurrentQuestion(SESSION, SOLVER, ACTIVE); // 60 → 49 daraltma
+
+    vi.setSystemTime(new Date(NOW.getTime() + 40_000)); // 9 sn kaldı
+    const again = await quizService.getCurrentQuestion(SESSION, SOLVER, ACTIVE);
+
+    expect(again.remaining_seconds).toBe(9);
+  });
+
+  it('TIME_EXTEND sonrası ikinci arm uzatmayı tekrar eklemez', async () => {
+    const { fake, quizService } = await setup(mediaSeed(), mediaStorage);
+    await quizService.getCurrentQuestion(SESSION, SOLVER, ACTIVE); // 49
+    await quizService.answerQuestion(SESSION, SOLVER, undefined, 'TIME_EXTEND'); // 64
+    expect(row(fake).current_q_powers).toContain('TIME_EXTEND');
+
+    vi.setSystemTime(new Date(NOW.getTime() + 2_000));
+    const again = await quizService.getCurrentQuestion(SESSION, SOLVER, ACTIVE);
+
+    expect(secondsLeft(row(fake).expires_at)).toBe(62);
+    expect(again.remaining_seconds).toBe(62);
+  });
+
+  it('iç medya işareti istemciye used_powers içinde dönmez', async () => {
+    const { quizService } = await setup(mediaSeed(), mediaStorage);
+    await quizService.getCurrentQuestion(SESSION, SOLVER, ACTIVE);
+
+    const again = await quizService.getCurrentQuestion(SESSION, SOLVER, ACTIVE);
+
+    expect(again.used_powers).toEqual([]);
+  });
+
+  it('bekleyen görsel: URL yok, görsel uzatması yok (yalnız ses)', async () => {
+    const { fake, quizService } = await setup(mediaSeed({}, { image_status: 'pending' }), mediaStorage);
+
+    const reply = await quizService.getCurrentQuestion(SESSION, SOLVER, ACTIVE);
+
+    expect(reply.image_url).toBeNull();
+    expect(reply.voice_url).not.toBeNull();
+    expect(reply.media_extra_seconds).toBe(16); // 13 + 3
+    expect(secondsLeft(row(fake).expires_at)).toBe(46);
+  });
+
+  it('medyasız soru: alanlar null/0, son an eski hesap, işaret yazılmaz', async () => {
+    const { fake, quizService } = await setup();
+
+    const reply = await quizService.getCurrentQuestion(SESSION, SOLVER, ACTIVE);
+
+    expect(reply).toMatchObject({ voice_url: null, voice_duration_ms: null, image_url: null, media_extra_seconds: 0 });
+    expect(secondsLeft(row(fake).expires_at)).toBe(30);
+    expect(row(fake).current_q_powers).toEqual([]);
+  });
+
+  it('işaret yazılamazsa uzatma verilmez (fail-closed), daraltma yine çalışır', async () => {
+    const { fake, quizService } = await setup(mediaSeed({ expires_at: at(30) }), {
+      ...mediaStorage,
+      rpc: { quiz_session_mark_power: () => ({ data: null, error: { message: 'boom' } }) },
+    });
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const reply = await quizService.getCurrentQuestion(SESSION, SOLVER, ACTIVE);
+
+    expect(secondsLeft(row(fake).expires_at)).toBe(30); // uzamadı
+    expect(reply.remaining_seconds).toBe(30);
+  });
+
+  it('imza hatası yanıtı patlatmaz: URL null, süre DB durumundan', async () => {
+    const { quizService } = await setup(mediaSeed(), {
+      ...mediaStorage,
+      storageFailOn: [{ bucket: MEDIA_BUCKET, op: 'sign' }],
+    });
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    const reply = await quizService.getCurrentQuestion(SESSION, SOLVER, ACTIVE);
+
+    expect(reply.voice_url).toBeNull();
+    expect(reply.image_url).toBeNull();
+    expect(reply.media_extra_seconds).toBe(19);
+  });
+});

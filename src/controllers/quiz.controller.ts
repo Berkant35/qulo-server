@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { quizService } from "../services/quiz.service.js";
+import { mediaQuestionsActive } from "../services/media-questions-gate.js";
 import type { StartQuizInput, AnswerQuizInput } from "../validators/quiz.validator.js";
 
 export async function startQuizHandler(req: Request, res: Response, next: NextFunction) {
@@ -13,11 +14,24 @@ export async function startQuizHandler(req: Request, res: Response, next: NextFu
   }
 }
 
+/**
+ * Sesli/gorselli soru kapisi (>= 2.0.19 VE `media_questions_enabled`). Kapi hatasi quiz'i bozmaz:
+ * medya kapali sayilir (fail-closed) — eski istemci zaten surum kontrolunde elenir.
+ */
+async function mediaActive(req: Request): Promise<boolean> {
+  try {
+    return await mediaQuestionsActive(req.headers);
+  } catch (err) {
+    console.error("[quiz] media gate failed:", err);
+    return false;
+  }
+}
+
 export async function getCurrentQuestionHandler(req: Request, res: Response, next: NextFunction) {
   try {
     const userId = req.user!.userId;
     const sessionId = req.params.session_id as string;
-    const data = await quizService.getCurrentQuestion(sessionId, userId);
+    const data = await quizService.getCurrentQuestion(sessionId, userId, { active: await mediaActive(req) });
     res.json(data);
   } catch (err) {
     next(err);
