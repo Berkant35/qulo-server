@@ -281,6 +281,18 @@ export const Errors = {
   PAGE_SECTION_IMAGE_REQUIRED: () =>
     new AppError("PAGE_SECTION_IMAGE_REQUIRED", 400, "Banner image is required"),
 
+  /** Özellik kapısı kapalı ya da istemci sürümü eski (ör. sesli/görselli soru: ≥2.0.19 + `media_questions_enabled`). */
+  FEATURE_DISABLED: () =>
+    new AppError("FEATURE_DISABLED", 403, "This feature is not available"),
+
+  /** Kullanıcının bu sıra numarasında sorusu yok (soru medyası uçları). */
+  QUESTION_NOT_FOUND: () =>
+    new AppError("QUESTION_NOT_FOUND", 404, "Question not found"),
+
+  /** Soru medyası okuma ile yazma arasında başka bir istekle değişti ya da soru silindi — istemci yeniden dener. */
+  QUESTION_MEDIA_CONFLICT: () =>
+    new AppError("QUESTION_MEDIA_CONFLICT", 409, "Question media changed concurrently"),
+
   INVALID_PHOTO_INDEX: () =>
     new AppError("INVALID_PHOTO_INDEX", 400, "Invalid photo index"),
 

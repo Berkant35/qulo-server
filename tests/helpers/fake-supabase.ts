@@ -54,7 +54,8 @@ export interface FailureSpec {
 /** Depolama hata enjeksiyonu — `FailureSpec`'in storage karşılığı. */
 export interface StorageFailureSpec {
   bucket: string;
-  op: 'list' | 'remove' | 'upload';
+  /** `sign`: `createSignedUrl` + `createSignedUrls`. */
+  op: 'list' | 'remove' | 'upload' | 'sign';
   error?: SupabaseError;
   /** Kaç başarılı çağrıdan SONRA patlasın (varsayılan 0 = hemen). */
   failAfter?: number;
@@ -537,6 +538,11 @@ export interface FakeSupabase {
   storageUploads: Array<{ bucket: string; path: string; body: unknown; opts?: StorageUploadOptions }>;
 }
 
+/** Fake imzalı URL biçimi — testler beklenen URL'i bununla kurar. */
+export function fakeSignedUrl(bucket: string, path: string, expiresIn: number): string {
+  return `https://fake.supabase.co/storage/v1/object/sign/${bucket}/${path}?expiresIn=${expiresIn}`;
+}
+
 /** `storage.from(b).upload` seçeneklerinin kod tabanında kullanılan kısmı. */
 export interface StorageUploadOptions { upsert?: boolean; contentType?: string; cacheControl?: string }
 
@@ -670,12 +676,12 @@ export function createFakeSupabase(
       };
     },
     /**
-     * Depolama — kod tabanının kullandığı `list`, `remove`, `upload`, `getPublicUrl`.
-     * Dosyalar `bucket → path` haritasında tutulur; `list(prefix)` o önekin
-     * altındaki dosya adlarını döner (Supabase `{ name }` listesi gibi).
+     * Depolama — kod tabanının kullandığı `list`, `remove`, `upload`, `getPublicUrl`,
+     * `createSignedUrl(s)`. Dosyalar `bucket → path` haritasında tutulur; `list(prefix)` o önekin
+     * altındaki girdileri döner (Supabase `FileObject` gibi `{ name, id }`).
      * Gerçek Storage'a sadık üç kural:
-     * - Sayfalı: `limit` verilmezse 100 dosya — sayfalamayı unutan kod testte de dosya bırakır.
-     * - Tek seviyeli: alt klasördeki dosyalar dönmez (klasör girdileri modellenmez).
+     * - Sayfalı: `limit` verilmezse 100 girdi — sayfalamayı unutan kod testte de dosya bırakır.
+     * - Tek seviyeli: alt klasördeki dosyalar dönmez; alt klasör tek girdi, `id: null`.
      * - `upload` var olan yola `upsert` verilmeden yazamaz (Storage 409 döner).
      */
     storage: {
@@ -704,10 +710,32 @@ export function createFakeSupabase(
             // `offset` gerçek API'deki gibi sayfalar: offset'i yok sayan bir fake, sayfalayan
             // kodu testte sonsuz döngüye sokar (her çağrı ilk sayfayı döner).
             const start = opts?.offset ?? 0;
-            const data = files()
-              .filter((path) => path.startsWith(`${prefix}/`) && !path.slice(prefix.length + 1).includes('/'))
-              .slice(start, start + (opts?.limit ?? 100))
-              .map((path) => ({ name: path.slice(prefix.length + 1) }));
+            const altYollar = files()
+              .filter((path) => path.startsWith(`${prefix}/`))
+              .map((path) => path.slice(prefix.length + 1));
+            // Dosyalar `id` taşır; alt klasör gerçek API'deki gibi TEK girdi, `id: null` (FileObject).
+            const dosyalar = altYollar
+              .filter((rest) => !rest.includes('/'))
+              .map((name) => ({ name, id: `fake-file:${prefix}/${name}` }));
+            const klasorler = [...new Set(altYollar.filter((rest) => rest.includes('/')).map((rest) => rest.split('/')[0]))]
+              .map((name) => ({ name, id: null }));
+            const data = [...dosyalar, ...klasorler].slice(start, start + (opts?.limit ?? 100));
+            return { data, error: null };
+          },
+          /** İmzalı URL — deterministik: yol + süre; dosya yoksa gerçek API gibi hata. */
+          async createSignedUrl(path: string, expiresIn: number) {
+            const failure = storageFailureFor(bucket, 'sign');
+            if (failure) return { data: null, error: failure };
+            if (!files().includes(path)) return { data: null, error: { message: 'Object not found', code: '404' } };
+            return { data: { signedUrl: fakeSignedUrl(bucket, path, expiresIn) }, error: null };
+          },
+          /** Toplu imza — tek istek; olmayan yol satır bazında `error` taşır (gerçek API gibi). */
+          async createSignedUrls(paths: string[], expiresIn: number) {
+            const failure = storageFailureFor(bucket, 'sign');
+            if (failure) return { data: null, error: failure };
+            const data = paths.map((path) => files().includes(path)
+              ? { path, signedUrl: fakeSignedUrl(bucket, path, expiresIn), error: null }
+              : { path, signedUrl: '', error: 'Either the object does not exist or you do not have access to it' });
             return { data, error: null };
           },
           async remove(paths: string[]) {

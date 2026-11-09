@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { env } from './env.js';
+import { IMAGE_MAX_BYTES, IMAGE_MIME_TYPES, QUESTION_MEDIA_BUCKET, VOICE_MIME_TYPES } from '../constants/question-media.js';
 
 export const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 
@@ -23,11 +24,11 @@ export async function ensureStorageBuckets() {
     },
     {
       // Soru medyası (sesli/görselli soru): PRIVATE — erişim yalnız sunucunun ürettiği imzalı URL ile.
-      id: "question-media",
+      id: QUESTION_MEDIA_BUCKET,
       options: {
         public: false,
-        fileSizeLimit: 8 * 1024 * 1024,
-        allowedMimeTypes: ["image/jpeg", "image/png", "image/webp", "audio/m4a", "audio/mp4", "audio/aac"],
+        fileSizeLimit: IMAGE_MAX_BYTES,
+        allowedMimeTypes: [...IMAGE_MIME_TYPES, ...VOICE_MIME_TYPES],
       },
     },
     {

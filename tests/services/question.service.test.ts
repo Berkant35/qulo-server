@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { createFakeSupabase, type Tables, type FakeSupabaseOptions } from '../helpers/fake-supabase.js';
+import { createFakeSupabase, fakeSignedUrl, type Tables, type FakeSupabaseOptions } from '../helpers/fake-supabase.js';
 import { activeConfigRow } from '../helpers/economy-config.fixture.js';
 
 /**
@@ -133,6 +133,69 @@ describe('deleteQuestion — silme ve sira yeniden dizilmesi', () => {
 
     const bRows = fake.table('questions').filter((r) => r.user_id === B);
     expect(bRows.map((r) => r.order_num).sort()).toEqual([1, 2]);
+  });
+});
+
+describe('soru medyasi — liste ve silme (sesli/gorselli soru)', () => {
+  const voice = `${A}/q1/voice-1.m4a`;
+  const image = `${A}/q1/image-2.jpg`;
+
+  it('GET /me her soruya imzali medya alanlarini ekler; sahip kendi pending gorselini gorur, ham yol donmez', async () => {
+    const { questionService } = await setup({
+      questions: [
+        q('q1', A, 1, { voice_path: voice, voice_duration_ms: 4200, image_path: image, image_status: 'pending' }),
+        q('q2', A, 2),
+      ],
+    }, { storage: { 'question-media': [voice, image] } });
+
+    const [withMedia, plain] = await questionService.getMyQuestions(A);
+
+    expect(withMedia).toMatchObject({
+      id: 'q1',
+      voice_url: fakeSignedUrl('question-media', voice, 600),
+      voice_duration_ms: 4200,
+      image_url: fakeSignedUrl('question-media', image, 600),
+      image_status: 'pending',
+    });
+    expect(withMedia).not.toHaveProperty('voice_path');
+    expect(withMedia).not.toHaveProperty('image_path');
+    expect(plain).toMatchObject({ id: 'q2', voice_url: null, voice_duration_ms: null, image_url: null, image_status: null });
+  });
+
+  it('migration oncesi satir (medya kolonu yok) bos medya alanlariyla doner', async () => {
+    const { questionService } = await setup({
+      questions: [{ id: 'q1', user_id: A, order_num: 1, question_text: 'Soru 1' }],
+    });
+
+    const [row] = await questionService.getMyQuestions(A);
+
+    expect(row).toMatchObject({ voice_url: null, voice_duration_ms: null, image_url: null, image_status: null });
+  });
+
+  it('deleteQuestion silinen sorunun medya dosyalarini siler, baskasininkine dokunmaz', async () => {
+    const keep = `${B}/qB/voice-3.m4a`;
+    const { fake, questionService } = await setup({
+      questions: [
+        q('q1', A, 1, { voice_path: voice, voice_duration_ms: 1000, image_path: image, image_status: 'approved' }),
+        q('qB', B, 1, { voice_path: keep, voice_duration_ms: 1000 }),
+      ],
+    }, { storage: { 'question-media': [voice, image, keep] } });
+
+    await questionService.deleteQuestion(A, 1);
+
+    expect(fake.storageFiles('question-media')).toEqual([keep]);
+  });
+
+  it('medya silinemese de soru silme basarili doner (satir zaten gitti)', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const { fake, questionService } = await setup({
+      questions: [q('q1', A, 1, { voice_path: voice, voice_duration_ms: 1000 })],
+    }, { storage: { 'question-media': [voice] }, storageFailOn: [{ bucket: 'question-media', op: 'remove' }] });
+
+    await expect(questionService.deleteQuestion(A, 1)).resolves.toBeUndefined();
+    expect(fake.table('questions')).toHaveLength(0);
+    expect(warn).toHaveBeenCalled();
+    warn.mockRestore();
   });
 });
 

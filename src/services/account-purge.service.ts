@@ -1,6 +1,7 @@
 import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
 import { assertUuid } from "../utils/validation.js";
+import { questionMediaService } from "./question-media.service.js";
 
 /** Storage `list` varsayilani 100 dosya; sohbet klasorleri sayfa sayfa bosaltilir. */
 const CHAT_MEDIA_PAGE_SIZE = 1000;
@@ -119,6 +120,8 @@ class AccountPurgeService {
     // mesajlarin gercekten gittigini garanti ediyor. Once silinseydi, eslesme silmesi
     // patladiginda karsi taraf hala duran sohbette kirik medya gorurdu.
     await this.removeChatMedia(matchIds);
+    // Soru medyasi (private, `${userId}/${questionId}/`): satirlar gittikten sonra, ayni gerekce.
+    await questionMediaService.removeAllForUser(userId);
 
     console.log(`[hardDelete] User ${userId} fully purged`);
   }

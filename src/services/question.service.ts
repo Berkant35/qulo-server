@@ -4,6 +4,7 @@ import type { CreateQuestionInput, UpdateQuestionInput } from "../validators/que
 import { aiSuggestService } from './ai-suggest.service.js';
 import { subscriptionService } from './subscription.service.js';
 import { economyConfigService } from "./economy-config.service.js";
+import { questionMediaService } from "./question-media.service.js";
 import type { SubscriptionPlan } from '../types/index.js';
 
 // Minimum number of questions a user must have to be discoverable + to leave
@@ -42,7 +43,8 @@ export class QuestionService {
       throw Errors.SERVER_ERROR();
     }
 
-    return data;
+    // Sahip medya alanlari (imzali URL, kendi `pending` gorseli dahil); ham depolama yolu donmez.
+    return questionMediaService.withOwnerMedia(data ?? []);
   }
 
   /**
@@ -224,11 +226,14 @@ export class QuestionService {
   }
 
   async deleteQuestion(userId: string, orderNum: number) {
-    const { error, count } = await supabase
+    // Silinen satir medya yollari icin geri okunur. `*`: 084 oncesi semada da calissin
+    // (adi verilen eksik kolon PostgREST'te DELETE'i geri alirdi).
+    const { data: deleted, error, count } = await supabase
       .from("questions")
       .delete({ count: "exact" })
       .eq("user_id", userId)
-      .eq("order_num", orderNum);
+      .eq("order_num", orderNum)
+      .select("*");
 
     if (error) {
       throw Errors.SERVER_ERROR();
@@ -240,6 +245,9 @@ export class QuestionService {
 
     // Reorder remaining questions to fill the gap
     await this.reorderQuestions(userId);
+
+    // Medya dosyalari satir gittikten SONRA (isaretci dosyasiz kalmaz); hata silmeyi bozmaz.
+    for (const row of deleted ?? []) await questionMediaService.removeAllForQuestion(row);
   }
 
   private async reorderQuestions(userId: string) {
