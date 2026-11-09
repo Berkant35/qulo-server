@@ -74,6 +74,40 @@ describe('updateAppConfig — discover_dormant_days (migration 074)', () => {
   });
 });
 
+describe('updateAppConfig — canli hedef ayarlari + recall e-postasi (migration 080)', () => {
+  it('dislama esigi ve cevapsiz tavan sayi olarak yazilir', async () => {
+    const { patch } = await setup({ discover_inactive_exclude_days: '45', discover_unanswered_match_cap: '0' });
+    expect(patch()).toMatchObject({ discover_inactive_exclude_days: 45, discover_unanswered_match_cap: 0 });
+  });
+
+  it.each([
+    ['discover_inactive_exclude_days', '366'],
+    ['discover_unanswered_match_cap', '101'],
+    ['discover_unanswered_match_cap', '-1'],
+  ])('%s gecersiz (%s) reddedilir, config yazilmaz', async (alan, deger) => {
+    const { updateConfig, res } = await setup({ [alan]: deger });
+    expect(updateConfig).not.toHaveBeenCalled();
+    expect(res.redirectedTo).toContain(encodeURIComponent(alan));
+  });
+
+  it('alanlar gelmezse (080 oncesi form) patch\'e girmez; recall e-postasi dokunulmaz', async () => {
+    const { patch } = await setup({});
+    expect(patch()).not.toHaveProperty('discover_inactive_exclude_days');
+    expect(patch()).not.toHaveProperty('discover_unanswered_match_cap');
+    expect(patch()).not.toHaveProperty('recall_email_enabled');
+  });
+
+  it('recall e-postasi: isaret + checkbox isaretliyse true yazar', async () => {
+    const { patch } = await setup({ recall_email_enabled_field: '1', recall_email_enabled: 'on' });
+    expect(patch()).toMatchObject({ recall_email_enabled: true });
+  });
+
+  it('recall e-postasi: isaret var checkbox yoksa false — panelden KAPATILABILIR', async () => {
+    const { patch } = await setup({ recall_email_enabled_field: '1' });
+    expect(patch()).toMatchObject({ recall_email_enabled: false });
+  });
+});
+
 describe('updateAppConfig — mutual_match_enabled (migration 075)', () => {
   it('form alanı varken işaretliyse true yazar', async () => {
     const { patch } = await setup({ mutual_match_field: '1', mutual_match_enabled: 'on' });

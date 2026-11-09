@@ -87,6 +87,10 @@ async function loadService(
     rpc?: FakeSupabaseOptions["rpc"];
     /** app_config.discover_dormant_days (migration 074); varsayilan 14. */
     dormantDays?: number;
+    /** app_config.discover_inactive_exclude_days (migration 080); testte varsayilan 0 (kapali — eski testler). */
+    inactiveExcludeDays?: number;
+    /** app_config.discover_unanswered_match_cap (migration 080); testte varsayilan 0 (kapali). */
+    unansweredCap?: number;
     /** app_config.mutual_match_enabled (migration 075); varsayilan kapali. */
     mutual?: boolean;
     /** app_config.served_gate_enabled (migration 077); varsayilan kapali. */
@@ -115,6 +119,8 @@ async function loadService(
   vi.doMock("../../src/services/app-config.service.js", () => ({
     appConfigService: {
       getDiscoverDormantDays: async () => opts.dormantDays ?? 14,
+      getDiscoverInactiveExcludeDays: async () => opts.inactiveExcludeDays ?? 0,
+      getDiscoverUnansweredMatchCap: async () => opts.unansweredCap ?? 0,
       getMutualMatchEnabled: async () => opts.mutual ?? false,
       getServedGateEnabled: async () => opts.servedGate ?? false,
     },
@@ -498,7 +504,7 @@ describe("discover — uyuyan hesaplar sona (prod 29 Eyl-3 Eki: yanitsiz eslesme
     expect(res.cards.map((c) => c.user_id)).toEqual([UYUYAN_YAKIN, AKTIF_UZAK]);
   });
 
-  it("havuzda yalniz uyuyanlar varsa Discover BOSALMAZ — sert filtre degil", async () => {
+  it("dislama kapaliyken (0) havuzda yalniz uyuyanlar varsa Discover BOSALMAZ — uyuyan esigi sert filtre degil", async () => {
     const ids = [uid(42), uid(43)];
     const service = await loadService({
       users: [viewerRow(), ...ids.map((id, i) => candidateRow(id, 3 + i, { last_seen_at: gunOnce(100) }))],
@@ -511,7 +517,7 @@ describe("discover — uyuyan hesaplar sona (prod 29 Eyl-3 Eki: yanitsiz eslesme
     expect(res.empty_reason).toBeUndefined();
   });
 
-  it("last_seen_at bos aday uyuyan sayilir ama listede kalir", async () => {
+  it("dislama kapaliyken last_seen_at bos aday uyuyan sayilir ama listede kalir", async () => {
     const BOS = uid(44);
     const service = await loadService(tablolar([candidateRow(BOS, 1, { last_seen_at: null })]));
     const res = await service.discover(VIEWER_ID, 1);
@@ -545,6 +551,169 @@ describe("discover — uyuyan hesaplar sona (prod 29 Eyl-3 Eki: yanitsiz eslesme
     });
     const res = await service.discover(VIEWER_ID, 1);
     expect(res.cards.map((c) => c.user_id)).toEqual([UYUYAN_YAKIN, AKTIF_UZAK, SEED]);
+  });
+});
+
+describe("discover — canli hedef onceligi (2.0.18: 208 eslesmenin 4'u konusmaya dondu)", () => {
+  const gunOnce = (gun: number) => new Date(Date.now() - gun * 24 * 60 * 60 * 1000).toISOString();
+  const AKTIF = uid(60);
+  const ON_GUN = uid(61);
+  const KIRK_GUN = uid(62);
+  const HIC = uid(63);
+  const users = () => [
+    viewerRow(),
+    candidateRow(AKTIF, 120, { last_seen_at: gunOnce(0.1) }),
+    candidateRow(ON_GUN, 2, { last_seen_at: gunOnce(10) }),
+    candidateRow(KIRK_GUN, 1, { last_seen_at: gunOnce(40) }),
+    candidateRow(HIC, 1, { last_seen_at: null }),
+  ];
+  const tablolar = (): Tables => ({
+    users: users(), swipes: [], matches: [], questions: questionsFor([AKTIF, ON_GUN, KIRK_GUN, HIC]),
+  });
+  const RPC = "discover_unanswered_match_counts";
+
+  it("30+ gundur gorulmeyen ve hic gorulmemis aday desteden cikar; 10 gunluk uyuyan sonda kalir", async () => {
+    const service = await loadService(tablolar(), { dormantDays: 3, inactiveExcludeDays: 30 });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual([AKTIF, ON_GUN]);
+  });
+
+  it("dislama 0 ise (kapali) hepsi listede, eski davranis", async () => {
+    const service = await loadService(tablolar(), { dormantDays: 3, inactiveExcludeDays: 0 });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id).sort()).toEqual([AKTIF, ON_GUN, KIRK_GUN, HIC].sort());
+  });
+
+  it("seed dislanmaz (presence ritmi yapay)", async () => {
+    const SEED = uid(64);
+    const t = tablolar();
+    t.users.push(candidateRow(SEED, 1, { is_seed_profile: true, is_test_account: true, last_seen_at: gunOnce(90) }));
+    (t.questions as unknown[]).push(...questionsFor([SEED]));
+    const service = await loadService(t, { dormantDays: 3, inactiveExcludeDays: 30 });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toContain(SEED);
+  });
+
+  it("dil kapisini gecenlerin hepsi uzun suredir gorulmuyorsa empty_reason 'inactive'", async () => {
+    const service = await loadService({
+      users: [viewerRow(), candidateRow(KIRK_GUN, 1, { last_seen_at: gunOnce(40) })],
+      swipes: [], matches: [], questions: questionsFor([KIRK_GUN]),
+    }, { inactiveExcludeDays: 30 });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards).toEqual([]);
+    expect(res.empty_reason).toBe("inactive");
+  });
+
+  it("dil kapisi hepsini elediyse sebep yine 'language' (aktiflik dislamasi acikken de)", async () => {
+    const service = await loadService({
+      users: [viewerRow(), candidateRow(AKTIF, 1)],
+      swipes: [], matches: [], questions: questionsFor([AKTIF], "de"),
+    }, { inactiveExcludeDays: 30 });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.empty_reason).toBe("language");
+  });
+
+  it("cevapsiz eslesmesi tavani asan aktif aday, diger aktiflerin ARKASINA, uyuyanin ONUNE gider", async () => {
+    const YIGILMIS = uid(65);
+    const t: Tables = {
+      users: [
+        viewerRow(),
+        candidateRow(YIGILMIS, 1, { last_seen_at: gunOnce(0.1) }),
+        candidateRow(AKTIF, 120, { last_seen_at: gunOnce(0.1) }),
+        candidateRow(ON_GUN, 2, { last_seen_at: gunOnce(10) }),
+      ],
+      swipes: [], matches: [], questions: questionsFor([YIGILMIS, AKTIF, ON_GUN]),
+    };
+    const service = await loadService(t, {
+      dormantDays: 3, inactiveExcludeDays: 30, unansweredCap: 3,
+      rpc: { [RPC]: { data: [{ user_id: YIGILMIS, unanswered: 21 }] } },
+    });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual([AKTIF, YIGILMIS, ON_GUN]);
+    const call = sonFake.rpcCalls.find((c) => c.name === RPC);
+    expect(call?.args).toMatchObject({ p_min: 3 });
+    const { p_since, p_until } = call?.args as { p_since: string; p_until: string };
+    expect(Math.abs(Date.now() - 30 * 24 * 60 * 60 * 1000 - Date.parse(p_since))).toBeLessThan(60_000);
+    // Cevap verme payi: son 24 saatteki eslesme "cevapsiz" sayilmaz.
+    expect(Math.abs(Date.now() - 24 * 60 * 60 * 1000 - Date.parse(p_until))).toBeLessThan(60_000);
+  });
+
+  it("RPC tavani asmayan satiri dondururse (savunma) kullanici yigilmis sayilmaz", async () => {
+    const service = await loadService({
+      users: [viewerRow(), candidateRow(ON_GUN, 1, { last_seen_at: gunOnce(0.1) }), candidateRow(AKTIF, 120, { last_seen_at: gunOnce(0.1) })],
+      swipes: [], matches: [], questions: questionsFor([ON_GUN, AKTIF]),
+    }, { unansweredCap: 3, rpc: { [RPC]: { data: [{ user_id: ON_GUN, unanswered: 2 }] } } });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual([ON_GUN, AKTIF]);
+  });
+
+  it("tavan 0 (kapali) ise RPC hic cagrilmaz", async () => {
+    const service = await loadService(tablolar(), { unansweredCap: 0 });
+    await service.discover(VIEWER_ID, 1);
+    expect(sonFake.rpcCalls.some((c) => c.name === RPC)).toBe(false);
+  });
+
+  it("RPC hatasi Discover'i bozmaz: kartlar doner, tavan uygulanmaz, hata loglanir", async () => {
+    const err = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const service = await loadService(tablolar(), {
+      dormantDays: 3, inactiveExcludeDays: 30, unansweredCap: 3,
+      rpc: { [RPC]: { data: null, error: { message: "function does not exist" } } },
+    });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual([AKTIF, ON_GUN]);
+    expect(err).toHaveBeenCalledWith(expect.stringContaining("unanswered RPC"), "function does not exist");
+  });
+
+  it("hic gorulmemis (last_seen_at NULL) 500+ hesap aday tavanini yemez: aktif aday yine gelir (NULLS LAST)", async () => {
+    const nulls = Array.from({ length: 520 }, (_, i) => candidateRow(uid(1000 + i), 1, { last_seen_at: null }));
+    const service = await loadService({
+      users: [viewerRow(), ...nulls, candidateRow(AKTIF, 120, { last_seen_at: gunOnce(0.1) })],
+      swipes: [], matches: [], questions: questionsFor([AKTIF]),
+    }, { inactiveExcludeDays: 30 });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual([AKTIF]);
+  });
+
+  it("RPC sonucu onbellekli: ardisik iki Discover istegi tek RPC", async () => {
+    const service = await loadService(tablolar(), { unansweredCap: 3, rpc: { [RPC]: { data: [] } } });
+    await service.discover(VIEWER_ID, 1);
+    await service.discover(VIEWER_ID, 1);
+    expect(sonFake.rpcCalls.filter((c) => c.name === RPC)).toHaveLength(1);
+  });
+});
+
+describe("discover — aktiflik sinyali (kart.activity)", () => {
+  const saatOnce = (saat: number) => new Date(Date.now() - saat * 60 * 60 * 1000).toISOString();
+  it("son 24 saat 'today', 7 gun 'week', daha eski null; seed her zaman null; ham zaman damgasi sizmaz", async () => {
+    const [BUGUN, HAFTA, ESKI, SEED] = [uid(70), uid(71), uid(72), uid(73)];
+    const service = await loadService({
+      users: [
+        viewerRow(),
+        candidateRow(BUGUN, 1, { last_seen_at: saatOnce(23) }),
+        candidateRow(HAFTA, 2, { last_seen_at: saatOnce(24 * 6) }),
+        candidateRow(ESKI, 3, { last_seen_at: saatOnce(24 * 8) }),
+        candidateRow(SEED, 4, { is_seed_profile: true, is_test_account: true, last_seen_at: saatOnce(0) }),
+      ],
+      swipes: [], matches: [], questions: questionsFor([BUGUN, HAFTA, ESKI, SEED]),
+    }, { dormantDays: 0 });
+    const res = await service.discover(VIEWER_ID, 1);
+    const byId = new Map(res.cards.map((c) => [c.user_id, c]));
+    expect(byId.get(BUGUN)?.activity).toBe("today");
+    expect(byId.get(HAFTA)?.activity).toBe("week");
+    expect(byId.get(ESKI)?.activity).toBeNull();
+    expect(byId.get(SEED)?.activity).toBeNull();
+    for (const card of res.cards) {
+      expect(JSON.stringify(card)).not.toMatch(/last_seen|\d{4}-\d{2}-\d{2}T/);
+    }
+  });
+});
+
+describe("emptyReasonOf", () => {
+  it("eleme zincirine gore sebep", async () => {
+    const { emptyReasonOf } = await import("../../src/services/discover-ranking.js");
+    expect(emptyReasonOf(0, 0)).toBe("no_candidates");
+    expect(emptyReasonOf(5, 0)).toBe("language");
+    expect(emptyReasonOf(5, 3)).toBe("inactive");
   });
 });
 
@@ -689,6 +858,18 @@ describe("undoSwipe — tier tutarliligi", () => {
     const card = await service.undoSwipe(VIEWER_ID, UZAK_ID);
     // Ayni mesafe discover'da tier 2 donuyor (bkz. yukaridaki test).
     expect(card.distance_tier).toBe(2);
+  });
+
+  it("undo edilen kart da aktiflik sinyalini tasir (discover ile ayni sozlesme)", async () => {
+    const service = await loadService({
+      users: [viewerRow(), candidateRow(UZAK_ID, 300, { last_seen_at: new Date().toISOString() })],
+      swipes: [{ swiper_id: VIEWER_ID, target_id: UZAK_ID, action: "REJECT" }],
+      matches: [],
+      questions: questionsFor([UZAK_ID]),
+    });
+    const card = await service.undoSwipe(VIEWER_ID, UZAK_ID);
+    expect(card.activity).toBe("today");
+    expect(card).not.toHaveProperty("last_seen_at");
   });
 });
 
@@ -1501,5 +1682,26 @@ describe("discover — gösterim kaydı (spec 2026-10-06 kehanet açığı)", ()
     const service = await loadService({ ...tablolar(), users: [viewerRow()] });
     await service.discover(VIEWER_ID);
     expect(sonFake.queries.filter((q) => q.table === "discover_served")).toHaveLength(0);
+  });
+});
+
+describe("discover-ranking (saf kurallar)", () => {
+  it("excludeLongInactive: 0 kapali; seed kalir; null ve esik oncesi cikar", async () => {
+    const { excludeLongInactive } = await import("../../src/services/discover-ranking.js");
+    const now = Date.parse("2026-11-09T12:00:00Z");
+    const rows = [
+      { id: "a", is_seed_profile: false, last_seen_at: "2026-11-01T00:00:00Z" },
+      { id: "b", is_seed_profile: false, last_seen_at: "2026-09-01T00:00:00Z" },
+      { id: "c", is_seed_profile: false, last_seen_at: null },
+      { id: "d", is_seed_profile: true, last_seen_at: null },
+    ];
+    expect(excludeLongInactive(rows, 0, now)).toHaveLength(4);
+    expect(excludeLongInactive(rows, 30, now).map((r) => r.id)).toEqual(["a", "d"]);
+  });
+
+  it("discoverGroupRank: aktif 0 < seed 1 < yigilmis aktif 2 < uyuyan 3", async () => {
+    const { discoverGroupRank } = await import("../../src/services/discover-ranking.js");
+    expect([discoverGroupRank(false, false), discoverGroupRank(true, true, true), discoverGroupRank(false, false, true), discoverGroupRank(false, true, true)])
+      .toEqual([0, 1, 2, 3]);
   });
 });

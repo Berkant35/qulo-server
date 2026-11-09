@@ -7,6 +7,10 @@
     "new_match_solver": "Tebrikler! Tüm soruları doğru çözdün, yeni bir eşleşmen var!",
     "new_match_badge": "Birisi sorularını {badge} badge ile çözdü! Yeni eşleşmen var!",
     "chat_question_answered": "Sohbet sorunuz cevaplandi ({result})",
+    "lifecycle_solved_waiting": {
+      "title": "Biri sorularını çözdü",
+      "body": "{name} sorularının hepsini doğru bildi ve eşleştiniz. Cevabını bekliyor!"
+    },
     "lifecycle_unread_message": {
       "title": "Okunmamış mesajın var",
       "body": "{name} sana yazdı, cevabını bekliyor."

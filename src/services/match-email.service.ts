@@ -19,6 +19,7 @@ interface OwnerRow {
   locale: string | null;
   last_active_at: string | null;
   email_notifications_enabled: boolean;
+  email_verified: boolean | null;
   is_deleted: boolean;
 }
 
@@ -27,7 +28,7 @@ class MatchEmailService {
     try {
       const { data: owner } = await supabase
         .from("users")
-        .select("id, email, locale, last_active_at, email_notifications_enabled, is_deleted")
+        .select("id, email, locale, last_active_at, email_notifications_enabled, email_verified, is_deleted")
         .eq("id", ownerId)
         .single();
       if (!owner) return;
@@ -39,11 +40,19 @@ class MatchEmailService {
       // 1) Opt-out kontrolü
       if (!o.email_notifications_enabled) return;
 
+      // 1b) Dogrulanmamis adrese eslesme e-postasi yok: baskasinin adresiyle acilan hesap, karsi tarafin
+      // adini o adrese yollatmasin (2.0.18 inceleme). Prod 10-01..11-09: 190 e-postanin 1'i dogrulanmamisa.
+      if (o.email_verified !== true) return;
+
       // 2) Inactive threshold (NULL → inactive kabul)
       if (o.last_active_at) {
         const inactiveMs = Date.now() - new Date(o.last_active_at).getTime();
         if (inactiveMs < INACTIVE_THRESHOLD_MS) return;
       }
+
+      // 2b) Gunluk tavan: son 20 saatte bu kullaniciya herhangi bir e-posta gittiyse atla.
+      // Prod 10-01..11-09: 190 eslesme e-postasinin 33'u ayni gun ikinci+ e-postaydi (tek hedefe gunde 4).
+      if (await emailUnsubscribeTokenService.sentWithinDailyWindow(o.id)) return;
 
       // 3) Locale + content (unknown locale → 'en' fallback via resolveLocale)
       const locale = resolveLocale(o.locale);

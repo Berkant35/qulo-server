@@ -6,13 +6,15 @@ interface MockOwner {
   locale: string | null;
   last_active_at: string | null;
   email_notifications_enabled: boolean;
+  email_verified?: boolean;
 }
 
-function mockDeps(opts: { owner: MockOwner | null; sendThrow?: boolean }) {
+function mockDeps(opts: { owner: MockOwner | null; sendThrow?: boolean; emailedRecently?: boolean }) {
   const sendMock = opts.sendThrow
     ? vi.fn().mockRejectedValue(new Error("gmail down"))
     : vi.fn().mockResolvedValue("messageId-xyz");
   const createTokenMock = vi.fn().mockResolvedValue("test-token-abc");
+  const issuedSinceMock = vi.fn().mockResolvedValue(opts.emailedRecently ?? false);
 
   vi.doMock("../../src/config/supabase.js", () => ({
     supabase: {
@@ -29,13 +31,13 @@ function mockDeps(opts: { owner: MockOwner | null; sendThrow?: boolean }) {
     },
   }));
   vi.doMock("../../src/services/email-unsubscribe-token.service.js", () => ({
-    emailUnsubscribeTokenService: { create: createTokenMock },
+    emailUnsubscribeTokenService: { create: createTokenMock, sentWithinDailyWindow: issuedSinceMock },
   }));
   vi.doMock("../../src/utils/gmail.js", () => ({
     sendEmail: sendMock,
   }));
 
-  return { sendMock, createTokenMock };
+  return { sendMock, createTokenMock, issuedSinceMock };
 }
 
 const ACTIVE_OWNER = (extra: Partial<MockOwner> = {}): MockOwner => ({
@@ -44,6 +46,7 @@ const ACTIVE_OWNER = (extra: Partial<MockOwner> = {}): MockOwner => ({
   locale: "en",
   last_active_at: new Date(Date.now() - 1 * 3600 * 1000).toISOString(),
   email_notifications_enabled: true,
+  email_verified: true,
   ...extra,
 });
 
@@ -53,6 +56,7 @@ const INACTIVE_OWNER = (extra: Partial<MockOwner> = {}): MockOwner => ({
   locale: "en",
   last_active_at: new Date(Date.now() - 25 * 3600 * 1000).toISOString(),
   email_notifications_enabled: true,
+  email_verified: true,
   ...extra,
 });
 
@@ -68,6 +72,23 @@ describe("matchEmailService.sendMatchEmail", () => {
     const { matchEmailService } = await import("../../src/services/match-email.service.js");
     await matchEmailService.sendMatchEmail("u1");
     expect(sendMock).not.toHaveBeenCalled();
+  });
+
+  it("gunluk tavan: son 20 saatte e-posta gittiyse (tek hedefe gunde 4 eslesme e-postasi) atlar, token da uretmez", async () => {
+    const { sendMock, createTokenMock, issuedSinceMock } = mockDeps({ owner: INACTIVE_OWNER(), emailedRecently: true });
+    const { matchEmailService } = await import("../../src/services/match-email.service.js");
+    await matchEmailService.sendMatchEmail("u1");
+    expect(sendMock).not.toHaveBeenCalled();
+    expect(createTokenMock).not.toHaveBeenCalled();
+    expect(issuedSinceMock).toHaveBeenCalledWith("u1");
+  });
+
+  it("dogrulanmamis adrese eslesme e-postasi gitmez (baskasinin adresiyle acilan hesap)", async () => {
+    const { sendMock, createTokenMock } = mockDeps({ owner: INACTIVE_OWNER({ email_verified: false }) });
+    const { matchEmailService } = await import("../../src/services/match-email.service.js");
+    await matchEmailService.sendMatchEmail("u1");
+    expect(sendMock).not.toHaveBeenCalled();
+    expect(createTokenMock).not.toHaveBeenCalled();
   });
 
   it("skips when owner active within 24 hours", async () => {

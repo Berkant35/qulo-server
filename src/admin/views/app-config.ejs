@@ -116,7 +116,36 @@
     <div>
       <label style="display:block; font-size:14px; margin-bottom:6px;">Uyuyan hesap eşiği (gün)</label>
       <input type="number" name="discover_dormant_days" min="0" max="365" step="1" value="<%= config.discover_dormant_days %>" style="width:120px;">
-      <p style="font-size:12px; color:#999; margin-top:4px;">Bu kadar gündür görülmeyen (<code>last_seen_at</code>) adaylar Discover'da aktif gerçek adayların arkasına sıralanır; listeden çıkarılmaz. 0 = kapalı. Varsayılan 14.</p>
+      <p style="font-size:12px; color:#999; margin-top:4px;">Bu kadar gündür görülmeyen (<code>last_seen_at</code>) adaylar Discover'da aktif gerçek adayların arkasına sıralanır; listeden çıkarılmaz. 0 = kapalı. Varsayılan 3.</p>
+    </div>
+    <% if (config.discover_inactive_exclude_days !== undefined && config.discover_inactive_exclude_days !== null) { %>
+    <div style="margin-top:16px;">
+      <label style="display:block; font-size:14px; margin-bottom:6px;">Desteden çıkarma eşiği (gün)</label>
+      <input type="number" name="discover_inactive_exclude_days" min="0" max="365" step="1" value="<%= config.discover_inactive_exclude_days %>" style="width:120px;">
+      <p style="font-size:12px; color:#999; margin-top:4px;">Bu kadar gündür görülmeyen gerçek adaylar Discover'a hiç gelmez. Deste boşalırsa mobil "kimse aktif değil" (<code>empty_reason=inactive</code>) sebebini alır. 0 = kapalı. Varsayılan 30.</p>
+    </div>
+    <% } %>
+    <% if (config.discover_unanswered_match_cap !== undefined && config.discover_unanswered_match_cap !== null) { %>
+    <div style="margin-top:16px;">
+      <label style="display:block; font-size:14px; margin-bottom:6px;">Cevapsız eşleşme tavanı</label>
+      <input type="number" name="discover_unanswered_match_cap" min="0" max="100" step="1" value="<%= config.discover_unanswered_match_cap %>" style="width:120px;">
+      <p style="font-size:12px; color:#999; margin-top:4px;">Son 30 günde bu kadar eşleşmesinde hiç yazmamış aday, diğer aktif adayların arkasına sıralanır (çıkarılmaz). Sayım 5 dk önbellekli. 0 = kapalı. Varsayılan 3.</p>
+    </div>
+    <% } %>
+  </div>
+  <% } %>
+
+  <% if (config && config.recall_email_enabled !== undefined && config.recall_email_enabled !== null) { %>
+  <!-- "Seni çözdüler" e-posta yedeği (migration 080) -->
+  <div class="card">
+    <h3 style="margin-bottom: 16px;">"Seni Çözdüler" E-postası</h3>
+    <div>
+      <input type="hidden" name="recall_email_enabled_field" value="1">
+      <label style="display:flex; align-items:center; gap:8px; font-size:14px; cursor:pointer;">
+        <input type="checkbox" name="recall_email_enabled" <%= config.recall_email_enabled ? 'checked' : '' %>>
+        <span>Push token'ı olmayan hedefe e-posta yedeği açık</span>
+      </label>
+      <p style="font-size:12px; color:#999; margin-top:4px;">Varsayılan KAPALI — gerçek kullanıcılara e-posta gider. Bildirim motoru <code>lifecycle_solved_waiting</code> kuralı uyan, push token'ı olmayan, e-posta bildirimini kapatmamış hedefe yerel 19:00'da en fazla günde 1 e-posta yollar (motorun günlük/haftalık tavanı ve %holdout'u geçerli; son 20 saatte eşleşme e-postası aldıysa atlanır). Kayıtlar <code>push_log</code>'da <code>channel=email</code>.</p>
     </div>
   </div>
   <% } %>

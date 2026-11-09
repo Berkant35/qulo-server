@@ -7,6 +7,10 @@
     "new_match_solver": "Gratulacje! Odpowiedział(a)eś poprawnie na wszystkie pytania, masz nowe dopasowanie!",
     "new_match_badge": "Ktoś rozwiązał Twój quiz z odznaką {badge}! Masz nowe dopasowanie!",
     "chat_question_answered": "Twoje pytanie na czacie otrzymało odpowiedź ({result})",
+    "lifecycle_solved_waiting": {
+      "title": "Ktoś rozwiązał Twoje pytania",
+      "body": "{name} odpowiedział(a) poprawnie na wszystkie Twoje pytania i macie dopasowanie. Czeka na Twoją odpowiedź!"
+    },
     "lifecycle_unread_message": {
       "title": "Masz nieprzeczytaną wiadomość",
       "body": "{name} napisał(a) do Ciebie i czeka na odpowiedź."

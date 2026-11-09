@@ -7,6 +7,10 @@
     "new_match_solver": "恭喜！你答对了所有问题，你有一个新匹配！",
     "new_match_badge": "有人以 {badge} 徽章解开了你的问题！你有一个新匹配！",
     "chat_question_answered": "你的聊天问题已被回答 ({result})",
+    "lifecycle_solved_waiting": {
+      "title": "有人解开了你的问题",
+      "body": "{name} 答对了你的所有问题，你们已匹配。正在等你回复！"
+    },
     "lifecycle_unread_message": {
       "title": "你有一条未读消息",
       "body": "{name}给你发了消息，正在等你回复。"

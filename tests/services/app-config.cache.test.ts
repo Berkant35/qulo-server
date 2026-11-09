@@ -78,12 +78,13 @@ describe('appConfigService.getDiscoverDormantDays (migration 074)', () => {
     expect(await appConfigService.getDiscoverDormantDays()).toBe(0);
   });
 
-  it('kolon yoksa (074 uygulanmadan deploy) varsayilan 14 doner; varsayilan da onbelleklenir, uyari bir kez', async () => {
+  it('kolon yoksa (074 uygulanmadan deploy) varsayilan (3, 080) doner; varsayilan da onbelleklenir, uyari bir kez', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     const { appConfigService, okumalar } = await setup();   // satirda kolon yok
     const { DEFAULT_DISCOVER_DORMANT_DAYS } = await import('../../src/services/app-config.service.js');
+    expect(DEFAULT_DISCOVER_DORMANT_DAYS).toBe(3);
     expect(await appConfigService.getDiscoverDormantDays()).toBe(DEFAULT_DISCOVER_DORMANT_DAYS);
-    expect(await appConfigService.getDiscoverDormantDays()).toBe(14);
+    expect(await appConfigService.getDiscoverDormantDays()).toBe(DEFAULT_DISCOVER_DORMANT_DAYS);
     expect(okumalar()).toBe(1);
     expect(warn).toHaveBeenCalledTimes(1);
     warn.mockRestore();
@@ -94,8 +95,8 @@ describe('appConfigService.getDiscoverDormantDays (migration 074)', () => {
     const { appConfigService, okumalar } = await setup({
       failOn: [{ table: 'app_config', op: 'select', error: { message: 'column does not exist', code: '42703' } }],
     });
-    expect(await appConfigService.getDiscoverDormantDays()).toBe(14);
-    expect(await appConfigService.getDiscoverDormantDays()).toBe(14);
+    expect(await appConfigService.getDiscoverDormantDays()).toBe(3);
+    expect(await appConfigService.getDiscoverDormantDays()).toBe(3);
     expect(okumalar()).toBe(1);
     warn.mockRestore();
   });
@@ -106,7 +107,7 @@ describe('appConfigService.getDiscoverDormantDays (migration 074)', () => {
       satirEk: { discover_dormant_days: 0 },
       failOn: [{ table: 'app_config', op: 'select', error: { message: 'timeout', code: '57014' }, times: 1 }],
     });
-    expect(await appConfigService.getDiscoverDormantDays()).toBe(14);
+    expect(await appConfigService.getDiscoverDormantDays()).toBe(3);
     expect(await appConfigService.getDiscoverDormantDays()).toBe(0);
     expect(okumalar()).toBe(2);
     err.mockRestore();
@@ -117,6 +118,55 @@ describe('appConfigService.getDiscoverDormantDays (migration 074)', () => {
     expect(await appConfigService.getDiscoverDormantDays()).toBe(14);
     await appConfigService.updateConfig({ discover_dormant_days: 30 });
     expect(await appConfigService.getDiscoverDormantDays()).toBe(30);
+  });
+});
+
+describe('appConfigService canli hedef ayarlari (migration 080)', () => {
+  it('kolonlar yoksa varsayilanlar: dislama 30 gun, cevapsiz tavan 3, recall e-postasi KAPALI', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const { appConfigService } = await setup();
+    expect(await appConfigService.getDiscoverInactiveExcludeDays()).toBe(30);
+    expect(await appConfigService.getDiscoverUnansweredMatchCap()).toBe(3);
+    expect(await appConfigService.getRecallEmailEnabled()).toBe(false);
+    warn.mockRestore();
+  });
+
+  it('kolon degerleri okunur; 0 (kapali) varsayilana dusmez', async () => {
+    const { appConfigService } = await setup({
+      satirEk: { discover_inactive_exclude_days: 0, discover_unanswered_match_cap: 0, recall_email_enabled: true },
+    });
+    expect(await appConfigService.getDiscoverInactiveExcludeDays()).toBe(0);
+    expect(await appConfigService.getDiscoverUnansweredMatchCap()).toBe(0);
+    expect(await appConfigService.getRecallEmailEnabled()).toBe(true);
+  });
+
+  it('negatif / tam sayi olmayan deger gecersiz: varsayilan doner, uyari kolon basina bir kez', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const { appConfigService } = await setup({ satirEk: { discover_inactive_exclude_days: -1, discover_unanswered_match_cap: 2.5 } });
+    expect(await appConfigService.getDiscoverInactiveExcludeDays()).toBe(30);
+    expect(await appConfigService.getDiscoverUnansweredMatchCap()).toBe(3);
+    expect(warn).toHaveBeenCalledTimes(2);
+    warn.mockRestore();
+  });
+
+  it('recall e-postasi okuma hatasinda KAPALI (fail-closed)', async () => {
+    const err = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { appConfigService } = await setup({
+      satirEk: { recall_email_enabled: true },
+      failOn: [{ table: 'app_config', op: 'select', error: { message: 'timeout', code: '57014' }, times: 1 }],
+    });
+    expect(await appConfigService.getRecallEmailEnabled()).toBe(false);
+    expect(await appConfigService.getRecallEmailEnabled()).toBe(true);
+    err.mockRestore();
+  });
+
+  it('admin guncellemesi yeni ayarlarin onbellegini de temizler', async () => {
+    const { appConfigService } = await setup({ satirEk: { discover_unanswered_match_cap: 3, recall_email_enabled: false } });
+    expect(await appConfigService.getDiscoverUnansweredMatchCap()).toBe(3);
+    expect(await appConfigService.getRecallEmailEnabled()).toBe(false);
+    await appConfigService.updateConfig({ discover_unanswered_match_cap: 5, recall_email_enabled: true });
+    expect(await appConfigService.getDiscoverUnansweredMatchCap()).toBe(5);
+    expect(await appConfigService.getRecallEmailEnabled()).toBe(true);
   });
 });
 

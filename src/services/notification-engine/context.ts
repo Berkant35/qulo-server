@@ -1,6 +1,7 @@
 import { supabase } from '../../config/supabase.js';
 import { fetchAll } from '../../utils/fetch-all.js';
 import { DAY_MS } from './timezone.js';
+import { SOLVED_LOOKBACK_MS } from './rules.js';
 
 export { DAY_MS };
 /** `fetchAll` artik src/utils/fetch-all.ts'te (Rainbow backoffice ozeti de kullaniyor); mevcut cagiranlar icin buradan da disa aciliyor. */
@@ -55,6 +56,13 @@ export interface EngineQuizSession {
   expires_at: string | null;
 }
 
+/** Son 48 saatte tamamlanmis (eslesmeyle biten) quiz — "seni cozduler" kurali hedef tarafini buradan bilir. */
+export interface EngineSolvedQuiz {
+  solver_id: string;
+  target_id: string;
+  completed_at: string;
+}
+
 export interface EngineLike {
   swiper_id: string;
   target_id: string;
@@ -79,6 +87,13 @@ export interface EngineContext {
   matchesByUser: Map<string, EngineMatch[]>;
   messagesByMatch: Map<string, EngineMessage[]>;
   expiredQuizBySolver: Map<string, EngineQuizSession[]>;
+  /** Hedef → son 48 saatte onun sorularini cozup eslesen kisiler (quiz_sessions COMPLETED). */
+  solvedByTarget: Map<string, EngineSolvedQuiz[]>;
+  /**
+   * E-posta yedegi adaylari: push'a uygun olmanin TEK eksigi token olan kullanicilar (silinmis/banli/
+   * test/seed elenmis). Yalniz recall_email_enabled acikken kullanilir (engine.ts).
+   */
+  emailFallbackUsers: EngineUser[];
   likesByTarget: Map<string, EngineLike[]>;
   /** Son 7 gunde katilan, kesfette gorunur (dogrulanmis + 2 soru + 1 foto) kullanici sayisi. */
   newVisibleUsers7d: number;
@@ -123,6 +138,23 @@ export function isEligibleUser(u: EligibilityFields): boolean {
     !u.is_seed_profile &&
     typeof u.push_token === 'string' &&
     u.push_token.length > 0
+  );
+}
+
+/** Push'a uygunluktan tek farki token'in OLMAMASI — e-posta yedeginin adayi. */
+export function isEmailFallbackUser(u: EligibilityFields): boolean {
+  return !u.is_deleted && !u.is_banned && !u.is_test_account && !u.is_seed_profile && !(typeof u.push_token === 'string' && u.push_token.length > 0);
+}
+
+function loadSolvedQuizzes(nowMs: number): Promise<EngineSolvedQuiz[]> {
+  return fetchAll<EngineSolvedQuiz>((from, to) =>
+    supabase
+      .from('quiz_sessions')
+      .select('solver_id, target_id, completed_at')
+      .eq('status', 'COMPLETED')
+      .gte('completed_at', iso(nowMs - SOLVED_LOOKBACK_MS))
+      .order('completed_at')
+      .range(from, to),
   );
 }
 
@@ -199,7 +231,7 @@ export async function loadContext(now: Date = new Date()): Promise<EngineContext
   const since14d = iso(nowMs - 14 * DAY_MS);
   const sinceDecisionWindow = iso(nowMs - DECISION_WINDOW_MS);
 
-  const allUsers = await loadAllUsers();
+  const [allUsers, solvedQuizzes] = await Promise.all([loadAllUsers(), loadSolvedQuizzes(nowMs)]);
   const usersById = new Map(allUsers.map((u) => [u.id, u]));
   const users = allUsers.filter(isEligibleUser);
 
@@ -249,6 +281,9 @@ export async function loadContext(now: Date = new Date()): Promise<EngineContext
   const expiredQuizBySolver = new Map<string, EngineQuizSession[]>();
   for (const q of quizSessions) push(expiredQuizBySolver, q.solver_id, q);
 
+  const solvedByTarget = new Map<string, EngineSolvedQuiz[]>();
+  for (const q of solvedQuizzes) push(solvedByTarget, q.target_id, q);
+
   const likesByTarget = new Map<string, EngineLike[]>();
   for (const like of likes) push(likesByTarget, like.target_id, like);
 
@@ -273,6 +308,8 @@ export async function loadContext(now: Date = new Date()): Promise<EngineContext
     matchesByUser,
     messagesByMatch,
     expiredQuizBySolver,
+    solvedByTarget,
+    emailFallbackUsers: allUsers.filter(isEmailFallbackUser),
     likesByTarget,
     newVisibleUsers7d,
     logByUser,

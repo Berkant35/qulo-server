@@ -7,6 +7,10 @@
     "new_match_solver": "Selamat! Kamu menjawab semua pertanyaan dengan benar, kamu punya kecocokan baru!",
     "new_match_badge": "Seseorang menyelesaikan kuismu dengan lencana {badge}! Kamu punya kecocokan baru!",
     "chat_question_answered": "Pertanyaan chatmu sudah dijawab ({result})",
+    "lifecycle_solved_waiting": {
+      "title": "Seseorang menjawab pertanyaanmu",
+      "body": "{name} menjawab semua pertanyaanmu dengan benar dan kalian cocok. Dia menunggu balasanmu!"
+    },
     "lifecycle_unread_message": {
       "title": "Ada pesan yang belum dibaca",
       "body": "{name} mengirimimu pesan dan sedang menunggu balasan."

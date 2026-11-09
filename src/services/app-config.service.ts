@@ -15,10 +15,30 @@ export const APP_CONFIG_TTL_MS = 60_000;
 const APP_CONFIG_KOLONLARI = "id, min_version_ios, min_version_android, latest_version_ios, latest_version_android, store_url_ios, store_url_android, is_maintenance, maintenance_message_tr, maintenance_message_en, is_force_update_enabled, seed_reply_enabled, seed_reply_fast_mode, photo_moderation_enabled, updated_at";
 
 /**
- * Discover'da "uyuyan" aday esigi (gun) — `app_config.discover_dormant_days` (migration 074)
- * okunamazsa (kolon henuz yok / okuma hatasi) kullanilir. 0 = siralama kapali.
+ * Discover'da "uyuyan" aday esigi (gun) — `app_config.discover_dormant_days` (migration 074, deger
+ * 080'de 3'e indi) okunamazsa (kolon henuz yok / okuma hatasi) kullanilir. 0 = siralama kapali.
+ * 2026-11-09: hedeflerin %79'u eslesme aninda >=3 gundur gorulmemisti → 14 gun cok gevsekti.
  */
-export const DEFAULT_DISCOVER_DORMANT_DAYS = 14;
+export const DEFAULT_DISCOVER_DORMANT_DAYS = 3;
+
+/**
+ * Bu kadar gundur gorulmeyen aday desteden CIKAR (`app_config.discover_inactive_exclude_days`,
+ * migration 080). 0 = kapali. Uyuyan siralamasinin (3 gun) sert ust siniri.
+ */
+export const DEFAULT_DISCOVER_INACTIVE_EXCLUDE_DAYS = 30;
+
+/**
+ * Hedef basina cevapsiz eslesme tavani (`app_config.discover_unanswered_match_cap`, migration 080):
+ * son 30 gunde bu kadar aktif eslesmesinde hic yazmamis aday listenin sonuna gider. 0 = kapali.
+ * 2026-11-09: eslesmeler 53 hedefte yigilmisti (tek hedefe 21).
+ */
+export const DEFAULT_DISCOVER_UNANSWERED_MATCH_CAP = 3;
+
+/**
+ * "Seni cozduler" e-posta yedegi (`app_config.recall_email_enabled`, migration 080). Gercek kullaniciya
+ * e-posta gonderir: fail-closed, kolon yoksa / okunamazsa KAPALI; acma karari kullanicida.
+ */
+export const DEFAULT_RECALL_EMAIL_ENABLED = false;
 
 /**
  * Karşılıklı eşleşme kuralı (spec 2026-10-05) — `app_config.mutual_match_enabled` (migration 075).
@@ -46,7 +66,15 @@ export const DEFAULT_POWER_DEMO_ENABLED = true;
 export const DEFAULT_ADS_ENABLED = false;
 
 /** `getRow` kolon listesinden AYRI okunan anahtarlar (migration'ı deploy'dan sonra gelebilir). */
-type BooleanFlagColumn = "mutual_match_enabled" | "served_gate_enabled" | "power_demo_enabled" | "ads_enabled";
+type BooleanFlagColumn =
+  | "mutual_match_enabled"
+  | "served_gate_enabled"
+  | "power_demo_enabled"
+  | "ads_enabled"
+  | "recall_email_enabled";
+
+/** `getRow` kolon listesinden AYRI okunan tam sayi ayarlari (0 = kapali, negatif gecersiz). */
+type IntegerSettingColumn = "discover_dormant_days" | "discover_inactive_exclude_days" | "discover_unanswered_match_cap";
 
 export interface AppConfigRow {
   id: string;
@@ -70,46 +98,68 @@ export interface AppConfigRow {
 
 class AppConfigService {
   private readonly onbellek = new TtlCache<"satir", Readonly<AppConfigRow>>(APP_CONFIG_TTL_MS);
-  private readonly dormantOnbellek = new TtlCache<"gun", number>(APP_CONFIG_TTL_MS);
+  private readonly dormantOnbellek = new TtlCache<"deger", number>(APP_CONFIG_TTL_MS);
+  private readonly inactiveExcludeOnbellek = new TtlCache<"deger", number>(APP_CONFIG_TTL_MS);
+  private readonly unansweredCapOnbellek = new TtlCache<"deger", number>(APP_CONFIG_TTL_MS);
   private readonly mutualOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
   private readonly servedGateOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
   private readonly powerDemoOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
   private readonly adsOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
-  private dormantUyariVerildi = false;
+  private readonly recallEmailOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
+  /** Kolon yok / gecersiz deger uyarisi surec basina kolon basina bir kez. */
+  private readonly uyariVerilenKolonlar = new Set<IntegerSettingColumn>();
+
+  /** Discover uyuyan-aday esigi (gun, migration 074/080). */
+  async getDiscoverDormantDays(): Promise<number> {
+    return this.readIntegerSetting("discover_dormant_days", this.dormantOnbellek, DEFAULT_DISCOVER_DORMANT_DAYS);
+  }
+
+  /** Discover dislama esigi (gun, migration 080) — 0 = kapali. */
+  async getDiscoverInactiveExcludeDays(): Promise<number> {
+    return this.readIntegerSetting(
+      "discover_inactive_exclude_days", this.inactiveExcludeOnbellek, DEFAULT_DISCOVER_INACTIVE_EXCLUDE_DAYS,
+    );
+  }
+
+  /** Discover cevapsiz eslesme tavani (migration 080) — 0 = kapali. */
+  async getDiscoverUnansweredMatchCap(): Promise<number> {
+    return this.readIntegerSetting(
+      "discover_unanswered_match_cap", this.unansweredCapOnbellek, DEFAULT_DISCOVER_UNANSWERED_MATCH_CAP,
+    );
+  }
 
   /**
-   * Discover uyuyan-aday esigi (gun). `getRow` kolon listesinden AYRI okunur: 074 uygulanmadan
-   * deploy edilirse `getRow` (bakim modu, seed kill-switch) bozulmasin diye. Kolon yoksa varsayilan
-   * TTL boyunca onbellekte kalir (her discover istegi DB'ye gitmez; uyari surec basina bir kez);
-   * gecici okuma hatasinda o istek varsayilani kullanir, sonuc onbelleklenmez.
+   * Tam sayi ayari, `getRow` kolon listesinden AYRI okunur: migration uygulanmadan deploy edilirse
+   * `getRow` (bakim modu, seed kill-switch) bozulmasin diye. Kolon yoksa (42703) varsayilan TTL boyunca
+   * onbellekte kalir (her discover istegi DB'ye gitmez; uyari surec basina bir kez). Gecici okuma hatasi
+   * onbelleklenmez: admin 0 (kapali) yaptiysa bir DB dalgalanmasi ayari 60 sn boyunca geri acmasin.
    */
-  async getDiscoverDormantDays(): Promise<number> {
-    const gun = await this.dormantOnbellek.getOrLoad("gun", async () => {
+  private async readIntegerSetting(
+    column: IntegerSettingColumn,
+    cache: TtlCache<"deger", number>,
+    fallback: number,
+  ): Promise<number> {
+    const deger = await cache.getOrLoad("deger", async () => {
       const { data, error } = await supabase
         .from("app_config")
-        .select("discover_dormant_days")
+        .select(column)
         .limit(1)
         .maybeSingle();
-      // Gecici okuma hatasi onbelleklenmez (sonraki istek tekrar dener): admin 0 (kapali)
-      // yaptiysa bir DB dalgalanmasi siralamayi 60 sn boyunca geri acmasin. Yalniz kolon
-      // yoksa (42703 — 074 uygulanmamis) varsayilan onbelleklenir.
       if (error && error.code !== "42703") {
-        console.error("[app-config] discover_dormant_days okuma hatasi:", error.message);
+        console.error(`[app-config] ${column} okuma hatasi:`, error.message);
         return undefined;
       }
-      const deger = (data as { discover_dormant_days?: unknown } | null)?.discover_dormant_days;
-      if (error || typeof deger !== "number" || !Number.isInteger(deger) || deger < 0) {
-        if (!this.dormantUyariVerildi) {
-          this.dormantUyariVerildi = true;
-          console.warn(
-            `[app-config] discover_dormant_days okunamadi (${error?.message ?? "deger yok"}); varsayilan ${DEFAULT_DISCOVER_DORMANT_DAYS} gun`,
-          );
+      const ham = (data as Record<string, unknown> | null)?.[column];
+      if (error || typeof ham !== "number" || !Number.isInteger(ham) || ham < 0) {
+        if (!this.uyariVerilenKolonlar.has(column)) {
+          this.uyariVerilenKolonlar.add(column);
+          console.warn(`[app-config] ${column} okunamadi (${error?.message ?? "deger yok"}); varsayilan ${fallback}`);
         }
-        return DEFAULT_DISCOVER_DORMANT_DAYS;
+        return fallback;
       }
-      return deger;
+      return ham;
     });
-    return gun ?? DEFAULT_DISCOVER_DORMANT_DAYS;
+    return deger ?? fallback;
   }
 
   /** Karşılıklı eşleşme anahtarı (migration 075). */
@@ -130,6 +180,11 @@ class AppConfigService {
   /** Reklam anahtarı (migration 079) — kolon yoksa KAPALI. */
   async getAdsEnabled(): Promise<boolean> {
     return this.readBooleanFlag("ads_enabled", this.adsOnbellek, DEFAULT_ADS_ENABLED);
+  }
+
+  /** "Seni cozduler" e-posta yedegi anahtari (migration 080) — kolon yoksa KAPALI. */
+  async getRecallEmailEnabled(): Promise<boolean> {
+    return this.readBooleanFlag("recall_email_enabled", this.recallEmailOnbellek, DEFAULT_RECALL_EMAIL_ENABLED);
   }
 
   /**
@@ -218,6 +273,9 @@ class AppConfigService {
   async updateConfig(
     updates: Partial<Omit<AppConfigRow, "id" | "updated_at">> & {
       discover_dormant_days?: number;
+      discover_inactive_exclude_days?: number;
+      discover_unanswered_match_cap?: number;
+      recall_email_enabled?: boolean;
       mutual_match_enabled?: boolean;
       served_gate_enabled?: boolean;
       power_demo_enabled?: boolean;
@@ -244,6 +302,9 @@ class AppConfigService {
     // Hata olsa bile temizle: yazımın gidip gitmediği belirsizse eski değeri sunmak daha kötü.
     this.onbellek.clear();
     this.dormantOnbellek.clear();
+    this.inactiveExcludeOnbellek.clear();
+    this.unansweredCapOnbellek.clear();
+    this.recallEmailOnbellek.clear();
     this.mutualOnbellek.clear();
     this.servedGateOnbellek.clear();
     this.powerDemoOnbellek.clear();

@@ -17,6 +17,15 @@ import { pairCompatibilityService } from "./pair-compatibility.service.js";
 import { identityService, type VisibleIdentity } from "./identity.service.js";
 import { servedGate } from "./served-gate.service.js";
 import { izleyiciDilleri, seedLanguageFilter } from "../utils/discover-language.js";
+import { activitySignal, type ActivitySignal } from "../utils/activity-signal.js";
+import { unansweredMatchService } from "./unanswered-match.service.js";
+import {
+  DAY_MS,
+  discoverGroupRank,
+  emptyReasonOf,
+  excludeLongInactive,
+  type DiscoverEmptyReason,
+} from "./discover-ranking.js";
 
 const PAGE_SIZE = 10;
 /**
@@ -27,14 +36,7 @@ const CANDIDATE_FETCH_LIMIT = 500;
 /** URL uzunlugu icin dislama listesi tavani; asilirsa kalani bellekte elenir. */
 const MAX_EXCLUDE_IDS = 1000;
 
-/**
- * Discover sira grubu: 0 = aktif gercek, 1 = seed, 2 = uyuyan gercek.
- * Seed'in kendi aktifligi bakilmaz (presence ritmi yapay); seed her zaman grup 1.
- */
-function discoverGroupRank(isSeed: boolean, isDormant: boolean): number {
-  if (isSeed) return 1;
-  return isDormant ? 2 : 0;
-}
+
 
 /** `match_list_summaries` satiri (migration 070): mesajsiz eslesmede son mesaj alanlari NULL. */
 interface MatchListSummary {
@@ -92,6 +94,11 @@ interface ProfileCard {
   relationship_goal: string | null;
   /** Yalnız sahibinin görünür yaptığı etiketler (spec 2026-10-06); yoksa alan yok. */
   identity?: VisibleIdentity;
+  /**
+   * Aktiflik rozeti (2.0.18): "today" | "week" | null — last_seen_at'ten kaba kova, ham zaman
+   * damgasi sizmaz (utils/activity-signal). Seed profilde her zaman null (presence ritmi yapay).
+   */
+  activity: ActivitySignal | null;
 }
 
 export class MatchingService {
@@ -105,7 +112,7 @@ export class MatchingService {
     cards: ProfileCard[];
     page: number;
     has_more: boolean;
-    empty_reason?: 'language' | 'no_candidates';
+    empty_reason?: DiscoverEmptyReason;
   }> {
     assertUuid(userId, "userId");
     // 1. Get current user + already-swiped IDs + basarisiz quiz gecmisi in parallel
@@ -155,11 +162,13 @@ export class MatchingService {
     // modunda deste kurulur; set_at boş olsa da bu bir seçimdir.
     if (!user.gender_pref_set_at && user.pref_consent_status !== "DECLINED") throw Errors.PROFILE_INCOMPLETE();
 
-    // Dil tercihleri + uyuyan-aday esigi (app_config, 60 sn onbellekli — istek basina DB yok)
-    const [userLanguages, dormantDays, mutualMatch] = await Promise.all([
+    // Dil tercihleri + canli hedef ayarlari (app_config, 60 sn onbellekli — istek basina DB yok)
+    const [userLanguages, dormantDays, mutualMatch, inactiveExcludeDays, unansweredCap] = await Promise.all([
       userLanguageService.getUserLanguages(userId),
       appConfigService.getDiscoverDormantDays(),
       appConfigService.getMutualMatchEnabled(),
+      appConfigService.getDiscoverInactiveExcludeDays(),
+      appConfigService.getDiscoverUnansweredMatchCap(),
     ]);
     const viewerBucket = bucketOf(user);
     if (mutualMatch && !viewerBucket) throw Errors.PROFILE_INCOMPLETE();
@@ -257,7 +266,9 @@ export class MatchingService {
       // `id` ikincil anahtar: `last_seen_at` esitliginde tiebreak yoksa kesme
       // noktasi yine belirsizlesir ve havuz 500'u astiginda ayni bug'in kucuk
       // bir versiyonu geri gelir.
-      .order("last_seen_at", { ascending: false })
+      // NULL'lar sona: Postgres DESC'te varsayilan NULLS FIRST; hic gorulmemis hesaplar (5.8'de zaten
+      // dislanir) 500'luk tavanda aktif adaylarin onune gecmesin.
+      .order("last_seen_at", { ascending: false, nullsFirst: false })
       .order("id", { ascending: true })
       .limit(CANDIDATE_FETCH_LIMIT);
 
@@ -305,7 +316,7 @@ export class MatchingService {
     }
 
     if (!candidates || candidates.length === 0) {
-      return { cards: [], page, has_more: false, empty_reason: 'no_candidates' };
+      return { cards: [], page, has_more: false, empty_reason: "no_candidates" };
     }
 
     // 4. Sert mesafe filtresi YOK — aday tier ile isaretlenir ve siralamada
@@ -451,13 +462,26 @@ export class MatchingService {
       });
     }
 
-    // 6. Score each candidate
+    // 5.8 — Uzun suredir gorulmeyen gercek aday desteden CIKAR (app_config.discover_inactive_exclude_days,
+    // varsayilan 30; 0 = kapali). 2026-11-09: hedeflerin %79'u eslesme aninda >=3 gundur gorulmemisti,
+    // 208 eslesmenin 4'u konusmaya dondu. Seed haric (presence ritmi yapay). Dil kapisindan SONRA:
+    // bos destede "dil" ile "kimse aktif degil" ayrilabilsin (empty_reason).
     const now = new Date();
+    const beforeInactiveCount = discoverableFiltered.length;
+    discoverableFiltered = excludeLongInactive(discoverableFiltered, inactiveExcludeDays, now.getTime());
+
+    // Cevapsiz eslesmesi yigilmis adaylar (son 30 gunde >= cap eslesmesinde hic yazmamis) — 5 dk
+    // surec ici onbellekli tek RPC; hata Discover'i bozmaz (bos kume, tavan o istekte uygulanmaz).
+    const heavyUnanswered = discoverableFiltered.length > 0
+      ? await unansweredMatchService.heavyUnansweredIds(unansweredCap, now)
+      : new Set<string>();
+
+    // 6. Score each candidate
     // Uyuyan aday: son `dormantDays` gundur gorulmemis (last_seen_at — presence heartbeat'i
     // yazar; last_active_at yalniz resume'da yazildigi icin guvenilmez). Prod 29 Eyl-3 Eki:
     // 15 eslesmenin 2'sinde yanit geldi, kohort disi 8 karsi tarafin 7'si Haziran-Eylul'den
-    // beri gorulmuyordu. Sert filtre DEGIL: havuz kucuk, uyuyanlar listenin sonunda kalir.
-    const dormantCutoff = dormantDays > 0 ? now.getTime() - dormantDays * 24 * 60 * 60 * 1000 : null;
+    // beri gorulmuyordu. Sert filtre DEGIL (o is 5.8'in): esik ile dislama arasindakiler sona.
+    const dormantCutoff = dormantDays > 0 ? now.getTime() - dormantDays * DAY_MS : null;
     const isDormant = (lastSeenAt: string | null): boolean =>
       dormantCutoff != null && (lastSeenAt == null || new Date(lastSeenAt).getTime() < dormantCutoff);
     const isBoostActive = (boostUntil: string | null): boolean =>
@@ -489,12 +513,13 @@ export class MatchingService {
         score,
         questionCount: qCount,
         tier: c.distance_tier,
-        groupRank: discoverGroupRank(c.is_seed_profile === true, isDormant(c.last_seen_at)),
+        groupRank: discoverGroupRank(c.is_seed_profile === true, isDormant(c.last_seen_at), heavyUnanswered.has(c.id)),
         retry: retryIds.has(c.id) ? 1 : 0,
       };
     });
 
-    // 7. Grup (aktif gercek -> seed -> uyuyan gercek), sonra tier artan, sonra tier icinde skor azalan.
+    // 7. Grup (aktif gercek -> seed -> cevapsizi yigilmis aktif gercek -> uyuyan gercek), sonra tier
+    // artan, sonra tier icinde skor azalan.
     // Aktif gercek kullanici her zaman en onde: uzak bir aktif aday bile yakin bir seed'in onundedir.
     // Seed'ler (yanit veren AI profiller) uyuyan gercek kullanicilarin ONUNDE: yanit vermeyecek
     // biriyle eslesmek ilk gunu oldurur (29 Eyl-3 Eki: 15 eslesmenin 2'sinde yanit, 12/15 kullanici
@@ -538,6 +563,7 @@ export class MatchingService {
       is_boosted: isBoostActive(s.candidate.boost_until),
       question_info: questionInfoMap.get(s.candidate.id) ?? { count: 0, categories: [], avg_difficulty: 'unranked', languages: [] },
       relationship_goal: s.candidate.relationship_goal,
+      activity: s.candidate.is_seed_profile === true ? null : activitySignal(s.candidate.last_seen_at, now.getTime()),
     }));
 
     // 11. Görünür kimlik/yönelim etiketleri — sayfadaki ≤10 kart için tek sorgu (süs bilgi: düşerse etiketsiz).
@@ -548,12 +574,7 @@ export class MatchingService {
     // `scored` doluyken sebep gonderilmez — aksi halde page=3 istegi, dil
     // filtresi hic elemedigi halde 'language' metnini gosterirdi.
     if (scored.length === 0) {
-      return {
-        cards,
-        page,
-        has_more: hasMore,
-        empty_reason: beforeLanguageCount > 0 ? 'language' : 'no_candidates',
-      };
+      return { cards, page, has_more: hasMore, empty_reason: emptyReasonOf(beforeLanguageCount, beforeInactiveCount) };
     }
 
     return { cards, page, has_more: hasMore };
@@ -651,7 +672,7 @@ export class MatchingService {
     // Fetch the target user's card data to return
     const { data: user, error: userError } = await supabase
       .from("users")
-      .select("id, name, age, city, bio, photos, lat, lng, profile_completion, boost_until, relationship_goal")
+      .select("id, name, age, city, bio, photos, lat, lng, profile_completion, boost_until, relationship_goal, last_seen_at, is_seed_profile")
       .eq("id", targetId)
       .eq("is_deleted", false)
       .maybeSingle();
@@ -730,6 +751,7 @@ export class MatchingService {
       is_boosted: isBoostActive,
       question_info: { count: userQuestions.length, categories, avg_difficulty: difficulty, languages },
       relationship_goal: user.relationship_goal,
+      activity: user.is_seed_profile === true ? null : activitySignal(user.last_seen_at as string | null, now.getTime()),
     };
 
     const identity = (await identityService.visibleForSafe([targetId])).get(targetId);

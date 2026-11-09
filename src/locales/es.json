@@ -7,6 +7,10 @@
     "new_match_solver": "¡Felicidades! Respondiste correctamente a todas las preguntas, ¡tienes una nueva coincidencia!",
     "new_match_badge": "¡Alguien resolvió tu cuestionario con la insignia {badge}! ¡Tienes una nueva coincidencia!",
     "chat_question_answered": "Tu pregunta del chat fue respondida ({result})",
+    "lifecycle_solved_waiting": {
+      "title": "Alguien resolvió tus preguntas",
+      "body": "{name} acertó todas tus preguntas y hicieron match. ¡Está esperando tu respuesta!"
+    },
     "lifecycle_unread_message": {
       "title": "Tienes un mensaje sin leer",
       "body": "{name} te escribió y espera tu respuesta."

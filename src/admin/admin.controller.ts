@@ -282,6 +282,9 @@ class AdminController {
       seed_reply_enabled, seed_reply_fast_mode,
       photo_moderation_enabled,
       discover_dormant_days,
+      discover_inactive_exclude_days,
+      discover_unanswered_match_cap,
+      recall_email_enabled, recall_email_enabled_field,
       mutual_match_enabled, mutual_match_field,
       served_gate_enabled, served_gate_field,
       power_demo_enabled, power_demo_enabled_field,
@@ -295,15 +298,22 @@ class AdminController {
       }
     }
 
-    // Discover uyuyan-aday esigi (migration 074). Form alani yalniz kolon varken render edilir;
-    // alan gelmediyse dokunulmaz (074 oncesi kayit, olmayan kolona yazmaya calisip patlamasin).
-    let dormantDays: number | undefined;
-    if (discover_dormant_days !== undefined) {
-      const raw = String(discover_dormant_days).trim();
-      dormantDays = Number(raw);
-      if (!/^\d{1,3}$/.test(raw) || dormantDays > 365) {
-        return res.redirect("/admin/app-config?error=" + encodeURIComponent("discover_dormant_days: 0-365 arasi tam sayi olmali"));
+    // Discover tam sayi ayarlari (migration 074/080). Form alani yalniz kolon varken render edilir;
+    // alan gelmediyse dokunulmaz (migration oncesi kayit, olmayan kolona yazmaya calisip patlamasin).
+    const intSettings = [
+      { field: "discover_dormant_days", raw: discover_dormant_days, max: 365 },
+      { field: "discover_inactive_exclude_days", raw: discover_inactive_exclude_days, max: 365 },
+      { field: "discover_unanswered_match_cap", raw: discover_unanswered_match_cap, max: 100 },
+    ] as const;
+    const intUpdates: Partial<Record<(typeof intSettings)[number]["field"], number>> = {};
+    for (const { field, raw, max } of intSettings) {
+      if (raw === undefined) continue;
+      const text = String(raw).trim();
+      const value = Number(text);
+      if (!/^\d{1,3}$/.test(text) || value > max) {
+        return res.redirect("/admin/app-config?error=" + encodeURIComponent(`${field}: 0-${max} arasi tam sayi olmali`));
       }
+      intUpdates[field] = value;
     }
 
     try {
@@ -317,7 +327,9 @@ class AdminController {
         ...(power_demo_enabled_field !== undefined ? { power_demo_enabled: power_demo_enabled === "on" } : {}),
         // Reklam anahtarı (migration 079) — aynı gizli işaret deseni.
         ...(ads_enabled_field !== undefined ? { ads_enabled: ads_enabled === "on" } : {}),
-        ...(dormantDays !== undefined ? { discover_dormant_days: dormantDays } : {}),
+        // "Seni çözdüler" e-posta yedeği (migration 080) — aynı gizli işaret deseni; varsayılan KAPALI.
+        ...(recall_email_enabled_field !== undefined ? { recall_email_enabled: recall_email_enabled === "on" } : {}),
+        ...intUpdates,
         min_version_ios,
         min_version_android,
         latest_version_ios,

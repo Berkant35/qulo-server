@@ -36,6 +36,8 @@ function ctx(partial: Partial<EngineContext> = {}): EngineContext {
     matchesByUser: new Map(),
     messagesByMatch: new Map(),
     expiredQuizBySolver: new Map(),
+    solvedByTarget: new Map(),
+    emailFallbackUsers: [],
     likesByTarget: new Map(),
     newVisibleUsers7d: 0,
     logByUser: new Map(),
@@ -49,8 +51,9 @@ const B = user({ id: 'B', name: 'Bora' });
 const match = { id: 'm1', user1_id: 'A', user2_id: 'B', matched_at: ago(3 * D) };
 
 describe('rules — oncelik sirasi ve anahtarlar', () => {
-  it('8 kural, oncelik dizilimi sabit (ilk gun geri cagirma eslesme/mesajdan sonra)', () => {
+  it('9 kural, oncelik dizilimi sabit ("seni cozduler" en taze sinyal, en onde; ilk gun geri cagirma eslesme/mesajdan sonra)', () => {
     expect(LIFECYCLE_RULES.map((r) => r.key)).toEqual([
+      'lifecycle_solved_waiting',
       'lifecycle_unread_message',
       'lifecycle_match_waiting',
       'lifecycle_day1_return',
@@ -60,6 +63,75 @@ describe('rules — oncelik sirasi ve anahtarlar', () => {
       'lifecycle_new_people',
       'lifecycle_winback',
     ]);
+  });
+});
+
+describe('lifecycle_solved_waiting ("seni cozduler", 2.0.18)', () => {
+  const rule = LIFECYCLE_RULES_BY_KEY.lifecycle_solved_waiting;
+  // A = hedef (sorulari cozulen), B = cozen. Eslesme 10 saat once; A 5 gundur girmedi.
+  const freshMatch = { id: 'm1', user1_id: 'A', user2_id: 'B', matched_at: ago(10 * H) };
+  const base = (solvedAgoMs = 10 * H) =>
+    ctx({
+      users: [A, B],
+      matchesByUser: new Map([['A', [freshMatch]], ['B', [freshMatch]]]),
+      solvedByTarget: new Map([['A', [{ solver_id: 'B', target_id: 'A', completed_at: ago(solvedAgoMs) }]]]),
+    });
+
+  it('cozulen hedef eslesmeden beri girmedi ve yazmadi → cozenin adi + chat linki', () => {
+    expect(rule.evaluate(A, base())).toEqual({ params: { name: 'Bora' }, actionUrl: '/chat/m1' });
+  });
+
+  it('cozen taraf (B) bu kurali almaz — hedef degil', () => {
+    expect(rule.evaluate(B, base())).toBeNull();
+  });
+
+  it('pencere: 3 saatten taze (anlik push yeni gitti) ve 48 saatten eski → yok', () => {
+    expect(rule.evaluate(A, base(2 * H))).toBeNull();
+    expect(rule.evaluate(A, base(49 * H))).toBeNull();
+    expect(rule.evaluate(A, base(47 * H))).not.toBeNull();
+  });
+
+  it('hedef eslesmeden SONRA uygulamaya girdiyse (gordu) → yok', () => {
+    expect(rule.evaluate(user({ id: 'A', last_seen_at: ago(1 * H) }), base())).toBeNull();
+  });
+
+  it('hedef zaten yazdiysa → yok', () => {
+    const c = base();
+    c.messagesByMatch.set('m1', [{ id: 'x', match_id: 'm1', sender_id: 'A', read_at: null, created_at: ago(5 * H), deleted_at: null }]);
+    expect(rule.evaluate(A, c)).toBeNull();
+  });
+
+  it('eslesme artik aktif degilse (unmatch, matchesByUser yalniz aktifler) → yok', () => {
+    const c = base();
+    c.matchesByUser.set('A', []);
+    expect(rule.evaluate(A, c)).toBeNull();
+  });
+
+  it('cozen test/seed hesabiysa "kisi cozdu" iddiasi uydurulmaz → yok', () => {
+    const seed = user({ id: 'B', name: 'Bora', is_seed_profile: true });
+    const c = base();
+    c.usersById.set('B', seed);
+    expect(rule.evaluate(A, c)).toBeNull();
+  });
+
+  it('iki cozumde en yenisi secilir', () => {
+    const C = user({ id: 'C', name: 'Cem' });
+    const m2 = { id: 'm2', user1_id: 'A', user2_id: 'C', matched_at: ago(5 * H) };
+    const c = ctx({
+      users: [A, B, C],
+      matchesByUser: new Map([['A', [freshMatch, m2]]]),
+      solvedByTarget: new Map([['A', [
+        { solver_id: 'B', target_id: 'A', completed_at: ago(10 * H) },
+        { solver_id: 'C', target_id: 'A', completed_at: ago(5 * H) },
+      ]]]),
+    });
+    expect(rule.evaluate(A, c)).toEqual({ params: { name: 'Cem' }, actionUrl: '/chat/m2' });
+  });
+
+  it('tek gonderim dizisi ve aktiflikte sifirlanir; kategori matches (eslesme bildirimi tercihine bagli)', () => {
+    expect(rule.defaultScheduleDays).toEqual([]);
+    expect(rule.resetOnActivity).toBe(true);
+    expect(rule.category).toBe('matches');
   });
 });
 

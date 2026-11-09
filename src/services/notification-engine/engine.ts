@@ -11,6 +11,8 @@ import { sequenceProgress } from './sequence.js';
 import type { LifecycleRule, RuleCategory, RuleMatch } from './rules.js';
 import { DAY_MS, localHour, utcOffsetHours } from './timezone.js';
 import { holdoutBucket, throttleReason } from './throttle.js';
+import { appConfigService } from '../app-config.service.js';
+import { matchRecallEmailService } from '../match-recall-email.service.js';
 
 /**
  * Bildirim motoru — Faz 1, bilerek basit:
@@ -42,7 +44,15 @@ export interface EngineDecision {
   notificationId: string | null;
   /** Bu gonderimin kural dizisindeki sirasi (1'den). push_log payload'ina yazilir, sequence.ts oradan okur. */
   sequenceStep: number;
+  /** Teslim kanali; yoksa push. E-posta yedegi (recall_email_enabled) 'email' yazar — payload.channel. */
+  channel?: 'push' | 'email';
 }
+
+/**
+ * Push token'i olmayan hedefe e-posta yedegi verilen kurallar. Yalniz "seni cozduler": e-posta pahali
+ * bir kanal (gonderici itibari, abonelikten cikma) — her yasam dongusu durtmesi icin degil.
+ */
+export const EMAIL_FALLBACK_RULE_KEYS: ReadonlySet<string> = new Set(['lifecycle_solved_waiting']);
 
 export interface EngineRunResult {
   runId: string;
@@ -75,9 +85,10 @@ export function pickRule(
   ctx: EngineContext,
   config: EngineConfig,
   nowMs: number,
+  rules: readonly LifecycleRule[] = LIFECYCLE_RULES,
 ): { rule: LifecycleRule; match: RuleMatch; step: number } | null {
   const entries = ctx.logByUser.get(user.id) ?? [];
-  for (const rule of LIFECYCLE_RULES) {
+  for (const rule of rules) {
     const ruleConfig = config.rules[rule.key];
     if (!ruleConfig.enabled) continue;
     const progress = sequenceProgress(user, entries, rule, ruleConfig.schedule_days, nowMs);
@@ -91,7 +102,13 @@ export function pickRule(
 // ── push_log yazimi ────────────────────────────────────────────────────────────
 
 function logPayload(d: EngineDecision) {
-  return { title: d.title, body: d.body, action_url: d.actionUrl, sequence_step: d.sequenceStep };
+  return {
+    title: d.title,
+    body: d.body,
+    action_url: d.actionUrl,
+    sequence_step: d.sequenceStep,
+    ...(d.channel ? { channel: d.channel } : {}),
+  };
 }
 
 /** Karari kaydeder; basarisizsa null (cagiran gonderimi iptal eder). created_at acikca kosum zamani. */
@@ -235,6 +252,66 @@ export async function runEngine(mode: EngineMode = 'live', opts: { now?: Date } 
     };
     result.decisions.push(final);
     await finalizeDecision(logId, final);
+  }
+
+  // E-posta yedegi (2.0.18): push token'i olmayan hedef. Gercek kullaniciya e-posta gider — anahtar
+  // `app_config.recall_email_enabled` VARSAYILAN KAPALI, okunamazsa da kapali (fail-closed).
+  if (ctx.emailFallbackUsers.length > 0 && (await appConfigService.getRecallEmailEnabled())) {
+    const emailRules = LIFECYCLE_RULES.filter((r) => EMAIL_FALLBACK_RULE_KEYS.has(r.key));
+    for (const user of ctx.emailFallbackUsers) {
+      result.evaluated++;
+      if (mode === 'live') {
+        if (localHour(now, utcOffsetHours(user)) !== config.send_hour_local) { result.outsideWindow++; continue; }
+        if (hasDecisionSince(ctx, user.id, nowMs - DECISION_WINDOW_MS)) { result.decidedToday++; continue; }
+      }
+      const picked = pickRule(user, ctx, config, nowMs, emailRules);
+      if (!picked) { result.noRule++; continue; }
+      const { rule, match, step } = picked;
+      const locale = resolveLocale(user.locale);
+      const base: EngineDecision = {
+        userId: user.id,
+        userName: user.name ?? '',
+        ruleKey: rule.key,
+        decision: 'suppressed',
+        reason: null,
+        locale,
+        actionUrl: match.actionUrl,
+        title: null,
+        body: null,
+        notificationId: null,
+        sequenceStep: step,
+        channel: 'email',
+      };
+      // Ayni "bogmama" politikasi: tavan + holdout (olcum push'la ayni kovada kalsin) + kategori tercihi.
+      const throttled = throttleReason(user.id, ctx.sendTimes, config, nowMs);
+      if (throttled === 'holdout') { await record({ ...base, decision: 'holdout', reason: 'holdout' }); continue; }
+      if (throttled) { await record({ ...base, reason: throttled }); continue; }
+      if (prefDisabled(user, rule.category)) { await record({ ...base, reason: 'pref_off' }); continue; }
+
+      const rendered = await NotificationService.renderPush(match.templateKey ?? rule.key, locale, match.params);
+      if (!rendered) { await record({ ...base, reason: 'template_muted' }); continue; }
+      const withText = { ...base, title: rendered.title, body: rendered.body };
+      if (effective !== 'live') { await record({ ...withText, decision: 'dry_run' }); continue; }
+
+      // Gonderilmeyecek hedef (tercih/adres/dogrulama/son 20 sa e-posta) tur butcesini harcamadan elenir.
+      const prepared = await matchRecallEmailService.prepare(user.id, now);
+      if (!prepared.ok) {
+        if (prepared.reason === 'lookup_failed') { result.decisions.push({ ...withText, decision: 'failed', reason: prepared.reason }); continue; }
+        await record({ ...withText, reason: prepared.reason });
+        continue;
+      }
+      if (sends >= config.max_per_run) { result.runCapped++; continue; }
+
+      const logId = await insertDecision(result.runId, effective, now, { ...withText, decision: 'failed', reason: 'in_flight' });
+      if (logId === null) { result.decisions.push({ ...withText, reason: 'log_write_failed' }); continue; }
+      sends++;
+      const delivered = await matchRecallEmailService.deliver(prepared.target, rendered);
+      const final: EngineDecision = delivered
+        ? { ...withText, decision: 'sent', reason: null }
+        : { ...withText, decision: 'failed', reason: 'send_failed' };
+      result.decisions.push(final);
+      await finalizeDecision(logId, final);
+    }
   }
 
   return result;
