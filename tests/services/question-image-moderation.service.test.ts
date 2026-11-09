@@ -136,6 +136,34 @@ describe('moderateQuestionImage', () => {
     expect(b.banUser).not.toHaveBeenCalled();
   });
 
+  it('category "none" + temiz gerekce → approved', async () => {
+    const { mod, row } = await setup({ cevaplar: [{ explicit: false, category: 'none', reason: 'a cat on a sofa' }] });
+    expect(await mod.moderateQuestionImage(Q1)).toBe('approved');
+    expect(row(Q1).image_status).toBe('approved');
+  });
+
+  it('bilinmeyen category (explicit=false) → ONAYLANMAZ: pending + check review (insan karar verir), dosya kalir', async () => {
+    const a = await setup({ cevaplar: [{ explicit: false, category: 'weapon', reason: 'a knife' }] });
+    expect(await a.mod.moderateQuestionImage(Q1)).toBe('pending');
+    expect(a.row(Q1)).toMatchObject({ image_path: P1, image_status: 'pending' });
+    expect(a.check(P1)).toMatchObject({ kind: 'question', verdict: 'review', attempts: 1 });
+    expect(a.check(P1)!.reason).toContain('weapon');
+    expect(a.fake.storageFiles(BUCKET)).toContain(P1);
+    // Insan kuyrugundaki gorsel cron'da modele yeniden sorulmaz.
+    expect(await a.mod.moderatePendingQuestionImages(25)).toBe(0);
+    expect(a.geminiVisionModerate).toHaveBeenCalledTimes(1);
+    expect(a.banUser).not.toHaveBeenCalled();
+  });
+
+  it('yasak kategorinin yazim varyanti ("sexual object", "Sexual-Object") → rejected', async () => {
+    for (const category of ['sexual object', 'Sexual-Object']) {
+      vi.resetModules();
+      const { mod, row } = await setup({ cevaplar: [{ explicit: false, category, reason: 'an item' }] });
+      expect(await mod.moderateQuestionImage(Q1)).toBe('rejected');
+      expect(row(Q1)).toMatchObject({ image_path: null, image_status: 'rejected' });
+    }
+  });
+
   it('zaman asimi → pending (check error), sonra cron isler ve onaylar', async () => {
     const { mod, row, check, geminiVisionModerate } = await setup({
       cevaplar: [new LlmError('timeout', 'Gemini istegi zaman asimina ugradi'), { explicit: false, category: 'none', reason: 'a dog' }],
@@ -202,17 +230,49 @@ describe('moderateQuestionImage', () => {
     expect(row(Q1)).toMatchObject({ image_path: PYENI, image_status: 'pending' });
   });
 
-  it('karar sirasinda gorsel degisti → ret yeni gorseli EZMEZ; reddedilen eski dosya yine silinir', async () => {
+  it('karar sirasinda gorsel degisti → ret yeni gorseli EZMEZ; CAS kaybinda dosya/kayit dokunulmaz (eskiyi writeSlot siler)', async () => {
     const PYENI = `${U1}/${Q1}/image-9.jpg`;
-    const { mod, fake, row, banUser } = await setup({
+    const { mod, fake, row, check, banUser } = await setup({
       files: [P1, PYENI],
       cevaplar: [{ explicit: true, category: 'sexual_content', reason: 'nudity' }],
       fakeOpts: { interleave: [{ table: 'questions', mutate: (rows) => { rows[0]!.image_path = PYENI; } }] },
     });
     expect(await mod.moderateQuestionImage(Q1)).toBe('pending');
     expect(row(Q1)).toMatchObject({ image_path: PYENI, image_status: 'pending' });
-    expect(fake.storageFiles(BUCKET)).toEqual([PYENI]);
+    expect(fake.storageFiles(BUCKET)).toEqual([P1, PYENI]);
+    expect(check(P1)).toBeUndefined();
     expect(banUser).not.toHaveBeenCalled();
+  });
+
+  it('yaris: admin "safe" onayladi, cron ret karari CAS kaybeder → dosya KALIR, admin kaydi ezilmez', async () => {
+    const adminKaydi = { id: 'c1', user_id: U1, photo_url: P1, kind: 'question', verdict: 'safe', model: 'admin', attempts: 3, checked_at: '2026-11-09T09:00:00Z' };
+    const { mod, fake, row, check } = await setup({
+      checks: [{ ...adminKaydi, verdict: 'error', model: 'gemini-model', attempts: 1 }],
+      cevaplar: [{ explicit: true, category: 'sexual_object', reason: 'model false positive' }],
+      fakeOpts: { interleave: [{ table: 'questions', mutate: (rows) => {
+        rows[0]!.image_status = 'approved';
+        const c = fake.table('photo_moderation_checks')[0]!;
+        Object.assign(c, adminKaydi);
+      } }] },
+    });
+    expect(await mod.moderateQuestionImage(Q1)).toBe('pending');
+    expect(row(Q1)).toMatchObject({ image_path: P1, image_status: 'approved' });
+    expect(fake.storageFiles(BUCKET)).toContain(P1);
+    expect(check(P1)).toMatchObject(adminKaydi);
+  });
+
+  it('yaris: admin "gorseli kaldir" dedi, cron onay karari CAS kaybeder → onaylanmaz, admin kaydi ezilmez', async () => {
+    const adminKaydi = { id: 'c1', user_id: U1, photo_url: P1, kind: 'question', verdict: 'explicit', model: 'admin', attempts: 1, checked_at: '2026-11-09T09:00:00Z' };
+    const { mod, fake, row, check } = await setup({
+      checks: [{ ...adminKaydi, verdict: 'error', model: 'gemini-model' }],
+      fakeOpts: { interleave: [{ table: 'questions', mutate: (rows) => {
+        Object.assign(rows[0]!, { image_path: null, image_status: 'rejected' });
+        Object.assign(fake.table('photo_moderation_checks')[0]!, adminKaydi);
+      } }] },
+    });
+    expect(await mod.moderateQuestionImage(Q1)).toBe('pending');
+    expect(row(Q1)).toMatchObject({ image_path: null, image_status: 'rejected' });
+    expect(check(P1)).toMatchObject(adminKaydi);
   });
 
   it('soru satiri guncellenemezse → pending; dosya silinmez (satir hala onu gosteriyor)', async () => {

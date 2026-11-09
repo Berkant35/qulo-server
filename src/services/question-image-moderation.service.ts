@@ -30,22 +30,37 @@ const PENDING_SCAN_LIMIT = 200;
 const IN_CHUNK = 50;
 const REASON_MAX = 500;
 
-/** Modelin `category` alani bunlardan biriyse `explicit=false` dese de ret (celiski onaylanmaz). */
+/** Modelin `category` alani (normalize) bunlardan biriyse `explicit=false` dese de ret (celiski onaylanmaz). */
 const YASAK_KATEGORILER = new Set(["sexual_content", "sexual_object", "violence", "minor", "personal_data"]);
+/** Onaya izin veren tek kategori degeri; alan hic yoksa da onay mumkun (salatalik vakasi). */
+const TEMIZ_KATEGORI = "none";
 
 interface QuestionImageRow { id: string; user_id: string; image_path: string | null; image_status: QuestionImageModerationStatus | null }
 interface CheckRow { photo_url: string; verdict: Verdict; attempts: number | null }
 
-export interface QuestionImageDecision { rejected: boolean; category: string | null; reason: string }
+/** `approve` | `reject` | `review` (insan karar verir; gorsel pending/gizli kalir, model yeniden sorulmaz). */
+export type QuestionImageOutcome = "approve" | "reject" | "review";
+export interface QuestionImageDecision { outcome: QuestionImageOutcome; category: string | null; reason: string }
+
+/** "Sexual-Object" / "sexual object" → "sexual_object": yazim varyanti yasak kategoriyi kacirmasin. */
+function kategoriNormalize(raw: string): string {
+  return raw.trim().toLowerCase().replace(/[\s-]+/g, "_");
+}
 
 /**
- * Model cevabindan karar (eval betigi de bunu kullanir). Ret: `explicit`, yasak `category`, ya da
- * `explicit=false` ama gerekce ciplaklik anlatiyor (profil taramasinda 11B'de goruldu).
+ * Model cevabindan karar (eval betigi de bunu kullanir). Fail-closed: onay YALNIZ
+ * `explicit=false` + category yok ya da "none" + gerekce ciplaklik anlatmiyor iken.
+ * - Ret: `explicit`, yasak kategori (normalize), ya da celiskili gerekce (profil taramasinda 11B'de goruldu).
+ * - Bilinmeyen kategori ("weapon", "nudity"...) → `review`: otomatik onay da otomatik ret de yok.
  */
 export function decideQuestionImage(result: VisionModerationResult): QuestionImageDecision {
-  const category = /"category"\s*:\s*"([^"]*)"/i.exec(result.raw)?.[1]?.trim().toLowerCase() || null;
-  const rejected = result.explicit || (category !== null && YASAK_KATEGORILER.has(category)) || supheliGerekce(result.reason);
-  return { rejected, category, reason: result.reason };
+  const ham = /"category"\s*:\s*"([^"]*)"/i.exec(result.raw)?.[1];
+  const category = ham === undefined || ham.trim() === "" ? null : kategoriNormalize(ham);
+  const yasak = result.explicit || (category !== null && YASAK_KATEGORILER.has(category)) || supheliGerekce(result.reason);
+  const outcome: QuestionImageOutcome = yasak ? "reject"
+    : category === null || category === TEMIZ_KATEGORI ? "approve"
+      : "review";
+  return { outcome, category, reason: result.reason };
 }
 
 /** Hakem Gemini; kill-switch profil ile ortak. NVIDIA anahtari gerekmez. */
@@ -111,7 +126,15 @@ async function moderateRow(
     return hataKaydet(q, attempts, hataMetni(err));
   }
 
-  const yeni = karar.rejected
+  const gerekce = karar.category ? `${karar.category}: ${karar.reason}` : karar.reason;
+  if (karar.outcome === "review") {
+    // Belirsiz kategori: soru satirina dokunulmaz (pending = gizli); insan kuyruguna duser.
+    await kaydet(q, "review", `unknown_category: ${gerekce}`, attempts);
+    console.warn(`[question-image-moderation] REVIEW question=${q.id} category=${karar.category ?? "-"}`);
+    return "pending";
+  }
+  const rejected = karar.outcome === "reject";
+  const yeni = rejected
     ? { image_path: null, image_status: "rejected" as const }
     : { image_status: "approved" as const };
   const { data, error } = await supabase
@@ -123,15 +146,15 @@ async function moderateRow(
     .select("id");
   if (error) return hataKaydet(q, attempts, `questions update: ${error.message}`);
 
-  // Ret: dosya CAS kaybedilse de silinir — bu yolu artik hicbir satir gostermez (yollar zaman damgali, tekil).
-  if (karar.rejected) await dosyayiSil(q.image_path);
-  const gerekce = karar.category ? `${karar.category}: ${karar.reason}` : karar.reason;
-  await kaydet(q, karar.rejected ? "review" : "safe", gerekce, attempts);
-  if (karar.rejected) console.warn(`[question-image-moderation] REJECTED question=${q.id} category=${karar.category ?? "-"}`);
-
-  // CAS kaybi: soru bu arada baska gorsele gecti/silindi; o gorselin karari bu cagrinin degil.
+  // CAS kaybi: bu arada yol degisti (eski dosyayi writeSlot/removeMedia zaten sildi) ya da durum degisti
+  // (admin karari, es zamanli tarama). Dosyaya ve kayda DOKUNULMAZ: onayli satir silinmis dosyayi
+  // gostermesin, admin'in denetim kaydi ezilmesin.
   if (!data || data.length === 0) return "pending";
-  return karar.rejected ? "rejected" : "approved";
+
+  if (rejected) await dosyayiSil(q.image_path);
+  await kaydet(q, rejected ? "review" : "safe", gerekce, attempts);
+  if (rejected) console.warn(`[question-image-moderation] REJECTED question=${q.id} category=${karar.category ?? "-"}`);
+  return rejected ? "rejected" : "approved";
 }
 
 /**

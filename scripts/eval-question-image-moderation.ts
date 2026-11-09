@@ -57,7 +57,7 @@ async function main(): Promise<void> {
         prompt: QUESTION_IMAGE_PROMPT, timeoutMs: QUESTION_IMAGE_TIMEOUT_MS,
       });
       const karar = decideQuestionImage(sonuc);
-      const sonucAdi = karar.rejected ? "reject" : "approve";
+      const sonucAdi = karar.outcome;
       const hedef = beklenen(dosya);
       satirlar.push({
         dosya, karar: sonucAdi, beklenen: hedef, dogru: hedef === "?" ? "-" : hedef === sonucAdi ? "EVET" : "HAYIR",
