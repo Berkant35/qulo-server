@@ -99,3 +99,23 @@ describe('createReportSchema', () => {
     }).success).toBe(false);
   });
 });
+
+describe('createReportSchema — soruya bagli medya sikayeti', () => {
+  const QID = '22222222-2222-4222-8222-222222222222';
+
+  it('INAPPROPRIATE_MEDIA kategorisi + question_id gecerli', () => {
+    const r = createReportSchema.safeParse({ reported_id: VALID, category: 'INAPPROPRIATE_MEDIA', question_id: QID });
+    expect(r.success).toBe(true);
+    if (r.success) expect(r.data.question_id).toBe(QID);
+  });
+
+  it('question_id opsiyonel (eski istemci) ve mevcut kategoriyle birlikte gecerli', () => {
+    expect(createReportSchema.safeParse({ reported_id: VALID, category: 'SPAM' }).success).toBe(true);
+    expect(createReportSchema.safeParse({ reported_id: VALID, category: 'SPAM', question_id: QID }).success).toBe(true);
+  });
+
+  it('uuid olmayan question_id reddedilir', () => {
+    expect(createReportSchema.safeParse({ reported_id: VALID, category: 'SPAM', question_id: 'x' }).success).toBe(false);
+  });
+});
+

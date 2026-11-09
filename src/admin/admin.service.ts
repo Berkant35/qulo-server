@@ -3,6 +3,7 @@ import { env } from "../config/env.js";
 import { hashPassword, comparePassword, normalizeEmail } from "../utils/hash.js";
 import { sanitizeIlike } from "../utils/validation.js";
 import { Errors } from "../utils/errors.js";
+import { questionMediaService } from "../services/question-media.service.js";
 import { banService } from "../services/ban.service.js";
 import { diamondService } from "../services/diamond.service.js";
 import {
@@ -292,7 +293,38 @@ class AdminService {
       supabase.from("users").select("id, email, name, surname, photos, is_banned").eq("id", report.reported_id).single(),
     ]);
 
-    return { report, reporter, reported };
+    const question = report.question_id ? await this.getReportQuestion(report.question_id as string) : null;
+
+    return { report, reporter, reported, question };
+  }
+
+  /** Soruya bagli sikayet: admin icin soru medyasi (moderasyon durumundan bagimsiz, 600 sn imzali URL). */
+  private async getReportQuestion(questionId: string) {
+    const { data: q } = await supabase
+      .from("questions")
+      .select("id, user_id, order_num, question_text, voice_path, image_path, image_status")
+      .eq("id", questionId)
+      .maybeSingle();
+    if (!q) return null;
+    const [voice_url, image_url] = await Promise.all([
+      questionMediaService.signedUrl((q.voice_path as string | null) ?? null),
+      questionMediaService.signedUrl((q.image_path as string | null) ?? null),
+    ]);
+    return { ...q, voice_url, image_url };
+  }
+
+  /** Sikayet edilen sorunun tek medya slotunu siler (sahip akisiyla ayni CAS/depo temizligi). Ban ayri akis. */
+  async removeReportMedia(reportId: string, kind: "voice" | "image"): Promise<boolean> {
+    const { data: report } = await supabase.from("reports").select("question_id").eq("id", reportId).maybeSingle();
+    if (!report?.question_id) return false;
+    const { data: q } = await supabase
+      .from("questions")
+      .select("user_id, order_num")
+      .eq("id", report.question_id)
+      .maybeSingle();
+    if (!q) return false;
+    await questionMediaService.removeMedia(q.user_id as string, q.order_num as number, kind);
+    return true;
   }
 
   async updateReportStatus(reportId: string, status: string) {

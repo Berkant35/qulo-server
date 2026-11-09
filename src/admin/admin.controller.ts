@@ -162,7 +162,17 @@ class AdminController {
 
   async reportAction(req: Request, res: Response) {
     const reportId = req.params.id as string;
-    const { status, ban_user } = req.body;
+    const { status, ban_user, remove_media } = req.body;
+    // Medya silme ayri aksiyon: durum degistirmez, ban cagirmaz.
+    if (remove_media === "voice" || remove_media === "image") {
+      try {
+        await adminService.removeReportMedia(reportId, remove_media);
+      } catch (err) {
+        console.error("[admin] report remove_media failed:", { reportId, err });
+        return res.redirect(`/admin/reports/${reportId}?error=remove_media_failed`);
+      }
+      return res.redirect(`/admin/reports/${reportId}`);
+    }
     await adminService.updateReportStatus(reportId, status);
     if (ban_user === "1") {
       const detail = await adminService.getReportDetail(reportId);
