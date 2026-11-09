@@ -1705,3 +1705,155 @@ describe("discover-ranking (saf kurallar)", () => {
       .toEqual([0, 1, 2, 3]);
   });
 });
+
+// ─── Sesli/gorselli soru rozetleri (2.0.19) ──────────────────────────────────────────────
+// Kart, izleyicinin COZEBILECEGI sorularda medya varsa rozet tasir: yalniz izleyicinin dil
+// kumesindeki sorular (dil kapisi 5.6 ve quiz filtresiyle ayni `questionLocale` kurali) ve
+// yalniz moderasyondan gecmis (`approved`) gorsel. Kapi kapaliyken (eski istemci / bayrak kapali)
+// yanit ve sorgu birebir eski: anahtar hic eklenmez, 084 kolonlari select'e girmez (migration
+// uygulanmadan once de patlamasin).
+
+/** Eski istemci sozlesmesi: question_info'nun tam anahtar kumesi. */
+const LEGACY_QUESTION_INFO_KEYS = ["avg_difficulty", "categories", "count", "languages"];
+const LEGACY_DISCOVER_QUESTION_COLUMNS = "user_id, category, stats_correct, stats_wrong, locale, created_at";
+const LEGACY_UNDO_QUESTION_COLUMNS = "user_id, category, stats_correct, stats_wrong, locale";
+const LEGACY_UNDO_VIEWER_COLUMNS = "lat, lng, passport_lat, passport_lng, match_radius_km";
+
+/** Sahte istemcinin `from(t).select(cols)` cagrilarini kaydeder (fake kolonlari yok sayar). */
+function recordSelects(fake: FakeSupabase): Array<{ table: string; columns: string | undefined }> {
+  const log: Array<{ table: string; columns: string | undefined }> = [];
+  const from = fake.client.from.bind(fake.client);
+  fake.client.from = (table: string) => {
+    const api = from(table);
+    const select = api.select;
+    return {
+      ...api,
+      select: (columns?: string, opts?: unknown) => {
+        log.push({ table, columns });
+        return select(columns, opts);
+      },
+    };
+  };
+  return log;
+}
+
+function mediaQuestion(userId: string, overrides: Record<string, unknown> = {}) {
+  return {
+    user_id: userId, category: "life", stats_correct: 0, stats_wrong: 0, locale: "tr",
+    voice_path: null, voice_duration_ms: null, image_path: null, image_status: null,
+    ...overrides,
+  };
+}
+
+describe("discover — sesli/gorselli soru rozetleri (has_voice / has_image, 2.0.19)", () => {
+  const SESLI = uid(90), YABANCI_MEDYA = uid(91), BEKLEYEN = uid(92), ONAYLI = uid(93), YOLSUZ = uid(94), REDDEDILEN = uid(95);
+  const ALL = [SESLI, YABANCI_MEDYA, BEKLEYEN, ONAYLI, YOLSUZ, REDDEDILEN];
+  const tablolar = (): Tables => ({
+    users: [viewerRow(), ...ALL.map((id, i) => candidateRow(id, 1 + i))],
+    swipes: [], matches: [],
+    questions: [
+      ...questionsFor(ALL),
+      mediaQuestion(SESLI, { voice_path: `${SESLI}/q1/voice.m4a`, voice_duration_ms: 8000 }),
+      // Medya izleyicinin okumadigi dilde: quiz bu soruyu sunmaz → rozet yok.
+      mediaQuestion(YABANCI_MEDYA, {
+        locale: "en", voice_path: `${YABANCI_MEDYA}/q1/voice.m4a`, voice_duration_ms: 5000,
+        image_path: `${YABANCI_MEDYA}/q1/image.jpg`, image_status: "approved",
+      }),
+      mediaQuestion(BEKLEYEN, { image_path: `${BEKLEYEN}/q1/image.jpg`, image_status: "pending" }),
+      mediaQuestion(ONAYLI, { image_path: `${ONAYLI}/q1/image.jpg`, image_status: "approved" }),
+      // Bozuk satir: onayli ama dosya yok → quiz de gorsel gostermez (solverVisibleMedia).
+      mediaQuestion(YOLSUZ, { image_path: null, image_status: "approved" }),
+      mediaQuestion(REDDEDILEN, { image_path: `${REDDEDILEN}/q1/image.jpg`, image_status: "rejected" }),
+    ],
+  });
+
+  async function cardsById(media?: { active: boolean }) {
+    const service = await loadService(tablolar());
+    const selects = recordSelects(sonFake);
+    const res = media ? await service.discover(VIEWER_ID, 1, media) : await service.discover(VIEWER_ID, 1);
+    const byId = new Map(res.cards.map((c) => [c.user_id, c.question_info as unknown as Record<string, unknown>]));
+    return { byId, selects, cards: res.cards };
+  }
+
+  it("kapi acik: izleyicinin dilindeki sesli soru → has_voice=true", async () => {
+    const { byId } = await cardsById({ active: true });
+    expect(byId.get(SESLI)).toMatchObject({ has_voice: true, has_image: false });
+  });
+
+  it("kapi acik: medya yalniz baska dildeki soruda → has_voice=false, has_image=false", async () => {
+    const { byId } = await cardsById({ active: true });
+    expect(byId.get(YABANCI_MEDYA)).toMatchObject({ has_voice: false, has_image: false });
+  });
+
+  it("kapi acik: yalniz approved gorsel sayilir (pending/rejected/yolsuz → false)", async () => {
+    const { byId } = await cardsById({ active: true });
+    expect(byId.get(ONAYLI)).toMatchObject({ has_voice: false, has_image: true });
+    expect(byId.get(BEKLEYEN)).toMatchObject({ has_image: false });
+    expect(byId.get(REDDEDILEN)).toMatchObject({ has_image: false });
+    expect(byId.get(YOLSUZ)).toMatchObject({ has_image: false });
+  });
+
+  it("kapi acik: rozetler mevcut question_info alanlarini bozmaz; select 084 kolonlarini okur", async () => {
+    const { byId, selects } = await cardsById({ active: true });
+    expect(Object.keys(byId.get(SESLI)!).sort()).toEqual([...LEGACY_QUESTION_INFO_KEYS, "has_image", "has_voice"].sort());
+    // Sayilar dil filtresinden ETKILENMEZ (eski davranis): rozet filtresi yalniz rozetler icin.
+    expect(byId.get(YABANCI_MEDYA)).toMatchObject({ count: 3, languages: ["tr", "en"] });
+    const cols = selects.filter((s) => s.table === "questions").map((s) => s.columns);
+    expect(cols.length).toBeGreaterThan(0);
+    for (const c of cols) expect(c).toBe(`${LEGACY_DISCOVER_QUESTION_COLUMNS}, voice_path, image_path, image_status`);
+  });
+
+  for (const [ad, media] of [["argumansiz", undefined], ["active:false", { active: false }]] as const) {
+    it(`eski istemci (${ad}): question_info tam eski anahtarlar, questions select birebir eski`, async () => {
+      const { cards, selects } = await cardsById(media);
+      expect(cards).toHaveLength(ALL.length);
+      for (const c of cards) {
+        expect(Object.keys(c.question_info).sort()).toEqual(LEGACY_QUESTION_INFO_KEYS);
+      }
+      const cols = selects.filter((s) => s.table === "questions").map((s) => s.columns);
+      expect(cols.length).toBeGreaterThan(0);
+      for (const c of cols) expect(c).toBe(LEGACY_DISCOVER_QUESTION_COLUMNS);
+    });
+  }
+});
+
+describe("undoSwipe — sesli/gorselli soru rozetleri (2.0.19)", () => {
+  const TARGET = uid(96);
+  const tablolar = (viewer: Record<string, unknown> = {}): Tables => ({
+    users: [viewerRow(viewer), candidateRow(TARGET, 2)],
+    swipes: [{ id: "sw-m", swiper_id: VIEWER_ID, target_id: TARGET, action: "REJECT", created_at: new Date().toISOString() }],
+    matches: [],
+    questions: [
+      ...questionsFor([TARGET]),
+      mediaQuestion(TARGET, { voice_path: `${TARGET}/q1/voice.m4a`, voice_duration_ms: 4000 }),
+      mediaQuestion(TARGET, { locale: "en", image_path: `${TARGET}/q2/image.jpg`, image_status: "approved" }),
+    ],
+  });
+
+  it("kapi acik: undo karti da rozetleri tasir (izleyicinin dili + approved kurali)", async () => {
+    const service = await loadService(tablolar());
+    const card = await service.undoSwipe(VIEWER_ID, TARGET, { active: true });
+    expect(card.question_info).toMatchObject({ count: 4, has_voice: true, has_image: false });
+  });
+
+  it("kapi acik: preferred_languages bossa izleyici dili user_languages'tan (quiz ile ayni kaynak)", async () => {
+    const service = await loadService(tablolar({ preferred_languages: [] }), { userLanguages: ["en"] });
+    const card = await service.undoSwipe(VIEWER_ID, TARGET, { active: true });
+    expect(card.question_info).toMatchObject({ has_voice: false, has_image: true });
+  });
+
+  for (const [ad, media] of [["argumansiz", undefined], ["active:false", { active: false }]] as const) {
+    it(`eski istemci (${ad}): undo karti eski anahtarlar, select'ler birebir eski`, async () => {
+      const service = await loadService(tablolar());
+      const selects = recordSelects(sonFake);
+      const card = media
+        ? await service.undoSwipe(VIEWER_ID, TARGET, media)
+        : await service.undoSwipe(VIEWER_ID, TARGET);
+      expect(Object.keys(card.question_info).sort()).toEqual(LEGACY_QUESTION_INFO_KEYS);
+      expect(selects.filter((s) => s.table === "questions").map((s) => s.columns)).toEqual([LEGACY_UNDO_QUESTION_COLUMNS]);
+      expect(selects.filter((s) => s.table === "users").map((s) => s.columns)).toContain(LEGACY_UNDO_VIEWER_COLUMNS);
+      // Kapi kapali → izleyici dili okunmaz (ek istek yok).
+      expect(sonFake.queries.filter((q) => q.table === "users")).toHaveLength(2);
+    });
+  }
+});

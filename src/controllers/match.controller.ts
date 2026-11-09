@@ -1,13 +1,15 @@
 import type { Request, Response, NextFunction } from "express";
 import { matchingService } from "../services/matching.service.js";
 import { localeFromRequestHeaders } from "../utils/locales.js";
+import { mediaActiveFailClosed } from "./media-gate.js";
 import type { SwipeInput, DiscoverQuery } from "../validators/match.validator.js";
 
 export async function discoverHandler(req: Request, res: Response, next: NextFunction) {
   try {
     const userId = req.user!.userId;
     const { page } = req.query as unknown as DiscoverQuery;
-    const data = await matchingService.discover(userId, page);
+    // Sesli/gorselli soru rozetleri (has_voice/has_image) yalniz kapi acikken; eski istemciye yanit birebir eski.
+    const data = await matchingService.discover(userId, page, { active: await mediaActiveFailClosed(req, "discover") });
     res.json(data);
   } catch (err) {
     next(err);
@@ -40,7 +42,7 @@ export async function undoSwipeHandler(req: Request, res: Response, next: NextFu
   try {
     const userId = req.user!.userId;
     const targetId = req.params.target_id as string;
-    const data = await matchingService.undoSwipe(userId, targetId);
+    const data = await matchingService.undoSwipe(userId, targetId, { active: await mediaActiveFailClosed(req, "undo") });
     res.json(data);
   } catch (err) {
     next(err);

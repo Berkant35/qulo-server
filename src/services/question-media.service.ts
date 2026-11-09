@@ -1,5 +1,6 @@
 import { supabase } from "../config/supabase.js";
 import { Errors } from "../utils/errors.js";
+import { questionLocale } from "../constants/locales.js";
 import { normalizeUploadedImage, NORMAL_GORSEL_MIME } from "../utils/image-normalize.js";
 import { DEGISMEZ_DOSYA_CACHE_CONTROL } from "../constants/storage.js";
 import { moderateQuestionImage, type QuestionImageModerationStatus } from "./question-image-moderation.service.js";
@@ -54,6 +55,27 @@ export function solverVisibleMedia(row: QuestionMediaColumns): {
     image_path: image,
     image_status: image ? "approved" : null,
   };
+}
+
+/**
+ * Discover/undo karti rozetleri (2.0.19): izleyicinin COZEBILECEGI sorularda medya var mi. Yalniz
+ * izleyicinin dil kumesindeki sorular (quiz `filterByLanguagePreference` ve Discover dil kapisiyla ayni
+ * `questionLocale` kurali) ve `solverVisibleMedia` filtresi (gorsel yalniz `approved` + dosya) — rozet,
+ * quiz'in gercekten gosterecegi medyadan sapamaz.
+ */
+export function mediaBadges(
+  rows: ReadonlyArray<QuestionMediaColumns & { locale?: unknown }>,
+  langs: readonly string[],
+): { has_voice: boolean; has_image: boolean } {
+  let hasVoice = false;
+  let hasImage = false;
+  for (const row of rows) {
+    if (!langs.includes(questionLocale(row.locale))) continue;
+    const visible = solverVisibleMedia(row);
+    hasVoice ||= visible.voice_path != null;
+    hasImage ||= visible.image_path != null;
+  }
+  return { has_voice: hasVoice, has_image: hasImage };
 }
 
 type OwnedQuestion = QuestionMediaColumns & { id: string };

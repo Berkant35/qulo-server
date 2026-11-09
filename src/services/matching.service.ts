@@ -19,6 +19,7 @@ import { servedGate } from "./served-gate.service.js";
 import { izleyiciDilleri, seedLanguageFilter } from "../utils/discover-language.js";
 import { activitySignal, type ActivitySignal } from "../utils/activity-signal.js";
 import { unansweredMatchService } from "./unanswered-match.service.js";
+import { buildQuestionInfo, type QuestionInfo, type QuestionSummaryRow } from "./discover-question-info.js";
 import {
   DAY_MS,
   discoverGroupRank,
@@ -35,6 +36,16 @@ const PAGE_SIZE = 10;
 const CANDIDATE_FETCH_LIMIT = 500;
 /** URL uzunlugu icin dislama listesi tavani; asilirsa kalani bellekte elenir. */
 const MAX_EXCLUDE_IDS = 1000;
+
+/**
+ * Kart soru ozeti kolonlari. Medya kolonlari (084) yalniz kapi acikken okunur: eski istemcinin
+ * sorgusu birebir eski kalir ve migration uygulanmadan once de patlamaz. Iki tam literal + iki ayri
+ * cagri — literal birlesimi supabase-js'in tip duzeyi select ayristiricisini bozuyor (quiz.service).
+ */
+const DISCOVER_QUESTION_COLUMNS = "user_id, category, stats_correct, stats_wrong, locale, created_at";
+const DISCOVER_QUESTION_MEDIA_COLUMNS = "user_id, category, stats_correct, stats_wrong, locale, created_at, voice_path, image_path, image_status";
+const UNDO_QUESTION_COLUMNS = "user_id, category, stats_correct, stats_wrong, locale";
+const UNDO_QUESTION_MEDIA_COLUMNS = "user_id, category, stats_correct, stats_wrong, locale, voice_path, image_path, image_status";
 
 
 
@@ -70,13 +81,6 @@ interface CandidateRow {
   is_seed_profile: boolean | null;
 }
 
-interface QuestionInfo {
-  count: number;
-  categories: string[];
-  avg_difficulty: string;
-  languages: string[];
-}
-
 interface ProfileCard {
   user_id: string;
   name: string;
@@ -108,6 +112,7 @@ export class MatchingService {
   async discover(
     userId: string,
     page = 1,
+    media: { active: boolean } = { active: false },
   ): Promise<{
     cards: ProfileCard[];
     page: number;
@@ -358,10 +363,9 @@ export class MatchingService {
       const ID_PARCA = 100;
       const questionStats: Array<Record<string, any>> = [];
       for (let i = 0; i < candidateIds.length; i += ID_PARCA) {
-        const { data: parca, error: parcaError } = await supabase
-          .from('questions')
-          .select('user_id, category, stats_correct, stats_wrong, locale, created_at')
-          .in('user_id', candidateIds.slice(i, i + ID_PARCA));
+        const { data: parca, error: parcaError } = await this.loadQuestionChunk(
+          candidateIds.slice(i, i + ID_PARCA), media.active,
+        );
         if (parcaError) {
           // Sessizce bos donmek "aday yok" gibi gorunur; bu yanlis sonuc, hatadan beterdir.
           console.error('[matching] question stats query error:', parcaError.message);
@@ -379,7 +383,8 @@ export class MatchingService {
         else rowsByUser.set(uid, [row]);
       }
 
-      // 5.2 — Enrich candidates with question info (category + difficulty)
+      // 5.2 — Enrich candidates with question info (category + difficulty [+ medya rozetleri])
+      const badgeLangs = media.active ? langPrefs : null;
       for (const cId of candidateIds) {
         const userQuestions = rowsByUser.get(cId) ?? [];
 
@@ -388,32 +393,7 @@ export class MatchingService {
           cId,
           userQuestions.map((q: any) => questionLocale(q.locale)),
         );
-
-        let totalAttempts = 0;
-        let totalCorrect = 0;
-        for (const q of userQuestions) {
-          totalAttempts += q.stats_correct + q.stats_wrong;
-          totalCorrect += q.stats_correct;
-        }
-        const successRate = totalAttempts > 0 ? (totalCorrect / totalAttempts) * 100 : 50;
-
-        let difficulty = 'unranked';
-        if (totalAttempts >= 10) {
-          if (successRate > 70) difficulty = 'easy';
-          else if (successRate > 40) difficulty = 'medium';
-          else if (successRate > 20) difficulty = 'hard';
-          else difficulty = 'legendary';
-        }
-
-        const categories = [...new Set(userQuestions.map((q: any) => q.category).filter(Boolean))] as string[];
-        const languages = [...new Set(userQuestions.map((q: any) => questionLocale(q.locale)))];
-
-        questionInfoMap.set(cId, {
-          count: userQuestions.length,
-          categories,
-          avg_difficulty: difficulty,
-          languages,
-        });
+        questionInfoMap.set(cId, buildQuestionInfo(userQuestions, badgeLangs));
       }
     }
 
@@ -561,7 +541,7 @@ export class MatchingService {
       question_count: s.questionCount,
       profile_completion: s.candidate.profile_completion,
       is_boosted: isBoostActive(s.candidate.boost_until),
-      question_info: questionInfoMap.get(s.candidate.id) ?? { count: 0, categories: [], avg_difficulty: 'unranked', languages: [] },
+      question_info: questionInfoMap.get(s.candidate.id) ?? buildQuestionInfo([], media.active ? langPrefs : null),
       relationship_goal: s.candidate.relationship_goal,
       activity: s.candidate.is_seed_profile === true ? null : activitySignal(s.candidate.last_seen_at, now.getTime()),
     }));
@@ -646,9 +626,46 @@ export class MatchingService {
     return { matched: false };
   }
 
+  /** Discover soru ozeti parcasi; 084 medya kolonlari yalniz kapi acikken (bkz. DISCOVER_QUESTION_*). */
+  private loadQuestionChunk(userIds: string[], withMedia: boolean) {
+    const questions = supabase.from("questions");
+    return withMedia
+      ? questions.select(DISCOVER_QUESTION_MEDIA_COLUMNS).in("user_id", userIds)
+      : questions.select(DISCOVER_QUESTION_COLUMNS).in("user_id", userIds);
+  }
+
+  /** Undo kartinin soru ozeti; 084 medya kolonlari yalniz kapi acikken (bkz. UNDO_QUESTION_*). */
+  private loadTargetQuestions(targetId: string, withMedia: boolean) {
+    const questions = supabase.from("questions");
+    return withMedia
+      ? questions.select(UNDO_QUESTION_MEDIA_COLUMNS).eq("user_id", targetId)
+      : questions.select(UNDO_QUESTION_COLUMNS).eq("user_id", targetId);
+  }
+
   /**
-   * Undo the last swipe (delete the swipe record and return the card).
+   * Undo izleyicisi (mesafe); kapi acikken rozet dilleri icin `preferred_languages, locale` da ayni
+   * istekte okunur (ek istek yok). Iki literal: bkz. DISCOVER_QUESTION_*.
    */
+  private loadUndoViewer(userId: string, withMedia: boolean) {
+    const users = supabase.from("users");
+    return withMedia
+      ? users.select("lat, lng, passport_lat, passport_lng, match_radius_km, preferred_languages, locale").eq("id", userId).single()
+      : users.select("lat, lng, passport_lat, passport_lng, match_radius_km").eq("id", userId).single();
+  }
+
+  /**
+   * Undo rozetleri icin izleyicinin dilleri (discover listeyi zaten kuruyor). Kaynak sirasi
+   * `izleyiciDilleri` / quiz `resolveSolverLanguages` ile ayni; user_languages yalniz tercih bossa okunur.
+   */
+  private async viewerLanguages(
+    userId: string,
+    viewer: Record<string, unknown> | null,
+  ): Promise<string[]> {
+    const preferred = (viewer?.preferred_languages as string[] | null | undefined) ?? null;
+    const fromTable = preferred && preferred.length > 0 ? [] : await userLanguageService.getUserLanguages(userId);
+    return izleyiciDilleri(preferred, fromTable, (viewer?.locale as string | null | undefined) ?? null);
+  }
+
   /** Kartlara görünür kimlik etiketlerini ekler (yerinde). Arama düşerse kartlar etiketsiz kalır. */
   private async attachIdentities(cards: ProfileCard[]): Promise<void> {
     const identities = await identityService.visibleForSafe(cards.map((c) => c.user_id));
@@ -658,7 +675,10 @@ export class MatchingService {
     }
   }
 
-  async undoSwipe(userId: string, targetId: string): Promise<ProfileCard> {
+  /**
+   * Undo the last swipe (delete the swipe record and return the card).
+   */
+  async undoSwipe(userId: string, targetId: string, media: { active: boolean } = { active: false }): Promise<ProfileCard> {
     assertUuid(targetId, "targetId");
 
     // Basarisiz quiz'in kilitli hedefi geri getirilmez: undo eskiden bedava tekrar yoluydu, simdi
@@ -696,33 +716,11 @@ export class MatchingService {
     if (count === 0) throw Errors.SESSION_NOT_FOUND();
 
     // Get question info
-    const { data: questions } = await supabase
-      .from("questions")
-      .select("user_id, category, stats_correct, stats_wrong, locale")
-      .eq("user_id", targetId);
-
-    const userQuestions = questions ?? [];
-    const totalAttempts = userQuestions.reduce((s, q: any) => s + q.stats_correct + q.stats_wrong, 0);
-    const totalCorrect = userQuestions.reduce((s, q: any) => s + q.stats_correct, 0);
-    const successRate = totalAttempts > 0 ? (totalCorrect / totalAttempts) * 100 : 50;
-
-    let difficulty = "unranked";
-    if (totalAttempts >= 10) {
-      if (successRate > 70) difficulty = "easy";
-      else if (successRate > 40) difficulty = "medium";
-      else if (successRate > 20) difficulty = "hard";
-      else difficulty = "legendary";
-    }
-
-    const categories = [...new Set(userQuestions.map((q: any) => q.category).filter(Boolean))] as string[];
-    const languages = [...new Set(userQuestions.map((q: any) => questionLocale(q.locale)))];
+    const { data: questions } = await this.loadTargetQuestions(targetId, media.active);
+    const userQuestions = (questions ?? []) as QuestionSummaryRow[];
 
     // Calculate distance
-    const { data: me } = await supabase
-      .from("users")
-      .select("lat, lng, passport_lat, passport_lng, match_radius_km")
-      .eq("id", userId)
-      .single();
+    const { data: me } = await this.loadUndoViewer(userId, media.active);
 
     const myLat = (me?.passport_lat as number | null) ?? me?.lat;
     const myLng = (me?.passport_lng as number | null) ?? me?.lng;
@@ -736,6 +734,8 @@ export class MatchingService {
 
     const now = new Date();
     const isBoostActive = user.boost_until != null && new Date(user.boost_until) > now;
+    // Rozetler discover'daki gibi izleyicinin dillerinden; kapi kapaliyken dil okunmaz (ek istek yok).
+    const badgeLangs = media.active ? await this.viewerLanguages(userId, me) : null;
 
     const card: ProfileCard = {
       user_id: user.id,
@@ -749,7 +749,7 @@ export class MatchingService {
       question_count: userQuestions.length,
       profile_completion: user.profile_completion,
       is_boosted: isBoostActive,
-      question_info: { count: userQuestions.length, categories, avg_difficulty: difficulty, languages },
+      question_info: buildQuestionInfo(userQuestions, badgeLangs),
       relationship_goal: user.relationship_goal,
       activity: user.is_seed_profile === true ? null : activitySignal(user.last_seen_at as string | null, now.getTime()),
     };
