@@ -7,6 +7,7 @@ interface MockOwner {
   last_active_at: string | null;
   email_notifications_enabled: boolean;
   email_verified?: boolean;
+  is_seed_profile?: boolean | null;
 }
 
 function mockDeps(opts: { owner: MockOwner | null; sendThrow?: boolean; emailedRecently?: boolean }) {
@@ -89,6 +90,21 @@ describe("matchEmailService.sendMatchEmail", () => {
     await matchEmailService.sendMatchEmail("u1");
     expect(sendMock).not.toHaveBeenCalled();
     expect(createTokenMock).not.toHaveBeenCalled();
+  });
+
+  it("seed hedefe (is_seed_profile ya da @qulo.seed adresi) eslesme e-postasi gitmez, token da uretilmez", async () => {
+    // Seed satiri dogrulanmis + tercih acik + last_active_at NULL basilir: diger kapilar onu gecirirdi (bounce).
+    for (const owner of [
+      INACTIVE_OWNER({ last_active_at: null, is_seed_profile: true }),
+      INACTIVE_OWNER({ last_active_at: null, email: "seed-tr_0015@qulo.seed", is_seed_profile: false }),
+    ]) {
+      vi.resetModules();
+      const { sendMock, createTokenMock } = mockDeps({ owner });
+      const { matchEmailService } = await import("../../src/services/match-email.service.js");
+      await matchEmailService.sendMatchEmail("u1");
+      expect(sendMock).not.toHaveBeenCalled();
+      expect(createTokenMock).not.toHaveBeenCalled();
+    }
   });
 
   it("skips when owner active within 24 hours", async () => {

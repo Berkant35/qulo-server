@@ -55,6 +55,16 @@ describe('matchRecallEmailService ("seni cozduler" e-posta yedegi)', () => {
     expect(await svc.prepare('T', NOW)).toEqual({ ok: false, reason: 'email_unverified' });
   });
 
+  it('seed hedef (bayrak ya da @qulo.seed adresi) → seed_profile, gonderim ve token yok', async () => {
+    const a = await setup(tables({ is_seed_profile: true }));
+    expect(await a.svc.prepare('T', NOW)).toEqual({ ok: false, reason: 'seed_profile' });
+    expect(a.sendEmail).not.toHaveBeenCalled();
+    expect(a.fake.table('email_unsubscribe_tokens')).toHaveLength(0);
+    vi.resetModules();
+    const b = await setup(tables({ is_seed_profile: false, email: 'seed-tr_0015@qulo.seed' }));
+    expect(await b.svc.prepare('T', NOW)).toEqual({ ok: false, reason: 'seed_profile' });
+  });
+
   it('adres yok → no_email; silinmis hesap → user_not_found', async () => {
     expect(await (await setup(tables({ email: null }))).svc.prepare('T', NOW)).toEqual({ ok: false, reason: 'no_email' });
     vi.resetModules();

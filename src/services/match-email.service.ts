@@ -7,6 +7,7 @@ import { sendEmail } from "../utils/gmail.js";
 import { emailLocales } from "../utils/email-locales.js";
 import { emailUnsubscribeTokenService } from "./email-unsubscribe-token.service.js";
 import { env } from "../config/env.js";
+import { isSeedRecipient } from "../utils/seed-recipient.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,6 +22,7 @@ interface OwnerRow {
   email_notifications_enabled: boolean;
   email_verified: boolean | null;
   is_deleted: boolean;
+  is_seed_profile: boolean | null;
 }
 
 class MatchEmailService {
@@ -28,7 +30,7 @@ class MatchEmailService {
     try {
       const { data: owner } = await supabase
         .from("users")
-        .select("id, email, locale, last_active_at, email_notifications_enabled, email_verified, is_deleted")
+        .select("id, email, locale, last_active_at, email_notifications_enabled, email_verified, is_deleted, is_seed_profile")
         .eq("id", ownerId)
         .single();
       if (!owner) return;
@@ -36,6 +38,10 @@ class MatchEmailService {
 
       // 0) Soft-deleted user — never email
       if (o.is_deleted) return;
+
+      // 0b) Seed (test) profili — gercek kullanici seed'in sorularini cozunce buraya gelir; adres @qulo.seed
+      // (bounce). Seed satiri dogrulanmis + tercih acik basilir, asagidaki kapilar onu elemez.
+      if (isSeedRecipient(o)) return;
 
       // 1) Opt-out kontrolü
       if (!o.email_notifications_enabled) return;

@@ -7,6 +7,7 @@ import { resolveLocale } from "../utils/locales.js";
 import { sendEmail } from "../utils/gmail.js";
 import { emailLocales, type MatchNewTpl } from "../utils/email-locales.js";
 import { emailUnsubscribeTokenService } from "./email-unsubscribe-token.service.js";
+import { isSeedRecipient } from "../utils/seed-recipient.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,7 +15,7 @@ const __dirname = path.dirname(__filename);
 /** Abonelikten cikma token'inin turu — unsubscribe ucu ture bakmaz, tum eslesme e-postalarini kapatir. */
 export const MATCH_RECALL_EMAIL_TYPE = "match_recall";
 
-export type RecallEmailSkip = "user_not_found" | "email_opt_out" | "no_email" | "email_unverified" | "email_recent";
+export type RecallEmailSkip = "user_not_found" | "seed_profile" | "email_opt_out" | "no_email" | "email_unverified" | "email_recent";
 
 /** Gonderime hazir hedef (`prepare` sonucu). */
 export interface RecallEmailTarget {
@@ -30,6 +31,7 @@ interface RecallTargetRow {
   email_notifications_enabled: boolean | null;
   email_verified: boolean | null;
   is_deleted: boolean | null;
+  is_seed_profile: boolean | null;
 }
 
 /**
@@ -48,7 +50,7 @@ class MatchRecallEmailService {
   ): Promise<{ ok: true; target: RecallEmailTarget } | { ok: false; reason: RecallEmailSkip | "lookup_failed" }> {
     const { data, error } = await supabase
       .from("users")
-      .select("id, email, locale, email_notifications_enabled, email_verified, is_deleted")
+      .select("id, email, locale, email_notifications_enabled, email_verified, is_deleted, is_seed_profile")
       .eq("id", userId)
       .maybeSingle();
     if (error) {
@@ -57,6 +59,8 @@ class MatchRecallEmailService {
     }
     const row = data as RecallTargetRow | null;
     if (!row || row.is_deleted) return { ok: false, reason: "user_not_found" };
+    // Motor seed'i zaten aday listesinden eler (isEmailFallbackUser); bu ikinci kapi servisi tek basina guvenli kilar.
+    if (isSeedRecipient(row)) return { ok: false, reason: "seed_profile" };
     if (!row.email_notifications_enabled) return { ok: false, reason: "email_opt_out" };
     if (!row.email) return { ok: false, reason: "no_email" };
     // Baskasinin adresiyle acilmis hesap karsi tarafin adini o adrese yollatmasin.
