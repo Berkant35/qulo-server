@@ -1,5 +1,5 @@
 -- 082_matches_rls_katilimci.sql
--- matches: RLS aç + yalnız katılımcıya SELECT policy + anon SELECT iptali.
+-- matches: RLS aç + yalnız katılımcıya ve AKTİF eşleşmeye SELECT policy + anon SELECT iptali.
 -- 2.0.18 P0 güvenlik maddesi 1, adım 1/2 (sonra 083 messages). Tablo başına AYRI migration.
 --
 -- ÖNKOŞUL (sıra ZORUNLU; bozulursa sohbet listesindeki yeni eşleşme bildirimi kesilir):
@@ -22,6 +22,12 @@
 --   * `authenticated` rolü diğer tüm public tablolarda RLS açık + 0 policy (= erişim yok). Kullanıcıya
 --     authenticated token vermek bu tablolar dışında yetki genişletmez (2026-11-09 SQL denetimi).
 --
+-- `is_active` koşulu sunucu kuralıyla aynı: getMatches yalnız aktif eşleşmeyi listeler, chat erişimi
+-- MATCH_INACTIVE ile reddeder. Unmatch, engelleme (block.service) ve ban (ban.service) satırı is_active=false yapar.
+-- Bundan sonra o satır Realtime'dan akmaz. Mobil matches UPDATE dinlemiyor (yalnız `matches:new` INSERT; unmatch'i
+-- API'nin MATCH_INACTIVE hatasından öğreniyor, grep 2026-11-09), bu yüzden is_active=false güncellemesinin
+-- teslim edilmemesi hiçbir akışı bozmaz. INSERT'te is_active varsayılanı true, yeni eşleşme teslim edilir.
+--
 -- Policy `auth.uid()` = JWT `sub` (qulo-server users.id, uuid). `(select auth.uid())` ifadesi satır başına
 -- değil sorgu başına bir kez hesaplanır (Supabase RLS performans önerisi).
 --
@@ -34,7 +40,7 @@ ALTER TABLE public.matches ENABLE ROW LEVEL SECURITY;
 CREATE POLICY matches_katilimci_select ON public.matches
   FOR SELECT
   TO authenticated
-  USING ((select auth.uid()) IN (user1_id, user2_id));
+  USING (is_active AND (select auth.uid()) IN (user1_id, user2_id));
 
 REVOKE SELECT ON public.matches FROM anon;
 

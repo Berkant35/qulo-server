@@ -3,6 +3,7 @@
 -- messages'ı 083 öncesine döndürür: policy yok, RLS kapalı, anon SELECT var.
 -- UYARI: geri alınca tüm mesaj içeriği yeniden anon'a açılır; sebep çözülünce 083 tekrar uygulanmalı.
 -- 082 bağımsızdır, bu rollback onu geri almaz.
+-- Policy adı 082/083 ile aynı: koşul (is_active, deleted_at) değişse de DROP POLICY onu kaldırır.
 
 BEGIN;
 

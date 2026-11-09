@@ -1,5 +1,5 @@
 -- 083_messages_rls_katilimci.sql
--- messages: RLS aç + yalnız eşleşmenin katılımcısına SELECT policy + anon SELECT iptali.
+-- messages: RLS aç + yalnız AKTİF eşleşmenin katılımcısına, SİLİNMEMİŞ mesaj için SELECT policy + anon SELECT iptali.
 -- 2.0.18 P0 güvenlik maddesi 1, adım 2/2. 082 (matches) uygulanıp yeşil/kırmızı re-test geçtikten SONRA.
 --
 -- ÖNKOŞUL: 082 ile aynı (token ucu + env canlı, mobil 2.0.18 setAuth, asgari sürüm 2.0.18) + 082 yeşil.
@@ -18,6 +18,11 @@
 --     hiçbir olay almaz.
 --   * Alt sorgu matches'i authenticated olarak okur. 082 policy'si katılımcıya izin verdiği için tutarlı.
 --     idx_matches_* + matches_pkey ile eşleşme id'si üzerinden tek satır okunur.
+--   * Sunucu kuralıyla aynı: getMessages `deleted_at IS NULL` + aktif eşleşme (verifyMatchAccess → MATCH_INACTIVE).
+--     Soft delete (deleted_at set eden UPDATE) karşı tarafa Realtime ile akmaz. Mobil silmeyi Realtime'dan
+--     işlemiyor: chat yalnız INSERT dinliyor, `matches:read` yalnız read_at'e bakıyor. Bu yüzden kırılan akış yok.
+--     Okundu UPDATE'i silinmemiş mesajda olduğu için teslim edilir. Ban eşleşmeleri pasifleştirdiği için banlı
+--     kullanıcının teslimatı da anında kesilir. `m.is_active` 082'den bağımsız tekrarlanır, 082 geri alınsa da 083 doğru kalır.
 --   * Kolon grant'ları değişmez (authenticated tüm 10 kolonda SELECT, mobil MessageModel bunları okur).
 --
 -- Geri alma: 083_messages_rls_katilimci_rollback.sql (yalnız YEŞİL regresyonda).
@@ -30,10 +35,12 @@ CREATE POLICY messages_katilimci_select ON public.messages
   FOR SELECT
   TO authenticated
   USING (
-    EXISTS (
+    messages.deleted_at IS NULL
+    AND EXISTS (
       SELECT 1
       FROM public.matches m
       WHERE m.id = messages.match_id
+        AND m.is_active
         AND (select auth.uid()) IN (m.user1_id, m.user2_id)
     )
   );

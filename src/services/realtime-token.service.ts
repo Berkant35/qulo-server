@@ -18,7 +18,13 @@ import { Errors } from "../utils/errors.js";
  * Hiçbiri yoksa uç 503 döner. Mobil 503'te anon bağlantıyla devam eder, bu sayede env eklenmeden de yayın güvenli olur.
  */
 
-export const REALTIME_TOKEN_TTL_SEC = 3600;
+/**
+ * 10 dk. Banlanan kullanıcı yeni token alamaz (ban önbelleği ≤60 sn), elindeki token da en geç bu sürede biter.
+ * Ban ayrıca tüm eşleşmelerini `is_active=false` yapar ve 082/083 policy'si teslimatı anında keser.
+ * Silinen hesabın refresh token'ları silinir: erişim ≤15 dk + bu süre, yalnız kendi sohbetleri.
+ * Maliyet: aktif kullanıcı başına 10 dk'da 1 istek, Supabase'e en çok 1 ban okuması (supabase-cost-guard).
+ */
+export const REALTIME_TOKEN_TTL_SEC = 600;
 
 export type RealtimeSignerKind = "es256" | "hs256" | "disabled";
 

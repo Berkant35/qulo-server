@@ -79,7 +79,7 @@ export const uploadLimiter = rateLimit({
 });
 
 /**
- * Realtime JWT (POST /api/v1/realtime/token): istemci saatte ~1 kez (süre dolmadan) ve uygulama öne gelince
+ * Realtime JWT (POST /api/v1/realtime/token): token 10 dk geçerli; istemci süre dolmadan ve uygulama öne gelince
  * ister. İmzalama yereldir, Supabase isteği yoktur. Dakikada 10 kullanıcı başına bol bir tavandır,
  * yenileme döngüsüne giren hatalı bir istemciyi keser. Kullanıcı anahtarlı (CGNAT).
  */

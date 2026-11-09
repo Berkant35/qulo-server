@@ -27,7 +27,7 @@ async function load() {
 }
 
 describe('createRealtimeTokenService — ES256 (önerilen)', () => {
-  it(`kid başlıklı ES256 token; claim'ler Supabase sözleşmesine uyar, süre 1 saat`, async () => {
+  it(`kid başlıklı ES256 token; claim'ler Supabase sözleşmesine uyar, süre 10 dk`, async () => {
     const { createRealtimeTokenService, REALTIME_TOKEN_TTL_SEC } = await load();
     const key = es256Jwk('7d68f0e0-test');
     const svc = createRealtimeTokenService({ privateJwk: key.raw, issuer: ISSUER, now: () => NOW });
@@ -46,8 +46,8 @@ describe('createRealtimeTokenService — ES256 (önerilen)', () => {
     expect(claims.is_anonymous).toBe(false);
     expect(claims.iat).toBe(NOW / 1000);
     expect(claims.exp).toBe(NOW / 1000 + REALTIME_TOKEN_TTL_SEC);
-    expect(REALTIME_TOKEN_TTL_SEC).toBe(3600);
-    expect(expiresAt).toBe(new Date((NOW / 1000 + 3600) * 1000).toISOString());
+    expect(REALTIME_TOKEN_TTL_SEC).toBe(600);
+    expect(expiresAt).toBe(new Date((NOW / 1000 + 600) * 1000).toISOString());
   });
 
   it(`başka anahtarın public key'i ile doğrulanmaz (imza gerçekten bu anahtardan)`, async () => {

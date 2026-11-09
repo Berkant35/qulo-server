@@ -4,7 +4,7 @@
  * Migration gövdeleri (BEGIN..COMMIT arası, elle kopya YOK) geçici şemadaki `LIKE public.<tablo>`
  * kopyalarına uygulanır. Bugünkü yetki hali (anon + authenticated SELECT) önce kurulur, sonra migration
  * çalışır. Sentetik satırlarla Realtime'ın yaptığı gibi `role` + `request.jwt.claims` ayarlanır:
- * katılımcı / yabancı / sub'sız authenticated / anon görünürlüğü sayılır. Sonda RAISE EXCEPTION
+ * katılımcı / yabancı / pasif eşleşme / silinmiş mesaj / sub'sız authenticated / anon görünürlüğü sayılır. Sonda RAISE EXCEPTION
  * her şeyi geri alır (desen: seed-reply-candidates.ts).
  *
  * Kullanım: npx tsx scripts/sql-checks/realtime-rls-policies.ts > /tmp/x.sql
@@ -36,13 +36,18 @@ const C = 'cccccccc-0000-4000-8000-000000000003';
 const D = 'dddddddd-0000-4000-8000-000000000004';
 const M_AB = 'abababab-0000-4000-8000-0000000000ab';
 const M_BC = 'bcbcbcbc-0000-4000-8000-0000000000bc';
+// Pasif (unmatch/engelleme/ban sonrasi) eslesme: A-D. Sunucu bunu listelemez, sohbetine MATCH_INACTIVE der.
+const M_AD = 'adadadad-0000-4000-8000-0000000000ad';
+
+// Veri: matches AB (aktif), BC (aktif), AD (PASIF).
+//       messages AB: 2 normal + 1 SILINMIS (deleted_at), BC: 1 normal, AD: 1 normal (pasif eslesmede).
 
 // [etiket, rol, sub | null, beklenen matches, beklenen messages] ; -1 = yetki reddi beklenir
 const VAKALAR: Array<[string, 'authenticated' | 'anon', string | null, number, number]> = [
-  ['A (yalniz AB katilimcisi)', 'authenticated', A, 1, 2],
-  ['B (AB + BC katilimcisi)', 'authenticated', B, 2, 3],
-  ['C (yalniz BC katilimcisi)', 'authenticated', C, 1, 1],
-  ['D (eslesmesi yok)', 'authenticated', D, 0, 0],
+  ['A (AB aktif; AD pasif; AB silinmis mesaj gizli)', 'authenticated', A, 1, 2],
+  ['B (AB + BC aktif; silinmis mesaj gizli)', 'authenticated', B, 2, 3],
+  ['C (yalniz BC)', 'authenticated', C, 1, 1],
+  ['D (yalniz pasif AD: eslesme ve mesaji gizli)', 'authenticated', D, 0, 0],
   ['authenticated sub yok', 'authenticated', null, 0, 0],
   ['anon (publishable anahtar)', 'anon', null, -1, -1],
 ];
@@ -80,9 +85,11 @@ BEGIN
   -- Bugunku hal (2026-11-09 canli ACL): anon + authenticated tablo seviyesinde SELECT, RLS kapali.
   GRANT SELECT ON ${S}.matches, ${S}.messages TO anon, authenticated;
 
-  INSERT INTO ${S}.matches (id, user1_id, user2_id) VALUES ('${M_AB}', '${A}', '${B}'), ('${M_BC}', '${B}', '${C}');
-  INSERT INTO ${S}.messages (match_id, sender_id, content) VALUES
-    ('${M_AB}', '${A}', 'x'), ('${M_AB}', '${B}', 'y'), ('${M_BC}', '${C}', 'z');
+  INSERT INTO ${S}.matches (id, user1_id, user2_id, is_active) VALUES
+    ('${M_AB}', '${A}', '${B}', true), ('${M_BC}', '${B}', '${C}', true), ('${M_AD}', '${A}', '${D}', false);
+  INSERT INTO ${S}.messages (match_id, sender_id, content, deleted_at) VALUES
+    ('${M_AB}', '${A}', 'x', NULL), ('${M_AB}', '${B}', 'y', NULL), ('${M_AB}', '${A}', 'silindi', now()),
+    ('${M_BC}', '${C}', 'z', NULL), ('${M_AD}', '${D}', 'pasif', NULL);
 
   -- Migration govdeleri (082 sonra 083), dosyadan:
   EXECUTE ${dollar(migrationSql)};

@@ -84,8 +84,8 @@ describe('POST /api/v1/realtime/token', () => {
     expect(claims.iss).toBe('https://test.supabase.co/auth/v1');
     const exp = new Date(body.expiresAt).getTime();
     expect(exp).toBe(claims.exp! * 1000);
-    expect(exp - before).toBeGreaterThan(3590_000);
-    expect(exp - before).toBeLessThanOrEqual(3601_000);
+    expect(exp - before).toBeGreaterThan(590_000);
+    expect(exp - before).toBeLessThanOrEqual(601_000);
   });
 
   it('banlı kullanıcı token alamaz (authMiddleware 403)', async () => {
