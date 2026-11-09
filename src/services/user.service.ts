@@ -1,4 +1,5 @@
 import type { UpdateLocationInput } from "../validators/user.validator.js";
+import { cityService } from "./city.service.js";
 import { supabase } from "../config/supabase.js";
 import type { SupportedLocale } from "../constants/locales.js";
 import { questionLocale } from "../constants/locales.js";
@@ -208,7 +209,8 @@ export class UserService {
   }
 
   async updateLocation(userId: string, { lat, lng, city, country }: UpdateLocationInput) {
-    const updateData: Record<string, unknown> = { lat, lng };
+    // Cihaz konumu (migration 081): elle secilmis sehir merkezinin yerine gecer.
+    const updateData: Record<string, unknown> = { lat, lng, location_source: "gps" };
     if (city) updateData.city = city;
     if (country) updateData.country = country;
 
@@ -228,6 +230,36 @@ export class UserService {
     } catch (err) {
       console.error("[updateLocation] recalculateProfileCompletion error:", err);
     }
+  }
+
+  /**
+   * Konum izni vermeyen kullanici sehir secer (2.0.18 plan madde 9): sehir MERKEZI users.lat/lng'ye,
+   * ad + ulke city/country'ye yazilir, location_source='city' (migration 081). Kayitlarin %19'u
+   * (kadinlarin %30'u) konumsuz oldugu icin Discover 400 PROFILE_INCOMPLETE aliyordu.
+   */
+  async setCityLocation(userId: string, cityId: string) {
+    const city = cityService.findById(cityId);
+    if (!city) throw Errors.CITY_NOT_FOUND();
+
+    const { data: updated, error } = await supabase
+      .from("users")
+      .update({ lat: city.lat, lng: city.lng, city: city.name, country: city.country, location_source: "city" })
+      .eq("id", userId)
+      .eq("is_deleted", false)
+      .select("id");
+
+    if (error) {
+      console.error("[setCityLocation] Supabase error:", error.message);
+      throw Errors.SERVER_ERROR();
+    }
+    if (!updated || updated.length === 0) throw Errors.USER_NOT_FOUND();
+
+    try {
+      await this.recalculateProfileCompletion(userId);
+    } catch (err) {
+      console.error("[setCityLocation] recalculateProfileCompletion error:", err);
+    }
+    return { city_id: city.id, city: city.name, country: city.country, location_source: "city" as const };
   }
 
   async updatePushToken(userId: string, pushToken: string) {

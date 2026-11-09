@@ -7,6 +7,7 @@ import {
   updateProfileSchema,
   updateDetailsSchema,
   updateLocationSchema,
+  setCityLocationSchema,
   updatePushTokenSchema,
   notificationPreferencesSchema,
   completeProfileSchema,
@@ -29,6 +30,7 @@ import {
   saveIdentityHandler,
   updateDetailsHandler,
   updateLocationHandler,
+  setCityLocationHandler,
   updatePushTokenHandler,
   heartbeatHandler,
   uploadPhotoHandler,
@@ -73,6 +75,8 @@ router.get("/me/identity", getIdentityHandler);
 router.put("/me/identity", validate(identitySchema), saveIdentityHandler);
 router.patch("/me/details", validate(updateDetailsSchema), updateDetailsHandler);
 router.patch("/me/location", validate(updateLocationSchema), updateLocationHandler);
+// Konumsuz yedek yol (2.0.18): secilen sehrin merkezi yazilir; sehir listesi GET /app/cities.
+router.patch("/me/location/city", validate(setCityLocationSchema), setCityLocationHandler);
 router.patch("/me/push-token", validate(updatePushTokenSchema), updatePushTokenHandler);
 router.post("/me/heartbeat", heartbeatHandler);
 router.post("/me/photos", uploadLimiter, upload.single("photo"), uploadPhotoHandler);

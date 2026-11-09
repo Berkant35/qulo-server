@@ -12,6 +12,7 @@ import type {
   UpdateProfileInput,
   UpdateDetailsInput,
   UpdateLocationInput,
+  SetCityLocationInput,
   UpdatePushTokenInput,
   NotificationPreferencesInput,
   SetInterestsInput,
@@ -88,6 +89,15 @@ export async function updateLocationHandler(req: Request, res: Response, next: N
   try {
     await userService.updateLocation(req.user!.userId, req.body as UpdateLocationInput);
     res.json({ message: "Location updated" });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function setCityLocationHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { city_id } = req.body as SetCityLocationInput;
+    res.json(await userService.setCityLocation(req.user!.userId, city_id));
   } catch (err) {
     next(err);
   }

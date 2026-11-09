@@ -129,6 +129,9 @@ export const Errors = {
   RATE_LIMITED: () =>
     new AppError("RATE_LIMITED", 429, "Too many requests"),
 
+  /** PATCH /users/me/location/city — `city_id` statik listede yok (data/cities.ts). */
+  CITY_NOT_FOUND: () =>
+    new AppError("CITY_NOT_FOUND", 404, "City not found"),
   VALIDATION_ERROR: (details: Record<string, unknown>) =>
     new AppError("VALIDATION_ERROR", 400, "Validation error", { details }),
 

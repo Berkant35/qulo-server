@@ -376,6 +376,39 @@ describe('userService.updateLocation — country', () => {
   });
 });
 
+describe('userService.updateLocation / setCityLocation — konum kaynagi (2.0.18, migration 081)', () => {
+  it('cihaz konumu location_source=gps yazar', async () => {
+    const { fake, userService } = await setup({ users: [user(ME, { location_source: 'city' })] });
+    await userService.updateLocation(ME, { lat: 41.0, lng: 29.0 });
+    expect(fake.table('users')[0]).toMatchObject({ lat: 41.0, lng: 29.0, location_source: 'gps' });
+  });
+
+  it('sehir secimi sehir MERKEZINI, adi ve ulkeyi yazar; location_source=city; yanit koordinat sizdirmaz', async () => {
+    const { fake, userService } = await setup({ users: [user(ME, { lat: null, lng: null, city: null, country: null })] });
+    const res = await userService.setCityLocation(ME, 'TR-izmir');
+    expect(fake.table('users')[0]).toMatchObject({ lat: 38.4237, lng: 27.1428, city: 'İzmir', country: 'TR', location_source: 'city' });
+    expect(res).toEqual({ city_id: 'TR-izmir', city: 'İzmir', country: 'TR', location_source: 'city' });
+  });
+
+  it('bilinmeyen sehir CITY_NOT_FOUND (404), hicbir sey yazilmaz', async () => {
+    const { fake, userService } = await setup({ users: [user(ME, { lat: null, lng: null })] });
+    await expect(userService.setCityLocation(ME, 'TR-atlantis')).rejects.toMatchObject({ code: 'CITY_NOT_FOUND', statusCode: 404 });
+    expect(fake.table('users')[0]).toMatchObject({ lat: null, lng: null });
+  });
+
+  it('silinmis hesap (satir guncellenmedi) USER_NOT_FOUND — 200 donmez', async () => {
+    const { userService } = await setup({ users: [user(ME, { is_deleted: true })] });
+    await expect(userService.setCityLocation(ME, 'TR-ankara')).rejects.toMatchObject({ code: 'USER_NOT_FOUND' });
+  });
+
+  it('DB yazimi patlarsa SERVER_ERROR (sessiz basari yok)', async () => {
+    const err = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { userService } = await setup({ users: [user(ME)] }, { failOn: [{ table: 'users', op: 'update' }] });
+    await expect(userService.setCityLocation(ME, 'TR-ankara')).rejects.toMatchObject({ code: 'SERVER_ERROR' });
+    err.mockRestore();
+  });
+});
+
 describe('userService.updateProfile — tercih kilidi sunucuda (spec 2026-10-05 §6)', () => {
   const me = (over: Record<string, unknown> = {}) =>
     user(ME, { locale: 'tr', preferred_languages: ['tr'], gender_pref: null, gender_pref_set_at: null, pref_consent_status: null, ...over });

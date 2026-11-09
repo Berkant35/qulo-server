@@ -71,6 +71,13 @@ export const updateLocationSchema = z.object({
 
 export type UpdateLocationInput = z.infer<typeof updateLocationSchema>;
 
+/** Konumsuz yedek yol: istemci yalniz sehir kimligini yollar, koordinati sunucu yazar (data/cities.ts). */
+export const setCityLocationSchema = z.object({
+  city_id: z.string().regex(/^[A-Z]{2}-[a-z0-9-]{1,60}$/),
+});
+
+export type SetCityLocationInput = z.infer<typeof setCityLocationSchema>;
+
 export const updatePushTokenSchema = z.object({
   push_token: z.string().min(20).max(512)
     .regex(/^[a-zA-Z0-9:_\-.]+$/, { message: "Invalid push token format" }),
