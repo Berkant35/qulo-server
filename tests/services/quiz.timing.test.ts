@@ -310,8 +310,8 @@ describe('süre dolunca', () => {
 });
 
 /**
- * Sesli/görselli soru (2.0.19): süre uzatması + imzalı medya URL'leri. Uzatma yalnız `active`
- * (sürüm ≥ 2.0.19 + `media_questions_enabled`) iken; eski istemcide yanıt ve son an BİREBİR eski.
+ * Sesli/görselli soru (2.0.18+101): süre uzatması + imzalı medya URL'leri. Uzatma yalnız `active`
+ * (sürüm ≥ 2.0.18+101 + `media_questions_enabled`) iken; eski istemcide yanıt ve son an BİREBİR eski.
  */
 const MEDIA_BUCKET = 'question-media';
 const VOICE = `${TARGET}/${Q1}/voice-1.m4a`;
@@ -382,7 +382,7 @@ describe('getCurrentQuestion — eski istemci (medya kapalı) birebir eski', () 
   }
 });
 
-describe('getCurrentQuestion — medya açık (2.0.19)', () => {
+describe('getCurrentQuestion — medya açık (2.0.18+101)', () => {
   it('imzalı URL + süre; son an "şimdi + süre + uzatma + tolerans"a kurulur', async () => {
     const { fake, quizService } = await setup(mediaSeed(), mediaStorage);
 

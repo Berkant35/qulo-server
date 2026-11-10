@@ -56,7 +56,19 @@ describe('isClientAtLeast', () => {
     expect(isClientAtLeast({}, '2.0.19')).toBe(false);
     expect(isClientAtLeast({ appVersion: 'abc' }, '2.0.19')).toBe(false);
   });
-  it('medya soru esigi 2.0.19', () => {
-    expect(MEDIA_QUESTIONS_MIN_CLIENT).toBe('2.0.19');
+  it('min build iceriyorsa build de karsilastirilir (2.0.18+101)', () => {
+    const min = '2.0.18+101';
+    expect(isClientAtLeast({ appVersion: '2.0.18+101' }, min)).toBe(true);
+    expect(isClientAtLeast({ appVersion: '2.0.18+102' }, min)).toBe(true);
+    expect(isClientAtLeast({ appVersion: '2.0.18+100' }, min)).toBe(false);
+    expect(isClientAtLeast({ appVersion: '2.0.18' }, min)).toBe(false);
+    expect(isClientAtLeast({ appVersion: '2.0.19+1' }, min)).toBe(true);
+    expect(isClientAtLeast({ appVersion: '2.0.19' }, min)).toBe(true);
+    expect(isClientAtLeast({ appVersion: '2.0.17+500' }, min)).toBe(false);
+    expect(isClientAtLeast({}, min)).toBe(false);
+    expect(isClientAtLeast({ appVersion: 'abc' }, min)).toBe(false);
+  });
+  it('medya soru esigi 2.0.18+101', () => {
+    expect(MEDIA_QUESTIONS_MIN_CLIENT).toBe('2.0.18+101');
   });
 });

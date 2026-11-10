@@ -3,7 +3,7 @@ import sharp from 'sharp';
 import { createFakeSupabase, fakeSignedUrl, type Tables, type FakeSupabaseOptions } from '../helpers/fake-supabase.js';
 
 /**
- * Soru medyasi (sesli/gorselli soru, 2.0.19) — yukleme / degistirme / silme.
+ * Soru medyasi (sesli/gorselli soru, 2.0.18+101) — yukleme / degistirme / silme.
  *
  * Merkezdeki iddialar:
  * - Yol YALNIZ sunucu kimliklerinden: `${userId}/${questionId}/${kind}-${ts}.(m4a|jpg)`; soru

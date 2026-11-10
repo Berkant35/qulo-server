@@ -54,7 +54,7 @@ router.post("/me", validate(createQuestionSchema), createQuestionHandler);
 router.patch("/me/reorder", validate(reorderQuestionsSchema), reorderQuestionsHandler);
 router.patch("/me/:order", validate(updateQuestionSchema), updateQuestionHandler);
 router.delete("/me/:order", deleteQuestionHandler);
-// Sesli/gorselli soru (2.0.19): kapi multer'dan ONCE — kapali/eski istemci dosyayi bellege almadan 403.
+// Sesli/gorselli soru (2.0.18+101): kapi multer'dan ONCE — kapali/eski istemci dosyayi bellege almadan 403.
 // Silme kapisiz: kullanici kendi medyasini ozellik kapatilsa da kaldirabilir.
 router.post("/me/:order/voice", uploadLimiter, validate(questionOrderParamsSchema, "params"), mediaQuestionsGuard,
   voiceUpload, validate(uploadVoiceBodySchema), uploadQuestionVoiceHandler);

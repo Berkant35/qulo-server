@@ -11,7 +11,7 @@ export interface QuestionInfo {
   avg_difficulty: string;
   languages: string[];
   /**
-   * Sesli/gorselli soru rozetleri (2.0.19) — yalniz medya kapisi acikken VAR (eski istemciye anahtar
+   * Sesli/gorselli soru rozetleri (2.0.18+101) — yalniz medya kapisi acikken VAR (eski istemciye anahtar
    * hic gitmez). Izleyicinin dilindeki sorular + yalniz `approved` gorsel (`mediaBadges`).
    */
   has_voice?: boolean;

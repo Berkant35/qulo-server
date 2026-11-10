@@ -7,7 +7,7 @@ import { GEMINI_VISION_MODEL, GEMINI_VISION_TIMEOUT_MS, geminiVisionAvailable, g
 import { MAX_ATTEMPTS, moderationSwitchOn, supheliGerekce, type Verdict } from "./photo-moderation.service.js";
 
 /**
- * Soru gorseli moderasyonu (sesli/gorselli soru, 2.0.19).
+ * Soru gorseli moderasyonu (sesli/gorselli soru, 2.0.18+101).
  *
  * Profil fotografindan uc fark:
  * - Senkron: yukleme yaniti karari bekler (8 sn); zaman asimi/hata → `pending`, saatlik cron yeniden dener.

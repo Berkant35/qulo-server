@@ -40,7 +40,7 @@ export const remainingSeconds = (expiresAt: string): number =>
   Math.max(0, Math.ceil((new Date(expiresAt).getTime() - Date.now()) / 1000));
 
 /**
- * Sesli/gorselli soru (2.0.19) ek suresi: ses varsa `ceil(sure) + 3`, ONAYLI gorsel varsa `+ 3`.
+ * Sesli/gorselli soru (2.0.18+101) ek suresi: ses varsa `ceil(sure) + 3`, ONAYLI gorsel varsa `+ 3`.
  * Bekleyen/reddedilen gorsel cozucuye gosterilmez → ek sure de yok. Sure ses ust sinirina
  * kirpilir (084 CHECK'i zaten 1..15000; bozuk satir son ani siseremesin).
  */

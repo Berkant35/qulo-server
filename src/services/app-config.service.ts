@@ -67,7 +67,7 @@ export const DEFAULT_ADS_ENABLED = false;
 
 /**
  * Sesli/gorselli soru ozellik kapisi — `app_config.media_questions_enabled` (migration 084).
- * Fail-closed: kolon yoksa / okunamazsa KAPALI. Istemci surum kapisi (>= 2.0.19) ayrica uygulanir.
+ * Fail-closed: kolon yoksa / okunamazsa KAPALI. Istemci surum kapisi (>= 2.0.18+101) ayrica uygulanir.
  */
 export const DEFAULT_MEDIA_QUESTIONS_ENABLED = false;
 

@@ -1,5 +1,5 @@
 /**
- * Sesli/gorselli soru (2.0.19) sinirlari — tek kaynak: bucket tanimi (config/supabase),
+ * Sesli/gorselli soru (2.0.18+101) sinirlari — tek kaynak: bucket tanimi (config/supabase),
  * multer sinirlari (routes/question.routes), validator ve servis buradan okur.
  */
 export const QUESTION_MEDIA_BUCKET = "question-media";

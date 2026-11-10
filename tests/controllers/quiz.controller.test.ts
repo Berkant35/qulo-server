@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 /**
  * GET /quiz/:session_id — medya kapisi controller'da cozulur, servis `{ active }` alir
- * (servis baslik okumaz → test edilebilir). Kapi: surum >= 2.0.19 VE `media_questions_enabled`.
+ * (servis baslik okumaz → test edilebilir). Kapi: surum >= 2.0.18+101 VE `media_questions_enabled`.
  */
 async function callWith(active: boolean) {
   const getCurrentQuestion = vi.fn().mockResolvedValue({ ok: true });

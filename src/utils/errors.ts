@@ -281,7 +281,7 @@ export const Errors = {
   PAGE_SECTION_IMAGE_REQUIRED: () =>
     new AppError("PAGE_SECTION_IMAGE_REQUIRED", 400, "Banner image is required"),
 
-  /** Özellik kapısı kapalı ya da istemci sürümü eski (ör. sesli/görselli soru: ≥2.0.19 + `media_questions_enabled`). */
+  /** Özellik kapısı kapalı ya da istemci sürümü eski (ör. sesli/görselli soru: ≥2.0.18+101 + `media_questions_enabled`). */
   FEATURE_DISABLED: () =>
     new AppError("FEATURE_DISABLED", 403, "This feature is not available"),
 

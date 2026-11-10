@@ -10,9 +10,13 @@ import { mediaQuestionsActive } from '../../src/services/media-questions-gate.js
 beforeEach(() => getFlag.mockReset());
 
 describe('mediaQuestionsActive', () => {
-  it('bayrak acik + surum >= 2.0.19 → true', async () => {
+  it('bayrak acik + surum >= 2.0.18+101 → true', async () => {
     getFlag.mockResolvedValue(true);
-    expect(await mediaQuestionsActive({ 'x-app-version': '2.0.19+101' })).toBe(true);
+    expect(await mediaQuestionsActive({ 'x-app-version': '2.0.18+101' })).toBe(true);
+  });
+  it('2.0.18+100 (medya UI yok) → false', async () => {
+    getFlag.mockResolvedValue(true);
+    expect(await mediaQuestionsActive({ 'x-app-version': '2.0.18+100' })).toBe(false);
   });
   it('bayrak kapali → false', async () => {
     getFlag.mockResolvedValue(false);

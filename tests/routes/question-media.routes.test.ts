@@ -6,7 +6,7 @@ import { activeConfigRow } from '../helpers/economy-config.fixture.js';
 
 /**
  * Soru medyasi uclari — kablolama sinamasi (gercek Express + multer + errorHandler, fake DB).
- * Kapi (surum >= 2.0.19 VE media_questions_enabled) multer'dan ONCE: kapali istek dosyayi belleğe almaz.
+ * Kapi (surum >= 2.0.18+101 VE media_questions_enabled) multer'dan ONCE: kapali istek dosyayi belleğe almaz.
  * Ses ucunda multer siniri 1 MB, gorselde 8 MB; tur listesi uca gore ayri.
  */
 const A = '11111111-1111-4111-8111-111111111111';

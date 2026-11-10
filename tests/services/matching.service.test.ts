@@ -1706,7 +1706,7 @@ describe("discover-ranking (saf kurallar)", () => {
   });
 });
 
-// ─── Sesli/gorselli soru rozetleri (2.0.19) ──────────────────────────────────────────────
+// ─── Sesli/gorselli soru rozetleri (2.0.18+101) ──────────────────────────────────────────────
 // Kart, izleyicinin COZEBILECEGI sorularda medya varsa rozet tasir: yalniz izleyicinin dil
 // kumesindeki sorular (dil kapisi 5.6 ve quiz filtresiyle ayni `questionLocale` kurali) ve
 // yalniz moderasyondan gecmis (`approved`) gorsel. Kapi kapaliyken (eski istemci / bayrak kapali)
@@ -1745,7 +1745,7 @@ function mediaQuestion(userId: string, overrides: Record<string, unknown> = {}) 
   };
 }
 
-describe("discover — sesli/gorselli soru rozetleri (has_voice / has_image, 2.0.19)", () => {
+describe("discover — sesli/gorselli soru rozetleri (has_voice / has_image, 2.0.18+101)", () => {
   const SESLI = uid(90), YABANCI_MEDYA = uid(91), BEKLEYEN = uid(92), ONAYLI = uid(93), YOLSUZ = uid(94), REDDEDILEN = uid(95);
   const ALL = [SESLI, YABANCI_MEDYA, BEKLEYEN, ONAYLI, YOLSUZ, REDDEDILEN];
   const tablolar = (): Tables => ({
@@ -1817,7 +1817,7 @@ describe("discover — sesli/gorselli soru rozetleri (has_voice / has_image, 2.0
   }
 });
 
-describe("undoSwipe — sesli/gorselli soru rozetleri (2.0.19)", () => {
+describe("undoSwipe — sesli/gorselli soru rozetleri (2.0.18+101)", () => {
   const TARGET = uid(96);
   const tablolar = (viewer: Record<string, unknown> = {}): Tables => ({
     users: [viewerRow(viewer), candidateRow(TARGET, 2)],

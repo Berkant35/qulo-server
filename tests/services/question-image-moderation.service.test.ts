@@ -3,7 +3,7 @@ import { createFakeSupabase, type FakeSupabaseOptions, type Row } from '../helpe
 import { LlmError } from '../../src/services/llm.common.js';
 
 /**
- * Soru gorseli moderasyonu (sesli/gorselli soru, 2.0.19). Merkezdeki iddialar:
+ * Soru gorseli moderasyonu (sesli/gorselli soru, 2.0.18+101). Merkezdeki iddialar:
  * - Onaylanmamis gorsel ASLA 'approved' olmaz: model hatasi/zaman asimi/kapali anahtar → 'pending'.
  * - Ret = gorsel kaldirilir (yol null, dosya silinir), soru metinle kalir, BAN YOK.
  * - Karar YALNIZ moderasyonu yapilan yola uygulanir (CAS): araya giren yeni gorsel onaylanmaz/ezilmez.

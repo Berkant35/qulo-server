@@ -58,7 +58,7 @@ export function solverVisibleMedia(row: QuestionMediaColumns): {
 }
 
 /**
- * Discover/undo karti rozetleri (2.0.19): izleyicinin COZEBILECEGI sorularda medya var mi. Yalniz
+ * Discover/undo karti rozetleri (2.0.18+101): izleyicinin COZEBILECEGI sorularda medya var mi. Yalniz
  * izleyicinin dil kumesindeki sorular (quiz `filterByLanguagePreference` ve Discover dil kapisiyla ayni
  * `questionLocale` kurali) ve `solverVisibleMedia` filtresi (gorsel yalniz `approved` + dosya) — rozet,
  * quiz'in gercekten gosterecegi medyadan sapamaz.
@@ -123,7 +123,7 @@ function withModeration<T extends OwnedQuestion>(row: T, status: QuestionImageSt
 }
 
 /**
- * Soru medyasi (sesli/gorselli soru, 2.0.19) — PRIVATE `question-media` bucket'i.
+ * Soru medyasi (sesli/gorselli soru, 2.0.18+101) — PRIVATE `question-media` bucket'i.
  *
  * - Yol yalniz sunucu kimliklerinden kurulur: `${userId}/${questionId}/${kind}-${ts}.(m4a|jpg)`;
  *   soru `user_id + order_num` ile bulunur — baskasinin sorusuna yazilamaz/silinemez.

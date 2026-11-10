@@ -34,7 +34,7 @@ const QUIZ_ANSWER_INDICES: readonly number[] = [1, 2, 3, 4];
 const CURRENT_QUESTION_COLUMNS = "id, order_num, question_text, answer_1, answer_2, answer_3, answer_4, hint_text, time_limit, locale";
 const CURRENT_QUESTION_MEDIA_COLUMNS = "id, order_num, question_text, answer_1, answer_2, answer_3, answer_4, hint_text, time_limit, locale, voice_path, voice_duration_ms, image_path, image_status";
 
-/** Medya acikken soru yanitina eklenen alanlar (2.0.19). */
+/** Medya acikken soru yanitina eklenen alanlar (2.0.18+101). */
 type CurrentQuestionMedia = SolverQuestionMedia & { media_extra_seconds: number };
 
 interface SessionRow {
@@ -300,7 +300,7 @@ export class QuizService {
 
   // ─── Get Current Question ──────────────────────────────────────
   /**
-   * `media.active` (controller: istemci >= 2.0.19 VE `media_questions_enabled`) iken medya kolonlari
+   * `media.active` (controller: istemci >= 2.0.18+101 VE `media_questions_enabled`) iken medya kolonlari
    * okunur, imzali URL'ler + `media_extra_seconds` doner ve son an ek sureyle kurulur. Kapaliyken
    * sorgu, son an ve yanit medya oncesiyle BIREBIR ayni — medya anahtarlari hic eklenmez (eski
    * istemci <= 2.0.18 sozlesmesi; migration 084 oncesi semada da calisir).

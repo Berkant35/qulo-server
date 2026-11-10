@@ -43,8 +43,8 @@ export function clientMetaFromHeaders(headers: IncomingHttpHeaders): ClientMeta 
   return meta;
 }
 
-/** Sesli/gorselli soru icin asgari istemci surumu. */
-export const MEDIA_QUESTIONS_MIN_CLIENT = "2.0.19";
+/** Sesli/gorselli soru icin asgari istemci surumu (2.0.18+100 medya UI'sizdir → build sarti sart). */
+export const MEDIA_QUESTIONS_MIN_CLIENT = "2.0.18+101";
 
 function numericParts(version: string): number[] | null {
   const core = version.split("+")[0];
@@ -52,7 +52,15 @@ function numericParts(version: string): number[] | null {
   return core.split(".").map(Number);
 }
 
-/** Istemci surumu >= min mi? Build numarasi (`+N`) yok sayilir; surum yok/bozuksa false. */
+function buildNumber(version: string): number | null {
+  const raw = version.split("+")[1];
+  return raw !== undefined && /^\d+$/.test(raw) ? Number(raw) : null;
+}
+
+/**
+ * Istemci surumu >= min mi? `min` `+build` icermiyorsa build yok sayilir. Icerirse sayisal parcalar
+ * esitken istemcinin build'i >= min build olmali (build'i olmayan istemci → false). Yok/bozuksa false.
+ */
 export function isClientAtLeast(meta: ClientMeta, min: string): boolean {
   const have = meta.appVersion ? numericParts(meta.appVersion) : null;
   const need = numericParts(min);
@@ -63,5 +71,8 @@ export function isClientAtLeast(meta: ClientMeta, min: string): boolean {
     const b = need[i] ?? 0;
     if (a !== b) return a > b;
   }
-  return true;
+  const needBuild = buildNumber(min);
+  if (needBuild === null) return true;
+  const haveBuild = buildNumber(meta.appVersion as string);
+  return haveBuild !== null && haveBuild >= needBuild;
 }

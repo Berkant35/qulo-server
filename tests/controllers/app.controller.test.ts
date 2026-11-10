@@ -250,7 +250,7 @@ describe("getAppConfigHandler — adsEnabled (migration 079)", () => {
   });
 });
 
-/** Sesli/Görselli Soru anahtarı (migration 084) — fail-closed: varsayılan false; 2.0.19 mobil UI'ı bununla açar. */
+/** Sesli/Görselli Soru anahtarı (migration 084) — fail-closed: varsayılan false; 2.0.18+101 mobil UI'ı bununla açar. */
 describe("getAppConfigHandler — mediaQuestionsEnabled (migration 084)", () => {
   beforeEach(() => {
     vi.resetModules();
