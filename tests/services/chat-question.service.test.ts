@@ -239,3 +239,76 @@ describe('ChatQuestionService.getQuestion', () => {
     expect(q.correct_option).toBe('');
   });
 });
+
+/**
+ * Günlük sohbet sorusu limiti planı erişimin kaynağından (`users.subscription_*`) okur. Eskiden
+ * `user_subscriptions`'taki aktif satırdan okuyordu: TRANSFER'le aboneliği alan hesapta satır yok, eski
+ * hesapta iki aktif satır kalabiliyor (maybeSingle hatası) — ikisinde de ödeyen kullanıcı "free" limit
+ * görüyordu. Fixture: free günde 1, premium 10 soru.
+ */
+describe('ChatQuestionService.createQuestion — plan users\'tan', () => {
+  const FUTURE = '2099-01-01T00:00:00.000Z';
+  const input = {
+    question_text: 'Hangisi?', option_count: 2, option_a: 'A', option_b: 'B',
+    correct_option: 'A', time_limit_seconds: 30, has_unmatch_risk: false,
+  } as never;
+  const todaysQuestion = () => question({ id: 'q-today', created_at: new Date().toISOString() });
+
+  async function setupCreate(senderOver: Record<string, unknown>, extra: Tables = {}) {
+    vi.doMock('../../src/services/notification.service.js', () => ({
+      NotificationService: {
+        getUserDisplayName: vi.fn().mockResolvedValue('Ada'),
+        sendPush: vi.fn().mockResolvedValue(undefined),
+      },
+    }));
+    return setup({
+      users: [user(ANSWERER), user(SENDER, senderOver)],
+      chat_questions: [todaysQuestion()],
+      ...extra,
+    });
+  }
+
+  beforeEach(() => vi.resetModules());
+
+  it('aboneliksiz: free limiti (günde 1) dolu → DAILY_LIMIT_EXCEEDED', async () => {
+    const { chatQuestionService } = await setupCreate({});
+
+    await expect(chatQuestionService.createQuestion(MATCH, SENDER, input))
+      .rejects.toMatchObject({ code: 'DAILY_LIMIT_EXCEEDED' });
+  });
+
+  it('users premium ama user_subscriptions satırı yok (TRANSFER sonrası hedef hesap) → premium limit', async () => {
+    const { fake, chatQuestionService } = await setupCreate({
+      subscription_plan: 'premium', subscription_expires_at: FUTURE,
+    });
+
+    await chatQuestionService.createQuestion(MATCH, SENDER, input);
+
+    expect(fake.table('chat_questions')).toHaveLength(2);
+  });
+
+  it('iki aktif user_subscriptions satırı kalsa da plan users\'tan okunur', async () => {
+    const { fake, chatQuestionService } = await setupCreate(
+      { subscription_plan: 'premium', subscription_expires_at: FUTURE },
+      {
+        user_subscriptions: [
+          { id: 's1', user_id: SENDER, plan: 'premium', status: 'active', expires_at: FUTURE },
+          { id: 's2', user_id: SENDER, plan: 'plus', status: 'active', expires_at: FUTURE },
+        ],
+      },
+    );
+
+    await chatQuestionService.createQuestion(MATCH, SENDER, input);
+
+    expect(fake.table('chat_questions')).toHaveLength(2);
+  });
+
+  it('süresi geçmiş users planı → free limiti', async () => {
+    const { chatQuestionService } = await setupCreate({
+      subscription_plan: 'premium', subscription_expires_at: '2020-01-01T00:00:00.000Z',
+    });
+
+    await expect(chatQuestionService.createQuestion(MATCH, SENDER, input))
+      .rejects.toMatchObject({ code: 'DAILY_LIMIT_EXCEEDED' });
+  });
+});

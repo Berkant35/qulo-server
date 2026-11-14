@@ -12,6 +12,7 @@ import {
 } from '../types/index.js';
 import { isPaidEligible, webhookPurchaseFacts } from '../utils/paid-eligibility.js';
 import { Errors } from '../utils/errors.js';
+import { isUuid } from '../utils/validation.js';
 import { env } from '../config/env.js';
 
 /** RevenueCat webhook olayı — `rcWebhookSchema.event` ile aynı alanlar. */
@@ -31,8 +32,19 @@ export interface RevenueCatWebhookEvent {
   cancel_reason?: string | null;
 }
 
+/** TRANSFER olayı — `app_user_id`/`product_id` yok (bkz. `rcWebhookSchema` transferEventSchema). */
+export interface RevenueCatTransferEvent {
+  type: 'TRANSFER';
+  transferred_from: string[];
+  transferred_to: string[];
+  store?: string | null;
+  environment?: string | null;
+}
+
 class WebhookService {
-  async handleRevenueCatEvent(event: RevenueCatWebhookEvent): Promise<void> {
+  async handleRevenueCatEvent(event: RevenueCatWebhookEvent | RevenueCatTransferEvent): Promise<void> {
+    if ('transferred_from' in event) return this.handleTransfer(event);
+
     const {
       type,
       app_user_id: userId,
@@ -130,6 +142,36 @@ class WebhookService {
       userId, productId, storeType, transaction_id || '',
       eventType, null, null
     );
+  }
+
+  /**
+   * TRANSFER: mağaza satın almaları ve haklar `transferred_from` hesap(lar)ından `transferred_to`'ya
+   * geçti (aynı Apple/Google hesabıyla başka Qulo hesabına giriş / geri yükleme); webhook yalnız hedef
+   * için bir kez gelir. Eskiden şema reddediyordu ve eski hesabın erişimi dönem sonuna kadar sürdü
+   * (2026-11-12: tek abonelik, iki premium hesap). İki tarafın erişimi mağaza durumundan yeniden yazılır;
+   * aboneliği kalmayan hesabın satırları kapanır. Bonus yok: dönemin bonusu satın almada/yenilemede
+   * verildi (yeni sahibin istemci yolu da yeniden vermez). RevenueCat anonim kimlikleri
+   * (`$RCAnonymousID:…`) Qulo hesabı değildir, atlanır.
+   */
+  private async handleTransfer(event: RevenueCatTransferEvent): Promise<void> {
+    const userIds = [...new Set([...event.transferred_from, ...event.transferred_to])].filter(isUuid);
+    if (!revenueCatService.canSyncSubscriptions()) {
+      console.warn('[webhook] TRANSFER ignored — store sync not configured', { userIds });
+      return;
+    }
+
+    // Hepsi yazmadan ÖNCE okunur: bir okuma patlarsa hiçbir hesap yarım yazılmaz, RevenueCat yeniden dener.
+    const states = await Promise.all(userIds.map((userId) => this.readStoreState(userId)));
+    for (const [i, userId] of userIds.entries()) {
+      const state = states[i] ?? null; // undefined olamaz: senkron kapısı yukarıda
+      // Satırlar en iyi çabayla kapanır (expireSubscription hata fırlatmaz); erişim yazımı fırlatır →
+      // 500 → RevenueCat yeniden dener. Yoksa yazım hatasında eski hesap sessizce premium kalırdı.
+      if (state === null) await subscriptionService.expireSubscription(userId);
+      await subscriptionService.applyStoreState(userId, state);
+    }
+    console.log('[webhook] TRANSFER applied', {
+      from: event.transferred_from, to: event.transferred_to, synced: userIds.length,
+    });
   }
 
   private async applySubscriptionEvent(
