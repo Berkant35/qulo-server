@@ -23,6 +23,18 @@ import type { ClientPlatform } from "../utils/client-meta.js";
 
 /** Herkese açık `photos` bucket URL'sinde depo yolunun başladığı yer. */
 const PHOTO_STORAGE_MARKER = "/storage/v1/object/public/photos/";
+/** PATCH /me cevabındaki profil sütunları (yazım ve salt okuma yolu aynı biçimi döner). */
+const PROFILE_COLUMNS =
+  "id, email, name, surname, bio, age, gender, gender_pref, gender_pref_set_at, pref_consent_status, match_radius_km, age_pref_min, age_pref_max, city, country, locale, lat, lng, photos, profile_completion, preferred_languages, purple_diamonds, green_diamonds, is_online, last_seen_at, email_verified, strict_language_mode, created_at";
+
+/** `order`, `current`'ın yalnızca yeniden sıralanmışı mı (aynı öğeler, aynı adetlerle)? */
+function isReordering(current: readonly string[], order: readonly string[]): boolean {
+  if (current.length !== order.length) return false;
+  const a = [...current].sort();
+  const b = [...order].sort();
+  return a.every((url, i) => url === b[i]);
+}
+
 /** Fotoğraf dizisi koşullu ekleme deneme sayısı (çakışmada güncel diziyle yeniden). */
 const PHOTO_WRITE_ATTEMPTS = 3;
 /** Bu kodlarla biten eklemede URL kesinlikle yazılmamıştır (yazım hiç denenmedi ya da satır eşleşmedi). */
@@ -118,27 +130,22 @@ export class UserService {
 
   async updateProfile(userId: string, data: UpdateProfileInput) {
     // Dil listesi sutuna dogrudan YAZILMAZ — tek yol set_user_languages RPC'si (migration 054).
-    const { preferred_languages, ...profileData } = data;
+    // Fotoğraf dizisi de: yalnız yeniden sıralama, koşullu yazımla (reorderPhotos).
+    const { preferred_languages, photos, ...profileData } = data;
+    // Sıralama önce: geçersizse (eklenen/çıkan/yabancı URL) hiçbir alan yazılmadan reddedilir.
+    if (photos !== undefined) await this.reorderPhotos(userId, photos);
+
     const updates: Record<string, unknown> = { ...profileData };
     const setsGenderPref = data.gender_pref !== undefined;
     // gender_pref geldiyse set_at server-side damgalanir (client'tan manipüle edilemez).
     if (setsGenderPref) updates.gender_pref_set_at = new Date().toISOString();
 
-    let query = supabase.from("users").update(updates).eq("id", userId).eq("is_deleted", false);
-    if (setsGenderPref) {
-      // Tercih kilidi SUNUCUDA (spec §6, kullanıcı kararı: istismar riski): yalnız ilk seçim
-      // yazılır, reddedilmiş rıza da kilitler. Koşul UPDATE'in içinde — okuma/yazma yarışı yok.
-      // Değişiklik tek yoldan: destek talebi + backoffice (admin.service.updateGenderPref).
-      query = query
-        .is("gender_pref_set_at", null)
-        .or("pref_consent_status.is.null,pref_consent_status.eq.GRANTED");
-    }
-
-    const { data: user, error } = await query
-      .select(
-        "id, email, name, surname, bio, age, gender, gender_pref, gender_pref_set_at, pref_consent_status, match_radius_km, age_pref_min, age_pref_max, city, country, locale, lat, lng, photos, profile_completion, preferred_languages, purple_diamonds, green_diamonds, is_online, last_seen_at, email_verified, strict_language_mode, created_at",
-      )
-      .maybeSingle();
+    // PostgREST boş gövdeli PATCH'i `SELECT … WHERE false` yapar (sıfır satır → yanlış 404): yazılacak
+    // sütun yoksa (yalnız photos / preferred_languages) satır okunur.
+    const hasColumnUpdates = Object.values(updates).some((v) => v !== undefined);
+    const { data: user, error } = hasColumnUpdates
+      ? await this.writeProfileColumns(userId, updates, setsGenderPref)
+      : await supabase.from("users").select(PROFILE_COLUMNS).eq("id", userId).eq("is_deleted", false).maybeSingle();
 
     if (error) {
       console.error("[updateProfile] Supabase error:", error);
@@ -357,6 +364,37 @@ export class UserService {
       .from("refresh_tokens")
       .delete()
       .eq("user_id", userId);
+  }
+
+  private writeProfileColumns(userId: string, updates: Record<string, unknown>, setsGenderPref: boolean) {
+    let query = supabase.from("users").update(updates).eq("id", userId).eq("is_deleted", false);
+    if (setsGenderPref) {
+      // Tercih kilidi SUNUCUDA (spec §6, kullanıcı kararı: istismar riski): yalnız ilk seçim
+      // yazılır, reddedilmiş rıza da kilitler. Koşul UPDATE'in içinde — okuma/yazma yarışı yok.
+      // Değişiklik tek yoldan: destek talebi + backoffice (admin.service.updateGenderPref).
+      query = query
+        .is("gender_pref_set_at", null)
+        .or("pref_consent_status.is.null,pref_consent_status.eq.GRANTED");
+    }
+    return query.select(PROFILE_COLUMNS).maybeSingle();
+  }
+
+  /**
+   * Mobil sürükle-bırak sıralaması (`PATCH /me` `photos`). Liste profildeki fotoğrafların yalnızca
+   * yeniden sıralanmışı olmalı — eklenen / çıkan / yabancı URL reddedilir (2026-04-01 güvenlik kararı:
+   * istemci profile rastgele adres yazamaz). Koşullu yazım: araya başka bir sıralama girerse güncel
+   * diziyle yeniden denenir; fotoğraf eklenip çıkarıldıysa PHOTOS_CHANGED (araya gireni ezmez).
+   */
+  private async reorderPhotos(userId: string, order: readonly string[]): Promise<void> {
+    for (let attempt = 1; ; attempt++) {
+      const current = await this.getActivePhotos(userId);
+      if (!isReordering(current, order)) {
+        throw attempt === 1 ? Errors.INVALID_PHOTO_ORDER() : Errors.PHOTOS_CHANGED();
+      }
+      if (current.every((url, i) => url === order[i])) return;
+      if (await this.writePhotosIfUnchanged(userId, current, [...order])) return;
+      if (attempt >= PHOTO_WRITE_ATTEMPTS) throw Errors.PHOTOS_CHANGED();
+    }
   }
 
   async uploadPhoto(userId: string, fileBuffer: Buffer) {

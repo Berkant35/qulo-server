@@ -300,6 +300,10 @@ export const Errors = {
   PHOTO_NOT_FOUND: () =>
     new AppError("PHOTO_NOT_FOUND", 404, "Photo not found on profile"),
 
+  /** Sıralama isteği profildeki fotoğrafların yeniden sıralanmışı değil (eklenen/çıkan/yabancı URL). */
+  INVALID_PHOTO_ORDER: () =>
+    new AppError("INVALID_PHOTO_ORDER", 400, "Photo order must contain exactly the current photos"),
+
   /** Fotoğraf dizisi okunduktan sonra başka bir istekle değişti (koşullu yazım eşleşmedi). */
   PHOTOS_CHANGED: () =>
     new AppError("PHOTOS_CHANGED", 409, "Photos changed concurrently, reload and retry"),

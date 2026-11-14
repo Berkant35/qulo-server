@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { SUPPORTED_LOCALES } from '../constants/locales.js';
 import { INTEREST_POOL } from '../constants/interest-pool.js';
+import { MAX_PROFILE_PHOTOS } from '../constants/photos.js';
 
 // ISO 3166-1 alpha-2 (mobil Placemark.isoCountryCode). users.country'ye yazan HER yol bunu
 // kullanır; FormatManager ve bölge bazlı kampanya raporları bu biçimi bekler, tam ad reddedilir.
@@ -21,9 +22,17 @@ export const updateProfileSchema = z.object({
   // Mobil 16 uygulama dilini sunuyor (AppConstants.supportedQuestionLocales); hepsi kabul.
   preferred_languages: z.array(z.enum(SUPPORTED_LOCALES as unknown as [string, ...string[]])).min(1).max(SUPPORTED_LOCALES.length).optional(),
   strict_language_mode: z.boolean().optional(),
+  // Mobil sürükle-bırak sıralaması. Yalnız profildeki fotoğrafların yeniden sıralanmışı kabul edilir —
+  // denetim serviste (userService.reorderPhotos): istemci profile yabancı/rastgele URL yazamaz.
+  photos: z.array(z.string().min(1).max(2048)).max(MAX_PROFILE_PHOTOS).optional(),
 }).refine(
   (data) => !data.age_pref_min || !data.age_pref_max || data.age_pref_min <= data.age_pref_max,
   { message: "age_pref_min must be less than or equal to age_pref_max", path: ["age_pref_max"] },
+).refine(
+  // Sıralama ayrı bir yazım (koşullu): başka alanla aynı istekte gelirse biri yazılıp öteki
+  // patlayınca yarım güncelleme kalır. Mobil `photos`'u hep tek başına yollar.
+  (data) => data.photos === undefined || Object.keys(data).length === 1,
+  { message: "photos must be sent alone", path: ["photos"] },
 );
 
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;

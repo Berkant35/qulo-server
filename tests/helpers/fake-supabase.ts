@@ -496,6 +496,12 @@ class QueryBuilder implements PromiseLike<Result<any>> {
       return { data: this.returnRows ? written : [], error: null, count: written.length };
     }
 
+    // PostgREST: gövdede sütun yoksa (`{}`; `undefined` alanlar JSON'da düşer) UPDATE yerine
+    // `SELECT … WHERE false` çalışır — sıfır satır, hata yok, hiçbir şey yazılmaz.
+    if (this.mode === 'update' && !Object.values(this.payload as Row).some((v) => v !== undefined)) {
+      return { data: [], error: this.failure ?? null, count: this.wantCount ? 0 : undefined };
+    }
+
     const { affected, total } = this.resolveRows();
 
     if (this.mode === 'update') {
