@@ -9,6 +9,8 @@ import { economyConfigSchema, ECONOMY_BOUNDARIES } from "../types/economy-config
 import { supabase } from "../config/supabase.js";
 import { isUuid } from "../utils/validation.js";
 import { rewardsQueueService } from "../services/rewards-queue.service.js";
+import { MAX_PROFILE_PHOTOS } from "../constants/photos.js";
+import { flashMessage } from "./admin-form.js";
 import {
   pushTemplateParamsSchema,
   pushTemplateQuerySchema,
@@ -24,14 +26,11 @@ const USER_ACTION_ERRORS: Record<string, string> = {
   invalid_diamonds: "Elmas değerleri 0 ya da pozitif tam sayı olmalı.",
   update_failed: "Bakiye güncellenemedi (eşzamanlı bir değişiklik olmuş olabilir) — sayfayı yenileyip tekrar dene.",
   action_failed: "İşlem başarısız oldu, sunucu loglarına bak.",
+  photo_selection: `Kaldırmak için 1–${MAX_PROFILE_PHOTOS} fotoğraf seç.`,
+  photo_not_found: "Seçilen fotoğraflar artık profilde değil (sayfa bayat) — yenileyip tekrar dene.",
+  photos_changed: "Kullanıcı bu sırada fotoğraflarını değiştirdi — sayfayı yenileyip tekrar dene.",
+  user_not_found: "Kullanıcı bulunamadı ya da hesabı silinmiş.",
 };
-
-/** Yalnız haritanın KENDİ anahtarı: `?error=constructor` prototip üyesine düşmesin. */
-function userActionError(key: unknown): string | null {
-  return typeof key === "string" && Object.prototype.hasOwnProperty.call(USER_ACTION_ERRORS, key)
-    ? USER_ACTION_ERRORS[key]
-    : null;
-}
 
 /**
  * HTML checkbox semantics: present + "on" -> true, present but unchecked -> false.
@@ -87,7 +86,7 @@ class AdminController {
       const swipeCount = await adminService.getSwipeCount(id);
       res.render("user-detail", {
         user, details, questions, swipeCount,
-        error: userActionError(req.query.error),
+        error: flashMessage(USER_ACTION_ERRORS, req.query.error),
         session: req.session, csrfToken: req.session.csrfToken,
       });
     } catch (err) {

@@ -11,6 +11,15 @@ export function flashMessage(map: Record<string, string>, key: unknown): string 
   return typeof key === "string" && Object.prototype.hasOwnProperty.call(map, key) ? map[key] : null;
 }
 
+/**
+ * Aynı adlı form alanları (checkbox grubu, tekrar eden gizli alan): `urlencoded({ extended: false })`
+ * tek değerde string, çok değerde dizi verir; alan yoksa boş dizi. String olmayan öğe atılır.
+ */
+export function formList(raw: unknown): string[] {
+  const values = Array.isArray(raw) ? raw : [raw];
+  return values.filter((v): v is string => typeof v === "string");
+}
+
 /** Admin `:id` uuid değilse null: servis (ve PostgREST'in uuid dönüşüm hatası → 500) hiç çağrılmaz. */
 export function uuidParam(value: unknown): string | null {
   const parsed = adminIdParamSchema.safeParse(value);

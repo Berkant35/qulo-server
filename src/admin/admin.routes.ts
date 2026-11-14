@@ -7,6 +7,7 @@ import { pageMessageAdminController } from "./page-message.admin.controller.js";
 import { acquisitionAdminController } from "./acquisition.admin.controller.js";
 import { deletionFeedbackAdminController } from "./deletion-feedback.admin.controller.js";
 import { photoModerationAdminController } from "./photo-moderation.admin.controller.js";
+import { userPhotosAdminController } from "./user-photos.admin.controller.js";
 import { notificationEngineAdminController } from "./notification-engine.admin.controller.js";
 import { adminAuth, superAdminOnly, ipWhitelist, csrfGenerate, csrfValidate } from "./admin.middleware.js";
 import { assetAdminController } from "./asset.admin.controller.js";
@@ -49,6 +50,7 @@ router.post("/users/:id/gender-pref", csrfValidate, (req, res) => adminControlle
 router.post("/users/:id/gender", csrfValidate, (req, res) => adminController.updateUserGender(req, res));
 router.post("/users/:id/send-notification", csrfValidate, (req, res) => adminController.sendNotification(req, res));
 router.post("/users/:id/test-push", csrfValidate, (req, res) => adminController.testPush(req, res));
+router.post("/users/:id/photos/remove", csrfValidate, (req, res) => userPhotosAdminController.remove(req, res));
 
 router.get("/deletion-feedback", (req, res) => deletionFeedbackAdminController.page(req, res));
 
