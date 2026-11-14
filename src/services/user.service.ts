@@ -10,7 +10,7 @@ import { userLanguageService } from "./user-language.service.js";
 import { moderateUploadedPhoto } from "./photo-moderation.service.js";
 import { rainbowAccessService } from "./rainbow-access.service.js";
 import { identityService } from "./identity.service.js";
-import { Errors } from "../utils/errors.js";
+import { AppError, Errors } from "../utils/errors.js";
 import { assertUuid } from "../utils/validation.js";
 import { haversineDistance } from "../utils/math.js";
 import { normalizeUploadedImage, NORMAL_GORSEL_MIME } from "../utils/image-normalize.js";
@@ -23,6 +23,10 @@ import type { ClientPlatform } from "../utils/client-meta.js";
 
 /** Herkese açık `photos` bucket URL'sinde depo yolunun başladığı yer. */
 const PHOTO_STORAGE_MARKER = "/storage/v1/object/public/photos/";
+/** Fotoğraf dizisi koşullu ekleme deneme sayısı (çakışmada güncel diziyle yeniden). */
+const PHOTO_WRITE_ATTEMPTS = 3;
+/** Bu kodlarla biten eklemede URL kesinlikle yazılmamıştır (yazım hiç denenmedi ya da satır eşleşmedi). */
+const APPEND_NOT_WRITTEN_CODES = new Set(["MAX_PHOTOS_REACHED", "PHOTOS_CHANGED", "USER_NOT_FOUND"]);
 /** Yükleme `${userId}/${Date.now()}.jpg` yazar: tek seviye, güvenli karakterli dosya adı. */
 const PHOTO_FILE_NAME = /^[A-Za-z0-9._-]+$/;
 
@@ -356,20 +360,8 @@ export class UserService {
   }
 
   async uploadPhoto(userId: string, fileBuffer: Buffer) {
-    // Get current photos
-    const { data: user, error: fetchError } = await supabase
-      .from("users")
-      .select("photos")
-      .eq("id", userId)
-      .eq("is_deleted", false)
-      .maybeSingle();
-
-    if (fetchError || !user) {
-      throw Errors.USER_NOT_FOUND();
-    }
-
-    const photos: string[] = user.photos ?? [];
-    if (photos.length >= MAX_PROFILE_PHOTOS) {
+    const initial = await this.getActivePhotos(userId);
+    if (initial.length >= MAX_PROFILE_PHOTOS) {
       throw Errors.MAX_PHOTOS_REACHED();
     }
 
@@ -396,14 +388,7 @@ export class UserService {
       .getPublicUrl(fileName);
 
     const photoUrl = urlData.publicUrl;
-    photos.push(photoUrl);
-
-    const { error: updateError } = await supabase
-      .from("users")
-      .update({ photos })
-      .eq("id", userId);
-
-    if (updateError) throw Errors.SERVER_ERROR();
+    const photos = await this.appendUploadedPhoto(userId, initial, photoUrl);
 
     try {
       await this.recalculateProfileCompletion(userId);
@@ -453,25 +438,69 @@ export class UserService {
   }
 
   /**
-   * Yazım okunan diziye koşullu (compare-and-swap): arada yükleme/silme/admin kaldırması olduysa
-   * satır eşleşmez → PHOTOS_CHANGED, depoya dokunulmaz (yeni fotoğraf ezilmez, silinen geri gelmez).
-   * Önce profil satırı, sonra depo: depo silmesi patlarsa yalnız sahipsiz dosya kalır; ters sırada
-   * satır yazımı patlarsa profilde dosyası silinmiş kırık fotoğraf kalırdı.
+   * Koşullu yazım (compare-and-swap): `users.photos` hâlâ `expected` ise `next` yazılır. Arada
+   * yükleme / silme / admin kaldırması / sıralama olduysa ya da hesap silindiyse false — hiçbir
+   * yazıcı ötekinin değişikliğini ezmez.
+   */
+  private async writePhotosIfUnchanged(userId: string, expected: readonly string[], next: string[]): Promise<boolean> {
+    const { data, error } = await supabase
+      .from("users")
+      .update({ photos: next })
+      .eq("id", userId)
+      .eq("is_deleted", false)
+      .eq("photos", pgTextArrayLiteral(expected))
+      .select("id");
+
+    if (error) throw Errors.SERVER_ERROR();
+    return (data?.length ?? 0) > 0;
+  }
+
+  /**
+   * Diziye koşullu ekleme. Çakışmada güncel dizi yeniden okunup tekrar denenir (sona ekleme
+   * sıradan bağımsız, tekrar güvenli). Sınır her denemede güncel diziyle kontrol edilir:
+   * eşzamanlı iki yükleme 6'yı aşamaz, admin'in kaldırdığı fotoğraf geri yazılmaz.
+   */
+  private async appendPhoto(userId: string, initial: string[], url: string): Promise<string[]> {
+    let current = initial;
+    for (let attempt = 1; ; attempt++) {
+      if (current.length >= MAX_PROFILE_PHOTOS) throw Errors.MAX_PHOTOS_REACHED();
+      const next = [...current, url];
+      if (await this.writePhotosIfUnchanged(userId, current, next)) return next;
+      if (attempt >= PHOTO_WRITE_ATTEMPTS) throw Errors.PHOTOS_CHANGED();
+      current = await this.getActivePhotos(userId);
+    }
+  }
+
+  /**
+   * Yüklenen dosyayı profile ekler; eklenemediği KESİNSE dosyayı siler (depoda sahipsiz kalmasın).
+   * Belirsiz hatada (SERVER_ERROR: UPDATE commit olup cevap kopmuş olabilir) önce profile bakılır:
+   * URL oradaysa başarı sayılır; doğrulama okuması da patlarsa dosyaya DOKUNULMAZ — en kötü
+   * sahipsiz dosya kalır, profilde dosyası silinmiş kırık fotoğraf asla.
+   */
+  private async appendUploadedPhoto(userId: string, initial: string[], url: string): Promise<string[]> {
+    try {
+      return await this.appendPhoto(userId, initial, url);
+    } catch (err) {
+      const notWritten = err instanceof AppError && APPEND_NOT_WRITTEN_CODES.has(err.code);
+      const current = notWritten ? [] : await this.getActivePhotos(userId).catch(() => null);
+      if (current === null) throw err;
+      if (current.includes(url)) return current;
+      await this.removeOwnPhotoFiles(userId, [url]);
+      throw err;
+    }
+  }
+
+  /**
+   * Kaldırma koşullu yazılır ve yeniden DENENMEZ: mobil silme indeksle gelir, değişmiş dizide aynı
+   * indeks başka fotoğraftır → PHOTOS_CHANGED, depoya dokunulmaz (yeni fotoğraf ezilmez, silinen
+   * geri gelmez). Önce profil satırı, sonra depo: depo silmesi patlarsa yalnız sahipsiz dosya
+   * kalır; ters sırada satır yazımı patlarsa profilde dosyası silinmiş kırık fotoğraf kalırdı.
    */
   private async removePhotos(userId: string, photos: string[], indexes: ReadonlySet<number>) {
     const remaining = photos.filter((_, i) => !indexes.has(i));
     const removed = photos.filter((_, i) => indexes.has(i));
 
-    const { data: written, error: updateError } = await supabase
-      .from("users")
-      .update({ photos: remaining })
-      .eq("id", userId)
-      .eq("is_deleted", false)
-      .eq("photos", pgTextArrayLiteral(photos))
-      .select("id");
-
-    if (updateError) throw Errors.SERVER_ERROR();
-    if (!written || written.length === 0) throw Errors.PHOTOS_CHANGED();
+    if (!(await this.writePhotosIfUnchanged(userId, photos, remaining))) throw Errors.PHOTOS_CHANGED();
 
     await this.removeOwnPhotoFiles(userId, removed.filter((url) => !remaining.includes(url)));
 
@@ -486,7 +515,8 @@ export class UserService {
 
   /**
    * Yalnız kullanıcının kendi klasöründeki dosyalar silinir: aynı dosyayı paylaşan başka bir profil
-   * (seed kopyası) kırılmasın. Profil zaten yazıldı — depo hatası yutulur, sahipsiz dosya kalır.
+   * (seed kopyası) kırılmasın. Depo hatası yutulur (en kötü sahipsiz dosya kalır): çağıran ya profili
+   * zaten yazmıştır (kaldırma) ya da kendi hatasını fırlatacaktır (yükleme temizliği).
    */
   private async removeOwnPhotoFiles(userId: string, urls: readonly string[]): Promise<void> {
     const paths = [...new Set(urls.flatMap((url) => {
