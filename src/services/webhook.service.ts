@@ -8,6 +8,7 @@ import {
   SUBSCRIPTION_PRODUCT_MAP,
   RCEventType,
   storeProductKey,
+  type SubscriptionPlan,
 } from '../types/index.js';
 import { isPaidEligible, webhookPurchaseFacts } from '../utils/paid-eligibility.js';
 import { Errors } from '../utils/errors.js';
@@ -110,16 +111,41 @@ class WebhookService {
     // Yazmadan ÖNCE okunur: okuma patlarsa hiçbir şey yazılmamış olur, RevenueCat yeniden dener.
     const storeState = await this.readStoreState(userId);
 
+    // Olayın hesabı aboneliği mağazada artık tutmuyorsa (başka hesaba taşındı — TRANSFER — ya da iade
+    // edildi) dönem açılmaz, bonus yatmaz: dönemi yeni sahip istemci yolundan almış olabilir ve geciken
+    // olay (yeniden deneme) eski sahibe ikinci bonusu yatırırdı. `undefined` = senkron yok → olaydan.
+    const opensPeriod = eventType === 'INITIAL_PURCHASE' || eventType === 'RENEWAL';
+    if (opensPeriod && storeState === null) {
+      console.warn('[webhook] subscription no longer held in store — period not opened, no bonus', {
+        eventType, userId, productId,
+      });
+    } else {
+      await this.applySubscriptionEvent(eventType, userId, plan, transaction_id || '', expiresAt, paidEligible);
+    }
+
+    // Erişim olay alanlarından değil mağazadaki güncel durumdan (bkz. readStoreState).
+    if (storeState !== undefined) await subscriptionService.applyStoreState(userId, storeState);
+
+    await this.logIapTransaction(
+      userId, productId, storeType, transaction_id || '',
+      eventType, null, null
+    );
+  }
+
+  private async applySubscriptionEvent(
+    eventType: RCEventType,
+    userId: string,
+    plan: SubscriptionPlan,
+    transactionId: string,
+    expiresAt: string,
+    paidEligible: boolean,
+  ): Promise<void> {
     switch (eventType) {
       case 'INITIAL_PURCHASE':
-        await subscriptionService.activateSubscription(
-          userId, plan, userId, transaction_id || '', expiresAt, paidEligible
-        );
+        await subscriptionService.activateFromWebhook(userId, plan, userId, transactionId, expiresAt, paidEligible);
         break;
       case 'RENEWAL':
-        await subscriptionService.renewSubscription(
-          userId, plan, transaction_id || '', expiresAt, paidEligible
-        );
+        await subscriptionService.renewSubscription(userId, plan, transactionId, expiresAt, paidEligible);
         break;
       case 'UNCANCELLATION':
         await subscriptionService.uncancelSubscription(userId);
@@ -138,14 +164,6 @@ class WebhookService {
       default:
         break;
     }
-
-    // Erişim olay alanlarından değil mağazadaki güncel durumdan (bkz. readStoreState).
-    if (storeState !== undefined) await subscriptionService.applyStoreState(userId, storeState);
-
-    await this.logIapTransaction(
-      userId, productId, storeType, transaction_id || '',
-      eventType, null, null
-    );
   }
 
   /**
