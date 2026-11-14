@@ -1,5 +1,6 @@
 import type { ZodIssue } from "zod";
 import { createCampaignSchema, type CampaignVariant } from "../validators/campaign.validator.js";
+import { formList } from "./admin-form.js";
 
 /**
  * Backoffice kampanya formu (urlencoded) → CreateCampaignInput. Sunum katmani bilgisi
@@ -31,9 +32,7 @@ function csv(body: FormBody, key: string): string[] | undefined {
 
 /** Checkbox grubu: tek secimde string, cok secimde dizi gelir; hic secilmemisse bos dizi. */
 function intList(body: FormBody, key: string): number[] {
-  const raw = body[key];
-  const values = Array.isArray(raw) ? raw : typeof raw === "string" ? [raw] : [];
-  return values.map((v) => Number(v)).filter((n) => Number.isFinite(n));
+  return formList(body[key]).map((v) => Number(v)).filter((n) => Number.isFinite(n));
 }
 
 /**

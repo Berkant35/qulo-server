@@ -15,9 +15,14 @@ import { assertUuid } from "../utils/validation.js";
 import { haversineDistance } from "../utils/math.js";
 import { normalizeUploadedImage, NORMAL_GORSEL_MIME } from "../utils/image-normalize.js";
 import { DEGISMEZ_DOSYA_CACHE_CONTROL } from "../constants/storage.js";
+import { MAX_PROFILE_PHOTOS } from "../constants/photos.js";
+import { pgTextArrayLiteral } from "../utils/pg-array.js";
 import { isKnownReasonCode } from "../constants/deletion-reasons.js";
 import type { UpdateProfileInput, UpdateDetailsInput } from "../validators/user.validator.js";
 import type { ClientPlatform } from "../utils/client-meta.js";
+
+/** Herkese açık `photos` bucket URL'sinde depo yolunun başladığı yer. */
+const PHOTO_STORAGE_MARKER = "/storage/v1/object/public/photos/";
 
 export class UserService {
   async getMe(userId: string, platform?: ClientPlatform) {
@@ -350,7 +355,7 @@ export class UserService {
     }
 
     const photos: string[] = user.photos ?? [];
-    if (photos.length >= 6) {
+    if (photos.length >= MAX_PROFILE_PHOTOS) {
       throw Errors.MAX_PHOTOS_REACHED();
     }
 
@@ -399,47 +404,88 @@ export class UserService {
   }
 
   async deletePhoto(userId: string, index: number) {
-    const { data: user, error: fetchError } = await supabase
+    const photos = await this.getActivePhotos(userId);
+    if (index < 0 || index >= photos.length) {
+      throw Errors.INVALID_PHOTO_INDEX();
+    }
+    const { photos: remaining } = await this.removePhotos(userId, photos, new Set([index]));
+    return { photos: remaining };
+  }
+
+  /**
+   * Backoffice: fotoğrafları URL ile kaldırır. İndeks kullanılmaz — sayfa açıkken kullanıcı
+   * sıralamayı değiştirir ya da foto silerse admin yanlış fotoğrafı kaldırmasın. Profilde
+   * olmayan URL yok sayılır; hiçbiri profilde değilse (bayat sayfa) PHOTO_NOT_FOUND.
+   */
+  async removePhotosByUrl(userId: string, urls: readonly string[]) {
+    const photos = await this.getActivePhotos(userId);
+    const targets = new Set(urls);
+    const indexes = new Set(photos.flatMap((url, i) => (targets.has(url) ? [i] : [])));
+    if (indexes.size === 0) throw Errors.PHOTO_NOT_FOUND();
+    return this.removePhotos(userId, photos, indexes);
+  }
+
+  private async getActivePhotos(userId: string): Promise<string[]> {
+    const { data: user, error } = await supabase
       .from("users")
       .select("photos")
       .eq("id", userId)
       .eq("is_deleted", false)
       .maybeSingle();
 
-    if (fetchError || !user) {
-      throw Errors.USER_NOT_FOUND();
-    }
+    if (error) throw Errors.SERVER_ERROR();
+    if (!user) throw Errors.USER_NOT_FOUND();
+    return user.photos ?? [];
+  }
 
-    const photos: string[] = user.photos ?? [];
-    if (index < 0 || index >= photos.length) {
-      throw Errors.INVALID_PHOTO_INDEX();
-    }
+  /**
+   * Yazım okunan diziye koşullu (compare-and-swap): arada yükleme/silme/admin kaldırması olduysa
+   * satır eşleşmez → PHOTOS_CHANGED, depoya dokunulmaz (yeni fotoğraf ezilmez, silinen geri gelmez).
+   * Önce profil satırı, sonra depo: depo silmesi patlarsa yalnız sahipsiz dosya kalır; ters sırada
+   * satır yazımı patlarsa profilde dosyası silinmiş kırık fotoğraf kalırdı.
+   */
+  private async removePhotos(userId: string, photos: string[], indexes: ReadonlySet<number>) {
+    const remaining = photos.filter((_, i) => !indexes.has(i));
+    const removed = photos.filter((_, i) => indexes.has(i));
 
-    const photoUrl = photos[index];
-
-    // Extract file path from URL
-    const urlParts = photoUrl.split("/storage/v1/object/public/photos/");
-    if (urlParts.length === 2) {
-      const filePath = urlParts[1];
-      await supabase.storage.from("photos").remove([filePath]);
-    }
-
-    photos.splice(index, 1);
-
-    const { error: updateError } = await supabase
+    const { data: written, error: updateError } = await supabase
       .from("users")
-      .update({ photos })
-      .eq("id", userId);
+      .update({ photos: remaining })
+      .eq("id", userId)
+      .eq("is_deleted", false)
+      .eq("photos", pgTextArrayLiteral(photos))
+      .select("id");
 
     if (updateError) throw Errors.SERVER_ERROR();
+    if (!written || written.length === 0) throw Errors.PHOTOS_CHANGED();
+
+    await this.removeOwnPhotoFiles(userId, removed.filter((url) => !remaining.includes(url)));
 
     try {
       await this.recalculateProfileCompletion(userId);
     } catch (err) {
-      console.error("[deletePhoto] recalculateProfileCompletion error:", err);
+      console.error("[removePhotos] recalculateProfileCompletion error:", err);
     }
 
-    return { photos };
+    return { photos: remaining, removed };
+  }
+
+  /**
+   * Yalnız kullanıcının kendi klasöründeki dosyalar silinir: aynı dosyayı paylaşan başka bir profil
+   * (seed kopyası) kırılmasın. Profil zaten yazıldı — depo hatası yutulur, sahipsiz dosya kalır.
+   */
+  private async removeOwnPhotoFiles(userId: string, urls: readonly string[]): Promise<void> {
+    const paths = [...new Set(urls.flatMap((url) => {
+      const parts = url.split(PHOTO_STORAGE_MARKER);
+      return parts.length === 2 && parts[1].startsWith(`${userId}/`) ? [parts[1]] : [];
+    }))];
+    if (paths.length === 0) return;
+    try {
+      const { error } = await supabase.storage.from("photos").remove(paths);
+      if (error) console.error("[user] photo storage remove failed:", { userId, paths, error });
+    } catch (err) {
+      console.error("[user] photo storage remove threw:", { userId, paths, err });
+    }
   }
 
   async boost(userId: string) {

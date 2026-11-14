@@ -209,12 +209,42 @@ function parseFilterExpression(part: string): Filter {
   return { op: op as FilterOp, column, value: raw in SABIT ? SABIT[raw] : raw };
 }
 
+/**
+ * Postgres `text[]` literali `{"a","b\"c"}` → dizi (`pgTextArrayLiteral`'ın tersi). Yalnız tırnaklı
+ * öğeler: kod tabanı literali hep tırnaklı üretir; tırnaksız/NULL öğe gelirse sessizce yanlış
+ * eşleşmesin diye hata.
+ */
+function parsePgTextArrayLiteral(raw: string): string[] {
+  if (raw === '{}') return [];
+  const out: string[] = [];
+  let i = 1;
+  while (i < raw.length - 1) {
+    if (raw[i] !== '"') throw new Error(`fake: desteklenmeyen dizi literali '${raw}' (öğeler tırnaklı olmalı)`);
+    let value = '';
+    i++;
+    while (raw[i] !== '"') {
+      if (raw[i] === '\\') i++;
+      value += raw[i++];
+    }
+    out.push(value);
+    i += 2; // kapanış tırnağı + virgül
+  }
+  return out;
+}
+
+/** `text[]` sütununda `eq` gerçek Postgres gibi sıra duyarlı öğe öğe karşılaştırır. */
+function arrayEq(actual: unknown, value: unknown): boolean {
+  if (!Array.isArray(actual) || typeof value !== 'string' || !value.startsWith('{')) return false;
+  const expected = parsePgTextArrayLiteral(value);
+  return actual.length === expected.length && actual.every((v, i) => v === expected[i]);
+}
+
 function matches(row: Row, filters: Filter[]): boolean {
   return filters.every((f) => {
     const actual = row[f.column];
     switch (f.op) {
       case 'eq':
-        return actual === f.value;
+        return Array.isArray(actual) ? arrayEq(actual, f.value) : actual === f.value;
       case 'neq':
         return actual !== f.value;
       case 'gte':

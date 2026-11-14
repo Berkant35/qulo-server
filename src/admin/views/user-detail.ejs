@@ -221,13 +221,38 @@
 </div>
 
 <% if (user.photos && user.photos.length > 0) { %>
+<% const photoRemoveAction = '/admin/users/' + user.id + '/photos/remove'; %>
 <div class="card">
-  <h3 style="margin-bottom: 12px;">Photos (<%= user.photos.length %>)</h3>
-  <div class="photos-grid">
-    <% user.photos.forEach(function(photo) { %>
-    <img src="<%= photo %>" alt="photo">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:8px; flex-wrap:wrap;">
+    <h3>Photos (<%= user.photos.length %>)</h3>
+    <% if (!user.is_deleted) { %>
+    <form id="photo-remove-bulk" method="POST" action="<%= photoRemoveAction %>" onsubmit="return confirm('Seçili fotoğraflar profilden kalıcı olarak kaldırılsın mı? Geri alınamaz.');">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button type="submit" class="btn btn-danger btn-sm">Seçilenleri kaldır</button>
+    </form>
+    <% } %>
+  </div>
+  <div class="photo-tiles">
+    <% user.photos.forEach(function(photo, i) { %>
+    <div class="photo-tile">
+      <% if (typeof photo === 'string' && photo.startsWith('https://')) { %><a href="<%= photo %>" target="_blank" rel="noopener noreferrer" title="Tam boyut"><img src="<%= photo %>" alt="photo <%= i + 1 %>"></a><% } else { %><img src="<%= photo %>" alt="photo <%= i + 1 %>"><% } %>
+      <% if (i === 0) { %><span class="photo-tile-main">Ana</span><% } %>
+      <% if (!user.is_deleted) { %>
+      <div class="photo-tile-actions">
+        <label><input type="checkbox" name="urls" value="<%= photo %>" form="photo-remove-bulk"> Seç</label>
+        <form method="POST" action="<%= photoRemoveAction %>" onsubmit="return confirm('Bu fotoğraf profilden kalıcı olarak kaldırılsın mı? Geri alınamaz.');">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="urls" value="<%= photo %>">
+          <button type="submit" class="btn btn-danger btn-sm">Kaldır</button>
+        </form>
+      </div>
+      <% } %>
+    </div>
     <% }); %>
   </div>
+  <% if (!user.is_deleted) { %>
+  <p style="font-size:12px; color:#999; margin-top:8px;">Kaldırılan fotoğraf profilden ve depodan silinir; kullanıcıya bildirim gitmez. İlk fotoğraf kaldırılırsa sıradaki ana fotoğraf olur.</p>
+  <% } %>
 </div>
 <% } %>
 
