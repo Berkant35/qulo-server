@@ -23,6 +23,20 @@ import type { ClientPlatform } from "../utils/client-meta.js";
 
 /** Herkese açık `photos` bucket URL'sinde depo yolunun başladığı yer. */
 const PHOTO_STORAGE_MARKER = "/storage/v1/object/public/photos/";
+/** Yükleme `${userId}/${Date.now()}.jpg` yazar: tek seviye, güvenli karakterli dosya adı. */
+const PHOTO_FILE_NAME = /^[A-Za-z0-9._-]+$/;
+
+/**
+ * URL kullanıcının KENDİ klasöründe tek seviyeli bir dosyaysa depo yolu, değilse null.
+ * `startsWith(userId/)` yetmez: `${userId}/../başkası/x.jpg` önekten geçer (path traversal).
+ */
+function ownPhotoPath(userId: string, url: string): string | null {
+  const parts = url.split(PHOTO_STORAGE_MARKER);
+  if (parts.length !== 2) return null;
+  const [folder, file, ...rest] = parts[1].split("/");
+  const safeFile = file !== undefined && file !== "." && file !== ".." && PHOTO_FILE_NAME.test(file);
+  return folder === userId && rest.length === 0 && safeFile ? parts[1] : null;
+}
 
 export class UserService {
   async getMe(userId: string, platform?: ClientPlatform) {
@@ -476,8 +490,8 @@ export class UserService {
    */
   private async removeOwnPhotoFiles(userId: string, urls: readonly string[]): Promise<void> {
     const paths = [...new Set(urls.flatMap((url) => {
-      const parts = url.split(PHOTO_STORAGE_MARKER);
-      return parts.length === 2 && parts[1].startsWith(`${userId}/`) ? [parts[1]] : [];
+      const path = ownPhotoPath(userId, url);
+      return path ? [path] : [];
     }))];
     if (paths.length === 0) return;
     try {
