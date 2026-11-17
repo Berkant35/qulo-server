@@ -266,6 +266,18 @@ describe('register', () => {
     expect(fake.table('users')[0].is_test_account).toBe(false);
   });
 
+  // Play on-lansman botlari (2026-11-17): bayrak kayit aninda yazilir, metrikten ayiklanir.
+  it('yeni kullanici is_store_bot=false yazilir; Test Lab basligi ile true', async () => {
+    const real = await setup({ users: [] });
+    await real.authService.register(registerInput(), { platform: 'android', appVersion: '2.0.19+107' });
+    expect(real.fake.table('users')[0].is_store_bot).toBe(false);
+
+    vi.resetModules();
+    const bot = await setup({ users: [] });
+    await bot.authService.register(registerInput({ email: 'testuser777@example.com' }), { platform: 'android', testLab: true });
+    expect(bot.fake.table('users')[0].is_store_bot).toBe(true);
+  });
+
   /** 2026-09-25: sabit 2× ORACLE yerine config'teki paket (varsayılan her güçten 1). Detay: alttaki describe. */
   it('yeni kullanıcıya config\'teki başlangıç paketi (her güçten 1) envantere yazılır', async () => {
     const { fake, authService } = await setup({ users: [] });
@@ -824,6 +836,18 @@ describe('socialLogin', () => {
     await authService.socialLogin(provider);
     expect(fake.table('users')[0].is_test_admin).toBe(false);
     expect(fake.table('users')[0].is_test_account).toBe(false);
+  });
+
+  it('Case C — Android + on-lansman Google hesabi is_store_bot=true, ayni adres iOS\'ta false', async () => {
+    socialPayload = { email: 'betsyhicks.16617@gmail.com', providerId: 'google-bot', emailVerified: true, name: 'Betsy', surname: 'Hicks' };
+    const android = await setup({ users: [] });
+    await android.authService.socialLogin(provider, { platform: 'android' });
+    expect(android.fake.table('users')[0].is_store_bot).toBe(true);
+
+    vi.resetModules();
+    const ios = await setup({ users: [] });
+    await ios.authService.socialLogin(provider, { platform: 'ios' });
+    expect(ios.fake.table('users')[0].is_store_bot).toBe(false);
   });
 
   it('Case C — Apple sagalayicisi (hide-my-email relay) is_test_admin=false yazar', async () => {

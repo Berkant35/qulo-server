@@ -68,15 +68,17 @@ class AdminService {
       { count: pendingReports },
     ] = await Promise.all([
       supabase.from("users").select("*", { count: "exact", head: true }).eq("is_deleted", false),
-      // Seed botlari ve sahibin kendi hesaplari ("berkant" gecen e-postalar) haric
+      // Seed botlari, magaza test botlari (Play on-lansman) ve sahibin kendi hesaplari ("berkant") haric
       supabase
         .from("users")
         .select("*", { count: "exact", head: true })
         .eq("is_deleted", false)
         .eq("is_seed_profile", false)
+        .eq("is_store_bot", false)
         .not("email", "ilike", "%berkant%"),
       supabase.from("users").select("*", { count: "exact", head: true }).eq("is_deleted", false).gte("last_seen_at", sevenDaysAgo),
-      supabase.from("users").select("*", { count: "exact", head: true }).gte("created_at", todayStart),
+      // Bugunku kayit = gercek kayit: build yuklemesi gunu Play botlari bu sayiyi sisiriyordu.
+      supabase.from("users").select("*", { count: "exact", head: true }).eq("is_store_bot", false).gte("created_at", todayStart),
       supabase.from("matches").select("*", { count: "exact", head: true }),
       supabase.from("reports").select("*", { count: "exact", head: true }).eq("status", "PENDING"),
     ]);
@@ -111,7 +113,7 @@ class AdminService {
   async getUsers(page: number, limit: number, search?: string, gender?: string) {
     let query = supabase
       .from("users")
-      .select("id, email, name, surname, age, gender, city, green_diamonds, purple_diamonds, is_online, is_deleted, is_banned, created_at, last_seen_at, photos", { count: "exact" })
+      .select("id, email, name, surname, age, gender, city, green_diamonds, purple_diamonds, is_online, is_deleted, is_banned, is_store_bot, created_at, last_seen_at, photos", { count: "exact" })
       .eq("is_deleted", false)
       .order("created_at", { ascending: false })
       .range((page - 1) * limit, page * limit - 1);

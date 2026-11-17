@@ -1,7 +1,7 @@
 import type { IncomingHttpHeaders } from "http";
 
 /**
- * Istemcinin basliklarla kendini tanitmasi: `x-app-platform`, `x-app-version`.
+ * Istemcinin basliklarla kendini tanitmasi: `x-app-platform`, `x-app-version`, `x-test-lab`.
  *
  * Denetim kayitlarina (riza) yazildigi icin DB'ye gitmeden once dogrulanir.
  * `user_consents.platform` ios/android/web CHECK kisitina tabi — dogrulanmamis bir
@@ -15,6 +15,12 @@ export type ClientPlatform = (typeof PLATFORMS)[number];
 export interface ClientMeta {
   platform?: ClientPlatform;
   appVersion?: string;
+  /**
+   * Firebase Test Lab cihazi (Play on-lansman raporu). Android istemci
+   * `Settings.System "firebase.test.lab"` okuyup `x-test-lab: 1` gonderir.
+   * Yalniz metrik ayiklamasi icin — davranisi DEGISTIRMEZ (bkz. utils/store-bot).
+   */
+  testLab?: boolean;
 }
 
 /** "2.0.10" ya da "2.0.10+73" — serbest metin denetim kaydina girmesin. */
@@ -34,12 +40,14 @@ function readHeader(headers: IncomingHttpHeaders, name: string): string | undefi
 export function clientMetaFromHeaders(headers: IncomingHttpHeaders): ClientMeta {
   const platform = readHeader(headers, "x-app-platform")?.toLowerCase();
   const appVersion = readHeader(headers, "x-app-version");
+  const testLab = readHeader(headers, "x-test-lab")?.toLowerCase();
 
   const meta: ClientMeta = {};
   if (isPlatform(platform)) meta.platform = platform;
   if (appVersion && appVersion.length <= APP_VERSION_MAX && APP_VERSION.test(appVersion)) {
     meta.appVersion = appVersion;
   }
+  if (testLab === "1" || testLab === "true") meta.testLab = true;
   return meta;
 }
 

@@ -37,6 +37,18 @@ describe('clientMetaFromHeaders', () => {
       expect(clientMetaFromHeaders({ 'x-app-version': value }).appVersion, value).toBeUndefined();
     }
   });
+
+  it('x-test-lab: 1/true → testLab (Play on-lansman cihazı)', () => {
+    expect(clientMetaFromHeaders({ 'x-test-lab': '1' }).testLab).toBe(true);
+    expect(clientMetaFromHeaders({ 'x-test-lab': ' TRUE ' }).testLab).toBe(true);
+  });
+
+  it('x-test-lab başka değerde ya da yoksa alan hiç yazılmaz', () => {
+    for (const value of ['0', 'false', 'yes', '']) {
+      expect(clientMetaFromHeaders({ 'x-test-lab': value }), value).toEqual({});
+    }
+    expect(clientMetaFromHeaders({ 'x-app-platform': 'android' })).toEqual({ platform: 'android' });
+  });
 });
 
 describe('isClientAtLeast', () => {
