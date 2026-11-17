@@ -102,6 +102,13 @@ export interface FakeSupabaseOptions {
    * unutan sorgu, bununla testte de eksik satır görür.
    */
   maxRows?: number;
+  /**
+   * Postgres kolon varsayılanları (ör. `created_at default now()`), tablo başına, opt-in: insert'te
+   * payload'da olmayan kolonlar buradan dolar (payload önceliklidir). Zaman penceresi sorgulayan kodu
+   * (`gte('created_at', …)`) sınamak için; global yapılmadı — satırı birebir karşılaştıran testler bozulmasın.
+   * Yalnız `insert`: upsert'te çakışan satır güncellenir, varsayılan onun mevcut değerini ezmemeli.
+   */
+  insertDefaults?: Record<string, () => Row>;
 }
 
 type FilterOp = 'eq' | 'neq' | 'gte' | 'lte' | 'gt' | 'lt' | 'in' | 'is' | 'notIs' | 'notIn' | 'notIlike' | 'like' | 'ilike';
@@ -657,6 +664,13 @@ export function createFakeSupabase(
     return spec.error ?? { message: `fake storage failure: ${op} on ${bucket}` };
   };
 
+  const withInsertDefaults = (table: string, payload: Row | Row[]): Row | Row[] => {
+    const defaults = options.insertDefaults?.[table];
+    if (!defaults) return payload;
+    const apply = (row: Row): Row => ({ ...defaults(), ...row });
+    return Array.isArray(payload) ? payload.map(apply) : apply(payload);
+  };
+
   const client = {
     from(table: string) {
       const kaydet = (op: FakeSupabase['queries'][number]['op']) => queries.push({ table, op });
@@ -684,7 +698,7 @@ export function createFakeSupabase(
           kaydet('insert');
           const fail = failureFor(table, 'insert');
           return new QueryBuilder(
-            store, table, 'insert', payload, false,
+            store, table, 'insert', withInsertDefaults(table, payload), false,
             fail?.error ?? null, undefined, options.unique?.[table] ?? [], fail?.committed ?? false,
           );
         },

@@ -255,6 +255,115 @@ describe('activateFromWebhook', () => {
   });
 });
 
+/**
+ * Sandbox (TestFlight / Xcode / Google lisans testçisi) dönemleri hızlandırılmış: TestFlight'ta "aylık"
+ * abonelik her gün yenilenir. 2026-11-12..17 canlı gözlemi: bir test hesabına 6 günde 9.000 mor (ödenmiş 0).
+ * Kural: sandbox'ta kullanıcı başına 30 günde en fazla bir abonelik bonusu (üretimin aylık ritmi). İlk
+ * satın alma bonusu hemen alır — App Review de sandbox'ta satın alır, cüzdanı dolu görmeli.
+ */
+describe('sandbox bonusu — 30 günde en fazla bir', () => {
+  const SANDBOX = { paidEligible: false, sandbox: true };
+  const PRODUCTION = { paidEligible: true, sandbox: false };
+  const DAY = 24 * 60 * 60 * 1000;
+  const at = (days: number) => new Date(NOW.getTime() + days * DAY).toISOString();
+  /** Postgres `created_at default now()` — pencere sorgusu bunu okur. */
+  const clock = { insertDefaults: { diamond_transactions: () => ({ created_at: new Date().toISOString() }) } };
+  const pastBonus = (daysAgo: number) => ({
+    id: 'old', user_id: 'u1', type: 'PURPLE', amount: 1000, reason: 'SUBSCRIPTION_BONUS',
+    reference_id: 'sub_premium_old', created_at: at(-daysAgo),
+  });
+  const bonuses = (fake: Awaited<ReturnType<typeof setup>>['fake']) =>
+    fake.table('diamond_transactions').filter((t) => t.reason === 'SUBSCRIPTION_BONUS');
+
+  it('ilk sandbox satın alması bonusu istemci yolunda hemen alır (App Review)', async () => {
+    const { fake, subscriptionService } = await setup({ users: [user()] }, clock);
+
+    await subscriptionService.activateFromClient('u1', 'premium', 'client_u1', 'tx-0', at(1), SANDBOX);
+
+    expect(fake.table('users')[0]).toMatchObject({ subscription_plan: 'premium', purple_diamonds: 1000 });
+  });
+
+  it('günlük sandbox yenilemeleri 30 gün içinde yeni bonus almaz; dönem yine uzar', async () => {
+    const { fake, subscriptionService } = await setup({ users: [user()] }, clock);
+
+    await subscriptionService.activateFromWebhook('u1', 'premium', 'u1', 'tx-0', at(1), SANDBOX);
+    await subscriptionService.renewSubscription('u1', 'premium', 'tx-1', at(2), SANDBOX);
+    await subscriptionService.renewSubscription('u1', 'premium', 'tx-2', at(3), SANDBOX);
+
+    expect(bonuses(fake)).toHaveLength(1);
+    expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 1000, subscription_expires_at: at(3) });
+  });
+
+  it('TestFlight\'ta "satın al"a yeniden dokunma: istemci yolu yeni günlük dönemi istese de bonus yok', async () => {
+    const { fake, subscriptionService } = await setup({ users: [user()] }, clock);
+
+    await subscriptionService.activateFromClient('u1', 'premium', 'client_u1', 'tx-0', at(1), SANDBOX);
+    await subscriptionService.activateFromClient('u1', 'premium', 'client_u1', 'tx-1', at(2), SANDBOX);
+
+    expect(bonuses(fake)).toHaveLength(1);
+    expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 1000, subscription_expires_at: at(2) });
+  });
+
+  it('30 günü geçmiş bonus pencereyi kapatmaz: sandbox yenilemesi yeniden bonus alır', async () => {
+    const { fake, subscriptionService } = await setup(
+      { users: [user()], diamond_transactions: [pastBonus(31)] }, clock,
+    );
+
+    await subscriptionService.renewSubscription('u1', 'premium', 'tx-1', at(1), SANDBOX);
+
+    expect(fake.table('users')[0].purple_diamonds).toBe(1000);
+  });
+
+  it('pencere yalnız aynı kullanıcının abonelik bonusunu sayar (başkası / elmas paketi engellemez)', async () => {
+    const { fake, subscriptionService } = await setup({
+      users: [user(), user({ id: 'u2' })],
+      diamond_transactions: [
+        { ...pastBonus(1), id: 'other', user_id: 'u2' },
+        { ...pastBonus(1), id: 'iap', reason: 'IAP_PURCHASE', reference_id: 'tx-iap' },
+      ],
+    }, clock);
+
+    await subscriptionService.renewSubscription('u1', 'premium', 'tx-1', at(1), SANDBOX);
+
+    expect(fake.table('users')[0].purple_diamonds).toBe(1000);
+  });
+
+  it('üretimde pencere yok: yakın tarihli bonus olsa da yenileme bonus alır', async () => {
+    const { fake, subscriptionService } = await setup(
+      { users: [user({ purple_paid: 0 })], diamond_transactions: [pastBonus(1)] }, clock,
+    );
+
+    await subscriptionService.renewSubscription('u1', 'premium', 'tx-1', at(1), PRODUCTION);
+
+    expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 1000, purple_paid: 200 });
+  });
+
+  it('sandbox istemci + webhook aynı dönemi iki sırada da bildirse tek bonus', async () => {
+    const first = await setup({ users: [user()] }, clock);
+    await first.subscriptionService.activateFromClient('u1', 'premium', 'client_u1', 'tx-0', at(1), SANDBOX);
+    await first.subscriptionService.activateFromWebhook('u1', 'premium', 'u1', 'tx-0', at(1), SANDBOX);
+    expect(bonuses(first.fake)).toHaveLength(1);
+
+    vi.resetModules();
+    const second = await setup({ users: [user()] }, clock);
+    await second.subscriptionService.activateFromWebhook('u1', 'premium', 'u1', 'tx-0', at(1), SANDBOX);
+    await second.subscriptionService.activateFromClient('u1', 'premium', 'client_u1', 'tx-0', at(1), SANDBOX);
+    expect(bonuses(second.fake)).toHaveLength(1);
+  });
+
+  it('pencere okunamazsa sandbox bonusu verilmez (yanlış "hayır" yalnız test hesabını etkiler)', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    // renewSubscription'ın ilk diamond_transactions okuması = pencere kontrolü.
+    const { fake, subscriptionService } = await setup({ users: [user()] }, {
+      ...clock, failOn: [{ table: 'diamond_transactions', op: 'select', failAfter: 0, times: 1 }],
+    });
+
+    await subscriptionService.renewSubscription('u1', 'premium', 'tx-1', at(1), SANDBOX);
+
+    expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 0, subscription_expires_at: at(1) });
+  });
+});
+
 describe('renewSubscription', () => {
   it('bitiş tarihini uzatır ve bonusu yeniden yatırır', async () => {
     const { fake, subscriptionService } = await setup({
@@ -313,7 +422,7 @@ describe('aylık bonus — ödenmiş pay uygunluğu', () => {
 
   it('activateFromWebhook: uygunsa tier payı ödenmiş', async () => {
     const { fake, subscriptionService } = await setup({ users: [paidUser()] });
-    await subscriptionService.activateFromWebhook('u1', 'plus', 'rc-1', 'tx-1', FUTURE, true);
+    await subscriptionService.activateFromWebhook('u1', 'plus', 'rc-1', 'tx-1', FUTURE, { paidEligible: true, sandbox: false });
     expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 200, purple_paid: 60 });
   });
 
@@ -323,7 +432,7 @@ describe('aylık bonus — ödenmiş pay uygunluğu', () => {
       user_subscriptions: [{ id: 's1', user_id: 'u1', plan: 'premium', status: 'active' }],
     });
     const eligible = await setup(seed());
-    await eligible.subscriptionService.renewSubscription('u1', 'premium', 'tx-r', FUTURE, true);
+    await eligible.subscriptionService.renewSubscription('u1', 'premium', 'tx-r', FUTURE, { paidEligible: true, sandbox: false });
     expect(eligible.fake.table('users')[0]).toMatchObject({ purple_diamonds: 1000, purple_paid: 200 });
 
     vi.resetModules();

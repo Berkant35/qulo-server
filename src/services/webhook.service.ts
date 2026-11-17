@@ -1,6 +1,6 @@
 import { supabase } from '../config/supabase.js';
 import { diamondService } from './diamond.service.js';
-import { subscriptionService } from './subscription.service.js';
+import { subscriptionService, type BonusFacts } from './subscription.service.js';
 import { rainbowRiskService } from './rainbow-risk.service.js';
 import { revenueCatService, type StoreSubscriptionState } from './revenuecat.service.js';
 import {
@@ -119,7 +119,12 @@ class WebhookService {
     }
 
     const expiresAt = new Date(expiration_at_ms).toISOString();
-    const paidEligible = isPaidEligible(facts, 'subscription');
+    // Sandbox yalnız açık 'SANDBOX': alan yoksa ya da beklenmeyen değerse üretim sayılır — `facts.sandbox`
+    // "şüphede ödenmiş sayma" için yazıldı (bilinmeyen = sandbox); bonus kararında şüphe gerçek kullanıcıyı korur.
+    const bonusFacts: BonusFacts = {
+      paidEligible: isPaidEligible(facts, 'subscription'),
+      sandbox: event.environment === 'SANDBOX',
+    };
     // Yazmadan ÖNCE okunur: okuma patlarsa hiçbir şey yazılmamış olur, RevenueCat yeniden dener.
     const storeState = await this.readStoreState(userId);
 
@@ -132,7 +137,7 @@ class WebhookService {
         eventType, userId, productId,
       });
     } else {
-      await this.applySubscriptionEvent(eventType, userId, plan, transaction_id || '', expiresAt, paidEligible);
+      await this.applySubscriptionEvent(eventType, userId, plan, transaction_id || '', expiresAt, bonusFacts);
     }
 
     // Erişim olay alanlarından değil mağazadaki güncel durumdan (bkz. readStoreState).
@@ -180,14 +185,14 @@ class WebhookService {
     plan: SubscriptionPlan,
     transactionId: string,
     expiresAt: string,
-    paidEligible: boolean,
+    bonusFacts: BonusFacts,
   ): Promise<void> {
     switch (eventType) {
       case 'INITIAL_PURCHASE':
-        await subscriptionService.activateFromWebhook(userId, plan, userId, transactionId, expiresAt, paidEligible);
+        await subscriptionService.activateFromWebhook(userId, plan, userId, transactionId, expiresAt, bonusFacts);
         break;
       case 'RENEWAL':
-        await subscriptionService.renewSubscription(userId, plan, transactionId, expiresAt, paidEligible);
+        await subscriptionService.renewSubscription(userId, plan, transactionId, expiresAt, bonusFacts);
         break;
       case 'UNCANCELLATION':
         await subscriptionService.uncancelSubscription(userId);

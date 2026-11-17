@@ -38,7 +38,7 @@ describe("activateSubscriptionHandler — ödenmiş pay uygunluğu", () => {
     await activateSubscriptionHandler(req(), res(), next);
 
     expect(next).not.toHaveBeenCalled();
-    expect(activateFromClient).toHaveBeenCalledWith("u1", "plus", "client_u1", "tx-1", EXPIRES, true);
+    expect(activateFromClient).toHaveBeenCalledWith("u1", "plus", "client_u1", "tx-1", EXPIRES, { paidEligible: true, sandbox: false });
   });
 
   it("deneme dönemi (trial) → false", async () => {
@@ -48,7 +48,7 @@ describe("activateSubscriptionHandler — ödenmiş pay uygunluğu", () => {
 
     await activateSubscriptionHandler(req(), res(), vi.fn());
 
-    expect(activateFromClient).toHaveBeenCalledWith("u1", "plus", "client_u1", "tx-1", EXPIRES, false);
+    expect(activateFromClient).toHaveBeenCalledWith("u1", "plus", "client_u1", "tx-1", EXPIRES, { paidEligible: false, sandbox: false });
   });
 
   it("uygunluk alanı yoksa false (fail-safe)", async () => {
@@ -56,6 +56,25 @@ describe("activateSubscriptionHandler — ödenmiş pay uygunluğu", () => {
 
     await activateSubscriptionHandler(req(), res(), vi.fn());
 
-    expect(activateFromClient).toHaveBeenCalledWith("u1", "plus", "client_u1", "tx-1", EXPIRES, false);
+    expect(activateFromClient).toHaveBeenCalledWith("u1", "plus", "client_u1", "tx-1", EXPIRES, { paidEligible: false, sandbox: false });
+  });
+});
+
+/** Sandbox gerçeği servise iner (30 günde bir bonus kuralı orada); bilinmiyorsa üretim sayılır. */
+describe("activateSubscriptionHandler — sandbox", () => {
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
+  it("RevenueCat sandbox derse sandbox: true geçer", async () => {
+    const { activateSubscriptionHandler, activateFromClient } = await loadHandler({
+      valid: true, expiresAt: EXPIRES, isSandbox: true, paidEligible: false,
+    });
+
+    await activateSubscriptionHandler(req(), res(), vi.fn());
+
+    expect(activateFromClient).toHaveBeenCalledWith(
+      "u1", "plus", "client_u1", "tx-1", EXPIRES, { paidEligible: false, sandbox: true },
+    );
   });
 });

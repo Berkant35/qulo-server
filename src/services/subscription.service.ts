@@ -15,6 +15,25 @@ import type {
 export const SUBSCRIPTION_EXPIRY_GRACE_MS = 3 * 24 * 60 * 60 * 1000;
 
 /**
+ * Aylık bonus kararının satın alma gerçekleri. `paidEligible`: ödenmiş pay (utils/paid-eligibility).
+ * `sandbox`: TestFlight / Xcode / Google lisans testçisi satın alması — bkz. SANDBOX_BONUS_WINDOW_MS.
+ */
+export interface BonusFacts {
+  paidEligible: boolean;
+  sandbox: boolean;
+}
+
+const UNPAID_PRODUCTION: BonusFacts = { paidEligible: false, sandbox: false };
+
+/**
+ * Sandbox'ta kullanıcı başına en fazla bir abonelik bonusu bu pencerede. Sandbox dönemleri hızlandırılmış
+ * (TestFlight'ta "aylık" abonelik her gün, Xcode/Google lisans testinde dakikalar içinde yenilenir); her
+ * dönem bonus alınca bir test hesabına 2026-11-12..17'de 6 günde 9.000 mor yattı. 30 gün = üretimin aylık
+ * ritmi; ilk satın alma bonusu hemen alır (App Review de sandbox'ta satın alır, cüzdanı dolu görmeli).
+ */
+export const SANDBOX_BONUS_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
+
+/**
  * Aylık bonusun tekilleştirme anahtarı.
  *
  * Bir satın alma sunucuya İKİ ayrı yoldan gelir: uygulamanın
@@ -74,10 +93,10 @@ class SubscriptionService {
     rcCustomerId: string,
     storeTransactionId: string,
     expiresAt: string,
-    paidEligible = false,
+    facts: BonusFacts = UNPAID_PRODUCTION,
   ): Promise<void> {
     await this.openPeriod(userId, plan, rcCustomerId, storeTransactionId, expiresAt);
-    await this.grantMonthlyBonus(userId, plan, expiresAt, paidEligible);
+    await this.grantMonthlyBonus(userId, plan, expiresAt, facts);
   }
 
   /**
@@ -101,11 +120,11 @@ class SubscriptionService {
     rcCustomerId: string,
     storeTransactionId: string,
     expiresAt: string,
-    paidEligible = false,
+    facts: BonusFacts = UNPAID_PRODUCTION,
   ): Promise<void> {
     await this.openPeriod(userId, plan, rcCustomerId, storeTransactionId, expiresAt);
     if (await this.isPeriodAlreadyRewarded(userId, plan, expiresAt)) return;
-    await this.grantMonthlyBonus(userId, plan, expiresAt, paidEligible);
+    await this.grantMonthlyBonus(userId, plan, expiresAt, facts);
   }
 
   /**
@@ -219,7 +238,7 @@ class SubscriptionService {
     plan: SubscriptionPlan,
     storeTransactionId: string,
     expiresAt: string,
-    paidEligible = false,
+    facts: BonusFacts = UNPAID_PRODUCTION,
   ): Promise<void> {
     const renewal = {
       plan,
@@ -245,7 +264,7 @@ class SubscriptionService {
       .eq('id', userId);
     if (userError) console.error('[subscription] renewal user access write failed:', userError.message);
 
-    await this.grantMonthlyBonus(userId, plan, expiresAt, paidEligible);
+    await this.grantMonthlyBonus(userId, plan, expiresAt, facts);
   }
 
   /**
@@ -370,19 +389,21 @@ class SubscriptionService {
    * Aylık mor bonusu — dönem anahtarıyla tekilleşir (bkz. subscriptionPeriodRef). Abonelik moru
    * "yarı ödenmiş": tier payı kadarı rainbow üretebilir (economy rainbow bloğu), ama YALNIZ gerçek,
    * tam fiyatlı, kendi satın almasında (`paidEligible`, utils/paid-eligibility). Aksi hâlde bonus
-   * yine tam yatar, ödenmiş payı 0.
+   * yine tam yatar, ödenmiş payı 0. Sandbox'ta 30 günde en fazla bir bonus (SANDBOX_BONUS_WINDOW_MS);
+   * dönem/erişim yine de açılır ya da uzar — çağıran onu bonustan önce yazar.
    */
   private async grantMonthlyBonus(
     userId: string,
     plan: SubscriptionPlan,
     expiresAt: string,
-    paidEligible: boolean,
+    facts: BonusFacts,
   ): Promise<void> {
     const config = await economyConfigService.getConfig();
     const bonus = config.subscriptionLimits[plan].monthlyPurpleBonus;
     if (bonus <= 0) return;
+    if (facts.sandbox && (await this.hasBonusWithinSandboxWindow(userId))) return;
 
-    const paid = paidEligible ? Math.floor(bonus * config.rainbow.subscriptionPaidShare[plan]) : 0;
+    const paid = facts.paidEligible ? Math.floor(bonus * config.rainbow.subscriptionPaidShare[plan]) : 0;
     await diamondService.addPurple(
       userId,
       bonus,
@@ -390,6 +411,29 @@ class SubscriptionService {
       subscriptionPeriodRef(plan, expiresAt),
       paid,
     );
+  }
+
+  /**
+   * Okuma hatasında `true` (verme): yalnız sandbox'ta sorulur, yanlış "hayır" yalnız test hesabını etkiler;
+   * körlemesine vermek günlük bonusu geri getirirdi.
+   */
+  private async hasBonusWithinSandboxWindow(userId: string): Promise<boolean> {
+    const since = new Date(Date.now() - SANDBOX_BONUS_WINDOW_MS).toISOString();
+    const { data, error } = await supabase
+      .from('diamond_transactions')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('reason', 'SUBSCRIPTION_BONUS')
+      .gte('created_at', since)
+      .limit(1);
+
+    if (error) {
+      console.error(`[subscription] sandbox bonus window check failed, bonus withheld for ${userId}:`, error.message);
+      return true;
+    }
+    if ((data?.length ?? 0) === 0) return false;
+    console.log(`[subscription] sandbox bonus within 30 days, skipped for ${userId}`);
+    return true;
   }
 
   async getDailyStats(userId: string) {

@@ -443,6 +443,74 @@ describe('abonelik olayları', () => {
 });
 
 /**
+ * 2026-11-12..17 canlı gözlemi: TestFlight'ta "aylık" abonelik her gün yenilendi, her RENEWAL bir test
+ * hesabına premium bonusu yatırdı (6 günde 9.000 mor, ödenmiş 0). Sandbox'ta 30 günde en fazla bir bonus.
+ * Sandbox yalnız `environment === 'SANDBOX'` — alan yoksa ya da beklenmeyen değerse üretim sayılır
+ * (gerçek kullanıcının bonusu kesilmesin).
+ */
+describe('sandbox (TestFlight) yenilemeleri — 30 günde bir bonus', () => {
+  const clock = { insertDefaults: { diamond_transactions: () => ({ created_at: new Date().toISOString() }) } };
+  const DAY = 24 * 60 * 60 * 1000;
+  const recentBonus = {
+    id: 'old', user_id: 'u1', type: 'PURPLE', amount: 1000, reason: 'SUBSCRIPTION_BONUS',
+    reference_id: 'sub_premium_old', created_at: new Date(NOW.getTime() - DAY).toISOString(),
+  };
+  const premiumUser = () => ({
+    users: [{
+      id: 'u1', purple_diamonds: 0, green_diamonds: 0,
+      subscription_plan: 'premium', subscription_expires_at: '2026-09-01T12:00:00Z',
+    }],
+    user_subscriptions: [{ id: 's1', user_id: 'u1', plan: 'premium', status: 'active', expires_at: '2026-09-01T12:00:00Z' }],
+    diamond_transactions: [recentBonus],
+  });
+  const renewal = (over: Record<string, unknown> = {}) => event({
+    type: 'RENEWAL', product_id: 'qulopremiummonthly2', transaction_id: 'tx-r', ...over,
+  });
+  const bonusRows = (fake: Awaited<ReturnType<typeof setup>>['fake']) =>
+    fake.table('diamond_transactions').filter((r) => r.reason === 'SUBSCRIPTION_BONUS');
+
+  it('TestFlight dizisi: SANDBOX INITIAL_PURCHASE + 3 günlük RENEWAL → tek bonus, dönem uzar', async () => {
+    const { fake, webhookService } = await setup({}, clock);
+
+    await webhookService.handleRevenueCatEvent(event({
+      product_id: 'qulopremiummonthly2', environment: 'SANDBOX', transaction_id: 'tx-0', expiration_at_ms: EXPIRES_MS,
+    }));
+    for (let i = 1; i <= 3; i++) {
+      await webhookService.handleRevenueCatEvent(renewal({
+        environment: 'SANDBOX', transaction_id: `tx-${i}`, expiration_at_ms: EXPIRES_MS + i * DAY,
+      }));
+    }
+
+    expect(bonusRows(fake)).toHaveLength(1);
+    expect(fake.table('users')[0]).toMatchObject({
+      purple_diamonds: 1000, subscription_expires_at: new Date(EXPIRES_MS + 3 * DAY).toISOString(),
+    });
+  });
+
+  it('SANDBOX RENEWAL, yakın tarihli bonus varken: dönem uzar, bonus yok', async () => {
+    const { fake, webhookService } = await setup(premiumUser(), clock);
+
+    await webhookService.handleRevenueCatEvent(renewal({ environment: 'SANDBOX' }));
+
+    expect(fake.table('users')[0]).toMatchObject({
+      purple_diamonds: 0, subscription_expires_at: new Date(EXPIRES_MS).toISOString(),
+    });
+    expect(bonusRows(fake)).toHaveLength(1);
+  });
+
+  it.each([['PRODUCTION'], [null], ['production'], ['']])(
+    'environment %j: üretim sayılır, yakın tarihli bonus olsa da yenileme bonus alır',
+    async (environment) => {
+      const { fake, webhookService } = await setup(premiumUser(), clock);
+
+      await webhookService.handleRevenueCatEvent(renewal({ environment }));
+
+      expect(fake.table('users')[0].purple_diamonds).toBe(1000);
+    },
+  );
+});
+
+/**
  * TRANSFER (RevenueCat docs: event-types-and-fields): satın almalar ve haklar `transferred_from`'dan
  * `transferred_to`'ya geçti — aynı Apple/Google hesabıyla başka Qulo hesabına giriş / geri yükleme.
  * Olayda `app_user_id`/`product_id` YOK; webhook yalnız hedef için bir kez gelir. Eskiden şema 400'le
