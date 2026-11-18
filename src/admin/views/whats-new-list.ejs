@@ -1,0 +1,39 @@
+<%- include('_header') %>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+  <h2>Yenilikler (<%= total %>)</h2>
+  <a href="/admin/whats-new/new" class="btn btn-primary">+ Yeni Kayıt</a>
+</div>
+<% if (error) { %>
+  <div style="color:#b91c1c;background:#fee2e2;padding:10px 14px;border-radius:6px;margin-bottom:16px;"><%= error %></div>
+<% } %>
+<p style="color:#6b7280;font-size:13px;margin:0 0 12px;">Uygulama güncellendikten sonra, istemci sürümüne <b>tam eşleşen</b> aktif kayıt bir kez gösterilir. Aynı sürüm + platform için tek aktif kayıt olabilir.</p>
+<table class="table">
+  <thead>
+    <tr><th>Sürüm</th><th>Platform</th><th>Durum</th><th>Dil doluluğu</th><th>Güncellendi</th><th></th></tr>
+  </thead>
+  <tbody>
+    <% items.forEach((i) => { %>
+      <tr>
+        <td><%= i.app_version %></td>
+        <td><%= i.platform %></td>
+        <td><%= i.is_active ? '✅ Aktif' : '⛔ Pasif' %></td>
+        <td><%= i.localeCount %> / <%= localeTotal %></td>
+        <td><%= i.updated_at ? new Date(i.updated_at).toLocaleDateString() : '' %></td>
+        <td>
+          <a href="/admin/whats-new/<%= i.id %>" class="btn">Düzenle</a>
+          <form method="post" action="/admin/whats-new/<%= i.id %>/toggle" style="display:inline;">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <button class="btn"><%= i.is_active ? 'Pasifleştir' : 'Aktifleştir' %></button>
+          </form>
+        </td>
+      </tr>
+    <% }); %>
+    <% if (items.length === 0) { %>
+      <tr><td colspan="6" style="text-align:center;color:#888;padding:20px;">Kayıt yok</td></tr>
+    <% } %>
+  </tbody>
+</table>
+<%- include('_pagination', { pagination: buildPagination({
+  basePath: '/admin/whats-new', page: page, totalPages: totalPages, params: {}
+}) }) %>
+<%- include('_footer') %>

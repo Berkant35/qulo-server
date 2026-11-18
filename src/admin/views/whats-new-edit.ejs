@@ -1,0 +1,50 @@
+<%- include('_header') %>
+<% const c = (l, f) => item && item.content && item.content[l] ? (item.content[l][f] || '') : ''; %>
+<a href="/admin/whats-new" class="btn" style="background:#e5e7eb;color:#333;">← Geri</a>
+<h2><%= item ? 'Kaydı Düzenle' : 'Yeni Kayıt' %></h2>
+
+<% if (error) { %>
+  <div style="color:#b91c1c;background:#fee2e2;padding:10px 14px;border-radius:6px;margin-bottom:16px;"><%= error %></div>
+<% } %>
+
+<form method="post" action="<%= item ? '/admin/whats-new/' + id : '/admin/whats-new' %>">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+  <div class="card">
+    <h3>Genel</h3>
+
+    <label>Sürüm (istemci sürümüne tam eşleşir, ör. <code>2.2.0</code>)</label>
+    <input name="app_version" value="<%= item ? item.app_version : '' %>" placeholder="2.2.0" style="width:100%;margin-bottom:12px;" />
+
+    <label>Platform</label>
+    <select name="platform" style="width:100%;margin-bottom:12px;">
+      <% platforms.forEach((p) => { %>
+        <option value="<%= p %>" <%= item && item.platform === p ? 'selected' : '' %>><%= p %></option>
+      <% }); %>
+    </select>
+
+    <label>Görsel URL (opsiyonel, https)</label>
+    <input name="image_url" value="<%= item ? (item.image_url || '') : '' %>" style="width:100%;margin-bottom:12px;" />
+
+    <label>
+      <input type="checkbox" name="is_active" <%= item && item.is_active ? 'checked' : '' %> />
+      Aktif (aynı sürüm + platform için tek aktif kayıt)
+    </label>
+  </div>
+
+  <div class="card">
+    <h3>İçerik — İngilizce zorunlu</h3>
+    <p style="color:#6b7280;font-size:13px;margin:0 0 12px;">Boş bıraktığın diller İngilizceye düşer. Bir dili kullanacaksan <b>başlık (≤<%= limits.title %>) ve metni (≤<%= limits.body %>)</b> doldur; düğme metni opsiyonel (≤<%= limits.cta %>).</p>
+    <% locales.forEach((l) => { %>
+      <fieldset style="border:1px solid #ddd;margin:8px 0;padding:12px;border-radius:6px;">
+        <legend style="font-weight:600;padding:0 6px;"><%= localeNames[l] %> (<%= l %>)<%= l === 'en' ? ' — zorunlu' : '' %></legend>
+        <input name="title_<%= l %>" maxlength="<%= limits.title %>" placeholder="Başlık" value="<%= c(l, 'title') %>" style="width:100%;margin-bottom:8px;" />
+        <textarea name="body_<%= l %>" maxlength="<%= limits.body %>" placeholder="Metin" style="width:100%;margin-bottom:8px;"><%= c(l, 'body') %></textarea>
+        <input name="cta_<%= l %>" maxlength="<%= limits.cta %>" placeholder="Düğme metni (opsiyonel)" value="<%= c(l, 'cta_label') %>" style="width:100%;" />
+      </fieldset>
+    <% }); %>
+  </div>
+
+  <button type="submit" class="btn btn-primary" style="margin-top:8px;"><%= item ? 'Güncelle' : 'Oluştur' %></button>
+</form>
+<%- include('_footer') %>

@@ -1,5 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { appConfigService } from "../services/app-config.service.js";
+import { whatsNewService } from "../services/whats-new.service.js";
+import type { WhatsNewQuery } from "../validators/whats-new.validator.js";
 import { economyConfigService, toPublicEconomyConfig } from "../services/economy-config.service.js";
 import { clientMetaFromHeaders } from "../utils/client-meta.js";
 import { localeFromRequestHeaders } from "../utils/locales.js";
@@ -26,6 +28,17 @@ export async function getEconomyConfigHandler(req: Request, res: Response, next:
       economyConfigService.getOracleAccuracy(),
     ]);
     res.json({ version, config: toPublicEconomyConfig(config), oracleAccuracy });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/** Sorgu `validate(whatsNewQuerySchema, "query")` ile doğrulanmış/normalize edilmiştir. Sözleşme: docs/whats-new-api.md */
+export async function getWhatsNewHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { version, platform, locale } = req.query as unknown as WhatsNewQuery;
+    const item = await whatsNewService.getForClient(version, platform, locale);
+    res.json({ item });
   } catch (err) {
     next(err);
   }

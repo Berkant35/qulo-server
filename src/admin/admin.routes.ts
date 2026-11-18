@@ -4,6 +4,7 @@ import { campaignAdminController } from "./campaign.controller.js";
 import { questionBankController } from "./question-bank.controller.js";
 import { analyticsController } from "./analytics.controller.js";
 import { pageMessageAdminController } from "./page-message.admin.controller.js";
+import { whatsNewAdminController } from "./whats-new.admin.controller.js";
 import { acquisitionAdminController } from "./acquisition.admin.controller.js";
 import { deletionFeedbackAdminController } from "./deletion-feedback.admin.controller.js";
 import { photoModerationAdminController } from "./photo-moderation.admin.controller.js";
@@ -103,6 +104,12 @@ router.post("/campaigns/:id/pause", csrfValidate, (req, res) => campaignAdminCon
 router.post("/campaigns/:id/resume", csrfValidate, (req, res) => campaignAdminController.resume(req, res));
 
 // Page Messages (sayfa-içi mesajlar)
+router.get("/whats-new", (req, res) => whatsNewAdminController.list(req, res));
+router.get("/whats-new/new", (req, res) => whatsNewAdminController.newForm(req, res));
+router.post("/whats-new", csrfValidate, (req, res) => whatsNewAdminController.create(req, res));
+router.get("/whats-new/:id", (req, res) => whatsNewAdminController.editForm(req, res));
+router.post("/whats-new/:id", csrfValidate, (req, res) => whatsNewAdminController.update(req, res));
+router.post("/whats-new/:id/toggle", csrfValidate, (req, res) => whatsNewAdminController.toggle(req, res));
 router.get("/page-messages", (req, res) => pageMessageAdminController.list(req, res));
 router.get("/page-messages/new", (req, res) => pageMessageAdminController.newForm(req, res));
 router.post("/page-messages", csrfValidate, (req, res) => pageMessageAdminController.create(req, res));
