@@ -26,11 +26,8 @@
     </tbody>
   </table>
 </div>
-<% if (totalPages > 1) { %>
-<div class="pagination">
-  <% for (var i = 1; i <= totalPages; i++) { %>
-  <a href="/admin/transactions?page=<%= i %>&type=<%= type %>&userId=<%= userId %>" class="<%= i === page ? 'active' : '' %>"><%= i %></a>
-  <% } %>
-</div>
-<% } %>
+<%- include('_pagination', { pagination: buildPagination({
+  basePath: '/admin/transactions', page: page, totalPages: totalPages,
+  params: { type: type, userId: userId }
+}) }) %>
 <%- include('_footer') %>

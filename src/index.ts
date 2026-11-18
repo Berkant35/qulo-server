@@ -7,6 +7,7 @@ import session from "express-session";
 import { env } from "./config/env.js";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import { buildPagination } from "./admin/utils/pagination.js";
 import questionRoutes from "./routes/question.routes.js";
 import diamondRoutes from "./routes/diamond.routes.js";
 import matchRoutes from "./routes/match.routes.js";
@@ -49,6 +50,7 @@ const __dirname = path.dirname(__filename);
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "admin", "views"));
+app.locals.buildPagination = buildPagination;
 
 // Middleware
 app.use(helmet({

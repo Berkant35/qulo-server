@@ -79,11 +79,8 @@
   </table>
 </div>
 
-<% if (totalPages > 1) { %>
-<div class="pagination">
-  <% for (var p = 1; p <= totalPages; p++) { %>
-  <a href="/admin/rewards/redemptions?page=<%= p %>&status=<%= filter.status %>&country=<%= filter.country || '' %>&q=<%= encodeURIComponent(filter.q || '') %>&user=<%= filter.user || '' %>" class="<%= p === page ? 'active' : '' %>"><%= p %></a>
-  <% } %>
-</div>
-<% } %>
+<%- include('_pagination', { pagination: buildPagination({
+  basePath: '/admin/rewards/redemptions', page: page, totalPages: totalPages,
+  params: { status: filter.status, country: filter.country || '', q: filter.q || '', user: filter.user || '' }
+}) }) %>
 <%- include('_footer') %>

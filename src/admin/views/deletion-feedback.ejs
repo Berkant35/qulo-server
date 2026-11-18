@@ -102,21 +102,8 @@
   </table>
 </div>
 
-<% if (totalPages > 1) { %>
-<div class="pagination">
-  <% var winStart = Math.max(1, page - 5); %>
-  <% var winEnd = Math.min(totalPages, page + 5); %>
-  <% if (winStart > 1) { %>
-  <a href="/admin/deletion-feedback?days=<%= days %>&page=1">1</a>
-  <% if (winStart > 2) { %><span style="color:#888;">…</span><% } %>
-  <% } %>
-  <% for (var i = winStart; i <= winEnd; i++) { %>
-  <a href="/admin/deletion-feedback?days=<%= days %>&page=<%= i %>" class="<%= i === page ? 'active' : '' %>"><%= i %></a>
-  <% } %>
-  <% if (winEnd < totalPages) { %>
-  <% if (winEnd < totalPages - 1) { %><span style="color:#888;">…</span><% } %>
-  <a href="/admin/deletion-feedback?days=<%= days %>&page=<%= totalPages %>"><%= totalPages %></a>
-  <% } %>
-</div>
-<% } %>
+<%- include('_pagination', { pagination: buildPagination({
+  basePath: '/admin/deletion-feedback', page: page, totalPages: totalPages,
+  params: { days: days }
+}) }) %>
 <%- include('_footer') %>

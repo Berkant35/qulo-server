@@ -67,14 +67,8 @@
   </table>
 </div>
 
-<% if (totalPages > 1) { %>
-<div class="pagination">
-  <% for (var i = 1; i <= Math.min(totalPages, 20); i++) { %>
-  <a href="/admin/questions?page=<%= i %>&search=<%= search %>&category=<%= category %>&userId=<%= userId %>" class="<%= i === page ? 'active' : '' %>"><%= i %></a>
-  <% } %>
-  <% if (totalPages > 20) { %>
-  <span>... (<%= totalPages %> pages)</span>
-  <% } %>
-</div>
-<% } %>
+<%- include('_pagination', { pagination: buildPagination({
+  basePath: '/admin/questions', page: page, totalPages: totalPages,
+  params: { search: search, category: category, userId: userId }
+}) }) %>
 <%- include('_footer') %>

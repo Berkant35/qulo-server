@@ -1,0 +1,9 @@
+<% if (pagination.visible) { %>
+<div class="pagination">
+  <% if (pagination.first) { %><a href="<%= pagination.first.href %>">« İlk</a><% } %>
+  <% if (pagination.prevBlock) { %><a href="<%= pagination.prevBlock.href %>">‹ Önceki <%= pagination.windowSize %></a><% } %>
+  <% pagination.pages.forEach(function (p) { %><a href="<%= p.href %>" class="<%= p.active ? 'active' : '' %>"><%= p.page %></a><% }); %>
+  <% if (pagination.nextBlock) { %><a href="<%= pagination.nextBlock.href %>">Sonraki <%= pagination.windowSize %> ›</a><% } %>
+  <% if (pagination.last) { %><a href="<%= pagination.last.href %>">Son »</a><% } %>
+</div>
+<% } %>

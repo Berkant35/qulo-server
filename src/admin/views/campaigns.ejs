@@ -68,11 +68,8 @@
   </table>
 </div>
 
-<% if (totalPages > 1) { %>
-<div class="pagination">
-  <% for (let i = 1; i <= totalPages; i++) { %>
-    <a href="/admin/campaigns?page=<%= i %>" class="<%= i === page ? 'active' : '' %>"><%= i %></a>
-  <% } %>
-</div>
-<% } %>
+<%- include('_pagination', { pagination: buildPagination({
+  basePath: '/admin/campaigns', page: page, totalPages: totalPages,
+  params: {}
+}) }) %>
 <%- include('_footer') %>
