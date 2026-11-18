@@ -17,6 +17,7 @@ import { pairCompatibilityService } from "./pair-compatibility.service.js";
 import { identityService, type VisibleIdentity } from "./identity.service.js";
 import { servedGate } from "./served-gate.service.js";
 import { izleyiciDilleri, seedLanguageFilter } from "../utils/discover-language.js";
+import { discoverGroupRank, passesLanguageGate } from "../utils/discover-rank.js";
 
 const PAGE_SIZE = 10;
 /**
@@ -26,15 +27,6 @@ const PAGE_SIZE = 10;
 const CANDIDATE_FETCH_LIMIT = 500;
 /** URL uzunlugu icin dislama listesi tavani; asilirsa kalani bellekte elenir. */
 const MAX_EXCLUDE_IDS = 1000;
-
-/**
- * Discover sira grubu: 0 = aktif gercek, 1 = seed, 2 = uyuyan gercek.
- * Seed'in kendi aktifligi bakilmaz (presence ritmi yapay); seed her zaman grup 1.
- */
-function discoverGroupRank(isSeed: boolean, isDormant: boolean): number {
-  if (isSeed) return 1;
-  return isDormant ? 2 : 0;
-}
 
 /** `match_list_summaries` satiri (migration 070): mesajsiz eslesmede son mesaj alanlari NULL. */
 interface MatchListSummary {
@@ -418,19 +410,17 @@ export class MatchingService {
       return photoCount >= 1;
     });
 
-    // 5.6 — Language filter: candidate must have 2+ questions in user's languages
-    // (dil listesi adim 3'te, seed on-filtresi icin sorgudan once kurulur).
-    // Dil kapisi tek eleyen mi, yoksa zaten aday mi yoktu? Bos ekranda dogru
-    // metni gosterebilmek icin dil oncesi sayiyi tut.
-    const beforeLanguageCount = discoverableFiltered.length;
-
-    // Reuse locale data from step 5 (no extra DB query needed)
-    // Language-based filtering: candidate MUST have 2+ questions in user's languages
-    // Always strict — no fallback candidates
+    // 5.6 — Dil kapisi artik ELEMEZ (karar K3, 2026-11-17): izleyicinin dillerinde toplam >= 2 soru
+    // yoksa gercek aday "yabanci dil" grubuna duser ve seed'in onunde, kendi dilindekilerin arkasinda
+    // gelir (bkz. discover-rank.ts). Kesin gorunmezlik yine 5.5'teki soru sayisi (< 2). Seed'in dil
+    // on-filtresi sorguda (seedLanguageFilter) aynen durur. Ek sorgu yok: yerel soru dilleri kullanilir.
+    // Seed DEGISMEZ: dil kapisini gecemeyen seed eskisi gibi elenir (yanit verecek AI yalniz
+    // izleyicinin okuyabildigi dilde sorusu olanlar).
+    const ownLanguageIds = new Set<string>();
     discoverableFiltered = discoverableFiltered.filter((c) => {
-      const qLocales = questionLocalesByUser.get(c.id) || [];
-      const matchingCount = qLocales.filter((l: string) => langPrefs.includes(l)).length;
-      return matchingCount >= 2;
+      const own = passesLanguageGate(questionLocalesByUser.get(c.id) ?? [], langPrefs);
+      if (own) ownLanguageIds.add(c.id);
+      return own || c.is_seed_profile !== true;
     });
 
     // 5.7 — Tekrar adayinin kesin karari: bekleme dolmadiysa hedef izleyicinin dilinde YENI soru
@@ -489,12 +479,12 @@ export class MatchingService {
         score,
         questionCount: qCount,
         tier: c.distance_tier,
-        groupRank: discoverGroupRank(c.is_seed_profile === true, isDormant(c.last_seen_at)),
+        groupRank: discoverGroupRank(c.is_seed_profile === true, isDormant(c.last_seen_at), ownLanguageIds.has(c.id)),
         retry: retryIds.has(c.id) ? 1 : 0,
       };
     });
 
-    // 7. Grup (aktif gercek -> seed -> uyuyan gercek), sonra tier artan, sonra tier icinde skor azalan.
+    // 7. Grup (aktif gercek kendi dili -> aktif gercek yabanci dil -> seed -> uyuyan gercek), sonra tier artan, sonra tier icinde skor azalan.
     // Aktif gercek kullanici her zaman en onde: uzak bir aktif aday bile yakin bir seed'in onundedir.
     // Seed'ler (yanit veren AI profiller) uyuyan gercek kullanicilarin ONUNDE: yanit vermeyecek
     // biriyle eslesmek ilk gunu oldurur (29 Eyl-3 Eki: 15 eslesmenin 2'sinde yanit, 12/15 kullanici
@@ -543,17 +533,12 @@ export class MatchingService {
     // 11. Görünür kimlik/yönelim etiketleri — sayfadaki ≤10 kart için tek sorgu (süs bilgi: düşerse etiketsiz).
     await this.attachIdentities(cards);
 
-    // empty_reason HAVUZUN neden bos oldugunu anlatir; sayfa sonuna gelmek
-    // havuz sebebi degildir (has_more=false zaten onu soyluyor). Bu yuzden
-    // `scored` doluyken sebep gonderilmez — aksi halde page=3 istegi, dil
-    // filtresi hic elemedigi halde 'language' metnini gosterirdi.
+    // empty_reason HAVUZUN neden bos oldugunu anlatir; sayfa sonuna gelmek havuz sebebi degildir
+    // (has_more=false zaten onu soyluyor), bu yuzden `scored` doluyken sebep gonderilmez.
+    // Dil kapisi artik elemedigi icin 'language' bu yoldan uretilmez (mobil enum'u korur); havuz
+    // 5.5 (soru/foto) veya 5.7 (tekrar bekleme) sonrasi bossa sebep 'no_candidates'.
     if (scored.length === 0) {
-      return {
-        cards,
-        page,
-        has_more: hasMore,
-        empty_reason: beforeLanguageCount > 0 ? 'language' : 'no_candidates',
-      };
+      return { cards, page, has_more: hasMore, empty_reason: 'no_candidates' };
     }
 
     return { cards, page, has_more: hasMore };

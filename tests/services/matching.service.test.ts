@@ -618,10 +618,9 @@ describe("discover — kademeli mesafe", () => {
     expect(res.cards[1].is_boosted).toBe(true);
   });
 
-  it("dil filtresi mesafe sinirsiz olsa da gevsemez", async () => {
-    // Adayin sorulari sadece Almanca; izleyicinin dili tr. Mesafe artik
-    // elemiyor ama dil kapisi elemeli — yoksa cozulemeyen kart uretiriz
-    // (quiz.service.startSession dil filtresi sonrasi 2'nin altinda NO_QUESTIONS atar).
+  it("yabanci dildeki uzak gercek aday ELENMEZ (K3: dil kapisi eleme degil sira grubu)", async () => {
+    // BAYAT TEST GUNCELLENDI (2026-11-17, K3): eskiden dil kapisi eliyordu; artik yabanci dilde
+    // (izleyici tr, sorular de) gercek aday listede, yalniz arka grupta.
     const service = await loadService({
       users: [viewerRow(), candidateRow("almanca", 3000)],
       swipes: [],
@@ -630,7 +629,7 @@ describe("discover — kademeli mesafe", () => {
     });
 
     const res = await service.discover(VIEWER_ID, 1);
-    expect(res.cards).toHaveLength(0);
+    expect(res.cards.map((c) => c.user_id)).toEqual(["almanca"]);
   });
 
   it("soru sayisi 2'nin altindaki aday hala elenir", async () => {
@@ -709,12 +708,13 @@ describe("discover — dil tercihi bossa uygulama dili son care", () => {
     }, { userLanguages: [] });
 
     const res = await service.discover(VIEWER_ID, 1);
-    expect(res.cards.map((c) => c.user_id), `empty_reason=${res.empty_reason}`).toEqual(["almanca"]);
+    // K3: kendi dili (de) once, yabanci dil (tr) arkada ama elenmez.
+    expect(res.cards.map((c) => c.user_id), `empty_reason=${res.empty_reason}`).toEqual(["almanca", "turkce"]);
   });
 });
 
 describe("discover — empty_reason", () => {
-  it("sadece dil filtresi eledigi zaman 'language' doner", async () => {
+  it("yabanci dil adayi artik elenmez: kart doner, empty_reason yok (K3; 'language' uretilmez)", async () => {
     const service = await loadService({
       users: [viewerRow(), candidateRow("almanca", 30)],
       swipes: [],
@@ -723,8 +723,8 @@ describe("discover — empty_reason", () => {
     });
 
     const res = await service.discover(VIEWER_ID, 1);
-    expect(res.cards).toHaveLength(0);
-    expect(res.empty_reason).toBe("language");
+    expect(res.cards.map((c) => c.user_id)).toEqual(["almanca"]);
+    expect(res.empty_reason).toBeUndefined();
   });
 
   it("hic aday yokken 'no_candidates' doner", async () => {
@@ -964,7 +964,8 @@ describe("discover — seed dil on-filtresi (global seed dalgasi, 2026-10-13)", 
   it("416 TR + 50 IT seed: Italyan izleyici IT seed'lerin HEPSINI gorur", async () => {
     const service = await loadService(havuz({ preferred_languages: ["it"], locale: "it" }), { userLanguages: ["it"] });
     const gorulen = await tumSayfalar(service);
-    expect(new Set(gorulen)).toEqual(new Set(itSeedler));
+    // K3: yabanci dildeki (tr) gercekler de gelir; seed on-filtresi degismedi: TR seed yok.
+    expect(new Set(gorulen)).toEqual(new Set([...itSeedler, ...gercekler]));
   });
 
   it("TR izleyici: once gercekler, sonra TR seed'ler; IT seed hic gelmez (TR davranisi aynen)", async () => {
@@ -1018,7 +1019,8 @@ describe("discover — seed dil on-filtresi (global seed dalgasi, 2026-10-13)", 
   it("gecersiz dil kodu filtreye ham girmez (PostgREST sozdizimi bozulmaz), seed'ler yine dil kapisindan gecer", async () => {
     const service = await loadService(havuz({ preferred_languages: ["it", "tr),is_seed_profile.eq.true,locale.in.(xx"] }));
     const gorulen = await tumSayfalar(service);
-    expect(new Set(gorulen)).toEqual(new Set(itSeedler));
+    // Gercekler (tr sorulu) yabanci dil grubunda gelir (K3); TR seed'ler sizmaz.
+    expect(new Set(gorulen)).toEqual(new Set([...itSeedler, ...gercekler]));
   });
 });
 
@@ -1501,5 +1503,131 @@ describe("discover — gösterim kaydı (spec 2026-10-06 kehanet açığı)", ()
     const service = await loadService({ ...tablolar(), users: [viewerRow()] });
     await service.discover(VIEWER_ID);
     expect(sonFake.queries.filter((q) => q.table === "discover_served")).toHaveLength(0);
+  });
+});
+
+describe("discover — yabanci dildeki gercek kullanici seed'den ONCE (K3, 2026-11-17)", () => {
+  const gunOnce = (gun: number) => new Date(Date.now() - gun * 24 * 60 * 60 * 1000).toISOString();
+  const KENDI = uid(80), YABANCI = uid(81), SEED = uid(82), UYUYAN_KENDI = uid(83), UYUYAN_YABANCI = uid(84);
+  const seedAlani = { is_seed_profile: true, is_test_account: true };
+  const sira = async (service: Awaited<ReturnType<typeof loadService>>) =>
+    (await service.discover(VIEWER_ID, 1)).cards.map((c) => c.user_id);
+
+  it("kendi dilindeki aktif > yabanci dildeki aktif > seed > uyuyan kendi dil > uyuyan yabanci dil", async () => {
+    const service = await loadService({
+      users: [
+        viewerRow(),
+        // Mesafe sirasi tersine kurulu: grup, mesafeden once gelmeli.
+        candidateRow(UYUYAN_YABANCI, 1, { last_seen_at: gunOnce(60) }),
+        candidateRow(UYUYAN_KENDI, 2, { last_seen_at: gunOnce(60) }),
+        candidateRow(SEED, 3, seedAlani),
+        candidateRow(YABANCI, 120),
+        candidateRow(KENDI, 130),
+      ],
+      swipes: [],
+      matches: [],
+      questions: [
+        ...questionsFor([KENDI, SEED, UYUYAN_KENDI], "tr"),
+        ...questionsFor([YABANCI, UYUYAN_YABANCI], "de"),
+      ],
+    });
+    expect(await sira(service)).toEqual([KENDI, YABANCI, SEED, UYUYAN_KENDI, UYUYAN_YABANCI]);
+  });
+
+  it("izleyici iki dil okuyorsa {tr:1, en:1} aday TOPLAMDAN gecer (dil basina degil) ve kendi dil grubunda", async () => {
+    const KARMA = uid(85);
+    const service = await loadService(
+      {
+        users: [viewerRow({ preferred_languages: ["tr", "en"] }), candidateRow(YABANCI, 1), candidateRow(KARMA, 120)],
+        swipes: [],
+        matches: [],
+        questions: [
+          ...questionsFor([YABANCI], "de"),
+          { user_id: KARMA, category: "life", stats_correct: 0, stats_wrong: 0, locale: "tr" },
+          { user_id: KARMA, category: "life", stats_correct: 0, stats_wrong: 0, locale: "en" },
+        ],
+      },
+      { userLanguages: ["tr", "en"] },
+    );
+    expect(await sira(service)).toEqual([KARMA, YABANCI]);
+  });
+
+  it("izleyicinin dilinde yalniz 1 sorusu olan aday yabanci grupta kalir (toplam >= 2 sarti)", async () => {
+    const BIR = uid(86);
+    const service = await loadService({
+      users: [viewerRow(), candidateRow(BIR, 1), candidateRow(KENDI, 120)],
+      swipes: [],
+      matches: [],
+      questions: [
+        { user_id: BIR, category: "life", stats_correct: 0, stats_wrong: 0, locale: "tr" },
+        { user_id: BIR, category: "life", stats_correct: 0, stats_wrong: 0, locale: "de" },
+        ...questionsFor([KENDI], "tr"),
+      ],
+    });
+    expect(await sira(service)).toEqual([KENDI, BIR]);
+  });
+
+  it("soru sayisi < 2 olan yabanci dil aday yine GORUNMEZ (kesin gorunmezlik degismedi)", async () => {
+    const TEK = uid(87);
+    const service = await loadService({
+      users: [viewerRow(), candidateRow(TEK, 1), candidateRow(YABANCI, 2)],
+      swipes: [],
+      matches: [],
+      questions: [
+        { user_id: TEK, category: "life", stats_correct: 0, stats_wrong: 0, locale: "de" },
+        ...questionsFor([YABANCI], "de"),
+      ],
+    });
+    expect(await sira(service)).toEqual([YABANCI]);
+  });
+
+  it("seed dil kapisi degismedi: izleyici dilinde sorusu olmayan seed yine elenir", async () => {
+    const SEED_DE = uid(88);
+    const service = await loadService({
+      users: [viewerRow(), candidateRow(KENDI, 1), candidateRow(SEED_DE, 2, seedAlani)],
+      swipes: [],
+      matches: [],
+      questions: [...questionsFor([KENDI], "tr"), ...questionsFor([SEED_DE], "de")],
+    });
+    expect(await sira(service)).toEqual([KENDI]);
+  });
+
+  it("dormantDays=0: uyuyan ayrimi kapali, yabanci dil aktif gercek yine seed'in onunde", async () => {
+    const service = await loadService(
+      {
+        users: [viewerRow(), candidateRow(SEED, 1, seedAlani), candidateRow(YABANCI, 120, { last_seen_at: gunOnce(60) })],
+        swipes: [],
+        matches: [],
+        questions: [...questionsFor([SEED], "tr"), ...questionsFor([YABANCI], "de")],
+      },
+      { dormantDays: 0 },
+    );
+    expect(await sira(service)).toEqual([YABANCI, SEED]);
+  });
+
+  it("izleyici dil tercihi bos: uygulama diline (locale) duser, o dilde olanlar 'kendi dili' grubunda", async () => {
+    const service = await loadService(
+      {
+        users: [viewerRow({ preferred_languages: [], locale: "de" }), candidateRow("tr-aday", 1), candidateRow("de-aday", 120)],
+        user_languages: [],
+        swipes: [],
+        matches: [],
+        questions: [...questionsFor(["tr-aday"], "tr"), ...questionsFor(["de-aday"], "de")],
+      },
+      { userLanguages: [] },
+    );
+    expect(await sira(service)).toEqual(["de-aday", "tr-aday"]);
+  });
+
+  it("yalniz yabanci dil adaylari varken havuz bos degil: empty_reason yok, has_more dogru", async () => {
+    const service = await loadService({
+      users: [viewerRow(), candidateRow(YABANCI, 5)],
+      swipes: [],
+      matches: [],
+      questions: questionsFor([YABANCI], "de"),
+    });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards).toHaveLength(1);
+    expect(res.empty_reason).toBeUndefined();
   });
 });
