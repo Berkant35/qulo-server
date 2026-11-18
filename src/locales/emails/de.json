@@ -16,7 +16,8 @@
     "headline": "Jemand hat alle deine Fragen beantwortet",
     "body": "Du hast eine neue Übereinstimmung bei Qulo. Öffne die App, um zu sehen, wer es ist.",
     "cta": "Jetzt ansehen",
-    "unsubscribe_label": "E-Mail-Benachrichtigungen deaktivieren"
+    "unsubscribe_label": "E-Mail-Benachrichtigungen deaktivieren",
+    "why": "Du erhältst diese E-Mail, weil E-Mail-Benachrichtigungen zu Matches für dein Qulo-Konto aktiviert sind."
   },
   "ban_notice": {
     "subject": "Dein Qulo-Konto wurde gesperrt",

@@ -16,7 +16,8 @@
     "headline": "Ktoś odpowiedział na wszystkie Twoje pytania",
     "body": "Masz nowe dopasowanie na Qulo. Otwórz aplikację, aby zobaczyć, kto to.",
     "cta": "Zobacz teraz",
-    "unsubscribe_label": "Wyłącz powiadomienia e-mail"
+    "unsubscribe_label": "Wyłącz powiadomienia e-mail",
+    "why": "Dostajesz tę wiadomość, bo powiadomienia e-mail o dopasowaniach są włączone na Twoim koncie Qulo."
   },
   "ban_notice": {
     "subject": "Twoje konto Qulo zostało zawieszone",

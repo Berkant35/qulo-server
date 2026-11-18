@@ -7,6 +7,7 @@ import { env } from "../config/env.js";
 import { sendEmail } from "../utils/gmail.js";
 import { resolveLocale } from "../utils/locales.js";
 import { emailLocales } from "../utils/email-locales.js";
+import { renderEmailLayout } from "../utils/email-layout.js";
 import { banStatusService } from "./ban-status.service.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -108,10 +109,16 @@ class BanService {
     const tpl = emailLocales[locale]?.ban_notice ?? emailLocales.en.ban_notice;
     const reason = reasonKey === "sexual_content" ? tpl.reason_sexual_content : tpl.reason_guidelines;
     const appealUrl = `${env.API_BASE_URL}/ban-appeal?token=${token}`;
-    const html = await ejs.renderFile(
-      path.join(__dirname, "../views/emails/ban-notice.ejs"),
-      { locale, ban_notice: tpl, reason, appealUrl },
-    );
+    const html = renderEmailLayout({
+      locale,
+      preheader: tpl.body,
+      tagline: emailLocales[locale]?.tagline ?? emailLocales.en.tagline,
+      title: tpl.headline,
+      paragraphs: [tpl.body, tpl.appeal_intro],
+      highlight: { label: tpl.reason_label, text: reason },
+      button: { label: tpl.appeal_cta, url: appealUrl },
+      footerLines: [tpl.footer],
+    });
     await sendEmail({
       to: user.email,
       subject: tpl.subject,

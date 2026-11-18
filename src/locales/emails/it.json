@@ -16,7 +16,8 @@
     "headline": "Qualcuno ha risposto a tutte le tue domande",
     "body": "Hai una nuova corrispondenza su Qulo. Apri l'app per vedere chi è.",
     "cta": "Vedi ora",
-    "unsubscribe_label": "Disattiva e-mail"
+    "unsubscribe_label": "Disattiva e-mail",
+    "why": "Ricevi questa e-mail perché le notifiche di match via e-mail sono attive sul tuo account Qulo."
   },
   "ban_notice": {
     "subject": "Il tuo account Qulo è stato sospeso",

@@ -16,7 +16,8 @@
     "headline": "Alguien respondió a todas tus preguntas",
     "body": "Tienes una nueva coincidencia en Qulo. Abre la app para ver quién es.",
     "cta": "Ver ahora",
-    "unsubscribe_label": "Desactivar correos"
+    "unsubscribe_label": "Desactivar correos",
+    "why": "Recibes este correo porque las notificaciones de match por correo están activadas en tu cuenta de Qulo."
   },
   "ban_notice": {
     "subject": "Tu cuenta de Qulo ha sido suspendida",

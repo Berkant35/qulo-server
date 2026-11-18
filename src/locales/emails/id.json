@@ -16,7 +16,8 @@
     "headline": "Seseorang menjawab semua pertanyaanmu",
     "body": "Kamu punya kecocokan baru di Qulo. Buka aplikasi untuk melihat siapa dia.",
     "cta": "Lihat sekarang",
-    "unsubscribe_label": "Matikan notifikasi email"
+    "unsubscribe_label": "Matikan notifikasi email",
+    "why": "Kamu menerima email ini karena notifikasi email untuk match aktif di akunmu di Qulo."
   },
   "ban_notice": {
     "subject": "Akun Qulo kamu ditangguhkan",

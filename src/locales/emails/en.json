@@ -16,7 +16,8 @@
     "headline": "Someone answered all your questions",
     "body": "You have a new match on Qulo. Open the app to see who it is.",
     "cta": "See now",
-    "unsubscribe_label": "Turn off email notifications"
+    "unsubscribe_label": "Turn off email notifications",
+    "why": "You're receiving this because match email notifications are turned on for your Qulo account."
   },
   "ban_notice": {
     "subject": "Your Qulo account has been suspended",

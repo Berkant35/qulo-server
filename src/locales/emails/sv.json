@@ -16,7 +16,8 @@
     "headline": "Någon svarade på alla dina frågor",
     "body": "Du har en ny matchning på Qulo. Öppna appen för att se vem det är.",
     "cta": "Se nu",
-    "unsubscribe_label": "Stäng av e-postmeddelanden"
+    "unsubscribe_label": "Stäng av e-postmeddelanden",
+    "why": "Du får det här mejlet eftersom e-postaviseringar om matchningar är aktiverade för ditt Qulo-konto."
   },
   "ban_notice": {
     "subject": "Ditt Qulo-konto har stängts av",

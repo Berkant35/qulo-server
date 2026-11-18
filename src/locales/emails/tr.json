@@ -16,7 +16,8 @@
     "headline": "Birisi tüm sorularını çözdü",
     "body": "Qulo'da yeni bir eşleşmen var. Şimdi kim olduğunu görmek için uygulamayı aç.",
     "cta": "Şimdi gör",
-    "unsubscribe_label": "E-posta bildirimlerini kapat"
+    "unsubscribe_label": "E-posta bildirimlerini kapat",
+    "why": "Bu e-postayı, Qulo hesabında eşleşme bildirimleri açık olduğu için aldın."
   },
   "ban_notice": {
     "subject": "Qulo hesabın askıya alındı",

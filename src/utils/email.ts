@@ -5,18 +5,10 @@ import { fileURLToPath } from "url";
 import { env } from "../config/env.js";
 import { sendEmail } from "./gmail.js";
 import { maskEmail } from "./pii.js";
+import { renderEmailLayout } from "./email-layout.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-let templateCache: string | null = null;
-
-function getTemplate(): string {
-  if (templateCache) return templateCache;
-  const templatePath = join(__dirname, "..", "templates", "email-base.html");
-  templateCache = readFileSync(templatePath, "utf-8");
-  return templateCache;
-}
 
 const localeCache = new Map<string, Record<string, string>>();
 
@@ -40,20 +32,21 @@ function getEmailLocale(locale?: string): Record<string, string> {
 }
 
 function renderTemplate(
+  loc: string,
   strings: Record<string, string>,
   url: string,
   type: "verify" | "reset",
 ): string {
-  const template = getTemplate();
-  const prefix = type === "verify" ? "verify" : "reset";
-  return template
-    .replace(/\{\{TAGLINE\}\}/g, strings.tagline)
-    .replace(/\{\{TITLE\}\}/g, strings[`${prefix}_title`])
-    .replace(/\{\{BODY\}\}/g, strings[`${prefix}_body`])
-    .replace(/\{\{BUTTON_TEXT\}\}/g, strings[`${prefix}_button`])
-    .replace(/\{\{URL\}\}/g, url)
-    .replace(/\{\{LINK_FALLBACK\}\}/g, strings.link_fallback)
-    .replace(/\{\{FOOTER_IGNORE\}\}/g, strings.footer_ignore);
+  return renderEmailLayout({
+    locale: loc,
+    preheader: strings[`${type}_body`],
+    tagline: strings.tagline,
+    title: strings[`${type}_title`],
+    paragraphs: [strings[`${type}_body`]],
+    button: { label: strings[`${type}_button`], url },
+    fallback: { label: strings.link_fallback, url },
+    footerLines: [strings.footer_ignore],
+  });
 }
 
 export async function sendVerificationEmail(
@@ -64,7 +57,7 @@ export async function sendVerificationEmail(
   const loc = resolveLocale(locale);
   const strings = getEmailLocale(loc);
   const url = `${env.APP_URL}/api/v1/auth/verify-email?token=${encodeURIComponent(token)}`;
-  const html = renderTemplate(strings, url, "verify");
+  const html = renderTemplate(loc, strings, url, "verify");
 
   const maskedTo = maskEmail(to);
   console.log(`[email] Sending verification email to ${maskedTo}...`);
@@ -86,7 +79,7 @@ export async function sendPasswordResetEmail(
   const loc = resolveLocale(locale);
   const strings = getEmailLocale(loc);
   const url = `${env.WEB_URL}/${webLocale(loc)}/reset-password?token=${encodeURIComponent(token)}`;
-  const html = renderTemplate(strings, url, "reset");
+  const html = renderTemplate(loc, strings, url, "reset");
 
   const maskedTo = maskEmail(to);
   console.log(`[email] Sending password reset email to ${maskedTo}...`);

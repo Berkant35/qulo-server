@@ -16,7 +16,8 @@
     "headline": "有人回答了你的所有问题",
     "body": "Qulo 上有了新匹配。打开应用查看是谁。",
     "cta": "立即查看",
-    "unsubscribe_label": "关闭邮件通知"
+    "unsubscribe_label": "关闭邮件通知",
+    "why": "你收到这封邮件，是因为你的 Qulo 账号已开启匹配邮件通知。"
   },
   "ban_notice": {
     "subject": "你的 Qulo 账号已被停用",

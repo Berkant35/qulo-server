@@ -16,7 +16,8 @@
     "headline": "Iemand heeft al je vragen beantwoord",
     "body": "Je hebt een nieuwe match op Qulo. Open de app om te zien wie het is.",
     "cta": "Bekijk nu",
-    "unsubscribe_label": "E-mailmeldingen uitschakelen"
+    "unsubscribe_label": "E-mailmeldingen uitschakelen",
+    "why": "Je ontvangt deze e-mail omdat e-mailmeldingen over matches aanstaan voor je Qulo-account."
   },
   "ban_notice": {
     "subject": "Je Qulo-account is geschorst",

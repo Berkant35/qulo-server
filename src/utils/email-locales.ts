@@ -10,6 +10,7 @@ export interface MatchNewTpl {
   body: string;
   cta: string;
   unsubscribe_label: string;
+  why: string;
 }
 
 export interface BanNoticeTpl {
@@ -25,6 +26,7 @@ export interface BanNoticeTpl {
 }
 
 export interface EmailLocaleBundle {
+  tagline: string;
   match_new: MatchNewTpl;
   ban_notice: BanNoticeTpl;
 }

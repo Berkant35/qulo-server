@@ -1,11 +1,7 @@
-import path from "path";
-import { fileURLToPath } from "url";
-import ejs from "ejs";
 import { sendEmail } from "../utils/gmail.js";
+import { renderEmailLayout } from "../utils/email-layout.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
+/** Destek yaniti metinleri sabit Turkcedir (admin tarafi); dil secimi yoktur. */
 class EmailService {
   async sendTicketReply(
     to: string,
@@ -13,14 +9,15 @@ class EmailService {
     replyText: string,
     ticketId: string,
   ): Promise<void> {
-    const templatePath = path.join(
-      __dirname,
-      "../admin/views/emails/ticket-reply.ejs",
-    );
-    const html = await ejs.renderFile(templatePath, {
-      subject,
-      replyText,
-      ticketId,
+    const html = renderEmailLayout({
+      locale: "tr",
+      preheader: replyText.slice(0, 120),
+      title: subject,
+      paragraphs: [replyText],
+      footerLines: [
+        "Yanıtlamak için uygulamadan yeni bir destek talebi oluşturun.",
+        `Ticket #${ticketId.substring(0, 8)}`,
+      ],
     });
 
     await sendEmail({

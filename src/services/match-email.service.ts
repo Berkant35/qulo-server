@@ -1,15 +1,10 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import ejs from "ejs";
 import { supabase } from "../config/supabase.js";
 import { resolveLocale } from "../utils/locales.js";
 import { sendEmail } from "../utils/gmail.js";
+import { renderEmailLayout } from "../utils/email-layout.js";
 import { emailLocales } from "../utils/email-locales.js";
 import { emailUnsubscribeTokenService } from "./email-unsubscribe-token.service.js";
 import { env } from "../config/env.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const INACTIVE_THRESHOLD_MS = 24 * 60 * 60 * 1000;
 
@@ -57,15 +52,16 @@ class MatchEmailService {
       const apiBaseUrl = env.API_BASE_URL;
 
       // 6) Render
-      const html = await ejs.renderFile(
-        path.join(__dirname, "../views/emails/match-new.ejs"),
-        {
-          locale,
-          match_new: tpl,
-          ctaUrl,
-          unsubscribeUrl: `${apiBaseUrl}/unsubscribe?token=${token}`,
-        },
-      );
+      const html = renderEmailLayout({
+        locale,
+        preheader: tpl.preheader,
+        tagline: emailLocales[locale]?.tagline ?? emailLocales.en.tagline,
+        title: tpl.headline,
+        paragraphs: [tpl.body],
+        button: { label: tpl.cta, url: ctaUrl },
+        footerLines: [tpl.why],
+        footerLink: { label: tpl.unsubscribe_label, url: `${apiBaseUrl}/unsubscribe?token=${token}` },
+      });
 
       // 7) Send (fire-and-forget at caller level; swallow send errors here so caller is never affected)
       try {

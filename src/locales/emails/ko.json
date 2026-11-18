@@ -16,7 +16,8 @@
     "headline": "누군가 모든 질문에 답했습니다",
     "body": "Qulo에서 새로운 매치가 있어요. 누구인지 보려면 앱을 열어보세요.",
     "cta": "지금 보기",
-    "unsubscribe_label": "이메일 알림 끄기"
+    "unsubscribe_label": "이메일 알림 끄기",
+    "why": "Qulo 계정에서 매칭 이메일 알림이 켜져 있어 이 메일을 보내드렸어요."
   },
   "ban_notice": {
     "subject": "Qulo 계정이 정지되었습니다",
