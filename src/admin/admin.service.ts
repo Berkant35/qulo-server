@@ -205,7 +205,7 @@ class AdminService {
     const expiresAt = new Date(Date.now() + durationDays * 24 * 60 * 60 * 1000).toISOString();
     await supabase
       .from("users")
-      .update({ subscription_plan: plan, subscription_expires_at: expiresAt })
+      .update({ subscription_plan: plan, subscription_period: 'monthly', subscription_expires_at: expiresAt })
       .eq("id", userId);
     await supabase.from("user_subscriptions").insert({
       user_id: userId,
@@ -221,7 +221,7 @@ class AdminService {
   async cancelSubscription(userId: string) {
     await supabase
       .from("users")
-      .update({ subscription_plan: null, subscription_expires_at: null })
+      .update({ subscription_plan: null, subscription_period: null, subscription_expires_at: null })
       .eq("id", userId);
     await supabase
       .from("user_subscriptions")

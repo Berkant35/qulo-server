@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { subscriptionService } from '../services/subscription.service.js';
 import { revenueCatService } from '../services/revenuecat.service.js';
-import { SUBSCRIPTION_PRODUCT_MAP, storeProductKey } from '../types/index.js';
+import { SUBSCRIPTION_PRODUCT_MAP, storeProductKey, subscriptionPeriodOf } from '../types/index.js';
 
 export const dailyStatsHandler = async (
   req: Request,
@@ -69,6 +69,7 @@ export const activateSubscriptionHandler = async (
       transaction_id || product_id,
       expiresAt,
       verification.paidEligible === true,
+      subscriptionPeriodOf(product_id),
     );
 
     const status = await subscriptionService.getStatus(userId);

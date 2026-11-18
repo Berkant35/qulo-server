@@ -398,7 +398,7 @@ describe('getActiveSubscription', () => {
     } }) });
     const service = await setup();
     await expect(service.getActiveSubscription('u1')).resolves.toEqual({
-      plan: 'premium', expiresAt: '2026-10-01T12:00:00.000Z',
+      plan: 'premium', period: 'monthly', expiresAt: '2026-10-01T12:00:00.000Z',
     });
   });
 
@@ -409,7 +409,17 @@ describe('getActiveSubscription', () => {
     } }) });
     const service = await setup();
     await expect(service.getActiveSubscription('u1')).resolves.toEqual({
-      plan: 'premium', expiresAt: '2026-09-20T12:00:00.000Z',
+      plan: 'premium', period: 'monthly', expiresAt: '2026-09-20T12:00:00.000Z',
+    });
+  });
+
+  it('haftalık Plus ürünü weekly dönemle döner; aynı planda geç biten kazanır', async () => {
+    mockFetch({ body: subscriberBody({ subscriptions: {
+      quloplusweekly: sub('2026-09-08T12:00:00Z'),
+    } }) });
+    const service = await setup();
+    await expect(service.getActiveSubscription('u1')).resolves.toEqual({
+      plan: 'plus', period: 'weekly', expiresAt: '2026-09-08T12:00:00.000Z',
     });
   });
 
@@ -427,7 +437,7 @@ describe('getActiveSubscription', () => {
     } }) });
     const service = await setup();
     await expect(service.getActiveSubscription('u1')).resolves.toEqual({
-      plan: 'plus', expiresAt: '2026-09-07T12:00:00.000Z',
+      plan: 'plus', period: 'monthly', expiresAt: '2026-09-07T12:00:00.000Z',
     });
   });
 

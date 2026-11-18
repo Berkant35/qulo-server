@@ -13,6 +13,17 @@ export const CHAT_QUESTION_POWERS_4: PowerName[] = ["ORACLE", "SKIP", "HALF", "H
 
 // Subscription Plans
 export type SubscriptionPlan = 'plus' | 'premium';
+/** Donem plandan AYRI: plan hak setini, donem faturalama araligini ve bonus miktarini belirler. */
+export type SubscriptionPeriod = 'weekly' | 'monthly';
+
+/**
+ * Plus Haftalik magaza kimligi. iOS ve Android AYRI anahtar: Premium'da kimlikler magazaya gore
+ * ayrisabildi (bkz. SUBSCRIPTION_PRODUCT_MAP); simdilik ikisi ayni ama tek yere bagli degil.
+ */
+export const SUBSCRIPTION_WEEKLY_PRODUCT_IDS = {
+  ios: 'quloplusweekly',
+  android: 'quloplusweekly',
+} as const;
 export type SubscriptionStatus = 'active' | 'expired' | 'cancelled';
 
 export interface SubscriptionInfo {
@@ -20,6 +31,8 @@ export interface SubscriptionInfo {
   status: SubscriptionStatus | null;
   expiresAt: string | null;
   isActive: boolean;
+  /** Faturalama donemi; aktif plan yoksa null. Donem kaydi olmayan eski abonelikler 'monthly'. */
+  period: SubscriptionPeriod | null;
 }
 
 // RevenueCat webhook event types
@@ -50,7 +63,13 @@ export const SUBSCRIPTION_PRODUCT_MAP: Record<string, SubscriptionPlan> = {
   quloplusmonthly2: 'plus',
   qulopremiummonthly2: 'premium',
   qulopremiummonthly: 'premium',
+  // Haftalik Plus (2.2.0, K1): plan 'plus' kalir — haklar/limitler Plus ile ayni kaynaktan.
+  // Set: iOS/Android kimlikleri aynıyken tekrarlı anahtar olmaz, ayrışırsa ikisi de eşlenir.
+  ...Object.fromEntries([...new Set(Object.values(SUBSCRIPTION_WEEKLY_PRODUCT_IDS))].map((id) => [id, 'plus' as const])),
 };
+
+/** Haritada olmayan her abonelik urunu aylik sayilir (mevcut urunlerin hepsi aylik). */
+const WEEKLY_PRODUCT_KEYS: ReadonlySet<string> = new Set(Object.values(SUBSCRIPTION_WEEKLY_PRODUCT_IDS));
 
 /**
  * RevenueCat, Google Play'in base-plan'li aboneliklerini `urun:basePlan`
@@ -59,6 +78,9 @@ export const SUBSCRIPTION_PRODUCT_MAP: Record<string, SubscriptionPlan> = {
  * calisir. Hem webhook hem dogrudan dogrulama ucu ayni anahtari kullanir.
  */
 export const storeProductKey = (productId: string): string => productId.split(':')[0];
+
+export const subscriptionPeriodOf = (productId: string): SubscriptionPeriod =>
+  WEEKLY_PRODUCT_KEYS.has(storeProductKey(productId)) ? 'weekly' : 'monthly';
 
 /* ── Chat Question Response Types ─────────────────────────────────────── */
 export interface ChatQuestionBase {

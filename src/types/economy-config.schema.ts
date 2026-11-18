@@ -57,6 +57,8 @@ export const ECONOMY_BOUNDARIES = {
   premium: {
     monthlyPurpleBonus: { min: 500, max: 5000 },
   },
+  /** Haftalik Plus donem bonusu (2.2.0, K1). */
+  weeklyPlusPurpleBonus: { min: 0, max: 500 },
 } as const;
 
 const B = ECONOMY_BOUNDARIES;
@@ -90,6 +92,25 @@ const subscriptionLimitsSchema = z.object({
   plus: tierLimitsSchema,
   premium: tierLimitsSchema,
 });
+
+/**
+ * Donem bonusu (2.2.0, K1): haftalik paketin her donemlik morunu belirler. AYLIK bonus eskisi gibi
+ * `subscriptionLimits[plan].monthlyPurpleBonus` (tek kaynak, kirilmaz); burada yalniz haftalik var.
+ * Eski config satirlarinda blok yoksa varsayilan uygulanir (migration gerekmez).
+ */
+export const DEFAULT_SUBSCRIPTION_BONUSES = { weekly: { plus: 100 } } as const;
+
+const subscriptionBonusesSchema = z
+  .object({
+    weekly: z
+      .object({
+        plus: z.number().int()
+          .min(B.weeklyPlusPurpleBonus.min).max(B.weeklyPlusPurpleBonus.max)
+          .default(DEFAULT_SUBSCRIPTION_BONUSES.weekly.plus),
+      })
+      .default({ ...DEFAULT_SUBSCRIPTION_BONUSES.weekly }),
+  })
+  .default({ weekly: { ...DEFAULT_SUBSCRIPTION_BONUSES.weekly } });
 
 const powerCostSchema = z.object({
   greenCost: z.number().int().min(B.powerCost.min).max(B.powerCost.max),
@@ -304,6 +325,7 @@ const rainbowSchema = z
 export const economyConfigSchema = z.object({
   core: coreSchema,
   subscriptionLimits: subscriptionLimitsSchema,
+  subscriptionBonuses: subscriptionBonusesSchema,
   rewards: rewardsSchema,
   timing: timingSchema,
   powerCosts: powerCostsSchema,
@@ -317,6 +339,7 @@ export type EconomyConfig = z.infer<typeof economyConfigSchema>;
 export type EconomyCore = z.infer<typeof coreSchema>;
 export type TierLimits = z.infer<typeof tierLimitsSchema>;
 export type SubscriptionLimitsConfig = z.infer<typeof subscriptionLimitsSchema>;
+export type SubscriptionBonusesConfig = z.infer<typeof subscriptionBonusesSchema>;
 export type RewardsConfig = z.infer<typeof rewardsSchema>;
 export type TimingConfig = z.infer<typeof timingSchema>;
 export type PowerCostsConfig = z.infer<typeof powerCostsSchema>;

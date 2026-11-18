@@ -1,6 +1,9 @@
 import { env } from '../config/env.js';
 import { isPaidEligible, subscriberSubscriptionFacts } from '../utils/paid-eligibility.js';
-import { SUBSCRIPTION_PRODUCT_MAP, storeProductKey, type SubscriptionPlan } from '../types/index.js';
+import {
+  SUBSCRIPTION_PRODUCT_MAP, storeProductKey, subscriptionPeriodOf,
+  type SubscriptionPlan, type SubscriptionPeriod,
+} from '../types/index.js';
 
 /** API v1 `subscriber.subscriptions[productId]` (docs: api-v1/customer-info-model). */
 interface RCSubscription {
@@ -21,6 +24,8 @@ interface RCSubscription {
 /** Mağazadaki güncel abonelik: erişimin doğrusu. */
 export interface StoreSubscriptionState {
   plan: SubscriptionPlan;
+  /** Erişim veren ürünün faturalama dönemi (haftalık Plus → 'weekly'). */
+  period: SubscriptionPeriod;
   /** Erişimin bittiği an — ödeme sorunu ek süresi dahil. */
   expiresAt: string;
 }
@@ -208,6 +213,7 @@ class RevenueCatService {
 
     const now = Date.now();
     let best: (StoreSubscriptionState & { endsAt: number }) | null = null;
+    // Aynı plan iki dönemle (haftalık+aylık Plus) aktifse geç biten kazanır (aşağıdaki eşitlik kuralı).
     for (const [productId, sub] of Object.entries(subscriber.subscriptions ?? {})) {
       const plan = SUBSCRIPTION_PRODUCT_MAP[storeProductKey(productId)];
       if (!plan || sub.refunded_at || !sub.expires_date) continue;
@@ -219,9 +225,9 @@ class RevenueCatService {
       const better = !best
         || PLAN_RANK[plan] > PLAN_RANK[best.plan]
         || (PLAN_RANK[plan] === PLAN_RANK[best.plan] && endsAt > best.endsAt);
-      if (better) best = { plan, expiresAt: new Date(endsAt).toISOString(), endsAt };
+      if (better) best = { plan, period: subscriptionPeriodOf(productId), expiresAt: new Date(endsAt).toISOString(), endsAt };
     }
-    return best ? { plan: best.plan, expiresAt: best.expiresAt } : null;
+    return best ? { plan: best.plan, period: best.period, expiresAt: best.expiresAt } : null;
   }
 
   /**

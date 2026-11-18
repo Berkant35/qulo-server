@@ -8,6 +8,7 @@ import {
   SUBSCRIPTION_PRODUCT_MAP,
   RCEventType,
   storeProductKey,
+  subscriptionPeriodOf,
 } from '../types/index.js';
 import { isPaidEligible, webhookPurchaseFacts } from '../utils/paid-eligibility.js';
 import { Errors } from '../utils/errors.js';
@@ -76,7 +77,13 @@ class WebhookService {
 
     // Subscription events
     const plan = SUBSCRIPTION_PRODUCT_MAP[storeProductKey(productId)];
-    if (!plan) return;
+    if (!plan) {
+      // Bilinmeyen ürün sessizce yutulmasın: haftalık/yeni ürün kimliği haritaya eklenmeden
+      // mağazaya açılırsa para alınıp hak verilmez — log bunu görünür kılar. 200 dönülür (retry düzeltmez).
+      console.warn('[webhook] unknown subscription product ignored', { eventType, productId, userId });
+      return;
+    }
+    const period = subscriptionPeriodOf(productId);
 
     if (!expiration_at_ms) {
       console.error(`[webhook] Missing expiration_at_ms for event ${eventType}, product ${productId}, user ${userId}`);
@@ -113,12 +120,12 @@ class WebhookService {
     switch (eventType) {
       case 'INITIAL_PURCHASE':
         await subscriptionService.activateSubscription(
-          userId, plan, userId, transaction_id || '', expiresAt, paidEligible
+          userId, plan, userId, transaction_id || '', expiresAt, paidEligible, period
         );
         break;
       case 'RENEWAL':
         await subscriptionService.renewSubscription(
-          userId, plan, transaction_id || '', expiresAt, paidEligible
+          userId, plan, transaction_id || '', expiresAt, paidEligible, period
         );
         break;
       case 'UNCANCELLATION':

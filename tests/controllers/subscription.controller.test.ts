@@ -38,7 +38,7 @@ describe("activateSubscriptionHandler — ödenmiş pay uygunluğu", () => {
     await activateSubscriptionHandler(req(), res(), next);
 
     expect(next).not.toHaveBeenCalled();
-    expect(activateSubscription).toHaveBeenCalledWith("u1", "plus", "client_u1", "tx-1", EXPIRES, true);
+    expect(activateSubscription).toHaveBeenCalledWith("u1", "plus", "client_u1", "tx-1", EXPIRES, true, "monthly");
   });
 
   it("deneme dönemi (trial) → false", async () => {
@@ -48,7 +48,7 @@ describe("activateSubscriptionHandler — ödenmiş pay uygunluğu", () => {
 
     await activateSubscriptionHandler(req(), res(), vi.fn());
 
-    expect(activateSubscription).toHaveBeenCalledWith("u1", "plus", "client_u1", "tx-1", EXPIRES, false);
+    expect(activateSubscription).toHaveBeenCalledWith("u1", "plus", "client_u1", "tx-1", EXPIRES, false, "monthly");
   });
 
   it("uygunluk alanı yoksa false (fail-safe)", async () => {
@@ -56,6 +56,18 @@ describe("activateSubscriptionHandler — ödenmiş pay uygunluğu", () => {
 
     await activateSubscriptionHandler(req(), res(), vi.fn());
 
-    expect(activateSubscription).toHaveBeenCalledWith("u1", "plus", "client_u1", "tx-1", EXPIRES, false);
+    expect(activateSubscription).toHaveBeenCalledWith("u1", "plus", "client_u1", "tx-1", EXPIRES, false, "monthly");
+  });
+
+  it("haftalık ürün (quloplusweekly) plus planı + weekly dönemle aktive edilir", async () => {
+    const { activateSubscriptionHandler, activateSubscription } = await loadHandler({
+      valid: true, expiresAt: EXPIRES, paidEligible: true,
+    });
+    const r = req();
+    r.body.product_id = "quloplusweekly";
+
+    await activateSubscriptionHandler(r, res(), vi.fn());
+
+    expect(activateSubscription).toHaveBeenCalledWith("u1", "plus", "client_u1", "tx-1", EXPIRES, true, "weekly");
   });
 });

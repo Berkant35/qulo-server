@@ -32,7 +32,7 @@ async function setup(seed: Tables = {}, options: FakeSupabaseOptions = {}) {
  * RevenueCat GET /subscribers — webhook sonrası erişimin doğrusu. `'off'` = senkron yok (yerel,
  * anahtarsız): erişim olay alanlarından. `'throw'` = API hatası. Varsayılan `'off'`.
  */
-let store: { plan: 'plus' | 'premium'; expiresAt: string } | null | 'off' | 'throw' = 'off';
+let store: { plan: 'plus' | 'premium'; period?: 'weekly' | 'monthly'; expiresAt: string } | null | 'off' | 'throw' = 'off';
 const storeMock = {
   canSyncSubscriptions: () => store !== 'off',
   getActiveSubscription: async () => {

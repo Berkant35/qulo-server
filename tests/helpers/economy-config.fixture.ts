@@ -28,6 +28,7 @@ export const economyConfigFixture: EconomyConfig = {
       chatQuestionDaily: 10, chatQuestionUnmatchRisk: 3, passportMode: true, hasAds: false,
     },
   },
+  subscriptionBonuses: { weekly: { plus: 100 } },
   rewards: {
     milestones: { '10': 5, '50': 25 },
     badges: { SILVER: 1, GOLD: 3 },

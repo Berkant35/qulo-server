@@ -4,6 +4,7 @@ import { economyConfigService } from './economy-config.service.js';
 import { Errors } from '../utils/errors.js';
 import type {
   SubscriptionPlan,
+  SubscriptionPeriod,
   SubscriptionInfo,
 } from '../types/index.js';
 
@@ -22,29 +23,40 @@ import type {
  * `new Date(expiration_at_ms).toISOString()` (`...:58.000Z`). Ham hâlde
  * birleştirilirse anahtarlar tutmaz ve bonus yine iki kez yatar.
  */
-function subscriptionPeriodRef(plan: SubscriptionPlan, expiresAt: string): string {
+function subscriptionPeriodRef(
+  plan: SubscriptionPlan,
+  expiresAt: string,
+  period: SubscriptionPeriod,
+): string {
   const ms = Date.parse(expiresAt);
   const normalized = Number.isNaN(ms) ? expiresAt : new Date(ms).toISOString();
-  return `sub_${plan}_${normalized}`;
+  // Aylik anahtar eskisiyle BIREBIR (canlidaki `sub_<plan>_<bitis>` satirlari tekil kalir);
+  // haftalik ayri onek tasir, boylece ayni bitis anina denk gelen aylik donemle asla carpismaz.
+  return period === 'weekly' ? `sub_${plan}_weekly_${normalized}` : `sub_${plan}_${normalized}`;
+}
+
+/** Kayitli donem; alan bos/bilinmiyorsa 'monthly' (haftalik paketten onceki tum abonelikler aylik). */
+function periodOf(raw: unknown): SubscriptionPeriod {
+  return raw === 'weekly' ? 'weekly' : 'monthly';
 }
 
 class SubscriptionService {
   async getStatus(userId: string): Promise<SubscriptionInfo> {
     const { data: user, error } = await supabase
       .from('users')
-      .select('subscription_plan, subscription_expires_at')
+      .select('subscription_plan, subscription_expires_at, subscription_period')
       .eq('id', userId)
       .single();
 
     if (error || !user) {
-      return { plan: null, status: null, expiresAt: null, isActive: false };
+      return { plan: null, status: null, expiresAt: null, isActive: false, period: null };
     }
 
     const plan = user.subscription_plan as SubscriptionPlan | null;
     const expiresAt = user.subscription_expires_at;
 
     if (!plan || !expiresAt) {
-      return { plan: null, status: null, expiresAt: null, isActive: false };
+      return { plan: null, status: null, expiresAt: null, isActive: false, period: null };
     }
 
     const isActive = new Date(expiresAt) > new Date();
@@ -53,6 +65,7 @@ class SubscriptionService {
       status: isActive ? 'active' : 'expired',
       expiresAt,
       isActive,
+      period: periodOf(user.subscription_period),
     };
   }
 
@@ -63,6 +76,7 @@ class SubscriptionService {
     storeTransactionId: string,
     expiresAt: string,
     paidEligible = false,
+    period: SubscriptionPeriod = 'monthly',
   ): Promise<void> {
     // Aynı dönem için zaten aktif bir kayıt varsa yeni satır AÇMA — iki giriş
     // yolu (istemci + webhook) aynı satın almayı saniyeler arayla bildiriyor.
@@ -122,12 +136,13 @@ class SubscriptionService {
       .from('users')
       .update({
         subscription_plan: plan,
+        subscription_period: period,
         subscription_expires_at: expiresAt,
         rc_customer_id: rcCustomerId,
       })
       .eq('id', userId);
 
-    await this.grantMonthlyBonus(userId, plan, expiresAt, paidEligible);
+    await this.grantPeriodBonus(userId, plan, period, expiresAt, paidEligible);
   }
 
   /**
@@ -140,6 +155,7 @@ class SubscriptionService {
     storeTransactionId: string,
     expiresAt: string,
     paidEligible = false,
+    period: SubscriptionPeriod = 'monthly',
   ): Promise<void> {
     await supabase
       .from('user_subscriptions')
@@ -155,10 +171,10 @@ class SubscriptionService {
 
     await supabase
       .from('users')
-      .update({ subscription_plan: plan, subscription_expires_at: expiresAt })
+      .update({ subscription_plan: plan, subscription_period: period, subscription_expires_at: expiresAt })
       .eq('id', userId);
 
-    await this.grantMonthlyBonus(userId, plan, expiresAt, paidEligible);
+    await this.grantPeriodBonus(userId, plan, period, expiresAt, paidEligible);
   }
 
   async cancelSubscription(userId: string): Promise<void> {
@@ -207,6 +223,7 @@ class SubscriptionService {
       .from('users')
       .update({
         subscription_plan: null,
+        subscription_period: null,
         subscription_expires_at: null,
       })
       .eq('id', userId);
@@ -219,12 +236,13 @@ class SubscriptionService {
    */
   async applyStoreState(
     userId: string,
-    state: { plan: SubscriptionPlan; expiresAt: string } | null,
+    state: { plan: SubscriptionPlan; period: SubscriptionPeriod; expiresAt: string } | null,
   ): Promise<void> {
     const { error } = await supabase
       .from('users')
       .update({
         subscription_plan: state?.plan ?? null,
+        subscription_period: state?.period ?? null,
         subscription_expires_at: state?.expiresAt ?? null,
       })
       .eq('id', userId);
@@ -235,19 +253,24 @@ class SubscriptionService {
   }
 
   /**
-   * Aylık mor bonusu — dönem anahtarıyla tekilleşir (bkz. subscriptionPeriodRef). Abonelik moru
+   * Dönem mor bonusu — dönem anahtarıyla tekilleşir (bkz. subscriptionPeriodRef). Miktar plana
+   * değil ÜRÜN DÖNEMİNE bağlı: aylık = `subscriptionLimits[plan].monthlyPurpleBonus` (eskisi gibi),
+   * haftalık = `subscriptionBonuses.weekly[plan]` (yalnız Plus tanımlı; Premium haftalık yok → 0). Abonelik moru
    * "yarı ödenmiş": tier payı kadarı rainbow üretebilir (economy rainbow bloğu), ama YALNIZ gerçek,
    * tam fiyatlı, kendi satın almasında (`paidEligible`, utils/paid-eligibility). Aksi hâlde bonus
    * yine tam yatar, ödenmiş payı 0.
    */
-  private async grantMonthlyBonus(
+  private async grantPeriodBonus(
     userId: string,
     plan: SubscriptionPlan,
+    period: SubscriptionPeriod,
     expiresAt: string,
     paidEligible: boolean,
   ): Promise<void> {
     const config = await economyConfigService.getConfig();
-    const bonus = config.subscriptionLimits[plan].monthlyPurpleBonus;
+    const bonus = period === 'weekly'
+      ? (plan === 'plus' ? config.subscriptionBonuses.weekly.plus : 0)
+      : config.subscriptionLimits[plan].monthlyPurpleBonus;
     if (bonus <= 0) return;
 
     const paid = paidEligible ? Math.floor(bonus * config.rainbow.subscriptionPaidShare[plan]) : 0;
@@ -255,7 +278,7 @@ class SubscriptionService {
       userId,
       bonus,
       'SUBSCRIPTION_BONUS',
-      subscriptionPeriodRef(plan, expiresAt),
+      subscriptionPeriodRef(plan, expiresAt, period),
       paid,
     );
   }
@@ -263,7 +286,7 @@ class SubscriptionService {
   async getDailyStats(userId: string) {
     const { data: user, error } = await supabase
       .from('users')
-      .select('daily_swipes_used, daily_swipes_reset_at, daily_undos_used, subscription_plan, subscription_expires_at')
+      .select('daily_swipes_used, daily_swipes_reset_at, daily_undos_used, subscription_plan, subscription_period, subscription_expires_at')
       .eq('id', userId)
       .single();
 
@@ -298,6 +321,9 @@ class SubscriptionService {
     const effectivePlan = isActive ? (plan || 'free') : 'free';
     const config = await economyConfigService.getConfig();
     const limits = config.subscriptionLimits[effectivePlan];
+    const effectivePeriodBonus = isActive && plan && periodOf(user.subscription_period) === 'weekly'
+      ? (plan === 'plus' ? config.subscriptionBonuses.weekly.plus : 0)
+      : limits.monthlyPurpleBonus;
 
     const { count: questionsCreated } = await supabase
       .from('questions')
@@ -313,6 +339,10 @@ class SubscriptionService {
       questionsCreated: questionsCreated ?? 0,
       questionsLimit: limits.maxQuestions,
       monthlyPurpleBonus: limits.monthlyPurpleBonus,
+      // Yeni alanlar (2.2.0): plan + donem + bu donemin bonusu. Eski alanlar degismedi.
+      plan: effectivePlan,
+      period: isActive && plan ? periodOf(user.subscription_period) : null,
+      periodPurpleBonus: effectivePeriodBonus,
       passportMode: limits.passportMode,
       hasAds: limits.hasAds,
     };

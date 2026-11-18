@@ -29,7 +29,7 @@ export class UserService {
     const { data: user, error } = await supabase
       .from("users")
       .select(
-        "id, email, name, surname, bio, age, gender, gender_pref, gender_pref_set_at, pref_consent_status, match_radius_km, age_pref_min, age_pref_max, city, country, locale, lat, lng, photos, profile_completion, green_diamonds, purple_diamonds, rainbow_diamonds, has_reward_redemptions, is_test_admin, is_seed_profile, is_test_account, is_online, last_seen_at, push_token, email_verified, passport_city, passport_lat, passport_lng, boost_until, like_received_count, times_shown_count, badge_rewards_claimed, preferred_languages, completion_rewards_claimed, relationship_goal, subscription_plan, subscription_expires_at, daily_swipes_used, daily_swipes_reset_at, daily_undos_used, strict_language_mode, interests, question_count, acquisition_answered, created_at",
+        "id, email, name, surname, bio, age, gender, gender_pref, gender_pref_set_at, pref_consent_status, match_radius_km, age_pref_min, age_pref_max, city, country, locale, lat, lng, photos, profile_completion, green_diamonds, purple_diamonds, rainbow_diamonds, has_reward_redemptions, is_test_admin, is_seed_profile, is_test_account, is_online, last_seen_at, push_token, email_verified, passport_city, passport_lat, passport_lng, boost_until, like_received_count, times_shown_count, badge_rewards_claimed, preferred_languages, completion_rewards_claimed, relationship_goal, subscription_plan, subscription_period, subscription_expires_at, daily_swipes_used, daily_swipes_reset_at, daily_undos_used, strict_language_mode, interests, question_count, acquisition_answered, created_at",
       )
       .eq("id", userId)
       .eq("is_deleted", false)
@@ -87,6 +87,8 @@ export class UserService {
       question_count: user.question_count ?? 0,
       question_locales: questionLocales,
       subscriptionPlan: user.subscription_plan || null,
+      // Plan geçerli değilse dönem de yok; kayıtlı plan + boş dönem (eski abonelik) = 'monthly'.
+      subscriptionPeriod: user.subscription_plan ? (user.subscription_period === 'weekly' ? 'weekly' : 'monthly') : null,
       subscriptionExpiresAt: user.subscription_expires_at || null,
       dailySwipesUsed: user.daily_swipes_used || 0,
       dailyUndosUsed: user.daily_undos_used || 0,

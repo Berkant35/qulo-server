@@ -48,7 +48,7 @@ describe('getStatus', () => {
   it('aboneliği olmayan kullanıcı için boş durum', async () => {
     const { subscriptionService } = await setup({ users: [user()] });
     await expect(subscriptionService.getStatus('u1')).resolves.toEqual({
-      plan: null, status: null, expiresAt: null, isActive: false,
+      plan: null, status: null, expiresAt: null, isActive: false, period: null,
     });
   });
 
@@ -453,7 +453,7 @@ describe('applyStoreState — erişimin mağazadaki doğrusu', () => {
     const { fake, subscriptionService } = await setup({
       users: [user({ subscription_plan: 'plus', subscription_expires_at: PAST })],
     });
-    await subscriptionService.applyStoreState('u1', { plan: 'premium', expiresAt: FUTURE });
+    await subscriptionService.applyStoreState('u1', { plan: 'premium', period: 'monthly', expiresAt: FUTURE });
     expect(fake.table('users')[0]).toMatchObject({ subscription_plan: 'premium', subscription_expires_at: FUTURE });
   });
 
