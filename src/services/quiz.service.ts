@@ -1,6 +1,6 @@
 import { supabase } from "../config/supabase.js";
 import { resolveLocale } from '../utils/locales.js';
-import { questionLocale } from "../constants/locales.js";
+import { selectQuizQuestions } from "../utils/quiz-question-set.js";
 import { ORACLE_DEFAULT_ACCURACY } from "../constants/oracle.js";
 import { Errors } from "../utils/errors.js";
 import { calculatePowerCost, calculateGreenReward, shuffleArray, pickOracleSuggestion, powerReward } from "../utils/math.js";
@@ -68,15 +68,6 @@ interface PowerRow {
 }
 
 export class QuizService {
-  /**
-   * Filter questions to only those matching solver's preferred languages.
-   * If solverLanguages is empty, returns all questions (no filtering).
-   */
-  private filterByLanguagePreference(questions: any[], solverLanguages: string[]): any[] {
-    if (!solverLanguages.length) return questions;
-    return questions.filter((q: any) => solverLanguages.includes(questionLocale(q.locale)));
-  }
-
   /**
    * Oturumun efektif guc fiyatlari — TEK DOGRU KAYNAK.
    *
@@ -205,10 +196,10 @@ export class QuizService {
 
     // Sort questions by solver's language preference (preferred first, others after)
     const solverLanguages = await this.resolveSolverLanguages(solverId);
-    const filteredQuestions = this.filterByLanguagePreference(allQuestions, solverLanguages);
+    const filteredQuestions = selectQuizQuestions(allQuestions, solverLanguages);
 
-    // Language filter can return <2 if solver changed prefs after discover loaded.
-    // Treat as NO_QUESTIONS instead of creating an empty session that immediately fails.
+    // Soru kumesi tek kaynaktan (quiz-question-set): izleyici dilinde >= 2 soru varsa yalniz onlar,
+    // yoksa hedefin tum sorulari (izleyici dili once). Toplam < 2 ise NO_QUESTIONS.
     if (filteredQuestions.length < 2) throw Errors.NO_QUESTIONS();
 
     const totalQuestions = filteredQuestions.length;
@@ -298,7 +289,7 @@ export class QuizService {
         .eq("user_id", session.target_id)
         .order("order_num", { ascending: true });
       const solverLanguages = await this.resolveSolverLanguages(solverId);
-      const ordered = this.filterByLanguagePreference(allQ || [], solverLanguages);
+      const ordered = selectQuizQuestions(allQ || [], solverLanguages);
       if (questionIndex >= ordered.length) throw Errors.SERVER_ERROR();
       questionId = ordered[questionIndex].id as string;
     }
@@ -369,7 +360,7 @@ export class QuizService {
         .order("order_num", { ascending: true });
       if (qErr || !allQuestions || allQuestions.length === 0) throw Errors.SERVER_ERROR();
       const solverLanguages = await this.resolveSolverLanguages(solverId);
-      const questions = this.filterByLanguagePreference(allQuestions, solverLanguages);
+      const questions = selectQuizQuestions(allQuestions, solverLanguages);
       currentQuestion = questions[questionIndex] as unknown as QuestionRow;
     }
 
@@ -466,7 +457,7 @@ export class QuizService {
             if (!allQ) remainingIds = [];
             else {
               const langs = await this.resolveSolverLanguages(solverId);
-              const filtered = this.filterByLanguagePreference(allQ, langs);
+              const filtered = selectQuizQuestions(allQ, langs);
               remainingIds = filtered.slice(questionIndex).map((q: any) => q.id as string);
             }
           }
@@ -1003,7 +994,7 @@ export class QuizService {
         if (!allQuestions) remainingQuestionIds = [];
         else {
           const solverLanguages = await this.resolveSolverLanguages(solverId);
-          const questions = this.filterByLanguagePreference(allQuestions, solverLanguages);
+          const questions = selectQuizQuestions(allQuestions, solverLanguages);
           remainingQuestionIds = questions.slice(session.current_q).map((q: any) => q.id as string);
         }
       }

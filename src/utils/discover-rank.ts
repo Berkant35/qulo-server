@@ -1,3 +1,5 @@
+import { hasEnoughInLanguages } from "./quiz-question-set.js";
+
 /**
  * Discover sira gruplari (kucukten buyuge). Karar K3 (2026-11-17): gercek kullanici yabanci dilde
  * olsa bile seed'den ONCE gelir; elenmez, yalniz arkaya alinir.
@@ -17,11 +19,8 @@ export const DiscoverGroup = {
 
 export type DiscoverGroupValue = (typeof DiscoverGroup)[keyof typeof DiscoverGroup];
 
-/** Aday dil kapisini gecti mi: izleyicinin dillerinde toplam >= 2 soru (dil basina degil, TOPLAM). */
-export function passesLanguageGate(candidateQuestionLocales: readonly string[], viewerLangs: readonly string[]): boolean {
-  if (viewerLangs.length === 0) return true;
-  return candidateQuestionLocales.filter((l) => viewerLangs.includes(l)).length >= 2;
-}
+/** Aday dil kapisini gecti mi: tek tanim `hasEnoughInLanguages` (quiz kumesiyle ortak). */
+export const passesLanguageGate = hasEnoughInLanguages;
 
 export function discoverGroupRank(isSeed: boolean, isDormant: boolean, ownLanguage: boolean): DiscoverGroupValue {
   if (isSeed) return DiscoverGroup.SEED;
