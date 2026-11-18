@@ -147,3 +147,18 @@ describe('görünümler — döngü yerine ortak parça', () => {
     expect(html).not.toMatch(/<=\s*(Math\.min\()?totalPages/);
   });
 });
+
+describe('pageParam — ayni sayfada iki sayfalama (kullanici detayi: matchesPage)', () => {
+  it('varsayilan anahtar page; pageParam verilirse yalniz o anahtar degisir, diger parametreler korunur', () => {
+    expect(buildPageHref('/admin/users/x', 2, { error: 'e' })).toBe('/admin/users/x?page=2&error=e');
+    expect(buildPageHref('/admin/users/x', 2, { error: 'e' }, 'matchesPage')).toBe('/admin/users/x?matchesPage=2&error=e');
+  });
+
+  it('buildPagination pageParam ile bloklarin tum bağlantılarında matchesPage üretir', () => {
+    const model = buildPagination({ basePath: '/admin/users/x', page: 6, totalPages: 12, pageParam: 'matchesPage' });
+    expect(model.prevBlock?.href).toBe('/admin/users/x?matchesPage=1');
+    expect(model.pages[0].href).toBe('/admin/users/x?matchesPage=6');
+    expect(model.last?.href).toBe('/admin/users/x?matchesPage=12');
+    expect(model.pages.every((p) => p.href.includes('matchesPage='))).toBe(true);
+  });
+});

@@ -275,6 +275,40 @@
 </div>
 <% } %>
 
+<div class="card">
+  <h3 style="margin-bottom: 12px;">Matches (<%= matchesTotal %>)</h3>
+  <% if (matchesError) { %>
+    <div class="alert alert-error">Matches could not be loaded. See server logs.</div>
+  <% } else if (userMatches.length === 0) { %>
+    <p style="color:#999; font-size:14px;">This user has no matches.</p>
+  <% } else { %>
+  <table>
+    <thead><tr><th>Partner</th><th>Status</th><th>Matched At</th><th>Unread</th><th>Chat</th></tr></thead>
+    <tbody>
+      <% userMatches.forEach(function (m) { %>
+      <tr>
+        <td>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <% if (m.other_photo && m.other_photo.startsWith('https://')) { %><img src="<%= m.other_photo %>" alt="" style="width:36px; height:36px; border-radius:50%; object-fit:cover;"><% } %>
+            <a href="/admin/users/<%= m.other_id %>" style="color:#a855f7;"><%= m.other_name || m.other_id.substring(0, 8) + '...' %></a>
+          </div>
+        </td>
+        <td>
+          <span class="badge <%= m.is_active ? 'badge-online' : 'badge-offline' %>"><%= m.is_active ? 'Active' : 'Inactive' %></span>
+          <% if (m.other_is_seed) { %><span class="badge badge-offline">Seed</span><% } %>
+          <% if (m.other_is_test) { %><span class="badge badge-offline">Test</span><% } %>
+        </td>
+        <td><%= new Date(m.matched_at).toLocaleString() %></td>
+        <td><%= m.unread_count %></td>
+        <td><a href="/admin/matches/<%= m.id %>" class="btn btn-primary btn-sm">View Chat</a></td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+  <%- include('_pagination', { pagination: matchesPagination }) %>
+  <% } %>
+</div>
+
 <% if (details) { %>
 <div class="card">
   <h3 style="margin-bottom: 12px;">Details</h3>

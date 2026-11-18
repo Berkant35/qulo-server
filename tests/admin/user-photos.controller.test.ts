@@ -158,6 +158,8 @@ describe('user-detail görünümü — fotoğraf kaldırma kontrolleri', () => {
   const render = (user: Record<string, unknown>) => ejs.renderFile(join(VIEWS, 'user-detail.ejs'), {
     user: { id: U1, created_at: '2026-11-01T00:00:00Z', ...user },
     details: null, questions: [], swipeCount: 0, error: null, session: SESSION, csrfToken: 'tok',
+    // Eşleşme bölümü (A2): controller her zaman geçirir; bu testte eşleşme yok.
+    userMatches: [], matchesTotal: 0, matchesError: false, matchesPagination: { visible: false },
   });
 
   it('her fotoğrafta Kaldır formu + toplu seçim kutusu; csrf ve onay diyaloğu var', async () => {

@@ -1,7 +1,7 @@
 import { supabase } from "../config/supabase.js";
 import { env } from "../config/env.js";
 import { hashPassword, comparePassword, normalizeEmail } from "../utils/hash.js";
-import { sanitizeIlike } from "../utils/validation.js";
+import { sanitizeIlike, assertUuid } from "../utils/validation.js";
 import { Errors } from "../utils/errors.js";
 import { banService } from "../services/ban.service.js";
 import { diamondService } from "../services/diamond.service.js";
@@ -328,6 +328,69 @@ class AdminService {
     }
 
     return { matches: data ?? [], total: count ?? 0 };
+  }
+
+  /**
+   * Kullanicinin taraf oldugu eslesmeler (en yeni once), admin kullanici detayinda.
+   * Sorgu sayisi sabit: eslesme sayfasi (1) + karsi taraf kullanicilari (1) + ozet RPC (1, migration 070).
+   * Eslesme basina sorgu yok (N+1 yok). `.in()` listeleri sayfa boyutuyla sinirli (<=50).
+   * Mesaj sayisi yerine okunmamis sayisi doner: toplam mesaj sayimi eslesme basina ayri sorgu ister.
+   */
+  async getUserMatches(userId: string, { page, limit }: { page: number; limit: number }) {
+    assertUuid(userId, "userId");
+    const size = Math.min(Math.max(1, Math.floor(limit)), 50);
+    const current = Math.max(1, Math.floor(page));
+    const from = (current - 1) * size;
+
+    const { data: matches, count, error } = await supabase
+      .from("matches")
+      .select("id, user1_id, user2_id, matched_at, is_active", { count: "exact" })
+      .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)
+      .order("matched_at", { ascending: false })
+      .range(from, from + size - 1);
+
+    if (error) throw new Error(`getUserMatches: ${error.message}`);
+    const rows = matches ?? [];
+    const total = count ?? 0;
+    if (rows.length === 0) return { matches: [], total };
+
+    const matchIds = rows.map((m) => m.id);
+    const otherIds = rows.map((m) => (m.user1_id === userId ? m.user2_id : m.user1_id));
+
+    const [usersResult, ozetResult] = await Promise.all([
+      supabase
+        .from("users")
+        .select("id, name, surname, photos, is_seed_profile, is_test_account")
+        .in("id", otherIds),
+      supabase.rpc("match_list_summaries", { p_user_id: userId, p_match_ids: matchIds }),
+    ]);
+    if (usersResult.error) throw new Error(`getUserMatches users: ${usersResult.error.message}`);
+    if (ozetResult.error) throw new Error(`getUserMatches summaries: ${ozetResult.error.message}`);
+
+    const userMap = new Map((usersResult.data ?? []).map((u) => [u.id, u]));
+    // RPC cevabi tiplenmez: yalniz kullanilan alanlar, sinir burada.
+    const summaries = (ozetResult.data ?? []) as { match_id: string; unread_count: number | null }[];
+    const ozetMap = new Map(summaries.map((o) => [o.match_id, o]));
+
+    const enriched = rows.map((m) => {
+      const otherId = m.user1_id === userId ? m.user2_id : m.user1_id;
+      const other = userMap.get(otherId);
+      const ozet = ozetMap.get(m.id);
+      const photos: unknown[] = Array.isArray(other?.photos) ? other.photos : [];
+      return {
+        id: m.id,
+        matched_at: m.matched_at,
+        is_active: m.is_active === true,
+        unread_count: Number(ozet?.unread_count ?? 0),
+        other_id: otherId,
+        other_name: other ? [other.name, other.surname].filter(Boolean).join(" ") : null,
+        other_photo: typeof photos[0] === "string" ? photos[0] : null,
+        other_is_seed: other?.is_seed_profile === true,
+        other_is_test: other?.is_test_account === true,
+      };
+    });
+
+    return { matches: enriched, total };
   }
 
   async getMatchDetail(matchId: string, page: number, limit: number) {

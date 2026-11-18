@@ -83,9 +83,9 @@ export interface PaginationModel {
   last: PageLink | null;
 }
 
-/** `basePath?page=N&k=v…` — mevcut sorgu parametreleri (boş değerler dahil) aynen korunur. */
-export function buildPageHref(basePath: string, page: number, params: QueryParams = {}): string {
-  const query = [`page=${page}`];
+/** `basePath?page=N&k=v…` (sayfa anahtarı `pageParam` ile değişir) — mevcut sorgu parametreleri aynen korunur. */
+export function buildPageHref(basePath: string, page: number, params: QueryParams = {}, pageParam = 'page'): string {
+  const query = [`${encodeURIComponent(pageParam)}=${page}`];
   for (const [key, value] of Object.entries(params)) {
     query.push(`${encodeURIComponent(key)}=${encodeURIComponent(value == null ? '' : String(value))}`);
   }
@@ -99,12 +99,14 @@ export function buildPagination(options: {
   totalPages: number;
   params?: QueryParams;
   windowSize?: number;
+  /** Sayfa numarasının sorgu anahtarı; aynı sayfada birden çok sayfalama varsa ayrılır (varsayılan `page`). */
+  pageParam?: string;
 }): PaginationModel {
   const win = buildPageWindow(options.page, options.totalPages, options.windowSize);
   const size = Math.max(1, toInt(options.windowSize ?? DEFAULT_WINDOW_SIZE, DEFAULT_WINDOW_SIZE));
   const link = (page: number): PageLink => ({
     page,
-    href: buildPageHref(options.basePath, page, options.params),
+    href: buildPageHref(options.basePath, page, options.params, options.pageParam),
   });
   if (!win.visible) {
     return { visible: false, windowSize: size, current: win.current, first: null, prevBlock: null, pages: [], nextBlock: null, last: null };

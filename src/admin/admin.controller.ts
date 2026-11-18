@@ -8,6 +8,7 @@ import { economyConfigService } from "../services/economy-config.service.js";
 import { economyConfigSchema, ECONOMY_BOUNDARIES } from "../types/economy-config.schema.js";
 import { supabase } from "../config/supabase.js";
 import { isUuid } from "../utils/validation.js";
+import { buildPagination, type QueryParams } from "./utils/pagination.js";
 import { rewardsQueueService } from "../services/rewards-queue.service.js";
 import { MAX_PROFILE_PHOTOS } from "../constants/photos.js";
 import { flashMessage } from "./admin-form.js";
@@ -84,8 +85,35 @@ class AdminController {
       const { user, details, questions } = await adminService.getUserDetail(id);
       if (!user) return res.status(404).render("error", { message: "User not found", session: req.session });
       const swipeCount = await adminService.getSwipeCount(id);
+      const matchesPage = Math.max(1, parseInt(req.query.matchesPage as string) || 1);
+      const MATCHES_PER_PAGE = 20;
+      // Eşleşme bölümü kendi hatasıyla ayrışır: eşleşme sorgusu düşse de kullanıcı detayı açılır.
+      let userMatches: Awaited<ReturnType<typeof adminService.getUserMatches>>["matches"] = [];
+      let matchesTotal = 0;
+      let matchesError = false;
+      try {
+        const result = await adminService.getUserMatches(id, { page: matchesPage, limit: MATCHES_PER_PAGE });
+        userMatches = result.matches;
+        matchesTotal = result.total;
+      } catch (err) {
+        matchesError = true;
+        console.error("[admin] userDetail matches failed:", { userId: id, err });
+      }
+      // Diğer sorgu parametreleri (örn. error) sayfalama bağlantılarında korunur; yalnız matchesPage değişir.
+      const preservedParams: QueryParams = {};
+      for (const [key, value] of Object.entries(req.query)) {
+        if (key !== "matchesPage" && typeof value === "string") preservedParams[key] = value;
+      }
+      const matchesPagination = buildPagination({
+        basePath: `/admin/users/${id}`,
+        page: matchesPage,
+        totalPages: Math.ceil(matchesTotal / MATCHES_PER_PAGE),
+        params: preservedParams,
+        pageParam: "matchesPage",
+      });
       res.render("user-detail", {
         user, details, questions, swipeCount,
+        userMatches, matchesTotal, matchesError, matchesPagination,
         error: flashMessage(USER_ACTION_ERRORS, req.query.error),
         session: req.session, csrfToken: req.session.csrfToken,
       });
