@@ -1,13 +1,21 @@
 import { supabase } from "../config/supabase.js";
 import { diamondService } from "./diamond.service.js";
 import { AppError, Errors } from "../utils/errors.js";
+import { economyConfigService } from "./economy-config.service.js";
+import { DEFAULT_BADGE_REWARDS, type BadgeLevel } from "../types/economy-config.schema.js";
 
-type BadgeLevel = "SILVER" | "GOLD";
+/** Eşikler kodda sabit; ÖDÜL miktarı ekonomi config'ten (`rewards.badges`) gelir. */
+const BADGE_MIN_COMPLETION: Record<BadgeLevel, number> = { SILVER: 60, GOLD: 85 };
 
-const BADGE_CONFIG: Record<BadgeLevel, { minCompletion: number; reward: number }> = {
-  SILVER: { minCompletion: 60, reward: 3 },
-  GOLD: { minCompletion: 85, reward: 10 },
-};
+/** Config okunamazsa yedek (`DEFAULT_BADGE_REWARDS`) — rozet talebi config hatasıyla düşmesin. */
+async function badgeReward(level: BadgeLevel): Promise<number> {
+  try {
+    return (await economyConfigService.getConfig()).rewards.badges[level];
+  } catch (err) {
+    console.error("[badge] economy config okunamadi, yedek odul kullaniliyor:", err);
+    return DEFAULT_BADGE_REWARDS[level];
+  }
+}
 
 export class BadgeService {
   async claimReward(userId: string, level: BadgeLevel) {
@@ -22,12 +30,12 @@ export class BadgeService {
       throw Errors.USER_NOT_FOUND();
     }
 
-    const config = BADGE_CONFIG[level];
-    if (!config) {
+    const minCompletion = BADGE_MIN_COMPLETION[level];
+    if (minCompletion === undefined) {
       throw new AppError("INVALID_BADGE_LEVEL", 400, "Invalid badge level");
     }
 
-    if (user.profile_completion < config.minCompletion) {
+    if (user.profile_completion < minCompletion) {
       throw new AppError("BADGE_THRESHOLD_NOT_MET", 400, "Profile completion too low for this badge");
     }
 
@@ -36,7 +44,8 @@ export class BadgeService {
       throw new AppError("BADGE_ALREADY_CLAIMED", 400, "Badge reward already claimed");
     }
 
-    await diamondService.addPurple(userId, config.reward, `BADGE_${level}`);
+    const reward = await badgeReward(level);
+    await diamondService.addPurple(userId, reward, `BADGE_${level}`);
 
     claimed.push(level);
     const { error: updateError } = await supabase
@@ -50,7 +59,7 @@ export class BadgeService {
 
     return {
       level,
-      diamonds_awarded: config.reward,
+      diamonds_awarded: reward,
       badge_rewards_claimed: claimed,
     };
   }

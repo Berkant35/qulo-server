@@ -3,7 +3,7 @@ import { createFakeSupabase, type Tables, type FakeSupabaseOptions } from '../he
 import { activeConfigRow } from '../helpers/economy-config.fixture.js';
 
 /**
- * Abonelik = para. Fixture limitleri: free(discover 50, undo 0, soru 3, bonus 0),
+ * Abonelik = para. Fixture limitleri: free(discover 25, undo 0, soru 3, bonus 0),
  * plus(200/3/5/200), premium(500/10/10/1000).
  */
 async function setup(seed: Tables, options?: FakeSupabaseOptions) {
@@ -395,7 +395,7 @@ describe('expireSubscription', () => {
     await subscriptionService.expireSubscription('u1');
     const stats = await subscriptionService.getDailyStats('u1');
 
-    expect(stats.dailyDiscoversLimit).toBe(50);
+    expect(stats.dailyDiscoversLimit).toBe(25);
     expect(stats.dailyUndosLimit).toBe(0);
     expect(stats.questionsLimit).toBe(3);
   });
@@ -481,7 +481,7 @@ describe('getDailyStats', () => {
     const stats = await subscriptionService.getDailyStats('u1');
 
     expect(stats).toMatchObject({
-      dailyDiscoversLimit: 50, dailyUndosLimit: 0,
+      dailyDiscoversLimit: 25, dailyUndosLimit: 0,
       questionsLimit: 3, monthlyPurpleBonus: 0, passportMode: false, hasAds: true,
     });
   });
@@ -503,7 +503,7 @@ describe('getDailyStats', () => {
       users: [user({ subscription_plan: 'premium', subscription_expires_at: PAST })],
     });
     const stats = await subscriptionService.getDailyStats('u1');
-    expect(stats.dailyDiscoversLimit).toBe(50);
+    expect(stats.dailyDiscoversLimit).toBe(25);
   });
 
   it('dünden kalan sayaçları sıfırlar (lazy reset)', async () => {
@@ -560,12 +560,41 @@ describe('incrementDailySwipes / incrementDailyUndos', () => {
   });
 
   it('limit dolunca reddeder ve sayacı artırmaz', async () => {
-    const { fake, subscriptionService } = await setup({ users: [user({ daily_swipes_used: 50 })] });
+    const { fake, subscriptionService } = await setup({ users: [user({ daily_swipes_used: 25 })] });
 
     await expect(subscriptionService.incrementDailySwipes('u1')).rejects.toMatchObject({
       code: 'DAILY_LIMIT_EXCEEDED',
     });
-    expect(fake.table('users')[0].daily_swipes_used).toBe(50);
+    expect(fake.table('users')[0].daily_swipes_used).toBe(25);
+  });
+
+  it('2.2.0: free plan 25. kaydırmaya izin verir, 26.da DAILY_LIMIT_EXCEEDED (limit config 25)', async () => {
+    const { fake, subscriptionService } = await setup({ users: [user({ daily_swipes_used: 24 })] });
+
+    await subscriptionService.incrementDailySwipes('u1');
+    expect(fake.table('users')[0].daily_swipes_used).toBe(25);
+    await expect(subscriptionService.incrementDailySwipes('u1')).rejects.toMatchObject({
+      code: 'DAILY_LIMIT_EXCEEDED',
+    });
+  });
+
+  it('ücretli planlar (plus/premium) günlük keşifte sınırsız (999999 → -1); free 25 sınırı uygulanmaz', async () => {
+    const base = activeConfigRow().config;
+    const unlimited = { ...base.subscriptionLimits, plus: { ...base.subscriptionLimits.plus, dailyDiscovers: 999999 },
+      premium: { ...base.subscriptionLimits.premium, dailyDiscovers: 999999 } };
+    for (const plan of ['plus', 'premium'] as const) {
+      vi.resetModules();
+      const fake = createFakeSupabase({
+        economy_config_versions: [activeConfigRow({ subscriptionLimits: unlimited })],
+        users: [user({ subscription_plan: plan, subscription_expires_at: FUTURE, daily_swipes_used: 500 })],
+      });
+      vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
+      const { subscriptionService } = await import('../../src/services/subscription.service.js');
+
+      await expect(subscriptionService.getDailyStats('u1')).resolves.toMatchObject({ dailyDiscoversLimit: -1 });
+      await subscriptionService.incrementDailySwipes('u1');
+      expect(fake.table('users')[0].daily_swipes_used).toBe(501);
+    }
   });
 
   it('free tier undo limiti 0 — ilk denemede reddeder', async () => {
@@ -594,7 +623,7 @@ describe('incrementDailySwipes / incrementDailyUndos', () => {
 describe('getLimits', () => {
   it('plan null ise free limitleri', async () => {
     const { subscriptionService } = await setup({ users: [user()] });
-    await expect(subscriptionService.getLimits(null)).resolves.toMatchObject({ dailyDiscovers: 50 });
+    await expect(subscriptionService.getLimits(null)).resolves.toMatchObject({ dailyDiscovers: 25 });
   });
 
   it('limitler config\'ten gelir, hardcoded değil', async () => {

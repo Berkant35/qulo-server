@@ -51,6 +51,17 @@ function mockDiamond(addPurple: (userId: string, amount: number, reason: string)
   }));
 }
 
+function mockEconomy(badges?: { SILVER: number; GOLD: number }, fail = false) {
+  vi.doMock("../../src/services/economy-config.service.js", () => ({
+    economyConfigService: {
+      getConfig: async () => {
+        if (fail) throw new Error("No active economy config found");
+        return { rewards: { badges } };
+      },
+    },
+  }));
+}
+
 describe("badgeService.claimReward", () => {
   beforeEach(() => {
     vi.resetModules();
@@ -115,7 +126,7 @@ describe("badgeService.claimReward", () => {
     expect(spy).not.toHaveBeenCalled();
   });
 
-  it("credits 3 purple diamonds and marks SILVER claimed on happy path", async () => {
+  it("credits 1 purple diamond (2.2.0 config) and marks SILVER claimed on happy path", async () => {
     let updatePatch: Record<string, unknown> | null = null;
     let updateUserId: string | null = null;
     mockSupabase({
@@ -125,23 +136,24 @@ describe("badgeService.claimReward", () => {
         updateUserId = id;
       },
     });
+    mockEconomy({ SILVER: 1, GOLD: 3 });
     const addPurple = vi.fn(async () => {});
     mockDiamond(addPurple);
     const { badgeService } = await import("../../src/services/badge.service.js");
 
     const result = await badgeService.claimReward("user-42", "SILVER");
 
-    expect(addPurple).toHaveBeenCalledWith("user-42", 3, "BADGE_SILVER");
+    expect(addPurple).toHaveBeenCalledWith("user-42", 1, "BADGE_SILVER");
     expect(updateUserId).toBe("user-42");
     expect(updatePatch).toEqual({ badge_rewards_claimed: ["SILVER"] });
     expect(result).toEqual({
       level: "SILVER",
-      diamonds_awarded: 3,
+      diamonds_awarded: 1,
       badge_rewards_claimed: ["SILVER"],
     });
   });
 
-  it("credits 10 purple diamonds and appends GOLD to existing claims", async () => {
+  it("credits 3 purple diamonds (2.2.0 config) and appends GOLD to existing claims", async () => {
     let updatePatch: Record<string, unknown> | null = null;
     mockSupabase({
       user: { profile_completion: 85, badge_rewards_claimed: ["SILVER"] },
@@ -149,16 +161,17 @@ describe("badgeService.claimReward", () => {
         updatePatch = patch;
       },
     });
+    mockEconomy({ SILVER: 1, GOLD: 3 });
     const addPurple = vi.fn(async () => {});
     mockDiamond(addPurple);
     const { badgeService } = await import("../../src/services/badge.service.js");
 
     const result = await badgeService.claimReward("user-42", "GOLD");
 
-    expect(addPurple).toHaveBeenCalledWith("user-42", 10, "BADGE_GOLD");
+    expect(addPurple).toHaveBeenCalledWith("user-42", 3, "BADGE_GOLD");
     expect(updatePatch).toEqual({ badge_rewards_claimed: ["SILVER", "GOLD"] });
     expect(result.badge_rewards_claimed).toEqual(["SILVER", "GOLD"]);
-    expect(result.diamonds_awarded).toBe(10);
+    expect(result.diamonds_awarded).toBe(3);
   });
 
   it("throws SERVER_ERROR when the update fails after diamonds are credited", async () => {
@@ -166,6 +179,7 @@ describe("badgeService.claimReward", () => {
       user: { profile_completion: 90, badge_rewards_claimed: [] },
       updateError: { message: "update failed" },
     });
+    mockEconomy({ SILVER: 1, GOLD: 3 });
     const addPurple = vi.fn(async () => {});
     mockDiamond(addPurple);
     const { badgeService } = await import("../../src/services/badge.service.js");
@@ -176,6 +190,41 @@ describe("badgeService.claimReward", () => {
     });
     // Karakterizasyon: diamond kredisi update hatasından ÖNCE yapiliyor,
     // yani SERVER_ERROR fırlarsa kullanici zaten elmasi almis oluyor.
-    expect(addPurple).toHaveBeenCalledWith("user-42", 3, "BADGE_SILVER");
+    expect(addPurple).toHaveBeenCalledWith("user-42", 1, "BADGE_SILVER");
+  });
+
+  it("ödül miktarı ekonomi config'ten gelir (admin yönetimi): eski 3/10 değerleri canlı config'te kalırsa onlar uygulanır", async () => {
+    mockSupabase({ user: { profile_completion: 90, badge_rewards_claimed: [] } });
+    mockEconomy({ SILVER: 3, GOLD: 10 });
+    const addPurple = vi.fn(async () => {});
+    mockDiamond(addPurple);
+    const { badgeService } = await import("../../src/services/badge.service.js");
+
+    await badgeService.claimReward("u1", "GOLD");
+    expect(addPurple).toHaveBeenCalledWith("u1", 10, "BADGE_GOLD");
+  });
+
+  it("config okunamazsa yedek sabitler (SILVER 1 / GOLD 3) kullanılır, talep düşmez", async () => {
+    mockSupabase({ user: { profile_completion: 90, badge_rewards_claimed: [] } });
+    mockEconomy(undefined, true);
+    const addPurple = vi.fn(async () => {});
+    mockDiamond(addPurple);
+    const { badgeService } = await import("../../src/services/badge.service.js");
+
+    await badgeService.claimReward("u1", "SILVER");
+    expect(addPurple).toHaveBeenCalledWith("u1", 1, "BADGE_SILVER");
+  });
+
+  it("daha önce SILVER alan kullanıcı yeni değerle bile ikinci kez ödül ALAMAZ (geriye dönük tekillik)", async () => {
+    mockSupabase({ user: { profile_completion: 100, badge_rewards_claimed: ["SILVER", "GOLD"] } });
+    mockEconomy({ SILVER: 1, GOLD: 3 });
+    const addPurple = vi.fn(async () => {});
+    mockDiamond(addPurple);
+    const { badgeService } = await import("../../src/services/badge.service.js");
+
+    for (const level of ["SILVER", "GOLD"] as const) {
+      await expect(badgeService.claimReward("u1", level)).rejects.toMatchObject({ code: "BADGE_ALREADY_CLAIMED" });
+    }
+    expect(addPurple).not.toHaveBeenCalled();
   });
 });

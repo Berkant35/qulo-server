@@ -20,6 +20,8 @@ export const ECONOMY_BOUNDARIES = {
   rainbowMonthlyRedeemCap: { min: 20, max: 500 },
   rainbowMinAccountAgeDays: { min: 0, max: 90 },
   rainbowSuggestedUsd: { min: 0.005, max: 0.07 },
+  /** Rozet başına tek seferlik mor (SILVER/GOLD). */
+  badgeReward: { min: 0, max: 50 },
   /** Yeni kayıtta verilen mor (tek sefer). 0 = verilmez. */
   starterPurple: { min: 0, max: 50 },
   /** Quiz soru başı süre toleransı (ağ gecikmesi + istemci saati kayması). */
@@ -124,8 +126,27 @@ const starterPowersSchema = z
   )
   .default({ ...DEFAULT_STARTER_POWERS });
 
+/**
+ * Profil tamamlama kilometre taşları (eşik % → mor). 2.2.0 (karar K2, 2026-11-17): ücretsiz mor
+ * dağıtımı kısıldı, 5/15/30/50 (100) → 2/3/5/10 (20). Canlı kaynak ekonomi config'tir
+ * (`rewards.milestones`, migration 087); bu sabit yalnız config okunamazsa yedektir.
+ * Daha önce alınan ödüller `completion_rewards_claimed` + `milestone_<eşik>` referansıyla tekildir.
+ */
+export const DEFAULT_PROFILE_MILESTONES: Readonly<Record<string, number>> = { "25": 2, "50": 3, "75": 5, "100": 10 };
+
+/** Profil rozeti ödülleri (mor). 2.2.0: 3/10 → 1/3. Eski config sürümlerinde alan yoksa bu varsayılan. */
+export const BADGE_LEVELS = ["SILVER", "GOLD"] as const;
+export type BadgeLevel = (typeof BADGE_LEVELS)[number];
+export const DEFAULT_BADGE_REWARDS: Readonly<Record<BadgeLevel, number>> = { SILVER: 1, GOLD: 3 };
+
 const rewardsSchema = z.object({
   milestones: z.record(z.string(), z.number().int().min(0)),
+  badges: z
+    .object({
+      SILVER: z.number().int().min(B.badgeReward.min).max(B.badgeReward.max),
+      GOLD: z.number().int().min(B.badgeReward.min).max(B.badgeReward.max),
+    })
+    .default({ ...DEFAULT_BADGE_REWARDS }),
   referralPurple: z.number().int().min(B.referralPurple.min).max(B.referralPurple.max),
   maxCompletedReferrals: z.number().int().min(B.maxCompletedReferrals.min).max(B.maxCompletedReferrals.max),
   starterPowers: starterPowersSchema,

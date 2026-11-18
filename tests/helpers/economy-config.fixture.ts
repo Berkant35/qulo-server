@@ -16,7 +16,7 @@ export const economyConfigFixture: EconomyConfig = {
   },
   subscriptionLimits: {
     free: {
-      dailyDiscovers: 50, maxQuestions: 3, dailyUndos: 0, monthlyPurpleBonus: 0,
+      dailyDiscovers: 25, maxQuestions: 3, dailyUndos: 0, monthlyPurpleBonus: 0,
       chatQuestionDaily: 1, chatQuestionUnmatchRisk: 1, passportMode: false, hasAds: true,
     },
     plus: {
@@ -30,6 +30,7 @@ export const economyConfigFixture: EconomyConfig = {
   },
   rewards: {
     milestones: { '10': 5, '50': 25 },
+    badges: { SILVER: 1, GOLD: 3 },
     referralPurple: 20,
     maxCompletedReferrals: 10,
     starterPowers: { ...DEFAULT_STARTER_POWERS },

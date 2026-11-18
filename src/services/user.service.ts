@@ -5,6 +5,7 @@ import { questionLocale } from "../constants/locales.js";
 import { diamondService } from "./diamond.service.js";
 import { referralService } from "./referral.service.js";
 import { economyConfigService } from "./economy-config.service.js";
+import { DEFAULT_PROFILE_MILESTONES } from "../types/economy-config.schema.js";
 import { userLanguageService } from "./user-language.service.js";
 import { moderateUploadedPhoto } from "./photo-moderation.service.js";
 import { rainbowAccessService } from "./rainbow-access.service.js";
@@ -589,6 +590,21 @@ export class UserService {
   }
 
 
+  /** Eşik (%) artan sırada; config okunamazsa `DEFAULT_PROFILE_MILESTONES`. */
+  private async resolveProfileMilestones(): Promise<Array<{ threshold: number; reward: number }>> {
+    let source: Readonly<Record<string, number>> = DEFAULT_PROFILE_MILESTONES;
+    try {
+      source = (await economyConfigService.getConfig()).rewards.milestones;
+    } catch (err) {
+      // Config okunamadı: yedek sabitlerle devam (tamamlama hesabı düşmesin).
+      console.error("[profile-milestones] economy config okunamadi, yedek oduller kullaniliyor:", err);
+    }
+    return Object.entries(source)
+      .map(([threshold, reward]) => ({ threshold: Number(threshold), reward }))
+      .filter((m) => Number.isFinite(m.threshold))
+      .sort((a, b) => a.threshold - b.threshold);
+  }
+
   private async recalculateProfileCompletion(userId: string) {
     const { data: user } = await supabase
       .from("users")
@@ -632,20 +648,17 @@ export class UserService {
 
     const newCompletion = Math.round((score / total) * 100);
 
-    // Milestone rewards
-    const milestones = [
-      { threshold: 25, reward: 5 },
-      { threshold: 50, reward: 15 },
-      { threshold: 75, reward: 30 },
-      { threshold: 100, reward: 50 },
-    ];
+    // Milestone rewards: miktarlar ekonomi config'ten (`rewards.milestones`), okunamazsa yedek sabit.
+    const milestones = await this.resolveProfileMilestones();
 
     const claimed: Record<string, boolean> = user.completion_rewards_claimed || {};
 
     for (const m of milestones) {
       if (newCompletion >= m.threshold && !claimed[String(m.threshold)]) {
         try {
-          await diamondService.addPurple(userId, m.reward, 'PROFILE_COMPLETION', `milestone_${m.threshold}`);
+          if (m.reward > 0) {
+            await diamondService.addPurple(userId, m.reward, 'PROFILE_COMPLETION', `milestone_${m.threshold}`);
+          }
           claimed[String(m.threshold)] = true;
 
           if (m.threshold === 100) {
