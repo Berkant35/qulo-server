@@ -31,6 +31,7 @@ export const economyConfigFixture: EconomyConfig = {
   rewards: {
     milestones: { '10': 5, '50': 25 },
     badges: { SILVER: 1, GOLD: 3 },
+    rewardedAd: { enabled: true, purple: 10, dailyLimit: 1 },
     referralPurple: 20,
     maxCompletedReferrals: 10,
     starterPowers: { ...DEFAULT_STARTER_POWERS },

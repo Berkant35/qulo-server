@@ -240,3 +240,14 @@ export const emailLinkLimiter = rateLimit({
   legacyHeaders: false,
   message: rateLimitResponse,
 });
+
+// AdMob SSV callback'i (kimliksiz): Google'ın birkaç IP'sinden gelir, yeniden denemeler 1 sn arayla.
+// Yalnız makine hızındaki kötüye kullanımı keser; imza + talep tablosu asıl koruma.
+export const rewardedAdSsvLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 300,
+  keyGenerator: clientKey,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: rateLimitResponse,
+});

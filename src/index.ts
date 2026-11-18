@@ -22,6 +22,7 @@ import subscriptionRoutes from "./routes/subscription.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
 import exchangeRoutes from "./routes/exchange.routes.js";
 import rewardsRoutes from "./routes/rewards.routes.js";
+import rewardedAdRoutes from "./routes/rewarded-ad.routes.js";
 import referralRoutes from "./routes/referral.routes.js";
 import acquisitionRoutes from "./routes/acquisition.routes.js";
 import webQuizRoutes from "./routes/web-quiz.routes.js";
@@ -160,6 +161,8 @@ app.use("/api/v1/subscriptions", subscriptionRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/page-messages", pageMessageRoutes);
 app.use("/api/v1/exchange", exchangeRoutes);
+// rewards router'ından ÖNCE: SSV kimliksiz (Google çağırır), rewards router'ı hepsine auth uygular.
+app.use("/api/v1/rewards/rewarded-ad", rewardedAdRoutes);
 app.use("/api/v1/rewards", rewardsRoutes);
 app.use("/api/v1/referrals", referralRoutes);
 app.use("/api/v1/acquisition", acquisitionRoutes);

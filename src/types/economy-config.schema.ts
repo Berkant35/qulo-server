@@ -22,6 +22,10 @@ export const ECONOMY_BOUNDARIES = {
   rainbowSuggestedUsd: { min: 0.005, max: 0.07 },
   /** Rozet başına tek seferlik mor (SILVER/GOLD). */
   badgeReward: { min: 0, max: 50 },
+  /** Günlük ödüllü reklam: izleme başına mor (2.2.0, B3). */
+  rewardedAdPurple: { min: 0, max: 50 },
+  /** Günlük ödüllü reklam: günde en çok kaç ödül. */
+  rewardedAdDailyLimit: { min: 0, max: 5 },
   /** Yeni kayıtta verilen mor (tek sefer). 0 = verilmez. */
   starterPurple: { min: 0, max: 50 },
   /** Quiz soru başı süre toleransı (ağ gecikmesi + istemci saati kayması). */
@@ -139,6 +143,22 @@ export const BADGE_LEVELS = ["SILVER", "GOLD"] as const;
 export type BadgeLevel = (typeof BADGE_LEVELS)[number];
 export const DEFAULT_BADGE_REWARDS: Readonly<Record<BadgeLevel, number>> = { SILVER: 1, GOLD: 3 };
 
+/**
+ * Günlük ödüllü reklam (2.2.0, B3): AdMob SSV doğrulanınca `purple` mor, günde en çok `dailyLimit`
+ * kez. `enabled` yoksa/false ise hiçbir yol ödül vermez (eski config satırları kendiliğinden kapalı).
+ */
+export const DEFAULT_REWARDED_AD = { enabled: false, purple: 10, dailyLimit: 1 } as const;
+
+const rewardedAdSchema = z
+  .object({
+    enabled: z.boolean().default(DEFAULT_REWARDED_AD.enabled),
+    purple: z.number().int().min(B.rewardedAdPurple.min).max(B.rewardedAdPurple.max).default(DEFAULT_REWARDED_AD.purple),
+    dailyLimit: z.number().int()
+      .min(B.rewardedAdDailyLimit.min).max(B.rewardedAdDailyLimit.max)
+      .default(DEFAULT_REWARDED_AD.dailyLimit),
+  })
+  .default({ ...DEFAULT_REWARDED_AD });
+
 const rewardsSchema = z.object({
   milestones: z.record(z.string(), z.number().int().min(0)),
   badges: z
@@ -147,6 +167,7 @@ const rewardsSchema = z.object({
       GOLD: z.number().int().min(B.badgeReward.min).max(B.badgeReward.max),
     })
     .default({ ...DEFAULT_BADGE_REWARDS }),
+  rewardedAd: rewardedAdSchema,
   referralPurple: z.number().int().min(B.referralPurple.min).max(B.referralPurple.max),
   maxCompletedReferrals: z.number().int().min(B.maxCompletedReferrals.min).max(B.maxCompletedReferrals.max),
   starterPowers: starterPowersSchema,
