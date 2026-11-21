@@ -141,3 +141,20 @@ describe('updateAppConfig — ads_enabled (migration 079)', () => {
     expect(patch()).not.toHaveProperty('ads_enabled');
   });
 });
+
+describe('updateAppConfig — local_schedule_enabled (migration 090)', () => {
+  it('form işaretliyse true yazılır', async () => {
+    const { patch } = await setup({ local_schedule_field: '1', local_schedule_enabled: 'on' });
+    expect(patch()).toMatchObject({ local_schedule_enabled: true });
+  });
+
+  it('form işaretsiz + local_schedule_field gönderilirse false yazılır — panelden KAPATILABİLİR', async () => {
+    const { patch } = await setup({ local_schedule_field: '1' });
+    expect(patch()).toMatchObject({ local_schedule_enabled: false });
+  });
+
+  it('alan gönderilmezse (090 öncesi form) dokunulmaz', async () => {
+    const { patch } = await setup({});
+    expect(patch()).not.toHaveProperty('local_schedule_enabled');
+  });
+});

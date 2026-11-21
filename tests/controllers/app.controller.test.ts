@@ -249,3 +249,35 @@ describe("getAppConfigHandler — adsEnabled (migration 079)", () => {
     expect(body.adsEnabled).toBe(false);
   });
 });
+
+/** Planlı yerel bildirim anahtarı (migration 090) — fail-closed (varsayılan false). */
+describe("getAppConfigHandler — localScheduleEnabled (migration 090)", () => {
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
+  it("alan yok (kolon satırda yok) → false", async () => {
+    expect((await configBodyFor(CONFIG_SATIRI)).localScheduleEnabled).toBe(false);
+  });
+
+  it("kolon yok hatası (42703) → false; geri kalan config bozulmaz", async () => {
+    const body = await configBodyFor(CONFIG_SATIRI, [
+      { table: "app_config", op: "select", failAfter: 3, error: { message: "column does not exist", code: "42703" } },
+    ]);
+    expect(body.localScheduleEnabled).toBe(false);
+    expect(body.latestVersion).toBe("2.0.15");
+  });
+
+  it("satırda local_schedule_enabled=true ise true; mevcut alanlar yerinde", async () => {
+    const body = await configBodyFor({ ...CONFIG_SATIRI, local_schedule_enabled: true });
+    expect(body.localScheduleEnabled).toBe(true);
+    expect(body).toMatchObject({ minVersion: "2.0.0", storeUrl: "ios-url", isMaintenance: false });
+  });
+
+  it("app_config okunamıyorsa (varsayılan yanıt) alan yine false — sözleşme alanı hep var", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const body = await configBodyFor(CONFIG_SATIRI, [{ table: "app_config", op: "select" }]);
+    expect(body.minVersion).toBe("0.0.0");
+    expect(body.localScheduleEnabled).toBe(false);
+  });
+});

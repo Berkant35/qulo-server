@@ -181,6 +181,21 @@
   </div>
   <% } %>
 
+  <% if (config && config.local_schedule_enabled !== undefined && config.local_schedule_enabled !== null) { %>
+  <!-- Planlı yerel bildirim (migration 090) -->
+  <div class="card">
+    <h3 style="margin-bottom: 16px;">Planlı Yerel Bildirim</h3>
+    <div>
+      <input type="hidden" name="local_schedule_field" value="1">
+      <label style="display:flex; align-items:center; gap:8px; font-size:14px; cursor:pointer;">
+        <input type="checkbox" name="local_schedule_enabled" <%= config.local_schedule_enabled ? 'checked' : '' %>>
+        <span>Mobil, arka plana geçerken yerel bildirim planlasın ve planı sunucuya bildirsin</span>
+      </label>
+      <p style="font-size:12px; color:#999; margin-top:4px;">Varsayılan KAPALI. Sunucu ucu (PATCH /users/me/local-schedule) ve motor eşlemesi yayında olmadan açma — aksi halde aynı konuda hem sunucu hem yerel bildirim gider. Sunucu önbelleği 60 sn içinde yenilenir; mobil değeri açılışta (/app/config) okur.</p>
+    </div>
+  </div>
+  <% } %>
+
   <div style="text-align: right;">
     <button type="submit" class="btn btn-primary" style="padding: 10px 32px; font-size: 15px;">Save Configuration</button>
   </div>

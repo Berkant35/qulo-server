@@ -10,6 +10,7 @@ import { LIFECYCLE_RULES } from './rules.js';
 import { sequenceProgress } from './sequence.js';
 import type { LifecycleRule, RuleCategory, RuleMatch } from './rules.js';
 import { DAY_MS, localHour, utcOffsetHours } from './timezone.js';
+import { suppressedByLocalSchedule } from './local-schedule.js';
 import { holdoutBucket, throttleReason } from './throttle.js';
 
 /**
@@ -77,7 +78,9 @@ export function pickRule(
   nowMs: number,
 ): { rule: LifecycleRule; match: RuleMatch; step: number } | null {
   const entries = ctx.logByUser.get(user.id) ?? [];
+  const localPlanned = suppressedByLocalSchedule(user.local_schedule, nowMs);
   for (const rule of LIFECYCLE_RULES) {
+    if (localPlanned.has(rule.key)) continue; // ayni konu yerelde planli → cift bildirim olmasin
     const ruleConfig = config.rules[rule.key];
     if (!ruleConfig.enabled) continue;
     const progress = sequenceProgress(user, entries, rule, ruleConfig.schedule_days, nowMs);

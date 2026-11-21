@@ -19,6 +19,7 @@ import {
   getRetentionEligibilityHandler,
   claimRetentionHandler,
 } from "../controllers/retention.controller.js";
+import { localScheduleSchema } from "../validators/local-schedule.validator.js";
 import { identitySchema } from "../validators/identity.validator.js";
 import { setUserLanguagesSchema } from "../validators/user-language.validator.js";
 import {
@@ -31,6 +32,7 @@ import {
   updateLocationHandler,
   updatePushTokenHandler,
   heartbeatHandler,
+  setLocalScheduleHandler,
   uploadPhotoHandler,
   deletePhotoHandler,
   boostHandler,
@@ -75,6 +77,7 @@ router.patch("/me/details", validate(updateDetailsSchema), updateDetailsHandler)
 router.patch("/me/location", validate(updateLocationSchema), updateLocationHandler);
 router.patch("/me/push-token", validate(updatePushTokenSchema), updatePushTokenHandler);
 router.post("/me/heartbeat", heartbeatHandler);
+router.patch("/me/local-schedule", validate(localScheduleSchema), setLocalScheduleHandler);
 router.post("/me/photos", uploadLimiter, upload.single("photo"), uploadPhotoHandler);
 router.post("/me/interests", validate(setInterestsSchema), setInterestsHandler);
 router.post("/me/quick-assign-questions", quickAssignLimiter, quickAssignQuestionsHandler);

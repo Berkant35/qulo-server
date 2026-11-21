@@ -7,6 +7,7 @@ import { questionService } from "../services/question.service.js";
 import { prefConsentService } from "../services/pref-consent.service.js";
 import { identityService } from "../services/identity.service.js";
 import type { IdentityInput } from "../validators/identity.validator.js";
+import type { LocalScheduleInput } from "../validators/local-schedule.validator.js";
 import { clientMetaFromHeaders } from "../utils/client-meta.js";
 import type {
   UpdateProfileInput,
@@ -98,6 +99,16 @@ export async function updatePushTokenHandler(req: Request, res: Response, next: 
     const { push_token } = req.body as UpdatePushTokenInput;
     await userService.updatePushToken(req.user!.userId, push_token);
     res.json({ message: "Push token updated" });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function setLocalScheduleHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { localScheduled, until } = req.body as LocalScheduleInput;
+    await userService.setLocalSchedule(req.user!.userId, localScheduled, until);
+    res.status(204).send();
   } catch (err) {
     next(err);
   }

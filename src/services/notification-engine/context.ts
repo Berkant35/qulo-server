@@ -29,6 +29,8 @@ export interface EngineUser {
   is_banned: boolean | null;
   is_test_account: boolean | null;
   is_seed_profile: boolean | null;
+  /** Istemcinin yerel planladigi kurallar ({rules, until}) — migration 090; ham jsonb, local-schedule.ts ayristirir. */
+  local_schedule?: unknown;
 }
 
 export interface EngineMatch {
@@ -90,7 +92,7 @@ export interface EngineContext {
 
 const USER_COLUMNS =
   'id, name, locale, lng, push_token, last_active_at, last_seen_at, created_at, question_count, photos, ' +
-  'notification_preferences, is_deleted, is_banned, is_test_account, is_seed_profile';
+  'notification_preferences, is_deleted, is_banned, is_test_account, is_seed_profile, local_schedule';
 /** "Gunde tek karar" penceresi (engine.ts DECISION_WINDOW_MS ile ayni). */
 export const DECISION_WINDOW_MS = 20 * 60 * 60 * 1000;
 /** push_log saklama suresi — analytics-cleanup bu kadar eskiyi siler, kural dizileri bu kadar geriye bakar. TEK kaynak. */

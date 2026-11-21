@@ -248,6 +248,21 @@ export class UserService {
     if (error) throw Errors.SERVER_ERROR();
   }
 
+  /**
+   * Yerel bildirim plani (A6): bos liste = temizle (NULL). Yazma yalniz kullanicinin kendi satirina;
+   * tekrarlayan kural adlari teke indirilir. Motor `until` gecene dek ayni konulu kurali atlar.
+   */
+  async setLocalSchedule(userId: string, rules: readonly string[], until: string | undefined): Promise<void> {
+    const unique = [...new Set(rules)];
+    const value = unique.length > 0 && until ? { rules: unique, until: new Date(until).toISOString() } : null;
+    const { error } = await supabase
+      .from("users")
+      .update({ local_schedule: value })
+      .eq("id", userId)
+      .eq("is_deleted", false);
+    if (error) throw Errors.SERVER_ERROR();
+  }
+
   async heartbeat(userId: string): Promise<void> {
     const { error } = await supabase
       .from("users")

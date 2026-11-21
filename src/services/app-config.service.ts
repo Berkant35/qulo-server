@@ -45,8 +45,14 @@ export const DEFAULT_POWER_DEMO_ENABLED = true;
  */
 export const DEFAULT_ADS_ENABLED = false;
 
+/**
+ * Planli yerel bildirim senkronu (2.2.0 A6) — `app_config.local_schedule_enabled` (migration 090). Fail-closed:
+ * kolon yoksa / okunamazsa KAPALI; mobil `localScheduleEnabled` alani yoksa da kapali sayar.
+ */
+export const DEFAULT_LOCAL_SCHEDULE_ENABLED = false;
+
 /** `getRow` kolon listesinden AYRI okunan anahtarlar (migration'ı deploy'dan sonra gelebilir). */
-type BooleanFlagColumn = "mutual_match_enabled" | "served_gate_enabled" | "power_demo_enabled" | "ads_enabled";
+type BooleanFlagColumn = "mutual_match_enabled" | "served_gate_enabled" | "power_demo_enabled" | "ads_enabled" | "local_schedule_enabled";
 
 export interface AppConfigRow {
   id: string;
@@ -75,6 +81,7 @@ class AppConfigService {
   private readonly servedGateOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
   private readonly powerDemoOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
   private readonly adsOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
+  private readonly localScheduleOnbellek = new TtlCache<"acik", boolean>(APP_CONFIG_TTL_MS);
   private dormantUyariVerildi = false;
 
   /**
@@ -130,6 +137,11 @@ class AppConfigService {
   /** Reklam anahtarı (migration 079) — kolon yoksa KAPALI. */
   async getAdsEnabled(): Promise<boolean> {
     return this.readBooleanFlag("ads_enabled", this.adsOnbellek, DEFAULT_ADS_ENABLED);
+  }
+
+  /** Planli yerel bildirim senkron anahtari (migration 090) — kolon yoksa KAPALI. */
+  async getLocalScheduleEnabled(): Promise<boolean> {
+    return this.readBooleanFlag("local_schedule_enabled", this.localScheduleOnbellek, DEFAULT_LOCAL_SCHEDULE_ENABLED);
   }
 
   /**
@@ -192,6 +204,7 @@ class AppConfigService {
         // Satır okunamadıysa anahtar da bilinmez: sözleşme alanı yine de hep döner.
         powerDemoEnabled: DEFAULT_POWER_DEMO_ENABLED,
         adsEnabled: DEFAULT_ADS_ENABLED,
+        localScheduleEnabled: DEFAULT_LOCAL_SCHEDULE_ENABLED,
       };
     }
 
@@ -200,6 +213,7 @@ class AppConfigService {
     // `getRow` kolon listesinden AYRI okunur (078 deploy'dan sonra gelebilir); 60 sn önbellekli.
     const powerDemoEnabled = await this.getPowerDemoEnabled();
     const adsEnabled = await this.getAdsEnabled();
+    const localScheduleEnabled = await this.getLocalScheduleEnabled();
 
     return {
       minVersion: isIos ? row.min_version_ios : row.min_version_android,
@@ -212,6 +226,7 @@ class AppConfigService {
       isForceUpdateEnabled: row.is_force_update_enabled,
       powerDemoEnabled,
       adsEnabled,
+      localScheduleEnabled,
     };
   }
 
@@ -222,6 +237,7 @@ class AppConfigService {
       served_gate_enabled?: boolean;
       power_demo_enabled?: boolean;
       ads_enabled?: boolean;
+      local_schedule_enabled?: boolean;
     },
   ) {
     const { data: existing, error: fetchError } = await supabase
@@ -248,6 +264,7 @@ class AppConfigService {
     this.servedGateOnbellek.clear();
     this.powerDemoOnbellek.clear();
     this.adsOnbellek.clear();
+    this.localScheduleOnbellek.clear();
     if (error) throw error;
     return data;
   }
