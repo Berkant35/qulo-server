@@ -367,14 +367,19 @@ export class QuestionService {
       };
     });
 
+    // Dogru/yanlis toplamlari ayni soru satirlarindaki sayaclardan toplanir (ek sorgu yok).
+    // updateQuestionStats her cevapta solve_count + (correct | wrong) birlikte artirir.
+    const totalCorrect = analytics.reduce((s, a) => s + a.stats.correct, 0);
+    const totalWrong = analytics.reduce((s, a) => s + a.stats.wrong, 0);
+    const totalAttempts = totalCorrect + totalWrong;
+
     const totals = {
       total_solve_count: analytics.reduce((s, a) => s + a.stats.solve_count, 0),
       total_green_earned: analytics.reduce((s, a) => s + a.stats.green_earned, 0),
-      overall_success_rate: (() => {
-        const totalCorrect = analytics.reduce((s, a) => s + a.stats.correct, 0);
-        const totalAttempts = analytics.reduce((s, a) => s + a.stats.total_attempts, 0);
-        return totalAttempts > 0 ? Math.round((totalCorrect / totalAttempts) * 100) : 0;
-      })(),
+      total_correct: totalCorrect,
+      total_wrong: totalWrong,
+      total_attempts: totalAttempts,
+      overall_success_rate: totalAttempts > 0 ? Math.round((totalCorrect / totalAttempts) * 100) : 0,
       best_question_order: analytics.length > 0
         ? analytics.reduce((best, a) => a.stats.green_earned > (best?.stats.green_earned ?? 0) ? a : best, analytics[0])?.order_num ?? null
         : null,

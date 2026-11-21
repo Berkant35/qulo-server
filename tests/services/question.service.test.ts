@@ -193,3 +193,48 @@ describe('reorderByIds — TAM KUME kurali', () => {
     await expect(questionService.reorderByIds(A, ['q3', 'q2', 'q1'])).rejects.toBeTruthy();
   });
 });
+
+describe('getQuestionAnalytics — toplam cozum/dogru/yanlis', () => {
+  const st = (c: number, w: number, extra: Record<string, unknown> = {}) => ({
+    stats_correct: c, stats_wrong: w, stats_solve_count: c + w, stats_total_time_spent: 0,
+    stats_green_earned: 0, stats_answer_1_count: 0, stats_answer_2_count: 0, stats_answer_3_count: 0,
+    stats_answer_4_count: 0, stats_copy_used: 0, stats_half_used: 0, stats_hint_used: 0,
+    stats_time_extend_used: 0, stats_skip_used: 0, ...extra,
+  });
+
+  it('toplamlar yalniz kendi sorularinin sayaclarinin toplami; baskasinin sorulari girmez', async () => {
+    const { questionService } = await setup({
+      questions: [
+        q('q1', A, 1, st(6, 2)), q('q2', A, 2, st(1, 3)), q('qb', B, 1, st(100, 100)),
+      ],
+    });
+
+    const { totals, questions } = await questionService.getQuestionAnalytics(A);
+
+    expect(questions).toHaveLength(2);
+    expect(totals).toMatchObject({
+      total_solve_count: 12, total_correct: 7, total_wrong: 5, total_attempts: 12,
+      overall_success_rate: 58,
+    });
+  });
+
+  it('cozum yokken oran 0 ve bolme hatasi yok', async () => {
+    const { questionService } = await setup({ questions: [q('q1', A, 1, st(0, 0))] });
+
+    const { totals } = await questionService.getQuestionAnalytics(A);
+
+    expect(totals).toMatchObject({ total_correct: 0, total_wrong: 0, total_attempts: 0, overall_success_rate: 0 });
+  });
+
+  it('eski alanlar aynen ve tek sorgu atilir', async () => {
+    const { questionService, fake } = await setup({
+      questions: [q('q1', A, 1, st(3, 1, { stats_green_earned: 5 }))],
+    });
+
+    const r = await questionService.getQuestionAnalytics(A);
+
+    expect(r.questions[0].stats).toMatchObject({ correct: 3, wrong: 1, total_attempts: 4, success_rate: 75, green_earned: 5 });
+    expect(r.totals).toMatchObject({ total_green_earned: 5, best_question_order: 1 });
+    expect(fake.queries).toEqual([{ table: 'questions', op: 'select' }]);
+  });
+});
