@@ -79,11 +79,35 @@ describe('whatsNewAdminController', () => {
 
   it('toggle durumu çevirir', async () => {
     const { whatsNewAdminController, fake } = await load([
-      { id: 'a', app_version: '2.2.0', platform: 'all', content: { en: {} }, image_url: null, is_active: true },
+      { id: '11111111-1111-4111-8111-111111111111', app_version: '2.2.0', platform: 'all', content: { en: {} }, image_url: null, is_active: true },
     ]);
-    const { req, res } = reqRes({}, { id: 'a' });
+    const { req, res } = reqRes({}, { id: '11111111-1111-4111-8111-111111111111' });
     await whatsNewAdminController.toggle(req, res);
     expect(fake.table('whats_new')[0].is_active).toBe(false);
+  });
+});
+
+describe('geçersiz :id', () => {
+  const BAD = '../x';
+  it('editForm uuid değilse okumaz, listeye döner', async () => {
+    const { whatsNewAdminController, fake } = await load();
+    const spy = vi.spyOn(fake.client, 'from');
+    const { req, res } = reqRes({}, { id: BAD });
+    await whatsNewAdminController.editForm(req, res);
+    expect(res.redirected).toBe('/admin/whats-new');
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('update/toggle uuid değilse yazmaz; id URL\'ye yansımaz', async () => {
+    const { whatsNewAdminController, fake } = await load();
+    const spy = vi.spyOn(fake.client, 'from');
+    const u = reqRes(FORM, { id: BAD });
+    await whatsNewAdminController.update(u.req, u.res);
+    expect(u.res.redirected).toBe('/admin/whats-new');
+    const t = reqRes({}, { id: BAD });
+    await whatsNewAdminController.toggle(t.req, t.res);
+    expect(t.res.redirected).toBe('/admin/whats-new');
+    expect(spy).not.toHaveBeenCalled();
   });
 });
 

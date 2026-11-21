@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { whatsNewService, WhatsNewConflictError } from "../services/whats-new.service.js";
 import { whatsNewInputSchema, WHATS_NEW_LIMITS, WHATS_NEW_PLATFORMS } from "../validators/whats-new.validator.js";
+import { isUuid } from "../utils/validation.js";
 import { SUPPORTED_LOCALES, LOCALE_NAMES } from "../constants/locales.js";
 
 const PER_PAGE = 20;
@@ -80,6 +81,7 @@ class WhatsNewAdminController {
   async editForm(req: Request, res: Response) {
     try {
       const id = req.params.id as string;
+      if (!isUuid(id)) return res.redirect("/admin/whats-new");
       const item = await whatsNewService.getById(id);
       if (!item) return res.redirect("/admin/whats-new");
       this.renderForm(req, res, item, id);
@@ -107,6 +109,7 @@ class WhatsNewAdminController {
 
   async update(req: Request, res: Response) {
     const id = req.params.id as string;
+    if (!isUuid(id)) return res.redirect("/admin/whats-new"); // geçersiz id URL'ye yansıtılmaz
     const parsed = parseWhatsNewForm(req.body ?? {});
     if (!parsed.success) {
       req.session.whatsNewError = parsed.error.errors.map((e) => e.message).join(" · ");
@@ -123,8 +126,10 @@ class WhatsNewAdminController {
   }
 
   async toggle(req: Request, res: Response) {
+    const id = req.params.id as string;
+    if (!isUuid(id)) return res.redirect("/admin/whats-new");
     try {
-      await whatsNewService.toggleActive(req.params.id as string);
+      await whatsNewService.toggleActive(id);
     } catch (err) {
       console.error("[Admin] whats-new toggle failed:", err);
       req.session.whatsNewError = errorText(err);
