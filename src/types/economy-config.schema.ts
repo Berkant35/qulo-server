@@ -20,6 +20,8 @@ export const ECONOMY_BOUNDARIES = {
   rainbowMonthlyRedeemCap: { min: 20, max: 500 },
   rainbowMinAccountAgeDays: { min: 0, max: 90 },
   rainbowSuggestedUsd: { min: 0.005, max: 0.07 },
+  /** Profil tamamlama eşiği başına tek seferlik mor (canlı değerler 2–10). */
+  milestoneReward: { min: 0, max: 50 },
   /** Rozet başına tek seferlik mor (SILVER/GOLD). */
   badgeReward: { min: 0, max: 50 },
   /** Günlük ödüllü reklam: izleme başına mor (2.2.0, B3). */
@@ -181,7 +183,11 @@ const rewardedAdSchema = z
   .default({ ...DEFAULT_REWARDED_AD });
 
 const rewardsSchema = z.object({
-  milestones: z.record(z.string(), z.number().int().min(0)),
+  // Eşik anahtarı 1..100 tam sayı (%); ödül sınırlı — config artık doğrudan mor yatırıyor.
+  milestones: z.record(
+    z.string().regex(/^(?:[1-9]\d?|100)$/, "Eşik 1..100 tam sayı olmalı"),
+    z.number().int().min(B.milestoneReward.min).max(B.milestoneReward.max),
+  ),
   badges: z
     .object({
       SILVER: z.number().int().min(B.badgeReward.min).max(B.badgeReward.max),
