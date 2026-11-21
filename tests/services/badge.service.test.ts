@@ -143,7 +143,7 @@ describe("badgeService.claimReward", () => {
 
     const result = await badgeService.claimReward("user-42", "SILVER");
 
-    expect(addPurple).toHaveBeenCalledWith("user-42", 1, "BADGE_SILVER");
+    expect(addPurple).toHaveBeenCalledWith("user-42", 1, "BADGE_SILVER", "BADGE_SILVER");
     expect(updateUserId).toBe("user-42");
     expect(updatePatch).toEqual({ badge_rewards_claimed: ["SILVER"] });
     expect(result).toEqual({
@@ -168,7 +168,7 @@ describe("badgeService.claimReward", () => {
 
     const result = await badgeService.claimReward("user-42", "GOLD");
 
-    expect(addPurple).toHaveBeenCalledWith("user-42", 3, "BADGE_GOLD");
+    expect(addPurple).toHaveBeenCalledWith("user-42", 3, "BADGE_GOLD", "BADGE_GOLD");
     expect(updatePatch).toEqual({ badge_rewards_claimed: ["SILVER", "GOLD"] });
     expect(result.badge_rewards_claimed).toEqual(["SILVER", "GOLD"]);
     expect(result.diamonds_awarded).toBe(3);
@@ -190,7 +190,7 @@ describe("badgeService.claimReward", () => {
     });
     // Karakterizasyon: diamond kredisi update hatasından ÖNCE yapiliyor,
     // yani SERVER_ERROR fırlarsa kullanici zaten elmasi almis oluyor.
-    expect(addPurple).toHaveBeenCalledWith("user-42", 1, "BADGE_SILVER");
+    expect(addPurple).toHaveBeenCalledWith("user-42", 1, "BADGE_SILVER", "BADGE_SILVER");
   });
 
   it("ödül miktarı ekonomi config'ten gelir (admin yönetimi): eski 3/10 değerleri canlı config'te kalırsa onlar uygulanır", async () => {
@@ -201,7 +201,7 @@ describe("badgeService.claimReward", () => {
     const { badgeService } = await import("../../src/services/badge.service.js");
 
     await badgeService.claimReward("u1", "GOLD");
-    expect(addPurple).toHaveBeenCalledWith("u1", 10, "BADGE_GOLD");
+    expect(addPurple).toHaveBeenCalledWith("u1", 10, "BADGE_GOLD", "BADGE_GOLD");
   });
 
   it("config okunamazsa yedek sabitler (SILVER 1 / GOLD 3) kullanılır, talep düşmez", async () => {
@@ -212,7 +212,7 @@ describe("badgeService.claimReward", () => {
     const { badgeService } = await import("../../src/services/badge.service.js");
 
     await badgeService.claimReward("u1", "SILVER");
-    expect(addPurple).toHaveBeenCalledWith("u1", 1, "BADGE_SILVER");
+    expect(addPurple).toHaveBeenCalledWith("u1", 1, "BADGE_SILVER", "BADGE_SILVER");
   });
 
   it("daha önce SILVER alan kullanıcı yeni değerle bile ikinci kez ödül ALAMAZ (geriye dönük tekillik)", async () => {

@@ -45,7 +45,7 @@ export class BadgeService {
     }
 
     const reward = await badgeReward(level);
-    await diamondService.addPurple(userId, reward, `BADGE_${level}`);
+    await diamondService.addPurple(userId, reward, `BADGE_${level}`, `BADGE_${level}`);
 
     claimed.push(level);
     const { error: updateError } = await supabase
