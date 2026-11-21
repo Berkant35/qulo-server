@@ -132,6 +132,7 @@ export type SsvOutcome =
   | "ignored_token"
   | "ignored_stale"
   | "ignored_disabled"
+  | "user_ineligible"
   | "ignored_limit"
   | "ignored_duplicate"
   | "ignored_conflict";
@@ -142,6 +143,17 @@ export interface SsvDeps {
 }
 
 class RewardedAdService {
+  /** Ödül yalnız var olan, silinmemiş ve banlı olmayan kullanıcıya. Okuma hatası fırlatır (SSV 500 -> Google yeniden dener). */
+  private async isEligibleUser(userId: string): Promise<boolean> {
+    const { data, error } = await supabase
+      .from("users")
+      .select("is_banned, is_deleted")
+      .eq("id", userId)
+      .maybeSingle();
+    if (error) throw Errors.SERVER_ERROR();
+    return !!data && data.is_banned !== true && data.is_deleted !== true;
+  }
+
   /** Mobilin reklam öncesi çağırdığı uç. Kapalı/sır yok/birim yok/limit dolu -> available=false. */
   async getStatus(userId: string, nowMs = Date.now()): Promise<RewardedAdStatus> {
     const resetsAt = nextUtcMidnightIso(nowMs);
@@ -150,6 +162,12 @@ class RewardedAdService {
     const secret = tokenSecret();
     const closed: RewardedAdStatus = { available: false, purple: cfg.purple, resetsAt, customData: null };
     if (!cfg.enabled || cfg.purple <= 0 || cfg.dailyLimit <= 0 || !secret || allowedAdUnits().size === 0) return closed;
+
+    try {
+      if (!(await this.isEligibleUser(userId))) return closed;
+    } catch {
+      return closed; // okunamadı: ödül vermeyen güvenli taraf
+    }
 
     const { count, error } = await supabase
       .from("rewarded_ad_claims")
@@ -202,6 +220,8 @@ class RewardedAdService {
     const { config } = await economyConfigService.getActiveConfig();
     const cfg = config.rewards.rewardedAd;
     if (!cfg.enabled || cfg.purple <= 0 || cfg.dailyLimit <= 0) return ignore("ignored_disabled");
+
+    if (!(await this.isEligibleUser(userId))) return ignore("user_ineligible");
 
     // 1) Bu işlem daha önce talep edildi mi? (Google yeniden denemesi / kısmi başarısızlık onarımı)
     const prior = await this.findClaim(txId);

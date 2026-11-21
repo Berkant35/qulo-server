@@ -270,6 +270,28 @@ describe('rewardedAdService.handleCallback — günlük sınır ve tekilleştirm
   });
 });
 
+describe('uygun olmayan kullanıcı (banlı / silinmiş / yok)', () => {
+  const bad = (extra: Record<string, unknown>) => [{ id: U1, purple_diamonds: 0, purple_paid: 0, green_diamonds: 0, ...extra }];
+
+  it.each([{ is_banned: true }, { is_deleted: true }])('SSV: %o -> 200 ama ödül yok, user_ineligible', async (flag) => {
+    const { run, token, fake } = await setup({}, { users: bad(flag) });
+    expect(await run(buildQuery({ custom_data: token() }))).toEqual({ httpStatus: 200, outcome: 'user_ineligible' });
+    expect(balance(fake)).toBe(0);
+    expect(fake.table('rewarded_ad_claims')).toHaveLength(0);
+  });
+
+  it('SSV: kullanıcı satırı yoksa ödül yok', async () => {
+    const { run, token, fake } = await setup({}, { users: [] });
+    expect((await run(buildQuery({ custom_data: token() }))).outcome).toBe('user_ineligible');
+    expect(fake.table('diamond_transactions')).toHaveLength(0);
+  });
+
+  it.each([{ is_banned: true }, { is_deleted: true }])('status: %o -> available=false', async (flag) => {
+    const { mod } = await setup({}, { users: bad(flag) });
+    expect(await mod.rewardedAdService.getStatus(U1, NOW)).toMatchObject({ available: false, customData: null });
+  });
+});
+
 describe('rewardedAdService.getStatus', () => {
   it('uygunsa available=true + jeton + sıfırlanma zamanı', async () => {
     const { mod, fake } = await setup();
