@@ -8,12 +8,14 @@ kullanır (`GADServerSideVerificationOptions`).
 
 ## Akış
 1. `GET /api/v1/rewards/rewarded-ad/status` (Bearer) →
-   `{ available, purple, resetsAt, customData }`. `available=false` ise butonu gösterme (özellik kapalı, günlük hak
+   `{ available, purple, resetsAt, customData, ssvUserId }`. `available=false` ise butonu gösterme (özellik kapalı, günlük hak
    bitti veya sunucu yapılandırılmamış). `resetsAt`: hakkın yenileneceği an (UTC gece yarısı, ISO).
 2. Reklamı yüklemeden/göstermeden önce `ServerSideVerificationOptions` kur:
-   - Android: `setUserId(<kendi kullanıcı id'si>)`, `setCustomData(<status.customData>)`
+   - Android: `setUserId(<status.ssvUserId>)`, `setCustomData(<status.customData>)`
    - iOS: `GADServerSideVerificationOptions.userIdentifier = <kullanıcı id>`, `.customRewardString = <customData>`
-   `customData` **olduğu gibi** verilir (sunucunun ürettiği imzalı, kullanıcıya ve güne bağlı jeton). Her reklam öncesi
+   `customData` ve `ssvUserId` **olduğu gibi** verilir. **Gerçek Qulo kullanıcı id'si hiçbir alanda Google'a gitmez** (iOS
+   Privacy Manifest `UserID` beyanı): `ssvUserId` tersine çevrilemez takma kimlik; `customData` içinde gerçek kullanıcı
+   AES-256-GCM ile şifreli taşınır (`v2.<gün>.<nonce>.<şifreli>.<mac>`), yalnız sunucu çözer. Her reklam öncesi
    yeniden `status` çağır; jeton yalnız o UTC gününde geçerli.
 3. Reklam gösterilir, kullanıcı ödülü kazanınca (`onUserEarnedReward`) **bakiyeyi artırma**. Kısa bir gecikmeyle
    (saniyeler) bakiye/`status` yenile: Google SSV callback'ini sunucuya yollar, mor sunucuda yatar.

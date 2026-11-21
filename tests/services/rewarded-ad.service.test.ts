@@ -14,13 +14,14 @@ const otherPair = generateKeyPairSync('ec', { namedCurve: 'P-256' });
 const keys = async (id: string) => (id === '1' ? PEM : null);
 
 /** Google'ın sırası: alfabetik; signature + key_id en sonda. */
+let ssvOf: (id: string) => string = (id) => id;
 function buildQuery(
   over: Record<string, string> = {},
   opts: { signWith?: typeof pair.privateKey; tail?: string; keyId?: string } = {},
 ): string {
   const p: Record<string, string> = {
     ad_network: '5450213213286189855', ad_unit: UNIT, custom_data: 'TOKEN', reward_amount: '1',
-    reward_item: 'coins', timestamp: String(NOW), transaction_id: 'tx-1', user_id: U1, ...over,
+    reward_item: 'coins', timestamp: String(NOW), transaction_id: 'tx-1', user_id: ssvOf(U1), ...over,
   };
   const content = Object.keys(p).sort().map((k) => `${k}=${encodeURIComponent(p[k]!)}`).join('&');
   const sig = createSign('SHA256').update(content).sign(opts.signWith ?? pair.privateKey).toString('base64url');
@@ -44,6 +45,7 @@ async function setup(
   }, { unique: { rewarded_ad_claims: ['transaction_id', 'user_id,day,slot'] }, ...fakeOpts });
   vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
   const mod = await import('../../src/services/rewarded-ad.service.js');
+  ssvOf = (id) => mod.ssvUserId(id, SECRET);
   const token = (userId = U1, at = NOW) => mod.mintCustomData(userId, at, SECRET);
   const run = (query: string) => mod.rewardedAdService.handleCallback(query, { keys, now: () => NOW });
   return { fake, mod, token, run };
@@ -88,7 +90,7 @@ describe('rewardedAdService.handleCallback — imza', () => {
 
   it('imzalı içerik değiştirilirse (user_id) 400', async () => {
     const { run, token, fake } = await setup();
-    const q = buildQuery({ custom_data: token() }).replace('user_id=u1', 'user_id=u2');
+    const q = buildQuery({ custom_data: token() }).replace(`user_id=${ssvOf(U1)}`, 'user_id=u2');
     expect((await run(q)).httpStatus).toBe(400);
     expect(balance(fake, 'u2')).toBe(0);
   });
@@ -107,7 +109,7 @@ describe('rewardedAdService.handleCallback — imza', () => {
     const { run, token } = await setup();
     // imza yinelenmiş içerik üzerinden atılır -> imza geçerli ama biçim geçersiz
     const t = token();
-    const content = `ad_unit=${UNIT}&custom_data=${t}&timestamp=${NOW}&transaction_id=tx-1&user_id=u1&user_id=u2`;
+    const content = `ad_unit=${UNIT}&custom_data=${t}&timestamp=${NOW}&transaction_id=tx-1&user_id=${ssvOf(U1)}&user_id=u2`;
     const sig = createSign('SHA256').update(content).sign(pair.privateKey).toString('base64url');
     expect((await run(`${content}&signature=${sig}&key_id=1`)).httpStatus).toBe(400);
   });
@@ -130,9 +132,9 @@ describe('rewardedAdService.handleCallback — imza', () => {
 });
 
 describe('rewardedAdService.handleCallback — jeton, birim, config', () => {
-  it('jeton başka kullanıcıya ait -> 200, ödül yok', async () => {
+  it('jeton başka kullanıcıya ait (user_id u1 takma kimliği, jeton u2) -> 200, ödül yok', async () => {
     const { run, token, fake } = await setup();
-    const r = await run(buildQuery({ custom_data: token('u2') })); // user_id=u1 ama jeton u2'nin
+    const r = await run(buildQuery({ custom_data: token('u2') }));
     expect(r).toEqual({ httpStatus: 200, outcome: 'ignored_token' });
     expect(balance(fake)).toBe(0);
     expect(balance(fake, 'u2')).toBe(0);
@@ -147,7 +149,7 @@ describe('rewardedAdService.handleCallback — jeton, birim, config', () => {
 
   it('sahte (imzasız) jeton ve eksik custom_data -> ödül yok', async () => {
     const { run, fake } = await setup();
-    expect((await run(buildQuery({ custom_data: 'v1.2026-11-18.abc.AAAA' }))).outcome).toBe('ignored_token');
+    expect((await run(buildQuery({ custom_data: 'v2.2026-11-18.abc.AAAA.BBBB' }))).outcome).toBe('ignored_token');
     const noToken = buildQuery({}).replace(/custom_data=TOKEN&/, '');
     // imza geçersiz olur (içerik değişti) -> 400; asıl kapı: jetonsuz ödül yok
     expect((await run(noToken)).httpStatus).toBe(400);
@@ -247,7 +249,7 @@ describe('rewardedAdService.handleCallback — günlük sınır ve tekilleştirm
   it('başka kullanıcının transaction_id’sini yeniden kullanma -> ödül yok', async () => {
     const { run, token, fake } = await setup();
     await run(buildQuery({ custom_data: token(), transaction_id: 'tx-1' }));
-    const r = await run(buildQuery({ custom_data: token('u2'), user_id: 'u2', transaction_id: 'tx-1' }));
+    const r = await run(buildQuery({ custom_data: token('u2'), user_id: ssvOf('u2'), transaction_id: 'tx-1' }));
     expect(r.outcome).toBe('ignored_conflict');
     expect(balance(fake, 'u2')).toBe(0);
   });
@@ -297,8 +299,8 @@ describe('rewardedAdService.getStatus', () => {
     const { mod, fake } = await setup();
     const s = await mod.rewardedAdService.getStatus(U1, NOW);
     expect(s).toMatchObject({ available: true, purple: 10, resetsAt: '2026-11-19T00:00:00.000Z' });
-    expect(mod.verifyCustomData(s.customData!, U1, SECRET)).toBe('2026-11-18');
-    expect(mod.verifyCustomData(s.customData!, 'u2', SECRET)).toBeNull();
+    expect(mod.openCustomData(s.customData!, SECRET)).toEqual({ userId: U1, day: '2026-11-18' });
+    expect(s.ssvUserId).toBe(mod.ssvUserId(U1, SECRET));
     expect(fake.table('diamond_transactions')).toHaveLength(0);
   });
 
@@ -329,5 +331,67 @@ describe('rewardedAdService.getStatus', () => {
     expect(parsed.rewards.rewardedAd).toEqual({ enabled: false, purple: 10, dailyLimit: 1 });
     expect(() => economyConfigSchema.parse({ ...economyConfigFixture, rewards: { ...rewardsOld, rewardedAd: { purple: 51 } } })).toThrow();
     expect(() => economyConfigSchema.parse({ ...economyConfigFixture, rewards: { ...rewardsOld, rewardedAd: { dailyLimit: 6 } } })).toThrow();
+  });
+});
+
+describe('rewardedAdService — Google\'a giden kimlik (gizlilik)', () => {
+  const dec = (t: string) => t.split('.').map((x) => { try { return Buffer.from(x, 'base64url').toString('latin1'); } catch { return ''; } }).join('|');
+
+  it('ssvUserId kararlı, kullanıcıya özgü, userId içermez', async () => {
+    const { mod } = await setup();
+    const a = mod.ssvUserId(U1, SECRET);
+    expect(a).toBe(mod.ssvUserId(U1, SECRET));
+    expect(a).toHaveLength(22);
+    expect(a).not.toBe(mod.ssvUserId('u2', SECRET));
+    expect(a).not.toBe(mod.ssvUserId(U1, SECRET + 'x'));
+    expect(a).not.toContain(U1);
+  });
+
+  it('jetonda userId düz metin / base64 olarak bulunmaz; her mint farklı', async () => {
+    const { token } = await setup();
+    const t = token();
+    expect(t).not.toContain(U1);
+    expect(dec(t)).not.toContain(U1);
+    expect(token()).not.toBe(t);
+  });
+
+  it('doğru akış ödül verir (user_id=ssvUserId)', async () => {
+    const { run, token, fake } = await setup();
+    expect((await run(buildQuery({ custom_data: token() }))).outcome).toBe('rewarded');
+    expect(balance(fake)).toBe(10);
+  });
+
+  it('user_id gerçek id (takma kimlik değil) -> ödül yok', async () => {
+    const { run, token, fake } = await setup();
+    expect((await run(buildQuery({ custom_data: token(), user_id: U1 }))).outcome).toBe('ignored_token');
+    expect((await run(buildQuery({ custom_data: token(), user_id: ssvOf('u2') }))).outcome).toBe('ignored_token');
+    expect(balance(fake)).toBe(0);
+  });
+
+  it('kurcalanmış şifreli metin / etiket / mac -> ödül yok', async () => {
+    const { mod, run, token, fake } = await setup();
+    const [v, d, n, enc, m] = token().split('.') as [string, string, string, string, string];
+    const raw = Buffer.from(enc, 'base64url');
+    const flip = (i: number) => { const b = Buffer.from(raw); b[i] = b[i]! ^ 1; return b.toString('base64url'); };
+    for (const bad of [flip(0), flip(14), flip(raw.length - 1)]) {
+      // mac yeniden hesaplanamaz (sır yok) -> mac uyuşmaz; GCM etiketi ayrıca korur
+      expect(mod.openCustomData([v, d, n, bad, m].join('.'), SECRET)).toBeNull();
+      expect((await run(buildQuery({ custom_data: [v, d, n, bad, m].join('.') }))).outcome).toBe('ignored_token');
+    }
+    expect(mod.openCustomData([v, d, n, enc, m.slice(0, -2) + 'AA'].join('.'), SECRET)).toBeNull();
+    expect(balance(fake)).toBe(0);
+  });
+
+  it('gün değiştirilmiş jeton (AAD/mac) geçmez', async () => {
+    const { mod, token } = await setup();
+    const [v, , n, enc, m] = token().split('.');
+    expect(mod.openCustomData([v, '2026-11-17', n, enc, m].join('.'), SECRET)).toBeNull();
+  });
+
+  it('eski v1 biçimi -> 200 + ödül yok', async () => {
+    const { run, fake } = await setup();
+    const r = await run(buildQuery({ custom_data: 'v1.2026-11-18.abc.AAAA', user_id: U1 }));
+    expect(r).toEqual({ httpStatus: 200, outcome: 'ignored_token' });
+    expect(balance(fake)).toBe(0);
   });
 });

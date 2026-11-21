@@ -1,4 +1,4 @@
-import { createHmac, createVerify, randomBytes, timingSafeEqual } from "node:crypto";
+import { createCipheriv, createDecipheriv, createHash, createHmac, createVerify, randomBytes, timingSafeEqual } from "node:crypto";
 import { supabase } from "../config/supabase.js";
 import { diamondService } from "./diamond.service.js";
 import { economyConfigService } from "./economy-config.service.js";
@@ -14,7 +14,7 @@ import { Errors } from "../utils/errors.js";
  */
 
 export const REWARDED_AD_REASON = "REWARDED_AD";
-const TOKEN_VERSION = "v1";
+const TOKEN_VERSION = "v2";
 /** Callback `timestamp`'ı (Google, imzalı) ile şimdi arasındaki en çok fark; eski callback tekrarını keser. */
 const MAX_CALLBACK_AGE_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -46,27 +46,55 @@ export function nextUtcMidnightIso(ms: number): string {
   return new Date((Math.floor(ms / DAY_MS) + 1) * DAY_MS).toISOString();
 }
 
-function mac(secret: string, userId: string, day: string, nonce: string): string {
-  return createHmac("sha256", secret).update(`${TOKEN_VERSION}|${userId}|${day}|${nonce}`).digest("base64url");
+/**
+ * Gizlilik: Google'a (SSV `user_id` + `custom_data`) gerçek Qulo kullanıcı kimliği GİTMEZ.
+ * - `ssvUserId`: kararlı, tersine çevrilemez takma kimlik (HMAC ilk 22 karakter).
+ * - jeton: gerçek userId AES-256-GCM ile ŞİFRELİ taşınır; yalnız sunucu çözer.
+ */
+export function ssvUserId(userId: string, secret: string): string {
+  return createHmac("sha256", secret).update(`ssv-uid:${userId}`).digest("base64url").slice(0, 22);
 }
 
-/** Kullanıcıya + o güne (UTC) bağlı imzalı jeton: `v1.<yyyy-mm-dd>.<nonce>.<mac>`. */
+function encKey(secret: string): Buffer {
+  return createHash("sha256").update(`${secret}ssv-enc`).digest();
+}
+
+function mac(secret: string, day: string, nonce: string, enc: string): string {
+  return createHmac("sha256", secret).update(`${TOKEN_VERSION}|${day}|${nonce}|${enc}`).digest("base64url");
+}
+
+/** Jeton: `v2.<yyyy-mm-dd>.<nonce>.<enc>.<mac>`; enc = base64url(iv12 | tag16 | AES-GCM(userId)), AAD = gün|nonce. */
 export function mintCustomData(userId: string, nowMs: number, secret: string): string {
   const day = utcDay(nowMs);
   const nonce = randomBytes(9).toString("base64url");
-  return `${TOKEN_VERSION}.${day}.${nonce}.${mac(secret, userId, day, nonce)}`;
+  const iv = randomBytes(12);
+  const cipher = createCipheriv("aes-256-gcm", encKey(secret), iv);
+  cipher.setAAD(Buffer.from(`${day}|${nonce}`));
+  const ct = Buffer.concat([cipher.update(userId, "utf8"), cipher.final()]);
+  const enc = Buffer.concat([iv, cipher.getAuthTag(), ct]).toString("base64url");
+  return `${TOKEN_VERSION}.${day}.${nonce}.${enc}.${mac(secret, day, nonce, enc)}`;
 }
 
-/** Geçerliyse jetonun günü; değilse null. Kullanıcı ve gün jetona bağlı — başkasının/dünün jetonu geçmez. */
-export function verifyCustomData(token: string, userId: string, secret: string): string | null {
+/** Geçerliyse jetondaki gerçek userId + gün; kurcalanmış/eski biçim/başka sır -> null. */
+export function openCustomData(token: string, secret: string): { userId: string; day: string } | null {
   const parts = token.split(".");
-  if (parts.length !== 4 || parts[0] !== TOKEN_VERSION) return null;
-  const [, day, nonce, given] = parts as [string, string, string, string];
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || !/^[A-Za-z0-9_-]{1,32}$/.test(nonce)) return null;
-  const expected = Buffer.from(mac(secret, userId, day, nonce));
+  if (parts.length !== 5 || parts[0] !== TOKEN_VERSION) return null;
+  const [, day, nonce, enc, given] = parts as [string, string, string, string, string];
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || !/^[A-Za-z0-9_-]{1,32}$/.test(nonce) || !/^[A-Za-z0-9_-]+$/.test(enc)) return null;
+  const expected = Buffer.from(mac(secret, day, nonce, enc));
   const actual = Buffer.from(given);
   if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) return null;
-  return day;
+  const raw = Buffer.from(enc, "base64url");
+  if (raw.length <= 28) return null;
+  try {
+    const d = createDecipheriv("aes-256-gcm", encKey(secret), raw.subarray(0, 12));
+    d.setAAD(Buffer.from(`${day}|${nonce}`));
+    d.setAuthTag(raw.subarray(12, 28));
+    const userId = Buffer.concat([d.update(raw.subarray(28)), d.final()]).toString("utf8");
+    return userId ? { userId, day } : null;
+  } catch {
+    return null;
+  }
 }
 
 // ── SSV sorgusu ──
@@ -123,6 +151,8 @@ export interface RewardedAdStatus {
   purple: number;
   resetsAt: string;
   customData: string | null;
+  /** Google'a `userId` olarak verilecek takma kimlik (gerçek kullanıcı id'si ASLA). */
+  ssvUserId: string | null;
 }
 
 export type SsvOutcome =
@@ -160,7 +190,7 @@ class RewardedAdService {
     const { config } = await economyConfigService.getActiveConfig();
     const cfg = config.rewards.rewardedAd;
     const secret = tokenSecret();
-    const closed: RewardedAdStatus = { available: false, purple: cfg.purple, resetsAt, customData: null };
+    const closed: RewardedAdStatus = { available: false, purple: cfg.purple, resetsAt, customData: null, ssvUserId: null };
     if (!cfg.enabled || cfg.purple <= 0 || cfg.dailyLimit <= 0 || !secret || allowedAdUnits().size === 0) return closed;
 
     try {
@@ -180,7 +210,7 @@ class RewardedAdService {
       return closed;
     }
     if ((count ?? 0) >= cfg.dailyLimit) return closed;
-    return { available: true, purple: cfg.purple, resetsAt, customData: mintCustomData(userId, nowMs, secret) };
+    return { available: true, purple: cfg.purple, resetsAt, customData: mintCustomData(userId, nowMs, secret), ssvUserId: ssvUserId(userId, secret) };
   }
 
   /**
@@ -199,22 +229,25 @@ class RewardedAdService {
 
     const { params } = parsed;
     const txId = params.get("transaction_id");
-    const userId = params.get("user_id");
+    const ssvUid = params.get("user_id");
     const adUnit = params.get("ad_unit");
     const customData = params.get("custom_data");
     const tsMs = Number(params.get("timestamp"));
     const ignore = (outcome: SsvOutcome) => {
-      console.warn("[RewardedAd] SSV ignored", { outcome, userId, txId });
+      console.warn("[RewardedAd] SSV ignored", { outcome, txId });
       return { httpStatus: 200 as const, outcome };
     };
 
-    if (!txId || !userId || !adUnit || !customData || !Number.isFinite(tsMs)) return ignore("ignored_token");
+    if (!txId || !ssvUid || !adUnit || !customData || !Number.isFinite(tsMs)) return ignore("ignored_token");
     if (!allowedAdUnits().has(normalizeUnit(adUnit))) return ignore("ignored_unit");
 
     const secret = tokenSecret();
-    const tokenDay = secret ? verifyCustomData(customData, userId, secret) : null;
-    // Gün = Google'ın (imzalı) olay zamanının UTC günü; jeton aynı güne ait olmalı.
-    if (!tokenDay || tokenDay !== utcDay(tsMs)) return ignore("ignored_token");
+    // Eski (v1) / bozuk / kurcalanmış jeton -> 200 + ödül yok (Google yeniden denemesin).
+    const opened = secret ? openCustomData(customData, secret) : null;
+    if (!secret || !opened) return ignore("ignored_token");
+    const { userId, day: tokenDay } = opened;
+    // Gün = Google'ın (imzalı) olay zamanının UTC günü; Google'a giden takma kimlik jetondaki kullanıcıya ait olmalı.
+    if (tokenDay !== utcDay(tsMs) || ssvUid !== ssvUserId(userId, secret)) return ignore("ignored_token");
     if (Math.abs(nowMs - tsMs) > MAX_CALLBACK_AGE_MS) return ignore("ignored_stale");
 
     const { config } = await economyConfigService.getActiveConfig();

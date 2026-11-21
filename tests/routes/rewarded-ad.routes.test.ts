@@ -73,7 +73,7 @@ describe('/api/v1/rewards/rewarded-ad', () => {
     expect(status.available).toBe(true);
     const params: Record<string, string> = {
       ad_network: '1', ad_unit: '1234567890', custom_data: status.customData, reward_amount: '1',
-      reward_item: 'coins', timestamp: String(NOW), transaction_id: 'tx-r1', user_id: 'u1',
+      reward_item: 'coins', timestamp: String(NOW), transaction_id: 'tx-r1', user_id: status.ssvUserId,
     };
     const content = Object.keys(params).sort().map((k) => `${k}=${encodeURIComponent(params[k]!)}`).join('&');
     const sig = createSign('SHA256').update(content).sign(pair.privateKey).toString('base64url');
