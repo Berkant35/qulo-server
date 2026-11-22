@@ -17,6 +17,12 @@ describe('errorHandler', () => {
     expect(govde).toEqual({ error: { code: 'PAYLOAD_TOO_LARGE' } });
   });
 
+  it('diger multer hatalari (beklenmeyen alan, dosya sayisi) 400 VALIDATION_ERROR olur', () => {
+    const { kod, govde } = calistir(new multer.MulterError('LIMIT_UNEXPECTED_FILE', 'other'));
+    expect(kod).toBe(400);
+    expect(govde).toEqual({ error: { code: 'VALIDATION_ERROR', params: { details: { file: 'LIMIT_UNEXPECTED_FILE' } } } });
+  });
+
   it('bilinmeyen hata 500 SERVER_ERROR ve ic ayrinti sizdirmaz', () => {
     const log = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     const { kod, govde } = calistir(new Error('db sifresi yanlis: xyz'));

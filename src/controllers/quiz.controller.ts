@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { quizService } from "../services/quiz.service.js";
+import { mediaActiveFailClosed } from "./media-gate.js";
 import type { StartQuizInput, AnswerQuizInput } from "../validators/quiz.validator.js";
 
 export async function startQuizHandler(req: Request, res: Response, next: NextFunction) {
@@ -17,7 +18,7 @@ export async function getCurrentQuestionHandler(req: Request, res: Response, nex
   try {
     const userId = req.user!.userId;
     const sessionId = req.params.session_id as string;
-    const data = await quizService.getCurrentQuestion(sessionId, userId);
+    const data = await quizService.getCurrentQuestion(sessionId, userId, { active: await mediaActiveFailClosed(req, "quiz") });
     res.json(data);
   } catch (err) {
     next(err);

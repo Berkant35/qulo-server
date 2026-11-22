@@ -7,6 +7,10 @@
     "new_match_solver": "Congratulations! You answered all questions correctly, you have a new match!",
     "new_match_badge": "Someone solved your quiz with {badge} badge! You have a new match!",
     "chat_question_answered": "Your chat question was answered ({result})",
+    "lifecycle_solved_waiting": {
+      "title": "Someone solved your questions",
+      "body": "{name} got all your questions right and you matched. They're waiting for your reply!"
+    },
     "lifecycle_unread_message": {
       "title": "You have an unread message",
       "body": "{name} wrote to you and is waiting for a reply."

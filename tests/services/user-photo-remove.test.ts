@@ -102,6 +102,21 @@ describe('userService.removePhotosByUrl (backoffice)', () => {
     expect(photosOf()).toEqual([url(1)]);
     expect(fake.storageFiles('photos')).toEqual([BASKA, path(1)]);
   });
+
+  it.each([
+    ['path traversal', `${U1}/../99999999-9999-4999-8999-999999999999/x.jpg`],
+    ['alt klasör', `${U1}/alt/x.jpg`],
+    ['nokta-nokta dosya adı', `${U1}/..`],
+    ['güvensiz karakter', `${U1}/x%2F..%2Fy.jpg`],
+  ])('%s: profilden kalkar, depoda hiçbir dosya silinmez', async (_ad, garip) => {
+    const BASKA = '99999999-9999-4999-8999-999999999999/x.jpg';
+    const { userService, fake, photosOf } = await kur([`${BASE}${garip}`, url(1)], {
+      fake: { storage: { photos: [BASKA, garip, path(1)] } },
+    });
+    await userService.removePhotosByUrl(U1, [`${BASE}${garip}`]);
+    expect(photosOf()).toEqual([url(1)]);
+    expect(fake.storageFiles('photos')).toEqual([BASKA, garip, path(1)]);
+  });
 });
 
 describe('koşullu yazım (compare-and-swap) — eşzamanlı değişiklik ezilmez', () => {

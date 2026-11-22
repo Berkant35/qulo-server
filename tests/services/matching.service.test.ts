@@ -87,6 +87,10 @@ async function loadService(
     rpc?: FakeSupabaseOptions["rpc"];
     /** app_config.discover_dormant_days (migration 074); varsayilan 14. */
     dormantDays?: number;
+    /** app_config.discover_inactive_exclude_days (migration 080); testte varsayilan 0 (kapali — eski testler). */
+    inactiveExcludeDays?: number;
+    /** app_config.discover_unanswered_match_cap (migration 080); testte varsayilan 0 (kapali). */
+    unansweredCap?: number;
     /** app_config.mutual_match_enabled (migration 075); varsayilan kapali. */
     mutual?: boolean;
     /** app_config.served_gate_enabled (migration 077); varsayilan kapali. */
@@ -115,6 +119,8 @@ async function loadService(
   vi.doMock("../../src/services/app-config.service.js", () => ({
     appConfigService: {
       getDiscoverDormantDays: async () => opts.dormantDays ?? 14,
+      getDiscoverInactiveExcludeDays: async () => opts.inactiveExcludeDays ?? 0,
+      getDiscoverUnansweredMatchCap: async () => opts.unansweredCap ?? 0,
       getMutualMatchEnabled: async () => opts.mutual ?? false,
       getServedGateEnabled: async () => opts.servedGate ?? false,
     },
@@ -498,7 +504,7 @@ describe("discover — uyuyan hesaplar sona (prod 29 Eyl-3 Eki: yanitsiz eslesme
     expect(res.cards.map((c) => c.user_id)).toEqual([UYUYAN_YAKIN, AKTIF_UZAK]);
   });
 
-  it("havuzda yalniz uyuyanlar varsa Discover BOSALMAZ — sert filtre degil", async () => {
+  it("dislama kapaliyken (0) havuzda yalniz uyuyanlar varsa Discover BOSALMAZ — uyuyan esigi sert filtre degil", async () => {
     const ids = [uid(42), uid(43)];
     const service = await loadService({
       users: [viewerRow(), ...ids.map((id, i) => candidateRow(id, 3 + i, { last_seen_at: gunOnce(100) }))],
@@ -511,7 +517,7 @@ describe("discover — uyuyan hesaplar sona (prod 29 Eyl-3 Eki: yanitsiz eslesme
     expect(res.empty_reason).toBeUndefined();
   });
 
-  it("last_seen_at bos aday uyuyan sayilir ama listede kalir", async () => {
+  it("dislama kapaliyken last_seen_at bos aday uyuyan sayilir ama listede kalir", async () => {
     const BOS = uid(44);
     const service = await loadService(tablolar([candidateRow(BOS, 1, { last_seen_at: null })]));
     const res = await service.discover(VIEWER_ID, 1);
@@ -545,6 +551,170 @@ describe("discover — uyuyan hesaplar sona (prod 29 Eyl-3 Eki: yanitsiz eslesme
     });
     const res = await service.discover(VIEWER_ID, 1);
     expect(res.cards.map((c) => c.user_id)).toEqual([UYUYAN_YAKIN, AKTIF_UZAK, SEED]);
+  });
+});
+
+describe("discover — canli hedef onceligi (2.0.18: 208 eslesmenin 4'u konusmaya dondu)", () => {
+  const gunOnce = (gun: number) => new Date(Date.now() - gun * 24 * 60 * 60 * 1000).toISOString();
+  const AKTIF = uid(60);
+  const ON_GUN = uid(61);
+  const KIRK_GUN = uid(62);
+  const HIC = uid(63);
+  const users = () => [
+    viewerRow(),
+    candidateRow(AKTIF, 120, { last_seen_at: gunOnce(0.1) }),
+    candidateRow(ON_GUN, 2, { last_seen_at: gunOnce(10) }),
+    candidateRow(KIRK_GUN, 1, { last_seen_at: gunOnce(40) }),
+    candidateRow(HIC, 1, { last_seen_at: null }),
+  ];
+  const tablolar = (): Tables => ({
+    users: users(), swipes: [], matches: [], questions: questionsFor([AKTIF, ON_GUN, KIRK_GUN, HIC]),
+  });
+  const RPC = "discover_unanswered_match_counts";
+
+  it("30+ gundur gorulmeyen ve hic gorulmemis aday desteden cikar; 10 gunluk uyuyan sonda kalir", async () => {
+    const service = await loadService(tablolar(), { dormantDays: 3, inactiveExcludeDays: 30 });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual([AKTIF, ON_GUN]);
+  });
+
+  it("dislama 0 ise (kapali) hepsi listede, eski davranis", async () => {
+    const service = await loadService(tablolar(), { dormantDays: 3, inactiveExcludeDays: 0 });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id).sort()).toEqual([AKTIF, ON_GUN, KIRK_GUN, HIC].sort());
+  });
+
+  it("seed dislanmaz (presence ritmi yapay)", async () => {
+    const SEED = uid(64);
+    const t = tablolar();
+    t.users.push(candidateRow(SEED, 1, { is_seed_profile: true, is_test_account: true, last_seen_at: gunOnce(90) }));
+    (t.questions as unknown[]).push(...questionsFor([SEED]));
+    const service = await loadService(t, { dormantDays: 3, inactiveExcludeDays: 30 });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toContain(SEED);
+  });
+
+  it("dil kapisini gecenlerin hepsi uzun suredir gorulmuyorsa empty_reason 'inactive'", async () => {
+    const service = await loadService({
+      users: [viewerRow(), candidateRow(KIRK_GUN, 1, { last_seen_at: gunOnce(40) })],
+      swipes: [], matches: [], questions: questionsFor([KIRK_GUN]),
+    }, { inactiveExcludeDays: 30 });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards).toEqual([]);
+    expect(res.empty_reason).toBe("inactive");
+  });
+
+  it("yabanci dilde tek aday: K3 geregi elenmez (dil kapisi artik elemez) → kart var, empty_reason yok", async () => {
+    const service = await loadService({
+      users: [viewerRow(), candidateRow(AKTIF, 1)],
+      swipes: [], matches: [], questions: questionsFor([AKTIF], "de"),
+    }, { inactiveExcludeDays: 30 });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual([AKTIF]);
+    expect(res.empty_reason).toBeUndefined();
+  });
+
+  it("cevapsiz eslesmesi tavani asan aktif aday, diger aktiflerin ARKASINA, uyuyanin ONUNE gider", async () => {
+    const YIGILMIS = uid(65);
+    const t: Tables = {
+      users: [
+        viewerRow(),
+        candidateRow(YIGILMIS, 1, { last_seen_at: gunOnce(0.1) }),
+        candidateRow(AKTIF, 120, { last_seen_at: gunOnce(0.1) }),
+        candidateRow(ON_GUN, 2, { last_seen_at: gunOnce(10) }),
+      ],
+      swipes: [], matches: [], questions: questionsFor([YIGILMIS, AKTIF, ON_GUN]),
+    };
+    const service = await loadService(t, {
+      dormantDays: 3, inactiveExcludeDays: 30, unansweredCap: 3,
+      rpc: { [RPC]: { data: [{ user_id: YIGILMIS, unanswered: 21 }] } },
+    });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual([AKTIF, YIGILMIS, ON_GUN]);
+    const call = sonFake.rpcCalls.find((c) => c.name === RPC);
+    expect(call?.args).toMatchObject({ p_min: 3 });
+    const { p_since, p_until } = call?.args as { p_since: string; p_until: string };
+    expect(Math.abs(Date.now() - 30 * 24 * 60 * 60 * 1000 - Date.parse(p_since))).toBeLessThan(60_000);
+    // Cevap verme payi: son 24 saatteki eslesme "cevapsiz" sayilmaz.
+    expect(Math.abs(Date.now() - 24 * 60 * 60 * 1000 - Date.parse(p_until))).toBeLessThan(60_000);
+  });
+
+  it("RPC tavani asmayan satiri dondururse (savunma) kullanici yigilmis sayilmaz", async () => {
+    const service = await loadService({
+      users: [viewerRow(), candidateRow(ON_GUN, 1, { last_seen_at: gunOnce(0.1) }), candidateRow(AKTIF, 120, { last_seen_at: gunOnce(0.1) })],
+      swipes: [], matches: [], questions: questionsFor([ON_GUN, AKTIF]),
+    }, { unansweredCap: 3, rpc: { [RPC]: { data: [{ user_id: ON_GUN, unanswered: 2 }] } } });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual([ON_GUN, AKTIF]);
+  });
+
+  it("tavan 0 (kapali) ise RPC hic cagrilmaz", async () => {
+    const service = await loadService(tablolar(), { unansweredCap: 0 });
+    await service.discover(VIEWER_ID, 1);
+    expect(sonFake.rpcCalls.some((c) => c.name === RPC)).toBe(false);
+  });
+
+  it("RPC hatasi Discover'i bozmaz: kartlar doner, tavan uygulanmaz, hata loglanir", async () => {
+    const err = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const service = await loadService(tablolar(), {
+      dormantDays: 3, inactiveExcludeDays: 30, unansweredCap: 3,
+      rpc: { [RPC]: { data: null, error: { message: "function does not exist" } } },
+    });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual([AKTIF, ON_GUN]);
+    expect(err).toHaveBeenCalledWith(expect.stringContaining("unanswered RPC"), "function does not exist");
+  });
+
+  it("hic gorulmemis (last_seen_at NULL) 500+ hesap aday tavanini yemez: aktif aday yine gelir (NULLS LAST)", async () => {
+    const nulls = Array.from({ length: 520 }, (_, i) => candidateRow(uid(1000 + i), 1, { last_seen_at: null }));
+    const service = await loadService({
+      users: [viewerRow(), ...nulls, candidateRow(AKTIF, 120, { last_seen_at: gunOnce(0.1) })],
+      swipes: [], matches: [], questions: questionsFor([AKTIF]),
+    }, { inactiveExcludeDays: 30 });
+    const res = await service.discover(VIEWER_ID, 1);
+    expect(res.cards.map((c) => c.user_id)).toEqual([AKTIF]);
+  });
+
+  it("RPC sonucu onbellekli: ardisik iki Discover istegi tek RPC", async () => {
+    const service = await loadService(tablolar(), { unansweredCap: 3, rpc: { [RPC]: { data: [] } } });
+    await service.discover(VIEWER_ID, 1);
+    await service.discover(VIEWER_ID, 1);
+    expect(sonFake.rpcCalls.filter((c) => c.name === RPC)).toHaveLength(1);
+  });
+});
+
+describe("discover — aktiflik sinyali (kart.activity)", () => {
+  const saatOnce = (saat: number) => new Date(Date.now() - saat * 60 * 60 * 1000).toISOString();
+  it("son 24 saat 'today', 7 gun 'week', daha eski null; seed her zaman null; ham zaman damgasi sizmaz", async () => {
+    const [BUGUN, HAFTA, ESKI, SEED] = [uid(70), uid(71), uid(72), uid(73)];
+    const service = await loadService({
+      users: [
+        viewerRow(),
+        candidateRow(BUGUN, 1, { last_seen_at: saatOnce(23) }),
+        candidateRow(HAFTA, 2, { last_seen_at: saatOnce(24 * 6) }),
+        candidateRow(ESKI, 3, { last_seen_at: saatOnce(24 * 8) }),
+        candidateRow(SEED, 4, { is_seed_profile: true, is_test_account: true, last_seen_at: saatOnce(0) }),
+      ],
+      swipes: [], matches: [], questions: questionsFor([BUGUN, HAFTA, ESKI, SEED]),
+    }, { dormantDays: 0 });
+    const res = await service.discover(VIEWER_ID, 1);
+    const byId = new Map(res.cards.map((c) => [c.user_id, c]));
+    expect(byId.get(BUGUN)?.activity).toBe("today");
+    expect(byId.get(HAFTA)?.activity).toBe("week");
+    expect(byId.get(ESKI)?.activity).toBeNull();
+    expect(byId.get(SEED)?.activity).toBeNull();
+    for (const card of res.cards) {
+      expect(JSON.stringify(card)).not.toMatch(/last_seen|\d{4}-\d{2}-\d{2}T/);
+    }
+  });
+});
+
+describe("emptyReasonOf", () => {
+  it("eleme zincirine gore sebep", async () => {
+    const { emptyReasonOf } = await import("../../src/services/discover-ranking.js");
+    expect(emptyReasonOf(0, 0)).toBe("no_candidates");
+    expect(emptyReasonOf(5, 0)).toBe("language");
+    expect(emptyReasonOf(5, 3)).toBe("inactive");
   });
 });
 
@@ -688,6 +858,18 @@ describe("undoSwipe — tier tutarliligi", () => {
     const card = await service.undoSwipe(VIEWER_ID, UZAK_ID);
     // Ayni mesafe discover'da tier 2 donuyor (bkz. yukaridaki test).
     expect(card.distance_tier).toBe(2);
+  });
+
+  it("undo edilen kart da aktiflik sinyalini tasir (discover ile ayni sozlesme)", async () => {
+    const service = await loadService({
+      users: [viewerRow(), candidateRow(UZAK_ID, 300, { last_seen_at: new Date().toISOString() })],
+      swipes: [{ swiper_id: VIEWER_ID, target_id: UZAK_ID, action: "REJECT" }],
+      matches: [],
+      questions: questionsFor([UZAK_ID]),
+    });
+    const card = await service.undoSwipe(VIEWER_ID, UZAK_ID);
+    expect(card.activity).toBe("today");
+    expect(card).not.toHaveProperty("last_seen_at");
   });
 });
 
@@ -1630,4 +1812,177 @@ describe("discover — yabanci dildeki gercek kullanici seed'den ONCE (K3, 2026-
     expect(res.cards).toHaveLength(1);
     expect(res.empty_reason).toBeUndefined();
   });
+});
+
+describe("discover-ranking (saf kurallar)", () => {
+  it("excludeLongInactive: 0 kapali; seed kalir; null ve esik oncesi cikar", async () => {
+    const { excludeLongInactive } = await import("../../src/services/discover-ranking.js");
+    const now = Date.parse("2026-11-09T12:00:00Z");
+    const rows = [
+      { id: "a", is_seed_profile: false, last_seen_at: "2026-11-01T00:00:00Z" },
+      { id: "b", is_seed_profile: false, last_seen_at: "2026-09-01T00:00:00Z" },
+      { id: "c", is_seed_profile: false, last_seen_at: null },
+      { id: "d", is_seed_profile: true, last_seen_at: null },
+    ];
+    expect(excludeLongInactive(rows, 0, now)).toHaveLength(4);
+    expect(excludeLongInactive(rows, 30, now).map((r) => r.id)).toEqual(["a", "d"]);
+  });
+
+  it("discoverGroupRank: aktif 0 < seed 2 < yigilmis aktif 3 < uyuyan 4 (kendi dili)", async () => {
+    const { discoverGroupRank } = await import("../../src/utils/discover-rank.js");
+    expect([discoverGroupRank(false, false, true), discoverGroupRank(true, true, true, true), discoverGroupRank(false, false, true, true), discoverGroupRank(false, true, true, true)])
+      .toEqual([0, 2, 3, 4]);
+  });
+});
+
+// ─── Sesli/gorselli soru rozetleri (2.0.18+101) ──────────────────────────────────────────────
+// Kart, izleyicinin COZEBILECEGI sorularda medya varsa rozet tasir: yalniz izleyicinin dil
+// kumesindeki sorular (dil kapisi 5.6 ve quiz filtresiyle ayni `questionLocale` kurali) ve
+// yalniz moderasyondan gecmis (`approved`) gorsel. Kapi kapaliyken (eski istemci / bayrak kapali)
+// yanit ve sorgu birebir eski: anahtar hic eklenmez, 084 kolonlari select'e girmez (migration
+// uygulanmadan once de patlamasin).
+
+/** Eski istemci sozlesmesi: question_info'nun tam anahtar kumesi. */
+const LEGACY_QUESTION_INFO_KEYS = ["avg_difficulty", "categories", "count", "languages"];
+const LEGACY_DISCOVER_QUESTION_COLUMNS = "user_id, category, stats_correct, stats_wrong, locale, created_at";
+const LEGACY_UNDO_QUESTION_COLUMNS = "user_id, category, stats_correct, stats_wrong, locale";
+const LEGACY_UNDO_VIEWER_COLUMNS = "lat, lng, passport_lat, passport_lng, match_radius_km";
+
+/** Sahte istemcinin `from(t).select(cols)` cagrilarini kaydeder (fake kolonlari yok sayar). */
+function recordSelects(fake: FakeSupabase): Array<{ table: string; columns: string | undefined }> {
+  const log: Array<{ table: string; columns: string | undefined }> = [];
+  const from = fake.client.from.bind(fake.client);
+  fake.client.from = (table: string) => {
+    const api = from(table);
+    const select = api.select;
+    return {
+      ...api,
+      select: (columns?: string, opts?: unknown) => {
+        log.push({ table, columns });
+        return select(columns, opts);
+      },
+    };
+  };
+  return log;
+}
+
+function mediaQuestion(userId: string, overrides: Record<string, unknown> = {}) {
+  return {
+    user_id: userId, category: "life", stats_correct: 0, stats_wrong: 0, locale: "tr",
+    voice_path: null, voice_duration_ms: null, image_path: null, image_status: null,
+    ...overrides,
+  };
+}
+
+describe("discover — sesli/gorselli soru rozetleri (has_voice / has_image, 2.0.18+101)", () => {
+  const SESLI = uid(90), YABANCI_MEDYA = uid(91), BEKLEYEN = uid(92), ONAYLI = uid(93), YOLSUZ = uid(94), REDDEDILEN = uid(95);
+  const ALL = [SESLI, YABANCI_MEDYA, BEKLEYEN, ONAYLI, YOLSUZ, REDDEDILEN];
+  const tablolar = (): Tables => ({
+    users: [viewerRow(), ...ALL.map((id, i) => candidateRow(id, 1 + i))],
+    swipes: [], matches: [],
+    questions: [
+      ...questionsFor(ALL),
+      mediaQuestion(SESLI, { voice_path: `${SESLI}/q1/voice.m4a`, voice_duration_ms: 8000 }),
+      // Medya izleyicinin okumadigi dilde: quiz bu soruyu sunmaz → rozet yok.
+      mediaQuestion(YABANCI_MEDYA, {
+        locale: "en", voice_path: `${YABANCI_MEDYA}/q1/voice.m4a`, voice_duration_ms: 5000,
+        image_path: `${YABANCI_MEDYA}/q1/image.jpg`, image_status: "approved",
+      }),
+      mediaQuestion(BEKLEYEN, { image_path: `${BEKLEYEN}/q1/image.jpg`, image_status: "pending" }),
+      mediaQuestion(ONAYLI, { image_path: `${ONAYLI}/q1/image.jpg`, image_status: "approved" }),
+      // Bozuk satir: onayli ama dosya yok → quiz de gorsel gostermez (solverVisibleMedia).
+      mediaQuestion(YOLSUZ, { image_path: null, image_status: "approved" }),
+      mediaQuestion(REDDEDILEN, { image_path: `${REDDEDILEN}/q1/image.jpg`, image_status: "rejected" }),
+    ],
+  });
+
+  async function cardsById(media?: { active: boolean }) {
+    const service = await loadService(tablolar());
+    const selects = recordSelects(sonFake);
+    const res = media ? await service.discover(VIEWER_ID, 1, media) : await service.discover(VIEWER_ID, 1);
+    const byId = new Map(res.cards.map((c) => [c.user_id, c.question_info as unknown as Record<string, unknown>]));
+    return { byId, selects, cards: res.cards };
+  }
+
+  it("kapi acik: izleyicinin dilindeki sesli soru → has_voice=true", async () => {
+    const { byId } = await cardsById({ active: true });
+    expect(byId.get(SESLI)).toMatchObject({ has_voice: true, has_image: false });
+  });
+
+  it("kapi acik: medya yalniz baska dildeki soruda → has_voice=false, has_image=false", async () => {
+    const { byId } = await cardsById({ active: true });
+    expect(byId.get(YABANCI_MEDYA)).toMatchObject({ has_voice: false, has_image: false });
+  });
+
+  it("kapi acik: yalniz approved gorsel sayilir (pending/rejected/yolsuz → false)", async () => {
+    const { byId } = await cardsById({ active: true });
+    expect(byId.get(ONAYLI)).toMatchObject({ has_voice: false, has_image: true });
+    expect(byId.get(BEKLEYEN)).toMatchObject({ has_image: false });
+    expect(byId.get(REDDEDILEN)).toMatchObject({ has_image: false });
+    expect(byId.get(YOLSUZ)).toMatchObject({ has_image: false });
+  });
+
+  it("kapi acik: rozetler mevcut question_info alanlarini bozmaz; select 084 kolonlarini okur", async () => {
+    const { byId, selects } = await cardsById({ active: true });
+    expect(Object.keys(byId.get(SESLI)!).sort()).toEqual([...LEGACY_QUESTION_INFO_KEYS, "has_image", "has_voice"].sort());
+    // Sayilar dil filtresinden ETKILENMEZ (eski davranis): rozet filtresi yalniz rozetler icin.
+    expect(byId.get(YABANCI_MEDYA)).toMatchObject({ count: 3, languages: ["tr", "en"] });
+    const cols = selects.filter((s) => s.table === "questions").map((s) => s.columns);
+    expect(cols.length).toBeGreaterThan(0);
+    for (const c of cols) expect(c).toBe(`${LEGACY_DISCOVER_QUESTION_COLUMNS}, voice_path, image_path, image_status`);
+  });
+
+  for (const [ad, media] of [["argumansiz", undefined], ["active:false", { active: false }]] as const) {
+    it(`eski istemci (${ad}): question_info tam eski anahtarlar, questions select birebir eski`, async () => {
+      const { cards, selects } = await cardsById(media);
+      expect(cards).toHaveLength(ALL.length);
+      for (const c of cards) {
+        expect(Object.keys(c.question_info).sort()).toEqual(LEGACY_QUESTION_INFO_KEYS);
+      }
+      const cols = selects.filter((s) => s.table === "questions").map((s) => s.columns);
+      expect(cols.length).toBeGreaterThan(0);
+      for (const c of cols) expect(c).toBe(LEGACY_DISCOVER_QUESTION_COLUMNS);
+    });
+  }
+});
+
+describe("undoSwipe — sesli/gorselli soru rozetleri (2.0.18+101)", () => {
+  const TARGET = uid(96);
+  const tablolar = (viewer: Record<string, unknown> = {}): Tables => ({
+    users: [viewerRow(viewer), candidateRow(TARGET, 2)],
+    swipes: [{ id: "sw-m", swiper_id: VIEWER_ID, target_id: TARGET, action: "REJECT", created_at: new Date().toISOString() }],
+    matches: [],
+    questions: [
+      ...questionsFor([TARGET]),
+      mediaQuestion(TARGET, { voice_path: `${TARGET}/q1/voice.m4a`, voice_duration_ms: 4000 }),
+      mediaQuestion(TARGET, { locale: "en", image_path: `${TARGET}/q2/image.jpg`, image_status: "approved" }),
+    ],
+  });
+
+  it("kapi acik: undo karti da rozetleri tasir (izleyicinin dili + approved kurali)", async () => {
+    const service = await loadService(tablolar());
+    const card = await service.undoSwipe(VIEWER_ID, TARGET, { active: true });
+    expect(card.question_info).toMatchObject({ count: 4, has_voice: true, has_image: false });
+  });
+
+  it("kapi acik: preferred_languages bossa izleyici dili user_languages'tan (quiz ile ayni kaynak)", async () => {
+    const service = await loadService(tablolar({ preferred_languages: [] }), { userLanguages: ["en"] });
+    const card = await service.undoSwipe(VIEWER_ID, TARGET, { active: true });
+    expect(card.question_info).toMatchObject({ has_voice: false, has_image: true });
+  });
+
+  for (const [ad, media] of [["argumansiz", undefined], ["active:false", { active: false }]] as const) {
+    it(`eski istemci (${ad}): undo karti eski anahtarlar, select'ler birebir eski`, async () => {
+      const service = await loadService(tablolar());
+      const selects = recordSelects(sonFake);
+      const card = media
+        ? await service.undoSwipe(VIEWER_ID, TARGET, media)
+        : await service.undoSwipe(VIEWER_ID, TARGET);
+      expect(Object.keys(card.question_info).sort()).toEqual(LEGACY_QUESTION_INFO_KEYS);
+      expect(selects.filter((s) => s.table === "questions").map((s) => s.columns)).toEqual([LEGACY_UNDO_QUESTION_COLUMNS]);
+      expect(selects.filter((s) => s.table === "users").map((s) => s.columns)).toContain(LEGACY_UNDO_VIEWER_COLUMNS);
+      // Kapi kapali → izleyici dili okunmaz (ek istek yok).
+      expect(sonFake.queries.filter((q) => q.table === "users")).toHaveLength(2);
+    });
+  }
 });

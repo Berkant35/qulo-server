@@ -31,7 +31,11 @@ export const createReportSchema = z.object({
     "THREATENING",
     "IMPERSONATION",
     "OTHER",
+    // 2.0.19: sesli/gorselli soru medyasi sikayeti (question_id ile birlikte).
+    "INAPPROPRIATE_MEDIA",
   ]),
+  // Opsiyonel: <=2.0.18 istemcileri gondermez. Sahiplik (raporlananin sorusu) serviste dogrulanir.
+  question_id: z.string().uuid().optional(),
 });
 
 export type CreateReportInput = z.infer<typeof createReportSchema>;

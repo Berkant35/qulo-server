@@ -129,6 +129,9 @@ export const Errors = {
   RATE_LIMITED: () =>
     new AppError("RATE_LIMITED", 429, "Too many requests"),
 
+  /** PATCH /users/me/location/city — `city_id` statik listede yok (data/cities.ts). */
+  CITY_NOT_FOUND: () =>
+    new AppError("CITY_NOT_FOUND", 404, "City not found"),
   VALIDATION_ERROR: (details: Record<string, unknown>) =>
     new AppError("VALIDATION_ERROR", 400, "Validation error", { details }),
 
@@ -278,12 +281,28 @@ export const Errors = {
   PAGE_SECTION_IMAGE_REQUIRED: () =>
     new AppError("PAGE_SECTION_IMAGE_REQUIRED", 400, "Banner image is required"),
 
+  /** Özellik kapısı kapalı ya da istemci sürümü eski (ör. sesli/görselli soru: ≥2.0.18+101 + `media_questions_enabled`). */
+  FEATURE_DISABLED: () =>
+    new AppError("FEATURE_DISABLED", 403, "This feature is not available"),
+
+  /** Kullanıcının bu sıra numarasında sorusu yok (soru medyası uçları). */
+  QUESTION_NOT_FOUND: () =>
+    new AppError("QUESTION_NOT_FOUND", 404, "Question not found"),
+
+  /** Soru medyası okuma ile yazma arasında başka bir istekle değişti ya da soru silindi — istemci yeniden dener. */
+  QUESTION_MEDIA_CONFLICT: () =>
+    new AppError("QUESTION_MEDIA_CONFLICT", 409, "Question media changed concurrently"),
+
   INVALID_PHOTO_INDEX: () =>
     new AppError("INVALID_PHOTO_INDEX", 400, "Invalid photo index"),
 
   /** Backoffice: kaldırılmak istenen URL'lerin hiçbiri profilde değil (bayat sayfa). */
   PHOTO_NOT_FOUND: () =>
     new AppError("PHOTO_NOT_FOUND", 404, "Photo not found on profile"),
+
+  /** Sıralama isteği profildeki fotoğrafların yeniden sıralanmışı değil (eklenen/çıkan/yabancı URL). */
+  INVALID_PHOTO_ORDER: () =>
+    new AppError("INVALID_PHOTO_ORDER", 400, "Photo order must contain exactly the current photos"),
 
   /** Fotoğraf dizisi okunduktan sonra başka bir istekle değişti (koşullu yazım eşleşmedi). */
   PHOTOS_CHANGED: () =>

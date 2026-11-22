@@ -7,6 +7,10 @@
     "new_match_solver": "おめでとうございます！すべての質問に正解しました。新しいマッチがあります！",
     "new_match_badge": "{badge}バッジで誰かがあなたのクイズを解きました！新しいマッチがあります！",
     "chat_question_answered": "チャットの質問に回答がありました ({result})",
+    "lifecycle_solved_waiting": {
+      "title": "誰かがあなたの質問を解きました",
+      "body": "{name}さんがあなたの質問に全問正解し、マッチしました。あなたの返信を待っています！"
+    },
     "lifecycle_unread_message": {
       "title": "未読メッセージがあります",
       "body": "{name}さんからメッセージが届いています。返事を待っていますよ。"

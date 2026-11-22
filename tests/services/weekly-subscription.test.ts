@@ -178,8 +178,9 @@ describe('haftalık dönem bonusu (100) ve idempotency', () => {
 
   it('farklı işlem numarası ama aynı dönem (istemci activate + webhook): tek bonus', async () => {
     const { fake, webhookService, subscriptionService } = await setup();
-    await subscriptionService.activateSubscription(
-      'u1', 'plus', 'client_u1', 'quloplusweekly', new Date(T1).toISOString().replace('.000Z', 'Z'), false, 'weekly',
+    await subscriptionService.activateFromClient(
+      'u1', 'plus', 'client_u1', 'quloplusweekly', new Date(T1).toISOString().replace('.000Z', 'Z'),
+      { paidEligible: false, sandbox: false }, 'weekly',
     );
     await webhookService.handleRevenueCatEvent(event());
     expect(bonuses(fake)).toHaveLength(1);

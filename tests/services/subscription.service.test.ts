@@ -83,11 +83,11 @@ describe('getStatus', () => {
   });
 });
 
-describe('activateSubscription', () => {
+describe('activateFromWebhook', () => {
   it('kullanıcıyı günceller, kayıt açar ve aylık bonusu yatırır', async () => {
     const { fake, subscriptionService } = await setup({ users: [user()] });
 
-    await subscriptionService.activateSubscription('u1', 'plus', 'rc-1', 'tx-1', FUTURE);
+    await subscriptionService.activateFromWebhook('u1', 'plus', 'rc-1', 'tx-1', FUTURE);
 
     expect(fake.table('users')[0]).toMatchObject({
       subscription_plan: 'plus',
@@ -102,7 +102,7 @@ describe('activateSubscription', () => {
 
   it('premium bonusu plus\'tan yüksek — tutar config\'ten okunur', async () => {
     const { fake, subscriptionService } = await setup({ users: [user()] });
-    await subscriptionService.activateSubscription('u1', 'premium', 'rc-1', 'tx-1', FUTURE);
+    await subscriptionService.activateFromWebhook('u1', 'premium', 'rc-1', 'tx-1', FUTURE);
     expect(fake.table('users')[0].purple_diamonds).toBe(1000);
   });
 
@@ -110,8 +110,8 @@ describe('activateSubscription', () => {
   it('aynı store_transaction_id ile ikinci çağrı bonusu tekrar yatırmaz', async () => {
     const { fake, subscriptionService } = await setup({ users: [user()] });
 
-    await subscriptionService.activateSubscription('u1', 'plus', 'rc-1', 'tx-1', FUTURE);
-    await subscriptionService.activateSubscription('u1', 'plus', 'rc-1', 'tx-1', FUTURE);
+    await subscriptionService.activateFromWebhook('u1', 'plus', 'rc-1', 'tx-1', FUTURE);
+    await subscriptionService.activateFromWebhook('u1', 'plus', 'rc-1', 'tx-1', FUTURE);
 
     expect(fake.table('users')[0].purple_diamonds).toBe(200);
   });
@@ -127,9 +127,9 @@ describe('activateSubscription', () => {
     const { fake, subscriptionService } = await setup({ users: [user()] });
 
     // istemci yolu — transaction_id yerine ISO tarih gönderiyor
-    await subscriptionService.activateSubscription('u1', 'plus', 'client_u1', '2026-09-05T22:15:58Z', FUTURE);
+    await subscriptionService.activateFromClient('u1', 'plus', 'client_u1', '2026-09-05T22:15:58Z', FUTURE);
     // webhook yolu — mağazanın gerçek işlem numarası
-    await subscriptionService.activateSubscription('u1', 'plus', 'u1', '520002987164397', FUTURE);
+    await subscriptionService.activateFromWebhook('u1', 'plus', 'u1', '520002987164397', FUTURE);
 
     expect(fake.table('users')[0].purple_diamonds).toBe(200);
     expect(
@@ -140,8 +140,8 @@ describe('activateSubscription', () => {
   it('aynı dönem iki kez bildirilse bile abonelik satırı tek kalır', async () => {
     const { fake, subscriptionService } = await setup({ users: [user()] });
 
-    await subscriptionService.activateSubscription('u1', 'plus', 'client_u1', '2026-09-05T22:15:58Z', FUTURE);
-    await subscriptionService.activateSubscription('u1', 'plus', 'u1', '520002987164397', FUTURE);
+    await subscriptionService.activateFromClient('u1', 'plus', 'client_u1', '2026-09-05T22:15:58Z', FUTURE);
+    await subscriptionService.activateFromWebhook('u1', 'plus', 'u1', '520002987164397', FUTURE);
 
     const rows = fake.table('user_subscriptions');
     expect(rows).toHaveLength(1);
@@ -160,8 +160,8 @@ describe('activateSubscription', () => {
   it('aynı an farklı ISO gösterimiyle gelse bile bonus TEK yatar', async () => {
     const { fake, subscriptionService } = await setup({ users: [user()] });
 
-    await subscriptionService.activateSubscription('u1', 'plus', 'client_u1', 'tx-iso', '2026-10-01T12:00:00Z');
-    await subscriptionService.activateSubscription('u1', 'plus', 'u1', 'tx-ms', '2026-10-01T12:00:00.000Z');
+    await subscriptionService.activateFromClient('u1', 'plus', 'client_u1', 'tx-iso', '2026-10-01T12:00:00Z');
+    await subscriptionService.activateFromWebhook('u1', 'plus', 'u1', 'tx-ms', '2026-10-01T12:00:00.000Z');
 
     expect(fake.table('users')[0].purple_diamonds).toBe(200);
     expect(
@@ -183,7 +183,7 @@ describe('activateSubscription', () => {
       }],
     });
 
-    await subscriptionService.activateSubscription('u1', 'plus', 'rc-1', 'tx-u1', FUTURE);
+    await subscriptionService.activateFromWebhook('u1', 'plus', 'rc-1', 'tx-u1', FUTURE);
 
     const other = fake.table('user_subscriptions').find((r) => r.user_id === 'u2');
     expect(other).toMatchObject({ plan: 'premium', store_transaction_id: 'tx-u2' });
@@ -204,7 +204,7 @@ describe('activateSubscription', () => {
       }],
     });
 
-    await subscriptionService.activateSubscription('u1', 'plus', 'rc-1', 'tx-new', FUTURE);
+    await subscriptionService.activateFromWebhook('u1', 'plus', 'rc-1', 'tx-new', FUTURE);
 
     const rows = fake.table('user_subscriptions');
     expect(rows).toHaveLength(2);
@@ -218,7 +218,7 @@ describe('activateSubscription', () => {
     const { fake, subscriptionService } = await setup({ users: [user()] });
 
     await expect(
-      subscriptionService.activateSubscription('u1', 'plus', 'rc-1', 'tx-1', 'not-a-date'),
+      subscriptionService.activateFromWebhook('u1', 'plus', 'rc-1', 'tx-1', 'not-a-date'),
     ).resolves.toBeUndefined();
     expect(fake.table('users')[0].purple_diamonds).toBe(200);
   });
@@ -226,8 +226,8 @@ describe('activateSubscription', () => {
   it('farklı DÖNEM ayrı bonus sayılır (yenileme gerçek bonus hak eder)', async () => {
     const { fake, subscriptionService } = await setup({ users: [user()] });
 
-    await subscriptionService.activateSubscription('u1', 'plus', 'rc-1', 'tx-1', FUTURE);
-    await subscriptionService.activateSubscription('u1', 'plus', 'rc-1', 'tx-2', '2026-11-01T12:00:00Z');
+    await subscriptionService.activateFromWebhook('u1', 'plus', 'rc-1', 'tx-1', FUTURE);
+    await subscriptionService.activateFromWebhook('u1', 'plus', 'rc-1', 'tx-2', '2026-11-01T12:00:00Z');
 
     expect(fake.table('users')[0].purple_diamonds).toBe(400);
   });
@@ -248,10 +248,119 @@ describe('activateSubscription', () => {
     vi.doMock('../../src/config/supabase.js', () => ({ supabase: fake.client }));
     const { subscriptionService } = await import('../../src/services/subscription.service.js');
 
-    await subscriptionService.activateSubscription('u1', 'plus', 'rc-1', 'tx-1', FUTURE);
+    await subscriptionService.activateFromWebhook('u1', 'plus', 'rc-1', 'tx-1', FUTURE);
 
     expect(fake.table('users')[0].purple_diamonds).toBe(0);
     expect(fake.table('diamond_transactions')).toHaveLength(0);
+  });
+});
+
+/**
+ * Sandbox (TestFlight / Xcode / Google lisans testçisi) dönemleri hızlandırılmış: TestFlight'ta "aylık"
+ * abonelik her gün yenilenir. 2026-11-12..17 canlı gözlemi: bir test hesabına 6 günde 9.000 mor (ödenmiş 0).
+ * Kural: sandbox'ta kullanıcı başına 30 günde en fazla bir abonelik bonusu (üretimin aylık ritmi). İlk
+ * satın alma bonusu hemen alır — App Review de sandbox'ta satın alır, cüzdanı dolu görmeli.
+ */
+describe('sandbox bonusu — 30 günde en fazla bir', () => {
+  const SANDBOX = { paidEligible: false, sandbox: true };
+  const PRODUCTION = { paidEligible: true, sandbox: false };
+  const DAY = 24 * 60 * 60 * 1000;
+  const at = (days: number) => new Date(NOW.getTime() + days * DAY).toISOString();
+  /** Postgres `created_at default now()` — pencere sorgusu bunu okur. */
+  const clock = { insertDefaults: { diamond_transactions: () => ({ created_at: new Date().toISOString() }) } };
+  const pastBonus = (daysAgo: number) => ({
+    id: 'old', user_id: 'u1', type: 'PURPLE', amount: 1000, reason: 'SUBSCRIPTION_BONUS',
+    reference_id: 'sub_premium_old', created_at: at(-daysAgo),
+  });
+  const bonuses = (fake: Awaited<ReturnType<typeof setup>>['fake']) =>
+    fake.table('diamond_transactions').filter((t) => t.reason === 'SUBSCRIPTION_BONUS');
+
+  it('ilk sandbox satın alması bonusu istemci yolunda hemen alır (App Review)', async () => {
+    const { fake, subscriptionService } = await setup({ users: [user()] }, clock);
+
+    await subscriptionService.activateFromClient('u1', 'premium', 'client_u1', 'tx-0', at(1), SANDBOX);
+
+    expect(fake.table('users')[0]).toMatchObject({ subscription_plan: 'premium', purple_diamonds: 1000 });
+  });
+
+  it('günlük sandbox yenilemeleri 30 gün içinde yeni bonus almaz; dönem yine uzar', async () => {
+    const { fake, subscriptionService } = await setup({ users: [user()] }, clock);
+
+    await subscriptionService.activateFromWebhook('u1', 'premium', 'u1', 'tx-0', at(1), SANDBOX);
+    await subscriptionService.renewSubscription('u1', 'premium', 'tx-1', at(2), SANDBOX);
+    await subscriptionService.renewSubscription('u1', 'premium', 'tx-2', at(3), SANDBOX);
+
+    expect(bonuses(fake)).toHaveLength(1);
+    expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 1000, subscription_expires_at: at(3) });
+  });
+
+  it('TestFlight\'ta "satın al"a yeniden dokunma: istemci yolu yeni günlük dönemi istese de bonus yok', async () => {
+    const { fake, subscriptionService } = await setup({ users: [user()] }, clock);
+
+    await subscriptionService.activateFromClient('u1', 'premium', 'client_u1', 'tx-0', at(1), SANDBOX);
+    await subscriptionService.activateFromClient('u1', 'premium', 'client_u1', 'tx-1', at(2), SANDBOX);
+
+    expect(bonuses(fake)).toHaveLength(1);
+    expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 1000, subscription_expires_at: at(2) });
+  });
+
+  it('30 günü geçmiş bonus pencereyi kapatmaz: sandbox yenilemesi yeniden bonus alır', async () => {
+    const { fake, subscriptionService } = await setup(
+      { users: [user()], diamond_transactions: [pastBonus(31)] }, clock,
+    );
+
+    await subscriptionService.renewSubscription('u1', 'premium', 'tx-1', at(1), SANDBOX);
+
+    expect(fake.table('users')[0].purple_diamonds).toBe(1000);
+  });
+
+  it('pencere yalnız aynı kullanıcının abonelik bonusunu sayar (başkası / elmas paketi engellemez)', async () => {
+    const { fake, subscriptionService } = await setup({
+      users: [user(), user({ id: 'u2' })],
+      diamond_transactions: [
+        { ...pastBonus(1), id: 'other', user_id: 'u2' },
+        { ...pastBonus(1), id: 'iap', reason: 'IAP_PURCHASE', reference_id: 'tx-iap' },
+      ],
+    }, clock);
+
+    await subscriptionService.renewSubscription('u1', 'premium', 'tx-1', at(1), SANDBOX);
+
+    expect(fake.table('users')[0].purple_diamonds).toBe(1000);
+  });
+
+  it('üretimde pencere yok: yakın tarihli bonus olsa da yenileme bonus alır', async () => {
+    const { fake, subscriptionService } = await setup(
+      { users: [user({ purple_paid: 0 })], diamond_transactions: [pastBonus(1)] }, clock,
+    );
+
+    await subscriptionService.renewSubscription('u1', 'premium', 'tx-1', at(1), PRODUCTION);
+
+    expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 1000, purple_paid: 200 });
+  });
+
+  it('sandbox istemci + webhook aynı dönemi iki sırada da bildirse tek bonus', async () => {
+    const first = await setup({ users: [user()] }, clock);
+    await first.subscriptionService.activateFromClient('u1', 'premium', 'client_u1', 'tx-0', at(1), SANDBOX);
+    await first.subscriptionService.activateFromWebhook('u1', 'premium', 'u1', 'tx-0', at(1), SANDBOX);
+    expect(bonuses(first.fake)).toHaveLength(1);
+
+    vi.resetModules();
+    const second = await setup({ users: [user()] }, clock);
+    await second.subscriptionService.activateFromWebhook('u1', 'premium', 'u1', 'tx-0', at(1), SANDBOX);
+    await second.subscriptionService.activateFromClient('u1', 'premium', 'client_u1', 'tx-0', at(1), SANDBOX);
+    expect(bonuses(second.fake)).toHaveLength(1);
+  });
+
+  it('pencere okunamazsa sandbox bonusu verilmez (yanlış "hayır" yalnız test hesabını etkiler)', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    // renewSubscription'ın ilk diamond_transactions okuması = pencere kontrolü.
+    const { fake, subscriptionService } = await setup({ users: [user()] }, {
+      ...clock, failOn: [{ table: 'diamond_transactions', op: 'select', failAfter: 0, times: 1 }],
+    });
+
+    await subscriptionService.renewSubscription('u1', 'premium', 'tx-1', at(1), SANDBOX);
+
+    expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 0, subscription_expires_at: at(1) });
   });
 });
 
@@ -304,16 +413,16 @@ describe('renewSubscription', () => {
 describe('aylık bonus — ödenmiş pay uygunluğu', () => {
   const paidUser = (over: Record<string, unknown> = {}) => user({ purple_paid: 0, ...over });
 
-  it('activateSubscription: uygunluk verilmezse ödenmiş 0 (fail-safe)', async () => {
+  it('activateFromWebhook: uygunluk verilmezse ödenmiş 0 (fail-safe)', async () => {
     const { fake, subscriptionService } = await setup({ users: [paidUser()] });
-    await subscriptionService.activateSubscription('u1', 'plus', 'rc-1', 'tx-1', FUTURE);
+    await subscriptionService.activateFromWebhook('u1', 'plus', 'rc-1', 'tx-1', FUTURE);
     expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 200, purple_paid: 0 });
     expect(fake.table('diamond_transactions')[0].paid_amount).toBeUndefined();
   });
 
-  it('activateSubscription: uygunsa tier payı ödenmiş', async () => {
+  it('activateFromWebhook: uygunsa tier payı ödenmiş', async () => {
     const { fake, subscriptionService } = await setup({ users: [paidUser()] });
-    await subscriptionService.activateSubscription('u1', 'plus', 'rc-1', 'tx-1', FUTURE, true);
+    await subscriptionService.activateFromWebhook('u1', 'plus', 'rc-1', 'tx-1', FUTURE, { paidEligible: true, sandbox: false });
     expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 200, purple_paid: 60 });
   });
 
@@ -323,7 +432,7 @@ describe('aylık bonus — ödenmiş pay uygunluğu', () => {
       user_subscriptions: [{ id: 's1', user_id: 'u1', plan: 'premium', status: 'active' }],
     });
     const eligible = await setup(seed());
-    await eligible.subscriptionService.renewSubscription('u1', 'premium', 'tx-r', FUTURE, true);
+    await eligible.subscriptionService.renewSubscription('u1', 'premium', 'tx-r', FUTURE, { paidEligible: true, sandbox: false });
     expect(eligible.fake.table('users')[0]).toMatchObject({ purple_diamonds: 1000, purple_paid: 200 });
 
     vi.resetModules();
@@ -401,14 +510,14 @@ describe('expireSubscription', () => {
   });
 });
 
-describe('activateSubscription — yeni dönem öncekinin yerini alır', () => {
+describe('activateFromWebhook — yeni dönem öncekinin yerini alır', () => {
   it('farklı bitişli yeni dönem: eski aktif satır expired, tek aktif satır yeni plan', async () => {
     const { fake, subscriptionService } = await setup({
       users: [user({ subscription_plan: 'plus', subscription_expires_at: FUTURE, rc_customer_id: 'rc-1' })],
       user_subscriptions: [{ id: 's1', user_id: 'u1', plan: 'plus', status: 'active', expires_at: FUTURE }],
     });
 
-    await subscriptionService.activateSubscription('u1', 'premium', 'client_u1', 'tx-up', '2026-10-01T12:01:00Z');
+    await subscriptionService.activateFromClient('u1', 'premium', 'client_u1', 'tx-up', '2026-10-01T12:01:00Z');
 
     const rows = fake.table('user_subscriptions');
     expect(rows.find((r) => r.id === 's1')!.status).toBe('expired');
@@ -422,11 +531,143 @@ describe('activateSubscription — yeni dönem öncekinin yerini alır', () => {
       user_subscriptions: [{ id: 's1', user_id: 'u1', plan: 'plus', status: 'active', expires_at: FUTURE }],
     });
 
-    await subscriptionService.activateSubscription('u1', 'plus', 'u1', 'tx-1', FUTURE);
+    await subscriptionService.activateFromWebhook('u1', 'plus', 'u1', 'tx-1', FUTURE);
 
     expect(fake.table('user_subscriptions')).toEqual([
       expect.objectContaining({ id: 's1', status: 'active', store_transaction_id: 'tx-1' }),
     ]);
+  });
+});
+
+/**
+ * 2026-11-12 canlı olayı: aynı App Store aboneliği A hesabından B hesabına taşındı (aynı Apple
+ * hesabıyla başka Qulo hesabına giriş → RevenueCat TRANSFER). A dönemin bonusunu 08:15'te RENEWAL
+ * ile almıştı; B 11:43'te `POST /subscriptions/activate` ile AYNI dönemi bildirdi ve premium bonusu
+ * yeniden yattı. Dönem anahtarı kullanıcı başına olduğu için tek satın alma = hesap başına bonus.
+ */
+describe('activateFromClient — taşınan aboneliğin dönemi başka hesapta ödüllendiyse', () => {
+  const twoUsers = () => ({ users: [user({ id: 'a' }), user({ id: 'b' })] });
+  const userRow = (fake: Awaited<ReturnType<typeof setup>>['fake'], id: string) =>
+    fake.table('users').find((u) => u.id === id)!;
+  const bonusRows = (fake: Awaited<ReturnType<typeof setup>>['fake']) =>
+    fake.table('diamond_transactions').filter((t) => t.reason === 'SUBSCRIPTION_BONUS');
+
+  it('erişim açılır ama bonus ikinci hesaba yeniden yatmaz', async () => {
+    const { fake, subscriptionService } = await setup(twoUsers());
+
+    await subscriptionService.activateFromWebhook('a', 'premium', 'a', 'tx-1', FUTURE); // webhook: A
+    await subscriptionService.activateFromClient('b', 'premium', 'client_b', 'tx-1', FUTURE);
+
+    expect(userRow(fake, 'b')).toMatchObject({
+      subscription_plan: 'premium', subscription_expires_at: FUTURE, purple_diamonds: 0,
+    });
+    expect(
+      fake.table('user_subscriptions').filter((s) => s.user_id === 'b' && s.status === 'active'),
+    ).toHaveLength(1);
+    expect(bonusRows(fake)).toHaveLength(1);
+  });
+
+  it('aynı an farklı ISO gösterimiyle gelse de aynı dönem sayılır', async () => {
+    const { fake, subscriptionService } = await setup(twoUsers());
+
+    await subscriptionService.activateFromWebhook('a', 'premium', 'a', 'tx-1', '2026-10-01T12:00:00.000Z');
+    await subscriptionService.activateFromClient('b', 'premium', 'client_b', 'tx-1', '2026-10-01T12:00:00Z');
+
+    expect(userRow(fake, 'b').purple_diamonds).toBe(0);
+  });
+
+  it('başka hesapta ödül yoksa bonus yatar (normal satın alma)', async () => {
+    const { fake, subscriptionService } = await setup(twoUsers());
+
+    await subscriptionService.activateFromClient('b', 'premium', 'client_b', 'tx-1', FUTURE);
+
+    expect(userRow(fake, 'b').purple_diamonds).toBe(1000);
+  });
+
+  it('başka hesabın FARKLI dönemi engellemez', async () => {
+    const { fake, subscriptionService } = await setup(twoUsers());
+
+    await subscriptionService.activateFromWebhook('a', 'premium', 'a', 'tx-0', '2026-09-15T12:00:00Z');
+    await subscriptionService.activateFromClient('b', 'premium', 'client_b', 'tx-1', FUTURE);
+
+    expect(userRow(fake, 'b').purple_diamonds).toBe(1000);
+  });
+
+  it('yalnız abonelik bonusu sayılır: başka sebepli aynı referans engellemez', async () => {
+    const { fake, subscriptionService } = await setup({
+      ...twoUsers(),
+      diamond_transactions: [{
+        id: 't0', user_id: 'a', type: 'PURPLE', amount: 5, reason: 'ADMIN_GRANT',
+        reference_id: 'sub_premium_2026-10-01T12:00:00.000Z',
+      }],
+    });
+
+    await subscriptionService.activateFromClient('b', 'premium', 'client_b', 'tx-1', FUTURE);
+
+    expect(userRow(fake, 'b').purple_diamonds).toBe(1000);
+  });
+
+  it('aynı hesap (webhook önce, istemci sonra): bonus tek', async () => {
+    const { fake, subscriptionService } = await setup(twoUsers());
+
+    await subscriptionService.activateFromWebhook('b', 'premium', 'b', 'tx-1', FUTURE);
+    await subscriptionService.activateFromClient('b', 'premium', 'client_b', 'tx-1', FUTURE);
+
+    expect(userRow(fake, 'b').purple_diamonds).toBe(1000);
+    expect(bonusRows(fake)).toHaveLength(1);
+  });
+
+  it('kontrol okunamazsa bonus yatmaz, erişim açılır — gerçek satın almada bonusu webhook verir', async () => {
+    // İlk diamond_transactions okuması = hesaplar arası kontrol; addPurple'ın kendi guard'ı sonra gelir.
+    const { fake, subscriptionService } = await setup(twoUsers(), {
+      failOn: [{ table: 'diamond_transactions', op: 'select', failAfter: 0, times: 1 }],
+    });
+
+    await subscriptionService.activateFromClient('b', 'premium', 'client_b', 'tx-1', FUTURE);
+
+    expect(userRow(fake, 'b')).toMatchObject({ subscription_plan: 'premium', purple_diamonds: 0 });
+    expect(bonusRows(fake)).toHaveLength(0);
+  });
+
+  it('webhook milisaniyeli, istemci saniyeli bitiş gönderse de aynı dönem sayılır', async () => {
+    const { fake, subscriptionService } = await setup(twoUsers());
+
+    await subscriptionService.activateFromWebhook('a', 'premium', 'a', 'tx-1', '2026-10-01T12:00:00.734Z');
+    await subscriptionService.activateFromClient('b', 'premium', 'client_b', 'tx-1', '2026-10-01T12:00:00Z');
+
+    expect(userRow(fake, 'b').purple_diamonds).toBe(0);
+  });
+});
+
+/**
+ * Bilinçli asimetri: TRANSFER'den sonra INITIAL_PURCHASE/RENEWAL yalnız aboneliğin YENİ sahibine
+ * gelir (eski sahibe geciken olayı webhook.service mağaza durumuyla eler), yani webhook yolu aynı
+ * dönemi iki hesaba bildirmez. Webhook'ta aynı anahtar başka hesapta varsa bu, aynı saniyede biten
+ * iki AYRI abonelik demektir — engellenirse gerçek ödeyen kaybeder.
+ */
+describe('activateFromWebhook — hesaplar arası kontrol yapmaz', () => {
+  it('aynı saniyede biten iki ayrı aboneliğin ikisi de bonus alır', async () => {
+    const { fake, subscriptionService } = await setup({ users: [user({ id: 'a' }), user({ id: 'b' })] });
+
+    await subscriptionService.activateFromWebhook('a', 'premium', 'a', 'tx-a', FUTURE);
+    await subscriptionService.activateFromWebhook('b', 'premium', 'b', 'tx-b', FUTURE);
+
+    expect(fake.table('users').map((u) => u.purple_diamonds)).toEqual([1000, 1000]);
+  });
+
+  it('erişim yazımı patlarsa fırlatmaz, loglar; bonus yine tekil yatar (kullanıcı ödedi)', async () => {
+    const errorLog = vi.spyOn(console, 'error').mockImplementation(() => {});
+    // İlk users.update = openPeriod'un erişim yazımı; addPurple'ın bakiye yazımı sonra gelir.
+    const { fake, subscriptionService } = await setup({ users: [user()] }, {
+      failOn: [{ table: 'users', op: 'update', failAfter: 0, times: 1 }],
+    });
+
+    await expect(
+      subscriptionService.activateFromWebhook('u1', 'premium', 'u1', 'tx-1', FUTURE),
+    ).resolves.toBeUndefined();
+
+    expect(errorLog).toHaveBeenCalledWith('[subscription] user access write failed:', expect.any(String));
+    expect(fake.table('users')[0]).toMatchObject({ subscription_plan: null, purple_diamonds: 1000 });
   });
 });
 

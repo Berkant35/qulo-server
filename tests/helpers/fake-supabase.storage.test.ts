@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createFakeSupabase } from './fake-supabase.js';
+import { createFakeSupabase, fakeSignedUrl } from './fake-supabase.js';
 
 /**
  * Fake Storage sadakati (2026-09-11, account-purge sohbet medyasi review'i).
@@ -19,12 +19,28 @@ describe('fake-supabase storage', () => {
     expect(withLimit).toHaveLength(150);
   });
 
-  it('list tek seviyeli — alt klasordeki dosyalar donmez', async () => {
-    const fake = createFakeSupabase({}, { storage: { photos: ['u/a.jpg', 'u/sub/b.jpg'] } });
+  // Gercek API alt klasoru `id: null` girdisi olarak doner (FileObject); eskiden fake klasoru hic
+  // gostermiyordu — klasorlu yapiyi (question-media `${userId}/${questionId}/`) temizleyen kod sinanamiyordu.
+  it('list tek seviyeli — alt klasordeki dosyalar donmez, klasor tek girdi (id: null)', async () => {
+    const fake = createFakeSupabase({}, { storage: { photos: ['u/a.jpg', 'u/sub/b.jpg', 'u/sub/c.jpg'] } });
 
     const { data } = await fake.client.storage.from('photos').list('u');
 
-    expect(data?.map((f: { name: string }) => f.name)).toEqual(['a.jpg']);
+    expect(data).toEqual([
+      { name: 'a.jpg', id: 'fake-file:u/a.jpg' },
+      { name: 'sub', id: null },
+    ]);
+  });
+
+  it('createSignedUrl(s) deterministik URL doner; olmayan dosya hata / satir hatasi', async () => {
+    const fake = createFakeSupabase({}, { storage: { 'question-media': ['u/q/a.jpg'] } });
+    const bucket = fake.client.storage.from('question-media');
+
+    expect((await bucket.createSignedUrl('u/q/a.jpg', 600)).data).toEqual({ signedUrl: fakeSignedUrl('question-media', 'u/q/a.jpg', 600) });
+    expect((await bucket.createSignedUrl('u/q/yok.jpg', 600)).error).not.toBeNull();
+    const { data } = await bucket.createSignedUrls(['u/q/a.jpg', 'u/q/yok.jpg'], 600);
+    expect(data?.[0]).toEqual({ path: 'u/q/a.jpg', signedUrl: fakeSignedUrl('question-media', 'u/q/a.jpg', 600), error: null });
+    expect(data?.[1].error).not.toBeNull();
   });
 
   it('ayni bucket nesnesiyle ardisik remove/list guncel diziyi gorur', async () => {

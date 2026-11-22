@@ -1,6 +1,6 @@
 import { supabase } from '../config/supabase.js';
 import { diamondService } from './diamond.service.js';
-import { subscriptionService } from './subscription.service.js';
+import { subscriptionService, type BonusFacts } from './subscription.service.js';
 import { rainbowRiskService } from './rainbow-risk.service.js';
 import { revenueCatService, type StoreSubscriptionState } from './revenuecat.service.js';
 import {
@@ -9,9 +9,12 @@ import {
   RCEventType,
   storeProductKey,
   subscriptionPeriodOf,
+  type SubscriptionPlan,
+  type SubscriptionPeriod,
 } from '../types/index.js';
 import { isPaidEligible, webhookPurchaseFacts } from '../utils/paid-eligibility.js';
 import { Errors } from '../utils/errors.js';
+import { isUuid } from '../utils/validation.js';
 import { env } from '../config/env.js';
 
 /** RevenueCat webhook olayı — `rcWebhookSchema.event` ile aynı alanlar. */
@@ -31,8 +34,19 @@ export interface RevenueCatWebhookEvent {
   cancel_reason?: string | null;
 }
 
+/** TRANSFER olayı — `app_user_id`/`product_id` yok (bkz. `rcWebhookSchema` transferEventSchema). */
+export interface RevenueCatTransferEvent {
+  type: 'TRANSFER';
+  transferred_from: string[];
+  transferred_to: string[];
+  store?: string | null;
+  environment?: string | null;
+}
+
 class WebhookService {
-  async handleRevenueCatEvent(event: RevenueCatWebhookEvent): Promise<void> {
+  async handleRevenueCatEvent(event: RevenueCatWebhookEvent | RevenueCatTransferEvent): Promise<void> {
+    if ('transferred_from' in event) return this.handleTransfer(event);
+
     const {
       type,
       app_user_id: userId,
@@ -113,20 +127,81 @@ class WebhookService {
     }
 
     const expiresAt = new Date(expiration_at_ms).toISOString();
-    const paidEligible = isPaidEligible(facts, 'subscription');
+    // Sandbox yalnız açık 'SANDBOX': alan yoksa ya da beklenmeyen değerse üretim sayılır — `facts.sandbox`
+    // "şüphede ödenmiş sayma" için yazıldı (bilinmeyen = sandbox); bonus kararında şüphe gerçek kullanıcıyı korur.
+    const bonusFacts: BonusFacts = {
+      paidEligible: isPaidEligible(facts, 'subscription'),
+      sandbox: event.environment === 'SANDBOX',
+    };
     // Yazmadan ÖNCE okunur: okuma patlarsa hiçbir şey yazılmamış olur, RevenueCat yeniden dener.
     const storeState = await this.readStoreState(userId);
 
+    // Olayın hesabı aboneliği mağazada artık tutmuyorsa (başka hesaba taşındı — TRANSFER — ya da iade
+    // edildi) dönem açılmaz, bonus yatmaz: dönemi yeni sahip istemci yolundan almış olabilir ve geciken
+    // olay (yeniden deneme) eski sahibe ikinci bonusu yatırırdı. `undefined` = senkron yok → olaydan.
+    const opensPeriod = eventType === 'INITIAL_PURCHASE' || eventType === 'RENEWAL';
+    if (opensPeriod && storeState === null) {
+      console.warn('[webhook] subscription no longer held in store — period not opened, no bonus', {
+        eventType, userId, productId,
+      });
+    } else {
+      await this.applySubscriptionEvent(eventType, userId, plan, period, transaction_id || '', expiresAt, bonusFacts);
+    }
+
+    // Erişim olay alanlarından değil mağazadaki güncel durumdan (bkz. readStoreState).
+    if (storeState !== undefined) await subscriptionService.applyStoreState(userId, storeState);
+
+    await this.logIapTransaction(
+      userId, productId, storeType, transaction_id || '',
+      eventType, null, null
+    );
+  }
+
+  /**
+   * TRANSFER: mağaza satın almaları ve haklar `transferred_from` hesap(lar)ından `transferred_to`'ya
+   * geçti (aynı Apple/Google hesabıyla başka Qulo hesabına giriş / geri yükleme); webhook yalnız hedef
+   * için bir kez gelir. Eskiden şema reddediyordu ve eski hesabın erişimi dönem sonuna kadar sürdü
+   * (2026-11-12: tek abonelik, iki premium hesap). İki tarafın erişimi mağaza durumundan yeniden yazılır;
+   * aboneliği kalmayan hesabın satırları kapanır. Bonus yok: dönemin bonusu satın almada/yenilemede
+   * verildi (yeni sahibin istemci yolu da yeniden vermez). RevenueCat anonim kimlikleri
+   * (`$RCAnonymousID:…`) Qulo hesabı değildir, atlanır.
+   */
+  private async handleTransfer(event: RevenueCatTransferEvent): Promise<void> {
+    const userIds = [...new Set([...event.transferred_from, ...event.transferred_to])].filter(isUuid);
+    if (!revenueCatService.canSyncSubscriptions()) {
+      console.warn('[webhook] TRANSFER ignored — store sync not configured', { userIds });
+      return;
+    }
+
+    // Hepsi yazmadan ÖNCE okunur: bir okuma patlarsa hiçbir hesap yarım yazılmaz, RevenueCat yeniden dener.
+    const states = await Promise.all(userIds.map((userId) => this.readStoreState(userId)));
+    for (const [i, userId] of userIds.entries()) {
+      const state = states[i] ?? null; // undefined olamaz: senkron kapısı yukarıda
+      // Satırlar en iyi çabayla kapanır (expireSubscription hata fırlatmaz); erişim yazımı fırlatır →
+      // 500 → RevenueCat yeniden dener. Yoksa yazım hatasında eski hesap sessizce premium kalırdı.
+      if (state === null) await subscriptionService.expireSubscription(userId);
+      await subscriptionService.applyStoreState(userId, state);
+    }
+    console.log('[webhook] TRANSFER applied', {
+      from: event.transferred_from, to: event.transferred_to, synced: userIds.length,
+    });
+  }
+
+  private async applySubscriptionEvent(
+    eventType: RCEventType,
+    userId: string,
+    plan: SubscriptionPlan,
+    period: SubscriptionPeriod,
+    transactionId: string,
+    expiresAt: string,
+    bonusFacts: BonusFacts,
+  ): Promise<void> {
     switch (eventType) {
       case 'INITIAL_PURCHASE':
-        await subscriptionService.activateSubscription(
-          userId, plan, userId, transaction_id || '', expiresAt, paidEligible, period
-        );
+        await subscriptionService.activateFromWebhook(userId, plan, userId, transactionId, expiresAt, bonusFacts, period);
         break;
       case 'RENEWAL':
-        await subscriptionService.renewSubscription(
-          userId, plan, transaction_id || '', expiresAt, paidEligible, period
-        );
+        await subscriptionService.renewSubscription(userId, plan, transactionId, expiresAt, bonusFacts, period);
         break;
       case 'UNCANCELLATION':
         await subscriptionService.uncancelSubscription(userId);
@@ -145,14 +220,6 @@ class WebhookService {
       default:
         break;
     }
-
-    // Erişim olay alanlarından değil mağazadaki güncel durumdan (bkz. readStoreState).
-    if (storeState !== undefined) await subscriptionService.applyStoreState(userId, storeState);
-
-    await this.logIapTransaction(
-      userId, productId, storeType, transaction_id || '',
-      eventType, null, null
-    );
   }
 
   /**

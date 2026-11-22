@@ -3,6 +3,7 @@ import { env } from "../config/env.js";
 import { hashPassword, comparePassword, normalizeEmail } from "../utils/hash.js";
 import { sanitizeIlike, assertUuid } from "../utils/validation.js";
 import { Errors } from "../utils/errors.js";
+import { questionMediaService } from "../services/question-media.service.js";
 import { banService } from "../services/ban.service.js";
 import { diamondService } from "../services/diamond.service.js";
 import {
@@ -67,15 +68,17 @@ class AdminService {
       { count: pendingReports },
     ] = await Promise.all([
       supabase.from("users").select("*", { count: "exact", head: true }).eq("is_deleted", false),
-      // Seed botlari ve sahibin kendi hesaplari ("berkant" gecen e-postalar) haric
+      // Seed botlari, magaza test botlari (Play on-lansman) ve sahibin kendi hesaplari ("berkant") haric
       supabase
         .from("users")
         .select("*", { count: "exact", head: true })
         .eq("is_deleted", false)
         .eq("is_seed_profile", false)
+        .eq("is_store_bot", false)
         .not("email", "ilike", "%berkant%"),
       supabase.from("users").select("*", { count: "exact", head: true }).eq("is_deleted", false).gte("last_seen_at", sevenDaysAgo),
-      supabase.from("users").select("*", { count: "exact", head: true }).gte("created_at", todayStart),
+      // Bugunku kayit = gercek kayit: build yuklemesi gunu Play botlari bu sayiyi sisiriyordu.
+      supabase.from("users").select("*", { count: "exact", head: true }).eq("is_store_bot", false).gte("created_at", todayStart),
       supabase.from("matches").select("*", { count: "exact", head: true }),
       supabase.from("reports").select("*", { count: "exact", head: true }).eq("status", "PENDING"),
     ]);
@@ -110,7 +113,7 @@ class AdminService {
   async getUsers(page: number, limit: number, search?: string, gender?: string) {
     let query = supabase
       .from("users")
-      .select("id, email, name, surname, age, gender, city, green_diamonds, purple_diamonds, is_online, is_deleted, is_banned, created_at, last_seen_at, photos", { count: "exact" })
+      .select("id, email, name, surname, age, gender, city, green_diamonds, purple_diamonds, is_online, is_deleted, is_banned, is_store_bot, created_at, last_seen_at, photos", { count: "exact" })
       .eq("is_deleted", false)
       .order("created_at", { ascending: false })
       .range((page - 1) * limit, page * limit - 1);
@@ -292,7 +295,38 @@ class AdminService {
       supabase.from("users").select("id, email, name, surname, photos, is_banned").eq("id", report.reported_id).single(),
     ]);
 
-    return { report, reporter, reported };
+    const question = report.question_id ? await this.getReportQuestion(report.question_id as string) : null;
+
+    return { report, reporter, reported, question };
+  }
+
+  /** Soruya bagli sikayet: admin icin soru medyasi (moderasyon durumundan bagimsiz, 600 sn imzali URL). */
+  private async getReportQuestion(questionId: string) {
+    const { data: q } = await supabase
+      .from("questions")
+      .select("id, user_id, order_num, question_text, voice_path, image_path, image_status")
+      .eq("id", questionId)
+      .maybeSingle();
+    if (!q) return null;
+    const [voice_url, image_url] = await Promise.all([
+      questionMediaService.signedUrl((q.voice_path as string | null) ?? null),
+      questionMediaService.signedUrl((q.image_path as string | null) ?? null),
+    ]);
+    return { ...q, voice_url, image_url };
+  }
+
+  /** Sikayet edilen sorunun tek medya slotunu siler (sahip akisiyla ayni CAS/depo temizligi). Ban ayri akis. */
+  async removeReportMedia(reportId: string, kind: "voice" | "image"): Promise<boolean> {
+    const { data: report } = await supabase.from("reports").select("question_id").eq("id", reportId).maybeSingle();
+    if (!report?.question_id) return false;
+    const { data: q } = await supabase
+      .from("questions")
+      .select("user_id, order_num")
+      .eq("id", report.question_id)
+      .maybeSingle();
+    if (!q) return false;
+    await questionMediaService.removeMedia(q.user_id as string, q.order_num as number, kind);
+    return true;
   }
 
   async updateReportStatus(reportId: string, status: string) {

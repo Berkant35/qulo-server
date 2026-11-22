@@ -54,7 +54,8 @@ export interface FailureSpec {
 /** Depolama hata enjeksiyonu — `FailureSpec`'in storage karşılığı. */
 export interface StorageFailureSpec {
   bucket: string;
-  op: 'list' | 'remove' | 'upload';
+  /** `sign`: `createSignedUrl` + `createSignedUrls`. */
+  op: 'list' | 'remove' | 'upload' | 'sign' | 'download';
   error?: SupabaseError;
   /** Kaç başarılı çağrıdan SONRA patlasın (varsayılan 0 = hemen). */
   failAfter?: number;
@@ -101,6 +102,13 @@ export interface FakeSupabaseOptions {
    * unutan sorgu, bununla testte de eksik satır görür.
    */
   maxRows?: number;
+  /**
+   * Postgres kolon varsayılanları (ör. `created_at default now()`), tablo başına, opt-in: insert'te
+   * payload'da olmayan kolonlar buradan dolar (payload önceliklidir). Zaman penceresi sorgulayan kodu
+   * (`gte('created_at', …)`) sınamak için; global yapılmadı — satırı birebir karşılaştıran testler bozulmasın.
+   * Yalnız `insert`: upsert'te çakışan satır güncellenir, varsayılan onun mevcut değerini ezmemeli.
+   */
+  insertDefaults?: Record<string, () => Row>;
 }
 
 type FilterOp = 'eq' | 'neq' | 'gte' | 'lte' | 'gt' | 'lt' | 'in' | 'is' | 'notIs' | 'notIn' | 'notIlike' | 'like' | 'ilike';
@@ -495,6 +503,12 @@ class QueryBuilder implements PromiseLike<Result<any>> {
       return { data: this.returnRows ? written : [], error: null, count: written.length };
     }
 
+    // PostgREST: gövdede sütun yoksa (`{}`; `undefined` alanlar JSON'da düşer) UPDATE yerine
+    // `SELECT … WHERE false` çalışır — sıfır satır, hata yok, hiçbir şey yazılmaz.
+    if (this.mode === 'update' && !Object.values(this.payload as Row).some((v) => v !== undefined)) {
+      return { data: [], error: this.failure ?? null, count: this.wantCount ? 0 : undefined };
+    }
+
     const { affected, total } = this.resolveRows();
 
     if (this.mode === 'update') {
@@ -565,6 +579,11 @@ export interface FakeSupabase {
    * depoya GERÇEKTE ne yazıldığını sınamak için (ör. PNG değil JPEG, önbellek başlığı).
    */
   storageUploads: Array<{ bucket: string; path: string; body: unknown; opts?: StorageUploadOptions }>;
+}
+
+/** Fake imzalı URL biçimi — testler beklenen URL'i bununla kurar. */
+export function fakeSignedUrl(bucket: string, path: string, expiresIn: number): string {
+  return `https://fake.supabase.co/storage/v1/object/sign/${bucket}/${path}?expiresIn=${expiresIn}`;
 }
 
 /** `storage.from(b).upload` seçeneklerinin kod tabanında kullanılan kısmı. */
@@ -645,6 +664,13 @@ export function createFakeSupabase(
     return spec.error ?? { message: `fake storage failure: ${op} on ${bucket}` };
   };
 
+  const withInsertDefaults = (table: string, payload: Row | Row[]): Row | Row[] => {
+    const defaults = options.insertDefaults?.[table];
+    if (!defaults) return payload;
+    const apply = (row: Row): Row => ({ ...defaults(), ...row });
+    return Array.isArray(payload) ? payload.map(apply) : apply(payload);
+  };
+
   const client = {
     from(table: string) {
       const kaydet = (op: FakeSupabase['queries'][number]['op']) => queries.push({ table, op });
@@ -672,7 +698,7 @@ export function createFakeSupabase(
           kaydet('insert');
           const fail = failureFor(table, 'insert');
           return new QueryBuilder(
-            store, table, 'insert', payload, false,
+            store, table, 'insert', withInsertDefaults(table, payload), false,
             fail?.error ?? null, undefined, options.unique?.[table] ?? [], fail?.committed ?? false,
           );
         },
@@ -700,12 +726,12 @@ export function createFakeSupabase(
       };
     },
     /**
-     * Depolama — kod tabanının kullandığı `list`, `remove`, `upload`, `getPublicUrl`.
-     * Dosyalar `bucket → path` haritasında tutulur; `list(prefix)` o önekin
-     * altındaki dosya adlarını döner (Supabase `{ name }` listesi gibi).
+     * Depolama — kod tabanının kullandığı `list`, `remove`, `upload`, `download`, `getPublicUrl`,
+     * `createSignedUrl(s)`. Dosyalar `bucket → path` haritasında tutulur; `list(prefix)` o önekin
+     * altındaki girdileri döner (Supabase `FileObject` gibi `{ name, id }`).
      * Gerçek Storage'a sadık üç kural:
-     * - Sayfalı: `limit` verilmezse 100 dosya — sayfalamayı unutan kod testte de dosya bırakır.
-     * - Tek seviyeli: alt klasördeki dosyalar dönmez (klasör girdileri modellenmez).
+     * - Sayfalı: `limit` verilmezse 100 girdi — sayfalamayı unutan kod testte de dosya bırakır.
+     * - Tek seviyeli: alt klasördeki dosyalar dönmez; alt klasör tek girdi, `id: null`.
      * - `upload` var olan yola `upsert` verilmeden yazamaz (Storage 409 döner).
      */
     storage: {
@@ -734,11 +760,45 @@ export function createFakeSupabase(
             // `offset` gerçek API'deki gibi sayfalar: offset'i yok sayan bir fake, sayfalayan
             // kodu testte sonsuz döngüye sokar (her çağrı ilk sayfayı döner).
             const start = opts?.offset ?? 0;
-            const data = files()
-              .filter((path) => path.startsWith(`${prefix}/`) && !path.slice(prefix.length + 1).includes('/'))
-              .slice(start, start + (opts?.limit ?? 100))
-              .map((path) => ({ name: path.slice(prefix.length + 1) }));
+            const altYollar = files()
+              .filter((path) => path.startsWith(`${prefix}/`))
+              .map((path) => path.slice(prefix.length + 1));
+            // Dosyalar `id` taşır; alt klasör gerçek API'deki gibi TEK girdi, `id: null` (FileObject).
+            const dosyalar = altYollar
+              .filter((rest) => !rest.includes('/'))
+              .map((name) => ({ name, id: `fake-file:${prefix}/${name}` }));
+            const klasorler = [...new Set(altYollar.filter((rest) => rest.includes('/')).map((rest) => rest.split('/')[0]))]
+              .map((name) => ({ name, id: null }));
+            const data = [...dosyalar, ...klasorler].slice(start, start + (opts?.limit ?? 100));
             return { data, error: null };
+          },
+          /** İmzalı URL — deterministik: yol + süre; dosya yoksa gerçek API gibi hata. */
+          async createSignedUrl(path: string, expiresIn: number) {
+            const failure = storageFailureFor(bucket, 'sign');
+            if (failure) return { data: null, error: failure };
+            if (!files().includes(path)) return { data: null, error: { message: 'Object not found', code: '404' } };
+            return { data: { signedUrl: fakeSignedUrl(bucket, path, expiresIn) }, error: null };
+          },
+          /** Toplu imza — tek istek; olmayan yol satır bazında `error` taşır (gerçek API gibi). */
+          async createSignedUrls(paths: string[], expiresIn: number) {
+            const failure = storageFailureFor(bucket, 'sign');
+            if (failure) return { data: null, error: failure };
+            const data = paths.map((path) => files().includes(path)
+              ? { path, signedUrl: fakeSignedUrl(bucket, path, expiresIn), error: null }
+              : { path, signedUrl: '', error: 'Either the object does not exist or you do not have access to it' });
+            return { data, error: null };
+          },
+          /**
+           * Service-role indirme (private bucket). Gövde: o yola yapılan son `upload` gövdesi; seed
+           * dosyasında `fake-file:<yol>` baytları. Dosya yoksa gerçek API gibi hata.
+           */
+          async download(path: string) {
+            const failure = storageFailureFor(bucket, 'download');
+            if (failure) return { data: null, error: failure };
+            if (!files().includes(path)) return { data: null, error: { message: 'Object not found', code: '404' } };
+            const son = [...storageUploads].reverse().find((u) => u.bucket === bucket && u.path === path);
+            const body = son?.body instanceof Buffer ? son.body : Buffer.from(`fake-file:${path}`);
+            return { data: new Blob([body]), error: null };
           },
           async remove(paths: string[]) {
             const failure = storageFailureFor(bucket, 'remove');

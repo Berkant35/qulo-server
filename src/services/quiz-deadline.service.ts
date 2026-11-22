@@ -1,6 +1,8 @@
 import { supabase } from "../config/supabase.js";
 import { AppError } from "../utils/errors.js";
 import { economyConfigService } from "./economy-config.service.js";
+import { ECONOMY_BOUNDARIES } from "../types/economy-config.schema.js";
+import { IMAGE_EXTRA_SECONDS, VOICE_EXTRA_BUFFER_SECONDS, VOICE_MAX_DURATION_MS } from "../constants/question-media.js";
 
 /** `questions.time_limit` bos ise (eski satirlar). */
 export const DEFAULT_QUESTION_SECONDS = 30;
@@ -14,10 +16,13 @@ const CAS_ATTEMPTS = 3;
  * gecisinde dizi sifirlaninca hak yenilenir). Istemciye `used_powers` icinde DONMEZLER.
  * - PAYWALL: ek sure bu soruda verildi (soru basina bir kez).
  * - RESCUE: yanlis cevap kaydedildi, kurtarma penceresi acik.
+ * - MEDIA: medya ek suresi bu soruda hak edildi (soru basina bir kez; bkz. `arm`). NO_REARM'da
+ *   DEGIL: isaretten sonra da sunum daraltmaya devam eder (ek sure hesaba katilarak).
  */
 const PAYWALL_MARKER = "__PAYWALL_GRACE";
 const RESCUE_MARKER = "__RESCUE_WINDOW";
-const INTERNAL_MARKERS: ReadonlySet<string> = new Set([PAYWALL_MARKER, RESCUE_MARKER]);
+const MEDIA_MARKER = "__MEDIA_EXTRA";
+const INTERNAL_MARKERS: ReadonlySet<string> = new Set([PAYWALL_MARKER, RESCUE_MARKER, MEDIA_MARKER]);
 /** Bu isaretlerden biri varsa sunum son ani DARALTMAZ: odenmis/verilmis sure geri alinmasin. */
 const NO_REARM: ReadonlySet<string> = new Set(["TIME_EXTEND", PAYWALL_MARKER, RESCUE_MARKER]);
 
@@ -34,6 +39,32 @@ const secondsFromNow = (seconds: number): string => new Date(Date.now() + second
 export const remainingSeconds = (expiresAt: string): number =>
   Math.max(0, Math.ceil((new Date(expiresAt).getTime() - Date.now()) / 1000));
 
+/**
+ * Sesli/gorselli soru (2.0.18+101) ek suresi: ses varsa `ceil(sure) + 3`, ONAYLI gorsel varsa `+ 3`.
+ * Bekleyen/reddedilen gorsel cozucuye gosterilmez → ek sure de yok. Sure ses ust sinirina
+ * kirpilir (084 CHECK'i zaten 1..15000; bozuk satir son ani siseremesin).
+ */
+export function mediaExtraSeconds(q: { voice_duration_ms: number | null; image_status: string | null }): number {
+  const voice = q.voice_duration_ms != null && q.voice_duration_ms > 0
+    ? Math.ceil(Math.min(q.voice_duration_ms, VOICE_MAX_DURATION_MS) / 1000) + VOICE_EXTRA_BUFFER_SECONDS
+    : 0;
+  return voice + (q.image_status === "approved" ? IMAGE_EXTRA_SECONDS : 0);
+}
+
+/**
+ * Durust bir cevabin en uzun suresi (sn): soru ust siniri + en buyuk medya ek suresi + TIME_EXTEND
+ * ve tolerans config ust sinirlari. `time_spent` yalniz istatistik — reddedilmez, buna kirpilir.
+ */
+export const MAX_TIME_SPENT_SECONDS =
+  MAX_QUESTION_SECONDS
+  + mediaExtraSeconds({ voice_duration_ms: VOICE_MAX_DURATION_MS, image_status: "approved" })
+  + ECONOMY_BOUNDARIES.timeExtendSeconds.max
+  + ECONOMY_BOUNDARIES.questionToleranceSeconds.max;
+
+/** Istemcinin bildirdigi cevap suresi → istatistige yazilacak deger (yoksa null). */
+export const clampTimeSpent = (seconds: number | null | undefined): number | null =>
+  seconds == null ? null : Math.min(Math.max(0, seconds), MAX_TIME_SPENT_SECONDS);
+
 /** Istemciye donen kullanilmis gucler — ic isaretler haric. */
 export const visiblePowers = (powers: string[] | null): string[] =>
   (powers ?? []).filter((p) => !INTERNAL_MARKERS.has(p));
@@ -45,7 +76,8 @@ export const visiblePowers = (powers: string[] | null): string[] =>
  * o anki sorunun son anini tutar.
  *
  * Yasam dongusu: oturum acilisi / soru gecisi → "sure + tolerans + gecis tamponu"; soru sunulunca
- * → "simdi + sure + tolerans"a DARALIR (asla uzamaz); TIME_EXTEND → +config; yetersiz elmas →
+ * → "simdi + sure + tolerans"a DARALIR (asla uzamaz; tek istisna medyali sorunun ilk sunumu,
+ * bkz. `arm`); TIME_EXTEND → +config; yetersiz elmas →
  * soru basina bir kez +paywall; yanlis cevap → kurtarma penceresi.
  */
 class QuizDeadlineService {
@@ -70,13 +102,32 @@ class QuizDeadlineService {
    * varsa hic dokunmaz — aksi halde tekrar cekmek ek sureyi "taze sure"ye cevirirdi (paywall'u
    * tetikle + tekrar cek = sure sifirlama) ya da kurtarma penceresini kisaltirdi.
    * Yarisi kaybederse (es zamanli iki GET) taze degeri okur; yazim hatasi akisi bozmaz.
+   *
+   * Medya ek suresi (`mediaExtra` > 0, yalniz medya kapisi acikken): son an
+   * "simdi + sure + ek + tolerans". Gecis/acilis son ani ek sureyi BILMEZ ve tampon (>= 10 sn)
+   * ek sureden (en cok 21 sn) kisa olabilir; yalniz daraltan kural ek sureyi o durumda yutardi.
+   * Bu yuzden sorunun ILK medyali sunumu son ani bir kez YUKSELTEBILIR — hak atomik isaretle
+   * (`__MEDIA_EXTRA`) soru basina bire sinirli; isaret yazilamazsa yukseltme yok (fail-closed).
+   * Ilk sunum daraltsa da isaret yakilir: aksi halde "erken cek, gec tekrar cek" sureyi uzatirdi.
+   * Sonraki sunumlar ek sureyi hesaba katarak yalniz daraltir (ek sure geri alinmaz, tekrar da
+   * eklenmez). `mediaExtra` = 0 iken akis medya oncesiyle BIREBIR ayni (ek okuma/yazim yok).
+   *
+   * Yukseltme TAVANI `min(simdi + sure + ek + tolerans, okunan son an + ek)`: yukseltme okunan son
+   * ana en cok `ek` ekler, gecen sureyi asla geri vermez. Tavansiz iki yol vardi (review fix 1/2):
+   * - Surum basligi oyunu: kapi kapali GET (`2.0.18`) isaretsiz daraltir, sure akar, kapi acik GET
+   *   (`2.0.19`) isareti alip "simdi + ..."ya yukseltir → gecen sure geri gelirdi (en cok L + tol).
+   * - Isaret RPC'si hata verirse daraltma ek sureyi isaretsiz katar; sonraki basarili GET isareti
+   *   alip yukseltir. Tavanla bu yol en cok BIR ek `ek` kadar sure kazandirir (soru basina, sinirli).
    */
-  async arm(session: DeadlineSession, timeLimit: number): Promise<string> {
+  async arm(session: DeadlineSession, timeLimit: number, mediaExtra = 0): Promise<string> {
     if ((session.current_q_powers ?? []).some((p) => NO_REARM.has(p))) return session.expires_at;
 
     const { timing } = await economyConfigService.getConfig();
-    const deadline = secondsFromNow(timeLimit + timing.questionToleranceSeconds);
-    if (new Date(deadline).getTime() >= new Date(session.expires_at).getTime()) return session.expires_at;
+    const deadline = secondsFromNow(timeLimit + mediaExtra + timing.questionToleranceSeconds);
+    const firstMediaArm = mediaExtra > 0 && (await this.claimMediaExtra(session));
+    if (new Date(deadline).getTime() >= new Date(session.expires_at).getTime()) {
+      return firstMediaArm ? this.raise(session, deadline, mediaExtra) : session.expires_at;
+    }
 
     const { data, error } = await supabase
       .from("quiz_sessions")
@@ -88,6 +139,37 @@ class QuizDeadlineService {
       .maybeSingle();
     if (error) {
       console.error("[quiz-deadline] arm failed:", error, { sessionId: session.id });
+      return session.expires_at;
+    }
+    if (data) return data.expires_at as string;
+    return (await this.readExpiresAt(session.id)) ?? session.expires_at;
+  }
+
+  /** Bu sorunun medya ek suresi hakkini al: true = bu cagri aldi (isaret daha once yoktu). */
+  private async claimMediaExtra(session: DeadlineSession): Promise<boolean> {
+    if ((session.current_q_powers ?? []).includes(MEDIA_MARKER)) return false;
+    return this.mark(session.id, MEDIA_MARKER);
+  }
+
+  /**
+   * Ilk medyali sunum: son ani `deadline`'a YUKSELT — en cok okunan son an + `mediaExtra` (tavan,
+   * bkz. `arm`). Okunan degere kosullu yazim — araya giren
+   * yazim (TIME_EXTEND, es zamanli GET'in daraltmasi) ezilmez; yarisi kaybederse taze deger doner
+   * (ek sure bu nadir yarista kaybolabilir; odenmis sure asla kaybolmaz).
+   */
+  private async raise(session: DeadlineSession, deadline: string, mediaExtra: number): Promise<string> {
+    const cap = new Date(session.expires_at).getTime() + mediaExtra * 1000;
+    const target = new Date(Math.min(new Date(deadline).getTime(), cap)).toISOString();
+    const { data, error } = await supabase
+      .from("quiz_sessions")
+      .update({ expires_at: target })
+      .eq("id", session.id)
+      .eq("current_q", session.current_q)
+      .eq("expires_at", session.expires_at)
+      .select("expires_at")
+      .maybeSingle();
+    if (error) {
+      console.error("[quiz-deadline] media raise failed:", error, { sessionId: session.id });
       return session.expires_at;
     }
     if (data) return data.expires_at as string;

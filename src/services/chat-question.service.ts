@@ -13,6 +13,7 @@ import {
   type PowerName,
 } from "../types/index.js";
 import { economyConfigService } from "./economy-config.service.js";
+import { subscriptionService } from "./subscription.service.js";
 import type {
   CreateChatQuestionInput,
   AnswerChatQuestionInput,
@@ -69,24 +70,14 @@ export class ChatQuestionService {
   }
 
   /* ── Helper: getUserTier ───────────────────────────────────────── */
+  /**
+   * Plan erişimin kaynağından (`users.subscription_*`, mağaza durumundan yazılır). `user_subscriptions`
+   * satırları rapor içindir: TRANSFER'le gelen hesapta satır yok, eski hesapta iki aktif satır kalabilir
+   * (maybeSingle hatası) — ikisinde de ödeyen kullanıcı "free" limitleri görüyordu.
+   */
   private async getUserTier(userId: string): Promise<UserTier> {
-    const { data: sub } = await supabase
-      .from("user_subscriptions")
-      .select("plan, status, expires_at")
-      .eq("user_id", userId)
-      .eq("status", "active")
-      .maybeSingle();
-
-    if (!sub) return "free";
-
-    // Check if subscription is still valid
-    if (sub.expires_at && new Date(sub.expires_at) < new Date()) {
-      return "free";
-    }
-
-    if (sub.plan === "premium") return "premium";
-    if (sub.plan === "plus") return "plus";
-    return "free";
+    const status = await subscriptionService.getStatus(userId);
+    return status.isActive && status.plan ? status.plan : "free";
   }
 
   /* ── Helper: fetchQuestion ─────────────────────────────────────── */

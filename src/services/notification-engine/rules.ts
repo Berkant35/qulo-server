@@ -8,6 +8,7 @@ import type { EngineContext, EngineUser } from './context.js';
  * Tasarim: docs/superpowers/specs/2026-09-07-akilli-bildirim-motoru-design.md
  */
 export const LIFECYCLE_RULE_KEYS = [
+  'lifecycle_solved_waiting',
   'lifecycle_unread_message',
   'lifecycle_match_waiting',
   'lifecycle_day1_return',
@@ -79,6 +80,14 @@ function otherUserOf(match: { user1_id: string; user2_id: string }, userId: stri
 const NEW_PEOPLE_MIN_COUNT = 3;
 
 /**
+ * "Seni cozduler" penceresi (2.0.18 plan madde 6): eslesmeden en az bu kadar sonra — anlik `new_match`
+ * push'u zaten gitti, ayni aksam ustune ikincisi binmesin — ve en fazla SOLVED_LOOKBACK_MS (48 saat) icinde.
+ */
+export const SOLVED_MIN_AGE_MS = 3 * 60 * 60 * 1000;
+/** "Seni cozduler" ust siniri — context.ts tamamlanan quiz'leri bu kadar geriye ceker. */
+export const SOLVED_LOOKBACK_MS = 2 * DAY_MS;
+
+/**
  * Ilk gun geri cagirma penceresi. Motor yalniz yerel gonderim saatinde (19:00) karar verir; kayittan
  * 4-30 saat sonrasina dusen ILK pencere = kayit gununun ya da ertesi gunun aksami. Dizi bos → tek gonderim.
  * 29 Eyl-3 Eki: ilk bildirim karari kayittan medyan 56,7 saat sonraydi; ertesi gun donen 1/27.
@@ -102,6 +111,38 @@ function realLikesSince(user: EngineUser, ctx: EngineContext, sinceMs: number): 
 }
 
 export const LIFECYCLE_RULES: LifecycleRule[] = [
+  {
+    key: 'lifecycle_solved_waiting',
+    description: 'Son 48 saatte biri sorularini cozup eslesti; hedef o andan beri girmedi ve yazmadi (push yoksa e-posta yedegi)',
+    category: 'matches',
+    defaultScheduleDays: [],
+    // Kosulda inaktiflik var (eslesmeden beri girmedi): donunce dizi bastan, sonraki cozumde yine gider.
+    resetOnActivity: true,
+    /**
+     * 2026-11-09: 208 gercek eslesmenin 4'u konusmaya dondu; hedeflerin %79'u eslesme aninda >=3 gundur
+     * gorulmemisti. Uygulamaya donen hedefin cevap orani %33 — is onu geri getirmek. Hedef tarafi
+     * quiz_sessions'tan (matches yonsuz): bu kisi cozen degil, cozulen.
+     */
+    evaluate(user, ctx) {
+      const nowMs = ctx.now.getTime();
+      const lastActive = lastActiveMs(user);
+      let best: { matchId: string; name: string; completedAt: number } | null = null;
+      for (const solved of ctx.solvedByTarget.get(user.id) ?? []) {
+        const completedAt = Date.parse(solved.completed_at);
+        if (!Number.isFinite(completedAt)) continue;
+        const age = nowMs - completedAt;
+        if (age < SOLVED_MIN_AGE_MS || age > SOLVED_LOOKBACK_MS) continue;
+        if (lastActive > completedAt) continue;
+        const solver = ctx.usersById.get(solved.solver_id);
+        if (!solver || solver.is_test_account || solver.is_seed_profile) continue;
+        const match = (ctx.matchesByUser.get(user.id) ?? []).find((m) => otherUserOf(m, user.id) === solved.solver_id);
+        if (!match) continue;
+        if ((ctx.messagesByMatch.get(match.id) ?? []).some((m) => m.sender_id === user.id)) continue;
+        if (!best || completedAt > best.completedAt) best = { matchId: match.id, name: solver.name ?? '', completedAt };
+      }
+      return best ? { params: { name: best.name }, actionUrl: `/chat/${best.matchId}` } : null;
+    },
+  },
   {
     key: 'lifecycle_unread_message',
     description: '24 saatten eski okunmamis mesaj var, kullanici o mesajdan beri girmedi',

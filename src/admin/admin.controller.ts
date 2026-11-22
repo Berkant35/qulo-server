@@ -189,7 +189,17 @@ class AdminController {
 
   async reportAction(req: Request, res: Response) {
     const reportId = req.params.id as string;
-    const { status, ban_user } = req.body;
+    const { status, ban_user, remove_media } = req.body;
+    // Medya silme ayri aksiyon: durum degistirmez, ban cagirmaz.
+    if (remove_media === "voice" || remove_media === "image") {
+      try {
+        await adminService.removeReportMedia(reportId, remove_media);
+      } catch (err) {
+        console.error("[admin] report remove_media failed:", { reportId, err });
+        return res.redirect(`/admin/reports/${reportId}?error=remove_media_failed`);
+      }
+      return res.redirect(`/admin/reports/${reportId}`);
+    }
     await adminService.updateReportStatus(reportId, status);
     if (ban_user === "1") {
       const detail = await adminService.getReportDetail(reportId);
@@ -309,11 +319,15 @@ class AdminController {
       seed_reply_enabled, seed_reply_fast_mode,
       photo_moderation_enabled,
       discover_dormant_days,
+      discover_inactive_exclude_days,
+      discover_unanswered_match_cap,
+      recall_email_enabled, recall_email_enabled_field,
       mutual_match_enabled, mutual_match_field,
       served_gate_enabled, served_gate_field,
       power_demo_enabled, power_demo_enabled_field,
       ads_enabled, ads_enabled_field,
       local_schedule_enabled, local_schedule_field,
+      media_questions_enabled, media_questions_enabled_field,
     } = req.body;
 
     const versionFields: Record<string, string> = { min_version_ios, min_version_android, latest_version_ios, latest_version_android };
@@ -323,15 +337,22 @@ class AdminController {
       }
     }
 
-    // Discover uyuyan-aday esigi (migration 074). Form alani yalniz kolon varken render edilir;
-    // alan gelmediyse dokunulmaz (074 oncesi kayit, olmayan kolona yazmaya calisip patlamasin).
-    let dormantDays: number | undefined;
-    if (discover_dormant_days !== undefined) {
-      const raw = String(discover_dormant_days).trim();
-      dormantDays = Number(raw);
-      if (!/^\d{1,3}$/.test(raw) || dormantDays > 365) {
-        return res.redirect("/admin/app-config?error=" + encodeURIComponent("discover_dormant_days: 0-365 arasi tam sayi olmali"));
+    // Discover tam sayi ayarlari (migration 074/080). Form alani yalniz kolon varken render edilir;
+    // alan gelmediyse dokunulmaz (migration oncesi kayit, olmayan kolona yazmaya calisip patlamasin).
+    const intSettings = [
+      { field: "discover_dormant_days", raw: discover_dormant_days, max: 365 },
+      { field: "discover_inactive_exclude_days", raw: discover_inactive_exclude_days, max: 365 },
+      { field: "discover_unanswered_match_cap", raw: discover_unanswered_match_cap, max: 100 },
+    ] as const;
+    const intUpdates: Partial<Record<(typeof intSettings)[number]["field"], number>> = {};
+    for (const { field, raw, max } of intSettings) {
+      if (raw === undefined) continue;
+      const text = String(raw).trim();
+      const value = Number(text);
+      if (!/^\d{1,3}$/.test(text) || value > max) {
+        return res.redirect("/admin/app-config?error=" + encodeURIComponent(`${field}: 0-${max} arasi tam sayi olmali`));
       }
+      intUpdates[field] = value;
     }
 
     try {
@@ -347,7 +368,11 @@ class AdminController {
         ...(ads_enabled_field !== undefined ? { ads_enabled: ads_enabled === "on" } : {}),
         // Planli yerel bildirim senkronu (migration 090) — aynı gizli işaret deseni.
         ...(local_schedule_field !== undefined ? { local_schedule_enabled: local_schedule_enabled === "on" } : {}),
-        ...(dormantDays !== undefined ? { discover_dormant_days: dormantDays } : {}),
+        // Sesli/görselli soru (migration 084) — aynı gizli işaret deseni; varsayılan KAPALI.
+        ...(media_questions_enabled_field !== undefined ? { media_questions_enabled: media_questions_enabled === "on" } : {}),
+        // "Seni çözdüler" e-posta yedeği (migration 080) — aynı gizli işaret deseni; varsayılan KAPALI.
+        ...(recall_email_enabled_field !== undefined ? { recall_email_enabled: recall_email_enabled === "on" } : {}),
+        ...intUpdates,
         min_version_ios,
         min_version_android,
         latest_version_ios,

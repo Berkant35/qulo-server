@@ -17,7 +17,16 @@ import { pairCompatibilityService } from "./pair-compatibility.service.js";
 import { identityService, type VisibleIdentity } from "./identity.service.js";
 import { servedGate } from "./served-gate.service.js";
 import { izleyiciDilleri, seedLanguageFilter } from "../utils/discover-language.js";
+import { activitySignal, type ActivitySignal } from "../utils/activity-signal.js";
+import { unansweredMatchService } from "./unanswered-match.service.js";
+import { buildQuestionInfo, type QuestionInfo, type QuestionSummaryRow } from "./discover-question-info.js";
 import { discoverGroupRank, passesLanguageGate } from "../utils/discover-rank.js";
+import {
+  DAY_MS,
+  emptyReasonOf,
+  excludeLongInactive,
+  type DiscoverEmptyReason,
+} from "./discover-ranking.js";
 
 const PAGE_SIZE = 10;
 /**
@@ -27,6 +36,18 @@ const PAGE_SIZE = 10;
 const CANDIDATE_FETCH_LIMIT = 500;
 /** URL uzunlugu icin dislama listesi tavani; asilirsa kalani bellekte elenir. */
 const MAX_EXCLUDE_IDS = 1000;
+
+/**
+ * Kart soru ozeti kolonlari. Medya kolonlari (084) yalniz kapi acikken okunur: eski istemcinin
+ * sorgusu birebir eski kalir ve migration uygulanmadan once de patlamaz. Iki tam literal + iki ayri
+ * cagri — literal birlesimi supabase-js'in tip duzeyi select ayristiricisini bozuyor (quiz.service).
+ */
+const DISCOVER_QUESTION_COLUMNS = "user_id, category, stats_correct, stats_wrong, locale, created_at";
+const DISCOVER_QUESTION_MEDIA_COLUMNS = "user_id, category, stats_correct, stats_wrong, locale, created_at, voice_path, image_path, image_status";
+const UNDO_QUESTION_COLUMNS = "user_id, category, stats_correct, stats_wrong, locale";
+const UNDO_QUESTION_MEDIA_COLUMNS = "user_id, category, stats_correct, stats_wrong, locale, voice_path, image_path, image_status";
+
+
 
 /** `match_list_summaries` satiri (migration 070): mesajsiz eslesmede son mesaj alanlari NULL. */
 interface MatchListSummary {
@@ -60,13 +81,6 @@ interface CandidateRow {
   is_seed_profile: boolean | null;
 }
 
-interface QuestionInfo {
-  count: number;
-  categories: string[];
-  avg_difficulty: string;
-  languages: string[];
-}
-
 interface ProfileCard {
   user_id: string;
   name: string;
@@ -84,6 +98,11 @@ interface ProfileCard {
   relationship_goal: string | null;
   /** Yalnız sahibinin görünür yaptığı etiketler (spec 2026-10-06); yoksa alan yok. */
   identity?: VisibleIdentity;
+  /**
+   * Aktiflik rozeti (2.0.18): "today" | "week" | null — last_seen_at'ten kaba kova, ham zaman
+   * damgasi sizmaz (utils/activity-signal). Seed profilde her zaman null (presence ritmi yapay).
+   */
+  activity: ActivitySignal | null;
 }
 
 export class MatchingService {
@@ -93,11 +112,12 @@ export class MatchingService {
   async discover(
     userId: string,
     page = 1,
+    media: { active: boolean } = { active: false },
   ): Promise<{
     cards: ProfileCard[];
     page: number;
     has_more: boolean;
-    empty_reason?: 'language' | 'no_candidates';
+    empty_reason?: DiscoverEmptyReason;
   }> {
     assertUuid(userId, "userId");
     // 1. Get current user + already-swiped IDs + basarisiz quiz gecmisi in parallel
@@ -147,11 +167,13 @@ export class MatchingService {
     // modunda deste kurulur; set_at boş olsa da bu bir seçimdir.
     if (!user.gender_pref_set_at && user.pref_consent_status !== "DECLINED") throw Errors.PROFILE_INCOMPLETE();
 
-    // Dil tercihleri + uyuyan-aday esigi (app_config, 60 sn onbellekli — istek basina DB yok)
-    const [userLanguages, dormantDays, mutualMatch] = await Promise.all([
+    // Dil tercihleri + canli hedef ayarlari (app_config, 60 sn onbellekli — istek basina DB yok)
+    const [userLanguages, dormantDays, mutualMatch, inactiveExcludeDays, unansweredCap] = await Promise.all([
       userLanguageService.getUserLanguages(userId),
       appConfigService.getDiscoverDormantDays(),
       appConfigService.getMutualMatchEnabled(),
+      appConfigService.getDiscoverInactiveExcludeDays(),
+      appConfigService.getDiscoverUnansweredMatchCap(),
     ]);
     const viewerBucket = bucketOf(user);
     if (mutualMatch && !viewerBucket) throw Errors.PROFILE_INCOMPLETE();
@@ -249,7 +271,9 @@ export class MatchingService {
       // `id` ikincil anahtar: `last_seen_at` esitliginde tiebreak yoksa kesme
       // noktasi yine belirsizlesir ve havuz 500'u astiginda ayni bug'in kucuk
       // bir versiyonu geri gelir.
-      .order("last_seen_at", { ascending: false })
+      // NULL'lar sona: Postgres DESC'te varsayilan NULLS FIRST; hic gorulmemis hesaplar (5.8'de zaten
+      // dislanir) 500'luk tavanda aktif adaylarin onune gecmesin.
+      .order("last_seen_at", { ascending: false, nullsFirst: false })
       .order("id", { ascending: true })
       .limit(CANDIDATE_FETCH_LIMIT);
 
@@ -297,7 +321,7 @@ export class MatchingService {
     }
 
     if (!candidates || candidates.length === 0) {
-      return { cards: [], page, has_more: false, empty_reason: 'no_candidates' };
+      return { cards: [], page, has_more: false, empty_reason: "no_candidates" };
     }
 
     // 4. Sert mesafe filtresi YOK — aday tier ile isaretlenir ve siralamada
@@ -339,10 +363,9 @@ export class MatchingService {
       const ID_PARCA = 100;
       const questionStats: Array<Record<string, any>> = [];
       for (let i = 0; i < candidateIds.length; i += ID_PARCA) {
-        const { data: parca, error: parcaError } = await supabase
-          .from('questions')
-          .select('user_id, category, stats_correct, stats_wrong, locale, created_at')
-          .in('user_id', candidateIds.slice(i, i + ID_PARCA));
+        const { data: parca, error: parcaError } = await this.loadQuestionChunk(
+          candidateIds.slice(i, i + ID_PARCA), media.active,
+        );
         if (parcaError) {
           // Sessizce bos donmek "aday yok" gibi gorunur; bu yanlis sonuc, hatadan beterdir.
           console.error('[matching] question stats query error:', parcaError.message);
@@ -360,7 +383,8 @@ export class MatchingService {
         else rowsByUser.set(uid, [row]);
       }
 
-      // 5.2 — Enrich candidates with question info (category + difficulty)
+      // 5.2 — Enrich candidates with question info (category + difficulty [+ medya rozetleri])
+      const badgeLangs = media.active ? langPrefs : null;
       for (const cId of candidateIds) {
         const userQuestions = rowsByUser.get(cId) ?? [];
 
@@ -369,32 +393,7 @@ export class MatchingService {
           cId,
           userQuestions.map((q: any) => questionLocale(q.locale)),
         );
-
-        let totalAttempts = 0;
-        let totalCorrect = 0;
-        for (const q of userQuestions) {
-          totalAttempts += q.stats_correct + q.stats_wrong;
-          totalCorrect += q.stats_correct;
-        }
-        const successRate = totalAttempts > 0 ? (totalCorrect / totalAttempts) * 100 : 50;
-
-        let difficulty = 'unranked';
-        if (totalAttempts >= 10) {
-          if (successRate > 70) difficulty = 'easy';
-          else if (successRate > 40) difficulty = 'medium';
-          else if (successRate > 20) difficulty = 'hard';
-          else difficulty = 'legendary';
-        }
-
-        const categories = [...new Set(userQuestions.map((q: any) => q.category).filter(Boolean))] as string[];
-        const languages = [...new Set(userQuestions.map((q: any) => questionLocale(q.locale)))];
-
-        questionInfoMap.set(cId, {
-          count: userQuestions.length,
-          categories,
-          avg_difficulty: difficulty,
-          languages,
-        });
+        questionInfoMap.set(cId, buildQuestionInfo(userQuestions, badgeLangs));
       }
     }
 
@@ -441,13 +440,26 @@ export class MatchingService {
       });
     }
 
-    // 6. Score each candidate
+    // 5.8 — Uzun suredir gorulmeyen gercek aday desteden CIKAR (app_config.discover_inactive_exclude_days,
+    // varsayilan 30; 0 = kapali). 2026-11-09: hedeflerin %79'u eslesme aninda >=3 gundur gorulmemisti,
+    // 208 eslesmenin 4'u konusmaya dondu. Seed haric (presence ritmi yapay). Dil kapisindan SONRA:
+    // bos destede "dil" ile "kimse aktif degil" ayrilabilsin (empty_reason).
     const now = new Date();
+    const beforeInactiveCount = discoverableFiltered.length;
+    discoverableFiltered = excludeLongInactive(discoverableFiltered, inactiveExcludeDays, now.getTime());
+
+    // Cevapsiz eslesmesi yigilmis adaylar (son 30 gunde >= cap eslesmesinde hic yazmamis) — 5 dk
+    // surec ici onbellekli tek RPC; hata Discover'i bozmaz (bos kume, tavan o istekte uygulanmaz).
+    const heavyUnanswered = discoverableFiltered.length > 0
+      ? await unansweredMatchService.heavyUnansweredIds(unansweredCap, now)
+      : new Set<string>();
+
+    // 6. Score each candidate
     // Uyuyan aday: son `dormantDays` gundur gorulmemis (last_seen_at — presence heartbeat'i
     // yazar; last_active_at yalniz resume'da yazildigi icin guvenilmez). Prod 29 Eyl-3 Eki:
     // 15 eslesmenin 2'sinde yanit geldi, kohort disi 8 karsi tarafin 7'si Haziran-Eylul'den
-    // beri gorulmuyordu. Sert filtre DEGIL: havuz kucuk, uyuyanlar listenin sonunda kalir.
-    const dormantCutoff = dormantDays > 0 ? now.getTime() - dormantDays * 24 * 60 * 60 * 1000 : null;
+    // beri gorulmuyordu. Sert filtre DEGIL (o is 5.8'in): esik ile dislama arasindakiler sona.
+    const dormantCutoff = dormantDays > 0 ? now.getTime() - dormantDays * DAY_MS : null;
     const isDormant = (lastSeenAt: string | null): boolean =>
       dormantCutoff != null && (lastSeenAt == null || new Date(lastSeenAt).getTime() < dormantCutoff);
     const isBoostActive = (boostUntil: string | null): boolean =>
@@ -479,12 +491,15 @@ export class MatchingService {
         score,
         questionCount: qCount,
         tier: c.distance_tier,
-        groupRank: discoverGroupRank(c.is_seed_profile === true, isDormant(c.last_seen_at), ownLanguageIds.has(c.id)),
+        groupRank: discoverGroupRank(
+          c.is_seed_profile === true, isDormant(c.last_seen_at), ownLanguageIds.has(c.id), heavyUnanswered.has(c.id),
+        ),
         retry: retryIds.has(c.id) ? 1 : 0,
       };
     });
 
-    // 7. Grup (aktif gercek kendi dili -> aktif gercek yabanci dil -> seed -> uyuyan gercek), sonra tier artan, sonra tier icinde skor azalan.
+    // 7. Grup (aktif gercek kendi dili -> aktif gercek yabanci dil -> seed -> cevapsizi yigilmis aktif gercek
+    // -> uyuyan gercek; bkz. discover-rank.ts), sonra tier artan, sonra tier icinde skor azalan.
     // Aktif gercek kullanici her zaman en onde: uzak bir aktif aday bile yakin bir seed'in onundedir.
     // Seed'ler (yanit veren AI profiller) uyuyan gercek kullanicilarin ONUNDE: yanit vermeyecek
     // biriyle eslesmek ilk gunu oldurur (29 Eyl-3 Eki: 15 eslesmenin 2'sinde yanit, 12/15 kullanici
@@ -526,8 +541,9 @@ export class MatchingService {
       question_count: s.questionCount,
       profile_completion: s.candidate.profile_completion,
       is_boosted: isBoostActive(s.candidate.boost_until),
-      question_info: questionInfoMap.get(s.candidate.id) ?? { count: 0, categories: [], avg_difficulty: 'unranked', languages: [] },
+      question_info: questionInfoMap.get(s.candidate.id) ?? buildQuestionInfo([], media.active ? langPrefs : null),
       relationship_goal: s.candidate.relationship_goal,
+      activity: s.candidate.is_seed_profile === true ? null : activitySignal(s.candidate.last_seen_at, now.getTime()),
     }));
 
     // 11. Görünür kimlik/yönelim etiketleri — sayfadaki ≤10 kart için tek sorgu (süs bilgi: düşerse etiketsiz).
@@ -538,7 +554,7 @@ export class MatchingService {
     // Dil kapisi artik elemedigi icin 'language' bu yoldan uretilmez (mobil enum'u korur); havuz
     // 5.5 (soru/foto) veya 5.7 (tekrar bekleme) sonrasi bossa sebep 'no_candidates'.
     if (scored.length === 0) {
-      return { cards, page, has_more: hasMore, empty_reason: 'no_candidates' };
+      return { cards, page, has_more: hasMore, empty_reason: emptyReasonOf(0, beforeInactiveCount) };
     }
 
     return { cards, page, has_more: hasMore };
@@ -610,9 +626,46 @@ export class MatchingService {
     return { matched: false };
   }
 
+  /** Discover soru ozeti parcasi; 084 medya kolonlari yalniz kapi acikken (bkz. DISCOVER_QUESTION_*). */
+  private loadQuestionChunk(userIds: string[], withMedia: boolean) {
+    const questions = supabase.from("questions");
+    return withMedia
+      ? questions.select(DISCOVER_QUESTION_MEDIA_COLUMNS).in("user_id", userIds)
+      : questions.select(DISCOVER_QUESTION_COLUMNS).in("user_id", userIds);
+  }
+
+  /** Undo kartinin soru ozeti; 084 medya kolonlari yalniz kapi acikken (bkz. UNDO_QUESTION_*). */
+  private loadTargetQuestions(targetId: string, withMedia: boolean) {
+    const questions = supabase.from("questions");
+    return withMedia
+      ? questions.select(UNDO_QUESTION_MEDIA_COLUMNS).eq("user_id", targetId)
+      : questions.select(UNDO_QUESTION_COLUMNS).eq("user_id", targetId);
+  }
+
   /**
-   * Undo the last swipe (delete the swipe record and return the card).
+   * Undo izleyicisi (mesafe); kapi acikken rozet dilleri icin `preferred_languages, locale` da ayni
+   * istekte okunur (ek istek yok). Iki literal: bkz. DISCOVER_QUESTION_*.
    */
+  private loadUndoViewer(userId: string, withMedia: boolean) {
+    const users = supabase.from("users");
+    return withMedia
+      ? users.select("lat, lng, passport_lat, passport_lng, match_radius_km, preferred_languages, locale").eq("id", userId).single()
+      : users.select("lat, lng, passport_lat, passport_lng, match_radius_km").eq("id", userId).single();
+  }
+
+  /**
+   * Undo rozetleri icin izleyicinin dilleri (discover listeyi zaten kuruyor). Kaynak sirasi
+   * `izleyiciDilleri` / quiz `resolveSolverLanguages` ile ayni; user_languages yalniz tercih bossa okunur.
+   */
+  private async viewerLanguages(
+    userId: string,
+    viewer: Record<string, unknown> | null,
+  ): Promise<string[]> {
+    const preferred = (viewer?.preferred_languages as string[] | null | undefined) ?? null;
+    const fromTable = preferred && preferred.length > 0 ? [] : await userLanguageService.getUserLanguages(userId);
+    return izleyiciDilleri(preferred, fromTable, (viewer?.locale as string | null | undefined) ?? null);
+  }
+
   /** Kartlara görünür kimlik etiketlerini ekler (yerinde). Arama düşerse kartlar etiketsiz kalır. */
   private async attachIdentities(cards: ProfileCard[]): Promise<void> {
     const identities = await identityService.visibleForSafe(cards.map((c) => c.user_id));
@@ -622,7 +675,10 @@ export class MatchingService {
     }
   }
 
-  async undoSwipe(userId: string, targetId: string): Promise<ProfileCard> {
+  /**
+   * Undo the last swipe (delete the swipe record and return the card).
+   */
+  async undoSwipe(userId: string, targetId: string, media: { active: boolean } = { active: false }): Promise<ProfileCard> {
     assertUuid(targetId, "targetId");
 
     // Basarisiz quiz'in kilitli hedefi geri getirilmez: undo eskiden bedava tekrar yoluydu, simdi
@@ -636,7 +692,7 @@ export class MatchingService {
     // Fetch the target user's card data to return
     const { data: user, error: userError } = await supabase
       .from("users")
-      .select("id, name, age, city, bio, photos, lat, lng, profile_completion, boost_until, relationship_goal")
+      .select("id, name, age, city, bio, photos, lat, lng, profile_completion, boost_until, relationship_goal, last_seen_at, is_seed_profile")
       .eq("id", targetId)
       .eq("is_deleted", false)
       .maybeSingle();
@@ -660,33 +716,11 @@ export class MatchingService {
     if (count === 0) throw Errors.SESSION_NOT_FOUND();
 
     // Get question info
-    const { data: questions } = await supabase
-      .from("questions")
-      .select("user_id, category, stats_correct, stats_wrong, locale")
-      .eq("user_id", targetId);
-
-    const userQuestions = questions ?? [];
-    const totalAttempts = userQuestions.reduce((s, q: any) => s + q.stats_correct + q.stats_wrong, 0);
-    const totalCorrect = userQuestions.reduce((s, q: any) => s + q.stats_correct, 0);
-    const successRate = totalAttempts > 0 ? (totalCorrect / totalAttempts) * 100 : 50;
-
-    let difficulty = "unranked";
-    if (totalAttempts >= 10) {
-      if (successRate > 70) difficulty = "easy";
-      else if (successRate > 40) difficulty = "medium";
-      else if (successRate > 20) difficulty = "hard";
-      else difficulty = "legendary";
-    }
-
-    const categories = [...new Set(userQuestions.map((q: any) => q.category).filter(Boolean))] as string[];
-    const languages = [...new Set(userQuestions.map((q: any) => questionLocale(q.locale)))];
+    const { data: questions } = await this.loadTargetQuestions(targetId, media.active);
+    const userQuestions = (questions ?? []) as QuestionSummaryRow[];
 
     // Calculate distance
-    const { data: me } = await supabase
-      .from("users")
-      .select("lat, lng, passport_lat, passport_lng, match_radius_km")
-      .eq("id", userId)
-      .single();
+    const { data: me } = await this.loadUndoViewer(userId, media.active);
 
     const myLat = (me?.passport_lat as number | null) ?? me?.lat;
     const myLng = (me?.passport_lng as number | null) ?? me?.lng;
@@ -700,6 +734,8 @@ export class MatchingService {
 
     const now = new Date();
     const isBoostActive = user.boost_until != null && new Date(user.boost_until) > now;
+    // Rozetler discover'daki gibi izleyicinin dillerinden; kapi kapaliyken dil okunmaz (ek istek yok).
+    const badgeLangs = media.active ? await this.viewerLanguages(userId, me) : null;
 
     const card: ProfileCard = {
       user_id: user.id,
@@ -713,8 +749,9 @@ export class MatchingService {
       question_count: userQuestions.length,
       profile_completion: user.profile_completion,
       is_boosted: isBoostActive,
-      question_info: { count: userQuestions.length, categories, avg_difficulty: difficulty, languages },
+      question_info: buildQuestionInfo(userQuestions, badgeLangs),
       relationship_goal: user.relationship_goal,
+      activity: user.is_seed_profile === true ? null : activitySignal(user.last_seen_at as string | null, now.getTime()),
     };
 
     const identity = (await identityService.visibleForSafe([targetId])).get(targetId);

@@ -7,6 +7,10 @@
     "new_match_solver": "Parabéns! Você respondeu corretamente a todas as perguntas, tem uma nova combinação!",
     "new_match_badge": "Alguém resolveu o seu questionário com a medalha {badge}! Tem uma nova combinação!",
     "chat_question_answered": "A sua pergunta do chat foi respondida ({result})",
+    "lifecycle_solved_waiting": {
+      "title": "Alguém resolveu suas perguntas",
+      "body": "{name} acertou todas as suas perguntas e vocês deram match. Está esperando sua resposta!"
+    },
     "lifecycle_unread_message": {
       "title": "Você tem uma mensagem não lida",
       "body": "{name} escreveu para você e está esperando sua resposta."

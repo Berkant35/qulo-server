@@ -7,6 +7,10 @@
     "new_match_solver": "Congratulazioni! Hai risposto correttamente a tutte le domande, hai una nuova corrispondenza!",
     "new_match_badge": "Qualcuno ha risolto il tuo quiz con il distintivo {badge}! Hai una nuova corrispondenza!",
     "chat_question_answered": "La tua domanda in chat ha ricevuto una risposta ({result})",
+    "lifecycle_solved_waiting": {
+      "title": "Qualcuno ha risolto le tue domande",
+      "body": "{name} ha indovinato tutte le tue domande ed è un match. Aspetta la tua risposta!"
+    },
     "lifecycle_unread_message": {
       "title": "Hai un messaggio non letto",
       "body": "{name} ti ha scritto e aspetta una risposta."

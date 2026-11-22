@@ -484,3 +484,140 @@ describe('runEngine — ilk gun geri cagirma (lifecycle_day1_return, 3 Eki)', ()
     expect(send).not.toHaveBeenCalled();
   });
 });
+
+describe('runEngine — "seni cozduler" (lifecycle_solved_waiting) + e-posta yedegi (2.0.18)', () => {
+  // T = hedef (sorulari cozulen, tr, yerel 19:00), S = cozen (en, pencere disinda). Eslesme 10 saat once.
+  const solvedTables = (target: Row = {}, extra: Partial<Tables> = {}): Tables =>
+    seed({ dry_run: false }, {
+      users: [
+        user({ id: 'T', name: 'Tuna', email: 't@example.com', email_notifications_enabled: true, email_verified: true, ...target }),
+        user({ id: 'S', name: 'Selin', locale: 'en', lng: 0 }),
+      ],
+      matches: [{ id: 'mx', user1_id: 'S', user2_id: 'T', matched_at: ago(10 * H), is_active: true }],
+      quiz_sessions: [{ id: 'q1', solver_id: 'S', target_id: 'T', status: 'COMPLETED', completed_at: ago(10 * H), started_at: ago(10.2 * H), expires_at: null }],
+      email_unsubscribe_tokens: [],
+      ...extra,
+    });
+
+  async function bootWithEmail(tables: Tables, emailOn: boolean) {
+    tables.app_config = [{ id: 'cfg', recall_email_enabled: emailOn }];
+    const sendEmail = vi.fn().mockResolvedValue('gmail-msg-1');
+    vi.resetModules();
+    vi.doMock('../../../src/utils/gmail.js', () => ({ sendEmail }));
+    const fake = createFakeSupabase(tables);
+    const send = vi.fn().mockResolvedValue('msg-1');
+    vi.doMock('../../../src/config/supabase.js', () => ({ supabase: fake.client, ensureStorageBuckets: async () => {} }));
+    vi.doMock('../../../src/config/firebase.js', () => ({ getFcm: () => ({ send }), isFcmAvailable: () => true, firebaseAdmin: {} }));
+    const { runEngine } = await import('../../../src/services/notification-engine/engine.js');
+    return { fake, send, sendEmail, runEngine };
+  }
+
+  it('token\'li hedef: push gider, metin cozenin adiyla, chat linki; kural motorun ilk onceligi', async () => {
+    const { runEngine, send, sendEmail, fake } = await bootWithEmail(solvedTables(), false);
+    const r = await runEngine('live', { now: NOW });
+    const d = r.decisions.find((x) => x.userId === 'T')!;
+    expect(d).toMatchObject({ ruleKey: 'lifecycle_solved_waiting', decision: 'sent', actionUrl: '/chat/mx' });
+    expect(d.body).toContain('Selin');
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(sendEmail).not.toHaveBeenCalled();
+    expect(fake.table('push_log')[0]!.payload).not.toHaveProperty('channel');
+  });
+
+  it('token\'siz hedef + anahtar KAPALI (varsayilan): e-posta yok, karar kaydi da yok', async () => {
+    const { runEngine, sendEmail, fake } = await bootWithEmail(solvedTables({ push_token: null }), false);
+    const r = await runEngine('live', { now: NOW });
+    expect(r.decisions.find((x) => x.userId === 'T')).toBeUndefined();
+    expect(sendEmail).not.toHaveBeenCalled();
+    expect(fake.table('push_log').filter((l) => l.user_id === 'T')).toHaveLength(0);
+  });
+
+  it('token\'siz hedef + anahtar ACIK: e-posta gider, push_log sent + channel=email, abonelikten cikma linki', async () => {
+    const { runEngine, sendEmail, send, fake } = await bootWithEmail(solvedTables({ push_token: null }), true);
+    await runEngine('live', { now: NOW });
+    expect(send).not.toHaveBeenCalled();
+    expect(sendEmail).toHaveBeenCalledTimes(1);
+    const mail = sendEmail.mock.calls[0]![0];
+    expect(mail.to).toBe('t@example.com');
+    expect(mail.subject).toBe('Biri sorularını çözdü');
+    expect(mail.html).toContain('Selin');
+    expect(mail.html).toContain('/unsubscribe?token=');
+    const log = fake.table('push_log').filter((l) => l.user_id === 'T');
+    expect(log).toHaveLength(1);
+    expect(log[0]).toMatchObject({ rule_key: 'lifecycle_solved_waiting', decision: 'sent' });
+    expect(log[0]!.payload).toMatchObject({ channel: 'email', action_url: '/chat/mx' });
+    expect(fake.table('email_unsubscribe_tokens')).toHaveLength(1);
+  });
+
+  it('ayni gun ikinci kosum ayni hedefe ikinci e-posta atmaz (gunde tek karar)', async () => {
+    const { runEngine, sendEmail } = await bootWithEmail(solvedTables({ push_token: null }), true);
+    await runEngine('live', { now: NOW });
+    await runEngine('live', { now: new Date(NOW.getTime() + 10 * 60 * 1000) });
+    expect(sendEmail).toHaveBeenCalledTimes(1);
+  });
+
+  it('e-posta tercihi kapali → suppressed/email_opt_out, gonderim yok', async () => {
+    const { runEngine, sendEmail, fake } = await bootWithEmail(solvedTables({ push_token: null, email_notifications_enabled: false }), true);
+    await runEngine('live', { now: NOW });
+    expect(sendEmail).not.toHaveBeenCalled();
+    expect(fake.table('push_log').find((l) => l.user_id === 'T')).toMatchObject({ decision: 'suppressed', reason: 'email_opt_out' });
+  });
+
+  it('e-postasi dogrulanmamis hedef → suppressed/email_unverified, tur butcesi harcanmaz (in_flight yok)', async () => {
+    const { runEngine, sendEmail, fake } = await bootWithEmail(solvedTables({ push_token: null, email_verified: false }), true);
+    await runEngine('live', { now: NOW });
+    expect(sendEmail).not.toHaveBeenCalled();
+    const rows = fake.table('push_log').filter((l) => l.user_id === 'T');
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ decision: 'suppressed', reason: 'email_unverified' });
+  });
+
+  it('son 20 saatte baska e-posta (eslesme e-postasi) gittiyse → suppressed/email_recent', async () => {
+    const tables = solvedTables({ push_token: null }, {
+      email_unsubscribe_tokens: [{ token: 'old', user_id: 'T', email_type: 'match_new', created_at: ago(9 * H), used_at: null }],
+    });
+    const { runEngine, sendEmail, fake } = await bootWithEmail(tables, true);
+    await runEngine('live', { now: NOW });
+    expect(sendEmail).not.toHaveBeenCalled();
+    expect(fake.table('push_log').find((l) => l.user_id === 'T')).toMatchObject({ decision: 'suppressed', reason: 'email_recent' });
+  });
+
+  it('eslesme bildirimi tercihi (push kategorisi matches) kapaliysa e-posta da gitmez → pref_off', async () => {
+    const tables = solvedTables({ push_token: null, notification_preferences: { matches: false } });
+    const { runEngine, sendEmail, fake } = await bootWithEmail(tables, true);
+    await runEngine('live', { now: NOW });
+    expect(sendEmail).not.toHaveBeenCalled();
+    expect(fake.table('push_log').find((l) => l.user_id === 'T')).toMatchObject({ reason: 'pref_off' });
+  });
+
+  it('holdout kovasindaki token\'siz hedef e-posta almaz (olcum push ile ayni kovada)', async () => {
+    const { holdoutBucket } = await import('../../../src/services/notification-engine/throttle.js');
+    const id = Array.from({ length: 100 }, (_, i) => `T${i}`).find((x) => holdoutBucket(x) < 50)!;
+    const tables = solvedTables({ id, push_token: null });
+    tables.notification_engine_config = [{ id: 1, config: { dry_run: false, holdout_pct: 50 } }];
+    tables.matches = [{ id: 'mx', user1_id: 'S', user2_id: id, matched_at: ago(10 * H), is_active: true }];
+    tables.quiz_sessions = [{ id: 'q1', solver_id: 'S', target_id: id, status: 'COMPLETED', completed_at: ago(10 * H), started_at: ago(11 * H), expires_at: null }];
+    const { runEngine, sendEmail, fake } = await bootWithEmail(tables, true);
+    await runEngine('live', { now: NOW });
+    expect(sendEmail).not.toHaveBeenCalled();
+    expect(fake.table('push_log').find((l) => l.user_id === id)).toMatchObject({ decision: 'holdout' });
+  });
+
+  it('dry_run modunda e-posta gonderilmez, dry_run karari kaydedilir', async () => {
+    const tables = solvedTables({ push_token: null });
+    tables.notification_engine_config = [{ id: 1, config: { dry_run: true } }];
+    const { runEngine, sendEmail, fake } = await bootWithEmail(tables, true);
+    await runEngine('live', { now: NOW });
+    expect(sendEmail).not.toHaveBeenCalled();
+    expect(fake.table('push_log').find((l) => l.user_id === 'T')).toMatchObject({ decision: 'dry_run' });
+  });
+
+  it('cozen taraf (S) bu kuraldan push/e-posta almaz', async () => {
+    const tables = solvedTables({ push_token: null });
+    // S'yi de pencereye al (tr, lng 29): yine "seni cozduler" almamali.
+    tables.users![1] = user({ id: 'S', name: 'Selin', push_token: null, email: 's@example.com', email_notifications_enabled: true, email_verified: true });
+    const { runEngine, sendEmail } = await bootWithEmail(tables, true);
+    await runEngine('live', { now: NOW });
+    expect(sendEmail).toHaveBeenCalledTimes(1);
+    expect(sendEmail.mock.calls[0]![0].to).toBe('t@example.com');
+  });
+});

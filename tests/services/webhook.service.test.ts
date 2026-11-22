@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createFakeSupabase, type Tables, type FakeSupabaseOptions } from '../helpers/fake-supabase.js';
 import { activeConfigRow } from '../helpers/economy-config.fixture.js';
+import type { RevenueCatTransferEvent } from '../../src/services/webhook.service.js';
 
 /**
  * RevenueCat webhook'u — store'dan gelen olayı elmasa/aboneliğe çeviren yer.
@@ -31,16 +32,27 @@ async function setup(seed: Tables = {}, options: FakeSupabaseOptions = {}) {
 /**
  * RevenueCat GET /subscribers — webhook sonrası erişimin doğrusu. `'off'` = senkron yok (yerel,
  * anahtarsız): erişim olay alanlarından. `'throw'` = API hatası. Varsayılan `'off'`.
+ * `storeByUser` kullanıcı başına durum (TRANSFER iki hesabı birlikte okur; `'throw'` = o kullanıcının
+ * okuması patlar); verilmeyen kullanıcı `store`'a düşer. `storeReads` = okunan kullanıcılar.
  */
-let store: { plan: 'plus' | 'premium'; period?: 'weekly' | 'monthly'; expiresAt: string } | null | 'off' | 'throw' = 'off';
+type StoreState = { plan: 'plus' | 'premium'; period?: 'weekly' | 'monthly'; expiresAt: string };
+let store: StoreState | null | 'off' | 'throw' = 'off';
+let storeByUser: Record<string, StoreState | null | 'throw'> = {};
+let storeReads: string[] = [];
 const storeMock = {
   canSyncSubscriptions: () => store !== 'off',
-  getActiveSubscription: async () => {
+  getActiveSubscription: async (userId: string) => {
+    storeReads.push(userId);
     if (store === 'throw') throw new Error('RevenueCat API error: 500');
+    if (userId in storeByUser) {
+      const own = storeByUser[userId];
+      if (own === 'throw') throw new Error('RevenueCat API error: 500');
+      return own;
+    }
     return store === 'off' ? null : store;
   },
 };
-beforeEach(() => { store = 'off'; });
+beforeEach(() => { store = 'off'; storeByUser = {}; storeReads = []; });
 
 const NOW = new Date('2026-09-01T12:00:00Z');
 const EXPIRES_MS = new Date('2026-10-01T12:00:00Z').getTime();
@@ -431,6 +443,250 @@ describe('abonelik olayları', () => {
 });
 
 /**
+ * 2026-11-12..17 canlı gözlemi: TestFlight'ta "aylık" abonelik her gün yenilendi, her RENEWAL bir test
+ * hesabına premium bonusu yatırdı (6 günde 9.000 mor, ödenmiş 0). Sandbox'ta 30 günde en fazla bir bonus.
+ * Sandbox yalnız `environment === 'SANDBOX'` — alan yoksa ya da beklenmeyen değerse üretim sayılır
+ * (gerçek kullanıcının bonusu kesilmesin).
+ */
+describe('sandbox (TestFlight) yenilemeleri — 30 günde bir bonus', () => {
+  const clock = { insertDefaults: { diamond_transactions: () => ({ created_at: new Date().toISOString() }) } };
+  const DAY = 24 * 60 * 60 * 1000;
+  const recentBonus = {
+    id: 'old', user_id: 'u1', type: 'PURPLE', amount: 1000, reason: 'SUBSCRIPTION_BONUS',
+    reference_id: 'sub_premium_old', created_at: new Date(NOW.getTime() - DAY).toISOString(),
+  };
+  const premiumUser = () => ({
+    users: [{
+      id: 'u1', purple_diamonds: 0, green_diamonds: 0,
+      subscription_plan: 'premium', subscription_expires_at: '2026-09-01T12:00:00Z',
+    }],
+    user_subscriptions: [{ id: 's1', user_id: 'u1', plan: 'premium', status: 'active', expires_at: '2026-09-01T12:00:00Z' }],
+    diamond_transactions: [recentBonus],
+  });
+  const renewal = (over: Record<string, unknown> = {}) => event({
+    type: 'RENEWAL', product_id: 'qulopremiummonthly2', transaction_id: 'tx-r', ...over,
+  });
+  const bonusRows = (fake: Awaited<ReturnType<typeof setup>>['fake']) =>
+    fake.table('diamond_transactions').filter((r) => r.reason === 'SUBSCRIPTION_BONUS');
+
+  it('TestFlight dizisi: SANDBOX INITIAL_PURCHASE + 3 günlük RENEWAL → tek bonus, dönem uzar', async () => {
+    const { fake, webhookService } = await setup({}, clock);
+
+    await webhookService.handleRevenueCatEvent(event({
+      product_id: 'qulopremiummonthly2', environment: 'SANDBOX', transaction_id: 'tx-0', expiration_at_ms: EXPIRES_MS,
+    }));
+    for (let i = 1; i <= 3; i++) {
+      await webhookService.handleRevenueCatEvent(renewal({
+        environment: 'SANDBOX', transaction_id: `tx-${i}`, expiration_at_ms: EXPIRES_MS + i * DAY,
+      }));
+    }
+
+    expect(bonusRows(fake)).toHaveLength(1);
+    expect(fake.table('users')[0]).toMatchObject({
+      purple_diamonds: 1000, subscription_expires_at: new Date(EXPIRES_MS + 3 * DAY).toISOString(),
+    });
+  });
+
+  it('SANDBOX RENEWAL, yakın tarihli bonus varken: dönem uzar, bonus yok', async () => {
+    const { fake, webhookService } = await setup(premiumUser(), clock);
+
+    await webhookService.handleRevenueCatEvent(renewal({ environment: 'SANDBOX' }));
+
+    expect(fake.table('users')[0]).toMatchObject({
+      purple_diamonds: 0, subscription_expires_at: new Date(EXPIRES_MS).toISOString(),
+    });
+    expect(bonusRows(fake)).toHaveLength(1);
+  });
+
+  it.each([['PRODUCTION'], [null], ['production'], ['']])(
+    'environment %j: üretim sayılır, yakın tarihli bonus olsa da yenileme bonus alır',
+    async (environment) => {
+      const { fake, webhookService } = await setup(premiumUser(), clock);
+
+      await webhookService.handleRevenueCatEvent(renewal({ environment }));
+
+      expect(fake.table('users')[0].purple_diamonds).toBe(1000);
+    },
+  );
+});
+
+/**
+ * TRANSFER (RevenueCat docs: event-types-and-fields): satın almalar ve haklar `transferred_from`'dan
+ * `transferred_to`'ya geçti — aynı Apple/Google hesabıyla başka Qulo hesabına giriş / geri yükleme.
+ * Olayda `app_user_id`/`product_id` YOK; webhook yalnız hedef için bir kez gelir. Eskiden şema 400'le
+ * reddediyordu ve eski hesap dönem sonuna kadar premium kaldı (2026-11-12: tek abonelik, iki premium).
+ */
+describe('TRANSFER — abonelik başka hesaba taşındı', () => {
+  const FROM = '11111111-1111-4111-8111-111111111111';
+  const TO = '22222222-2222-4222-8222-222222222222';
+  const PREMIUM = { plan: 'premium' as const, expiresAt: '2026-10-01T12:00:00.000Z' };
+  const transfer = (over: Partial<RevenueCatTransferEvent> = {}): RevenueCatTransferEvent => ({
+    type: 'TRANSFER', transferred_from: [FROM], transferred_to: [TO],
+    store: 'APP_STORE', environment: 'PRODUCTION', ...over,
+  });
+  const seed = () => ({
+    users: [
+      { id: FROM, purple_diamonds: 0, green_diamonds: 0, subscription_plan: 'premium', subscription_expires_at: PREMIUM.expiresAt },
+      { id: TO, purple_diamonds: 0, green_diamonds: 0, subscription_plan: null, subscription_expires_at: null },
+    ],
+    user_subscriptions: [
+      { id: 's1', user_id: FROM, plan: 'premium', status: 'active', expires_at: PREMIUM.expiresAt },
+      { id: 's0', user_id: FROM, plan: 'plus', status: 'cancelled', expires_at: '2026-09-15T12:00:00.000Z' },
+    ],
+  });
+  const userRow = (fake: Awaited<ReturnType<typeof setup>>['fake'], id: string) =>
+    fake.table('users').find((u) => u.id === id)!;
+
+  it('eski hesabın erişimi kapanır ve satırları biter; yeni hesap erişimi mağazadan alır; bonus yok', async () => {
+    store = null;
+    storeByUser = { [FROM]: null, [TO]: PREMIUM };
+    const { fake, webhookService } = await setup(seed());
+
+    await webhookService.handleRevenueCatEvent(transfer());
+
+    expect(userRow(fake, FROM)).toMatchObject({ subscription_plan: null, subscription_expires_at: null });
+    expect(fake.table('user_subscriptions').map((r) => r.status)).toEqual(['expired', 'expired']);
+    expect(userRow(fake, TO)).toMatchObject({
+      subscription_plan: 'premium', subscription_expires_at: PREMIUM.expiresAt, purple_diamonds: 0,
+    });
+    expect(fake.table('diamond_transactions')).toHaveLength(0);
+  });
+
+  it('eski hesabın kendi başka aboneliği sürüyorsa erişimi mağazadaki o aboneliğe göre kalır', async () => {
+    const ownPlus = { plan: 'plus' as const, expiresAt: '2026-09-20T12:00:00.000Z' };
+    storeByUser = { [FROM]: ownPlus, [TO]: PREMIUM };
+    store = null;
+    const { fake, webhookService } = await setup(seed());
+
+    await webhookService.handleRevenueCatEvent(transfer());
+
+    expect(userRow(fake, FROM)).toMatchObject({ subscription_plan: 'plus', subscription_expires_at: ownPlus.expiresAt });
+  });
+
+  it('RevenueCat anonim kimlikleri Qulo hesabı değildir — okunmaz, yazılmaz', async () => {
+    store = null;
+    storeByUser = { [TO]: PREMIUM };
+    const { fake, webhookService } = await setup(seed());
+
+    await webhookService.handleRevenueCatEvent(transfer({ transferred_from: ['$RCAnonymousID:8f2c'] }));
+
+    expect(storeReads).toEqual([TO]);
+    expect(userRow(fake, FROM).subscription_plan).toBe('premium');
+    expect(userRow(fake, TO).subscription_plan).toBe('premium');
+  });
+
+  it('bir hesabın mağaza okuması patlarsa diğeri de yazılmaz, hata yükselir (RevenueCat yeniden dener)', async () => {
+    storeByUser = { [FROM]: null, [TO]: 'throw' }; // eski hesabın okuması başarılı, yeninin patlıyor
+    store = null;
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { fake, webhookService } = await setup(seed());
+
+    await expect(webhookService.handleRevenueCatEvent(transfer())).rejects.toMatchObject({ statusCode: 500 });
+
+    expect(userRow(fake, FROM).subscription_plan).toBe('premium');
+    expect(userRow(fake, TO).subscription_plan).toBeNull();
+    expect(fake.table('user_subscriptions').map((r) => r.status)).toEqual(['active', 'cancelled']);
+  });
+
+  it('eski hesabın erişim yazımı patlarsa 500 (RevenueCat yeniden dener), sessizce premium kalmaz', async () => {
+    store = null;
+    storeByUser = { [FROM]: null };
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    // Yalnız eski hesap yazılır (hedef anonim → atlanır). İki users.update da patlar:
+    // expireSubscription'ınki (loglanır, fırlatmaz) + applyStoreState'inki (fırlatır).
+    const { fake, webhookService } = await setup(seed(), {
+      failOn: [{ table: 'users', op: 'update', failAfter: 0, times: 2 }],
+    });
+
+    await expect(webhookService.handleRevenueCatEvent(transfer({ transferred_to: ['$RCAnonymousID:9a1'] })))
+      .rejects.toMatchObject({ statusCode: 500 });
+
+    expect(userRow(fake, FROM).subscription_plan).toBe('premium');
+  });
+
+  it('iki listede de geçen kimlik bir kez okunur; boş listeler no-op', async () => {
+    store = null;
+    storeByUser = { [TO]: PREMIUM };
+    const { fake, webhookService } = await setup(seed());
+
+    await webhookService.handleRevenueCatEvent(transfer({ transferred_from: [TO], transferred_to: [TO] }));
+    expect(storeReads).toEqual([TO]);
+
+    storeReads = [];
+    await webhookService.handleRevenueCatEvent(transfer({ transferred_from: [], transferred_to: [] }));
+    expect(storeReads).toEqual([]);
+    expect(userRow(fake, FROM).subscription_plan).toBe('premium');
+  });
+
+  it('mağaza senkronu yoksa (yerel) dokunmaz, hata vermez', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { fake, webhookService } = await setup(seed());
+
+    await expect(webhookService.handleRevenueCatEvent(transfer())).resolves.toBeUndefined();
+
+    expect(userRow(fake, FROM).subscription_plan).toBe('premium');
+    expect(storeReads).toEqual([]);
+  });
+});
+
+/**
+ * 2026-11-12 olayının webhook ayağı: abonelik başka hesaba taşındıktan (RevenueCat TRANSFER) sonra
+ * eski sahibin INITIAL_PURCHASE/RENEWAL'ı gelirse (gecikme, yeniden deneme) mağaza aboneliği artık o
+ * hesapta göstermez — dönem açılmaz, bonus yatmaz; dönemi yeni sahip istemci yolundan almış olabilir.
+ */
+describe('taşınan abonelik — eski sahibe geciken olay', () => {
+  const plainUser = (id: string, over: Record<string, unknown> = {}) => ({
+    id, purple_diamonds: 0, green_diamonds: 0, subscription_plan: null, subscription_expires_at: null, ...over,
+  });
+  const bonusRows = (fake: Awaited<ReturnType<typeof setup>>['fake']) =>
+    fake.table('diamond_transactions').filter((r) => r.reason === 'SUBSCRIPTION_BONUS');
+
+  it('RENEWAL: mağazada abonelik yoksa dönem uzamaz, bonus yok, erişim kapanır, olay işlendi sayılır', async () => {
+    store = null;
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { fake, webhookService } = await setup({
+      users: [plainUser('u1', { subscription_plan: 'premium', subscription_expires_at: '2026-09-01T13:00:00Z' })],
+      user_subscriptions: [{
+        id: 's1', user_id: 'u1', plan: 'premium', status: 'active', expires_at: '2026-09-01T13:00:00Z',
+      }],
+    });
+
+    await webhookService.handleRevenueCatEvent(event({
+      type: 'RENEWAL', product_id: 'qulopremiummonthly2', transaction_id: 'tx-r',
+    }));
+
+    expect(bonusRows(fake)).toHaveLength(0);
+    expect(fake.table('users')[0]).toMatchObject({ purple_diamonds: 0, subscription_plan: null });
+    expect(fake.table('user_subscriptions')[0].expires_at).toBe('2026-09-01T13:00:00Z');
+    expect(fake.table('iap_transactions')[0].rc_event_type).toBe('RENEWAL');
+  });
+
+  it('yeni sahip istemci yolundan önce aldıysa eski sahibin INITIAL_PURCHASE\'ı ikinci bonus yatırmaz', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { fake, webhookService } = await setup({ users: [plainUser('u1'), plainUser('u2')] });
+    const { subscriptionService } = await import('../../src/services/subscription.service.js');
+    store = null; // u1 aboneliği artık tutmuyor (u2'ye taşındı)
+
+    await subscriptionService.activateFromClient(
+      'u2', 'premium', 'client_u2', 'tx-1', new Date(EXPIRES_MS).toISOString(),
+    );
+    await webhookService.handleRevenueCatEvent(event({ product_id: 'qulopremiummonthly2' })); // u1, aynı dönem
+
+    expect(bonusRows(fake).map((r) => r.user_id)).toEqual(['u2']);
+  });
+
+  it('mağazada abonelik o hesaptaysa (normal satın alma) dönem açılır, bonus yatar', async () => {
+    store = { plan: 'premium', expiresAt: new Date(EXPIRES_MS).toISOString() };
+    const { fake, webhookService } = await setup();
+
+    await webhookService.handleRevenueCatEvent(event({ product_id: 'qulopremiummonthly2' }));
+
+    expect(fake.table('users')[0]).toMatchObject({ subscription_plan: 'premium', purple_diamonds: 1000 });
+    expect(fake.table('user_subscriptions')).toHaveLength(1);
+  });
+});
+
+/**
  * PRODUCT_CHANGE bilgilendirmedir (RevenueCat: "does not mean that the product change has gone into
  * effect"): `product_id` ESKİ ürün, `expiration_at_ms` eski ürünün kesildiği an. Değişim yürürlüğe
  * girince Apple'da RENEWAL, Google'da INITIAL_PURCHASE yeni ürünle gelir — plan ve bonus oradan.
@@ -452,7 +708,7 @@ describe('Apple plus → premium yükseltme olay dizisi', () => {
     const { subscriptionService } = await import('../../src/services/subscription.service.js');
 
     await webhookService.handleRevenueCatEvent(event({ transaction_id: 'tx-plus', expiration_at_ms: PLUS_EXP }));
-    await subscriptionService.activateSubscription(
+    await subscriptionService.activateFromClient(
       'u1', 'premium', 'client_u1', 'tx-prem', new Date(PREMIUM_EXP).toISOString(),
     );
     await webhookService.handleRevenueCatEvent(event({

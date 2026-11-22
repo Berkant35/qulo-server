@@ -1,4 +1,5 @@
 import type { UpdateLocationInput } from "../validators/user.validator.js";
+import { cityService } from "./city.service.js";
 import { supabase } from "../config/supabase.js";
 import type { SupportedLocale } from "../constants/locales.js";
 import { questionLocale } from "../constants/locales.js";
@@ -10,7 +11,7 @@ import { userLanguageService } from "./user-language.service.js";
 import { moderateUploadedPhoto } from "./photo-moderation.service.js";
 import { rainbowAccessService } from "./rainbow-access.service.js";
 import { identityService } from "./identity.service.js";
-import { Errors } from "../utils/errors.js";
+import { AppError, Errors } from "../utils/errors.js";
 import { assertUuid } from "../utils/validation.js";
 import { haversineDistance } from "../utils/math.js";
 import { normalizeUploadedImage, NORMAL_GORSEL_MIME } from "../utils/image-normalize.js";
@@ -23,6 +24,36 @@ import type { ClientPlatform } from "../utils/client-meta.js";
 
 /** Herkese açık `photos` bucket URL'sinde depo yolunun başladığı yer. */
 const PHOTO_STORAGE_MARKER = "/storage/v1/object/public/photos/";
+/** PATCH /me cevabındaki profil sütunları (yazım ve salt okuma yolu aynı biçimi döner). */
+const PROFILE_COLUMNS =
+  "id, email, name, surname, bio, age, gender, gender_pref, gender_pref_set_at, pref_consent_status, match_radius_km, age_pref_min, age_pref_max, city, country, locale, lat, lng, photos, profile_completion, preferred_languages, purple_diamonds, green_diamonds, is_online, last_seen_at, email_verified, strict_language_mode, created_at";
+
+/** `order`, `current`'ın yalnızca yeniden sıralanmışı mı (aynı öğeler, aynı adetlerle)? */
+function isReordering(current: readonly string[], order: readonly string[]): boolean {
+  if (current.length !== order.length) return false;
+  const a = [...current].sort();
+  const b = [...order].sort();
+  return a.every((url, i) => url === b[i]);
+}
+
+/** Fotoğraf dizisi koşullu ekleme deneme sayısı (çakışmada güncel diziyle yeniden). */
+const PHOTO_WRITE_ATTEMPTS = 3;
+/** Bu kodlarla biten eklemede URL kesinlikle yazılmamıştır (yazım hiç denenmedi ya da satır eşleşmedi). */
+const APPEND_NOT_WRITTEN_CODES = new Set(["MAX_PHOTOS_REACHED", "PHOTOS_CHANGED", "USER_NOT_FOUND"]);
+/** Yükleme `${userId}/${Date.now()}.jpg` yazar: tek seviye, güvenli karakterli dosya adı. */
+const PHOTO_FILE_NAME = /^[A-Za-z0-9._-]+$/;
+
+/**
+ * URL kullanıcının KENDİ klasöründe tek seviyeli bir dosyaysa depo yolu, değilse null.
+ * `startsWith(userId/)` yetmez: `${userId}/../başkası/x.jpg` önekten geçer (path traversal).
+ */
+function ownPhotoPath(userId: string, url: string): string | null {
+  const parts = url.split(PHOTO_STORAGE_MARKER);
+  if (parts.length !== 2) return null;
+  const [folder, file, ...rest] = parts[1].split("/");
+  const safeFile = file !== undefined && file !== "." && file !== ".." && PHOTO_FILE_NAME.test(file);
+  return folder === userId && rest.length === 0 && safeFile ? parts[1] : null;
+}
 
 export class UserService {
   async getMe(userId: string, platform?: ClientPlatform) {
@@ -102,27 +133,22 @@ export class UserService {
 
   async updateProfile(userId: string, data: UpdateProfileInput) {
     // Dil listesi sutuna dogrudan YAZILMAZ — tek yol set_user_languages RPC'si (migration 054).
-    const { preferred_languages, ...profileData } = data;
+    // Fotoğraf dizisi de: yalnız yeniden sıralama, koşullu yazımla (reorderPhotos).
+    const { preferred_languages, photos, ...profileData } = data;
+    // Sıralama önce: geçersizse (eklenen/çıkan/yabancı URL) hiçbir alan yazılmadan reddedilir.
+    if (photos !== undefined) await this.reorderPhotos(userId, photos);
+
     const updates: Record<string, unknown> = { ...profileData };
     const setsGenderPref = data.gender_pref !== undefined;
     // gender_pref geldiyse set_at server-side damgalanir (client'tan manipüle edilemez).
     if (setsGenderPref) updates.gender_pref_set_at = new Date().toISOString();
 
-    let query = supabase.from("users").update(updates).eq("id", userId).eq("is_deleted", false);
-    if (setsGenderPref) {
-      // Tercih kilidi SUNUCUDA (spec §6, kullanıcı kararı: istismar riski): yalnız ilk seçim
-      // yazılır, reddedilmiş rıza da kilitler. Koşul UPDATE'in içinde — okuma/yazma yarışı yok.
-      // Değişiklik tek yoldan: destek talebi + backoffice (admin.service.updateGenderPref).
-      query = query
-        .is("gender_pref_set_at", null)
-        .or("pref_consent_status.is.null,pref_consent_status.eq.GRANTED");
-    }
-
-    const { data: user, error } = await query
-      .select(
-        "id, email, name, surname, bio, age, gender, gender_pref, gender_pref_set_at, pref_consent_status, match_radius_km, age_pref_min, age_pref_max, city, country, locale, lat, lng, photos, profile_completion, preferred_languages, purple_diamonds, green_diamonds, is_online, last_seen_at, email_verified, strict_language_mode, created_at",
-      )
-      .maybeSingle();
+    // PostgREST boş gövdeli PATCH'i `SELECT … WHERE false` yapar (sıfır satır → yanlış 404): yazılacak
+    // sütun yoksa (yalnız photos / preferred_languages) satır okunur.
+    const hasColumnUpdates = Object.values(updates).some((v) => v !== undefined);
+    const { data: user, error } = hasColumnUpdates
+      ? await this.writeProfileColumns(userId, updates, setsGenderPref)
+      : await supabase.from("users").select(PROFILE_COLUMNS).eq("id", userId).eq("is_deleted", false).maybeSingle();
 
     if (error) {
       console.error("[updateProfile] Supabase error:", error);
@@ -216,7 +242,8 @@ export class UserService {
   }
 
   async updateLocation(userId: string, { lat, lng, city, country }: UpdateLocationInput) {
-    const updateData: Record<string, unknown> = { lat, lng };
+    // Cihaz konumu (migration 081): elle secilmis sehir merkezinin yerine gecer.
+    const updateData: Record<string, unknown> = { lat, lng, location_source: "gps" };
     if (city) updateData.city = city;
     if (country) updateData.country = country;
 
@@ -236,6 +263,36 @@ export class UserService {
     } catch (err) {
       console.error("[updateLocation] recalculateProfileCompletion error:", err);
     }
+  }
+
+  /**
+   * Konum izni vermeyen kullanici sehir secer (2.0.18 plan madde 9): sehir MERKEZI users.lat/lng'ye,
+   * ad + ulke city/country'ye yazilir, location_source='city' (migration 081). Kayitlarin %19'u
+   * (kadinlarin %30'u) konumsuz oldugu icin Discover 400 PROFILE_INCOMPLETE aliyordu.
+   */
+  async setCityLocation(userId: string, cityId: string) {
+    const city = cityService.findById(cityId);
+    if (!city) throw Errors.CITY_NOT_FOUND();
+
+    const { data: updated, error } = await supabase
+      .from("users")
+      .update({ lat: city.lat, lng: city.lng, city: city.name, country: city.country, location_source: "city" })
+      .eq("id", userId)
+      .eq("is_deleted", false)
+      .select("id");
+
+    if (error) {
+      console.error("[setCityLocation] Supabase error:", error.message);
+      throw Errors.SERVER_ERROR();
+    }
+    if (!updated || updated.length === 0) throw Errors.USER_NOT_FOUND();
+
+    try {
+      await this.recalculateProfileCompletion(userId);
+    } catch (err) {
+      console.error("[setCityLocation] recalculateProfileCompletion error:", err);
+    }
+    return { city_id: city.id, city: city.name, country: city.country, location_source: "city" as const };
   }
 
   async updatePushToken(userId: string, pushToken: string) {
@@ -327,21 +384,40 @@ export class UserService {
       .eq("user_id", userId);
   }
 
-  async uploadPhoto(userId: string, fileBuffer: Buffer) {
-    // Get current photos
-    const { data: user, error: fetchError } = await supabase
-      .from("users")
-      .select("photos")
-      .eq("id", userId)
-      .eq("is_deleted", false)
-      .maybeSingle();
-
-    if (fetchError || !user) {
-      throw Errors.USER_NOT_FOUND();
+  private writeProfileColumns(userId: string, updates: Record<string, unknown>, setsGenderPref: boolean) {
+    let query = supabase.from("users").update(updates).eq("id", userId).eq("is_deleted", false);
+    if (setsGenderPref) {
+      // Tercih kilidi SUNUCUDA (spec §6, kullanıcı kararı: istismar riski): yalnız ilk seçim
+      // yazılır, reddedilmiş rıza da kilitler. Koşul UPDATE'in içinde — okuma/yazma yarışı yok.
+      // Değişiklik tek yoldan: destek talebi + backoffice (admin.service.updateGenderPref).
+      query = query
+        .is("gender_pref_set_at", null)
+        .or("pref_consent_status.is.null,pref_consent_status.eq.GRANTED");
     }
+    return query.select(PROFILE_COLUMNS).maybeSingle();
+  }
 
-    const photos: string[] = user.photos ?? [];
-    if (photos.length >= MAX_PROFILE_PHOTOS) {
+  /**
+   * Mobil sürükle-bırak sıralaması (`PATCH /me` `photos`). Liste profildeki fotoğrafların yalnızca
+   * yeniden sıralanmışı olmalı — eklenen / çıkan / yabancı URL reddedilir (2026-04-01 güvenlik kararı:
+   * istemci profile rastgele adres yazamaz). Koşullu yazım: araya başka bir sıralama girerse güncel
+   * diziyle yeniden denenir; fotoğraf eklenip çıkarıldıysa PHOTOS_CHANGED (araya gireni ezmez).
+   */
+  private async reorderPhotos(userId: string, order: readonly string[]): Promise<void> {
+    for (let attempt = 1; ; attempt++) {
+      const current = await this.getActivePhotos(userId);
+      if (!isReordering(current, order)) {
+        throw attempt === 1 ? Errors.INVALID_PHOTO_ORDER() : Errors.PHOTOS_CHANGED();
+      }
+      if (current.every((url, i) => url === order[i])) return;
+      if (await this.writePhotosIfUnchanged(userId, current, [...order])) return;
+      if (attempt >= PHOTO_WRITE_ATTEMPTS) throw Errors.PHOTOS_CHANGED();
+    }
+  }
+
+  async uploadPhoto(userId: string, fileBuffer: Buffer) {
+    const initial = await this.getActivePhotos(userId);
+    if (initial.length >= MAX_PROFILE_PHOTOS) {
       throw Errors.MAX_PHOTOS_REACHED();
     }
 
@@ -368,14 +444,7 @@ export class UserService {
       .getPublicUrl(fileName);
 
     const photoUrl = urlData.publicUrl;
-    photos.push(photoUrl);
-
-    const { error: updateError } = await supabase
-      .from("users")
-      .update({ photos })
-      .eq("id", userId);
-
-    if (updateError) throw Errors.SERVER_ERROR();
+    const photos = await this.appendUploadedPhoto(userId, initial, photoUrl);
 
     try {
       await this.recalculateProfileCompletion(userId);
@@ -425,25 +494,69 @@ export class UserService {
   }
 
   /**
-   * Yazım okunan diziye koşullu (compare-and-swap): arada yükleme/silme/admin kaldırması olduysa
-   * satır eşleşmez → PHOTOS_CHANGED, depoya dokunulmaz (yeni fotoğraf ezilmez, silinen geri gelmez).
-   * Önce profil satırı, sonra depo: depo silmesi patlarsa yalnız sahipsiz dosya kalır; ters sırada
-   * satır yazımı patlarsa profilde dosyası silinmiş kırık fotoğraf kalırdı.
+   * Koşullu yazım (compare-and-swap): `users.photos` hâlâ `expected` ise `next` yazılır. Arada
+   * yükleme / silme / admin kaldırması / sıralama olduysa ya da hesap silindiyse false — hiçbir
+   * yazıcı ötekinin değişikliğini ezmez.
+   */
+  private async writePhotosIfUnchanged(userId: string, expected: readonly string[], next: string[]): Promise<boolean> {
+    const { data, error } = await supabase
+      .from("users")
+      .update({ photos: next })
+      .eq("id", userId)
+      .eq("is_deleted", false)
+      .eq("photos", pgTextArrayLiteral(expected))
+      .select("id");
+
+    if (error) throw Errors.SERVER_ERROR();
+    return (data?.length ?? 0) > 0;
+  }
+
+  /**
+   * Diziye koşullu ekleme. Çakışmada güncel dizi yeniden okunup tekrar denenir (sona ekleme
+   * sıradan bağımsız, tekrar güvenli). Sınır her denemede güncel diziyle kontrol edilir:
+   * eşzamanlı iki yükleme 6'yı aşamaz, admin'in kaldırdığı fotoğraf geri yazılmaz.
+   */
+  private async appendPhoto(userId: string, initial: string[], url: string): Promise<string[]> {
+    let current = initial;
+    for (let attempt = 1; ; attempt++) {
+      if (current.length >= MAX_PROFILE_PHOTOS) throw Errors.MAX_PHOTOS_REACHED();
+      const next = [...current, url];
+      if (await this.writePhotosIfUnchanged(userId, current, next)) return next;
+      if (attempt >= PHOTO_WRITE_ATTEMPTS) throw Errors.PHOTOS_CHANGED();
+      current = await this.getActivePhotos(userId);
+    }
+  }
+
+  /**
+   * Yüklenen dosyayı profile ekler; eklenemediği KESİNSE dosyayı siler (depoda sahipsiz kalmasın).
+   * Belirsiz hatada (SERVER_ERROR: UPDATE commit olup cevap kopmuş olabilir) önce profile bakılır:
+   * URL oradaysa başarı sayılır; doğrulama okuması da patlarsa dosyaya DOKUNULMAZ — en kötü
+   * sahipsiz dosya kalır, profilde dosyası silinmiş kırık fotoğraf asla.
+   */
+  private async appendUploadedPhoto(userId: string, initial: string[], url: string): Promise<string[]> {
+    try {
+      return await this.appendPhoto(userId, initial, url);
+    } catch (err) {
+      const notWritten = err instanceof AppError && APPEND_NOT_WRITTEN_CODES.has(err.code);
+      const current = notWritten ? [] : await this.getActivePhotos(userId).catch(() => null);
+      if (current === null) throw err;
+      if (current.includes(url)) return current;
+      await this.removeOwnPhotoFiles(userId, [url]);
+      throw err;
+    }
+  }
+
+  /**
+   * Kaldırma koşullu yazılır ve yeniden DENENMEZ: mobil silme indeksle gelir, değişmiş dizide aynı
+   * indeks başka fotoğraftır → PHOTOS_CHANGED, depoya dokunulmaz (yeni fotoğraf ezilmez, silinen
+   * geri gelmez). Önce profil satırı, sonra depo: depo silmesi patlarsa yalnız sahipsiz dosya
+   * kalır; ters sırada satır yazımı patlarsa profilde dosyası silinmiş kırık fotoğraf kalırdı.
    */
   private async removePhotos(userId: string, photos: string[], indexes: ReadonlySet<number>) {
     const remaining = photos.filter((_, i) => !indexes.has(i));
     const removed = photos.filter((_, i) => indexes.has(i));
 
-    const { data: written, error: updateError } = await supabase
-      .from("users")
-      .update({ photos: remaining })
-      .eq("id", userId)
-      .eq("is_deleted", false)
-      .eq("photos", pgTextArrayLiteral(photos))
-      .select("id");
-
-    if (updateError) throw Errors.SERVER_ERROR();
-    if (!written || written.length === 0) throw Errors.PHOTOS_CHANGED();
+    if (!(await this.writePhotosIfUnchanged(userId, photos, remaining))) throw Errors.PHOTOS_CHANGED();
 
     await this.removeOwnPhotoFiles(userId, removed.filter((url) => !remaining.includes(url)));
 
@@ -458,12 +571,13 @@ export class UserService {
 
   /**
    * Yalnız kullanıcının kendi klasöründeki dosyalar silinir: aynı dosyayı paylaşan başka bir profil
-   * (seed kopyası) kırılmasın. Profil zaten yazıldı — depo hatası yutulur, sahipsiz dosya kalır.
+   * (seed kopyası) kırılmasın. Depo hatası yutulur (en kötü sahipsiz dosya kalır): çağıran ya profili
+   * zaten yazmıştır (kaldırma) ya da kendi hatasını fırlatacaktır (yükleme temizliği).
    */
   private async removeOwnPhotoFiles(userId: string, urls: readonly string[]): Promise<void> {
     const paths = [...new Set(urls.flatMap((url) => {
-      const parts = url.split(PHOTO_STORAGE_MARKER);
-      return parts.length === 2 && parts[1].startsWith(`${userId}/`) ? [parts[1]] : [];
+      const path = ownPhotoPath(userId, url);
+      return path ? [path] : [];
     }))];
     if (paths.length === 0) return;
     try {

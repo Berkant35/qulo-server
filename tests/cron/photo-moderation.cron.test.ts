@@ -5,8 +5,11 @@ async function setup(opts: { enabled?: boolean; key?: string; ozet?: unknown } =
   const moderatePendingPhotos = vi.fn(async () => opts.ozet ?? { checked: 0, banned: 0, review: 0, errors: 0 });
   const moderationEnabled = vi.fn(async () => opts.enabled ?? true);
   vi.doMock('../../src/services/photo-moderation.service.js', () => ({ moderatePendingPhotos, moderationEnabled }));
+  // Kapi (Gemini anahtari + kill-switch) servisin icinde: question-image-moderation.service.test.
+  const moderatePendingQuestionImages = vi.fn(async () => 0);
+  vi.doMock('../../src/services/question-image-moderation.service.js', () => ({ moderatePendingQuestionImages }));
   const mod = await import('../../src/cron/photo-moderation.cron.js');
-  return { mod, moderatePendingPhotos };
+  return { mod, moderatePendingPhotos, moderatePendingQuestionImages };
 }
 
 beforeEach(() => vi.resetModules());
@@ -39,9 +42,34 @@ describe('photoModerationTick', () => {
   });
 });
 
+describe('photoModerationTick — soru gorselleri', () => {
+  it('bekleyen soru gorsellerini de tik butcesiyle isler (NVIDIA anahtari olmasa da: hakem Gemini)', async () => {
+    const { mod, moderatePendingPhotos, moderatePendingQuestionImages } = await setup({ key: '' });
+    await mod.photoModerationTick();
+    expect(moderatePendingPhotos).not.toHaveBeenCalled();
+    expect(moderatePendingQuestionImages).toHaveBeenCalledWith(mod.TIK_BUTCESI);
+  });
+
+  it('soru taramasi patlasa da tik dusmez; profil taramasi yine calisir', async () => {
+    const { mod, moderatePendingPhotos, moderatePendingQuestionImages } = await setup();
+    moderatePendingQuestionImages.mockRejectedValueOnce(new Error('questions down'));
+    await expect(mod.photoModerationTick()).resolves.toBeUndefined();
+    expect(moderatePendingPhotos).toHaveBeenCalledTimes(1);
+  });
+
+  it('profil taramasi patlasa da soru taramasi calisir', async () => {
+    const { mod, moderatePendingPhotos, moderatePendingQuestionImages } = await setup();
+    moderatePendingPhotos.mockRejectedValueOnce(new Error('patladi'));
+    await mod.photoModerationTick();
+    expect(moderatePendingQuestionImages).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe('photoModerationCron.start — acilis supurgesi', () => {
   it('start() ACILIS_GECIKMESI_MS sonra bir tik calistirir; stop() iptal eder', async () => {
     vi.useFakeTimers();
+    // Saat sabitlenir: "17 * * * *" cron'u 2 dk'lik acilis penceresinde (XX:16-XX:17) tetiklenmesin.
+    vi.setSystemTime(new Date('2026-01-01T10:00:00Z'));
     try {
       const { mod, moderatePendingPhotos } = await setup();
       mod.photoModerationCron.start();
@@ -51,6 +79,7 @@ describe('photoModerationCron.start — acilis supurgesi', () => {
       mod.photoModerationCron.stop();
 
       vi.resetModules();
+      vi.setSystemTime(new Date('2026-01-01T10:00:00Z'));
       const ikinci = await setup();
       ikinci.mod.photoModerationCron.start();
       ikinci.mod.photoModerationCron.stop();

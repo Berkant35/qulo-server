@@ -7,6 +7,7 @@ import type { RegisterInput } from "../validators/auth.validator.js";
 import { resolveLocale, localeFromTag } from "../utils/locales.js";
 import { initialPreferredLanguages } from "../constants/locales.js";
 import type { ClientMeta } from "../utils/client-meta.js";
+import { isStoreBot } from "../utils/store-bot.js";
 import { userLanguageService } from "./user-language.service.js";
 import { referralService } from "./referral.service.js";
 import { consentService } from "./consent.service.js";
@@ -69,6 +70,8 @@ export class AuthService {
         is_test_admin: false,
         // Rainbow ana anahtari kapaliyken tek kapi bu bayrak; test hesaplari seed betiklerinden acilir.
         is_test_account: false,
+        // Yalniz metrik ayiklamasi (Play on-lansman botlari) — davranisi degistirmez.
+        is_store_bot: isStoreBot(email, client),
         verify_token: verifyTokenHash,
         token_expires_at: tokenExpiresAt,
         email_verified: false,
@@ -436,6 +439,8 @@ export class AuthService {
         is_test_admin: false,
         // Rainbow ana anahtari kapaliyken tek kapi bu bayrak (ayni drift savunmasi).
         is_test_account: false,
+        // Yalniz metrik ayiklamasi (Play on-lansman botlari) — davranisi degistirmez.
+        is_store_bot: isStoreBot(email, client),
       })
       .select("id, email, age")
       .single();

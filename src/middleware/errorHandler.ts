@@ -14,6 +14,8 @@ export function errorHandler(
   else if (bodyErr.type === "entity.too.large") err = Errors.PAYLOAD_TOO_LARGE();
   // multer dosya boyutu sınırı (foto 5 MB, sohbet 10 MB): `statusCode` taşımadığı için 500'e düşüyordu.
   else if (bodyErr.name === "MulterError" && bodyErr.code === "LIMIT_FILE_SIZE") err = Errors.PAYLOAD_TOO_LARGE();
+  // Diğer multer sınırları (beklenmeyen alan adı, fazla dosya/alan) da istemci hatası.
+  else if (bodyErr.name === "MulterError") err = Errors.VALIDATION_ERROR({ file: bodyErr.code });
 
   // Check both instanceof and duck-typing for AppError
   if (err instanceof AppError) {

@@ -7,6 +7,10 @@
     "new_match_solver": "축하합니다! 모든 질문에 정답을 맞췄어요. 새로운 매치가 있습니다!",
     "new_match_badge": "누군가가 {badge} 배지로 당신의 퀴즈를 풀었어요! 새로운 매치가 있습니다!",
     "chat_question_answered": "채팅 질문에 답변이 달렸어요 ({result})",
+    "lifecycle_solved_waiting": {
+      "title": "누군가 당신의 질문을 풀었어요",
+      "body": "{name}님이 당신의 질문을 모두 맞혀 매칭됐어요. 답장을 기다리고 있어요!"
+    },
     "lifecycle_unread_message": {
       "title": "읽지 않은 메시지가 있어요",
       "body": "{name}님이 메시지를 보냈고 답장을 기다리고 있어요."

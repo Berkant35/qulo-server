@@ -1,11 +1,21 @@
 import type { Request, Response } from "express";
-import { listChecksForAdmin, resolveCheck, type Verdict } from "../services/photo-moderation.service.js";
+import { getCheckKind, listChecksForAdmin, resolveCheck, type CheckKind, type Verdict } from "../services/photo-moderation.service.js";
+import { resolveQuestionImageCheck } from "../services/question-image-moderation.service.js";
 
 const PAGE_SIZE = 30;
 const VERDICTS = new Set<Verdict | "all">(["review", "explicit", "safe", "error", "all"]);
 const UUID_DESENI = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+/**
+ * Tur basina gecerli aksiyonlar. Soru gorselinde ban YOK (ret = gorsel kaldirilir, soru metinle kalir);
+ * kotuye kullanimda ban, kullanici sayfasindaki ayri insan akisidir.
+ */
+const AKSIYONLAR: Record<CheckKind, ReadonlySet<string>> = {
+  profile: new Set(["ban", "safe"]),
+  question: new Set(["remove_image", "safe"]),
+};
+const TUM_AKSIYONLAR = new Set([...AKSIYONLAR.profile, ...AKSIYONLAR.question]);
 
-/** Fotograf moderasyonu review kuyrugu: modelin kesinlestiremedigi fotograflari insan karara baglar. */
+/** Fotograf moderasyonu review kuyrugu (profil + soru gorseli): modelin kesinlestiremedigini insan karara baglar. */
 class PhotoModerationAdminController {
   // Express 4: reddedilen promise errorHandler'a ulasmaz (istek askida kalir) — diger admin sayfalari gibi try/catch.
   async page(req: Request, res: Response): Promise<void> {
@@ -28,12 +38,19 @@ class PhotoModerationAdminController {
   async action(req: Request, res: Response): Promise<void> {
     const id = req.params.id as string;
     const action = req.body?.action as string;
-    if (!UUID_DESENI.test(id) || (action !== "ban" && action !== "safe")) {
+    if (!UUID_DESENI.test(id) || !TUM_AKSIYONLAR.has(action)) {
       res.status(400).render("error", { message: "Invalid moderation action", session: req.session });
       return;
     }
     try {
-      const ok = await resolveCheck(id, action);
+      const kind = await getCheckKind(id);
+      if (kind && !AKSIYONLAR[kind].has(action)) {
+        res.status(400).render("error", { message: "Invalid moderation action", session: req.session });
+        return;
+      }
+      const ok = kind === null ? false
+        : kind === "question" ? await resolveQuestionImageCheck(id, action as "safe" | "remove_image")
+          : await resolveCheck(id, action as "ban" | "safe");
       if (!ok) {
         res.status(404).render("error", { message: "Moderation record not found", session: req.session });
         return;

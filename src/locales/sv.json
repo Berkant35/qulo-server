@@ -7,6 +7,10 @@
     "new_match_solver": "Grattis! Du svarade rätt på alla frågor, du har en ny matchning!",
     "new_match_badge": "Någon löste din quiz med {badge}-märket! Du har en ny matchning!",
     "chat_question_answered": "Din chattfråga har besvarats ({result})",
+    "lifecycle_solved_waiting": {
+      "title": "Någon har löst dina frågor",
+      "body": "{name} svarade rätt på alla dina frågor och ni har en match. Ditt svar väntas!"
+    },
     "lifecycle_unread_message": {
       "title": "Du har ett oläst meddelande",
       "body": "{name} har skrivit till dig och väntar på svar."

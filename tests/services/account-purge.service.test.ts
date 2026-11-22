@@ -121,6 +121,42 @@ describe('accountPurgeService.hardDeleteUser', () => {
   });
 
   /**
+   * Soru medyasi (sesli/gorselli soru) PRIVATE `question-media/${userId}/${questionId}/` altinda —
+   * iki seviye: ust liste soru klasorlerini (`id: null`) doner, dosyalar bir alttadir.
+   */
+  it('soru medyasinin tum klasorleri silinir, baskasininki kalir', async () => {
+    const { fake, accountPurgeService } = await setup({}, {
+      storage: {
+        'question-media': [
+          `${UID}/q1/voice-1.m4a`, `${UID}/q1/image-2.jpg`, `${UID}/q2/image-3.jpg`,
+          `${OTHER}/q9/voice-4.m4a`,
+        ],
+      },
+    });
+
+    await accountPurgeService.hardDeleteUser(UID);
+
+    expect(fake.storageFiles('question-media')).toEqual([`${OTHER}/q9/voice-4.m4a`]);
+  });
+
+  it('bir soru klasorunde hata digerlerini durdurmaz; kullanici satiri silinemezse soru medyasi kalir', async () => {
+    const { fake, accountPurgeService } = await setup({}, {
+      storage: { 'question-media': [`${UID}/q1/voice-1.m4a`, `${UID}/q2/image-2.jpg`] },
+      storageFailOn: [{ bucket: 'question-media', op: 'remove', times: 1 }],
+    });
+    await accountPurgeService.hardDeleteUser(UID);
+    expect(fake.storageFiles('question-media')).toEqual([`${UID}/q1/voice-1.m4a`]);
+
+    vi.resetModules();
+    const second = await setup({}, {
+      failOn: [{ table: 'users', op: 'delete' }],
+      storage: { 'question-media': [`${UID}/q1/voice-1.m4a`] },
+    });
+    await expect(second.accountPurgeService.hardDeleteUser(UID)).rejects.toMatchObject({ code: 'SERVER_ERROR' });
+    expect(second.fake.storageFiles('question-media')).toEqual([`${UID}/q1/voice-1.m4a`]);
+  });
+
+  /**
    * Sohbet medyasi `chat-media/${matchId}/` altinda. Eslesme silinince mesajlari da
    * CASCADE ile gidiyor (prod semasi dogrulandi); klasor temizlenmezse dosyalar
    * herkese acik bucket'ta sahipsiz kalir — gizlilik politikasi mesajlarin kalici

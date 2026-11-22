@@ -9,6 +9,32 @@ import type {
 } from '../types/index.js';
 
 /**
+ * Suresi dolmus ama `active`/`cancelled` kalmis satirlarin kapanma payi. Magaza yeniden deneme / ek sure
+ * sirasinda RENEWAL gec gelebilir: pay icinde satir acik kalir, pay sonrasi kapanir; gec RENEWAL yine de
+ * en yeni satiri yeniden acar (renewSubscription).
+ */
+export const SUBSCRIPTION_EXPIRY_GRACE_MS = 3 * 24 * 60 * 60 * 1000;
+
+/**
+ * Aylık bonus kararının satın alma gerçekleri. `paidEligible`: ödenmiş pay (utils/paid-eligibility).
+ * `sandbox`: TestFlight / Xcode / Google lisans testçisi satın alması — bkz. SANDBOX_BONUS_WINDOW_MS.
+ */
+export interface BonusFacts {
+  paidEligible: boolean;
+  sandbox: boolean;
+}
+
+const UNPAID_PRODUCTION: BonusFacts = { paidEligible: false, sandbox: false };
+
+/**
+ * Sandbox'ta kullanıcı başına en fazla bir abonelik bonusu bu pencerede. Sandbox dönemleri hızlandırılmış
+ * (TestFlight'ta "aylık" abonelik her gün, Xcode/Google lisans testinde dakikalar içinde yenilenir); her
+ * dönem bonus alınca bir test hesabına 2026-11-12..17'de 6 günde 9.000 mor yattı. 30 gün = üretimin aylık
+ * ritmi; ilk satın alma bonusu hemen alır (App Review de sandbox'ta satın alır, cüzdanı dolu görmeli).
+ */
+export const SANDBOX_BONUS_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
+
+/**
  * Aylık bonusun tekilleştirme anahtarı.
  *
  * Bir satın alma sunucuya İKİ ayrı yoldan gelir: uygulamanın
@@ -21,7 +47,8 @@ import type {
  * Tarih NORMALIZE edilmek zorunda: iki yol aynı anı farklı ISO gösterimiyle
  * yolluyor — istemci yolu RevenueCat'in ham string'ini (`...:58Z`), webhook ise
  * `new Date(expiration_at_ms).toISOString()` (`...:58.000Z`). Ham hâlde
- * birleştirilirse anahtarlar tutmaz ve bonus yine iki kez yatar.
+ * birleştirilirse anahtarlar tutmaz ve bonus yine iki kez yatar. Saniyeye kırpılır: RevenueCat API v1
+ * `expires_date` saniye hassasiyetinde, webhook `expiration_at_ms` milisaniye taşıyabilir.
  */
 function subscriptionPeriodRef(
   plan: SubscriptionPlan,
@@ -29,7 +56,7 @@ function subscriptionPeriodRef(
   period: SubscriptionPeriod,
 ): string {
   const ms = Date.parse(expiresAt);
-  const normalized = Number.isNaN(ms) ? expiresAt : new Date(ms).toISOString();
+  const normalized = Number.isNaN(ms) ? expiresAt : new Date(Math.floor(ms / 1000) * 1000).toISOString();
   // Aylik anahtar eskisiyle BIREBIR (canlidaki `sub_<plan>_<bitis>` satirlari tekil kalir);
   // haftalik ayri onek tasir, boylece ayni bitis anina denk gelen aylik donemle asla carpismaz.
   return period === 'weekly' ? `sub_${plan}_weekly_${normalized}` : `sub_${plan}_${normalized}`;
@@ -69,14 +96,86 @@ class SubscriptionService {
     };
   }
 
-  async activateSubscription(
+  /**
+   * Webhook yolu (INITIAL_PURCHASE): olay dönemin sahibine gelir — dönemi açar, bonusu yatırır.
+   * Abonelik mağazada artık bu hesapta değilse webhook bu metodu hiç çağırmaz (webhook.service).
+   */
+  async activateFromWebhook(
     userId: string,
     plan: SubscriptionPlan,
     rcCustomerId: string,
     storeTransactionId: string,
     expiresAt: string,
-    paidEligible = false,
+    facts: BonusFacts = UNPAID_PRODUCTION,
     period: SubscriptionPeriod = 'monthly',
+  ): Promise<void> {
+    await this.openPeriod(userId, plan, rcCustomerId, storeTransactionId, expiresAt, period);
+    await this.grantPeriodBonus(userId, plan, period, expiresAt, facts);
+  }
+
+  /**
+   * İstemci yolu (`POST /subscriptions/activate`). Mağaza aboneliği RevenueCat'te hesaplar arasında
+   * taşınır (aynı Apple/Google hesabıyla başka Qulo hesabına giriş → TRANSFER); taşınan aboneliğin
+   * GÜNCEL dönemi önceki hesapta zaten ödüllendirildi. Burada yeniden yatırmak tek satın almayla
+   * hesap başına bonus demekti (2026-11-12: aynı dönemin premium bonusu iki hesaba yattı). Dönem
+   * başka hesapta ödüllendiyse erişim açılır, bonus verilmez.
+   *
+   * Yanlış eşleşme (aynı saniyede biten iki AYRI abonelik) kayıp değil: TRANSFER'den sonra
+   * INITIAL_PURCHASE/RENEWAL yalnız yeni sahibe gelir, webhook yolu bu kontrolü yapmaz ve bonusu
+   * dönemin sahibine kendisi verir.
+   *
+   * Bilinen sınır: oku-sonra-yaz, hesaplar arası DB kısıtı yok (047 kullanıcı başına). Sahiplik iki
+   * hesabın eşzamanlı isteği arasında el değiştirmeli — dönem başına tek, birkaç yüz ms'lik pencere.
+   * Global kısıt aynı saniyede biten iki ayrı aboneliği webhook'ta da engellerdi.
+   */
+  async activateFromClient(
+    userId: string,
+    plan: SubscriptionPlan,
+    rcCustomerId: string,
+    storeTransactionId: string,
+    expiresAt: string,
+    facts: BonusFacts = UNPAID_PRODUCTION,
+    period: SubscriptionPeriod = 'monthly',
+  ): Promise<void> {
+    await this.openPeriod(userId, plan, rcCustomerId, storeTransactionId, expiresAt, period);
+    if (await this.isPeriodAlreadyRewarded(userId, plan, period, expiresAt)) return;
+    await this.grantPeriodBonus(userId, plan, period, expiresAt, facts);
+  }
+
+  /**
+   * Dönemin bonusu HERHANGİ bir hesaba (bu hesap dahil) yattı mı. Okuma hatasında `true` (yatırma):
+   * gerçek satın almada bonusu webhook yolu verir; kontrolü görmeden yatırmak taşınan abonelikte
+   * çift bonus olur.
+   */
+  private async isPeriodAlreadyRewarded(
+    userId: string,
+    plan: SubscriptionPlan,
+    period: SubscriptionPeriod,
+    expiresAt: string,
+  ): Promise<boolean> {
+    const { data, error } = await supabase
+      .from('diamond_transactions')
+      .select('id')
+      .eq('reason', 'SUBSCRIPTION_BONUS')
+      .eq('reference_id', subscriptionPeriodRef(plan, expiresAt, period))
+      .limit(1);
+
+    if (error) {
+      console.error(`[subscription] period bonus check failed, client bonus withheld for ${userId}:`, error.message);
+      return true;
+    }
+    if ((data?.length ?? 0) === 0) return false;
+    console.log(`[subscription] period bonus already granted, client claim skipped for ${userId}`);
+    return true;
+  }
+
+  private async openPeriod(
+    userId: string,
+    plan: SubscriptionPlan,
+    rcCustomerId: string,
+    storeTransactionId: string,
+    expiresAt: string,
+    period: SubscriptionPeriod,
   ): Promise<void> {
     // Aynı dönem için zaten aktif bir kayıt varsa yeni satır AÇMA — iki giriş
     // yolu (istemci + webhook) aynı satın almayı saniyeler arayla bildiriyor.
@@ -98,8 +197,10 @@ class SubscriptionService {
     }
     const existing = existingRows?.[0];
 
+    // Yazım hataları da fırlatılmaz (yukarıdaki gerekçe) ama loglanır — sessiz kalırsa erişimsiz
+    // ödeyen kullanıcının izi kalmaz.
     if (existing) {
-      await supabase
+      const { error: updateError } = await supabase
         .from('user_subscriptions')
         .update({
           plan,
@@ -108,6 +209,7 @@ class SubscriptionService {
           updated_at: new Date().toISOString(),
         })
         .eq('id', existing.id);
+      if (updateError) console.error('[subscription] period update failed:', updateError.message);
     } else {
       // Yeni dönem öncekinin yerini alır (yükseltme: istemci yeni ürünü bildirir, eski satır
       // açık kalırsa sonraki RENEWAL onu da yeni plana/süreye çekerdi).
@@ -121,7 +223,7 @@ class SubscriptionService {
         console.error('[subscription] previous period close failed:', supersedeError.message);
       }
 
-      await supabase.from('user_subscriptions').insert({
+      const { error: insertError } = await supabase.from('user_subscriptions').insert({
         user_id: userId,
         plan,
         status: 'active',
@@ -130,9 +232,10 @@ class SubscriptionService {
         started_at: new Date().toISOString(),
         expires_at: expiresAt,
       });
+      if (insertError) console.error('[subscription] period insert failed:', insertError.message);
     }
 
-    await supabase
+    const { error: userError } = await supabase
       .from('users')
       .update({
         subscription_plan: plan,
@@ -141,8 +244,7 @@ class SubscriptionService {
         rc_customer_id: rcCustomerId,
       })
       .eq('id', userId);
-
-    await this.grantPeriodBonus(userId, plan, period, expiresAt, paidEligible);
+    if (userError) console.error('[subscription] user access write failed:', userError.message);
   }
 
   /**
@@ -154,31 +256,59 @@ class SubscriptionService {
     plan: SubscriptionPlan,
     storeTransactionId: string,
     expiresAt: string,
-    paidEligible = false,
+    facts: BonusFacts = UNPAID_PRODUCTION,
     period: SubscriptionPeriod = 'monthly',
   ): Promise<void> {
-    await supabase
+    const renewal = {
+      plan,
+      status: 'active',
+      expires_at: expiresAt,
+      store_transaction_id: storeTransactionId,
+      updated_at: new Date().toISOString(),
+    };
+    const { data: renewed, error: renewError } = await supabase
       .from('user_subscriptions')
-      .update({
-        plan,
-        status: 'active',
-        expires_at: expiresAt,
-        store_transaction_id: storeTransactionId,
-        updated_at: new Date().toISOString(),
-      })
+      .update(renewal)
       .eq('user_id', userId)
-      .eq('status', 'active');
+      .eq('status', 'active')
+      .select('id');
 
-    await supabase
+    // Fırlatılmaz (openPeriod gerekçesi): erişimin kaynağı `users`, aşağıda yine yenilenir.
+    if (renewError) console.error('[subscription] renewal row update failed:', renewError.message);
+    else if ((renewed ?? []).length === 0) await this.reopenLatestRow(userId, renewal);
+
+    const { error: userError } = await supabase
       .from('users')
       .update({ subscription_plan: plan, subscription_period: period, subscription_expires_at: expiresAt })
       .eq('id', userId);
+    if (userError) console.error('[subscription] renewal user access write failed:', userError.message);
 
-    await this.grantPeriodBonus(userId, plan, period, expiresAt, paidEligible);
+    await this.grantPeriodBonus(userId, plan, period, expiresAt, facts);
+  }
+
+  /**
+   * Acik satir yoksa (sure dolumu taramasi gec gelen RENEWAL'dan once kapattiysa) en yeni satir yeniden
+   * acilir — yoksa erisim `users`'ta yenilenir ama abonelik kaydi "expired" kalirdi. Hatalar loglanir.
+   */
+  private async reopenLatestRow(userId: string, renewal: Record<string, unknown>): Promise<void> {
+    const { data: latest, error } = await supabase
+      .from('user_subscriptions')
+      .select('id')
+      .eq('user_id', userId)
+      .order('expires_at', { ascending: false })
+      .limit(1);
+    if (error) {
+      console.error('[subscription] latest row lookup failed:', error.message);
+      return;
+    }
+    const latestId = (latest as Array<{ id: string }> | null)?.[0]?.id;
+    if (!latestId) return;
+    const { error: reopenError } = await supabase.from('user_subscriptions').update(renewal).eq('id', latestId);
+    if (reopenError) console.error('[subscription] latest row reopen failed:', reopenError.message);
   }
 
   async cancelSubscription(userId: string): Promise<void> {
-    await supabase
+    const { error } = await supabase
       .from('user_subscriptions')
       .update({
         status: 'cancelled',
@@ -186,6 +316,7 @@ class SubscriptionService {
       })
       .eq('user_id', userId)
       .eq('status', 'active');
+    if (error) console.error('[subscription] cancel write failed:', error.message);
   }
 
   /**
@@ -193,12 +324,13 @@ class SubscriptionService {
    * Bonus yok — dönemin bonusu satın almada/yenilemede verildi.
    */
   async uncancelSubscription(userId: string): Promise<void> {
-    await supabase
+    const { error } = await supabase
       .from('user_subscriptions')
       .update({ status: 'active', updated_at: new Date().toISOString() })
       .eq('user_id', userId)
       .eq('status', 'cancelled')
       .gt('expires_at', new Date().toISOString());
+    if (error) console.error('[subscription] uncancel write failed:', error.message);
   }
 
   /**
@@ -217,9 +349,10 @@ class SubscriptionService {
       .eq('user_id', userId)
       .in('status', ['active', 'cancelled']);
     if (plan) rows = rows.eq('plan', plan);
-    await rows;
+    const { error: periodError } = await rows;
+    if (periodError) console.error('[subscription] expire period write failed:', periodError.message);
 
-    await supabase
+    const { error: userError } = await supabase
       .from('users')
       .update({
         subscription_plan: null,
@@ -227,6 +360,27 @@ class SubscriptionService {
         subscription_expires_at: null,
       })
       .eq('id', userId);
+    if (userError) console.error('[subscription] expire user access write failed:', userError.message);
+  }
+
+  /**
+   * Suresi `SUBSCRIPTION_EXPIRY_GRACE_MS`ten fazla gecmis `active`/`cancelled` satirlari `expired` yapar.
+   * Neden: durum yalniz RevenueCat EXPIRATION webhook'uyla kapaniyordu; webhook'u hic gelmeyen
+   * (istemci /subscriptions/activate ile acilmis, sandbox/TestFlight) satirlar sonsuza dek `active`
+   * kaldi (prod 2026-11-09: 8 satir, en eskisi 07-15'te bitmis). Erisim etkilenmez — erisimin kaynagi
+   * users.subscription_expires_at (tarih karsilastirmasi); bu satirlar rapor/backoffice dogrulugu icin.
+   * Doner: kapatilan satir sayisi. Hata firlatilir (cron loglar).
+   */
+  async expireLapsedRows(now: Date = new Date()): Promise<number> {
+    const cutoff = new Date(now.getTime() - SUBSCRIPTION_EXPIRY_GRACE_MS).toISOString();
+    const { data, error } = await supabase
+      .from('user_subscriptions')
+      .update({ status: 'expired', updated_at: now.toISOString() })
+      .in('status', ['active', 'cancelled'])
+      .lt('expires_at', cutoff)
+      .select('id');
+    if (error) throw new Error(`user_subscriptions expiry sweep failed: ${error.message}`);
+    return data?.length ?? 0;
   }
 
   /**
@@ -253,27 +407,29 @@ class SubscriptionService {
   }
 
   /**
-   * Dönem mor bonusu — dönem anahtarıyla tekilleşir (bkz. subscriptionPeriodRef). Miktar plana
-   * değil ÜRÜN DÖNEMİNE bağlı: aylık = `subscriptionLimits[plan].monthlyPurpleBonus` (eskisi gibi),
-   * haftalık = `subscriptionBonuses.weekly[plan]` (yalnız Plus tanımlı; Premium haftalık yok → 0). Abonelik moru
+   * Dönem mor bonusu — dönem anahtarıyla tekilleşir (bkz. subscriptionPeriodRef). Abonelik moru
    * "yarı ödenmiş": tier payı kadarı rainbow üretebilir (economy rainbow bloğu), ama YALNIZ gerçek,
    * tam fiyatlı, kendi satın almasında (`paidEligible`, utils/paid-eligibility). Aksi hâlde bonus
-   * yine tam yatar, ödenmiş payı 0.
+   * yine tam yatar, ödenmiş payı 0. Sandbox'ta 30 günde en fazla bir bonus (SANDBOX_BONUS_WINDOW_MS);
+   * dönem/erişim yine de açılır ya da uzar — çağıran onu bonustan önce yazar.
    */
   private async grantPeriodBonus(
     userId: string,
     plan: SubscriptionPlan,
     period: SubscriptionPeriod,
     expiresAt: string,
-    paidEligible: boolean,
+    facts: BonusFacts,
   ): Promise<void> {
     const config = await economyConfigService.getConfig();
+    // Miktar plana değil ÜRÜN DÖNEMİNE bağlı: aylık = `monthlyPurpleBonus`, haftalık =
+    // `subscriptionBonuses.weekly[plan]` (yalnız Plus tanımlı; Premium haftalık yok → 0).
     const bonus = period === 'weekly'
       ? (plan === 'plus' ? config.subscriptionBonuses.weekly.plus : 0)
       : config.subscriptionLimits[plan].monthlyPurpleBonus;
     if (bonus <= 0) return;
+    if (facts.sandbox && (await this.hasBonusWithinSandboxWindow(userId))) return;
 
-    const paid = paidEligible ? Math.floor(bonus * config.rainbow.subscriptionPaidShare[plan]) : 0;
+    const paid = facts.paidEligible ? Math.floor(bonus * config.rainbow.subscriptionPaidShare[plan]) : 0;
     await diamondService.addPurple(
       userId,
       bonus,
@@ -281,6 +437,29 @@ class SubscriptionService {
       subscriptionPeriodRef(plan, expiresAt, period),
       paid,
     );
+  }
+
+  /**
+   * Okuma hatasında `true` (verme): yalnız sandbox'ta sorulur, yanlış "hayır" yalnız test hesabını etkiler;
+   * körlemesine vermek günlük bonusu geri getirirdi.
+   */
+  private async hasBonusWithinSandboxWindow(userId: string): Promise<boolean> {
+    const since = new Date(Date.now() - SANDBOX_BONUS_WINDOW_MS).toISOString();
+    const { data, error } = await supabase
+      .from('diamond_transactions')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('reason', 'SUBSCRIPTION_BONUS')
+      .gte('created_at', since)
+      .limit(1);
+
+    if (error) {
+      console.error(`[subscription] sandbox bonus window check failed, bonus withheld for ${userId}:`, error.message);
+      return true;
+    }
+    if ((data?.length ?? 0) === 0) return false;
+    console.log(`[subscription] sandbox bonus within 30 days, skipped for ${userId}`);
+    return true;
   }
 
   async getDailyStats(userId: string) {

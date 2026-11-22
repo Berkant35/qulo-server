@@ -37,6 +37,39 @@ describe('rcWebhookSchema', () => {
       },
     });
     expect(parsed.success).toBe(true);
-    expect(parsed.success && parsed.data.event.cancel_reason).toBe('CUSTOMER_SUPPORT');
+    const ev = parsed.success ? parsed.data.event : undefined;
+    expect(ev && 'cancel_reason' in ev ? ev.cancel_reason : undefined).toBe('CUSTOMER_SUPPORT');
+  });
+
+  /** TRANSFER'de `app_user_id`/`product_id` yok (RevenueCat docs) — eskiden 400 alıp düşüyordu. */
+  it('TRANSFER app_user_id/product_id olmadan kabul edilir, aktarım listeleri korunur', () => {
+    const parsed = rcWebhookSchema.safeParse({
+      event: {
+        type: 'TRANSFER', id: 'evt-1', app_id: 'app1', event_timestamp_ms: 1, store: 'APP_STORE',
+        environment: 'PRODUCTION', transferred_from: ['u-old'], transferred_to: ['u-new'],
+      },
+      api_version: '1.0',
+    });
+    expect(parsed.success).toBe(true);
+    expect(parsed.success && parsed.data.event).toMatchObject({
+      type: 'TRANSFER', transferred_from: ['u-old'], transferred_to: ['u-new'],
+    });
+  });
+
+  it('aktarım listesi olmayan TRANSFER ve app_user_id olmayan diğer olaylar reddedilir', () => {
+    expect(rcWebhookSchema.safeParse({ event: { type: 'TRANSFER', store: 'APP_STORE' } }).success).toBe(false);
+    const { app_user_id: _omit, ...withoutUser } = base;
+    expect(rcWebhookSchema.safeParse({ event: withoutUser }).success).toBe(false);
+  });
+
+  it('listesiz TRANSFER app_user_id/product_id taşısa da satın alma olayı gibi kabul edilmez', () => {
+    expect(rcWebhookSchema.safeParse({ event: { ...base, type: 'TRANSFER' } }).success).toBe(false);
+  });
+
+  it('TRANSFER: bilinmeyen store kabul edilir (400 = RevenueCat yeniden dener), 10\'dan uzun liste reddedilir', () => {
+    const ok = { type: 'TRANSFER', transferred_from: ['a'], transferred_to: ['b'], store: 'PROMOTIONAL' };
+    expect(rcWebhookSchema.safeParse({ event: ok }).success).toBe(true);
+    const many = Array.from({ length: 11 }, (_, i) => `u${i}`);
+    expect(rcWebhookSchema.safeParse({ event: { ...ok, transferred_from: many } }).success).toBe(false);
   });
 });

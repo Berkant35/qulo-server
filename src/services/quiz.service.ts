@@ -12,13 +12,30 @@ import { NotificationService } from "./notification.service.js";
 import { matchEmailService } from "./match-email.service.js";
 import { userLanguageService } from "./user-language.service.js";
 import { quizSecondChanceService, FREE_SECOND_CHANCE } from "./quiz-second-chance.service.js";
-import { DEFAULT_QUESTION_SECONDS, quizDeadlineService, remainingSeconds, visiblePowers } from "./quiz-deadline.service.js";
+import { clampTimeSpent, DEFAULT_QUESTION_SECONDS, mediaExtraSeconds, quizDeadlineService, remainingSeconds, visiblePowers } from "./quiz-deadline.service.js";
+import {
+  questionMediaService,
+  solverVisibleMedia,
+  type QuestionMediaColumns,
+  type SolverQuestionMedia,
+} from "./question-media.service.js";
 import type { PowerName } from "../types/index.js";
 import { pairCompatibilityService } from "./pair-compatibility.service.js";
 import { servedGate } from "./served-gate.service.js";
 
 /** questions.answer_1..answer_4 — cevap indeksleri 1 tabanli. */
 const QUIZ_ANSWER_INDICES: readonly number[] = [1, 2, 3, 4];
+
+/**
+ * `getCurrentQuestion` kolonlari. Medya kapaliyken sorgu medya oncesiyle AYNI; 084 kolonlari yalniz
+ * medya kapisi acikken okunur. Iki tam literal + iki ayri cagri (`loadCurrentQuestion`): literal
+ * birlesimi ya da genis `string` supabase-js'in tip duzeyi select ayristiricisini bozuyor.
+ */
+const CURRENT_QUESTION_COLUMNS = "id, order_num, question_text, answer_1, answer_2, answer_3, answer_4, hint_text, time_limit, locale";
+const CURRENT_QUESTION_MEDIA_COLUMNS = "id, order_num, question_text, answer_1, answer_2, answer_3, answer_4, hint_text, time_limit, locale, voice_path, voice_duration_ms, image_path, image_status";
+
+/** Medya acikken soru yanitina eklenen alanlar (2.0.18+101). */
+type CurrentQuestionMedia = SolverQuestionMedia & { media_extra_seconds: number };
 
 interface SessionRow {
   id: string;
@@ -273,7 +290,13 @@ export class QuizService {
   }
 
   // ─── Get Current Question ──────────────────────────────────────
-  async getCurrentQuestion(sessionId: string, solverId: string) {
+  /**
+   * `media.active` (controller: istemci >= 2.0.18+101 VE `media_questions_enabled`) iken medya kolonlari
+   * okunur, imzali URL'ler + `media_extra_seconds` doner ve son an ek sureyle kurulur. Kapaliyken
+   * sorgu, son an ve yanit medya oncesiyle BIREBIR ayni — medya anahtarlari hic eklenmez (eski
+   * istemci <= 2.0.18 sozlesmesi; migration 084 oncesi semada da calisir).
+   */
+  async getCurrentQuestion(sessionId: string, solverId: string, media: { active: boolean } = { active: false }) {
     const session = await this.getActiveSession(sessionId, solverId);
     const questionIndex = session.current_q - 1;
 
@@ -294,11 +317,7 @@ export class QuizService {
       questionId = ordered[questionIndex].id as string;
     }
 
-    const { data: q, error: qErr } = await supabase
-      .from("questions")
-      .select("id, order_num, question_text, answer_1, answer_2, answer_3, answer_4, hint_text, time_limit, locale")
-      .eq("id", questionId)
-      .single();
+    const { data: q, error: qErr } = await this.loadCurrentQuestion(questionId, media.active);
 
     if (qErr || !q) throw Errors.SERVER_ERROR();
 
@@ -310,7 +329,12 @@ export class QuizService {
     ];
     const shuffledAnswers = shuffleArray(answers);
     const timeLimit = (q.time_limit as number | null) ?? DEFAULT_QUESTION_SECONDS;
-    const expiresAt = await quizDeadlineService.arm(session, timeLimit);
+    const visibleMedia = media.active ? solverVisibleMedia(q as QuestionMediaColumns) : null;
+    const extraSeconds = visibleMedia ? mediaExtraSeconds(visibleMedia) : 0;
+    const [expiresAt, mediaFields] = await Promise.all([
+      quizDeadlineService.arm(session, timeLimit, extraSeconds),
+      this.currentQuestionMedia(visibleMedia, extraSeconds),
+    ]);
 
     return {
       session_id: sessionId,
@@ -327,7 +351,28 @@ export class QuizService {
       remaining_seconds: remainingSeconds(expiresAt),
       // Uygulama yeniden baslatilsa da kullanilmis gucler dogru gorunsun.
       used_powers: visiblePowers(session.current_q_powers),
+      // Yalniz medya acikken dolu; kapaliyken `{}` → eski sozlesme.
+      ...mediaFields,
     };
+  }
+
+  private loadCurrentQuestion(questionId: string, withMedia: boolean) {
+    const questions = supabase.from("questions");
+    return withMedia
+      ? questions.select(CURRENT_QUESTION_MEDIA_COLUMNS).eq("id", questionId).single()
+      : questions.select(CURRENT_QUESTION_COLUMNS).eq("id", questionId).single();
+  }
+
+  /**
+   * Cozucu medyasi + ek sure; medya kapaliyken `{}` (yanita hic anahtar eklenmez).
+   * `time_limit_seconds` taban sure kalir; istemci ek sureyi `media_extra_seconds`'tan okur.
+   */
+  private async currentQuestionMedia(
+    visibleMedia: QuestionMediaColumns | null,
+    extraSeconds: number,
+  ): Promise<Partial<CurrentQuestionMedia>> {
+    if (!visibleMedia) return {};
+    return { ...(await questionMediaService.solverMedia(visibleMedia)), media_extra_seconds: extraSeconds };
   }
 
   // ─── Answer Question ──────────────────────────────────────────
@@ -338,6 +383,8 @@ export class QuizService {
     powerUsed?: PowerName,
     timeSpent?: number,
   ) {
+    // Yalniz istatistik: validator ust sinir koymaz (durust yavas cevap 400 almasin), burada kirpilir.
+    const spent = clampTimeSpent(timeSpent);
     const session = await this.getActiveSession(sessionId, solverId);
     const questionIndex = session.current_q - 1;
 
@@ -432,8 +479,8 @@ export class QuizService {
       switch (powerUsed) {
         case "SKIP": {
           // Mark correct, record answer, proceed — no selected_answer for SKIP
-          await this.recordAnswer(sessionId, currentQuestion.id, currentQuestion.correct_answer, true, powerUsed, timeSpent ?? null);
-          await this.updateQuestionStats(currentQuestion.id, true, powerUsed ?? null, timeSpent ?? null, currentQuestion.correct_answer);
+          await this.recordAnswer(sessionId, currentQuestion.id, currentQuestion.correct_answer, true, powerUsed, spent);
+          await this.updateQuestionStats(currentQuestion.id, true, powerUsed ?? null, spent, currentQuestion.correct_answer);
 
           if (session.current_q >= session.total_questions) {
             return await this.completeSession(session);
@@ -572,9 +619,9 @@ export class QuizService {
     const isCorrect = selectedAnswer === currentQuestion.correct_answer;
 
     // Record answer
-    await this.recordAnswer(sessionId, currentQuestion.id, selectedAnswer, isCorrect, powerUsed ?? null, timeSpent ?? null);
+    await this.recordAnswer(sessionId, currentQuestion.id, selectedAnswer, isCorrect, powerUsed ?? null, spent);
     // Update question stats
-    await this.updateQuestionStats(currentQuestion.id, isCorrect, powerUsed ?? null, timeSpent ?? null, selectedAnswer);
+    await this.updateQuestionStats(currentQuestion.id, isCorrect, powerUsed ?? null, spent, selectedAnswer);
 
     if (!isCorrect) {
       // Session'ı hemen FAILED yapma — client'a SKIP kurtulma şansı ver. Cevap kaydedildi,

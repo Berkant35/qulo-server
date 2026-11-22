@@ -62,4 +62,29 @@
   </div>
   <% } %>
 </div>
+<% if (typeof question !== 'undefined' && question) { %>
+<div class="card">
+  <h3 style="margin-bottom: 12px;">Reported Question (#<%= question.order_num %>)</h3>
+  <p><%= question.question_text %></p>
+  <% if (question.voice_url) { %>
+  <h4 style="margin: 12px 0 4px;">Voice</h4>
+  <audio controls src="<%= question.voice_url %>"></audio>
+  <form method="POST" action="/admin/reports/<%= report.id %>/action" style="margin-top:6px;">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="hidden" name="remove_media" value="voice">
+    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Remove voice?')">Remove Voice</button>
+  </form>
+  <% } %>
+  <% if (question.image_url) { %>
+  <h4 style="margin: 12px 0 4px;">Image (<%= question.image_status || '-' %>)</h4>
+  <img src="<%= question.image_url %>" alt="" style="max-width:320px; border-radius:8px; display:block;">
+  <form method="POST" action="/admin/reports/<%= report.id %>/action" style="margin-top:6px;">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="hidden" name="remove_media" value="image">
+    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Remove image?')">Remove Image</button>
+  </form>
+  <% } %>
+  <% if (!question.voice_url && !question.image_url) { %><p>No media on this question.</p><% } %>
+</div>
+<% } %>
 <%- include('_footer') %>

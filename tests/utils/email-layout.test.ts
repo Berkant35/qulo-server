@@ -148,6 +148,7 @@ describe("kullanici e-postalari (gercek gonderici + mock gmail)", () => {
                       locale: loc,
                       last_active_at: null,
                       email_notifications_enabled: true,
+                      email_verified: true,
                       is_deleted: false,
                     },
                     error: null,
@@ -158,7 +159,7 @@ describe("kullanici e-postalari (gercek gonderici + mock gmail)", () => {
           },
         }));
         vi.doMock("../../src/services/email-unsubscribe-token.service.js", () => ({
-          emailUnsubscribeTokenService: { create: vi.fn(async () => "utok") },
+          emailUnsubscribeTokenService: { create: vi.fn(async () => "utok"), sentWithinDailyWindow: vi.fn(async () => false) },
         }));
         const { matchEmailService } = await import("../../src/services/match-email.service.js");
         await matchEmailService.sendMatchEmail("u1");
